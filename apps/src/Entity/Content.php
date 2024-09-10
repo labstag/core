@@ -11,8 +11,16 @@ abstract class Content
     protected ?string $title = null;
 
     #[Gedmo\Slug(updatable: false, fields: ['title'])]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
     protected ?string $slug = null;
+
+    #[ORM\Column(
+        type: 'boolean',
+        options: [
+            'default' => 1
+        ]
+    )]
+    protected ?bool $enable = null;
 
     public function getTitle(): ?string
     {
@@ -34,6 +42,18 @@ abstract class Content
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function isEnable(): ?bool
+    {
+        return $this->enable;
+    }
+
+    public function setEnable(bool $enable): static
+    {
+        $this->enable = $enable;
 
         return $this;
     }

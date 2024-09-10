@@ -20,8 +20,11 @@ class Tag
     private ?string $title = null;
 
     #[Gedmo\Slug(updatable: false, fields: ['title'])]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $slug = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $type = null;
 
     public function getId(): ?string
     {
@@ -48,6 +51,18 @@ class Tag
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }
