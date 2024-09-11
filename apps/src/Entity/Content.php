@@ -7,6 +7,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 abstract class Content
 {
+
     #[ORM\Column(length: 255)]
     protected ?string $title = null;
 
@@ -16,9 +17,7 @@ abstract class Content
 
     #[ORM\Column(
         type: 'boolean',
-        options: [
-            'default' => 1
-        ]
+        options: ['default' => 1]
     )]
     protected ?bool $enable = null;
 

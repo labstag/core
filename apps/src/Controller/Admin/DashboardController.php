@@ -25,9 +25,7 @@ class DashboardController extends AbstractDashboardController
     {
         return $this->render(
             'admin/dashboard.html.twig',
-            [
-
-            ]
+            []
         );
     }
 
