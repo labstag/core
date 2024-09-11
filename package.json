@@ -103,15 +103,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hackariens/symfony.git"
+    "url": "git+https://github.com/labstag/core.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hackariens/symfony/issues"
+    "url": "https://github.com/labstag/core/issues"
   },
-  "homepage": "https://github.com/hackariens/symfony#readme",
+  "homepage": "https://github.com/labstag/core#readme",
   "dependencies": {
     "@symfony/stimulus-bridge": "2.0.*",
     "@symfony/webpack-encore": "1.6.*",
