@@ -96,6 +96,11 @@
     "workflow:dump:post": "docker exec -i $($npm_package_config_phpfpm) $npm_package_config_wdump post | dot -Tpng -o post.png",
     "workflow:dump:user": "docker exec -i $($npm_package_config_phpfpm) $npm_package_config_wdump user | dot -Tpng -o user.png"
   },
+  "config": {
+      "phpstan": "bin/phpstan analyse",
+      "wdump": "symfony console workflow:dump",
+      "phpfpm": "npx korojscommands docker_getname-container --container phpfpm"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hackariens/symfony.git"
