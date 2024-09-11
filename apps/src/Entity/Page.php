@@ -42,7 +42,6 @@ class Page extends Content
 
     public function __construct()
     {
-        parent::__construct();
         $this->meta = new ArrayCollection();
         $this->children = new ArrayCollection();
     }

@@ -6,9 +6,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Meta;
 use Labstag\Lib\ServiceEntityRepositoryLib;
 
-/**
- * @extends ServiceEntityRepositoryLib<Meta>
- */
 class MetaRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $registry)

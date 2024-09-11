@@ -6,9 +6,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\File;
 use Labstag\Lib\ServiceEntityRepositoryLib;
 
-/**
- * @extends ServiceEntityRepositoryLib<File>
- */
 class FileRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $registry)
