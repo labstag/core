@@ -7,8 +7,8 @@ use Labstag\Entity\Chapter;
 
 class ChapterRepository extends ContentRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Chapter::class);
+        parent::__construct($managerRegistry, Chapter::class);
     }
 }

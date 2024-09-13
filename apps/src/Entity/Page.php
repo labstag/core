@@ -8,11 +8,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\PageRepository;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Sluggable\Handler\TreeSlugHandler;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: PageRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
 class Page extends Content
 {
+
+    use SoftDeleteableEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -59,23 +63,21 @@ class Page extends Content
         return $this->meta;
     }
 
-    public function addMetum(Meta $metum): static
+    public function addMetum(Meta $meta): static
     {
-        if (!$this->meta->contains($metum)) {
-            $this->meta->add($metum);
-            $metum->setPage($this);
+        if (!$this->meta->contains($meta)) {
+            $this->meta->add($meta);
+            $meta->setPage($this);
         }
 
         return $this;
     }
 
-    public function removeMetum(Meta $metum): static
+    public function removeMetum(Meta $meta): static
     {
-        if ($this->meta->removeElement($metum)) {
-            // set the owning side to null (unless already changed)
-            if ($metum->getPage() === $this) {
-                $metum->setPage(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->meta->removeElement($meta) && $meta->getPage() === $this) {
+            $meta->setPage(null);
         }
 
         return $this;
@@ -113,11 +115,9 @@ class Page extends Content
 
     public function removeChild(self $child): static
     {
-        if ($this->children->removeElement($child)) {
-            // set the owning side to null (unless already changed)
-            if ($child->getPage() === $this) {
-                $child->setPage(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->children->removeElement($child) && $child->getPage() === $this) {
+            $child->setPage(null);
         }
 
         return $this;

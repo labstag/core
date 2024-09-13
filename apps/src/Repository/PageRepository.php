@@ -7,8 +7,8 @@ use Labstag\Entity\Page;
 
 class PageRepository extends ContentRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Page::class);
+        parent::__construct($managerRegistry, Page::class);
     }
 }

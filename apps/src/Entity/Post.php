@@ -5,12 +5,17 @@ namespace Labstag\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\PostRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
 class Post extends Content
 {
+
+    use SoftDeleteableEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -39,23 +44,21 @@ class Post extends Content
         return $this->meta;
     }
 
-    public function addMetum(Meta $metum): static
+    public function addMetum(Meta $meta): static
     {
-        if (!$this->meta->contains($metum)) {
-            $this->meta->add($metum);
-            $metum->setPost($this);
+        if (!$this->meta->contains($meta)) {
+            $this->meta->add($meta);
+            $meta->setPost($this);
         }
 
         return $this;
     }
 
-    public function removeMetum(Meta $metum): static
+    public function removeMetum(Meta $meta): static
     {
-        if ($this->meta->removeElement($metum)) {
-            // set the owning side to null (unless already changed)
-            if ($metum->getPost() === $this) {
-                $metum->setPost(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->meta->removeElement($meta) && $meta->getPost() === $this) {
+            $meta->setPost(null);
         }
 
         return $this;

@@ -7,8 +7,8 @@ use Labstag\Entity\History;
 
 class HistoryRepository extends ContentRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, History::class);
+        parent::__construct($managerRegistry, History::class);
     }
 }

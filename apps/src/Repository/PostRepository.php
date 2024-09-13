@@ -7,8 +7,8 @@ use Labstag\Entity\Post;
 
 class PostRepository extends ContentRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Post::class);
+        parent::__construct($managerRegistry, Post::class);
     }
 }

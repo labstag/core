@@ -7,8 +7,8 @@ use Labstag\Entity\Edito;
 
 class EditoRepository extends ContentRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Edito::class);
+        parent::__construct($managerRegistry, Edito::class);
     }
 }

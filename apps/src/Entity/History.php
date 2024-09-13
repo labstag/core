@@ -5,12 +5,17 @@ namespace Labstag\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\HistoryRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: HistoryRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
 class History extends Content
 {
+
+    use SoftDeleteableEntity;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -43,23 +48,21 @@ class History extends Content
         return $this->meta;
     }
 
-    public function addMetum(Meta $metum): static
+    public function addMetum(Meta $meta): static
     {
-        if (!$this->meta->contains($metum)) {
-            $this->meta->add($metum);
-            $metum->setHistory($this);
+        if (!$this->meta->contains($meta)) {
+            $this->meta->add($meta);
+            $meta->setHistory($this);
         }
 
         return $this;
     }
 
-    public function removeMetum(Meta $metum): static
+    public function removeMetum(Meta $meta): static
     {
-        if ($this->meta->removeElement($metum)) {
-            // set the owning side to null (unless already changed)
-            if ($metum->getHistory() === $this) {
-                $metum->setHistory(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->meta->removeElement($meta) && $meta->getHistory() === $this) {
+            $meta->setHistory(null);
         }
 
         return $this;
@@ -85,11 +88,9 @@ class History extends Content
 
     public function removeChapter(Chapter $chapter): static
     {
-        if ($this->chapters->removeElement($chapter)) {
-            // set the owning side to null (unless already changed)
-            if ($chapter->getRefhistory() === $this) {
-                $chapter->setRefhistory(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->chapters->removeElement($chapter) && $chapter->getRefhistory() === $this) {
+            $chapter->setRefhistory(null);
         }
 
         return $this;

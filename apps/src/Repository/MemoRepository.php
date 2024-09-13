@@ -7,8 +7,8 @@ use Labstag\Entity\Memo;
 
 class MemoRepository extends ContentRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Memo::class);
+        parent::__construct($managerRegistry, Memo::class);
     }
 }
