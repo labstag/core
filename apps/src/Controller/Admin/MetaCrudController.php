@@ -2,12 +2,12 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Meta;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Override;
 
 class MetaCrudController extends AbstractCrudControllerLib
 {

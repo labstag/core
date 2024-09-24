@@ -2,9 +2,9 @@
 
 namespace Labstag\DataFixtures;
 
-use Override;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Override;
 
 class AppFixtures extends Fixture
 {

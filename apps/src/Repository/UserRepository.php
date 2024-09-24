@@ -2,10 +2,10 @@
 
 namespace Labstag\Repository;
 
-use Override;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\User;
 use Labstag\Lib\ServiceEntityRepositoryLib;
+use Override;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
