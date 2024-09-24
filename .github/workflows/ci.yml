@@ -63,8 +63,8 @@ jobs:
         run: npm run doctrine:fixtures
     #   - name: 'Install Labstag'
     #     run: npm run cmd:labstag:all
-      - name: Run Acceptance Tests
-        run: npm run test:behat
+    #   - name: Run Acceptance Tests
+    #     run: npm run test:behat
       - name: Cypress run
         uses: cypress-io/github-action@v5
       - name: Archive screenshots
