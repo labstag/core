@@ -83,22 +83,7 @@ class DashboardController extends AbstractDashboardController
         $uuid      = $request->attributes->get('uuid', null);
         switch ($routeName) {
             case 'admin_restore':
-                $repository = $this->getRepository($entity);
-                $data       = $repository->find($uuid);
-                if (is_null($data)) {
-                    throw new Exception('Data not found');
-                }
-
-                $methods = get_class_methods($data);
-                if (!in_array('isDeleted', $methods)) {
-                    throw new Exception('Method not found');
-                }
-
-                if ($data->isDeleted()) {
-                    $data->setDeletedAt(null);
-                    $this->entityManager->persist($data);
-                    $this->entityManager->flush();
-                }
+                $this->adminRestore($entity, $uuid);
 
                 break;
             case 'admin_empty':
@@ -118,6 +103,26 @@ class DashboardController extends AbstractDashboardController
             'admin/dashboard.html.twig',
             []
         );
+    }
+
+    protected function adminRestore($entity, $uuid): void
+    {
+        $repository = $this->getRepository($entity);
+        $data       = $repository->find($uuid);
+        if (is_null($data)) {
+            throw new Exception('Data not found');
+        }
+
+        $methods = get_class_methods($data);
+        if (!in_array('isDeleted', $methods)) {
+            throw new Exception('Method not found');
+        }
+
+        if ($data->isDeleted()) {
+            $data->setDeletedAt(null);
+            $this->entityManager->persist($data);
+            $this->entityManager->flush();
+        }
     }
 
     protected function getRepository(string $entity)
