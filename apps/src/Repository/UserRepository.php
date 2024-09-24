@@ -2,6 +2,7 @@
 
 namespace Labstag\Repository;
 
+use Override;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\User;
 use Labstag\Lib\ServiceEntityRepositoryLib;
@@ -19,10 +20,19 @@ class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgra
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
-    public function upgradePassword(PasswordAuthenticatedUserInterface $passwordAuthenticatedUser, string $newHashedPassword): void
+    #[Override]
+    public function upgradePassword(
+        PasswordAuthenticatedUserInterface $passwordAuthenticatedUser,
+        string $newHashedPassword
+    ): void
     {
         if (!$passwordAuthenticatedUser instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $passwordAuthenticatedUser::class));
+            $message = sprintf(
+                'Instances of "%s" are not supported.',
+                $passwordAuthenticatedUser::class
+            );
+
+            throw new UnsupportedUserException($message);
         }
 
         $passwordAuthenticatedUser->setPassword($newHashedPassword);

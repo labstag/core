@@ -9,11 +9,22 @@ use Labstag\Repository\MetaRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: MetaRepository::class)]
-#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 class Meta
 {
-
     use SoftDeleteableEntity;
+
+    #[ORM\ManyToOne(inversedBy: 'meta')]
+    private ?Chapter $chapter = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\ManyToOne(inversedBy: 'meta')]
+    private ?Edito $edito = null;
+
+    #[ORM\ManyToOne(inversedBy: 'meta')]
+    private ?History $history = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -24,26 +35,34 @@ class Meta
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $keywords = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $title = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $description = null;
-
-    #[ORM\ManyToOne(inversedBy: 'meta')]
-    private ?Chapter $chapter = null;
-
-    #[ORM\ManyToOne(inversedBy: 'meta')]
-    private ?Edito $edito = null;
-
-    #[ORM\ManyToOne(inversedBy: 'meta')]
-    private ?History $history = null;
-
     #[ORM\ManyToOne(inversedBy: 'meta')]
     private ?Page $page = null;
 
     #[ORM\ManyToOne(inversedBy: 'meta')]
     private ?Post $post = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $title = null;
+
+    public function getChapter(): ?Chapter
+    {
+        return $this->chapter;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function getEdito(): ?Edito
+    {
+        return $this->edito;
+    }
+
+    public function getHistory(): ?History
+    {
+        return $this->history;
+    }
 
     public function getId(): ?string
     {
@@ -55,40 +74,19 @@ class Meta
         return $this->keywords;
     }
 
-    public function setKeywords(?string $keywords): static
+    public function getPage(): ?Page
     {
-        $this->keywords = $keywords;
+        return $this->page;
+    }
 
-        return $this;
+    public function getPost(): ?Post
+    {
+        return $this->post;
     }
 
     public function getTitle(): ?string
     {
         return $this->title;
-    }
-
-    public function setTitle(?string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getChapter(): ?Chapter
-    {
-        return $this->chapter;
     }
 
     public function setChapter(?Chapter $chapter): static
@@ -98,9 +96,11 @@ class Meta
         return $this;
     }
 
-    public function getEdito(): ?Edito
+    public function setDescription(?string $description): static
     {
-        return $this->edito;
+        $this->description = $description;
+
+        return $this;
     }
 
     public function setEdito(?Edito $edito): static
@@ -110,11 +110,6 @@ class Meta
         return $this;
     }
 
-    public function getHistory(): ?History
-    {
-        return $this->history;
-    }
-
     public function setHistory(?History $history): static
     {
         $this->history = $history;
@@ -122,9 +117,11 @@ class Meta
         return $this;
     }
 
-    public function getPage(): ?Page
+    public function setKeywords(?string $keywords): static
     {
-        return $this->page;
+        $this->keywords = $keywords;
+
+        return $this;
     }
 
     public function setPage(?Page $page): static
@@ -134,14 +131,16 @@ class Meta
         return $this;
     }
 
-    public function getPost(): ?Post
-    {
-        return $this->post;
-    }
-
     public function setPost(?Post $post): static
     {
         $this->post = $post;
+
+        return $this;
+    }
+
+    public function setTitle(?string $title): static
+    {
+        $this->title = $title;
 
         return $this;
     }

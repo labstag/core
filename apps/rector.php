@@ -13,13 +13,10 @@ use Rector\Php80\Rector\Class_\AnnotationToAttributeRector;
 use Rector\Php80\ValueObject\AnnotationToAttribute;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
-use Rector\Php80\Rector\Property\NestedAnnotationToAttributeRector;
-use Rector\Php80\ValueObject\NestedAnnotationToAttribute;
 use Rector\Symfony\Set\SymfonySetList;
 use Rector\Symfony\Set\SensiolabsSetList;
 use Rector\Doctrine\Set\DoctrineSetList;
 use Rector\Php82\Rector\Class_\ReadOnlyClassRector;
-use Rector\TypeDeclaration\Rector\Property\TypedPropertyFromAssignsRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->cacheClass(FileCacheStorage::class);
@@ -30,7 +27,7 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/tests'
     ]);
 
-    $rectorConfig->phpVersion(PhpVersion::PHP_82);
+    $rectorConfig->phpVersion(PhpVersion::PHP_83);
     $rectorConfig->rules(
         [
             InlineConstructorDefaultToPropertyRector::class,
@@ -41,7 +38,6 @@ return static function (RectorConfig $rectorConfig): void {
     );
     $rectorConfig->skip(
         [
-            TypedPropertyFromAssignsRector::class,
             ReadOnlyClassRector::class,
         ]
     );
@@ -49,24 +45,8 @@ return static function (RectorConfig $rectorConfig): void {
         AnnotationToAttributeRector::class,
         [
             new AnnotationToAttribute('Symfony\Component\Routing\Annotation\Route'),
-            // new AnnotationToAttribute('Labstag\Annotation\IgnoreSoftDelete'),
-            // new AnnotationToAttribute('Labstag\Annotation\Trashable'),
-            // new AnnotationToAttribute('Labstag\Annotation\Uploadable'),
-            // new AnnotationToAttribute('Labstag\Annotation\UploadableField'),
         ]
     );
-    // $rectorConfig->ruleWithConfiguration(
-    //     NestedAnnotationToAttributeRector::class,
-    //     [
-    //         new NestedAnnotationToAttribute(
-    //             'Doctrine\ORM\Mapping\JoinTable',
-    //             [
-    //                 'joinColumns' => 'Doctrine\ORM\Mapping\JoinColumn',
-    //                 'inverseJoinColumns' => 'Doctrine\ORM\Mapping\InverseJoinColumn',
-    //             ]
-    //         ),
-    //     ]
-    // );
     $rectorConfig->phpstanConfig(__DIR__ . '/phpstan.neon');
     // define sets of rules
     $rectorConfig->sets([

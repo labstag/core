@@ -2,14 +2,16 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Entity\Meta;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Entity\Meta;
+use Labstag\Lib\AbstractCrudControllerLib;
 
-class MetaCrudController extends AbstractCrudController
+class MetaCrudController extends AbstractCrudControllerLib
 {
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Meta::class;

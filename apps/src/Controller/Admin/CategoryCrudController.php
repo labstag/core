@@ -2,14 +2,16 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Entity\Category;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Entity\Category;
+use Labstag\Lib\AbstractCrudControllerLib;
 
-class CategoryCrudController extends AbstractCrudController
+class CategoryCrudController extends AbstractCrudControllerLib
 {
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Category::class;

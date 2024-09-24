@@ -2,14 +2,16 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Entity\Tag;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Entity\Tag;
+use Labstag\Lib\AbstractCrudControllerLib;
 
-class TagCrudController extends AbstractCrudController
+class TagCrudController extends AbstractCrudControllerLib
 {
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Tag::class;

@@ -2,14 +2,16 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Entity\Edito;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Entity\Edito;
+use Labstag\Lib\AbstractCrudControllerLib;
 
-class EditoCrudController extends AbstractCrudController
+class EditoCrudController extends AbstractCrudControllerLib
 {
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Edito::class;

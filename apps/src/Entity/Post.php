@@ -11,10 +11,9 @@ use Labstag\Repository\PostRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
-#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 class Post extends Content
 {
-
     use SoftDeleteableEntity;
 
     #[ORM\Id]
@@ -31,6 +30,16 @@ class Post extends Content
         $this->meta = new ArrayCollection();
     }
 
+    public function addMetum(Meta $meta): static
+    {
+        if (!$this->meta->contains($meta)) {
+            $this->meta->add($meta);
+            $meta->setPost($this);
+        }
+
+        return $this;
+    }
+
     public function getId(): ?string
     {
         return $this->id;
@@ -42,16 +51,6 @@ class Post extends Content
     public function getMeta(): Collection
     {
         return $this->meta;
-    }
-
-    public function addMetum(Meta $meta): static
-    {
-        if (!$this->meta->contains($meta)) {
-            $this->meta->add($meta);
-            $meta->setPost($this);
-        }
-
-        return $this;
     }
 
     public function removeMetum(Meta $meta): static

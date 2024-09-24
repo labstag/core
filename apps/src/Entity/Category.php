@@ -11,27 +11,10 @@ use Labstag\Repository\CategoryRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
-#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 class Category
 {
-
     use SoftDeleteableEntity;
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: 'guid', unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
-
-    #[Gedmo\Slug(updatable: false, fields: ['title'])]
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
-    private ?string $slug = null;
-
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
-    private ?self $parent = null;
 
     /**
      * @var Collection<int, self>
@@ -39,61 +22,28 @@ class Category
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
     private Collection $children;
 
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: 'guid', unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+    private ?self $parent = null;
+
+    #[Gedmo\Slug(updatable: false, fields: ['title'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    private ?string $slug = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $title = null;
+
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
     public function __construct()
     {
         $this->children = new ArrayCollection();
-    }
-
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
-
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): static
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    public function getParent(): ?self
-    {
-        return $this->parent;
-    }
-
-    public function setParent(?self $category): static
-    {
-        $this->parent = $category;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, self>
-     */
-    public function getChildren(): Collection
-    {
-        return $this->children;
     }
 
     public function addChild(self $child): static
@@ -106,6 +56,39 @@ class Category
         return $this;
     }
 
+    /**
+     * @return Collection<int, self>
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
     public function removeChild(self $child): static
     {
         // set the owning side to null (unless already changed)
@@ -116,9 +99,25 @@ class Category
         return $this;
     }
 
-    public function getType(): ?string
+    public function setParent(?self $category): static
     {
-        return $this->type;
+        $this->parent = $category;
+
+        return $this;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
     }
 
     public function setType(string $type): static

@@ -11,10 +11,9 @@ use Labstag\Repository\ChapterRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: ChapterRepository::class)]
-#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 class Chapter extends Content
 {
-
     use SoftDeleteableEntity;
 
     #[ORM\Id]
@@ -35,6 +34,16 @@ class Chapter extends Content
         $this->meta = new ArrayCollection();
     }
 
+    public function addMetum(Meta $meta): static
+    {
+        if (!$this->meta->contains($meta)) {
+            $this->meta->add($meta);
+            $meta->setChapter($this);
+        }
+
+        return $this;
+    }
+
     public function getId(): ?string
     {
         return $this->id;
@@ -48,14 +57,9 @@ class Chapter extends Content
         return $this->meta;
     }
 
-    public function addMetum(Meta $meta): static
+    public function getRefhistory(): ?History
     {
-        if (!$this->meta->contains($meta)) {
-            $this->meta->add($meta);
-            $meta->setChapter($this);
-        }
-
-        return $this;
+        return $this->refhistory;
     }
 
     public function removeMetum(Meta $meta): static
@@ -66,11 +70,6 @@ class Chapter extends Content
         }
 
         return $this;
-    }
-
-    public function getRefhistory(): ?History
-    {
-        return $this->refhistory;
     }
 
     public function setRefhistory(?History $history): static

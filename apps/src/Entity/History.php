@@ -11,11 +11,13 @@ use Labstag\Repository\HistoryRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: HistoryRepository::class)]
-#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 class History extends Content
 {
-
     use SoftDeleteableEntity;
+
+    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'refhistory', orphanRemoval: true)]
+    private Collection $chapters;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -26,13 +28,38 @@ class History extends Content
     #[ORM\OneToMany(targetEntity: Meta::class, mappedBy: 'history')]
     private Collection $meta;
 
-    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'refhistory', orphanRemoval: true)]
-    private Collection $chapters;
-
     public function __construct()
     {
-        $this->meta = new ArrayCollection();
+        $this->meta     = new ArrayCollection();
         $this->chapters = new ArrayCollection();
+    }
+
+    public function addChapter(Chapter $chapter): static
+    {
+        if (!$this->chapters->contains($chapter)) {
+            $this->chapters->add($chapter);
+            $chapter->setRefhistory($this);
+        }
+
+        return $this;
+    }
+
+    public function addMetum(Meta $meta): static
+    {
+        if (!$this->meta->contains($meta)) {
+            $this->meta->add($meta);
+            $meta->setHistory($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Chapter>
+     */
+    public function getChapters(): Collection
+    {
+        return $this->chapters;
     }
 
     public function getId(): ?string
@@ -48,11 +75,11 @@ class History extends Content
         return $this->meta;
     }
 
-    public function addMetum(Meta $meta): static
+    public function removeChapter(Chapter $chapter): static
     {
-        if (!$this->meta->contains($meta)) {
-            $this->meta->add($meta);
-            $meta->setHistory($this);
+        // set the owning side to null (unless already changed)
+        if ($this->chapters->removeElement($chapter) && $chapter->getRefhistory() === $this) {
+            $chapter->setRefhistory(null);
         }
 
         return $this;
@@ -63,34 +90,6 @@ class History extends Content
         // set the owning side to null (unless already changed)
         if ($this->meta->removeElement($meta) && $meta->getHistory() === $this) {
             $meta->setHistory(null);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Chapter>
-     */
-    public function getChapters(): Collection
-    {
-        return $this->chapters;
-    }
-
-    public function addChapter(Chapter $chapter): static
-    {
-        if (!$this->chapters->contains($chapter)) {
-            $this->chapters->add($chapter);
-            $chapter->setRefhistory($this);
-        }
-
-        return $this;
-    }
-
-    public function removeChapter(Chapter $chapter): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->chapters->removeElement($chapter) && $chapter->getRefhistory() === $this) {
-            $chapter->setRefhistory(null);
         }
 
         return $this;

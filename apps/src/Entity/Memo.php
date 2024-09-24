@@ -9,10 +9,9 @@ use Labstag\Repository\MemoRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: MemoRepository::class)]
-#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 class Memo extends Content
 {
-
     use SoftDeleteableEntity;
 
     #[ORM\Id]

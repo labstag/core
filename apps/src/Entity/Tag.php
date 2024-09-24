@@ -9,10 +9,9 @@ use Labstag\Repository\TagRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
-#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: true)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 class Tag
 {
-
     use SoftDeleteableEntity;
 
     #[ORM\Id]
@@ -21,12 +20,12 @@ class Tag
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
-
     #[Gedmo\Slug(updatable: false, fields: ['title'])]
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $slug = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     private ?string $type = null;
@@ -36,21 +35,19 @@ class Tag
         return $this->id;
     }
 
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function getType(): ?string
     {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
+        return $this->type;
     }
 
     public function setSlug(string $slug): static
@@ -60,9 +57,11 @@ class Tag
         return $this;
     }
 
-    public function getType(): ?string
+    public function setTitle(string $title): static
     {
-        return $this->type;
+        $this->title = $title;
+
+        return $this;
     }
 
     public function setType(string $type): static
