@@ -7,7 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -37,12 +36,9 @@ class UserCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $action  = $request->query->get('action', null);
         yield TextField::new('username');
         yield EmailField::new('email');
-        $booleanField = BooleanField::new('enable', 'Actif')->renderAsSwitch(empty($action));
-        yield $booleanField;
+        yield $this->addFieldBoolean();
         $choiceField = ChoiceField::new('roles');
         $choiceField->allowMultipleChoices();
         $choiceField->setChoices(

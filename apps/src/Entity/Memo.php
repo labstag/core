@@ -12,9 +12,22 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: MemoRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class Memo extends Content
+class Memo
 {
     use SoftDeleteableEntity;
+
+    #[ORM\Column(
+        type: 'boolean',
+        options: ['default' => 1]
+    )]
+    protected ?bool $enable = null;
+
+    #[Gedmo\Slug(updatable: false, fields: ['title'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    protected ?string $slug = null;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -57,12 +70,27 @@ class Memo extends Content
         return $this->refuser;
     }
 
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
     /**
      * @return Collection<int, Tag>
      */
     public function getTags(): Collection
     {
         return $this->tags;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function isEnable(): ?bool
+    {
+        return $this->enable;
     }
 
     public function removeTag(Tag $tag): static
@@ -74,9 +102,30 @@ class Memo extends Content
         return $this;
     }
 
+    public function setEnable(bool $enable): static
+    {
+        $this->enable = $enable;
+
+        return $this;
+    }
+
     public function setRefuser(?User $user): static
     {
         $this->refuser = $user;
+
+        return $this;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
 
         return $this;
     }

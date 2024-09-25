@@ -4,8 +4,9 @@ namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Page;
+use Labstag\Lib\ServiceEntityRepositoryLib;
 
-class PageRepository extends ContentRepository
+class PageRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

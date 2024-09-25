@@ -13,9 +13,15 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: PageRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class Page extends Content
+class Page
 {
     use SoftDeleteableEntity;
+
+    #[ORM\Column(
+        type: 'boolean',
+        options: ['default' => 1]
+    )]
+    protected ?bool $enable = null;
 
     #[Gedmo\Slug(fields: ['title'])]
     #[Gedmo\SlugHandler(
@@ -27,6 +33,9 @@ class Page extends Content
     )]
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     protected ?string $slug = null;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
 
     /**
      * @var Collection<int, Category>
@@ -146,12 +155,27 @@ class Page extends Content
         return $this->refuser;
     }
 
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
     /**
      * @return Collection<int, Tag>
      */
     public function getTags(): Collection
     {
         return $this->tags;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function isEnable(): ?bool
+    {
+        return $this->enable;
     }
 
     public function removeCategory(Category $category): static
@@ -192,6 +216,13 @@ class Page extends Content
         return $this;
     }
 
+    public function setEnable(bool $enable): static
+    {
+        $this->enable = $enable;
+
+        return $this;
+    }
+
     public function setPage(?self $page): static
     {
         $this->page = $page;
@@ -202,6 +233,20 @@ class Page extends Content
     public function setRefuser(?User $user): static
     {
         $this->refuser = $user;
+
+        return $this;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
 
         return $this;
     }

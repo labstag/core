@@ -11,6 +11,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Override;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,6 +37,42 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         }
 
         return $queryBuilder;
+    }
+
+    protected function addFieldBoolean()
+    {
+        $request      = $this->container->get('request_stack')->getCurrentRequest();
+        $action       = $request->query->get('action', null);
+        $booleanField = BooleanField::new('enable', 'Actif');
+        $booleanField->renderAsSwitch(empty($action));
+
+        return $booleanField;
+    }
+
+    protected function addFieldID()
+    {
+        $idField = IdField::new('id');
+        $idField->onlyOnDetail();
+
+        return $idField;
+    }
+
+    protected function addFieldRefUser()
+    {
+        $associationField = AssociationField::new('refuser');
+        $associationField->autocomplete();
+        $associationField->setSortProperty('username');
+
+        return $associationField;
+    }
+
+    protected function addFieldSlug()
+    {
+        $slugField = SlugField::new('slug');
+        $slugField->setTargetFieldName('title');
+        $slugField->setUnlockConfirmationMessage('Attention, si vous changez le titre, le slug sera modifié');
+
+        return $slugField;
     }
 
     protected function configureActionsBtn(Actions $actions): void

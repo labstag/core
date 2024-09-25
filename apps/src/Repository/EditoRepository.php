@@ -4,8 +4,9 @@ namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Edito;
+use Labstag\Lib\ServiceEntityRepositoryLib;
 
-class EditoRepository extends ContentRepository
+class EditoRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

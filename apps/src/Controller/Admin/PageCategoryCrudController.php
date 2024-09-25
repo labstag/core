@@ -2,8 +2,8 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use Labstag\Entity\Category;
+use Override;
 
 class PageCategoryCrudController extends CategoryCrudController
 {

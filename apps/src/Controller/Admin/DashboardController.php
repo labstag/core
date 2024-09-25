@@ -117,8 +117,8 @@ class DashboardController extends AbstractDashboardController
         $uuid      = $request->attributes->get('uuid', null);
         match ($routeName) {
             'admin_restore' => $this->adminRestore($entity, $uuid),
-            'admin_empty' => $this->adminEmpty($entity),
-            default => throw new Exception('Route not found'),
+            'admin_empty'   => $this->adminEmpty($entity),
+            default         => throw new Exception('Route not found'),
         };
 
         return $this->redirect($referer);

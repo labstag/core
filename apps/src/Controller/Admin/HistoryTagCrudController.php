@@ -2,8 +2,8 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use Labstag\Entity\Tag;
+use Override;
 
 class HistoryTagCrudController extends TagCrudController
 {

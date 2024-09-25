@@ -9,6 +9,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\UserRepository;
 use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -16,7 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringable
 {
     use SoftDeleteableEntity;
 
@@ -87,6 +88,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->memos     = new ArrayCollection();
         $this->pages     = new ArrayCollection();
         $this->posts     = new ArrayCollection();
+    }
+
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getUsername();
     }
 
     public function addEdito(Edito $edito): static

@@ -8,13 +8,28 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\HistoryRepository;
+use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: HistoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class History extends Content
+class History implements Stringable
 {
     use SoftDeleteableEntity;
+
+    #[ORM\Column(
+        type: 'boolean',
+        options: ['default' => 1]
+    )]
+    protected ?bool $enable = null;
+
+    #[Gedmo\Slug(updatable: false, fields: ['title'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    protected ?string $slug = null;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
 
     /**
      * @var Collection<int, Category>
@@ -50,6 +65,12 @@ class History extends Content
         $this->chapters   = new ArrayCollection();
         $this->tags       = new ArrayCollection();
         $this->categories = new ArrayCollection();
+    }
+
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
     }
 
     public function addCategory(Category $category): static
@@ -126,12 +147,27 @@ class History extends Content
         return $this->refuser;
     }
 
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
     /**
      * @return Collection<int, Tag>
      */
     public function getTags(): Collection
     {
         return $this->tags;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function isEnable(): ?bool
+    {
+        return $this->enable;
     }
 
     public function removeCategory(Category $category): static
@@ -172,9 +208,30 @@ class History extends Content
         return $this;
     }
 
+    public function setEnable(bool $enable): static
+    {
+        $this->enable = $enable;
+
+        return $this;
+    }
+
     public function setRefuser(?User $user): static
     {
         $this->refuser = $user;
+
+        return $this;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
 
         return $this;
     }
