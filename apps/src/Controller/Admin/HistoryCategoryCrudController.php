@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Entity\Category;
 use Override;
 
 class HistoryCategoryCrudController extends CategoryCrudController
@@ -10,7 +9,7 @@ class HistoryCategoryCrudController extends CategoryCrudController
     #[Override]
     public function createEntity(string $entityFqcn)
     {
-        $category = new Category();
+        $category = new $entityFqcn();
         $category->setType('history');
 
         return $category;

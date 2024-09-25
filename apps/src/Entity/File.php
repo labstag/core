@@ -17,7 +17,7 @@ class File
     use SoftDeleteableEntity;
     use TimestampableEntity;
 
-    #[ORM\Column(type: Types::ARRAY)]
+    #[ORM\Column(type: Types::JSON)]
     private array $dimensions = [];
 
     #[ORM\Id]

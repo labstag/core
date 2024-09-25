@@ -2,13 +2,13 @@
 
 namespace Labstag\Entity;
 
-use Stringable;
-use Override;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\MetaRepository;
+use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: MetaRepository::class)]

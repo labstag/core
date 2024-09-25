@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Entity\Tag;
 use Override;
 
 class MemoTagCrudController extends TagCrudController
@@ -10,7 +9,7 @@ class MemoTagCrudController extends TagCrudController
     #[Override]
     public function createEntity(string $entityFqcn)
     {
-        $tag = new Tag();
+        $tag = new $entityFqcn();
         $tag->setType('memo');
 
         return $tag;

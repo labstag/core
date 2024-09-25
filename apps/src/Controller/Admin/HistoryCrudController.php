@@ -24,6 +24,7 @@ class HistoryCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
+        unset($pageName);
         yield $this->addFieldID();
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
@@ -40,7 +41,7 @@ class HistoryCrudController extends AbstractCrudControllerLib
     #[Override]
     public function createEntity(string $entityFqcn)
     {
-        $history = new History();
+        $history = new $entityFqcn();
         $meta    = new Meta();
         $history->setMeta($meta);
 

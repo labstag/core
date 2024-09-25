@@ -24,6 +24,7 @@ class PageCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
+        unset($pageName);
         yield $this->addFieldID();
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
@@ -40,7 +41,7 @@ class PageCrudController extends AbstractCrudControllerLib
     #[Override]
     public function createEntity(string $entityFqcn)
     {
-        $page = new Page();
+        $page = new $entityFqcn();
         $meta = new Meta();
         $page->setMeta($meta);
 
