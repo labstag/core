@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -11,6 +12,14 @@ use Override;
 
 class HistoryCrudController extends AbstractCrudControllerLib
 {
+    #[Override]
+    public function configureActions(Actions $actions): Actions
+    {
+        $this->configureActionsTrash($actions);
+
+        return $actions;
+    }
+
     #[Override]
     public static function getEntityFqcn(): string
     {

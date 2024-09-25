@@ -22,14 +22,32 @@ class Category
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
     private Collection $children;
 
+    /**
+     * @var Collection<int, History>
+     */
+    #[ORM\ManyToMany(targetEntity: History::class, inversedBy: 'categories')]
+    private Collection $histories;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: 'guid', unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
+    /**
+     * @var Collection<int, Page>
+     */
+    #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'categories')]
+    private Collection $pages;
+
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
     private ?self $parent = null;
+
+    /**
+     * @var Collection<int, Post>
+     */
+    #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'categories')]
+    private Collection $posts;
 
     #[Gedmo\Slug(updatable: false, fields: ['title'])]
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
@@ -43,7 +61,10 @@ class Category
 
     public function __construct()
     {
-        $this->children = new ArrayCollection();
+        $this->children  = new ArrayCollection();
+        $this->histories = new ArrayCollection();
+        $this->pages     = new ArrayCollection();
+        $this->posts     = new ArrayCollection();
     }
 
     public function addChild(self $child): static
@@ -51,6 +72,33 @@ class Category
         if (!$this->children->contains($child)) {
             $this->children->add($child);
             $child->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function addHistory(History $history): static
+    {
+        if (!$this->histories->contains($history)) {
+            $this->histories->add($history);
+        }
+
+        return $this;
+    }
+
+    public function addPage(Page $page): static
+    {
+        if (!$this->pages->contains($page)) {
+            $this->pages->add($page);
+        }
+
+        return $this;
+    }
+
+    public function addPost(Post $post): static
+    {
+        if (!$this->posts->contains($post)) {
+            $this->posts->add($post);
         }
 
         return $this;
@@ -64,14 +112,38 @@ class Category
         return $this->children;
     }
 
+    /**
+     * @return Collection<int, History>
+     */
+    public function getHistories(): Collection
+    {
+        return $this->histories;
+    }
+
     public function getId(): ?string
     {
         return $this->id;
     }
 
+    /**
+     * @return Collection<int, Page>
+     */
+    public function getPages(): Collection
+    {
+        return $this->pages;
+    }
+
     public function getParent(): ?self
     {
         return $this->parent;
+    }
+
+    /**
+     * @return Collection<int, Post>
+     */
+    public function getPosts(): Collection
+    {
+        return $this->posts;
     }
 
     public function getSlug(): ?string
@@ -95,6 +167,27 @@ class Category
         if ($this->children->removeElement($child) && $child->getCategory() === $this) {
             $child->setParent(null);
         }
+
+        return $this;
+    }
+
+    public function removeHistory(History $history): static
+    {
+        $this->histories->removeElement($history);
+
+        return $this;
+    }
+
+    public function removePage(Page $page): static
+    {
+        $this->pages->removeElement($page);
+
+        return $this;
+    }
+
+    public function removePost(Post $post): static
+    {
+        $this->posts->removeElement($post);
 
         return $this;
     }

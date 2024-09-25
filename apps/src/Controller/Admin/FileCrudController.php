@@ -6,11 +6,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Entity\Meta;
+use Labstag\Entity\File;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 
-class MetaCrudController extends AbstractCrudControllerLib
+class FileCrudController extends AbstractCrudControllerLib
 {
     #[Override]
     public function configureActions(Actions $actions): Actions
@@ -23,7 +23,7 @@ class MetaCrudController extends AbstractCrudControllerLib
     #[Override]
     public static function getEntityFqcn(): string
     {
-        return Meta::class;
+        return File::class;
     }
 
     /*

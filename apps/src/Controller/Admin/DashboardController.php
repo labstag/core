@@ -11,6 +11,7 @@ use Exception;
 use Labstag\Entity\Category;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
+use Labstag\Entity\File;
 use Labstag\Entity\History;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Meta;
@@ -35,6 +36,7 @@ class DashboardController extends AbstractDashboardController
     {
         $dashboard = Dashboard::new();
         $dashboard->setTitle('Www');
+        $dashboard->setTranslationDomain('admin');
         $dashboard->renderContentMaximized();
         $dashboard->setLocales(
             [
@@ -43,11 +45,6 @@ class DashboardController extends AbstractDashboardController
             ]
         );
 
-        $debug = $this->getParameter('kernel.debug');
-        if ($debug) {
-            $dashboard->disableUrlSignatures();
-        }
-
         return $dashboard;
     }
 
@@ -55,15 +52,52 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        yield MenuItem::linkToCrud('Category', 'fa fa-list', Category::class);
-        yield MenuItem::linkToCrud('Chapter', 'fa fa-list', Chapter::class);
-        yield MenuItem::linkToCrud('Edito', 'fa fa-list', Edito::class);
-        yield MenuItem::linkToCrud('History', 'fa fa-list', History::class);
-        yield MenuItem::linkToCrud('Memo', 'fa fa-list', Memo::class);
+        yield MenuItem::linkToCrud('File', 'fa fa-list', File::class);
+        yield MenuItem::subMenu('History')->setSubItems(
+            [
+                MenuItem::linkToCrud('History', 'fa fa-list', History::class),
+                MenuItem::linkToCrud('Category', 'fa fa-list', Category::class)->setController(HistoryCategoryCrudController::class),
+                MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(HistoryTagCrudController::class),
+            ]
+        );
+        yield MenuItem::subMenu('Chapter')->setSubItems(
+            [
+                MenuItem::linkToCrud('Chapter', 'fa fa-list', Chapter::class),
+                MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(ChapterTagCrudController::class),
+            ]
+        );
+
+        yield MenuItem::subMenu('Edito')->setSubItems(
+            [
+                MenuItem::linkToCrud('Edito', 'fa fa-list', Edito::class),
+                MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(EditoTagCrudController::class),
+            ]
+        );
+
+        yield MenuItem::subMenu('Memo')->setSubItems(
+            [
+                MenuItem::linkToCrud('Memo', 'fa fa-list', Memo::class),
+                MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(MemoTagCrudController::class),
+            ]
+        );
+
+        yield MenuItem::subMenu('Page')->setSubItems(
+            [
+                MenuItem::linkToCrud('Page', 'fa fa-list', Page::class),
+                MenuItem::linkToCrud('Category', 'fa fa-list', Category::class)->setController(PageCategoryCrudController::class),
+                MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(PageTagCrudController::class),
+            ]
+        );
+
+        yield MenuItem::subMenu('Post')->setSubItems(
+            [
+                MenuItem::linkToCrud('Post', 'fa fa-list', Post::class),
+                MenuItem::linkToCrud('Category', 'fa fa-list', Category::class)->setController(PostCategoryCrudController::class),
+                MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(PostTagCrudController::class),
+            ]
+        );
+
         yield MenuItem::linkToCrud('Meta', 'fa fa-list', Meta::class);
-        yield MenuItem::linkToCrud('Page', 'fa fa-list', Page::class);
-        yield MenuItem::linkToCrud('Post', 'fa fa-list', Post::class);
-        yield MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class);
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
     }
 
@@ -81,16 +115,11 @@ class DashboardController extends AbstractDashboardController
         $routeName = $request->query->get('routeName');
         $entity    = $request->attributes->get('entity', null);
         $uuid      = $request->attributes->get('uuid', null);
-        switch ($routeName) {
-            case 'admin_restore':
-                $this->adminRestore($entity, $uuid);
-
-                break;
-            case 'admin_empty':
-                break;
-            default:
-                throw new Exception('Route not found');
-        }
+        match ($routeName) {
+            'admin_restore' => $this->adminRestore($entity, $uuid),
+            'admin_empty' => $this->adminEmpty($entity),
+            default => throw new Exception('Route not found'),
+        };
 
         return $this->redirect($referer);
     }
@@ -103,6 +132,17 @@ class DashboardController extends AbstractDashboardController
             'admin/dashboard.html.twig',
             []
         );
+    }
+
+    protected function adminEmpty($entity)
+    {
+        $repository = $this->getRepository($entity);
+        $all        = $repository->findDeleted();
+        foreach ($all as $row) {
+            $repository->remove($row);
+        }
+
+        $repository->flush();
     }
 
     protected function adminRestore($entity, $uuid): void

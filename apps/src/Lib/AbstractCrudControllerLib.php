@@ -35,11 +35,19 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $queryBuilder;
     }
 
+    protected function configureActionsBtn(Actions $actions): void
+    {
+        $actions->add(Crud::PAGE_EDIT, Action::INDEX);
+        $actions->add(Crud::PAGE_INDEX, Action::DETAIL);
+        $actions->add(Crud::PAGE_NEW, Action::INDEX);
+    }
+
     protected function configureActionsTrash(Actions $actions): void
     {
         $request = $this->container->get('request_stack')->getCurrentRequest();
         $this->configureActionsTrashBtn($request, $actions);
         $this->configureActionsTrashEmptyBtn($request, $actions);
+        $this->configureActionsBtn($actions);
     }
 
     protected function configureActionsTrashBtn(Request $request, Actions $actions): void
@@ -78,7 +86,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $action->linkToRoute(
             'admin_empty',
             [
-                'class' => static::class,
+                'entity' => $this->getEntityFqcn(),
             ]
         );
         $action->createAsGlobalAction();

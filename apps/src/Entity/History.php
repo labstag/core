@@ -16,6 +16,12 @@ class History extends Content
 {
     use SoftDeleteableEntity;
 
+    /**
+     * @var Collection<int, Category>
+     */
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'histories')]
+    private Collection $categories;
+
     #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'refhistory', orphanRemoval: true)]
     private Collection $chapters;
 
@@ -28,10 +34,32 @@ class History extends Content
     #[ORM\OneToMany(targetEntity: Meta::class, mappedBy: 'history')]
     private Collection $meta;
 
+    #[ORM\ManyToOne(inversedBy: 'histories')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $refuser = null;
+
+    /**
+     * @var Collection<int, Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'histories')]
+    private Collection $tags;
+
     public function __construct()
     {
-        $this->meta     = new ArrayCollection();
-        $this->chapters = new ArrayCollection();
+        $this->meta       = new ArrayCollection();
+        $this->chapters   = new ArrayCollection();
+        $this->tags       = new ArrayCollection();
+        $this->categories = new ArrayCollection();
+    }
+
+    public function addCategory(Category $category): static
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->addHistory($this);
+        }
+
+        return $this;
     }
 
     public function addChapter(Chapter $chapter): static
@@ -52,6 +80,24 @@ class History extends Content
         }
 
         return $this;
+    }
+
+    public function addTag(Tag $tag): static
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+            $tag->addHistory($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
     }
 
     /**
@@ -75,6 +121,28 @@ class History extends Content
         return $this->meta;
     }
 
+    public function getRefuser(): ?User
+    {
+        return $this->refuser;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function removeCategory(Category $category): static
+    {
+        if ($this->categories->removeElement($category)) {
+            $category->removeHistory($this);
+        }
+
+        return $this;
+    }
+
     public function removeChapter(Chapter $chapter): static
     {
         // set the owning side to null (unless already changed)
@@ -91,6 +159,22 @@ class History extends Content
         if ($this->meta->removeElement($meta) && $meta->getHistory() === $this) {
             $meta->setHistory(null);
         }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): static
+    {
+        if ($this->tags->removeElement($tag)) {
+            $tag->removeHistory($this);
+        }
+
+        return $this;
+    }
+
+    public function setRefuser(?User $user): static
+    {
+        $this->refuser = $user;
 
         return $this;
     }
