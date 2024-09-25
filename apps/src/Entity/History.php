@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\HistoryRepository;
 use Override;
 use Stringable;
@@ -17,6 +18,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 class History implements Stringable
 {
     use SoftDeleteableEntity;
+    use TimestampableEntity;
 
     #[ORM\Column(
         type: 'boolean',
@@ -46,8 +48,9 @@ class History implements Stringable
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[ORM\OneToMany(targetEntity: Meta::class, mappedBy: 'history')]
-    private Collection $meta;
+    #[ORM\OneToOne(inversedBy: 'history', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Meta $meta = null;
 
     #[ORM\ManyToOne(inversedBy: 'histories')]
     #[ORM\JoinColumn(nullable: false)]
@@ -61,7 +64,6 @@ class History implements Stringable
 
     public function __construct()
     {
-        $this->meta       = new ArrayCollection();
         $this->chapters   = new ArrayCollection();
         $this->tags       = new ArrayCollection();
         $this->categories = new ArrayCollection();
@@ -88,16 +90,6 @@ class History implements Stringable
         if (!$this->chapters->contains($chapter)) {
             $this->chapters->add($chapter);
             $chapter->setRefhistory($this);
-        }
-
-        return $this;
-    }
-
-    public function addMeta(Meta $meta): static
-    {
-        if (!$this->meta->contains($meta)) {
-            $this->meta->add($meta);
-            $meta->setHistory($this);
         }
 
         return $this;
@@ -134,10 +126,7 @@ class History implements Stringable
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, Meta>
-     */
-    public function getMeta(): Collection
+    public function getMeta(): ?Meta
     {
         return $this->meta;
     }
@@ -189,16 +178,6 @@ class History implements Stringable
         return $this;
     }
 
-    public function removeMeta(Meta $meta): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->meta->removeElement($meta) && $meta->getHistory() === $this) {
-            $meta->setHistory(null);
-        }
-
-        return $this;
-    }
-
     public function removeTag(Tag $tag): static
     {
         if ($this->tags->removeElement($tag)) {
@@ -211,6 +190,13 @@ class History implements Stringable
     public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
+
+        return $this;
+    }
+
+    public function setMeta(Meta $meta): static
+    {
+        $this->meta = $meta;
 
         return $this;
     }

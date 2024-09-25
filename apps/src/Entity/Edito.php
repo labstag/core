@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\EditoRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
@@ -15,6 +16,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 class Edito
 {
     use SoftDeleteableEntity;
+    use TimestampableEntity;
 
     #[ORM\Column(
         type: 'boolean',
@@ -35,8 +37,9 @@ class Edito
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[ORM\OneToMany(targetEntity: Meta::class, mappedBy: 'edito')]
-    private Collection $meta;
+    #[ORM\OneToOne(inversedBy: 'edito', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Meta $meta = null;
 
     #[ORM\ManyToOne(inversedBy: 'editos')]
     #[ORM\JoinColumn(nullable: false)]
@@ -50,18 +53,7 @@ class Edito
 
     public function __construct()
     {
-        $this->meta = new ArrayCollection();
         $this->tags = new ArrayCollection();
-    }
-
-    public function addMeta(Meta $meta): static
-    {
-        if (!$this->meta->contains($meta)) {
-            $this->meta->add($meta);
-            $meta->setEdito($this);
-        }
-
-        return $this;
     }
 
     public function addTag(Tag $tag): static
@@ -79,10 +71,7 @@ class Edito
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, Meta>
-     */
-    public function getMeta(): Collection
+    public function getMeta(): ?Meta
     {
         return $this->meta;
     }
@@ -115,16 +104,6 @@ class Edito
         return $this->enable;
     }
 
-    public function removeMeta(Meta $meta): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->meta->removeElement($meta) && $meta->getEdito() === $this) {
-            $meta->setEdito(null);
-        }
-
-        return $this;
-    }
-
     public function removeTag(Tag $tag): static
     {
         if ($this->tags->removeElement($tag)) {
@@ -137,6 +116,13 @@ class Edito
     public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
+
+        return $this;
+    }
+
+    public function setMeta(Meta $meta): static
+    {
+        $this->meta = $meta;
 
         return $this;
     }

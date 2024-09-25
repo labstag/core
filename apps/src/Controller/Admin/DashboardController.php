@@ -55,35 +55,35 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('File', 'fa fa-list', File::class);
         yield MenuItem::subMenu('History')->setSubItems(
             [
-                MenuItem::linkToCrud('History', 'fa fa-list', History::class),
+                MenuItem::linkToCrud('List', 'fa fa-list', History::class),
                 MenuItem::linkToCrud('Category', 'fa fa-list', Category::class)->setController(HistoryCategoryCrudController::class),
                 MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(HistoryTagCrudController::class),
             ]
         );
         yield MenuItem::subMenu('Chapter')->setSubItems(
             [
-                MenuItem::linkToCrud('Chapter', 'fa fa-list', Chapter::class),
+                MenuItem::linkToCrud('List', 'fa fa-list', Chapter::class),
                 MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(ChapterTagCrudController::class),
             ]
         );
 
         yield MenuItem::subMenu('Edito')->setSubItems(
             [
-                MenuItem::linkToCrud('Edito', 'fa fa-list', Edito::class),
+                MenuItem::linkToCrud('List', 'fa fa-list', Edito::class),
                 MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(EditoTagCrudController::class),
             ]
         );
 
         yield MenuItem::subMenu('Memo')->setSubItems(
             [
-                MenuItem::linkToCrud('Memo', 'fa fa-list', Memo::class),
+                MenuItem::linkToCrud('List', 'fa fa-list', Memo::class),
                 MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(MemoTagCrudController::class),
             ]
         );
 
         yield MenuItem::subMenu('Page')->setSubItems(
             [
-                MenuItem::linkToCrud('Page', 'fa fa-list', Page::class),
+                MenuItem::linkToCrud('List', 'fa fa-list', Page::class),
                 MenuItem::linkToCrud('Category', 'fa fa-list', Category::class)->setController(PageCategoryCrudController::class),
                 MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(PageTagCrudController::class),
             ]
@@ -91,7 +91,7 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::subMenu('Post')->setSubItems(
             [
-                MenuItem::linkToCrud('Post', 'fa fa-list', Post::class),
+                MenuItem::linkToCrud('List', 'fa fa-list', Post::class),
                 MenuItem::linkToCrud('Category', 'fa fa-list', Category::class)->setController(PostCategoryCrudController::class),
                 MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(PostTagCrudController::class),
             ]

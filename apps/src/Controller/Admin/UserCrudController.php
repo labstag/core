@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\User;
@@ -61,8 +62,12 @@ class UserCrudController extends AbstractCrudControllerLib
         );
         $textField->setRequired(Crud::PAGE_NEW === $pageName);
         $textField->onlyOnForms();
-
         yield $textField;
+        yield CollectionField::new('histories')->onlyOnDetail();
+        yield CollectionField::new('editos')->onlyOnDetail();
+        yield CollectionField::new('memos')->onlyOnDetail();
+        yield CollectionField::new('pages')->onlyOnDetail();
+        yield CollectionField::new('posts')->onlyOnDetail();
     }
 
     #[Override]

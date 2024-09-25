@@ -6,6 +6,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\FileRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
@@ -14,6 +15,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 class File
 {
     use SoftDeleteableEntity;
+    use TimestampableEntity;
 
     #[ORM\Column(type: Types::ARRAY)]
     private array $dimensions = [];

@@ -3,6 +3,8 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Edito;
 use Labstag\Entity\Meta;
@@ -26,7 +28,13 @@ class EditoCrudController extends AbstractCrudControllerLib
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
         yield TextField::new('title');
+        yield DateTimeField::new('createdAt')->hideOnForm();
+        yield DateTimeField::new('updatedAt')->hideOnForm();
         yield $this->addFieldRefUser();
+        yield FormField::addFieldset('Meta');
+        yield TextField::new('meta.title')->hideOnIndex();
+        yield TextField::new('meta.keywords')->hideOnIndex();
+        yield TextField::new('meta.description')->hideOnIndex();
     }
 
     #[Override]
@@ -34,7 +42,7 @@ class EditoCrudController extends AbstractCrudControllerLib
     {
         $edito = new Edito();
         $meta  = new Meta();
-        $edito->addMeta($meta);
+        $edito->setMeta($meta);
 
         return $edito;
     }

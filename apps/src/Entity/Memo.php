@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\MemoRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
@@ -15,6 +16,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 class Memo
 {
     use SoftDeleteableEntity;
+    use TimestampableEntity;
 
     #[ORM\Column(
         type: 'boolean',

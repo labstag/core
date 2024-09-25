@@ -2,28 +2,32 @@
 
 namespace Labstag\Entity;
 
+use Stringable;
+use Override;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\MetaRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: MetaRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class Meta
+class Meta implements Stringable
 {
     use SoftDeleteableEntity;
+    use TimestampableEntity;
 
-    #[ORM\ManyToOne(inversedBy: 'meta')]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
     private ?Chapter $chapter = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\ManyToOne(inversedBy: 'meta')]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
     private ?Edito $edito = null;
 
-    #[ORM\ManyToOne(inversedBy: 'meta')]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
     private ?History $history = null;
 
     #[ORM\Id]
@@ -35,14 +39,20 @@ class Meta
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $keywords = null;
 
-    #[ORM\ManyToOne(inversedBy: 'meta')]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
     private ?Page $page = null;
 
-    #[ORM\ManyToOne(inversedBy: 'meta')]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
     private ?Post $post = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
+
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getId();
+    }
 
     public function getChapter(): ?Chapter
     {
@@ -89,8 +99,13 @@ class Meta
         return $this->title;
     }
 
-    public function setChapter(?Chapter $chapter): static
+    public function setChapter(Chapter $chapter): static
     {
+        // set the owning side of the relation if necessary
+        if ($chapter->getMeta() !== $this) {
+            $chapter->setMeta($this);
+        }
+
         $this->chapter = $chapter;
 
         return $this;
@@ -103,15 +118,25 @@ class Meta
         return $this;
     }
 
-    public function setEdito(?Edito $edito): static
+    public function setEdito(Edito $edito): static
     {
+        // set the owning side of the relation if necessary
+        if ($edito->getMeta() !== $this) {
+            $edito->setMeta($this);
+        }
+
         $this->edito = $edito;
 
         return $this;
     }
 
-    public function setHistory(?History $history): static
+    public function setHistory(History $history): static
     {
+        // set the owning side of the relation if necessary
+        if ($history->getMeta() !== $this) {
+            $history->setMeta($this);
+        }
+
         $this->history = $history;
 
         return $this;
@@ -124,15 +149,25 @@ class Meta
         return $this;
     }
 
-    public function setPage(?Page $page): static
+    public function setPage(Page $page): static
     {
+        // set the owning side of the relation if necessary
+        if ($page->getMeta() !== $this) {
+            $page->setMeta($this);
+        }
+
         $this->page = $page;
 
         return $this;
     }
 
-    public function setPost(?Post $post): static
+    public function setPost(Post $post): static
     {
+        // set the owning side of the relation if necessary
+        if ($post->getMeta() !== $this) {
+            $post->setMeta($this);
+        }
+
         $this->post = $post;
 
         return $this;

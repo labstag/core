@@ -4,6 +4,7 @@ namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
@@ -28,6 +29,10 @@ class ChapterCrudController extends AbstractCrudControllerLib
         yield $this->addFieldBoolean();
         yield TextField::new('title');
         yield AssociationField::new('refhistory')->autocomplete();
+        yield FormField::addFieldset('Meta');
+        yield TextField::new('meta.title')->hideOnIndex();
+        yield TextField::new('meta.keywords')->hideOnIndex();
+        yield TextField::new('meta.description')->hideOnIndex();
     }
 
     #[Override]
@@ -35,7 +40,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
     {
         $chapter = new Chapter();
         $meta    = new Meta();
-        $chapter->addMeta($meta);
+        $chapter->setMeta($meta);
 
         return $chapter;
     }

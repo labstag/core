@@ -3,6 +3,8 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\History;
 use Labstag\Entity\Meta;
@@ -26,7 +28,13 @@ class HistoryCrudController extends AbstractCrudControllerLib
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
         yield TextField::new('title');
+        yield DateTimeField::new('createdAt')->hideOnForm();
+        yield DateTimeField::new('updatedAt')->hideOnForm();
         yield $this->addFieldRefUser();
+        yield FormField::addFieldset('Meta');
+        yield TextField::new('meta.title')->hideOnIndex();
+        yield TextField::new('meta.keywords')->hideOnIndex();
+        yield TextField::new('meta.description')->hideOnIndex();
     }
 
     #[Override]
@@ -34,7 +42,7 @@ class HistoryCrudController extends AbstractCrudControllerLib
     {
         $history = new History();
         $meta    = new Meta();
-        $history->addMeta($meta);
+        $history->setMeta($meta);
 
         return $history;
     }

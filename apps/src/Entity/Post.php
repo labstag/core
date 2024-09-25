@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\PostRepository;
 use Override;
 use Stringable;
@@ -17,6 +18,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 class Post implements Stringable
 {
     use SoftDeleteableEntity;
+    use TimestampableEntity;
 
     #[ORM\Column(
         type: 'boolean',
@@ -43,8 +45,9 @@ class Post implements Stringable
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[ORM\OneToMany(targetEntity: Meta::class, mappedBy: 'post')]
-    private Collection $meta;
+    #[ORM\OneToOne(inversedBy: 'post', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Meta $meta = null;
 
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
@@ -58,7 +61,6 @@ class Post implements Stringable
 
     public function __construct()
     {
-        $this->meta       = new ArrayCollection();
         $this->tags       = new ArrayCollection();
         $this->categories = new ArrayCollection();
     }
@@ -74,16 +76,6 @@ class Post implements Stringable
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
             $category->addPost($this);
-        }
-
-        return $this;
-    }
-
-    public function addMeta(Meta $meta): static
-    {
-        if (!$this->meta->contains($meta)) {
-            $this->meta->add($meta);
-            $meta->setPost($this);
         }
 
         return $this;
@@ -112,10 +104,7 @@ class Post implements Stringable
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, Meta>
-     */
-    public function getMeta(): Collection
+    public function getMeta(): ?Meta
     {
         return $this->meta;
     }
@@ -157,16 +146,6 @@ class Post implements Stringable
         return $this;
     }
 
-    public function removeMeta(Meta $meta): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->meta->removeElement($meta) && $meta->getPost() === $this) {
-            $meta->setPost(null);
-        }
-
-        return $this;
-    }
-
     public function removeTag(Tag $tag): static
     {
         if ($this->tags->removeElement($tag)) {
@@ -179,6 +158,13 @@ class Post implements Stringable
     public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
+
+        return $this;
+    }
+
+    public function setMeta(Meta $meta): static
+    {
+        $this->meta = $meta;
 
         return $this;
     }
