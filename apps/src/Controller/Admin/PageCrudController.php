@@ -4,6 +4,7 @@ namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
@@ -26,6 +27,16 @@ class PageCrudController extends AbstractCrudControllerLib
         yield $this->addFieldBoolean();
         yield TextField::new('title');
         yield $this->addFieldRefUser();
+    }
+
+    #[Override]
+    public function createEntity(string $entityFqcn)
+    {
+        $page = new Page();
+        $meta = new Meta();
+        $page->addMeta($meta);
+
+        return $page;
     }
 
     #[Override]

@@ -54,7 +54,7 @@ class Edito
         $this->tags = new ArrayCollection();
     }
 
-    public function addMetum(Meta $meta): static
+    public function addMeta(Meta $meta): static
     {
         if (!$this->meta->contains($meta)) {
             $this->meta->add($meta);
@@ -115,7 +115,7 @@ class Edito
         return $this->enable;
     }
 
-    public function removeMetum(Meta $meta): static
+    public function removeMeta(Meta $meta): static
     {
         // set the owning side to null (unless already changed)
         if ($this->meta->removeElement($meta) && $meta->getEdito() === $this) {

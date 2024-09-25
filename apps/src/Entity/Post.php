@@ -2,14 +2,14 @@
 
 namespace Labstag\Entity;
 
-use Stringable;
-use Override;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\PostRepository;
+use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
@@ -79,7 +79,7 @@ class Post implements Stringable
         return $this;
     }
 
-    public function addMetum(Meta $meta): static
+    public function addMeta(Meta $meta): static
     {
         if (!$this->meta->contains($meta)) {
             $this->meta->add($meta);
@@ -157,7 +157,7 @@ class Post implements Stringable
         return $this;
     }
 
-    public function removeMetum(Meta $meta): static
+    public function removeMeta(Meta $meta): static
     {
         // set the owning side to null (unless already changed)
         if ($this->meta->removeElement($meta) && $meta->getPost() === $this) {

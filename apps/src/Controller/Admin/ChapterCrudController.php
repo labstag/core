@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\Meta;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 
@@ -27,6 +28,16 @@ class ChapterCrudController extends AbstractCrudControllerLib
         yield $this->addFieldBoolean();
         yield TextField::new('title');
         yield AssociationField::new('refhistory')->autocomplete();
+    }
+
+    #[Override]
+    public function createEntity(string $entityFqcn)
+    {
+        $chapter = new Chapter();
+        $meta    = new Meta();
+        $chapter->addMeta($meta);
+
+        return $chapter;
     }
 
     #[Override]

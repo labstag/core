@@ -2,7 +2,9 @@
 
 namespace Labstag\Controller\Admin;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -16,6 +18,7 @@ class MetaCrudController extends AbstractCrudControllerLib
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
+        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
 
         return $actions;
     }
