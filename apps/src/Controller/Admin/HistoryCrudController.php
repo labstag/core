@@ -25,6 +25,7 @@ class HistoryCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
+        yield FormField::addTab('Principal');
         yield $this->addFieldID();
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
@@ -32,10 +33,10 @@ class HistoryCrudController extends AbstractCrudControllerLib
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield DateTimeField::new('updatedAt')->hideOnForm();
         yield $this->addFieldRefUser();
-        yield FormField::addFieldset('Meta');
-        yield TextField::new('meta.title')->hideOnIndex();
-        yield TextField::new('meta.keywords')->hideOnIndex();
-        yield TextField::new('meta.description')->hideOnIndex();
+        $fields = $this->addFieldMetas();
+        foreach ($fields as $field) {
+            yield $field;
+        }
     }
 
     #[Override]

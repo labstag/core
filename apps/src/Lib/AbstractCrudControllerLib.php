@@ -13,8 +13,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Override;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,7 +45,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     {
         $request      = $this->container->get('request_stack')->getCurrentRequest();
         $action       = $request->query->get('action', null);
-        $booleanField = BooleanField::new('enable', 'Actif');
+        $booleanField = BooleanField::new('enable');
         $booleanField->renderAsSwitch(empty($action));
 
         return $booleanField;
@@ -55,6 +57,16 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $idField->onlyOnDetail();
 
         return $idField;
+    }
+
+    protected function addFieldMetas()
+    {
+        return [
+            FormField::addTab('SEO'),
+            TextField::new('meta.title')->hideOnIndex(),
+            TextField::new('meta.keywords')->hideOnIndex(),
+            TextField::new('meta.description')->hideOnIndex(),
+        ];
     }
 
     protected function addFieldRefUser()

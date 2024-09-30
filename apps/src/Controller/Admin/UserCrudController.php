@@ -64,10 +64,21 @@ class UserCrudController extends AbstractCrudControllerLib
         $textField->onlyOnForms();
         yield $textField;
         yield CollectionField::new('histories')->onlyOnDetail();
-        yield CollectionField::new('editos')->onlyOnDetail();
-        yield CollectionField::new('memos')->onlyOnDetail();
-        yield CollectionField::new('pages')->onlyOnDetail();
-        yield CollectionField::new('posts')->onlyOnDetail();
+        yield CollectionField::new('editos')->onlyOnDetail()->formatValue(
+            fn ($entity) => count($entity)
+        );
+
+        $tab = [
+            'memos',
+            'pages',
+            'posts',
+        ];
+        foreach ($tab as $key) {
+            $collectionField = CollectionField::new($key);
+            $collectionField->onlyOnDetail();
+            $collectionField->formatValue(fn ($value) => count($value));
+            yield $collectionField;
+        }
     }
 
     #[Override]

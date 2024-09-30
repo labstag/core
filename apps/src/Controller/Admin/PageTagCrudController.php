@@ -3,14 +3,10 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Tag;
-use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 
-class PageTagCrudController extends AbstractCrudControllerLib
+class PageTagCrudController extends TagCrudController
 {
     #[Override]
     public function configureActions(Actions $actions): Actions
@@ -25,15 +21,4 @@ class PageTagCrudController extends AbstractCrudControllerLib
     {
         return Tag::class;
     }
-
-    /*
-    public function configureFields(string $pageName): iterable
-    {
-        return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
-        ];
-    }
-    */
 }

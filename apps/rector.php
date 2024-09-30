@@ -17,6 +17,7 @@ use Rector\Symfony\Set\SymfonySetList;
 use Rector\Symfony\Set\SensiolabsSetList;
 use Rector\Doctrine\Set\DoctrineSetList;
 use Rector\Php82\Rector\Class_\ReadOnlyClassRector;
+use Rector\Php83\Rector\ClassConst\AddTypeToConstRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->cacheClass(FileCacheStorage::class);
@@ -38,6 +39,7 @@ return static function (RectorConfig $rectorConfig): void {
     );
     $rectorConfig->skip(
         [
+            AddTypeToConstRector::class,
             ReadOnlyClassRector::class,
         ]
     );

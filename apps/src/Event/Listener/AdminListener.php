@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\EventListener;
+namespace Labstag\Event\Listener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;

@@ -11,7 +11,6 @@ use Exception;
 use Labstag\Entity\Category;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
-use Labstag\Entity\File;
 use Labstag\Entity\History;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Meta;
@@ -52,48 +51,72 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        yield MenuItem::linkToCrud('File', 'fa fa-list', File::class);
+        $tab = [
+            'history' => HistoryCategoryCrudController::class,
+            'page'    => PageCategoryCrudController::class,
+            'post'    => PostCategoryCrudController::class,
+        ];
+        $categories = [];
+        foreach ($tab as $key => $value) {
+            $categories[$key] = MenuItem::linkToCrud('Category', 'fa fa-list', Category::class);
+            $categories[$key]->setController($value);
+        }
+
+        $tab = [
+            'history' => HistoryTagCrudController::class,
+            'chapter' => ChapterTagCrudController::class,
+            'edito'   => EditoTagCrudController::class,
+            'memo'    => MemoTagCrudController::class,
+            'page'    => PageTagCrudController::class,
+            'post'    => PostTagCrudController::class,
+        ];
+        $tags = [];
+        foreach ($tab as $key => $value) {
+            $tags[$key] = MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class);
+            $tags[$key]->setController($value);
+        }
+
         yield MenuItem::subMenu('History')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', History::class),
-                MenuItem::linkToCrud('Category', 'fa fa-list', Category::class)->setController(HistoryCategoryCrudController::class),
-                MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(HistoryTagCrudController::class),
+                $categories['history'],
+                $tags['history'],
             ]
         );
         yield MenuItem::subMenu('Chapter')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Chapter::class),
-                MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(ChapterTagCrudController::class),
+                $tags['chapter'],
             ]
         );
 
         yield MenuItem::subMenu('Edito')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Edito::class),
-                MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(EditoTagCrudController::class),
+                $tags['edito'],
             ]
         );
 
         yield MenuItem::subMenu('Memo')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Memo::class),
-                MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(MemoTagCrudController::class),
+                $tags['memo'],
             ]
         );
 
         yield MenuItem::subMenu('Page')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Page::class),
-                MenuItem::linkToCrud('Category', 'fa fa-list', Category::class)->setController(PageCategoryCrudController::class),
-                MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(PageTagCrudController::class),
+                $categories['page'],
+                $tags['page'],
             ]
         );
 
         yield MenuItem::subMenu('Post')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Post::class),
-                MenuItem::linkToCrud('Category', 'fa fa-list', Category::class)->setController(PostCategoryCrudController::class),
-                MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class)->setcontroller(PostTagCrudController::class),
+                $categories['post'],
+                $tags['post'],
             ]
         );
 

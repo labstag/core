@@ -25,15 +25,16 @@ class ChapterCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
+        yield FormField::addTab('Principal');
         yield $this->addFieldID();
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
         yield TextField::new('title');
         yield AssociationField::new('refhistory')->autocomplete();
-        yield FormField::addFieldset('Meta');
-        yield TextField::new('meta.title')->hideOnIndex();
-        yield TextField::new('meta.keywords')->hideOnIndex();
-        yield TextField::new('meta.description')->hideOnIndex();
+        $fields = $this->addFieldMetas();
+        foreach ($fields as $field) {
+            yield $field;
+        }
     }
 
     #[Override]
