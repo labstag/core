@@ -30,6 +30,16 @@ class MemoCrudController extends AbstractCrudControllerLib
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield DateTimeField::new('updatedAt')->hideOnForm();
         yield $this->addFieldRefUser();
+        yield $this->addFieldTags('memo');
+    }
+
+    #[Override]
+    public function createEntity(string $entityFqcn)
+    {
+        $memo = new $entityFqcn();
+        $memo->setRefuser($this->getUser());
+
+        return $memo;
     }
 
     #[Override]

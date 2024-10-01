@@ -32,6 +32,7 @@ class EditoCrudController extends AbstractCrudControllerLib
         yield TextField::new('title');
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield DateTimeField::new('updatedAt')->hideOnForm();
+        yield $this->addFieldTags('edito');
         yield $this->addFieldRefUser();
         $fields = $this->addFieldMetas();
         foreach ($fields as $field) {
@@ -44,6 +45,7 @@ class EditoCrudController extends AbstractCrudControllerLib
     {
         $edito = new $entityFqcn();
         $meta  = new Meta();
+        $edito->setRefuser($this->getUser());
         $edito->setMeta($meta);
 
         return $edito;

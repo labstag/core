@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
@@ -79,6 +80,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('History')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', History::class),
+                MenuItem::linkToCrud('new', 'fa fa-list', History::class)->setAction(Action::NEW),
                 $categories['history'],
                 $tags['history'],
             ]
@@ -86,6 +88,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('Chapter')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Chapter::class),
+                MenuItem::linkToCrud('new', 'fa fa-list', Chapter::class)->setAction(Action::NEW),
                 $tags['chapter'],
             ]
         );
@@ -93,6 +96,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('Edito')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Edito::class),
+                MenuItem::linkToCrud('new', 'fa fa-list', Edito::class)->setAction(Action::NEW),
                 $tags['edito'],
             ]
         );
@@ -100,6 +104,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('Memo')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Memo::class),
+                MenuItem::linkToCrud('new', 'fa fa-list', Memo::class)->setAction(Action::NEW),
                 $tags['memo'],
             ]
         );
@@ -107,6 +112,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('Page')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Page::class),
+                MenuItem::linkToCrud('new', 'fa fa-list', Page::class)->setAction(Action::NEW),
                 $categories['page'],
                 $tags['page'],
             ]
@@ -115,6 +121,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('Post')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Post::class),
+                MenuItem::linkToCrud('new', 'fa fa-list', Post::class)->setAction(Action::NEW),
                 $categories['post'],
                 $tags['post'],
             ]

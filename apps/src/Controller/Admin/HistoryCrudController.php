@@ -33,6 +33,8 @@ class HistoryCrudController extends AbstractCrudControllerLib
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield DateTimeField::new('updatedAt')->hideOnForm();
         yield $this->addFieldRefUser();
+        yield $this->addFieldTags('history');
+        yield $this->addFieldCategories('history');
         $fields = $this->addFieldMetas();
         foreach ($fields as $field) {
             yield $field;
@@ -44,6 +46,7 @@ class HistoryCrudController extends AbstractCrudControllerLib
     {
         $history = new $entityFqcn();
         $meta    = new Meta();
+        $history->setRefuser($this->getUser());
         $history->setMeta($meta);
 
         return $history;

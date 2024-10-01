@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -30,9 +31,12 @@ class PageCrudController extends AbstractCrudControllerLib
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
         yield TextField::new('title');
+        yield AssociationField::new('page')->autocomplete();
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield DateTimeField::new('updatedAt')->hideOnForm();
         yield $this->addFieldRefUser();
+        yield $this->addFieldTags('page');
+        yield $this->addFieldCategories('page');
         $fields = $this->addFieldMetas();
         foreach ($fields as $field) {
             yield $field;
@@ -44,6 +48,7 @@ class PageCrudController extends AbstractCrudControllerLib
     {
         $page = new $entityFqcn();
         $meta = new Meta();
+        $page->setRefuser($this->getUser());
         $page->setMeta($meta);
 
         return $page;

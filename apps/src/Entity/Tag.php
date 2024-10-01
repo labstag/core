@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use Stringable;
+use Override;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,7 +14,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class Tag
+class Tag implements Stringable
 {
     use SoftDeleteableEntity;
 
@@ -20,18 +22,21 @@ class Tag
      * @var Collection<int, Chapter>
      */
     #[ORM\ManyToMany(targetEntity: Chapter::class, inversedBy: 'tags')]
+    #[ORM\JoinTable(name: 'tag_chapter')]
     private Collection $chapters;
 
     /**
      * @var Collection<int, Edito>
      */
     #[ORM\ManyToMany(targetEntity: Edito::class, inversedBy: 'tags')]
+    #[ORM\JoinTable(name: 'tag_edito')]
     private Collection $editos;
 
     /**
      * @var Collection<int, History>
      */
     #[ORM\ManyToMany(targetEntity: History::class, inversedBy: 'tags')]
+    #[ORM\JoinTable(name: 'tag_history')]
     private Collection $histories;
 
     #[ORM\Id]
@@ -44,21 +49,24 @@ class Tag
      * @var Collection<int, Memo>
      */
     #[ORM\ManyToMany(targetEntity: Memo::class, inversedBy: 'tags')]
+    #[ORM\JoinTable(name: 'tag_memo')]
     private Collection $memos;
 
     /**
      * @var Collection<int, Page>
      */
     #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'tags')]
+    #[ORM\JoinTable(name: 'tag_page')]
     private Collection $pages;
 
     /**
      * @var Collection<int, Post>
      */
     #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'tags')]
+    #[ORM\JoinTable(name: 'tag_post')]
     private Collection $posts;
 
-    #[Gedmo\Slug(updatable: false, fields: ['title'])]
+    #[Gedmo\Slug(updatable: false, fields: ['title'], unique_base: 'type')]
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $slug = null;
 
@@ -76,6 +84,12 @@ class Tag
         $this->editos    = new ArrayCollection();
         $this->memos     = new ArrayCollection();
         $this->chapters  = new ArrayCollection();
+    }
+
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
     }
 
     public function addChapter(Chapter $chapter): static

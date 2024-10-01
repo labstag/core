@@ -18,11 +18,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Labstag\Repository\TagRepository;
 use Override;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class AbstractCrudControllerLib extends AbstractCrudController
 {
+    public function __construct(
+        protected TagRepository $tagRepository
+    )
+    {
+    }
+
     #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
@@ -32,13 +39,9 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     ): QueryBuilder
     {
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
-        $request      = $searchDto->getRequest();
-        $action       = $request->query->get('action', null);
-        if ('trash' == $action) {
-            $queryBuilder->andWhere('entity.deletedAt IS NOT NULL');
-        }
+        $queryBuilder = $this->filterListeTrash($searchDto, $queryBuilder);
 
-        return $queryBuilder;
+        return $this->filterListRefUser($queryBuilder, $entityDto);
     }
 
     protected function addFieldBoolean()
@@ -49,6 +52,21 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $booleanField->renderAsSwitch(empty($action));
 
         return $booleanField;
+    }
+
+    protected function addFieldCategories(string $type)
+    {
+        $associationField = AssociationField::new('categories')->autocomplete();
+        $associationField->setFormTypeOption('by_reference', false);
+        $associationField->setQueryBuilder(
+            function (QueryBuilder $queryBuilder) use ($type)
+            {
+                $queryBuilder->andWhere('entity.type = :type');
+                $queryBuilder->setParameter('type', $type);
+            }
+        );
+
+        return $associationField;
     }
 
     protected function addFieldID()
@@ -75,6 +93,12 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $associationField->autocomplete();
         $associationField->setSortProperty('username');
 
+        $user  = $this->getUser();
+        $roles = $user->getRoles();
+        if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
+            $associationField->hideOnForm();
+        }
+
         return $associationField;
     }
 
@@ -85,6 +109,21 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $slugField->setUnlockConfirmationMessage('Attention, si vous changez le titre, le slug sera modifié');
 
         return $slugField;
+    }
+
+    protected function addFieldTags(string $type)
+    {
+        $associationField = AssociationField::new('tags')->autocomplete();
+        $associationField->setFormTypeOption('by_reference', false);
+        $associationField->setQueryBuilder(
+            function (QueryBuilder $queryBuilder) use ($type)
+            {
+                $queryBuilder->andWhere('entity.type = :type');
+                $queryBuilder->setParameter('type', $type);
+            }
+        );
+
+        return $associationField;
     }
 
     protected function configureActionsBtn(Actions $actions): void
@@ -156,5 +195,33 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             ]
         );
         $actions->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function filterListeTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
+    {
+        $request = $searchDto->getRequest();
+        $action  = $request->query->get('action', null);
+        if ('trash' == $action) {
+            $queryBuilder->andWhere('entity.deletedAt IS NOT NULL');
+        }
+
+        return $queryBuilder;
+    }
+
+    private function filterListRefUser(QueryBuilder $queryBuilder, EntityDto $entityDto): QueryBuilder
+    {
+        $fqcn    = $entityDto->getFqcn();
+        $entity  = new $fqcn();
+        $methods = get_class_methods($entity);
+        if (in_array('getRefuser', $methods)) {
+            $user  = $this->getUser();
+            $roles = $user->getRoles();
+            if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
+                $queryBuilder->andWhere('entity.refuser = :refuser');
+                $queryBuilder->setParameter('refuser', $user);
+            }
+        }
+
+        return $queryBuilder;
     }
 }

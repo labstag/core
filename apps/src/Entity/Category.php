@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use Stringable;
+use Override;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,7 +14,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class Category
+class Category implements Stringable
 {
     use SoftDeleteableEntity;
 
@@ -49,7 +51,7 @@ class Category
     #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'categories')]
     private Collection $posts;
 
-    #[Gedmo\Slug(updatable: false, fields: ['title'])]
+    #[Gedmo\Slug(updatable: false, fields: ['title'], unique_base: 'type')]
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $slug = null;
 
@@ -65,6 +67,12 @@ class Category
         $this->histories = new ArrayCollection();
         $this->pages     = new ArrayCollection();
         $this->posts     = new ArrayCollection();
+    }
+
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
     }
 
     public function addChild(self $child): static

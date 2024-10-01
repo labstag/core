@@ -33,6 +33,8 @@ class PostCrudController extends AbstractCrudControllerLib
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield DateTimeField::new('updatedAt')->hideOnForm();
         yield $this->addFieldRefUser();
+        yield $this->addFieldTags('post');
+        yield $this->addFieldCategories('post');
         $fields = $this->addFieldMetas();
         foreach ($fields as $field) {
             yield $field;
@@ -44,6 +46,7 @@ class PostCrudController extends AbstractCrudControllerLib
     {
         $post = new $entityFqcn();
         $meta = new Meta();
+        $post->setRefuser($this->getUser());
         $post->setMeta($meta);
 
         return $post;

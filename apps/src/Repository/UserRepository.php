@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\User;
 use Labstag\Lib\ServiceEntityRepositoryLib;
@@ -15,6 +17,23 @@ class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgra
     public function __construct(ManagerRegistry $managerRegistry)
     {
         parent::__construct($managerRegistry, User::class);
+    }
+
+    public function findUserName(string $field): ?User
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+        $queryBuilder->where(
+            'u.username LIKE :username OR u.email LIKE :email'
+        );
+        $data = new ArrayCollection(
+            [
+                new Parameter('username', '%'.$field.'%'),
+                new Parameter('email', '%'.$field.'%'),
+            ]
+        );
+        $queryBuilder->setParameters($data);
+
+        return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 
     /**
