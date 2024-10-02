@@ -9,3 +9,23 @@ flysystem:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/uploads'
+    avatar.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/avatar'
+    page.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/page'
+    memo.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/memo'
+    history.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/history'
+    post.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/post'

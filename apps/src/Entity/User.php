@@ -2,24 +2,31 @@
 
 namespace Labstag\Entity;
 
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\UserRepository;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Entity\File as EmbeddedFile;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
+#[Vich\Uploadable]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringable
 {
     use SoftDeleteableEntity;
+    use TimestampableEntity;
 
     /**
      * @var Collection<int, Edito>
@@ -81,6 +88,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     #[ORM\Column(length: 255, unique: true)]
     private ?string $username = null;
 
+    #[Vich\UploadableField(mapping: 'avatar', fileNameProperty: 'avatar')]
+    private ?File $avatarFile = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatar = null;
+
+    /**
+     * @var int
+     */
+    protected const DATAUNSERIALIZE = 4;
+
     public function __construct()
     {
         $this->histories = new ArrayCollection();
@@ -88,6 +106,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         $this->memos     = new ArrayCollection();
         $this->pages     = new ArrayCollection();
         $this->posts     = new ArrayCollection();
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            $this->id,
+            $this->username,
+            $this->email,
+            $this->password
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        if (self::DATAUNSERIALIZE === count($data)) {
+            [
+                $this->id,
+                $this->username,
+                $this->email,
+                $this->password
+            ] = $data;
+        }
     }
 
     #[Override]
@@ -337,5 +377,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         $this->username = $username;
 
         return $this;
+    }
+
+    public function setAvatarFile(?File $avatarFile = null): void
+    {
+        $this->avatarFile = $avatarFile;
+
+        if (null !== $avatarFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new DateTimeImmutable();
+        }
+    }
+
+    public function getAvatarFile(): ?File
+    {
+        return $this->avatarFile;
+    }
+
+    public function setAvatar(?string $avatar): void
+    {
+        $this->avatar = $avatar;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
     }
 }

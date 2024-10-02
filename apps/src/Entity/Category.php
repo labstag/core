@@ -2,14 +2,14 @@
 
 namespace Labstag\Entity;
 
-use Stringable;
-use Override;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\CategoryRepository;
+use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
@@ -51,7 +51,7 @@ class Category implements Stringable
     #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'categories')]
     private Collection $posts;
 
-    #[Gedmo\Slug(updatable: false, fields: ['title'], unique_base: 'type')]
+    #[Gedmo\Slug(updatable: true, fields: ['title'], unique_base: 'type')]
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $slug = null;
 

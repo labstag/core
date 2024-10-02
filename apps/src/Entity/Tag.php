@@ -2,14 +2,14 @@
 
 namespace Labstag\Entity;
 
-use Stringable;
-use Override;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\TagRepository;
+use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
@@ -66,7 +66,7 @@ class Tag implements Stringable
     #[ORM\JoinTable(name: 'tag_post')]
     private Collection $posts;
 
-    #[Gedmo\Slug(updatable: false, fields: ['title'], unique_base: 'type')]
+    #[Gedmo\Slug(updatable: true, fields: ['title'], unique_base: 'type')]
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $slug = null;
 

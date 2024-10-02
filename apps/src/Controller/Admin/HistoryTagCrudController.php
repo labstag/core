@@ -12,6 +12,15 @@ use Override;
 class HistoryTagCrudController extends TagCrudController
 {
     #[Override]
+    public function configureFields(string $pageName): iterable
+    {
+        $data   = parent::configureFields($pageName);
+        $data[] = $this->addFieldTotalChild('histories');
+
+        return $data;
+    }
+
+    #[Override]
     public function createEntity(string $entityFqcn)
     {
         $tag = new $entityFqcn();

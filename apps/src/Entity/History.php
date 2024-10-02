@@ -26,8 +26,8 @@ class History implements Stringable
     )]
     protected ?bool $enable = null;
 
-    #[Gedmo\Slug(updatable: false, fields: ['title'])]
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]

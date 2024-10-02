@@ -12,6 +12,15 @@ use Override;
 class PageTagCrudController extends TagCrudController
 {
     #[Override]
+    public function configureFields(string $pageName): iterable
+    {
+        $data   = parent::configureFields($pageName);
+        $data[] = $this->addFieldTotalChild('pages');
+
+        return $data;
+    }
+
+    #[Override]
     public function createEntity(string $entityFqcn)
     {
         $tag = new $entityFqcn();

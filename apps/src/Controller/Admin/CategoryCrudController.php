@@ -22,9 +22,12 @@ abstract class CategoryCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
-        yield $this->addFieldID();
-        yield $this->addFieldSlug();
-        yield TextField::new('title');
+
+        return [
+            $this->addFieldID(),
+            $this->addFieldSlug(),
+            TextField::new('title'),
+        ];
     }
 
     #[Override]

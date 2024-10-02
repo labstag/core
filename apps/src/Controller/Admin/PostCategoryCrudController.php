@@ -12,6 +12,15 @@ use Override;
 class PostCategoryCrudController extends CategoryCrudController
 {
     #[Override]
+    public function configureFields(string $pageName): iterable
+    {
+        $data   = parent::configureFields($pageName);
+        $data[] = $this->addFieldTotalChild('posts');
+
+        return $data;
+    }
+
+    #[Override]
     public function createEntity(string $entityFqcn)
     {
         $category = new $entityFqcn();

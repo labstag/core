@@ -1,9 +1,54 @@
 vich_uploader:
   db_driver: orm
   storage: flysystem
-
-  #mappings:
-  #    products:
-  #        uri_prefix: /images/products
-  #        upload_destination: '%kernel.project_dir%/public/images/products'
-  #        namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+  mappings:
+    avatar:
+      uri_prefix: /uploads/avatar
+      upload_destination: avatar.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: username
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    page:
+      uri_prefix: /uploads/page
+      upload_destination: page.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    memo:
+      uri_prefix: /uploads/memo
+      upload_destination: memo.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    history:
+      uri_prefix: /uploads/history
+      upload_destination: history.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    post:
+      uri_prefix: /uploads/post
+      upload_destination: post.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true

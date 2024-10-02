@@ -24,7 +24,7 @@ class Edito
     )]
     protected ?bool $enable = null;
 
-    #[Gedmo\Slug(updatable: false, fields: ['title'])]
+    #[Gedmo\Slug(updatable: true, fields: ['title'])]
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     protected ?string $slug = null;
 

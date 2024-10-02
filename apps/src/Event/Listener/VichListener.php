@@ -5,12 +5,16 @@ namespace Labstag\Event\Listener;
 use Doctrine\ORM\EntityManagerInterface;
 use Override;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Vich\UploaderBundle\Event\Event;
 use Vich\UploaderBundle\Event\Events;
 
 final class VichListener implements EventSubscriberInterface
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
+    public function __construct(
+        private RequestStack $requestStack,
+        private readonly EntityManagerInterface $entityManager
+    )
     {
     }
 
@@ -23,7 +27,10 @@ final class VichListener implements EventSubscriberInterface
     public function preRemove(Event $event)
     {
         $filterCollection = $this->entityManager->getFilters();
-        if ($filterCollection->isEnabled('deletedfile')) {
+        $request = $this->requestStack->getCurrentRequest();
+        $all = $request->request->all();
+        $serialize = serialize($all);
+        if ($filterCollection->isEnabled('deletedfile') || 1 == substr_count($serialize, '{s:6:"delete";s:1:"1";}')) {
             return;
         }
 

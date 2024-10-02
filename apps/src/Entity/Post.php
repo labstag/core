@@ -2,6 +2,7 @@
 
 namespace Labstag\Entity;
 
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,9 +13,13 @@ use Labstag\Repository\PostRepository;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Entity\File as EmbeddedFile;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
+#[Vich\Uploadable]
 class Post implements Stringable
 {
     use SoftDeleteableEntity;
@@ -26,7 +31,7 @@ class Post implements Stringable
     )]
     protected ?bool $enable = null;
 
-    #[Gedmo\Slug(updatable: false, fields: ['title'])]
+    #[Gedmo\Slug(updatable: true, fields: ['title'])]
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     protected ?string $slug = null;
 
@@ -58,6 +63,12 @@ class Post implements Stringable
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'posts')]
     private Collection $tags;
+
+    #[Vich\UploadableField(mapping: 'post', fileNameProperty: 'img')]
+    private ?File $imgFile = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $img = null;
 
     public function __construct()
     {
@@ -188,5 +199,31 @@ class Post implements Stringable
         $this->title = $title;
 
         return $this;
+    }
+
+    public function setImgFile(?File $imgFile = null): void
+    {
+        $this->imgFile = $imgFile;
+
+        if (null !== $imgFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new DateTimeImmutable();
+        }
+    }
+
+    public function getImgFile(): ?File
+    {
+        return $this->imgFile;
+    }
+
+    public function setImg(?string $img): void
+    {
+        $this->img = $img;
+    }
+
+    public function getImg(): ?string
+    {
+        return $this->img;
     }
 }

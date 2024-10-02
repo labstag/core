@@ -10,8 +10,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\User;
+use Labstag\Field\VichImageField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -19,12 +22,10 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class UserCrudController extends AbstractCrudControllerLib
 {
-    public function __construct(protected UserPasswordHasherInterface $userPasswordHasher)
-    {
-    }
 
     #[Override]
     public function configureActions(Actions $actions): Actions
@@ -55,14 +56,25 @@ class UserCrudController extends AbstractCrudControllerLib
         $textField->setFormTypeOptions(
             [
                 'type'           => PasswordType::class,
-                'first_options'  => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Répéter le mot de passe'],
+                'first_options'  => [
+                    'label' => 'Mot de passe',
+                    'attr'  => [
+                        'autocomplete' => 'new-password',
+                    ]
+                ],
+                'second_options' => [
+                    'label' => 'Répéter le mot de passe',
+                    'attr'  => [
+                        'autocomplete' => 'new-password',
+                    ]
+                ],
                 'mapped'         => false,
             ]
         );
         $textField->setRequired(Crud::PAGE_NEW === $pageName);
         $textField->onlyOnForms();
         yield $textField;
+        yield $this->addFieldImageUpload('avatar', $pageName);
         yield CollectionField::new('histories')->onlyOnDetail();
         yield CollectionField::new('editos')->onlyOnDetail()->formatValue(
             fn ($entity) => count($entity)

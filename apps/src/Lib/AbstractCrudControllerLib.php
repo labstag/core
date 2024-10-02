@@ -13,21 +13,45 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Repository\TagRepository;
+use Labstag\Service\VichImageFieldService;
 use Override;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 abstract class AbstractCrudControllerLib extends AbstractCrudController
 {
     public function __construct(
-        protected TagRepository $tagRepository
+        protected TagRepository $tagRepository,
+        protected VichImageFieldService $vichImageFieldService,
+        protected UserPasswordHasherInterface $userPasswordHasher
     )
     {
+    }
+
+    public function addFieldImageUpload(string $type, string $pageName)
+    {
+        if ($pageName == Crud::PAGE_EDIT) {
+            $imageField = TextField::new($type.'File');
+            $imageField->setFormType(VichImageType::class);
+
+            return $imageField;
+        }
+        
+        $entity = $this->getEntityFqcn();
+        $basePath = $this->vichImageFieldService->getBasePath($entity, $type.'File');
+        $imageField = ImageField::new($type);
+        $imageField->setBasePath($basePath);
+
+        return $imageField;
     }
 
     #[Override]
@@ -105,8 +129,16 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     protected function addFieldSlug()
     {
         $slugField = SlugField::new('slug');
+        $slugField->hideOnIndex();
+        $slugField->setFormTypeOptions(
+            [
+                'required' => false
+            ]
+        );
         $slugField->setTargetFieldName('title');
-        $slugField->setUnlockConfirmationMessage('Attention, si vous changez le titre, le slug sera modifié');
+        $slugField->setUnlockConfirmationMessage(
+            'Attention, si vous changez le titre, le slug sera modifié'
+        );
 
         return $slugField;
     }
@@ -124,6 +156,15 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         );
 
         return $associationField;
+    }
+
+    protected function addFieldTotalChild(string $type)
+    {
+        $collectionField = CollectionField::new($type);
+        $collectionField->hideOnForm();
+        $collectionField->formatValue(fn ($value) => count($value));
+
+        return $collectionField;
     }
 
     protected function configureActionsBtn(Actions $actions): void

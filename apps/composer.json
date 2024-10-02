@@ -21,6 +21,7 @@
         "knplabs/knp-menu-bundle": "3.4.*",
         "knplabs/knp-paginator-bundle": "6.5.*",
         "league/flysystem-bundle": "3.3.*",
+        "liip/imagine-bundle": "^2.13",
         "nelmio/cors-bundle": "2.5.*",
         "spipu/html2pdf": "5.2.*",
         "symfony/apache-pack": "1.0.*",
