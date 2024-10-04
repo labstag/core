@@ -256,7 +256,7 @@ class Tag implements Stringable
         return $this;
     }
 
-    public function setSlug(string $slug): static
+    public function setSlug(?string $slug): static
     {
         $this->slug = $slug;
 

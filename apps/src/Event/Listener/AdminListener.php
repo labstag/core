@@ -18,10 +18,17 @@ final class AdminListener
     #[AsEventListener(event: KernelEvents::REQUEST)]
     public function disableFilterSoftDeleteable(RequestEvent $requestEvent): void
     {
-        $request = $requestEvent->getRequest();
-        $action  = $request->query->get('action', null);
+        $request          = $requestEvent->getRequest();
+        $action           = $request->query->get('action', null);
+        $all              = $request->request->all();
+        $serialize        = serialize($all);
+        $filterCollection = $this->entityManager->getFilters();
+        if (1 == substr_count($serialize, '{s:6:"delete";s:1:"1";}')) {
+            $filterCollection->enable('deletedfile');
+        }
+
         if ('trash' == $action) {
-            $this->entityManager->getFilters()->disable('softdeleteable');
+            $filterCollection->disable('softdeleteable');
         }
     }
 }

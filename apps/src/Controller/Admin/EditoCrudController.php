@@ -24,7 +24,6 @@ class EditoCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
         yield FormField::addTab('Principal');
         yield $this->addFieldID();
         yield $this->addFieldSlug();
@@ -34,6 +33,7 @@ class EditoCrudController extends AbstractCrudControllerLib
         yield DateTimeField::new('updatedAt')->hideOnForm();
         yield $this->addFieldTags('edito');
         yield $this->addFieldRefUser();
+        yield $this->addFieldImageUpload('img', $pageName);
         $fields = $this->addFieldMetas();
         foreach ($fields as $field) {
             yield $field;

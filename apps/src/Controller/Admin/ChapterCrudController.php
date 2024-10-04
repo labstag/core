@@ -25,7 +25,6 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
         yield FormField::addTab('Principal');
         yield $this->addFieldID();
         yield $this->addFieldSlug();
@@ -48,6 +47,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
 
         $associationField->setSortProperty('title');
         yield $associationField;
+        yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('chapter');
         $fields = $this->addFieldMetas();
         foreach ($fields as $field) {

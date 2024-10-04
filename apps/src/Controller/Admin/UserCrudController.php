@@ -10,23 +10,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\User;
-use Labstag\Field\VichImageField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class UserCrudController extends AbstractCrudControllerLib
 {
-
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -58,15 +52,11 @@ class UserCrudController extends AbstractCrudControllerLib
                 'type'           => PasswordType::class,
                 'first_options'  => [
                     'label' => 'Mot de passe',
-                    'attr'  => [
-                        'autocomplete' => 'new-password',
-                    ]
+                    'attr'  => ['autocomplete' => 'new-password'],
                 ],
                 'second_options' => [
                     'label' => 'Répéter le mot de passe',
-                    'attr'  => [
-                        'autocomplete' => 'new-password',
-                    ]
+                    'attr'  => ['autocomplete' => 'new-password'],
                 ],
                 'mapped'         => false,
             ]

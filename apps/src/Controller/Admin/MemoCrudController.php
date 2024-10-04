@@ -22,7 +22,6 @@ class MemoCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
         yield $this->addFieldID();
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
@@ -30,6 +29,7 @@ class MemoCrudController extends AbstractCrudControllerLib
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield DateTimeField::new('updatedAt')->hideOnForm();
         yield $this->addFieldRefUser();
+        yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('memo');
     }
 

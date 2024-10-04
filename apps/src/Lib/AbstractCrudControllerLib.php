@@ -39,15 +39,15 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     public function addFieldImageUpload(string $type, string $pageName)
     {
-        if ($pageName == Crud::PAGE_EDIT) {
+        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
             $imageField = TextField::new($type.'File');
             $imageField->setFormType(VichImageType::class);
 
             return $imageField;
         }
-        
-        $entity = $this->getEntityFqcn();
-        $basePath = $this->vichImageFieldService->getBasePath($entity, $type.'File');
+
+        $entity     = $this->getEntityFqcn();
+        $basePath   = $this->vichImageFieldService->getBasePath($entity, $type.'File');
         $imageField = ImageField::new($type);
         $imageField->setBasePath($basePath);
 
@@ -131,9 +131,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $slugField = SlugField::new('slug');
         $slugField->hideOnIndex();
         $slugField->setFormTypeOptions(
-            [
-                'required' => false
-            ]
+            ['required' => false]
         );
         $slugField->setTargetFieldName('title');
         $slugField->setUnlockConfirmationMessage(

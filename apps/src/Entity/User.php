@@ -13,10 +13,9 @@ use Labstag\Repository\UserRepository;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Entity\File as EmbeddedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -27,6 +26,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
 {
     use SoftDeleteableEntity;
     use TimestampableEntity;
+
+    /**
+     * @var int
+     */
+    protected const DATAUNSERIALIZE = 4;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatar = null;
+
+    #[Vich\UploadableField(mapping: 'avatar', fileNameProperty: 'avatar')]
+    private ?File $avatarFile = null;
 
     /**
      * @var Collection<int, Edito>
@@ -88,17 +98,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     #[ORM\Column(length: 255, unique: true)]
     private ?string $username = null;
 
-    #[Vich\UploadableField(mapping: 'avatar', fileNameProperty: 'avatar')]
-    private ?File $avatarFile = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $avatar = null;
-
-    /**
-     * @var int
-     */
-    protected const DATAUNSERIALIZE = 4;
-
     public function __construct()
     {
         $this->histories = new ArrayCollection();
@@ -114,8 +113,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
             $this->id,
             $this->username,
             $this->email,
-            $this->password
+            $this->password,
         ];
+    }
+
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getUsername();
     }
 
     public function __unserialize(array $data): void
@@ -125,15 +130,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
                 $this->id,
                 $this->username,
                 $this->email,
-                $this->password
+                $this->password,
             ] = $data;
         }
-    }
-
-    #[Override]
-    public function __toString(): string
-    {
-        return (string) $this->getUsername();
     }
 
     public function addEdito(Edito $edito): static
@@ -194,6 +193,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function getAvatarFile(): ?File
+    {
+        return $this->avatarFile;
     }
 
     /**
@@ -341,6 +350,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return $this;
     }
 
+    public function setAvatar(?string $avatar): void
+    {
+        $this->avatar = $avatar;
+    }
+
+    public function setAvatarFile(?File $avatarFile = null): void
+    {
+        $this->avatarFile = $avatarFile;
+
+        if ($avatarFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new DateTimeImmutable();
+        }
+    }
+
     public function setEmail(string $email): static
     {
         $this->email = $email;
@@ -377,31 +402,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         $this->username = $username;
 
         return $this;
-    }
-
-    public function setAvatarFile(?File $avatarFile = null): void
-    {
-        $this->avatarFile = $avatarFile;
-
-        if (null !== $avatarFile) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new DateTimeImmutable();
-        }
-    }
-
-    public function getAvatarFile(): ?File
-    {
-        return $this->avatarFile;
-    }
-
-    public function setAvatar(?string $avatar): void
-    {
-        $this->avatar = $avatar;
-    }
-
-    public function getAvatar(): ?string
-    {
-        return $this->avatar;
     }
 }

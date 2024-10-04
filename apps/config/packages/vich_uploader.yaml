@@ -22,9 +22,29 @@ vich_uploader:
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
+    edito:
+      uri_prefix: /uploads/edito
+      upload_destination: edito.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
     memo:
       uri_prefix: /uploads/memo
       upload_destination: memo.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    chapter:
+      uri_prefix: /uploads/chapter
+      upload_destination: chapter.storage
       namer:
         service: Vich\UploaderBundle\Naming\PropertyNamer
         options:

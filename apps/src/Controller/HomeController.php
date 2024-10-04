@@ -3,9 +3,7 @@
 namespace Labstag\Controller;
 
 use Labstag\Service\FileService;
-use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -16,8 +14,7 @@ class HomeController extends AbstractController
         FileService $fileService
     ): Response
     {
-
-        $fileService->getFileSystem('avatar.storage');
+        $fileService->all();
 
         return $this->render(
             'home/index.html.twig',
