@@ -22,6 +22,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Repository\TagRepository;
 use Labstag\Service\VichImageFieldService;
+use Labstag\Service\WorkflowService;
 use Override;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -32,6 +33,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     public function __construct(
         protected TagRepository $tagRepository,
         protected VichImageFieldService $vichImageFieldService,
+        protected WorkflowService $workflowService,
         protected UserPasswordHasherInterface $userPasswordHasher
     )
     {

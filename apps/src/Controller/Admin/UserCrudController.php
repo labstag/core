@@ -96,6 +96,15 @@ class UserCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
+    public function createEntity(string $entityFqcn)
+    {
+        $user = new $entityFqcn();
+        $this->workflowService->init($user);
+
+        return $user;
+    }
+
+    #[Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,

@@ -10,6 +10,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\PostRepository;
+use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -23,6 +24,7 @@ class Post implements Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableEntity;
+    use WorkflowTrait;
 
     #[ORM\Column(
         type: 'boolean',

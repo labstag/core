@@ -18,17 +18,39 @@ final class AdminListener
     #[AsEventListener(event: KernelEvents::REQUEST)]
     public function disableFilterSoftDeleteable(RequestEvent $requestEvent): void
     {
-        $request          = $requestEvent->getRequest();
-        $action           = $request->query->get('action', null);
-        $all              = $request->request->all();
-        $serialize        = serialize($all);
         $filterCollection = $this->entityManager->getFilters();
-        if (1 == substr_count($serialize, '{s:6:"delete";s:1:"1";}')) {
+        if ($this->enableDeleteFile($requestEvent)) {
             $filterCollection->enable('deletedfile');
         }
 
-        if ('trash' == $action) {
+        if ($this->isDelete($requestEvent)) {
             $filterCollection->disable('softdeleteable');
         }
+    }
+
+    private function enableDeleteFile(RequestEvent $requestEvent): bool
+    {
+        $request   = $requestEvent->getRequest();
+        $all       = $request->request->all();
+        $serialize = serialize($all);
+
+        return 1 == substr_count($serialize, '{s:6:"delete";s:1:"1";}');
+    }
+
+    private function isDelete(RequestEvent $requestEvent): bool
+    {
+        $request    = $requestEvent->getRequest();
+        $crudAction = $request->query->get('crudAction', null);
+        $action     = $request->query->get('action', null);
+        $referer    = $request->headers->get('referer', null);
+        if ('trash' == $action) {
+            return true;
+        }
+
+        if ('batchDelete' != $crudAction) {
+            return false;
+        }
+
+        return 1 == substr_count((string) $referer, 'action=trash');
     }
 }

@@ -47,6 +47,7 @@ class PageCrudController extends AbstractCrudControllerLib
     public function createEntity(string $entityFqcn)
     {
         $page = new $entityFqcn();
+        $this->workflowService->init($page);
         $meta = new Meta();
         $page->setRefuser($this->getUser());
         $page->setMeta($meta);

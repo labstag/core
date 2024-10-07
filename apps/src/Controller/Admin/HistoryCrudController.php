@@ -45,7 +45,8 @@ class HistoryCrudController extends AbstractCrudControllerLib
     public function createEntity(string $entityFqcn)
     {
         $history = new $entityFqcn();
-        $meta    = new Meta();
+        $this->workflowService->init($history);
+        $meta = new Meta();
         $history->setRefuser($this->getUser());
         $history->setMeta($meta);
 

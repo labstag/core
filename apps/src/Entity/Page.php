@@ -11,6 +11,7 @@ use Gedmo\Sluggable\Handler\TreeSlugHandler;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\PageRepository;
+use Labstag\Traits\Entity\WorkflowTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -22,6 +23,7 @@ class Page
 {
     use SoftDeleteableEntity;
     use TimestampableEntity;
+    use WorkflowTrait;
 
     #[ORM\Column(
         type: 'boolean',

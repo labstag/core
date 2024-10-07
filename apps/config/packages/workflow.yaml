@@ -1,2 +1,182 @@
 framework:
-    workflows: null
+  workflows:
+    chapter:
+      type: 'workflow'
+      audit_trail:
+        enabled: true
+      marking_store:
+        type: 'method'
+        property: 'currentPlace'
+      supports:
+      - Labstag\Entity\Chapter
+      initial_marking: start
+      places:
+      - start
+      - draft
+      - relecture
+      - publie
+      - rejete
+      transitions:
+        relire:
+          from: draft
+          to: relecture
+        corriger:
+          from: relecture
+          to: draft
+        publier:
+          from: relecture
+          to: publie
+        rejeter:
+          from: relecture
+          to: rejete
+    edito:
+      type: 'workflow'
+      audit_trail:
+        enabled: "%kernel.debug%"
+      marking_store:
+        type: 'method'
+        property: 'currentPlace'
+      supports:
+      - Labstag\Entity\Edito
+      initial_marking: start
+      places:
+      - start
+      - draft
+      - relecture
+      - publie
+      - rejete
+      transitions:
+        relire:
+          from: draft
+          to: relecture
+        corriger:
+          from: relecture
+          to: draft
+        publier:
+          from: relecture
+          to: publie
+        rejeter:
+          from: relecture
+          to: rejete
+    history:
+      type: 'workflow'
+      audit_trail:
+        enabled: "%kernel.debug%"
+      marking_store:
+        type: 'method'
+        property: 'currentPlace'
+      supports:
+      - Labstag\Entity\History
+      initial_marking: start
+      places:
+      - start
+      - draft
+      - relecture
+      - publie
+      - rejete
+      transitions:
+        relire:
+          from: draft
+          to: relecture
+        corriger:
+          from: relecture
+          to: draft
+        publier:
+          from: relecture
+          to: publie
+        rejeter:
+          from: relecture
+          to: rejete
+    memo:
+      type: 'workflow'
+      audit_trail:
+        enabled: "%kernel.debug%"
+      marking_store:
+        type: 'method'
+        property: 'currentPlace'
+      supports:
+      - Labstag\Entity\Memo
+      initial_marking: start
+      places:
+      - start
+      - draft
+      - relecture
+      - publie
+      - rejete
+      transitions:
+        relire:
+          from: draft
+          to: relecture
+        corriger:
+          from: relecture
+          to: draft
+        publier:
+          from: relecture
+          to: publie
+        rejeter:
+          from: relecture
+          to: rejete
+    post:
+      type: 'workflow'
+      audit_trail:
+        enabled: "%kernel.debug%"
+      marking_store:
+        type: 'method'
+        property: 'currentPlace'
+      supports:
+      - Labstag\Entity\Post
+      initial_marking: start
+      places:
+      - start
+      - draft
+      - relecture
+      - publie
+      - rejete
+      transitions:
+        relire:
+          from: draft
+          to: relecture
+        corriger:
+          from: relecture
+          to: draft
+        publier:
+          from: relecture
+          to: publie
+        rejeter:
+          from: relecture
+          to: rejete
+    user:
+      type: 'workflow'
+      audit_trail:
+        enabled: "%kernel.debug%"
+      marking_store:
+        type: 'method'
+        property: 'currentPlace'
+      supports:
+      - Labstag\Entity\User
+      initial_marking: start
+      places:
+      - start
+      - nonverifier
+      - valider
+      - lostpassword
+      - disable
+      transitions:
+        submit:
+          from: start
+          to: nonverifier
+        validation:
+          from: nonverifier
+          to: valider
+        passwordlost:
+          from: valider
+          to: lostpassword
+        changepassword:
+          from: lostpassword
+          to: valider
+        desactiver:
+          from: valider
+          to: disable
+        activer:
+          from: disable
+          to: valider

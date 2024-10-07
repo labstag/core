@@ -10,6 +10,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\MemoRepository;
+use Labstag\Traits\Entity\WorkflowTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -21,6 +22,7 @@ class Memo
 {
     use SoftDeleteableEntity;
     use TimestampableEntity;
+    use WorkflowTrait;
 
     #[ORM\Column(
         type: 'boolean',

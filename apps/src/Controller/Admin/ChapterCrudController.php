@@ -59,7 +59,8 @@ class ChapterCrudController extends AbstractCrudControllerLib
     public function createEntity(string $entityFqcn)
     {
         $chapter = new $entityFqcn();
-        $meta    = new Meta();
+        $this->workflowService->init($chapter);
+        $meta = new Meta();
         $chapter->setMeta($meta);
 
         return $chapter;

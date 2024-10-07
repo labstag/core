@@ -10,6 +10,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\UserRepository;
+use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -26,6 +27,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
 {
     use SoftDeleteableEntity;
     use TimestampableEntity;
+    use WorkflowTrait;
 
     /**
      * @var int

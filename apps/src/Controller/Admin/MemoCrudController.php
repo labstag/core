@@ -37,6 +37,7 @@ class MemoCrudController extends AbstractCrudControllerLib
     public function createEntity(string $entityFqcn)
     {
         $memo = new $entityFqcn();
+        $this->workflowService->init($memo);
         $memo->setRefuser($this->getUser());
 
         return $memo;

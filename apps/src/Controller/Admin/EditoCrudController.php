@@ -44,7 +44,8 @@ class EditoCrudController extends AbstractCrudControllerLib
     public function createEntity(string $entityFqcn)
     {
         $edito = new $entityFqcn();
-        $meta  = new Meta();
+        $this->workflowService->init($edito);
+        $meta = new Meta();
         $edito->setRefuser($this->getUser());
         $edito->setMeta($meta);
 

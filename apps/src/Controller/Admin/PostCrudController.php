@@ -45,6 +45,7 @@ class PostCrudController extends AbstractCrudControllerLib
     public function createEntity(string $entityFqcn)
     {
         $post = new $entityFqcn();
+        $this->workflowService->init($post);
         $meta = new Meta();
         $post->setRefuser($this->getUser());
         $post->setMeta($meta);
