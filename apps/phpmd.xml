@@ -5,6 +5,7 @@
 	<description>Created with the PHP Coding Standard Generator. http://edorian.github.com/php-coding-standard-generator/</description>
     <rule ref="rulesets/cleancode.xml">
 		<exclude name="StaticAccess" />
+        <exclude name="BooleanArgumentFlag" />
     </rule>
 	<rule ref="rulesets/codesize.xml">
 		<exclude name="TooManyPublicMethods" />

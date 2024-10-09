@@ -31,7 +31,5 @@ class WorkflowService
 
         $markingStore = $workflow->getMarkingStore();
         $markingStore->setMarking($entity, $initialMarking);
-
-        dump(get_class_methods($workflow));
     }
 }

@@ -61,6 +61,13 @@ class Post implements Stringable
     #[ORM\JoinColumn(nullable: false)]
     private ?Meta $meta = null;
 
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'post', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $paragraphs;
+
     #[ORM\ManyToOne(inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $refuser = null;
@@ -75,6 +82,7 @@ class Post implements Stringable
     {
         $this->tags       = new ArrayCollection();
         $this->categories = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
     }
 
     #[Override]
@@ -88,6 +96,16 @@ class Post implements Stringable
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
             $category->addPost($this);
+        }
+
+        return $this;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setPost($this);
         }
 
         return $this;
@@ -131,6 +149,14 @@ class Post implements Stringable
         return $this->meta;
     }
 
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
     public function getRefuser(): ?User
     {
         return $this->refuser;
@@ -163,6 +189,16 @@ class Post implements Stringable
     {
         if ($this->categories->removeElement($category)) {
             $category->removePost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPost() === $this) {
+            $paragraph->setPost(null);
         }
 
         return $this;

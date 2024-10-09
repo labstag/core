@@ -36,7 +36,7 @@ final class VichListener
     private function isDeletedFileNotEntity($entity): bool
     {
         $delete           = false;
-        $reflectionClass  = $this->setReflection($entity);
+        $reflectionClass  = new ReflectionClass($entity);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $name  = $reflectionProperty->getName();
@@ -51,10 +51,5 @@ final class VichListener
         }
 
         return $delete;
-    }
-
-    private function setReflection($entity): ReflectionClass
-    {
-        return new ReflectionClass($entity);
     }
 }

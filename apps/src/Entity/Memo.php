@@ -49,6 +49,13 @@ class Memo
     #[Vich\UploadableField(mapping: 'memo', fileNameProperty: 'img')]
     private ?File $imgFile = null;
 
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'memo', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $paragraphs;
+
     #[ORM\ManyToOne(inversedBy: 'memos')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $refuser = null;
@@ -61,7 +68,18 @@ class Memo
 
     public function __construct()
     {
-        $this->tags = new ArrayCollection();
+        $this->tags       = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setMemo($this);
+        }
+
+        return $this;
     }
 
     public function addTag(Tag $tag): static
@@ -87,6 +105,14 @@ class Memo
     public function getImgFile(): ?File
     {
         return $this->imgFile;
+    }
+
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
     }
 
     public function getRefuser(): ?User
@@ -115,6 +141,16 @@ class Memo
     public function isEnable(): ?bool
     {
         return $this->enable;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getMemo() === $this) {
+            $paragraph->setMemo(null);
+        }
+
+        return $this;
     }
 
     public function removeTag(Tag $tag): static

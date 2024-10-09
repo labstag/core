@@ -141,7 +141,7 @@ class UserCrudController extends AbstractCrudControllerLib
                 return;
             }
 
-            $hash = $this->userPasswordHasher->hashPassword($event->getData(), $password);
+            $hash = $this->userService->hashPassword($event->getData(), $password);
             $form->getData()->setPassword($hash);
         };
     }

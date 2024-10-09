@@ -53,6 +53,13 @@ class Chapter
     #[ORM\JoinColumn(nullable: false)]
     private ?Meta $meta = null;
 
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'chapter', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $paragraphs;
+
     #[ORM\ManyToOne(inversedBy: 'chapters')]
     #[ORM\JoinColumn(nullable: false)]
     private ?History $refhistory = null;
@@ -65,7 +72,18 @@ class Chapter
 
     public function __construct()
     {
-        $this->tags = new ArrayCollection();
+        $this->tags       = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setChapter($this);
+        }
+
+        return $this;
     }
 
     public function addTag(Tag $tag): static
@@ -98,6 +116,14 @@ class Chapter
         return $this->meta;
     }
 
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
     public function getRefhistory(): ?History
     {
         return $this->refhistory;
@@ -124,6 +150,16 @@ class Chapter
     public function isEnable(): ?bool
     {
         return $this->enable;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getChapter() === $this) {
+            $paragraph->setChapter(null);
+        }
+
+        return $this;
     }
 
     public function removeTag(Tag $tag): static

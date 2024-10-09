@@ -1,0 +1,14 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+{% block head_stylesheets %}
+	{{ encore_entry_link_tags('back') }}
+  {{ parent() }}
+{% endblock %}
+{% block head_metas %}
+  {{ parent() }}
+	<meta name="robots" content="noindex, nofollow">
+{% endblock %}
+{% block head_javascript %}
+  {{ parent() }}
+	{{ encore_entry_script_tags('back') }}
+  <script src="{{ asset('assets/translations/fr.js') }}"></script>
+{% endblock %}

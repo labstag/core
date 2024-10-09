@@ -35,7 +35,7 @@ class PostCrudController extends AbstractCrudControllerLib
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('post');
         yield $this->addFieldCategories('post');
-        $fields = $this->addFieldMetas();
+        $fields = array_merge($this->addFieldParagraphs($pageName), $this->addFieldMetas());
         foreach ($fields as $field) {
             yield $field;
         }

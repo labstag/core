@@ -46,12 +46,8 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         AdminContext $adminContext
     ): void {
         $instance = $entityDto->getInstance();
-        if (is_null($instance)) {
-            return;
-        }
-
-        $object = $this->metaService->getEntityParent($instance);
-        if (is_null($object->value)) {
+        $object   = $this->metaService->getEntityParent($instance);
+        if (is_null($object->value) || is_null($object->name) || is_null($object)) {
             return;
         }
 

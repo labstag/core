@@ -73,6 +73,13 @@ class Page
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
     private ?self $page = null;
 
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'page', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $paragraphs;
+
     #[ORM\ManyToOne(inversedBy: 'pages')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $refuser = null;
@@ -88,6 +95,7 @@ class Page
         $this->children   = new ArrayCollection();
         $this->tags       = new ArrayCollection();
         $this->categories = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
     }
 
     public function addCategory(Category $category): static
@@ -105,6 +113,16 @@ class Page
         if (!$this->children->contains($child)) {
             $this->children->add($child);
             $child->setPage($this);
+        }
+
+        return $this;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setPage($this);
         }
 
         return $this;
@@ -161,6 +179,14 @@ class Page
         return $this->page;
     }
 
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
     public function getRefuser(): ?User
     {
         return $this->refuser;
@@ -203,6 +229,16 @@ class Page
         // set the owning side to null (unless already changed)
         if ($this->children->removeElement($child) && $child->getPage() === $this) {
             $child->setPage(null);
+        }
+
+        return $this;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this) {
+            $paragraph->setPage(null);
         }
 
         return $this;

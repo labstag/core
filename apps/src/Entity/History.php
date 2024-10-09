@@ -64,6 +64,13 @@ class History implements Stringable
     #[ORM\JoinColumn(nullable: false)]
     private ?Meta $meta = null;
 
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'history', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $paragraphs;
+
     #[ORM\ManyToOne(inversedBy: 'histories')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $refuser = null;
@@ -79,6 +86,7 @@ class History implements Stringable
         $this->chapters   = new ArrayCollection();
         $this->tags       = new ArrayCollection();
         $this->categories = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
     }
 
     #[Override]
@@ -102,6 +110,16 @@ class History implements Stringable
         if (!$this->chapters->contains($chapter)) {
             $this->chapters->add($chapter);
             $chapter->setRefhistory($this);
+        }
+
+        return $this;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setHistory($this);
         }
 
         return $this;
@@ -153,6 +171,14 @@ class History implements Stringable
         return $this->meta;
     }
 
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
     public function getRefuser(): ?User
     {
         return $this->refuser;
@@ -195,6 +221,16 @@ class History implements Stringable
         // set the owning side to null (unless already changed)
         if ($this->chapters->removeElement($chapter) && $chapter->getRefhistory() === $this) {
             $chapter->setRefhistory(null);
+        }
+
+        return $this;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getHistory() === $this) {
+            $paragraph->setHistory(null);
         }
 
         return $this;

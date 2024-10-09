@@ -16,14 +16,18 @@ class MetaService
     {
     }
 
-    public function getEntityParent(Meta $meta): object
+    public function getEntityParent(?Meta $meta): ?object
     {
+        if (is_null($meta)) {
+            return null;
+        }
+
         $return = new stdClass();
 
         $return->name  = null;
         $return->value = null;
 
-        $reflectionClass  = $this->setReflection($meta);
+        $reflectionClass  = new ReflectionClass($meta);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $name  = $reflectionProperty->getName();
@@ -38,10 +42,5 @@ class MetaService
         }
 
         return $return;
-    }
-
-    protected function setReflection($entity): ReflectionClass
-    {
-        return new ReflectionClass($entity);
     }
 }

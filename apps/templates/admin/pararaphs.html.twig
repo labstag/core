@@ -1,0 +1,62 @@
+<table class="table datagrid paragraphs-list">
+  <thead>
+      <tr>
+          <th>
+            <i class="fas fa-arrows-alt"></i>
+          </th>
+          <th class="header-for-field-select text-left" dir="ltr">
+              Fond
+          </th>
+          <th class="header-for-field-text text-left" dir="ltr">
+              Type
+          </th>
+          <th class="header-for-field-datetime text-left" dir="ltr">
+              Date de création
+          </th>
+          <th class="header-for-field-datetime text-left" dir="ltr">
+              Dernière modification
+          </th>
+          <th class="header-for-field-datetime text-center" dir="ltr">
+              Actions
+          </th>
+      </tr>
+  </thead>
+  <tbody id="paragraph_sort">
+    {% set controller = "Labstag\\Controller\\Admin\\ParagraphCrudController" %}
+      {% for row in paragraphs %}
+        {% set id = random() %}
+        {% set fond = paragraph_fond(row.fond) %}
+        <tr data-id="{{ row.id }}">
+            <td class="batch-actions-selector">
+              <i class="fas fa-arrows-alt"></i>
+            </td>
+            <td data-label="Fond" class=" text-left field-select" dir="ltr">
+              {% if fond != null %}
+                <span title="{{ fond|e('html_attr') }}">{{ fond }}</span>
+              {% else %}
+                <span class="badge badge-secondary">{{ 'label.null'|trans(domain = 'EasyAdminBundle') }}</span>
+              {% endif %}
+            </td>
+            <td data-label="Type" class=" text-left field-text" dir="ltr">
+                <span title="{{ paragraph_name(row.type)|e('html_attr') }}">{{ paragraph_name(row.type) }}</span>
+            </td>
+            <td data-label="Date de création" class=" text-left field-datetime" dir="ltr">
+                <time datetime="{{ row.createdAt|date('c') }}" title="{{ row.createdAt|date('r') }}">{{ row.createdAt|format_datetime('medium', 'medium') }}</time>
+            </td>
+            <td data-label="Dernière modification" class=" text-left field-datetime" dir="ltr">
+                <time datetime="{{ row.updatedAt|date('c') }}" title="{{ row.updatedAt|date('r') }}">{{ row.updatedAt|format_datetime('medium', 'medium') }}</time>
+            </td>
+            <td class="text-center field-id" dir="ltr">
+              <a
+                class="paragraph_edit"
+                href="{{ ea_url().setController(controller).setAction('edit').setEntityId(row.id).set('iframe', 1) }}"
+                data-target="#paragraph_iframe"
+                data-bs-toggle="modal"
+                data-bs-target="#paragraph_modal"
+              ></a>
+              <a class="paragraph_delete" href="#"></a>
+            </td>
+        </tr>
+      {% endfor %}
+  </tbody>
+</table>

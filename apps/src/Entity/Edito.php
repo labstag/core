@@ -53,6 +53,13 @@ class Edito
     #[ORM\JoinColumn(nullable: false)]
     private ?Meta $meta = null;
 
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'edito', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $paragraphs;
+
     #[ORM\ManyToOne(inversedBy: 'editos')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $refuser = null;
@@ -65,7 +72,18 @@ class Edito
 
     public function __construct()
     {
-        $this->tags = new ArrayCollection();
+        $this->tags       = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setEdito($this);
+        }
+
+        return $this;
     }
 
     public function addTag(Tag $tag): static
@@ -98,6 +116,14 @@ class Edito
         return $this->meta;
     }
 
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
     public function getRefuser(): ?User
     {
         return $this->refuser;
@@ -124,6 +150,16 @@ class Edito
     public function isEnable(): ?bool
     {
         return $this->enable;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getEdito() === $this) {
+            $paragraph->setEdito(null);
+        }
+
+        return $this;
     }
 
     public function removeTag(Tag $tag): static

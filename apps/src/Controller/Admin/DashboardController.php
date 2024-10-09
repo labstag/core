@@ -16,6 +16,7 @@ use Labstag\Entity\History;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
+use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
@@ -29,6 +30,15 @@ class DashboardController extends AbstractDashboardController
         protected EntityManagerInterface $entityManager
     )
     {
+    }
+
+    #[Route('/admin/blank', name: 'admin_blank')]
+    public function blank(): Response
+    {
+        return $this->render(
+            'admin/blank.html.twig',
+            []
+        );
     }
 
     #[Override]
@@ -128,6 +138,7 @@ class DashboardController extends AbstractDashboardController
         );
 
         yield MenuItem::linkToCrud('Meta', 'fa fa-list', Meta::class);
+        yield MenuItem::linkToCrud('Paragraph', 'fa fa-user', Paragraph::class);
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
     }
 

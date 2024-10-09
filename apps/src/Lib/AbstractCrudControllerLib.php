@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
@@ -20,12 +21,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Labstag\Entity\Paragraph;
+use Labstag\Field\ParagraphsField;
+use Labstag\Repository\ParagraphRepository;
 use Labstag\Repository\TagRepository;
+use Labstag\Service\ParagraphService;
+use Labstag\Service\UserService;
 use Labstag\Service\VichImageFieldService;
 use Labstag\Service\WorkflowService;
 use Override;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 abstract class AbstractCrudControllerLib extends AbstractCrudController
@@ -33,8 +39,10 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     public function __construct(
         protected TagRepository $tagRepository,
         protected VichImageFieldService $vichImageFieldService,
+        protected ParagraphService $paragraphService,
         protected WorkflowService $workflowService,
-        protected UserPasswordHasherInterface $userPasswordHasher
+        protected RequestStack $requestStack,
+        protected UserService $userService
     )
     {
     }
@@ -56,6 +64,50 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $imageField;
     }
 
+    public function addParagraph(
+        AdminContext $adminContext
+    )
+    {
+        $request  = $adminContext->getRequest();
+        $entityId = $request->query->get('entityId');
+
+        $generator = $this->container->get(AdminUrlGenerator::class);
+        $generator->setAction('listParagraph');
+        $generator->setEntityId($entityId);
+
+        $type = $request->request->get('paragraph', null);
+        if (!is_null($type)) {
+            $repository = $this->getRepository();
+            $entity     = $repository->find($entityId);
+
+            $paragraph = new Paragraph();
+            $paragraph->setEnable(true);
+            $paragraph->setPosition(count($entity->getParagraphs()) + 1);
+            $paragraph->setType($type);
+            $entity->addParagraph($paragraph);
+
+            $repository->save($entity);
+            $classobject = $this->paragraphService->getTypeEntity($paragraph);
+            if (!is_null($classobject)) {
+                $classentity = new $classobject();
+                $classentity->setParagraph($paragraph);
+                $repository->save($classentity);
+            }
+        }
+
+        $url = $generator->generateUrl();
+
+        return $this->redirect($url);
+    }
+
+    #[Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud->addFormTheme('admin/form.html.twig');
+
+        return $crud;
+    }
+
     #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
@@ -68,6 +120,70 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $queryBuilder = $this->filterListeTrash($searchDto, $queryBuilder);
 
         return $this->filterListRefUser($queryBuilder, $entityDto);
+    }
+
+    public function deleteParagraph(
+        AdminContext $adminContext
+    )
+    {
+        $request   = $adminContext->getRequest();
+        $entityId  = $request->query->get('entityId');
+        $generator = $this->container->get(AdminUrlGenerator::class);
+        $generator->setAction('listParagraph');
+
+        $paragraphId = $request->request->get('paragraph', null);
+        if (!is_null($paragraphId)) {
+            $repository = $this->getRepositoryParagraph();
+            $paragraph  = $repository->find($paragraphId);
+            $repository->remove($paragraph);
+        }
+
+        $generator->setEntityId($entityId);
+
+        $url = $generator->generateUrl();
+
+        return $this->redirect($url);
+    }
+
+    public function listParagraph(
+        AdminContext $adminContext
+    )
+    {
+        $entityId   = $adminContext->getRequest()->query->get('entityId');
+        $repository = $this->getRepository();
+        $entity     = $repository->find($entityId);
+        $paragraphs = $entity->getParagraphs();
+
+        return $this->render(
+            'admin/pararaphs.html.twig',
+            ['paragraphs' => $paragraphs]
+        );
+    }
+
+    public function updateParagraph(
+        AdminContext $adminContext
+    )
+    {
+        $request   = $adminContext->getRequest();
+        $generator = $this->container->get(AdminUrlGenerator::class);
+        $entityId  = $request->query->get('entityId');
+        $generator->setAction('listParagraph');
+        $paragraphs = $request->request->get('paragraphs', null);
+        if (!is_null($paragraphs)) {
+            $paragraphs = explode(',', $paragraphs);
+            $repository = $this->getRepositoryParagraph();
+            foreach ($paragraphs as $position => $idParagraph) {
+                $paragraph = $repository->find($idParagraph);
+                $paragraph->setPosition($position + 1);
+                $repository->save($paragraph);
+            }
+        }
+
+        $generator->setEntityId($entityId);
+
+        $url = $generator->generateUrl();
+
+        return $this->redirect($url);
     }
 
     protected function addFieldBoolean()
@@ -103,7 +219,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $idField;
     }
 
-    protected function addFieldMetas()
+    protected function addFieldMetas(): array
     {
         return [
             FormField::addTab('SEO'),
@@ -111,6 +227,19 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             TextField::new('meta.keywords')->hideOnIndex(),
             TextField::new('meta.description')->hideOnIndex(),
         ];
+    }
+
+    protected function addFieldParagraphs(string $pageName): array
+    {
+        $fields = [];
+        if ('edit' !== $pageName) {
+            return $fields;
+        }
+
+        $fields[] = FormField::addTab('Paragraphs');
+        $fields[] = ParagraphsField::new('paragraphs');
+
+        return $fields;
     }
 
     protected function addFieldRefUser()
@@ -236,6 +365,20 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             ]
         );
         $actions->add(Crud::PAGE_INDEX, $action);
+    }
+
+    protected function getRepository()
+    {
+        $doctrine = $this->container->get('doctrine');
+
+        return $doctrine->getManagerForClass(static::getEntityFqcn())->getRepository(static::getEntityFqcn());
+    }
+
+    protected function getRepositoryParagraph(): ParagraphRepository
+    {
+        $doctrine = $this->container->get('doctrine');
+
+        return $doctrine->getManagerForClass(Paragraph::class)->getRepository(Paragraph::class);
     }
 
     private function filterListeTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
