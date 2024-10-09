@@ -20,24 +20,24 @@ a{
   text-decoration: none;
 
   &.paragraph-edit{
-    @extend .btn;
-    @extend .btn-sm;
-    @extend .btn-primary;
+    @extend .btn !optional;
+    @extend .btn-sm !optional;
+    @extend .btn-primary !optional;
 
     &::before{
-      @extend .fas;
-      @extend .fa-edit;
+      @extend .fas !optional;
+      @extend .fa-edit !optional;
     }
   }
 
   &.paragraph-delete{
-    @extend .btn;
-    @extend .btn-sm;
-    @extend .btn-danger;
+    @extend .btn !optional;
+    @extend .btn-sm !optional;
+    @extend .btn-danger !optional;
 
     &::before{
-      @extend .fas;
-      @extend .fa-trash;
+      @extend .fas !optional;
+      @extend .fa-trash !optional;
     }
   }
 }
