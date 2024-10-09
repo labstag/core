@@ -21,7 +21,7 @@
           </th>
       </tr>
   </thead>
-  <tbody id="paragraph_sort">
+  <tbody id="paragraph-sort">
     {% set controller = "Labstag\\Controller\\Admin\\ParagraphCrudController" %}
       {% for row in paragraphs %}
         {% set id = random() %}
@@ -48,13 +48,13 @@
             </td>
             <td class="text-center field-id" dir="ltr">
               <a
-                class="paragraph_edit"
+                class="paragraph-edit"
                 href="{{ ea_url().setController(controller).setAction('edit').setEntityId(row.id).set('iframe', 1) }}"
                 data-target="#paragraph_iframe"
                 data-bs-toggle="modal"
                 data-bs-target="#paragraph_modal"
               ></a>
-              <a class="paragraph_delete" href="#"></a>
+              <a class="paragraph-delete" href="#"></a>
             </td>
         </tr>
       {% endfor %}

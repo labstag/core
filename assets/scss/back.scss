@@ -1,15 +1,16 @@
-@import "@nm/bootstrap/scss/bootstrap";
-@import "@nm/@fortawesome/fontawesome-free/scss/brands.scss";
-@import "@nm/@fortawesome/fontawesome-free/scss/fontawesome.scss";
-@import "@nm/@fortawesome/fontawesome-free/scss/regular.scss";
-@import "@nm/@fortawesome/fontawesome-free/scss/solid.scss";
+@import url("@nm/bootstrap/scss/bootstrap");
+@import url("@nm/@fortawesome/fontawesome-free/scss/brands.scss");
+@import url("@nm/@fortawesome/fontawesome-free/scss/fontawesome.scss");
+@import url("@nm/@fortawesome/fontawesome-free/scss/regular.scss");
+@import url("@nm/@fortawesome/fontawesome-free/scss/solid.scss");
 
 .sort-list{
   li{
     cursor: move;
   }
 }
-#paragraph_sort{
+
+#paragraph-sort{
   .fa-arrows-alt{
     cursor: move;
   }
@@ -17,19 +18,23 @@
 
 a{
   text-decoration: none;
-  &.paragraph_edit{
+
+  &.paragraph-edit{
     @extend .btn;
     @extend .btn-sm;
     @extend .btn-primary;
+
     &::before{
       @extend .fas;
       @extend .fa-edit;
     }
   }
-  &.paragraph_delete{
+
+  &.paragraph-delete{
     @extend .btn;
     @extend .btn-sm;
     @extend .btn-danger;
+
     &::before{
       @extend .fas;
       @extend .fa-trash;

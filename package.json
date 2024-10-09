@@ -126,6 +126,8 @@
     "sass": "1.79.*",
     "sass-loader": "16.0.*",
     "sortablejs": "1.15.*",
+    "stylelint": "16.9.*",
+    "stylelint-config-standard": "36.0.*",
     "webpack": "5.95.*",
     "webpack-cli": "5.1.*",
     "webpack-notifier": "1.15.*"

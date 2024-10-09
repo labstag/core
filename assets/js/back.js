@@ -53,7 +53,7 @@ function returnParargaphsList(data) {
 }
 
 function paragraphsAction() {
-  document.querySelectorAll('.paragraph_edit').forEach(element => {
+  document.querySelectorAll('.paragraph-edit').forEach(element => {
     element.addEventListener('click', function (e) {
 
       document.querySelector(this.dataset.target).src = this.href;
@@ -79,7 +79,7 @@ function testWysiwyg() {
 }
 
 function BtnDeleteParagraph() {
-  document.querySelectorAll('.paragraph_delete').forEach(element => {
+  document.querySelectorAll('.paragraph-delete').forEach(element => {
     element.addEventListener('click', function (e) {
       e.preventDefault();
       var dataParagraph = document.querySelector('#paragraphs_list').closest('.paragraph_data');
