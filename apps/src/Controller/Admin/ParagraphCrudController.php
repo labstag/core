@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -13,6 +14,18 @@ use Override;
 
 class ParagraphCrudController extends AbstractCrudControllerLib
 {
+    #[Override]
+    public function configureActions(Actions $actions): Actions
+    {
+        if ($this->isIframeEdit()) {
+            return $actions;
+        }
+
+        $this->configureActionsTrash($actions);
+
+        return $actions;
+    }
+
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {

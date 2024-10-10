@@ -24,6 +24,8 @@ jobs:
         run: 'cp apps/.env.test apps/.env'
       - name: 'set .env'
         run: 'cp .env.example .env'
+      - name: 'Encore build'
+        run: npm run encore:build
       - name: 'SET BDD'
         run: npm run bdd:mariadb
       - name: 'Launch Lampy'
@@ -50,8 +52,6 @@ jobs:
         run: npm run lint:phpmnd
       - name: Add assets
         run: npm run assets
-      - name: 'Encore build'
-        run: npm run encore:build
       - name: Linter twig
         run: npm run lint:twig
       - name: Linter yaml
