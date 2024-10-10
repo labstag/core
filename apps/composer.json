@@ -16,7 +16,7 @@
         "doctrine/doctrine-migrations-bundle": "3.3.*",
         "easycorp/easyadmin-bundle": "4.12.*",
         "fakerphp/faker": "1.23.*",
-        "gedmo/doctrine-extensions": "3.16.*",
+        "gedmo/doctrine-extensions": "3.17.*",
         "giggsey/libphonenumber-for-php": "8.13.*",
         "knplabs/knp-menu-bundle": "3.4.*",
         "knplabs/knp-paginator-bundle": "6.5.*",
