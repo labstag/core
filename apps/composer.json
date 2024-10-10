@@ -19,7 +19,7 @@
         "gedmo/doctrine-extensions": "3.16.*",
         "giggsey/libphonenumber-for-php": "8.13.*",
         "knplabs/knp-menu-bundle": "3.4.*",
-        "knplabs/knp-paginator-bundle": "6.5.*",
+        "knplabs/knp-paginator-bundle": "6.6.*",
         "league/flysystem-bundle": "3.3.*",
         "liip/imagine-bundle": "^2.13",
         "nelmio/cors-bundle": "2.5.*",
