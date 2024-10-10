@@ -50,8 +50,6 @@ jobs:
         run: npm run lint:phpmnd
       - name: Add assets
         run: npm run assets
-      - name: Version sass
-        run: npm list sass
       - name: 'Encore build'
         run: npm run encore:build
       - name: Linter twig
