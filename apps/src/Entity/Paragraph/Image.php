@@ -4,12 +4,13 @@ namespace Labstag\Entity\Paragraph;
 
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Entity\Paragraph;
+use Labstag\Interface\ParagraphInterface;
 use Labstag\Repository\Paragraph\ImageRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
 #[ORM\Table(name: 'paragraph_image')]
-class Image
+class Image implements ParagraphInterface
 {
 
     #[ORM\Id]

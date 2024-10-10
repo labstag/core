@@ -3,7 +3,9 @@
 namespace Labstag\Service;
 
 use DateTime;
+use Doctrine\Common\Util\ClassUtils;
 use Labstag\Entity\Paragraph;
+use Labstag\Interface\ParagraphInterface;
 use ReflectionClass;
 use stdClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -47,13 +49,21 @@ class ParagraphService
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $name  = $reflectionProperty->getName();
-            $type  = $reflectionProperty->getType();
             $value = $propertyAccessor->getValue($paragraph, $name);
             if (!is_object($value) || $value instanceof DateTime) {
                 continue;
             }
 
-            dump($name, $type, $value);
+            $class  = ClassUtils::getClass($value);
+            $entity = new $class();
+            if ($entity instanceof ParagraphInterface) {
+                continue;
+            }
+
+            $object->name  = $name;
+            $object->value = $value;
+
+            break;
         }
 
         return $object;

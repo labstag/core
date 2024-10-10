@@ -39,7 +39,6 @@ class FileService
     {
         $data = $this->getData();
         foreach (array_keys($data) as $key) {
-            dump($key);
             $this->getFileSystem($key);
         }
     }

@@ -5,7 +5,7 @@
   {% set controller = ea_crud_form.ea_field.customOptions.get('controller') %}
   {% include "admin/modal/paragraph.html.twig" %}
   <div
-    class="paragraph_data"
+    class="paragraph-data"
     data-url-add="{{ ea_url().setController(controller).setAction('addParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
     data-url-delete="{{ ea_url().setController(controller).setAction('deleteParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
     data-url-update="{{ ea_url().setController(controller).setAction('updateParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
@@ -18,10 +18,10 @@
     {% set list = ea_crud_form.ea_field.customOptions.get('paragraphs') %}
     <div class="row">
         <div class="col-md-3">
-            <label class="form-control-label" for="paragraph_select">Ajouter un paragraphe</label>
+            <label class="form-control-label" for="paragraph-select">Ajouter un paragraphe</label>
         </div>
         <div class="col-md-3 form-widget">
-            <select id="paragraph_select" name="paragraph_select" class="form-select" data-ea-widget="ea-autocomplete" data-ea-autocomplete-render-items-as-html="false">
+            <select id="paragraph-select" name="paragraph-select" class="form-select" data-ea-widget="ea-autocomplete" data-ea-autocomplete-render-items-as-html="false">
             <option value=""></option>
             {% for info, code in list %}
                 <option value="{{ code }}">{{ info }}</option>
@@ -29,8 +29,8 @@
             </select>
         </div>
         <div class="col-md-3">
-            <a href="#" id="paragraph_btn" class="btn btn-primary">AJOUTER</a>
-            <a href="#" id="paragraph_refresh" class="btn btn-primary">REFRESH</a>
+            <a href="#" id="paragraph-btn" class="btn btn-primary">AJOUTER</a>
+            <a href="#" id="paragraph-refresh" class="btn btn-primary">REFRESH</a>
         </div>
     </div>
   </div>

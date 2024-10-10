@@ -4,12 +4,13 @@ namespace Labstag\Entity\Paragraph;
 
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Entity\Paragraph;
+use Labstag\Interface\ParagraphInterface;
 use Labstag\Repository\Paragraph\VideoRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: VideoRepository::class)]
 #[ORM\Table(name: 'paragraph_video')]
-class Video
+class Video implements ParagraphInterface
 {
 
     #[ORM\Id]

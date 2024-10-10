@@ -38,8 +38,8 @@ Encore
    * Each entry will result in one JavaScript file (e.g. app.js)
    * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
    */
-  .addEntry("front", ["./assets/js/front.js", "./assets/scss/front.scss"])
-  .addEntry("back", ["./assets/js/back.js", "./assets/scss/back.scss"])
+  .addEntry("front", ["./assets/front.js", "./assets/front.scss"])
+  .addEntry("back", ["./assets/back.js", "./assets/back.scss"])
 
   // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
   // .enableStimulusBridge('./assets/controllers.json')
@@ -119,9 +119,12 @@ Encore
       loader: 'raw-loader'
     }
   )
-  .configureLoaderRule( 'images', loader => {
-    loader.exclude = /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/;
-  })
+  .configureLoaderRule(
+    'images',
+    loader => {
+      loader.exclude = /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/;
+    }
+  )
   .addLoader({
     test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
     loader: 'postcss-loader',

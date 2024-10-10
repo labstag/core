@@ -1,0 +1,43 @@
+@import url("@nm/bootstrap/scss/bootstrap");
+@import url("@nm/@fortawesome/fontawesome-free/scss/brands");
+@import url("@nm/@fortawesome/fontawesome-free/scss/fontawesome");
+@import url("@nm/@fortawesome/fontawesome-free/scss/regular");
+@import url("@nm/@fortawesome/fontawesome-free/scss/solid");
+
+.sort-list{
+  li{
+    cursor: move;
+  }
+}
+
+#paragraph-sort{
+  .fa-arrows-alt{
+    cursor: move;
+  }
+}
+
+a{
+  text-decoration: none;
+
+  &.paragraph-edit{
+    @extend .btn;
+    @extend .btn-sm;
+    @extend .btn-primary;
+
+    &::before{
+      @extend .fa-solid;
+      @extend .fa-pen-to-square;
+    }
+  }
+
+  &.paragraph-delete{
+    @extend .btn;
+    @extend .btn-sm;
+    @extend .btn-danger;
+
+    &::before{
+      @extend .fa-solid;
+      @extend .fa-trash;
+    }
+  }
+}

@@ -1,4 +1,3 @@
-import '../scss/back.scss'
 import Sortable from 'sortablejs';
 import Wysiwyg from './wysiwyg';
 
@@ -23,7 +22,7 @@ function sortableElementSort() {
           document.querySelectorAll("#paragraphs_list tbody tr").forEach(tr => {
             paragraphs.push(tr.dataset.id);
           });
-          var dataParagraph = document.querySelector('#paragraphs_list').closest('.paragraph_data');
+          var dataParagraph = document.querySelector('#paragraphs_list').closest('.paragraph-data');
           fetch(dataParagraph.dataset.urlUpdate, {
             method: 'POST',
             headers: {
@@ -82,7 +81,7 @@ function BtnDeleteParagraph() {
   document.querySelectorAll('.paragraph-delete').forEach(element => {
     element.addEventListener('click', function (e) {
       e.preventDefault();
-      var dataParagraph = document.querySelector('#paragraphs_list').closest('.paragraph_data');
+      var dataParagraph = document.querySelector('#paragraphs_list').closest('.paragraph-data');
       fetch(dataParagraph.dataset.urlDelete, {
         method: 'POST',
         headers: {
@@ -97,14 +96,14 @@ function BtnDeleteParagraph() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  document.querySelector('#paragraph_btn').addEventListener('click', function () {
-    var dataParagraph = document.querySelector('#paragraphs_list').closest('.paragraph_data');
+  document.querySelector('#paragraph-btn').addEventListener('click', function () {
+    var dataParagraph = document.querySelector('#paragraphs_list').closest('.paragraph-data');
     fetch(dataParagraph.dataset.urlAdd, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: new URLSearchParams({ paragraph: document.querySelector('#paragraph_select').value })
+      body: new URLSearchParams({ paragraph: document.querySelector('#paragraph-select').value })
     })
     .then(response => response.text())
     .then(returnParargaphsList);
@@ -112,9 +111,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   BtnDeleteParagraph();
 
-  document.querySelector('#paragraph_refresh').addEventListener('click', function (e) {
+  document.querySelector('#paragraph-refresh').addEventListener('click', function (e) {
     e.preventDefault();
-    var dataParagraph = document.querySelector('#paragraphs_list').closest('.paragraph_data');
+    var dataParagraph = document.querySelector('#paragraphs_list').closest('.paragraph-data');
     fetch(dataParagraph.dataset.urlList)
     .then(response => response.text())
     .then(returnParargaphsList);
@@ -122,9 +121,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   paragraphsAction();
 
-  document.querySelector('#paragraph_modal').addEventListener('hide.bs.modal', function (e) {
-    document.querySelector('#paragraph_refresh').click();
-    document.querySelector('#paragraph_iframe').src = document.querySelector('#paragraph_iframe').dataset.src;
+  document.querySelector('#paragraph-modal').addEventListener('hide.bs.modal', function (e) {
+    document.querySelector('#paragraph-refresh').click();
+    document.querySelector('#paragraph-iframe').src = document.querySelector('#paragraph-iframe').dataset.src;
   });
 
   document.querySelector('#modal-block-add').addEventListener('click', function (e) {

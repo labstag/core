@@ -4,12 +4,13 @@ namespace Labstag\Entity\Paragraph;
 
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Entity\Paragraph;
+use Labstag\Interface\ParagraphInterface;
 use Labstag\Repository\Paragraph\FormRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: FormRepository::class)]
 #[ORM\Table(name: 'paragraph_form')]
-class Form
+class Form implements ParagraphInterface
 {
 
     #[ORM\Id]
