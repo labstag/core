@@ -123,7 +123,7 @@
     "postcss-discard-comments": "7.0.*",
     "postcss-loader": "8.1.*",
     "regenerator-runtime": "0.14.*",
-    "sass": "1.64.*",
+    "sass": "1.79.*",
     "sass-loader": "16.0.*",
     "sortablejs": "1.15.*",
     "stylelint": "16.9.*",
