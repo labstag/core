@@ -1,4 +1,16 @@
-@import "bootstrap/scss/bootstrap";
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/maps";
+@import "node_modules/bootstrap/scss/mixins";
+@import "node_modules/bootstrap/scss/root";
+@import "node_modules/bootstrap/scss/utilities";
+@import "node_modules/bootstrap/scss/reboot";
+@import "node_modules/bootstrap/scss/type";
+@import "node_modules/bootstrap/scss/images";
+@import "node_modules/bootstrap/scss/containers";
+@import "node_modules/bootstrap/scss/grid";
+@import "node_modules/bootstrap/scss/helpers";
+@import "node_modules/bootstrap/scss/utilities/api";
 @import "@fortawesome/fontawesome-free/scss/brands";
 @import "@fortawesome/fontawesome-free/scss/fontawesome";
 @import "@fortawesome/fontawesome-free/scss/regular";
@@ -20,24 +32,24 @@ a{
   text-decoration: none;
 
   &.paragraph-edit{
-    @extend .btn !optional;
-    @extend .btn-sm !optional;
-    @extend .btn-primary !optional;
+    @extend .btn;
+    @extend .btn-sm;
+    @extend .btn-primary;
 
     &::before{
-      @extend .fa-solid !optional;
-      @extend .fa-pen-to-square !optional;
+      @extend .fa-solid;
+      @extend .fa-pen-to-square;
     }
   }
 
   &.paragraph-delete{
-    @extend .btn !optional;
-    @extend .btn-sm !optional;
-    @extend .btn-danger !optional;
+    @extend .btn;
+    @extend .btn-sm;
+    @extend .btn-danger;
 
     &::before{
-      @extend .fa-solid !optional;
-      @extend .fa-trash !optional;
+      @extend .fa-solid;
+      @extend .fa-trash;
     }
   }
 }
