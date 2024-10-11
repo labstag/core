@@ -69,8 +69,12 @@ class ParagraphService
         return $object;
     }
 
-    public function getFields(Paragraph $paragraph)
+    public function getFields($paragraph)
     {
+        if (!$paragraph instanceof Paragraph) {
+            return [];
+        }
+
         $type   = $paragraph->getType();
         $fields = [];
         foreach ($this->paragraphs as $row) {

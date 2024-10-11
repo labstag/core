@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use Labstag\Entity\Paragraph;
 use Labstag\Entity\Paragraph\Text;
 use Labstag\Lib\ParagraphLib;
 use Override;
@@ -24,6 +25,13 @@ class TextParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'text';
+    }
+
+    public function getFields(Paragraph $paragraph): iterable
+    {
+        unset($paragraph);
+
+        return [];
     }
 
     #[Override]

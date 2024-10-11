@@ -33,11 +33,10 @@ class PageCrudController extends AbstractCrudControllerLib
         yield AssociationField::new('page')->autocomplete();
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield DateTimeField::new('updatedAt')->hideOnForm();
-        yield $this->addFieldRefUser();
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('page');
         yield $this->addFieldCategories('page');
-        $fields = $this->addFieldMetas();
+        $fields = array_merge($this->addFieldMetas(), $this->addFieldRefUser());
         foreach ($fields as $field) {
             yield $field;
         }

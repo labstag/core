@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -18,6 +19,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     public function configureActions(Actions $actions): Actions
     {
         if ($this->isIframeEdit()) {
+            $actions->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN);
             return $actions;
         }
 
@@ -44,8 +46,11 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     {
         unset($pageName);
         $currentEntity = $this->getContext()->getEntity()->getInstance();
+        dump($currentEntity);
         yield $this->addFieldID();
-        yield ChoiceField::new('fond', 'Fond')->setChoices($this->paragraphService->getFonds());
+        $choiceField = ChoiceField::new('fond', 'Fond');
+        $choiceField->setChoices($this->paragraphService->getFonds());
+        yield $choiceField;
         $allTypes = array_flip($this->paragraphService->getAll(null));
         yield TextField::new('type')->hideOnForm()->formatValue(
             static fn ($value) => $allTypes[$value] ?? null

@@ -32,9 +32,8 @@ class EditoCrudController extends AbstractCrudControllerLib
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield DateTimeField::new('updatedAt')->hideOnForm();
         yield $this->addFieldTags('edito');
-        yield $this->addFieldRefUser();
         yield $this->addFieldImageUpload('img', $pageName);
-        $fields = $this->addFieldMetas();
+        $fields = array_merge($this->addFieldMetas(), $this->addFieldRefUser());
         foreach ($fields as $field) {
             yield $field;
         }

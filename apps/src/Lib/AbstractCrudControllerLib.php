@@ -236,14 +236,22 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             return $fields;
         }
 
-        $fields[] = FormField::addTab('Paragraphs');
-        $fields[] = ParagraphsField::new('paragraphs');
+        $fields[] = FormField::addTab('Paragraphs')->hideWhenCreating();
+        $fields[] = ParagraphsField::new('paragraphs')->hideWhenCreating();
 
         return $fields;
     }
 
     protected function addFieldRefUser()
     {
+        $data = [];
+        $user  = $this->getUser();
+        $roles = $user->getRoles();
+        if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
+            return [];
+        }
+        
+        $data[]           = FormField::addTab('refuser');
         $associationField = AssociationField::new('refuser');
         $associationField->autocomplete();
         $associationField->setSortProperty('username');
@@ -254,7 +262,9 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             $associationField->hideOnForm();
         }
 
-        return $associationField;
+        $data[] = $associationField;
+
+        return $data;
     }
 
     protected function addFieldSlug()

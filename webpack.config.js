@@ -1,8 +1,8 @@
 const path = require('path');
 var Encore = require('@symfony/webpack-encore');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const { CKEditorTranslationsPlugin } = require( '@ckeditor/ckeditor5-dev-translations' );
-const { styles } = require( '@ckeditor/ckeditor5-dev-utils' );
+// const { CKEditorTranslationsPlugin } = require( '@ckeditor/ckeditor5-dev-translations' );
+// const { styles } = require( '@ckeditor/ckeditor5-dev-utils' );
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
 if (!Encore.isRuntimeEnvironmentConfigured()) {
@@ -96,23 +96,23 @@ Encore
   .enableBuildNotifications(true, function (options) {
     options.title = 'Labstag';
   })
-  .addPlugin(
-    new CKEditorTranslationsPlugin(
-      {
-        // The main language that will be built into the main bundle.
-        language: 'fr',
-        addMainLanguageTranslationsToAllAssets: true,
-        buildAllTranslationsToSeparateFiles: true,
+  // .addPlugin(
+  //   new CKEditorTranslationsPlugin(
+  //     {
+  //       // The main language that will be built into the main bundle.
+  //       language: 'fr',
+  //       addMainLanguageTranslationsToAllAssets: true,
+  //       buildAllTranslationsToSeparateFiles: true,
 
-        // Additional languages that will be emitted to the `outputDirectory`.
-        // This option can be set to an array of language codes or `'all'` to build all found languages.
-        // The bundle is optimized for one language when this option is omitted.
-        additionalLanguages: 'all',
+  //       // Additional languages that will be emitted to the `outputDirectory`.
+  //       // This option can be set to an array of language codes or `'all'` to build all found languages.
+  //       // The bundle is optimized for one language when this option is omitted.
+  //       additionalLanguages: 'all',
 
-        // For more advanced options see https://github.com/ckeditor/ckeditor5-dev/tree/master/packages/ckeditor5-dev-translations.
-      }
-    )
-  )
+  //       // For more advanced options see https://github.com/ckeditor/ckeditor5-dev/tree/master/packages/ckeditor5-dev-translations.
+  //     }
+  //   )
+  // )
   .addRule(
     {
       test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
@@ -125,18 +125,18 @@ Encore
       loader.exclude = /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/;
     }
   )
-  .addLoader({
-    test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
-    loader: 'postcss-loader',
-    options: {
-        postcssOptions: styles.getPostCssConfig( {
-            themeImporter: {
-                themePath: require.resolve( '@ckeditor/ckeditor5-theme-lark' )
-            },
-            minify: true
-        } )
-    }
-} )
+//   .addLoader({
+//     test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
+//     loader: 'postcss-loader',
+//     options: {
+//         postcssOptions: styles.getPostCssConfig( {
+//             themeImporter: {
+//                 themePath: require.resolve( '@ckeditor/ckeditor5-theme-lark' )
+//             },
+//             minify: true
+//         } )
+//     }
+// } )
   .enablePostCssLoader(
     (options) => {
       options.postcssOptions = {

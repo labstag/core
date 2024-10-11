@@ -2,6 +2,7 @@
 
 namespace Labstag\Entity\Paragraph;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Entity\Paragraph;
 use Labstag\Interface\ParagraphInterface;
@@ -21,6 +22,12 @@ class Html implements ParagraphInterface
 
     #[ORM\OneToOne(mappedBy: 'html', cascade: ['persist', 'remove'])]
     private ?Paragraph $paragraph = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $title = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
     public function getId(): ?int
     {
@@ -45,6 +52,30 @@ class Html implements ParagraphInterface
         }
 
         $this->paragraph = $paragraph;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

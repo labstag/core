@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use Labstag\Entity\Paragraph;
 use Labstag\Entity\Paragraph\Image;
 use Labstag\Lib\ParagraphLib;
 use Override;
@@ -24,6 +25,13 @@ class ImageParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'img';
+    }
+
+    public function getFields(Paragraph $paragraph): iterable
+    {
+        unset($paragraph);
+
+        return [];
     }
 
     #[Override]

@@ -31,11 +31,10 @@ class HistoryCrudController extends AbstractCrudControllerLib
         yield TextField::new('title');
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield DateTimeField::new('updatedAt')->hideOnForm();
-        yield $this->addFieldRefUser();
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('history');
         yield $this->addFieldCategories('history');
-        $fields = $this->addFieldMetas();
+        $fields = array_merge($this->addFieldMetas(), $this->addFieldRefUser());
         foreach ($fields as $field) {
             yield $field;
         }

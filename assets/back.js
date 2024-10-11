@@ -1,5 +1,6 @@
 import Sortable from 'sortablejs';
-import Wysiwyg from './wysiwyg';
+import { ClassicEditor } from 'ckeditor5';
+import editorConfig from './wysiwyg'; 
 
 function sortableElementSort() {
   document.querySelectorAll(".sort-list").forEach(element => {
@@ -62,13 +63,7 @@ function paragraphsAction() {
 
 function addWysiwygToElement(element) {
   element.classList.remove('wysiwyg');
-  Wysiwyg.create(element, {
-    language: 'fr'
-  }).then(editor => {
-    console.log('Editor was initialized', editor);
-  }).catch(err => {
-    console.error(err);
-  });
+  ClassicEditor.create(element, editorConfig);
 }
 
 function testWysiwyg() {
