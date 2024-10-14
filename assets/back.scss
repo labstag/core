@@ -1,10 +1,12 @@
+/* stylelint-disable */
 @import "bootstrap/scss/bootstrap";
 @import "@fortawesome/fontawesome-free/scss/brands";
 @import "@fortawesome/fontawesome-free/scss/fontawesome";
 @import "@fortawesome/fontawesome-free/scss/regular";
 @import "@fortawesome/fontawesome-free/scss/solid";
 @import 'ckeditor5/ckeditor5.css';
-@import './wysiwyg.scss';
+/* stylelint-enable */
+@import url('./wysiwyg.scss');
 
 .sort-list{
   li{
