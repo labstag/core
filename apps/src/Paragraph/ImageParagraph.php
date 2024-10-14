@@ -16,6 +16,14 @@ class ImageParagraph extends ParagraphLib
     }
 
     #[Override]
+    public function getFields(Paragraph $paragraph): iterable
+    {
+        unset($paragraph);
+
+        return [];
+    }
+
+    #[Override]
     public function getName(): string
     {
         return 'Image';
@@ -25,13 +33,6 @@ class ImageParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'img';
-    }
-
-    public function getFields(Paragraph $paragraph): iterable
-    {
-        unset($paragraph);
-
-        return [];
     }
 
     #[Override]

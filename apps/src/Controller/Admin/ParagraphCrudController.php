@@ -20,6 +20,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     {
         if ($this->isIframeEdit()) {
             $actions->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN);
+
             return $actions;
         }
 

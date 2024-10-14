@@ -16,6 +16,14 @@ class VideoParagraph extends ParagraphLib
     }
 
     #[Override]
+    public function getFields(Paragraph $paragraph): iterable
+    {
+        unset($paragraph);
+
+        return [];
+    }
+
+    #[Override]
     public function getName(): string
     {
         return 'Video';
@@ -25,13 +33,6 @@ class VideoParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'video';
-    }
-
-    public function getFields(Paragraph $paragraph): iterable
-    {
-        unset($paragraph);
-
-        return [];
     }
 
     #[Override]

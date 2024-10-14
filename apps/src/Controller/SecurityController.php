@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller;
 
+use Symfony\Component\Security\Core\User\UserInterface;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,12 +14,13 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        $error        = $authenticationUtils->getLastAuthenticationError();
-        $lastUsername = $authenticationUtils->getLastUsername();
+        if ($this->getUser() instanceof UserInterface) {
+            return $this->redirectToRoute('admin');
+        }
 
         return $this->render(
             '@EasyAdmin/page/login.html.twig',
-            $this->getDataLogin($error, $lastUsername)
+            $this->getDataLogin($authenticationUtils)
         );
     }
 
@@ -28,8 +30,11 @@ class SecurityController extends AbstractController
         throw new LogicException();
     }
 
-    protected function getDataLogin($error, $lastUsername): array
+    protected function getDataLogin($authenticationUtils): array
     {
+        $error        = $authenticationUtils->getLastAuthenticationError();
+        $lastUsername = $authenticationUtils->getLastUsername();
+
         return [
             // parameters usually defined in Symfony login forms
             'error'                   => $error,

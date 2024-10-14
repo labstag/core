@@ -16,6 +16,14 @@ class TextParagraph extends ParagraphLib
     }
 
     #[Override]
+    public function getFields(Paragraph $paragraph): iterable
+    {
+        unset($paragraph);
+
+        return [];
+    }
+
+    #[Override]
     public function getName(): string
     {
         return 'Texte';
@@ -25,13 +33,6 @@ class TextParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'text';
-    }
-
-    public function getFields(Paragraph $paragraph): iterable
-    {
-        unset($paragraph);
-
-        return [];
     }
 
     #[Override]

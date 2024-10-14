@@ -244,13 +244,13 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFieldRefUser()
     {
-        $data = [];
+        $data  = [];
         $user  = $this->getUser();
         $roles = $user->getRoles();
         if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
             return [];
         }
-        
+
         $data[]           = FormField::addTab('refuser');
         $associationField = AssociationField::new('refuser');
         $associationField->autocomplete();

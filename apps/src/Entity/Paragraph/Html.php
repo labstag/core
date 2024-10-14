@@ -14,6 +14,9 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 class Html implements ParagraphInterface
 {
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -26,8 +29,10 @@ class Html implements ParagraphInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
 
     public function getId(): ?int
     {
@@ -37,6 +42,18 @@ class Html implements ParagraphInterface
     public function getParagraph(): ?Paragraph
     {
         return $this->paragraph;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
     }
 
     public function setParagraph(?Paragraph $paragraph): static
@@ -56,26 +73,9 @@ class Html implements ParagraphInterface
         return $this;
     }
 
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
     public function setTitle(?string $title): static
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
 
         return $this;
     }

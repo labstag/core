@@ -48,7 +48,6 @@ import {
 	TableToolbar,
 	TextPartLanguage,
 	TextTransformation,
-	Title,
 	Underline,
 	Undo
 } from 'ckeditor5';
@@ -138,7 +137,6 @@ const editorConfig = {
 		TableToolbar,
 		TextPartLanguage,
 		TextTransformation,
-		Title,
 		Underline,
 		Undo
 	],
