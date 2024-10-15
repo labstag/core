@@ -3,20 +3,13 @@
 namespace Labstag\Paragraph;
 
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Paragraph\Text;
 use Labstag\Lib\ParagraphLib;
 use Override;
 
 class TextParagraph extends ParagraphLib
 {
     #[Override]
-    public function getEntity()
-    {
-        return Text::class;
-    }
-
-    #[Override]
-    public function getFields(Paragraph $paragraph): iterable
+    public function getFieldsEA(Paragraph $paragraph): iterable
     {
         unset($paragraph);
 

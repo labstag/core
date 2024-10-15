@@ -4,7 +4,6 @@ namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Paragraph\Html;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\ParagraphLib;
 use Override;
@@ -12,18 +11,12 @@ use Override;
 class HtmlParagraph extends ParagraphLib
 {
     #[Override]
-    public function getEntity()
-    {
-        return Html::class;
-    }
-
-    #[Override]
-    public function getFields(Paragraph $paragraph): iterable
+    public function getFieldsEA(Paragraph $paragraph): iterable
     {
         unset($paragraph);
 
-        yield TextField::new('html.title', 'Titre');
-        $wysiwygField = WysiwygField::new('html.description', 'Texte');
+        yield TextField::new('title', 'Titre');
+        $wysiwygField = WysiwygField::new('description', 'Texte');
         yield $wysiwygField;
     }
 

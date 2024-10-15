@@ -36,7 +36,11 @@ class PageCrudController extends AbstractCrudControllerLib
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('page');
         yield $this->addFieldCategories('page');
-        $fields = array_merge($this->addFieldMetas(), $this->addFieldRefUser());
+        $fields = array_merge(
+            $this->addFieldParagraphs($pageName),
+            $this->addFieldMetas(),
+            $this->addFieldRefUser()
+        );
         foreach ($fields as $field) {
             yield $field;
         }

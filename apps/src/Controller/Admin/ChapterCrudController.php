@@ -49,7 +49,10 @@ class ChapterCrudController extends AbstractCrudControllerLib
         yield $associationField;
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('chapter');
-        $fields = $this->addFieldMetas();
+        $fields = array_merge(
+            $this->addFieldParagraphs($pageName),
+            $this->addFieldMetas()
+        );
         foreach ($fields as $field) {
             yield $field;
         }

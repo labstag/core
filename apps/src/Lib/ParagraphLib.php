@@ -12,12 +12,7 @@ use Labstag\Entity\Post;
 
 abstract class ParagraphLib
 {
-    public function getEntity()
-    {
-
-    }
-
-    public function getFields(Paragraph $paragraph): iterable
+    public function getFieldsEA(Paragraph $paragraph): iterable
     {
         unset($paragraph);
 

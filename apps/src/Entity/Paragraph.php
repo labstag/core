@@ -2,27 +2,28 @@
 
 namespace Labstag\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Labstag\Entity\Paragraph\Form;
-use Labstag\Entity\Paragraph\Html;
-use Labstag\Entity\Paragraph\Image;
-use Labstag\Entity\Paragraph\Text;
-use Labstag\Entity\Paragraph\Video;
 use Labstag\Repository\ParagraphRepository;
+use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: ParagraphRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class Paragraph
+class Paragraph implements Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableEntity;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs')]
     private ?Chapter $chapter = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs')]
     private ?Edito $edito = null;
@@ -36,23 +37,14 @@ class Paragraph
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $fond = null;
 
-    #[ORM\OneToOne(inversedBy: 'paragraph', cascade: ['persist', 'remove'])]
-    private ?Form $form = null;
-
     #[ORM\ManyToOne(inversedBy: 'paragraphs')]
     private ?History $history = null;
-
-    #[ORM\OneToOne(inversedBy: 'paragraph', cascade: ['persist', 'remove'])]
-    private ?Html $html = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: 'guid', unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
-
-    #[ORM\OneToOne(inversedBy: 'paragraph', cascade: ['persist', 'remove'])]
-    private ?Image $image = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs')]
     private ?Memo $memo = null;
@@ -66,18 +58,26 @@ class Paragraph
     #[ORM\ManyToOne(inversedBy: 'paragraphs')]
     private ?Post $post = null;
 
-    #[ORM\OneToOne(inversedBy: 'paragraph', cascade: ['persist', 'remove'])]
-    private ?Text $text = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
-    #[ORM\OneToOne(inversedBy: 'paragraph', cascade: ['persist', 'remove'])]
-    private ?Video $video = null;
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getType();
+    }
 
     public function getChapter(): ?Chapter
     {
         return $this->chapter;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
     }
 
     public function getEdito(): ?Edito
@@ -90,29 +90,14 @@ class Paragraph
         return $this->fond;
     }
 
-    public function getForm(): ?Form
-    {
-        return $this->form;
-    }
-
     public function getHistory(): ?History
     {
         return $this->history;
     }
 
-    public function getHtml(): ?Html
-    {
-        return $this->html;
-    }
-
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    public function getImage(): ?Image
-    {
-        return $this->image;
     }
 
     public function getMemo(): ?Memo
@@ -135,19 +120,14 @@ class Paragraph
         return $this->post;
     }
 
-    public function getText(): ?Text
+    public function getTitle(): ?string
     {
-        return $this->text;
+        return $this->title;
     }
 
     public function getType(): ?string
     {
         return $this->type;
-    }
-
-    public function getVideo(): ?Video
-    {
-        return $this->video;
     }
 
     public function isEnable(): ?bool
@@ -158,6 +138,13 @@ class Paragraph
     public function setChapter(?Chapter $chapter): static
     {
         $this->chapter = $chapter;
+
+        return $this;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }
@@ -183,30 +170,9 @@ class Paragraph
         return $this;
     }
 
-    public function setForm(?Form $form): static
-    {
-        $this->form = $form;
-
-        return $this;
-    }
-
     public function setHistory(?History $history): static
     {
         $this->history = $history;
-
-        return $this;
-    }
-
-    public function setHtml(?Html $html): static
-    {
-        $this->html = $html;
-
-        return $this;
-    }
-
-    public function setImage(?Image $image): static
-    {
-        $this->image = $image;
 
         return $this;
     }
@@ -239,9 +205,9 @@ class Paragraph
         return $this;
     }
 
-    public function setText(?Text $text): static
+    public function setTitle(?string $title): static
     {
-        $this->text = $text;
+        $this->title = $title;
 
         return $this;
     }
@@ -249,13 +215,6 @@ class Paragraph
     public function setType(string $type): static
     {
         $this->type = $type;
-
-        return $this;
-    }
-
-    public function setVideo(?Video $video): static
-    {
-        $this->video = $video;
 
         return $this;
     }

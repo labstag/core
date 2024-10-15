@@ -87,12 +87,6 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             $entity->addParagraph($paragraph);
 
             $repository->save($entity);
-            $classobject = $this->paragraphService->getTypeEntity($paragraph);
-            if (!is_null($classobject)) {
-                $classentity = new $classobject();
-                $classentity->setParagraph($paragraph);
-                $repository->save($classentity);
-            }
         }
 
         $url = $generator->generateUrl();

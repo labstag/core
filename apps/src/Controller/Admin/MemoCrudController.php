@@ -30,7 +30,10 @@ class MemoCrudController extends AbstractCrudControllerLib
         yield DateTimeField::new('updatedAt')->hideOnForm();
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('memo');
-        $fields = array_merge($this->addFieldRefUser());
+        $fields = array_merge(
+            $this->addFieldParagraphs($pageName),
+            $this->addFieldRefUser()
+        );
         foreach ($fields as $field) {
             yield $field;
         }

@@ -3,20 +3,13 @@
 namespace Labstag\Paragraph;
 
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Paragraph\Video;
 use Labstag\Lib\ParagraphLib;
 use Override;
 
 class VideoParagraph extends ParagraphLib
 {
     #[Override]
-    public function getEntity()
-    {
-        return Video::class;
-    }
-
-    #[Override]
-    public function getFields(Paragraph $paragraph): iterable
+    public function getFieldsEA(Paragraph $paragraph): iterable
     {
         unset($paragraph);
 

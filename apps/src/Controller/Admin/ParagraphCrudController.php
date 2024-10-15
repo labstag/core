@@ -47,7 +47,6 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     {
         unset($pageName);
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        dump($currentEntity);
         yield $this->addFieldID();
         $choiceField = ChoiceField::new('fond', 'Fond');
         $choiceField->setChoices($this->paragraphService->getFonds());
@@ -59,11 +58,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         yield ParagraphParentField::new('parent', 'Parent');
         yield DateTimeField::new('created')->hideOnForm();
         yield DateTimeField::new('updated')->hideOnForm();
-        if (is_null($currentEntity)) {
-            return;
-        }
-
-        $fields = $this->paragraphService->getFields($currentEntity);
+        $fields = $this->paragraphService->getFieldsCrudEA($currentEntity);
         foreach ($fields as $field) {
             yield $field;
         }
