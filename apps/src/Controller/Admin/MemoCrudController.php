@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Memo;
+use Labstag\Form\Paragraphs\MemoType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 
@@ -31,7 +32,7 @@ class MemoCrudController extends AbstractCrudControllerLib
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('memo');
         $fields = array_merge(
-            $this->addFieldParagraphs($pageName),
+            $this->addFieldParagraphs($pageName, MemoType::class),
             $this->addFieldRefUser()
         );
         foreach ($fields as $field) {

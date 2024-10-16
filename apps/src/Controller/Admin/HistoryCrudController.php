@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\History;
 use Labstag\Entity\Meta;
+use Labstag\Form\Paragraphs\HistoryType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 
@@ -35,7 +36,7 @@ class HistoryCrudController extends AbstractCrudControllerLib
         yield $this->addFieldTags('history');
         yield $this->addFieldCategories('history');
         $fields = array_merge(
-            $this->addFieldParagraphs($pageName),
+            $this->addFieldParagraphs($pageName, HistoryType::class),
             $this->addFieldMetas(),
             $this->addFieldRefUser()
         );

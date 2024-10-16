@@ -3,13 +3,14 @@
   {% set instance = ea_crud_form.ea_entity.instance %}
   {% set urlOrder = ea_url().setController('Labstag\\Controller\\Admin\\ParagraphCrudController').setAction('order') %}
   {% set controller = ea_crud_form.ea_field.customOptions.get('controller') %}
+  {% set ea_urlcontroller = ea_url().setController(controller) %}
   {% include "admin/modal/paragraph.html.twig" %}
   <div
     class="paragraph-data"
-    data-url-add="{{ ea_url().setController(controller).setAction('addParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
-    data-url-delete="{{ ea_url().setController(controller).setAction('deleteParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
-    data-url-update="{{ ea_url().setController(controller).setAction('updateParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
-    data-url-list="{{ ea_url().setController(controller).setAction('listParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
+    data-url-add="{{ ea_urlcontroller.setAction('addParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
+    data-url-delete="{{ ea_urlcontroller.setAction('deleteParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
+    data-url-update="{{ ea_urlcontroller.setAction('updateParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
+    data-url-list="{{ ea_urlcontroller.setAction('listParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
   >
     <div id="paragraphs_list" class="row">
       {% include 'admin/pararaphs.html.twig' with {'paragraphs': instance.paragraphs} %}

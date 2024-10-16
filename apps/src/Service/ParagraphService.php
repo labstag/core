@@ -99,7 +99,7 @@ class ParagraphService
         $fields = [];
         foreach ($this->paragraphs as $row) {
             if ($row->getType() == $type) {
-                $fields = $row->getFieldsEA($paragraph);
+                $fields = $row->getFields($paragraph);
 
                 break;
             }

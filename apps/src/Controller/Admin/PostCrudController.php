@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
+use Labstag\Form\Paragraphs\PostType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 
@@ -35,7 +36,7 @@ class PostCrudController extends AbstractCrudControllerLib
         yield $this->addFieldTags('post');
         yield $this->addFieldCategories('post');
         $fields = array_merge(
-            $this->addFieldParagraphs($pageName),
+            $this->addFieldParagraphs($pageName, PostType::class),
             $this->addFieldMetas(),
             $this->addFieldRefUser()
         );

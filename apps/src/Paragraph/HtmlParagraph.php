@@ -11,12 +11,12 @@ use Override;
 class HtmlParagraph extends ParagraphLib
 {
     #[Override]
-    public function getFieldsEA(Paragraph $paragraph): iterable
+    public function getFields(Paragraph $paragraph): iterable
     {
         unset($paragraph);
 
         yield TextField::new('title', 'Titre');
-        $wysiwygField = WysiwygField::new('description', 'Texte');
+        $wysiwygField = WysiwygField::new('content', 'Texte');
         yield $wysiwygField;
     }
 

@@ -223,7 +223,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         ];
     }
 
-    protected function addFieldParagraphs(string $pageName): array
+    protected function addFieldParagraphs(string $pageName, string $form): array
     {
         $fields = [];
         if ('edit' !== $pageName) {
@@ -232,6 +232,21 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
         $fields[] = FormField::addTab('Paragraphs')->hideWhenCreating();
         $fields[] = ParagraphsField::new('paragraphs')->hideWhenCreating();
+
+
+        // $collectionField = CollectionField::new('paragraphs');
+        // $collectionField->setEntryType($form);
+        // $collectionField->setDefaultColumns('col-md-12 col-xxl-12');
+        // $collectionField->setFormTypeOption(
+        //     'entry_options', [
+        //         'allow_add' => true,
+        //         'allow_delete' => true
+        //     ]
+        // );
+        // $collectionField->allowAdd();
+        // $collectionField->allowDelete();
+
+        // $fields[] = $collectionField;
 
         return $fields;
     }

@@ -48,6 +48,7 @@ function changePositionSortList(event) {
 }
 
 function returnParargaphsList(data) {
+  document.querySelector('#paragraph-select').value = '';
   document.querySelector('#paragraphs_list').innerHTML = data;
   paragraphsAction();
 }
@@ -119,11 +120,6 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('#paragraph-modal').addEventListener('hide.bs.modal', function (e) {
     document.querySelector('#paragraph-refresh').click();
     document.querySelector('#paragraph-iframe').src = document.querySelector('#paragraph-iframe').dataset.src;
-  });
-
-  document.querySelector('#modal-block-add').addEventListener('click', function (e) {
-    e.preventDefault();
-    document.querySelector('#modal-block form').submit();
   });
 
   changePositionSortList();

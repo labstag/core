@@ -13,26 +13,30 @@ flysystem:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/uploads/avatar'
-    edito.storage:
-      adapter: 'local'
-      options:
-        directory: '%kernel.project_dir%/public/uploads/edito'
-    page.storage:
-      adapter: 'local'
-      options:
-        directory: '%kernel.project_dir%/public/uploads/page'
     chapter.storage:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/uploads/chapter'
-    memo.storage:
+    edito.storage:
       adapter: 'local'
       options:
-        directory: '%kernel.project_dir%/public/uploads/memo'
+        directory: '%kernel.project_dir%/public/uploads/edito'
     history.storage:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/uploads/history'
+    memo.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/memo'
+    page.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/page'
+    paragraph.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/paragraph'
     post.storage:
       adapter: 'local'
       options:

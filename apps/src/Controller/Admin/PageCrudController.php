@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
+use Labstag\Form\Paragraphs\PageType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 
@@ -37,7 +38,7 @@ class PageCrudController extends AbstractCrudControllerLib
         yield $this->addFieldTags('page');
         yield $this->addFieldCategories('page');
         $fields = array_merge(
-            $this->addFieldParagraphs($pageName),
+            $this->addFieldParagraphs($pageName, PageType::class),
             $this->addFieldMetas(),
             $this->addFieldRefUser()
         );

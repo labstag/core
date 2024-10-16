@@ -2,18 +2,23 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Override;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ImageParagraph extends ParagraphLib
 {
     #[Override]
-    public function getFieldsEA(Paragraph $paragraph): iterable
+    public function getFields(Paragraph $paragraph): iterable
     {
         unset($paragraph);
 
-        return [];
+        $imageField = TextField::new('imgFile');
+        $imageField->setFormType(VichImageType::class);
+
+        yield $imageField;
     }
 
     #[Override]

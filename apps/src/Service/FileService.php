@@ -14,20 +14,22 @@ class FileService
     public function __construct(
         #[Autowire(service: 'flysystem.adapter.private.storage')]
         protected LocalFilesystemAdapter $privateAdapter,
-        #[Autowire(service: 'flysystem.adapter.edito.storage')]
-        protected LocalFilesystemAdapter $editoAdapter,
         #[Autowire(service: 'flysystem.adapter.public.storage')]
         protected LocalFilesystemAdapter $publicAdapter,
         #[Autowire(service: 'flysystem.adapter.avatar.storage')]
         protected LocalFilesystemAdapter $avatarAdapter,
         #[Autowire(service: 'flysystem.adapter.chapter.storage')]
         protected LocalFilesystemAdapter $chapterAdapter,
-        #[Autowire(service: 'flysystem.adapter.page.storage')]
-        protected LocalFilesystemAdapter $pageAdapter,
-        #[Autowire(service: 'flysystem.adapter.memo.storage')]
-        protected LocalFilesystemAdapter $memoAdapter,
+        #[Autowire(service: 'flysystem.adapter.edito.storage')]
+        protected LocalFilesystemAdapter $editoAdapter,
         #[Autowire(service: 'flysystem.adapter.history.storage')]
         protected LocalFilesystemAdapter $historyAdapter,
+        #[Autowire(service: 'flysystem.adapter.memo.storage')]
+        protected LocalFilesystemAdapter $memoAdapter,
+        #[Autowire(service: 'flysystem.adapter.page.storage')]
+        protected LocalFilesystemAdapter $pageAdapter,
+        #[Autowire(service: 'flysystem.adapter.paragraph.storage')]
+        protected LocalFilesystemAdapter $paragraphAdapter,
         #[Autowire(service: 'flysystem.adapter.post.storage')]
         protected LocalFilesystemAdapter $postAdapter,
         protected KernelInterface $kernel
@@ -39,6 +41,10 @@ class FileService
     {
         $data = $this->getData();
         foreach (array_keys($data) as $key) {
+            if (in_array($key, ['private.storage', 'public.storage'])) {
+                continue;
+            }
+
             $this->getFileSystem($key);
         }
     }
@@ -78,15 +84,16 @@ class FileService
     private function getData(): array
     {
         return [
-            'avatar.storage'  => $this->avatarAdapter,
-            'chapter.storage' => $this->chapterAdapter,
-            'edito.storage'   => $this->editoAdapter,
-            'history.storage' => $this->historyAdapter,
-            'memo.storage'    => $this->memoAdapter,
-            'page.storage'    => $this->pageAdapter,
-            'post.storage'    => $this->postAdapter,
-            'private.storage' => $this->privateAdapter,
-            'public.storage'  => $this->publicAdapter,
+            'private.storage'   => $this->privateAdapter,
+            'public.storage'    => $this->publicAdapter,
+            'avatar.storage'    => $this->avatarAdapter,
+            'chapter.storage'   => $this->chapterAdapter,
+            'edito.storage'     => $this->editoAdapter,
+            'history.storage'   => $this->historyAdapter,
+            'memo.storage'      => $this->memoAdapter,
+            'page.storage'      => $this->pageAdapter,
+            'paragraph.storage' => $this->paragraphAdapter,
+            'post.storage'      => $this->postAdapter,
         ];
     }
 

@@ -9,7 +9,7 @@ use Override;
 class FormParagraph extends ParagraphLib
 {
     #[Override]
-    public function getFieldsEA(Paragraph $paragraph): iterable
+    public function getFields(Paragraph $paragraph): iterable
     {
         unset($paragraph);
 

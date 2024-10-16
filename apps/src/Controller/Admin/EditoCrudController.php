@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Edito;
 use Labstag\Entity\Meta;
+use Labstag\Form\Paragraphs\EditoType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 
@@ -34,7 +35,7 @@ class EditoCrudController extends AbstractCrudControllerLib
         yield $this->addFieldTags('edito');
         yield $this->addFieldImageUpload('img', $pageName);
         $fields = array_merge(
-            $this->addFieldParagraphs($pageName),
+            $this->addFieldParagraphs($pageName, EditoType::class),
             $this->addFieldMetas(),
             $this->addFieldRefUser()
         );

@@ -2,6 +2,7 @@
 
 namespace Labstag\Entity;
 
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -11,9 +12,12 @@ use Labstag\Repository\ParagraphRepository;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: ParagraphRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
+#[Vich\Uploadable]
 class Paragraph implements Stringable
 {
     use SoftDeleteableEntity;
@@ -23,7 +27,7 @@ class Paragraph implements Stringable
     private ?Chapter $chapter = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    private ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs')]
     private ?Edito $edito = null;
@@ -64,6 +68,12 @@ class Paragraph implements Stringable
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $img = null;
+
+    #[Vich\UploadableField(mapping: 'paragraph', fileNameProperty: 'img')]
+    private ?File $imgFile = null;
+
     #[Override]
     public function __toString(): string
     {
@@ -75,9 +85,9 @@ class Paragraph implements Stringable
         return $this->chapter;
     }
 
-    public function getDescription(): ?string
+    public function getContent(): ?string
     {
-        return $this->description;
+        return $this->content;
     }
 
     public function getEdito(): ?Edito
@@ -142,9 +152,9 @@ class Paragraph implements Stringable
         return $this;
     }
 
-    public function setDescription(?string $description): static
+    public function setContent(?string $content): static
     {
-        $this->description = $description;
+        $this->content = $content;
 
         return $this;
     }
@@ -210,6 +220,32 @@ class Paragraph implements Stringable
         $this->title = $title;
 
         return $this;
+    }
+
+    public function setImg(?string $img): void
+    {
+        $this->img = $img;
+    }
+
+    public function setImgFile(?File $imgFile = null): void
+    {
+        $this->imgFile = $imgFile;
+
+        if ($imgFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new DateTimeImmutable();
+        }
+    }
+
+    public function getImg(): ?string
+    {
+        return $this->img;
+    }
+
+    public function getImgFile(): ?File
+    {
+        return $this->imgFile;
     }
 
     public function setType(string $type): static

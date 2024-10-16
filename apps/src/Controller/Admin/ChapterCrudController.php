@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
+use Labstag\Form\Paragraphs\ChapterType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 
@@ -50,7 +51,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('chapter');
         $fields = array_merge(
-            $this->addFieldParagraphs($pageName),
+            $this->addFieldParagraphs($pageName, ChapterType::class),
             $this->addFieldMetas()
         );
         foreach ($fields as $field) {

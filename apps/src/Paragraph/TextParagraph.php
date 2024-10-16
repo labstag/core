@@ -3,17 +3,19 @@
 namespace Labstag\Paragraph;
 
 use Labstag\Entity\Paragraph;
+use Labstag\Field\WysiwygField;
 use Labstag\Lib\ParagraphLib;
 use Override;
 
 class TextParagraph extends ParagraphLib
 {
     #[Override]
-    public function getFieldsEA(Paragraph $paragraph): iterable
+    public function getFields(Paragraph $paragraph): iterable
     {
         unset($paragraph);
+        $wysiwygField = WysiwygField::new('content', 'Texte');
 
-        return [];
+        yield $wysiwygField;
     }
 
     #[Override]
