@@ -53,8 +53,9 @@
                 data-target="#paragraph-iframe"
                 data-bs-toggle="modal"
                 data-bs-target="#paragraph-modal"
+                id="paragrapEdit{{ row.id }}"
               ></a>
-              <a class="paragraph-delete" href="#"></a>
+              <a class="paragraph-delete" href="#" id="paragrapDelete{{ row.id }}"></a>
             </td>
         </tr>
       {% endfor %}

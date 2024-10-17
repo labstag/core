@@ -1,3 +1,4 @@
+import { ClassicEditor } from 'ckeditor5';
 import {
 	AccessibilityHelp,
 	Alignment,
@@ -274,4 +275,12 @@ const editorConfig = {
 	},
 	translations: [translations]
 };
-export default editorConfig;
+export class Wysiwyg
+{
+  constructor()
+  {
+    document.querySelectorAll('.wysiwyg').forEach(element => {
+      ClassicEditor.create(element, editorConfig);
+    });
+  }
+}

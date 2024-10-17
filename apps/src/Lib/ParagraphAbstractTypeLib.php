@@ -2,6 +2,7 @@
 
 namespace Labstag\Lib;
 
+use Override;
 use Closure;
 use Labstag\Entity\Paragraph;
 use Labstag\Service\ParagraphService;
@@ -13,13 +14,43 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class ParagraphAbstractTypeLib extends AbstractType
 {
+
     protected $entity;
 
     public function __construct(
         protected ParagraphService $paragraphService
     )
     {
+    }
 
+    #[Override]
+    public function buildForm(FormBuilderInterface $formBuilder, array $options): void
+    {
+        $prototypes = $this->buildPrototypes($formBuilder, $options);
+        unset($prototypes);
+        $formBuilder->add('type');
+    }
+
+    #[Override]
+    public function configureOptions(OptionsResolver $optionsResolver): void
+    {
+        $optionsResolver->setDefaults(
+            [
+                'allow_add'      => false,
+                'allow_delete'   => false,
+                'prototype'      => true,
+                'prototype_name' => '__name__',
+                'type_name'      => '_type',
+                'options'        => [],
+                'types_options'  => [],
+                'index_property' => null,
+                'sortable'       => true,
+                'sortable_field' => 'position',
+                'placeholder'    => 'Add new item',
+                'data_class'     => Paragraph::class,
+            ]
+        );
+        $optionsResolver->setNormalizer('options', $this->getOptionsNormalizer());
     }
 
     public function setEntity($entity): void
@@ -27,66 +58,46 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
         $this->entity = $entity;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    protected function buildPrototype(FormBuilderInterface $formBuilder, string $name, FormTypeInterface|string $type, array $options): FormBuilderInterface
     {
-        $prototypes = $this->buildPrototypes($builder, $options);
-        $builder->add('type');
+        return $formBuilder->create($name, $type, $options);
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'allow_add' => false,
-            'allow_delete' => false,
-            'prototype' => true,
-            'prototype_name' => '__name__',
-            'type_name' => '_type',
-            'options' => [],
-            'types_options' => [],
-            'index_property' => null,
-            'sortable' => true,
-            'sortable_field' => 'position',
-            'placeholder' => 'Add new item',
-            'data_class' => Paragraph::class,
-        ]);
-        $resolver->setNormalizer('options', $this->getOptionsNormalizer());
-    }
-
-    private function getOptionsNormalizer(): Closure
-    {
-        return function (Options $options, $value) {
-            $value['block_name'] = 'entry';
-
-            return $value;
-        };
-    }
-
-    protected function buildPrototypes(FormBuilderInterface $builder, array $options): array
+    protected function buildPrototypes(FormBuilderInterface $formBuilder, array $options): array
     {
         $prototypes = [];
-        $types = $this->paragraphService->getAll($this->entity);
+        $types      = $this->paragraphService->getAll($this->entity);
         foreach ($types as $key => $type) {
             $typeOptions = $options['options'];
             $typeOptions = array_replace($typeOptions, ['block_prefix' => '_paragraph']);
-            $typeOptions = array_replace($typeOptions, [
-                'row_attr' => ['class' => 'paragraph'],
-            ]);
+            $typeOptions = array_replace(
+                $typeOptions,
+                [
+                    'row_attr' => ['class' => 'paragraph'],
+                ]
+            );
 
             $prototype = $this->buildPrototype(
-                $builder,
+                $formBuilder,
                 $options['prototype_name'],
                 $type,
                 $typeOptions
             );
-            
+
             $prototypes[$key] = $prototype->getForm();
         }
 
         return $prototypes;
     }
 
-    protected function buildPrototype(FormBuilderInterface $builder, string $name, FormTypeInterface|string $type, array $options): FormBuilderInterface
+    private function getOptionsNormalizer(): Closure
     {
-        return $builder->create($this::class, $type, $options);
+        return function (Options $options, $value)
+        {
+            unset($options);
+            $value['block_name'] = 'entry';
+
+            return $value;
+        };
     }
 }

@@ -15,10 +15,10 @@ class ImageParagraph extends ParagraphLib
     {
         unset($paragraph);
 
-        $imageField = TextField::new('imgFile');
-        $imageField->setFormType(VichImageType::class);
+        $textField = TextField::new('imgFile');
+        $textField->setFormType(VichImageType::class);
 
-        yield $imageField;
+        yield $textField;
     }
 
     #[Override]

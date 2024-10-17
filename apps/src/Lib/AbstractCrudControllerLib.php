@@ -130,6 +130,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             $repository = $this->getRepositoryParagraph();
             $paragraph  = $repository->find($paragraphId);
             $repository->remove($paragraph);
+            $repository->flush();
         }
 
         $generator->setEntityId($entityId);
@@ -225,6 +226,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFieldParagraphs(string $pageName, string $form): array
     {
+        // Disable $form because allow_add and allow_delete are not working for using multiple prototypes
+
+        unset($form);
+
+
         $fields = [];
         if ('edit' !== $pageName) {
             return $fields;
@@ -232,7 +238,6 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
         $fields[] = FormField::addTab('Paragraphs')->hideWhenCreating();
         $fields[] = ParagraphsField::new('paragraphs')->hideWhenCreating();
-
 
         // $collectionField = CollectionField::new('paragraphs');
         // $collectionField->setEntryType($form);
