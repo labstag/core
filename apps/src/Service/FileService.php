@@ -9,6 +9,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Yaml\Yaml;
 
+use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
+
 class FileService
 {
     public function __construct(
@@ -32,7 +34,8 @@ class FileService
         protected LocalFilesystemAdapter $paragraphAdapter,
         #[Autowire(service: 'flysystem.adapter.post.storage')]
         protected LocalFilesystemAdapter $postAdapter,
-        protected KernelInterface $kernel
+        protected KernelInterface $kernel,
+        protected PropertyMappingFactory $propertyMappingFactory
     )
     {
     }
@@ -47,6 +50,13 @@ class FileService
 
             $this->getFileSystem($key);
         }
+    }
+
+    public function getBasePath($entity, $type)
+    {
+        $object = $this->propertyMappingFactory->fromField(new $entity(), $type);
+
+        return $object->getUriPrefix();
     }
 
     public function getFileSystem($type)

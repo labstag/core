@@ -12,6 +12,8 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\PageRepository;
 use Labstag\Traits\Entity\WorkflowTrait;
+use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -19,16 +21,13 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: PageRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Page
+class Page implements Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableEntity;
     use WorkflowTrait;
 
-    #[ORM\Column(
-        type: 'boolean',
-        options: ['default' => 1]
-    )]
+    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
     protected ?bool $enable = null;
 
     #[Gedmo\Slug(fields: ['title'])]
@@ -53,6 +52,9 @@ class Page
 
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'page')]
     private Collection $children;
+
+    #[ORM\Column]
+    private ?bool $home = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -96,6 +98,12 @@ class Page
         $this->tags       = new ArrayCollection();
         $this->categories = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
+    }
+
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
     }
 
     public function addCategory(Category $category): static
@@ -215,6 +223,11 @@ class Page
         return $this->enable;
     }
 
+    public function isHome(): ?bool
+    {
+        return $this->home;
+    }
+
     public function removeCategory(Category $category): static
     {
         if ($this->categories->removeElement($category)) {
@@ -256,6 +269,13 @@ class Page
     public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
+
+        return $this;
+    }
+
+    public function setHome(bool $home): static
+    {
+        $this->home = $home;
 
         return $this;
     }

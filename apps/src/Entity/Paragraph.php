@@ -32,10 +32,7 @@ class Paragraph implements Stringable
     #[ORM\ManyToOne(inversedBy: 'paragraphs')]
     private ?Edito $edito = null;
 
-    #[ORM\Column(
-        type: 'boolean',
-        options: ['default' => 1]
-    )]
+    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
     private ?bool $enable = null;
 
     #[ORM\Column(length: 255, nullable: true)]

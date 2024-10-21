@@ -4,6 +4,7 @@ namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -26,10 +27,19 @@ class PageCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
+        $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield FormField::addTab('Principal');
         yield $this->addFieldID();
-        yield $this->addFieldSlug();
+        if ($currentEntity instanceof Page && !$currentEntity->isHome()) {
+            yield $this->addFieldSlug();
+        }
+
         yield $this->addFieldBoolean();
+        $isHome = $this->addFieldIsHome($currentEntity, $pageName);
+        if (!is_null($isHome)) {
+            yield $isHome;
+        }
+
         yield TextField::new('title');
         yield AssociationField::new('page')->autocomplete();
         yield DateTimeField::new('createdAt')->hideOnForm();
@@ -53,6 +63,8 @@ class PageCrudController extends AbstractCrudControllerLib
         $page = new $entityFqcn();
         $this->workflowService->init($page);
         $meta = new Meta();
+        $home = $this->getRepository()->findOneBy(['home' => true]);
+        $page->setPage($home);
         $page->setRefuser($this->getUser());
         $page->setMeta($meta);
 
@@ -63,5 +75,17 @@ class PageCrudController extends AbstractCrudControllerLib
     public static function getEntityFqcn(): string
     {
         return Page::class;
+    }
+
+    protected function addFieldIsHome($currentEntity, $pageName)
+    {
+        if ('new' == $pageName || !$currentEntity instanceof Page || $currentEntity->isHome()) {
+            return null;
+        }
+
+        $booleanField = BooleanField::new('home');
+        $booleanField->hideOnIndex();
+
+        return $booleanField;
     }
 }

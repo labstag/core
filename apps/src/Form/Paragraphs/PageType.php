@@ -2,9 +2,9 @@
 
 namespace Labstag\Form\Paragraphs;
 
-use Override;
 use Labstag\Entity\Page;
 use Labstag\Lib\ParagraphAbstractTypeLib;
+use Override;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class PageType extends ParagraphAbstractTypeLib

@@ -25,9 +25,9 @@ use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphsField;
 use Labstag\Repository\ParagraphRepository;
 use Labstag\Repository\TagRepository;
+use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\UserService;
-use Labstag\Service\VichImageFieldService;
 use Labstag\Service\WorkflowService;
 use Override;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,7 +38,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 {
     public function __construct(
         protected TagRepository $tagRepository,
-        protected VichImageFieldService $vichImageFieldService,
+        protected FileService $fileService,
         protected ParagraphService $paragraphService,
         protected WorkflowService $workflowService,
         protected RequestStack $requestStack,
@@ -57,7 +57,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         }
 
         $entity     = $this->getEntityFqcn();
-        $basePath   = $this->vichImageFieldService->getBasePath($entity, $type.'File');
+        $basePath   = $this->fileService->getBasePath($entity, $type.'File');
         $imageField = ImageField::new($type);
         $imageField->setBasePath($basePath);
 
@@ -227,9 +227,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     protected function addFieldParagraphs(string $pageName, string $form): array
     {
         // Disable $form because allow_add and allow_delete are not working for using multiple prototypes
-
         unset($form);
-
 
         $fields = [];
         if ('edit' !== $pageName) {
@@ -391,11 +389,13 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $actions->add(Crud::PAGE_INDEX, $action);
     }
 
-    protected function getRepository()
+    protected function getRepository(?string $entity = null)
     {
         $doctrine = $this->container->get('doctrine');
 
-        return $doctrine->getManagerForClass(static::getEntityFqcn())->getRepository(static::getEntityFqcn());
+        $entity = is_null($entity) ? static::getEntityFqcn() : $entity;
+
+        return $doctrine->getManagerForClass(static::getEntityFqcn())->getRepository($entity);
     }
 
     protected function getRepositoryParagraph(): ParagraphRepository

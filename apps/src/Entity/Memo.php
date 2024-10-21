@@ -24,10 +24,7 @@ class Memo
     use TimestampableEntity;
     use WorkflowTrait;
 
-    #[ORM\Column(
-        type: 'boolean',
-        options: ['default' => 1]
-    )]
+    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
     protected ?bool $enable = null;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'])]

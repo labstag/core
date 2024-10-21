@@ -2,10 +2,10 @@
 
 namespace Labstag\Lib;
 
-use Override;
 use Closure;
 use Labstag\Entity\Paragraph;
 use Labstag\Service\ParagraphService;
+use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormTypeInterface;

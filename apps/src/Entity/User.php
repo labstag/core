@@ -49,10 +49,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(
-        type: 'boolean',
-        options: ['default' => 1]
-    )]
+    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
     private ?bool $enable = null;
 
     /**
