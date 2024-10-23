@@ -1513,16 +1513,16 @@
         },
         {
             "name": "easycorp/easyadmin-bundle",
-            "version": "v4.13.1",
+            "version": "v4.13.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EasyCorp/EasyAdminBundle.git",
-                "reference": "c7495ccfae29688e6d9dfab6225f9c38ebf5be88"
+                "reference": "7e3f69bbd05f42afb7af65812f63e467db5459a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/c7495ccfae29688e6d9dfab6225f9c38ebf5be88",
-                "reference": "c7495ccfae29688e6d9dfab6225f9c38ebf5be88",
+                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/7e3f69bbd05f42afb7af65812f63e467db5459a5",
+                "reference": "7e3f69bbd05f42afb7af65812f63e467db5459a5",
                 "shasum": ""
             },
             "require": {
@@ -1596,7 +1596,7 @@
             ],
             "support": {
                 "issues": "https://github.com/EasyCorp/EasyAdminBundle/issues",
-                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.13.1"
+                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.13.5"
             },
             "funding": [
                 {
@@ -1604,7 +1604,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-10-14T17:32:23+00:00"
+            "time": "2024-10-23T06:15:53+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -11686,7 +11686,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -11694,7 +11694,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "platform-overrides": {
         "php": "8.3"
     },
