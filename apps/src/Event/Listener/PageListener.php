@@ -20,7 +20,7 @@ final class PageListener implements EventSubscriberInterface
     public function afterUpdated($event)
     {
         $entity = $event->getEntityInstance();
-        if (!$entity instanceof Page || !$entity->isHome()) {
+        if (!$entity instanceof Page || 'home' != $entity->getType()) {
             return;
         }
 
@@ -31,17 +31,17 @@ final class PageListener implements EventSubscriberInterface
     public function beforeUpdated(BeforeEntityUpdatedEvent $beforeEntityUpdatedEvent)
     {
         $entity = $beforeEntityUpdatedEvent->getEntityInstance();
-        if (!$entity instanceof Page || !$entity->isHome()) {
+        if (!$entity instanceof Page || 'home' != $entity->getType()) {
             return;
         }
 
-        $oldHome = $this->pageRepository->findOneBy(['home' => true]);
+        $oldHome = $this->pageRepository->findOneBy(['type' => 'home']);
         if ($oldHome instanceof Page && $oldHome->getId() === $entity->getId()) {
             return;
         }
 
         if ($oldHome instanceof Page) {
-            $oldHome->setHome(false);
+            $oldHome->setType('page');
             $this->pageRepository->save($oldHome);
         }
 

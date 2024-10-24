@@ -4,7 +4,7 @@ namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -30,14 +30,14 @@ class PageCrudController extends AbstractCrudControllerLib
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield FormField::addTab('Principal');
         yield $this->addFieldID();
-        if ($currentEntity instanceof Page && !$currentEntity->isHome()) {
+        if ($currentEntity instanceof Page && 'home' != $currentEntity->getType()) {
             yield $this->addFieldSlug();
         }
 
         yield $this->addFieldBoolean();
-        $isHome = $this->addFieldIsHome($currentEntity, $pageName);
-        if (!is_null($isHome)) {
-            yield $isHome;
+        $fieldChoice = $this->addFieldIsHome($currentEntity, $pageName);
+        if (!is_null($fieldChoice)) {
+            yield $fieldChoice;
         }
 
         yield TextField::new('title');
@@ -63,8 +63,12 @@ class PageCrudController extends AbstractCrudControllerLib
         $page = new $entityFqcn();
         $this->workflowService->init($page);
         $meta = new Meta();
-        $home = $this->getRepository()->findOneBy(['home' => true]);
-        $page->setPage($home);
+        $home = $this->getRepository()->findOneBy(['type' => 'home']);
+        if ($home instanceof Page) {
+            $page->setPage($home);
+        }
+
+        $page->setType(($home instanceof Page) ? 'page' : 'home');
         $page->setRefuser($this->getUser());
         $page->setMeta($meta);
 
@@ -79,13 +83,14 @@ class PageCrudController extends AbstractCrudControllerLib
 
     protected function addFieldIsHome($currentEntity, $pageName)
     {
-        if ('new' == $pageName || !$currentEntity instanceof Page || $currentEntity->isHome()) {
+        if ('new' == $pageName && !$currentEntity instanceof Page && 'home' == $currentEntity->getType()) {
             return null;
         }
 
-        $booleanField = BooleanField::new('home');
-        $booleanField->hideOnIndex();
+        $choiceField = ChoiceField::new('type');
+        $choiceField->setChoices($this->siteService->getTypesPages());
+        $choiceField->setRequired(true);
 
-        return $booleanField;
+        return $choiceField;
     }
 }

@@ -27,6 +27,7 @@ use Labstag\Repository\ParagraphRepository;
 use Labstag\Repository\TagRepository;
 use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
+use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
@@ -39,6 +40,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     public function __construct(
         protected TagRepository $tagRepository,
         protected FileService $fileService,
+        protected SiteService $siteService,
         protected ParagraphService $paragraphService,
         protected WorkflowService $workflowService,
         protected RequestStack $requestStack,

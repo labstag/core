@@ -53,9 +53,6 @@ class Page implements Stringable
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'page')]
     private Collection $children;
 
-    #[ORM\Column]
-    private ?bool $home = null;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -91,6 +88,9 @@ class Page implements Stringable
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'pages')]
     private Collection $tags;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $type = null;
 
     public function __construct()
     {
@@ -218,14 +218,14 @@ class Page implements Stringable
         return $this->title;
     }
 
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
     public function isEnable(): ?bool
     {
         return $this->enable;
-    }
-
-    public function isHome(): ?bool
-    {
-        return $this->home;
     }
 
     public function removeCategory(Category $category): static
@@ -269,13 +269,6 @@ class Page implements Stringable
     public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
-
-        return $this;
-    }
-
-    public function setHome(bool $home): static
-    {
-        $this->home = $home;
 
         return $this;
     }
@@ -327,6 +320,13 @@ class Page implements Stringable
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function setType(?string $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }

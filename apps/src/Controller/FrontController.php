@@ -12,14 +12,19 @@ class FrontController extends AbstractController
 {
     #[Route('{slug}{_</(?!/)>}', name: 'front', requirements: ['slug' => '.*'], defaults: ['slug' => '', '_' => ''], priority: -1)]
     public function index(
-        $slug,
         SiteService $siteService
     ): Response
     {
-        $entity = $siteService->getEntityBySlug($slug);
+        $entity = $siteService->getEntityBySlug();
         if (!is_object($entity)) {
             throw $this->createNotFoundException();
         }
+
+        if (!$siteService->isEnable($entity)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        dd($entity);
 
         return $this->render(
             $siteService->getViewByEntity($entity),

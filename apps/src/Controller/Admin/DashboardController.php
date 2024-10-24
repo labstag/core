@@ -20,6 +20,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
+use Labstag\Form\Admin\OptionType;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -140,6 +141,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Meta', 'fa fa-list', Meta::class);
         yield MenuItem::linkToCrud('Paragraph', 'fa fa-user', Paragraph::class);
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
+        yield MenuItem::linkToRoute('Options', 'fas fa-cog', 'admin_option');
     }
 
     #[Route('/admin/restore', name: 'admin_restore')]
@@ -172,6 +174,17 @@ class DashboardController extends AbstractDashboardController
         return $this->render(
             'admin/dashboard.html.twig',
             []
+        );
+    }
+
+    #[Route('/admin/option', name: 'admin_option')]
+    public function option(): Response
+    {
+        $form = $this->createForm(OptionType::class);
+
+        return $this->render(
+            'admin/option.html.twig',
+            ['form' => $form]
         );
     }
 
