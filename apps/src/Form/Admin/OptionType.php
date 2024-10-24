@@ -21,7 +21,7 @@ class OptionType extends AbstractType
     {
         $optionsResolver->setDefaults(
             [
-            // Configure your form options here
+                // Configure your form options here
             ]
         );
     }

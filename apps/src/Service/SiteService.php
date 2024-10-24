@@ -14,7 +14,9 @@ use Twig\Environment;
 
 class SiteService
 {
+
     public $editoRepository;
+
     public function __construct(
         protected ChapterRepository $chapterRepository,
         protected TokenStorageInterface $tokenStorage,
@@ -50,7 +52,7 @@ class SiteService
         $page  = null;
         $types = array_filter(
             $types,
-            fn($type) => !is_null($type) && 'home' != $type->getType()
+            fn ($type) => !is_null($type) && 'home' != $type->getType()
         );
 
         foreach ($types as $type => $row) {
