@@ -4,6 +4,7 @@ namespace Labstag\Service;
 
 use Labstag\Entity\Meta;
 use Labstag\Repository\ChapterRepository;
+use Labstag\Repository\ConfigurationRepository;
 use Labstag\Repository\HistoryRepository;
 use Labstag\Repository\PageRepository;
 use Labstag\Repository\PostRepository;
@@ -14,9 +15,6 @@ use Twig\Environment;
 
 class SiteService
 {
-
-    public $editoRepository;
-
     public function __construct(
         protected ChapterRepository $chapterRepository,
         protected TokenStorageInterface $tokenStorage,
@@ -25,13 +23,20 @@ class SiteService
         protected PageRepository $pageRepository,
         protected PostRepository $postRepository,
         protected Environment $twigEnvironment,
+        protected ConfigurationRepository $configurationRepository
     )
     {
+    }
+
+    public function getConfiguration()
+    {
+        return $this->configurationRepository->findAll();
     }
 
     public function getDataByEntity(object $entity)
     {
         return [
+            'config'     => $this->getConfiguration(),
             'meta'       => $this->getMetaByEntity($entity->getMeta()),
             'paragraphs' => $entity->getParagraphs(),
             'img'        => $entity->getImg(),
@@ -107,7 +112,6 @@ class SiteService
     {
         return [
             'chapter' => $this->chapterRepository,
-            'edito'   => $this->editoRepository,
             'history' => $this->historyRepository,
             'page'    => $this->pageRepository,
             'post'    => $this->postRepository,

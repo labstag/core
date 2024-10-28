@@ -24,8 +24,6 @@ class FrontController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        dd($entity);
-
         return $this->render(
             $siteService->getViewByEntity($entity),
             $siteService->getDataByEntity($entity)

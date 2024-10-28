@@ -24,6 +24,7 @@ use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Form\Admin\OptionType;
 use Override;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -193,9 +194,21 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[Route('/admin/option', name: 'admin_option')]
-    public function option(): Response
+    public function option(Request $request): Response
     {
-        $form = $this->createForm(OptionType::class);
+        $data = [];
+        $form = $this->createForm(
+            OptionType::class,
+            $data,
+            [
+                'attr' => ['id' => 'form_options'],
+            ]
+        );
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $post = $form->getData();
+            dump($post);
+        }
 
         return $this->render(
             'admin/option.html.twig',

@@ -26,6 +26,19 @@ use Symfony\Component\Form\FormEvents;
 
 class BlockCrudController extends AbstractCrudControllerLib
 {
+    public function addFieldParagraphsForBlock($entity, string $pageName, string $form): array
+    {
+        if ('edit' === $pageName && $entity instanceof Block) {
+            if ('paragraphs' == $entity->getType()) {
+                return parent::addFieldParagraphs($pageName, $form);
+            }
+
+            return [];
+        }
+
+        return parent::addFieldParagraphs($pageName, $form);
+    }
+
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -53,7 +66,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         yield $this->getChoiceType($pageName, $allTypes);
         yield $this->addFieldBoolean();
         $fields = array_merge(
-            $this->addFieldParagraphs($pageName, BlockType::class),
+            $this->addFieldParagraphsForBlock($currentEntity, $pageName, BlockType::class),
             $this->paragraphService->getFieldsCrudEA($currentEntity)
         );
         foreach ($fields as $field) {
@@ -160,7 +173,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return function ($event)
         {
             $form = $event->getForm();
-            if (!$form->isValid()) {
+            if (!$form->isSubmitted()) {
                 return;
             }
 

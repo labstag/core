@@ -13,7 +13,9 @@ class OptionType extends AbstractType
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         unset($options);
-        $formBuilder->add('field_name');
+        $formBuilder->add(
+            'field_name'
+        );
     }
 
     #[Override]

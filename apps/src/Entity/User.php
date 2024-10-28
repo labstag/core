@@ -64,6 +64,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
+    #[ORM\Column(length: 2, options: ['default' => 'fr'])]
+    private ?string $language = null;
+
     /**
      * @var Collection<int, Memo>
      */
@@ -230,6 +233,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return $this->id;
     }
 
+    public function getLanguage(): ?string
+    {
+        return $this->language;
+    }
+
     /**
      * @return Collection<int, Memo>
      */
@@ -375,6 +383,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
+
+        return $this;
+    }
+
+    public function setLanguage(string $language): static
+    {
+        $this->language = $language;
 
         return $this;
     }

@@ -2,7 +2,7 @@
 {% form_theme form '@EasyAdmin/crud/form_theme.html.twig' %}
 {% block page_title %}Gestion des options du site (WIP){% endblock %}
 {% block page_actions %}
-    <button class="action-saveAndReturn btn btn-primary action-save" type="submit" value="saveAndReturn" data-action-name="saveAndReturn" form="{{ form.vars.name}}">
+    <button class="action-saveAndReturn btn btn-primary action-save" type="submit" value="saveAndReturn" name="ea[newForm][btn]" data-action-name="saveAndReturn" form="{{ form.vars.attr.id }}">
         Sauvegarder
     </button>
 {% endblock %}

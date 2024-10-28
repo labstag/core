@@ -31,18 +31,24 @@ class UserFixtures extends Fixture
 
     private function data(): array
     {
+        $roles = $this->userService->getRoles();
+
         return [
             [
                 'username' => 'admin',
                 'password' => 'password',
                 'email'    => 'admin@test.local',
-                'roles'    => ['ROLE_ADMIN'],
+                'roles'    => [
+                    isset($roles['Admin']) ?? null,
+                ],
             ],
             [
                 'username' => 'superadmin',
                 'password' => 'password',
                 'email'    => 'superadmin@test.local',
-                'roles'    => ['ROLE_SUPER_ADMIN'],
+                'roles'    => [
+                    isset($roles['Super Admin']) ?? null,
+                ],
             ],
         ];
     }
