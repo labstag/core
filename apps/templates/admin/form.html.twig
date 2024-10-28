@@ -11,10 +11,6 @@
     data-url-update="{{ ea_url().setController(controller).setAction('updateParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
     data-url-list="{{ ea_url().setController(controller).setAction('listParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
   >
-    <div id="paragraphs-list" class="row paragraphs-list">
-      {% include 'admin/pararaphs.html.twig' with {'paragraphs': instance.paragraphs} %}
-    </div>
-    <br />
     {% set list = ea_crud_form.ea_field.customOptions.get('paragraphs') %}
     <div class="row">
         <div class="col-md-3">
@@ -32,6 +28,10 @@
             <a href="#" id="paragraph-btn" class="btn btn-primary paragraph-btn">AJOUTER</a>
             <a href="#" id="paragraph-refresh" class="btn btn-primary paragraph-refresh">REFRESH</a>
         </div>
+    </div>
+    <br />
+    <div id="paragraphs-list" class="row paragraphs-list">
+      {% include 'admin/pararaphs.html.twig' with {'paragraphs': instance.paragraphs} %}
     </div>
   </div>
 {% endblock %}

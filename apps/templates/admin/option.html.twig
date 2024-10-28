@@ -1,6 +1,11 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
-{% form_theme form 'bootstrap_5_layout.html.twig' %}
-{% block page_title %}Gestion des options du site{% endblock %}
+{% form_theme form '@EasyAdmin/crud/form_theme.html.twig' %}
+{% block page_title %}Gestion des options du site (WIP){% endblock %}
+{% block page_actions %}
+    <button class="action-saveAndReturn btn btn-primary action-save" type="submit" value="saveAndReturn" data-action-name="saveAndReturn" form="{{ form.vars.name}}">
+        Sauvegarder
+    </button>
+{% endblock %}
 {% block main %}
     {{ form_start(form) }}
     {{ form_widget(form) }}

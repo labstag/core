@@ -173,6 +173,8 @@ class SiteService
 
     private function getUser()
     {
-        return $this->tokenStorage->getToken()->getUser();
+        $token = $this->tokenStorage->getToken();
+
+        return is_null($token) ? null : $token->getUser();
     }
 }

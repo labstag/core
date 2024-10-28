@@ -14,6 +14,12 @@ export class Paragraphs {
   {
     document.querySelectorAll(".paragraphs-list").forEach(
       element => {
+        // disable if element have class 'datagrid-empty'
+        console.log(element.classList, element.classList.contains('datagrid-empty'));
+        if (element.classList.contains('datagrid-empty')) {
+          return;
+        }
+
         var elementSortable = document.getElementById(element.id);
         if (elementSortable != undefined) {
           Sortable.create(elementSortable, {
@@ -30,6 +36,12 @@ export class Paragraphs {
     );
     document.querySelectorAll(".paragraphs-list tbody").forEach(
       element => {
+        console.log(element.classList, element.classList.contains('body-empty'));
+        // disable if element have class 'body-empty'
+        if (element.classList.contains('body-empty')) {
+          return;
+        }
+
         var elementSortable = document.getElementById(element.id);
         if (elementSortable != undefined) {
           Sortable.create(elementSortable, {

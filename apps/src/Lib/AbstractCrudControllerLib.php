@@ -233,6 +233,8 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
         $fields = [];
         if ('edit' !== $pageName) {
+            $fields[] = ParagraphsField::new('paragraphs');
+
             return $fields;
         }
 

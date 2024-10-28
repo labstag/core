@@ -6,9 +6,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Exception;
+use Labstag\Entity\Block;
 use Labstag\Entity\Category;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
@@ -24,6 +26,7 @@ use Labstag\Form\Admin\OptionType;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class DashboardController extends AbstractDashboardController
 {
@@ -57,6 +60,16 @@ class DashboardController extends AbstractDashboardController
         );
 
         return $dashboard;
+    }
+
+    public function configureUserMenu(UserInterface $user): UserMenu
+    {
+        $config = parent::configureUserMenu($user);
+        if ($user instanceof User) {
+            $config->setGravatarEmail($user->getEmail());
+        }
+
+        return $config;
     }
 
     #[Override]
@@ -140,6 +153,7 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::linkToCrud('Meta', 'fa fa-list', Meta::class);
         yield MenuItem::linkToCrud('Paragraph', 'fa fa-user', Paragraph::class);
+        yield MenuItem::linkToCrud('Block', 'fa fa-user', Block::class);
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
         yield MenuItem::linkToRoute('Options', 'fas fa-cog', 'admin_option');
     }
