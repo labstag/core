@@ -23,6 +23,10 @@ services:
     resource: "../src/Paragraph/"
     public: true
     tags: ['labstag.paragraphs']
+  Labstag\Block\:
+    resource: "../src/Block/"
+    public: true
+    tags: ['labstag.blocks']
 
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones

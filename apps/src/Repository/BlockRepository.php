@@ -12,4 +12,33 @@ class BlockRepository extends ServiceEntityRepositoryLib
     {
         parent::__construct($managerRegistry, Block::class);
     }
+
+    public function findAllOrderedByRegion()
+    {
+        $queryBuilder = $this->createQueryBuilder('b');
+        $queryBuilder->orderBy(
+            "CASE 
+                WHEN b.region = 'header' THEN 1
+                WHEN b.region = 'content' THEN 2
+                WHEN b.region = 'footer' THEN 3
+                ELSE 4
+            END",
+            'ASC'
+        );
+        $queryBuilder->addOrderBy('b.position', 'ASC');
+
+        return $queryBuilder;
+    }
+
+    public function getMaxPositionByRegion($region)
+    {
+        $queryBuilder = $this->createQueryBuilder('b');
+        $queryBuilder->select('MAX(b.position) as maxposition');
+        $queryBuilder->where('b.region = :region');
+        $queryBuilder->setParameter('region', $region);
+
+        $data = $queryBuilder->getQuery()->getOneOrNullResult();
+
+        return $data['maxposition'];
+    }
 }

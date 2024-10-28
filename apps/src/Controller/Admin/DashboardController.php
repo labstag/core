@@ -62,16 +62,6 @@ class DashboardController extends AbstractDashboardController
         return $dashboard;
     }
 
-    public function configureUserMenu(UserInterface $user): UserMenu
-    {
-        $config = parent::configureUserMenu($user);
-        if ($user instanceof User) {
-            $config->setGravatarEmail($user->getEmail());
-        }
-
-        return $config;
-    }
-
     #[Override]
     public function configureMenuItems(): iterable
     {
@@ -156,6 +146,17 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Block', 'fa fa-user', Block::class);
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
         yield MenuItem::linkToRoute('Options', 'fas fa-cog', 'admin_option');
+    }
+
+    #[Override]
+    public function configureUserMenu(UserInterface $user): UserMenu
+    {
+        $userMenu = parent::configureUserMenu($user);
+        if ($user instanceof User) {
+            $userMenu->setGravatarEmail($user->getEmail());
+        }
+
+        return $userMenu;
     }
 
     #[Route('/admin/restore', name: 'admin_restore')]

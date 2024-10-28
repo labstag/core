@@ -25,6 +25,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphsField;
 use Labstag\Repository\ParagraphRepository;
 use Labstag\Repository\TagRepository;
+use Labstag\Service\BlockService;
 use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
@@ -41,6 +42,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         protected TagRepository $tagRepository,
         protected FileService $fileService,
         protected SiteService $siteService,
+        protected BlockService $blockService,
         protected ParagraphService $paragraphService,
         protected WorkflowService $workflowService,
         protected RequestStack $requestStack,
@@ -232,6 +234,10 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         unset($form);
 
         $fields = [];
+        if ('new' === $pageName) {
+            return $fields;
+        }
+
         if ('edit' !== $pageName) {
             $fields[] = ParagraphsField::new('paragraphs');
 

@@ -37,13 +37,7 @@ class UserCrudController extends AbstractCrudControllerLib
         yield $this->addFieldBoolean();
         $choiceField = ChoiceField::new('roles');
         $choiceField->allowMultipleChoices();
-        $choiceField->setChoices(
-            [
-                'User'        => 'ROLE_USER',
-                'Admin'       => 'ROLE_ADMIN',
-                'Super Admin' => 'ROLE_SUPER_ADMIN',
-            ]
-        );
+        $choiceField->setChoices($this->userService->getRoles());
         yield $choiceField;
         $textField = TextField::new('password');
         $textField->setFormType(RepeatedType::class);
@@ -71,6 +65,7 @@ class UserCrudController extends AbstractCrudControllerLib
         );
 
         $tab = [
+            'editos',
             'memos',
             'pages',
             'posts',
@@ -124,7 +119,10 @@ class UserCrudController extends AbstractCrudControllerLib
 
     private function addPasswordEventListener(FormBuilderInterface $formBuilder): FormBuilderInterface
     {
-        return $formBuilder->addEventListener(FormEvents::POST_SUBMIT, $this->hashPassword());
+        return $formBuilder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            $this->hashPassword()
+        );
     }
 
     private function hashPassword()

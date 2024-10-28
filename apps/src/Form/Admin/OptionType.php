@@ -19,10 +19,6 @@ class OptionType extends AbstractType
     #[Override]
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
-        $optionsResolver->setDefaults(
-            [
-                // Configure your form options here
-            ]
-        );
+        $optionsResolver->setDefaults([]);
     }
 }

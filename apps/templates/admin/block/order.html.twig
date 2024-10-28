@@ -1,0 +1,47 @@
+{% block content_title 'Gestion des positions' %}
+{% block page_title 'Gestion des positions' %}
+{% block page_actions %}
+  <button
+    class="action-saveAndReturn btn btn-primary action-save"
+    type="submit"
+    name="ea[newForm][btn]"
+    value="saveAndReturn"
+    data-action-name="saveAndReturn"
+    form="position-Content-form"
+    >
+      <span class="btn-label">Sauvegarder les modifications</span>
+  </button>
+{% endblock %}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+{% block main %}
+  <form method="POST" id="position-Content-form">
+    {% set region = null %}
+    <fieldset>
+        {% set position = 0 %}
+        {% for i, row in blocks %}
+            {% if region != row.region %}
+                {% set region = row.region %}
+                {% set position = 0 %}
+                {% if i != 0 %}
+                    </ul>
+                {% endif %}
+                <legend>{{ region }}</legend>
+                <ul class="block-sort" id="sort_list{{ region }}">
+            {% endif %}
+            {% set position = position + 1 %}
+            <li class="list-group-item">
+              <div class="d-flex">
+                <div class="p-2">
+                  <i class="fas fa-arrows-alt"></i>
+                  <input type="hidden" value="{{ position }}" id="{{ region }}_{{ row.id }}" class="sort_input" name="{{ region }}[{{ row.id }}]"/>
+                </div>
+                <div class="p-2">
+                  {{ row.title }}
+                </div>
+              </div>
+            </li>
+        {% endfor %}
+        </ul>
+    </fieldset>
+  </form>
+{% endblock %}

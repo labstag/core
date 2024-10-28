@@ -24,6 +24,9 @@ class Paragraph implements Stringable
     use TimestampableEntity;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    private ?Block $block = null;
+
+    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
     private ?Chapter $chapter = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -75,6 +78,11 @@ class Paragraph implements Stringable
     public function __toString(): string
     {
         return (string) $this->getType();
+    }
+
+    public function getBlock(): ?Block
+    {
+        return $this->block;
     }
 
     public function getChapter(): ?Chapter
@@ -150,6 +158,13 @@ class Paragraph implements Stringable
     public function isEnable(): ?bool
     {
         return $this->enable;
+    }
+
+    public function setBlock(?Block $block): static
+    {
+        $this->block = $block;
+
+        return $this;
     }
 
     public function setChapter(?Chapter $chapter): static
