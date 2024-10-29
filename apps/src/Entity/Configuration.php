@@ -20,7 +20,7 @@ class Configuration
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(type: Types::OBJECT, nullable: true)]
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?object $value = null;
 
     public function getId(): ?string
