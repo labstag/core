@@ -2,8 +2,8 @@
 
 namespace Labstag\Event\Subscriber;
 
-use Override;
 use Labstag\Entity\User;
+use Override;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;

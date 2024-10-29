@@ -58,6 +58,9 @@ class UserCrudController extends AbstractCrudControllerLib
         $textField->setRequired(Crud::PAGE_NEW === $pageName);
         $textField->onlyOnForms();
         yield $textField;
+        $languageField = ChoiceField::new('language');
+        $languageField->setChoices($this->userService->getLanguagesForChoices());
+        yield $languageField;
         yield $this->addFieldImageUpload('avatar', $pageName);
         yield CollectionField::new('histories')->onlyOnDetail();
         yield CollectionField::new('editos')->onlyOnDetail()->formatValue(

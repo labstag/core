@@ -23,6 +23,8 @@ use Labstag\Entity\Post;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Form\Admin\OptionType;
+use Labstag\Service\SiteService;
+use Labstag\Service\UserService;
 use Override;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +34,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class DashboardController extends AbstractDashboardController
 {
     public function __construct(
-        protected EntityManagerInterface $entityManager
+        protected EntityManagerInterface $entityManager,
+        protected UserService $userService,
+        protected SiteService $siteService
     )
     {
     }
@@ -53,12 +57,7 @@ class DashboardController extends AbstractDashboardController
         $dashboard->setTitle('Www');
         $dashboard->setTranslationDomain('admin');
         $dashboard->renderContentMaximized();
-        $dashboard->setLocales(
-            [
-                'fr',
-                'en',
-            ]
-        );
+        $dashboard->setLocales($this->userService->getLanguages());
 
         return $dashboard;
     }

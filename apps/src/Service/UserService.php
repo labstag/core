@@ -2,6 +2,7 @@
 
 namespace Labstag\Service;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Locale;
 use Labstag\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -11,6 +12,25 @@ class UserService
         protected UserPasswordHasherInterface $userPasswordHasher
     )
     {
+    }
+
+    public function getLanguages(): array
+    {
+        return [
+            'fr',
+            'en',
+        ];
+    }
+
+    public function getLanguagesForChoices(): array
+    {
+        $data      = $this->getLanguages();
+        $languages = [];
+        foreach ($data as $key) {
+            $languages[$key] = Locale::new($key)->getAsDto()->getName();
+        }
+
+        return array_flip($languages);
     }
 
     public function getRoles(): array
