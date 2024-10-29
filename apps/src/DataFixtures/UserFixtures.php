@@ -38,6 +38,7 @@ class UserFixtures extends Fixture
                 'username' => 'admin',
                 'password' => 'password',
                 'email'    => 'admin@test.local',
+                'language' => 'fr',
                 'roles'    => [
                     isset($roles['Admin']) ?? null,
                 ],
@@ -46,6 +47,7 @@ class UserFixtures extends Fixture
                 'username' => 'superadmin',
                 'password' => 'password',
                 'email'    => 'superadmin@test.local',
+                'language' => 'fr',
                 'roles'    => [
                     isset($roles['Super Admin']) ?? null,
                 ],
@@ -61,6 +63,7 @@ class UserFixtures extends Fixture
         $user->setEnable(true);
         $user->setUsername($data['username']);
         $user->setPassword($hash);
+        $user->setLanguage($data['language']);
         $user->setEmail($data['email']);
         $user->setRoles($data['roles']);
 
