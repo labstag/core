@@ -145,22 +145,6 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->redirect($url);
     }
 
-    public function linkw3CValidator(AdminContext $adminContext)
-    {
-        $entity = $adminContext->getEntity()->getInstance();
-        $slug   = $this->siteService->getSlugByEntity($entity);
-
-        return $this->redirect(
-            'https://validator.w3.org/nu/?doc='.$this->generateUrl(
-                'front',
-                [
-                    'slug' => $slug
-                ],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            )
-        );
-    }
-
     public function linkPublic(AdminContext $adminContext)
     {
         $entity = $adminContext->getEntity()->getInstance();
@@ -170,6 +154,20 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             $this->generateUrl(
                 'front',
                 ['slug' => $slug]
+            )
+        );
+    }
+
+    public function linkw3CValidator(AdminContext $adminContext)
+    {
+        $entity = $adminContext->getEntity()->getInstance();
+        $slug   = $this->siteService->getSlugByEntity($entity);
+
+        return $this->redirect(
+            'https://validator.w3.org/nu/?doc='.$this->generateUrl(
+                'front',
+                ['slug' => $slug],
+                UrlGeneratorInterface::ABSOLUTE_URL
             )
         );
     }
@@ -464,6 +462,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         );
         $w3caction->linkToCrudAction('linkw3CValidator');
         $w3caction->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
+
         $actions->add(Crud::PAGE_EDIT, $w3caction);
         $actions->add(Crud::PAGE_INDEX, $w3caction);
     }

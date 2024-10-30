@@ -2,7 +2,6 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
@@ -23,10 +22,13 @@ class HistoryFixtures extends FixtureLib implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
+            CategoryFixtures::class,
+            TagFixtures::class,
             UserFixtures::class,
         ];
     }
 
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->loadForeach(self::NUMBER_HISTORY, 'addHistory', $objectManager);
@@ -38,10 +40,11 @@ class HistoryFixtures extends FixtureLib implements DependentFixtureInterface
         ObjectManager $objectManager
     ): void
     {
-        $meta = new Meta();
+        $meta    = new Meta();
         $history = new History();
         $history->setMeta($meta);
-        $history->setEnable((bool) rand(0, 1));
+        $history->setEnable((bool) random_int(0, 1));
+
         $users = $this->getIdentitiesByClass(User::class);
         $history->setRefuser($this->getReference(array_rand($users)));
         $history->setTitle($generator->unique()->colorName());

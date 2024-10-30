@@ -2,7 +2,6 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
@@ -23,10 +22,13 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
+            CategoryFixtures::class,
+            TagFixtures::class,
             UserFixtures::class,
         ];
     }
 
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->loadForeach(self::NUMBER_POST, 'addPost', $objectManager);
@@ -41,7 +43,8 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
         $meta = new Meta();
         $post = new Post();
         $post->setMeta($meta);
-        $post->setEnable((bool) rand(0, 1));
+        $post->setEnable((bool) random_int(0, 1));
+
         $users = $this->getIdentitiesByClass(User::class);
         $post->setRefuser($this->getReference(array_rand($users)));
         $post->setTitle($generator->unique()->colorName());

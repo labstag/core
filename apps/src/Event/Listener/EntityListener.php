@@ -32,6 +32,25 @@ final class EntityListener
         $this->prePersistPage($object);
     }
 
+    private function prePersistAddMeta($entity): void
+    {
+        $tab = [
+            Page::class,
+            Chapter::class,
+            Post::class,
+        ];
+
+        if (!in_array($entity::class, $tab)) {
+            return;
+        }
+
+        $meta = $entity->getMeta();
+        if (!$meta instanceof Meta) {
+            $meta = new Meta();
+            $entity->setMeta($meta);
+        }
+    }
+
     private function prePersistChapter($entity): void
     {
         if (!$entity instanceof Chapter) {
@@ -42,37 +61,9 @@ final class EntityListener
             return;
         }
 
-        $history = $entity->getRefhistory();
+        $history  = $entity->getRefhistory();
         $chapters = $history->getChapters();
-        $entity->setPosition(count($chapters)+1);
-    }
-
-    private function prePersistParagraph($entity): void
-    {
-        if (!$entity instanceof Paragraph) {
-            return;
-        }
-
-        dd($entity);
-    }
-
-    private function prePersistAddMeta($entity): void
-    {
-        $tab = [
-            Page::class,
-            Chapter::class,
-            Post::class,
-        ];
-
-        if (!in_array(get_class($entity), $tab)) {
-            return;
-        }
-
-        $meta = $entity->getMeta();
-        if (!$meta instanceof Meta) {
-            $meta = new Meta();
-            $entity->setMeta($meta);
-        }
+        $entity->setPosition(count($chapters) + 1);
     }
 
     private function prePersistPage($entity): void
@@ -96,5 +87,14 @@ final class EntityListener
         }
 
         $entity->setSlug('');
+    }
+
+    private function prePersistParagraph($entity): void
+    {
+        if (!$entity instanceof Paragraph) {
+            return;
+        }
+
+        dd($entity);
     }
 }

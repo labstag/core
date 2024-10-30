@@ -9,19 +9,11 @@ use Faker\Generator;
 
 abstract class FixtureLib extends Fixture
 {
-
-    protected function setFaker(): Generator
-    {
-        $generator = Factory::create('fr_FR');
-
-        return $generator;
-    }
-
     protected function getIdentitiesByClass(string $class): array
     {
         $data = $this->referenceRepository->getIdentitiesByClass();
 
-        return isset($data[$class]) ? $data[$class] : [];
+        return $data[$class] ?? [];
     }
 
     protected function loadForeach(
@@ -30,9 +22,14 @@ abstract class FixtureLib extends Fixture
         ObjectManager $objectManager
     ): void
     {
-        $faker     = $this->setFaker();
+        $generator = $this->setFaker();
         for ($index = 0; $index < $number; ++$index) {
-            call_user_func([$this, $method], $faker, $objectManager);
+            call_user_func([$this, $method], $generator, $objectManager);
         }
+    }
+
+    protected function setFaker(): Generator
+    {
+        return Factory::create('fr_FR');
     }
 }

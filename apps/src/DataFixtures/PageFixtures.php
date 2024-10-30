@@ -2,7 +2,6 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\Page;
@@ -16,6 +15,8 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
+            CategoryFixtures::class,
+            TagFixtures::class,
             UserFixtures::class,
         ];
     }

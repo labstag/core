@@ -2,7 +2,7 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use Override;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Tag;
@@ -15,6 +15,7 @@ class TagFixtures extends FixtureLib
      */
     protected const NUMBER_TAGS = 30;
 
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->loadForeach(self::NUMBER_TAGS, 'addTag', $objectManager);
@@ -27,13 +28,18 @@ class TagFixtures extends FixtureLib
     ): void
     {
         $tab = [
-            'chapter', 'edito', 'history', 'memo', 'page', 'post'
+            'chapter',
+            'edito',
+            'history',
+            'memo',
+            'page',
+            'post',
         ];
-        $code = $tab[array_rand($tab)];
-        $category = new Tag();
-        $category->setTitle($generator->unique()->colorName());
-        $category->setType($code);
-        $this->addReference('tag'.$code.'_'.md5(uniqid()), $category);
-        $objectManager->persist($category);
+        $code     = $tab[array_rand($tab)];
+        $tag = new Tag();
+        $tag->setTitle($generator->unique()->colorName());
+        $tag->setType($code);
+        $this->addReference('tag'.$code.'_'.md5(uniqid()), $tag);
+        $objectManager->persist($tag);
     }
 }

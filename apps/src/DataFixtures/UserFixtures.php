@@ -2,7 +2,6 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;

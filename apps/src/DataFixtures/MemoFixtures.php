@@ -2,7 +2,6 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
@@ -22,10 +21,12 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
+            TagFixtures::class,
             UserFixtures::class,
         ];
     }
 
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->loadForeach(self::NUMBER_MEMO, 'addMemo', $objectManager);
@@ -38,7 +39,8 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
     ): void
     {
         $memo = new Memo();
-        $memo->setEnable((bool) rand(0, 1));
+        $memo->setEnable((bool) random_int(0, 1));
+
         $users = $this->getIdentitiesByClass(User::class);
         $memo->setRefuser($this->getReference(array_rand($users)));
         $memo->setTitle($generator->unique()->colorName());

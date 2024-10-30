@@ -2,7 +2,7 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use Override;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Category;
@@ -17,7 +17,7 @@ class CategoryFixtures extends FixtureLib
 
     protected array $categories = [];
 
-
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->loadForeach(self::NUMBER_CATEGORY, 'addCategory', $objectManager);
@@ -30,16 +30,19 @@ class CategoryFixtures extends FixtureLib
     ): void
     {
         $tab = [
-            'history', 'page', 'post'
+            'history',
+            'page',
+            'post',
         ];
-        $code = $tab[array_rand($tab)];
+        $code     = $tab[array_rand($tab)];
         $category = new Category();
         $category->setTitle($generator->unique()->colorName());
         $category->setType($code);
-        $parent = rand(0, 1);
-        if ($parent == 1) {
+
+        $parent = random_int(0, 1);
+        if (1 == $parent) {
             $categories = $this->getParent('category'.$code);
-            if (count($categories) != 0) {
+            if (0 != count($categories)) {
                 $parentCategory = $this->getReference(array_rand($categories));
                 $category->setParent($parentCategory);
             }
@@ -49,14 +52,13 @@ class CategoryFixtures extends FixtureLib
         $this->addReference($id, $category);
         $this->categories[$id] = $category;
         $objectManager->persist($category);
-        
     }
 
     protected function getParent(string $code): array
     {
         $tab = [];
         foreach ($this->categories as $key => $value) {
-            if (substr_count($key, $code) != 0) {
+            if (0 != substr_count($key, $code)) {
                 $tab[$key] = $value;
             }
         }

@@ -2,9 +2,7 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Chapter;
@@ -25,10 +23,12 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
+            TagFixtures::class,
             HistoryFixtures::class,
         ];
     }
-    
+
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->loadForeach(self::NUMBER_CHAPTER, 'addChapter', $objectManager);
@@ -47,8 +47,9 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
         }
 
         $chapter = new Chapter();
-        $chapter->setEnable((bool) rand(0, 1));
-        $chapter->setPosition(count($this->position[$historyId])+1);
+        $chapter->setEnable((bool) random_int(0, 1));
+        $chapter->setPosition(count($this->position[$historyId]) + 1);
+
         $history = $this->getReference($historyId);
         $chapter->setRefhistory($history);
         $chapter->setTitle($generator->unique()->colorName());

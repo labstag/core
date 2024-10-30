@@ -6,7 +6,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Edito;
-use Labstag\Entity\Meta;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
 use Override;
@@ -22,10 +21,12 @@ class EditoFixtures extends FixtureLib implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
+            TagFixtures::class,
             UserFixtures::class,
         ];
     }
 
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->loadForeach(self::NUMBER_EDITO, 'addEdito', $objectManager);
@@ -38,7 +39,8 @@ class EditoFixtures extends FixtureLib implements DependentFixtureInterface
     ): void
     {
         $edito = new Edito();
-        $edito->setEnable((bool) rand(0, 1));
+        $edito->setEnable((bool) random_int(0, 1));
+
         $users = $this->getIdentitiesByClass(User::class);
         $edito->setRefuser($this->getReference(array_rand($users)));
         $edito->setTitle($generator->unique()->colorName());
