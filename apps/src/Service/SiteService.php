@@ -2,7 +2,13 @@
 
 namespace Labstag\Service;
 
+use Exception;
+use Labstag\Entity\Chapter;
+use Labstag\Entity\Configuration;
+use Labstag\Entity\History;
 use Labstag\Entity\Meta;
+use Labstag\Entity\Page;
+use Labstag\Entity\Post;
 use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\ConfigurationRepository;
 use Labstag\Repository\HistoryRepository;
@@ -30,19 +36,33 @@ class SiteService
 
     public function getConfiguration()
     {
-        return $this->configurationRepository->findAll();
+        $configurations = $this->configurationRepository->findAll();
+        $tab            = [];
+        foreach ($configurations as $configuration) {
+            $data = $configuration->getValue();
+
+            $tab[$configuration->getName()] = $data['value'];
+        }
+
+        return $tab;
     }
 
     public function getDataByEntity(object $entity)
     {
-        return [
+        $data = [
             'config'     => $this->getConfiguration(),
             'meta'       => $this->getMetaByEntity($entity->getMeta()),
             'paragraphs' => $entity->getParagraphs(),
             'img'        => $entity->getImg(),
             'tags'       => $entity->getTags(),
-            'categories' => $entity->getCategories(),
         ];
+
+        $methods = get_class_methods($entity);
+        if (in_array('getCategories', $methods)) {
+            $data['categories'] = $entity->getCategories();
+        }
+
+        return $data;
     }
 
     public function getEntityBySlug()
@@ -60,6 +80,11 @@ class SiteService
             fn ($type) => !is_null($type) && 'home' != $type->getType()
         );
 
+        $page = $this->pageRepository->findOneBy(['slug' => $slug]);
+        if ($page instanceof Page) {
+            return $page;
+        }
+
         foreach ($types as $type => $row) {
             if ($slug == $row->getSlug()) {
                 $page = $row;
@@ -76,6 +101,32 @@ class SiteService
         }
 
         return $page;
+    }
+
+    public function getSlugByEntity($entity)
+    {
+        $types = $this->getPageByTypes();
+        if ($entity instanceof Page) {
+            return $entity->getSlug();
+        }
+
+        if ($entity instanceof Post) {
+            if (is_null($types['post']) || !$types['post'] instanceof Page) {
+                throw new Exception('Post page not found');
+            }
+
+            return $types['post']->getSlug().'/'.$entity->getSlug();
+        }
+
+        if ($entity instanceof History || $entity instanceof Chapter) {
+            if (is_null($types['history']) || !$types['history'] instanceof Page) {
+                throw new Exception('Post page not found');
+            }
+
+            return $types['history']->getSlug().'/'.$entity->getSlug();
+        }
+
+        return '';
     }
 
     public function getTypesPages()
@@ -101,6 +152,27 @@ class SiteService
         return !(!$entity->isEnable() && is_null($this->getUser()));
 
         // TODO : Prévoir de vérifier les droits de l'utilisateur
+    }
+
+    public function saveConfiguration($post)
+    {
+        foreach ($post as $name => $value) {
+            $configuration = $this->configurationRepository->findOneBy(['name' => $name]);
+            if (!$configuration instanceof Configuration) {
+                $configuration = new Configuration();
+                $configuration->setName($name);
+            }
+
+            $data = [
+                'type'  => gettype($value),
+                'value' => $value,
+            ];
+
+            $configuration->setValue($data);
+            $this->configurationRepository->persist($configuration);
+        }
+
+        $this->configurationRepository->flush();
     }
 
     protected function getMetaByEntity(Meta $meta)

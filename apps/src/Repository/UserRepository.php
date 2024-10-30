@@ -27,8 +27,8 @@ class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgra
         );
         $data = new ArrayCollection(
             [
-                new Parameter('username', '%'.$field.'%'),
-                new Parameter('email', '%'.$field.'%'),
+                new Parameter('username', $field),
+                new Parameter('email', $field),
             ]
         );
         $queryBuilder->setParameters($data);

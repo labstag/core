@@ -39,10 +39,11 @@ class History implements Stringable
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'histories')]
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'histories', cascade: ['persist', 'detach'])]
     private Collection $categories;
 
-    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'refhistory', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'refhistory', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $chapters;
 
     #[ORM\Id]
@@ -68,14 +69,14 @@ class History implements Stringable
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'histories')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'histories', cascade: ['persist', 'detach'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $refuser = null;
 
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'histories')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'histories', cascade: ['persist', 'detach'])]
     private Collection $tags;
 
     public function __construct()

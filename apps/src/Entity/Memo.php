@@ -27,10 +27,6 @@ class Memo
     #[ORM\Column(type: 'boolean', options: ['default' => 1])]
     protected ?bool $enable = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: 'string', length: 255, nullable: true, unique: true)]
-    protected ?string $slug = null;
-
     #[ORM\Column(length: 255)]
     protected ?string $title = null;
 
@@ -53,14 +49,14 @@ class Memo
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'memos')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'memos', cascade: ['persist', 'detach'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $refuser = null;
 
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'memos')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'memos', cascade: ['persist', 'detach'])]
     private Collection $tags;
 
     public function __construct()
@@ -115,11 +111,6 @@ class Memo
     public function getRefuser(): ?User
     {
         return $this->refuser;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
     }
 
     /**
@@ -185,13 +176,6 @@ class Memo
     public function setRefuser(?User $user): static
     {
         $this->refuser = $user;
-
-        return $this;
-    }
-
-    public function setSlug(?string $slug): static
-    {
-        $this->slug = $slug;
 
         return $this;
     }

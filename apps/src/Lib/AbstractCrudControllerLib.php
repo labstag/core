@@ -34,6 +34,7 @@ use Labstag\Service\WorkflowService;
 use Override;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 abstract class AbstractCrudControllerLib extends AbstractCrudController
@@ -142,6 +143,35 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $url = $generator->generateUrl();
 
         return $this->redirect($url);
+    }
+
+    public function linkw3CValidator(AdminContext $adminContext)
+    {
+        $entity = $adminContext->getEntity()->getInstance();
+        $slug   = $this->siteService->getSlugByEntity($entity);
+
+        return $this->redirect(
+            'https://validator.w3.org/nu/?doc='.$this->generateUrl(
+                'front',
+                [
+                    'slug' => $slug
+                ],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            )
+        );
+    }
+
+    public function linkPublic(AdminContext $adminContext)
+    {
+        $entity = $adminContext->getEntity()->getInstance();
+        $slug   = $this->siteService->getSlugByEntity($entity);
+
+        return $this->redirect(
+            $this->generateUrl(
+                'front',
+                ['slug' => $slug]
+            )
+        );
     }
 
     public function listParagraph(
@@ -413,6 +443,29 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $doctrine = $this->container->get('doctrine');
 
         return $doctrine->getManagerForClass(Paragraph::class)->getRepository(Paragraph::class);
+    }
+
+    protected function setActionPublic(Actions $actions): void
+    {
+        $action = Action::new('linkPublic', 'Voir la page');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToCrudAction('linkPublic');
+        $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
+
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+
+        $w3caction = Action::new('linkw3CValidator', 'W3C Validator');
+        $w3caction->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $w3caction->linkToCrudAction('linkw3CValidator');
+        $w3caction->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
+        $actions->add(Crud::PAGE_EDIT, $w3caction);
+        $actions->add(Crud::PAGE_INDEX, $w3caction);
     }
 
     private function filterListeTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder

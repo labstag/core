@@ -23,16 +23,16 @@ class Paragraph implements Stringable
     use SoftDeleteableEntity;
     use TimestampableEntity;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Block $block = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Chapter $chapter = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Edito $edito = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => 1])]
@@ -41,7 +41,7 @@ class Paragraph implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $fond = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?History $history = null;
 
     #[ORM\Id]
@@ -56,16 +56,16 @@ class Paragraph implements Stringable
     #[Vich\UploadableField(mapping: 'paragraph', fileNameProperty: 'img')]
     private ?File $imgFile = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Memo $memo = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Page $page = null;
 
     #[ORM\Column]
     private ?int $position = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Post $post = null;
 
     #[ORM\Column(length: 255, nullable: true)]

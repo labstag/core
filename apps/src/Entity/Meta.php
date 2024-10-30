@@ -25,9 +25,6 @@ class Meta implements Stringable
     private ?string $description = null;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Edito $edito = null;
-
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
     private ?History $history = null;
 
     #[ORM\Id]
@@ -62,11 +59,6 @@ class Meta implements Stringable
     public function getDescription(): ?string
     {
         return $this->description;
-    }
-
-    public function getEdito(): ?Edito
-    {
-        return $this->edito;
     }
 
     public function getHistory(): ?History
@@ -114,18 +106,6 @@ class Meta implements Stringable
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function setEdito(Edito $edito): static
-    {
-        // set the owning side of the relation if necessary
-        if ($edito->getMeta() !== $this) {
-            $edito->setMeta($this);
-        }
-
-        $this->edito = $edito;
 
         return $this;
     }

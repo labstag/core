@@ -4,7 +4,7 @@ namespace Labstag\Lib;
 
 use Labstag\Entity\Block;
 
-class BlockLib
+abstract class BlockLib
 {
     public function getFields(Block $block): iterable
     {

@@ -21,21 +21,21 @@ class Tag implements Stringable
     /**
      * @var Collection<int, Chapter>
      */
-    #[ORM\ManyToMany(targetEntity: Chapter::class, inversedBy: 'tags')]
+    #[ORM\ManyToMany(targetEntity: Chapter::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
     #[ORM\JoinTable(name: 'tag_chapter')]
     private Collection $chapters;
 
     /**
      * @var Collection<int, Edito>
      */
-    #[ORM\ManyToMany(targetEntity: Edito::class, inversedBy: 'tags')]
+    #[ORM\ManyToMany(targetEntity: Edito::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
     #[ORM\JoinTable(name: 'tag_edito')]
     private Collection $editos;
 
     /**
      * @var Collection<int, History>
      */
-    #[ORM\ManyToMany(targetEntity: History::class, inversedBy: 'tags')]
+    #[ORM\ManyToMany(targetEntity: History::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
     #[ORM\JoinTable(name: 'tag_history')]
     private Collection $histories;
 
@@ -48,21 +48,21 @@ class Tag implements Stringable
     /**
      * @var Collection<int, Memo>
      */
-    #[ORM\ManyToMany(targetEntity: Memo::class, inversedBy: 'tags')]
+    #[ORM\ManyToMany(targetEntity: Memo::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
     #[ORM\JoinTable(name: 'tag_memo')]
     private Collection $memos;
 
     /**
      * @var Collection<int, Page>
      */
-    #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'tags')]
+    #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
     #[ORM\JoinTable(name: 'tag_page')]
     private Collection $pages;
 
     /**
      * @var Collection<int, Post>
      */
-    #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'tags')]
+    #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
     #[ORM\JoinTable(name: 'tag_post')]
     private Collection $posts;
 

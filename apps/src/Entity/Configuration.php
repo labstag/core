@@ -21,7 +21,7 @@ class Configuration
     private ?string $name = null;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?object $value = null;
+    private ?array $value = null;
 
     public function getId(): ?string
     {
@@ -33,7 +33,7 @@ class Configuration
         return $this->name;
     }
 
-    public function getValue(): ?object
+    public function getValue(): ?array
     {
         return $this->value;
     }
@@ -45,7 +45,7 @@ class Configuration
         return $this;
     }
 
-    public function setValue(?object $value): static
+    public function setValue(?array $value): static
     {
         $this->value = $value;
 

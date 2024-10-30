@@ -21,13 +21,13 @@ class Category implements Stringable
     /**
      * @var Collection<int, self>
      */
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent', cascade: ['persist', 'detach'])]
     private Collection $children;
 
     /**
      * @var Collection<int, History>
      */
-    #[ORM\ManyToMany(targetEntity: History::class, inversedBy: 'categories')]
+    #[ORM\ManyToMany(targetEntity: History::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
     private Collection $histories;
 
     #[ORM\Id]
@@ -39,16 +39,17 @@ class Category implements Stringable
     /**
      * @var Collection<int, Page>
      */
-    #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'categories')]
+    #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
     private Collection $pages;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist', 'detach'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?self $parent = null;
 
     /**
      * @var Collection<int, Post>
      */
-    #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'categories')]
+    #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
     private Collection $posts;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'], unique_base: 'type')]

@@ -27,7 +27,6 @@ class EditoCrudController extends AbstractCrudControllerLib
     {
         yield FormField::addTab('Principal');
         yield $this->addFieldID();
-        yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
         yield TextField::new('title');
         yield DateTimeField::new('createdAt')->hideOnForm();
@@ -49,8 +48,8 @@ class EditoCrudController extends AbstractCrudControllerLib
     {
         $edito = new $entityFqcn();
         $this->workflowService->init($edito);
-        $meta = new Meta();
         $edito->setRefuser($this->getUser());
+        $meta = new Meta();
         $edito->setMeta($meta);
 
         return $edito;

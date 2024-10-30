@@ -27,10 +27,6 @@ class Edito
     #[ORM\Column(type: 'boolean', options: ['default' => 1])]
     protected ?bool $enable = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: 'string', length: 255, nullable: true, unique: true)]
-    protected ?string $slug = null;
-
     #[ORM\Column(length: 255)]
     protected ?string $title = null;
 
@@ -46,10 +42,6 @@ class Edito
     #[Vich\UploadableField(mapping: 'edito', fileNameProperty: 'img')]
     private ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'edito', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Meta $meta = null;
-
     /**
      * @var Collection<int, Paragraph>
      */
@@ -57,14 +49,14 @@ class Edito
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'editos')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'editos', cascade: ['persist', 'detach'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $refuser = null;
 
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'editos')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'editos', cascade: ['persist', 'detach'])]
     private Collection $tags;
 
     public function __construct()
@@ -108,11 +100,6 @@ class Edito
         return $this->imgFile;
     }
 
-    public function getMeta(): ?Meta
-    {
-        return $this->meta;
-    }
-
     /**
      * @return Collection<int, Paragraph>
      */
@@ -124,11 +111,6 @@ class Edito
     public function getRefuser(): ?User
     {
         return $this->refuser;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
     }
 
     /**
@@ -191,23 +173,9 @@ class Edito
         }
     }
 
-    public function setMeta(Meta $meta): static
-    {
-        $this->meta = $meta;
-
-        return $this;
-    }
-
     public function setRefuser(?User $user): static
     {
         $this->refuser = $user;
-
-        return $this;
-    }
-
-    public function setSlug(?string $slug): static
-    {
-        $this->slug = $slug;
 
         return $this;
     }

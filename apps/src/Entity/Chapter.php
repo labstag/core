@@ -57,15 +57,18 @@ class Chapter
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'chapters')]
+    #[ORM\ManyToOne(inversedBy: 'chapters', cascade: ['persist', 'detach'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?History $refhistory = null;
 
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'chapters')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'chapters', cascade: ['persist', 'detach'])]
     private Collection $tags;
+
+    #[ORM\Column(options: ['default' => 1])]
+    private int $position = 1;
 
     public function __construct()
     {
@@ -215,6 +218,18 @@ class Chapter
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): static
+    {
+        $this->position = $position;
 
         return $this;
     }

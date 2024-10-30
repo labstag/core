@@ -43,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @var Collection<int, Edito>
      */
-    #[ORM\OneToMany(targetEntity: Edito::class, mappedBy: 'refuser')]
+    #[ORM\OneToMany(targetEntity: Edito::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
     private Collection $editos;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -55,7 +55,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @var Collection<int, History>
      */
-    #[ORM\OneToMany(targetEntity: History::class, mappedBy: 'refuser')]
+    #[ORM\OneToMany(targetEntity: History::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
     private Collection $histories;
 
     #[ORM\Id]
@@ -70,13 +70,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @var Collection<int, Memo>
      */
-    #[ORM\OneToMany(targetEntity: Memo::class, mappedBy: 'refuser')]
+    #[ORM\OneToMany(targetEntity: Memo::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
     private Collection $memos;
 
     /**
      * @var Collection<int, Page>
      */
-    #[ORM\OneToMany(targetEntity: Page::class, mappedBy: 'refuser')]
+    #[ORM\OneToMany(targetEntity: Page::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
     private Collection $pages;
 
     /**
@@ -88,7 +88,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @var Collection<int, Post>
      */
-    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'refuser')]
+    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
     private Collection $posts;
 
     /**

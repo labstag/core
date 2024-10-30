@@ -4,6 +4,7 @@ namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Memo;
 use Labstag\Form\Paragraphs\MemoType;
@@ -23,8 +24,8 @@ class MemoCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
+        yield FormField::addTab('Principal');
         yield $this->addFieldID();
-        yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
         yield TextField::new('title');
         yield DateTimeField::new('createdAt')->hideOnForm();

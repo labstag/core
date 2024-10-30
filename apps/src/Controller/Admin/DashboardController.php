@@ -195,7 +195,7 @@ class DashboardController extends AbstractDashboardController
     #[Route('/admin/option', name: 'admin_option')]
     public function option(Request $request): Response
     {
-        $data = [];
+        $data = $this->siteService->getConfiguration();
         $form = $this->createForm(
             OptionType::class,
             $data,
@@ -206,7 +206,9 @@ class DashboardController extends AbstractDashboardController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $post = $form->getData();
-            dump($post);
+            $this->addFlash('success', 'Options mis à jour');
+            // TODO : Sauvegarde données
+            $this->siteService->saveConfiguration($post);
         }
 
         return $this->render(

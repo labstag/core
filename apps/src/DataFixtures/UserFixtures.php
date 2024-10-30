@@ -5,11 +5,12 @@ namespace Labstag\DataFixtures;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\User;
+use Labstag\Lib\FixtureLib;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
 
-class UserFixtures extends Fixture
+class UserFixtures extends FixtureLib
 {
     public function __construct(
         protected WorkflowService $workflowService,
@@ -23,7 +24,9 @@ class UserFixtures extends Fixture
     {
         $data = $this->data();
         foreach ($data as $row) {
-            $this->setUser($objectManager, $row);
+            $entity = $row['entity'];
+            unset($row['entity']);
+            $this->setUser($objectManager, $entity, $row);
         }
 
         $objectManager->flush();
@@ -33,39 +36,50 @@ class UserFixtures extends Fixture
     {
         $roles = $this->userService->getRoles();
 
+        $user = new User();
+        $user->setRoles(
+            [
+                $roles['Admin'],
+            ]
+        );
+        $user->setLanguage('fr');
+        $user->setUsername('admin');
+        $user->setEmail('admin@test.local');
+
+        $admin = $user;
+
+        $user = new User();
+        $user->setRoles(
+            [
+                $roles['Super Admin'],
+            ]
+        );
+        $user->setLanguage('fr');
+        $user->setUsername('superadmin');
+        $user->setEmail('superadmin@test.local');
+
+        $superadmin = $user;
+
         return [
             [
-                'username' => 'admin',
+                'entity'   => $admin,
                 'password' => 'password',
-                'email'    => 'admin@test.local',
-                'language' => 'fr',
-                'roles'    => [
-                    isset($roles['Admin']) ?? null,
-                ],
             ],
             [
-                'username' => 'superadmin',
+                'entity'   => $superadmin,
                 'password' => 'password',
-                'email'    => 'superadmin@test.local',
-                'language' => 'fr',
-                'roles'    => [
-                    isset($roles['Super Admin']) ?? null,
-                ],
             ],
         ];
     }
 
-    private function setUser(ObjectManager $objectManager, array $data): void
+    private function setUser(ObjectManager $objectManager, User $user, array $data): void
     {
-        $user = new User();
         $this->workflowService->init($user);
         $hash = $this->userService->hashPassword($user, $data['password']);
         $user->setEnable(true);
-        $user->setUsername($data['username']);
         $user->setPassword($hash);
-        $user->setLanguage($data['language']);
-        $user->setEmail($data['email']);
-        $user->setRoles($data['roles']);
+
+        $this->addReference('user_'.$user->getUsername(), $user);
 
         $objectManager->persist($user);
     }

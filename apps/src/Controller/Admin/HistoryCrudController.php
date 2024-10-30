@@ -17,6 +17,7 @@ class HistoryCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
+        $this->setActionPublic($actions);
         $this->configureActionsTrash($actions);
 
         return $actions;
@@ -50,8 +51,8 @@ class HistoryCrudController extends AbstractCrudControllerLib
     {
         $history = new $entityFqcn();
         $this->workflowService->init($history);
-        $meta = new Meta();
         $history->setRefuser($this->getUser());
+        $meta = new Meta();
         $history->setMeta($meta);
 
         return $history;

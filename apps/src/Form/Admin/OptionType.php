@@ -14,7 +14,7 @@ class OptionType extends AbstractType
     {
         unset($options);
         $formBuilder->add(
-            'field_name'
+            'site_name'
         );
     }
 

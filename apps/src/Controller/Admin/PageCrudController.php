@@ -19,6 +19,7 @@ class PageCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
+        $this->setActionPublic($actions);
         $this->configureActionsTrash($actions);
 
         return $actions;
@@ -63,6 +64,7 @@ class PageCrudController extends AbstractCrudControllerLib
         $page = new $entityFqcn();
         $this->workflowService->init($page);
         $meta = new Meta();
+        $page->setMeta($meta);
         $home = $this->getRepository()->findOneBy(['type' => 'home']);
         if ($home instanceof Page) {
             $page->setPage($home);
@@ -70,7 +72,6 @@ class PageCrudController extends AbstractCrudControllerLib
 
         $page->setType(($home instanceof Page) ? 'page' : 'home');
         $page->setRefuser($this->getUser());
-        $page->setMeta($meta);
 
         return $page;
     }

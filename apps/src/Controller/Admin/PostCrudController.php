@@ -17,6 +17,7 @@ class PostCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
+        $this->setActionPublic($actions);
         $this->configureActionsTrash($actions);
 
         return $actions;
@@ -50,8 +51,8 @@ class PostCrudController extends AbstractCrudControllerLib
     {
         $post = new $entityFqcn();
         $this->workflowService->init($post);
-        $meta = new Meta();
         $post->setRefuser($this->getUser());
+        $meta = new Meta();
         $post->setMeta($meta);
 
         return $post;

@@ -18,6 +18,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
+        $this->setActionPublic($actions);
         $this->configureActionsTrash($actions);
 
         return $actions;
