@@ -3,7 +3,9 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -19,6 +21,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions);
+        $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
 
         return $actions;

@@ -226,6 +226,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     protected function addFieldCategories(string $type)
     {
         $associationField = AssociationField::new('categories')->autocomplete();
+        $associationField->setTemplatePath('admin/field/categories.html.twig');
         $associationField->setFormTypeOption('by_reference', false);
         $associationField->setQueryBuilder(
             function (QueryBuilder $queryBuilder) use ($type)
@@ -335,6 +336,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     protected function addFieldTags(string $type)
     {
         $associationField = AssociationField::new('tags')->autocomplete();
+        $associationField->setTemplatePath('admin/field/tags.html.twig');
         $associationField->setFormTypeOption('by_reference', false);
         $associationField->setQueryBuilder(
             function (QueryBuilder $queryBuilder) use ($type)
@@ -465,6 +467,12 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
         $actions->add(Crud::PAGE_EDIT, $w3caction);
         $actions->add(Crud::PAGE_INDEX, $w3caction);
+        $actions->add(Crud::PAGE_DETAIL, $w3caction);
+    }
+
+    protected function setEditDetail(Actions $actions): void
+    {
+        $actions->add(Crud::PAGE_EDIT, Action::DETAIL);
     }
 
     private function filterListeTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder

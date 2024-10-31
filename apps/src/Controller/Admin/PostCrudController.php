@@ -18,6 +18,7 @@ class PostCrudController extends AbstractCrudControllerLib
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions);
+        $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
 
         return $actions;

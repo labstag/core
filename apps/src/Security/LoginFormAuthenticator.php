@@ -2,7 +2,6 @@
 
 namespace Labstag\Security;
 
-use Exception;
 use Labstag\Entity\User;
 use Labstag\Repository\UserRepository;
 use Override;
@@ -68,6 +67,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     {
         unset($token);
         $targetPath = $this->getTargetPath($request->getSession(), $firewallName);
+
         return new RedirectResponse($targetPath ?: $this->urlGenerator->generate('front'));
     }
 

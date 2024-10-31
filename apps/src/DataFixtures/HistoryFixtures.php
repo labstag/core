@@ -5,8 +5,10 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
+use Labstag\Entity\Category;
 use Labstag\Entity\History;
 use Labstag\Entity\Meta;
+use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
 use Override;
@@ -17,6 +19,8 @@ class HistoryFixtures extends FixtureLib implements DependentFixtureInterface
      * @var int
      */
     protected const NUMBER_HISTORY = 10;
+
+    protected array $users = [];
 
     #[Override]
     public function getDependencies(): array
@@ -31,6 +35,9 @@ class HistoryFixtures extends FixtureLib implements DependentFixtureInterface
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
+        $this->users      = $this->getIdentitiesByClass(User::class);
+        $this->tags       = $this->getIdentitiesByClass(Tag::class, 'history');
+        $this->categories = $this->getIdentitiesByClass(Category::class, 'history');
         $this->loadForeach(self::NUMBER_HISTORY, 'addHistory', $objectManager);
         $objectManager->flush();
     }
@@ -44,10 +51,10 @@ class HistoryFixtures extends FixtureLib implements DependentFixtureInterface
         $history = new History();
         $history->setMeta($meta);
         $history->setEnable((bool) random_int(0, 1));
-
-        $users = $this->getIdentitiesByClass(User::class);
-        $history->setRefuser($this->getReference(array_rand($users)));
+        $history->setRefuser($this->getReference(array_rand($this->users), User::class));
         $history->setTitle($generator->unique()->colorName());
+        $this->addTagToEntity($history);
+        $this->addCategoryToEntity($history);
         $this->addReference('history_'.md5(uniqid()), $history);
         $objectManager->persist($history);
     }

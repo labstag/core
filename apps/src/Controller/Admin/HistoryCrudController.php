@@ -2,7 +2,10 @@
 
 namespace Labstag\Controller\Admin;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -18,9 +21,25 @@ class HistoryCrudController extends AbstractCrudControllerLib
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions);
+        $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
+        $this->setActionMoveChapter($actions);
 
         return $actions;
+    }
+
+    private function setActionMoveChapter(Actions $actions): void
+    {
+        $action = Action::new('moveChapter', 'Déplacer un chapitre');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToCrudAction('moveChapter');
+        $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
+
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
     }
 
     #[Override]
@@ -36,6 +55,14 @@ class HistoryCrudController extends AbstractCrudControllerLib
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('history');
         yield $this->addFieldCategories('history');
+        $collectionField = CollectionField::new('chapters');
+        $collectionField->onlyOnIndex();
+        $collectionField->formatValue(fn ($value) => count($value));
+        yield $collectionField;
+        $collectionField = CollectionField::new('chapters');
+        $collectionField->setTemplatePath('admin/field/chapters.html.twig');
+        $collectionField->onlyOnDetail();
+        yield $collectionField;
         $fields = array_merge(
             $this->addFieldParagraphs($pageName, HistoryType::class),
             $this->addFieldMetas(),

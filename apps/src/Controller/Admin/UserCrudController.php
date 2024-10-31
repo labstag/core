@@ -24,6 +24,7 @@ class UserCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
+        $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
 
         return $actions;

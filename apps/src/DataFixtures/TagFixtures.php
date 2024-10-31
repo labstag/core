@@ -2,11 +2,11 @@
 
 namespace Labstag\DataFixtures;
 
-use Override;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Tag;
 use Labstag\Lib\FixtureLib;
+use Override;
 
 class TagFixtures extends FixtureLib
 {
@@ -35,8 +35,8 @@ class TagFixtures extends FixtureLib
             'page',
             'post',
         ];
-        $code     = $tab[array_rand($tab)];
-        $tag = new Tag();
+        $code = $tab[array_rand($tab)];
+        $tag  = new Tag();
         $tag->setTitle($generator->unique()->colorName());
         $tag->setType($code);
         $this->addReference('tag'.$code.'_'.md5(uniqid()), $tag);

@@ -4,7 +4,9 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Labstag\Entity\Category;
 use Labstag\Entity\Page;
+use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
 use Override;
@@ -24,7 +26,9 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
-        $data = $this->data();
+        $data             = $this->data();
+        $this->tags       = $this->getIdentitiesByClass(Tag::class, 'page');
+        $this->categories = $this->getIdentitiesByClass(Category::class, 'page');
         foreach ($data as $row) {
             $entity = $row['entity'];
             unset($row['entity']);

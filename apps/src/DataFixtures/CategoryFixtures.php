@@ -2,11 +2,11 @@
 
 namespace Labstag\DataFixtures;
 
-use Override;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Category;
 use Labstag\Lib\FixtureLib;
+use Override;
 
 class CategoryFixtures extends FixtureLib
 {
@@ -14,8 +14,6 @@ class CategoryFixtures extends FixtureLib
      * @var int
      */
     protected const NUMBER_CATEGORY = 30;
-
-    protected array $categories = [];
 
     #[Override]
     public function load(ObjectManager $objectManager): void
@@ -43,7 +41,7 @@ class CategoryFixtures extends FixtureLib
         if (1 == $parent) {
             $categories = $this->getParent('category'.$code);
             if (0 != count($categories)) {
-                $parentCategory = $this->getReference(array_rand($categories));
+                $parentCategory = $this->getReference(array_rand($categories), Category::class);
                 $category->setParent($parentCategory);
             }
         }
