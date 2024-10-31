@@ -1,13 +1,16 @@
-import { ClassicEditor } from 'ckeditor5';
 import {
+	ClassicEditor,
 	AccessibilityHelp,
 	Alignment,
 	Autoformat,
+	AutoImage,
 	AutoLink,
 	Autosave,
+	Base64UploadAdapter,
 	BlockQuote,
 	Bold,
 	Code,
+	CodeBlock,
 	Essentials,
 	FindAndReplace,
 	FontBackgroundColor,
@@ -21,11 +24,29 @@ import {
 	HorizontalLine,
 	HtmlComment,
 	HtmlEmbed,
+	ImageBlock,
+	ImageCaption,
+	ImageInline,
+	ImageInsert,
+	ImageInsertViaUrl,
+	ImageResize,
+	ImageStyle,
+	ImageTextAlternative,
+	ImageToolbar,
+	ImageUpload,
 	Indent,
 	IndentBlock,
 	Italic,
 	Link,
+	LinkImage,
+	List,
+	ListProperties,
+	Markdown,
+	MediaEmbed,
+	PageBreak,
 	Paragraph,
+	PasteFromMarkdownExperimental,
+	PasteFromOffice,
 	RemoveFormat,
 	SelectAll,
 	ShowBlocks,
@@ -49,6 +70,7 @@ import {
 	TableToolbar,
 	TextPartLanguage,
 	TextTransformation,
+	TodoList,
 	Underline,
 	Undo
 } from 'ckeditor5';
@@ -77,12 +99,17 @@ const editorConfig = {
 			'underline',
 			'|',
 			'link',
+			'insertImage',
 			'insertTable',
 			'highlight',
 			'blockQuote',
+			'codeBlock',
 			'|',
 			'alignment',
 			'|',
+			'bulletedList',
+			'numberedList',
+			'todoList',
 			'outdent',
 			'indent'
 		],
@@ -92,11 +119,14 @@ const editorConfig = {
 		AccessibilityHelp,
 		Alignment,
 		Autoformat,
+		AutoImage,
 		AutoLink,
 		Autosave,
+		Base64UploadAdapter,
 		BlockQuote,
 		Bold,
 		Code,
+		CodeBlock,
 		Essentials,
 		FindAndReplace,
 		FontBackgroundColor,
@@ -110,11 +140,29 @@ const editorConfig = {
 		HorizontalLine,
 		HtmlComment,
 		HtmlEmbed,
+		ImageBlock,
+		ImageCaption,
+		ImageInline,
+		ImageInsert,
+		ImageInsertViaUrl,
+		ImageResize,
+		ImageStyle,
+		ImageTextAlternative,
+		ImageToolbar,
+		ImageUpload,
 		Indent,
 		IndentBlock,
 		Italic,
 		Link,
+		LinkImage,
+		List,
+		ListProperties,
+		Markdown,
+		MediaEmbed,
+		PageBreak,
 		Paragraph,
+		PasteFromMarkdownExperimental,
+		PasteFromOffice,
 		RemoveFormat,
 		SelectAll,
 		ShowBlocks,
@@ -138,6 +186,7 @@ const editorConfig = {
 		TableToolbar,
 		TextPartLanguage,
 		TextTransformation,
+		TodoList,
 		Underline,
 		Undo
 	],
@@ -203,6 +252,18 @@ const editorConfig = {
 			}
 		]
 	},
+	image: {
+		toolbar: [
+			'toggleImageCaption',
+			'imageTextAlternative',
+			'|',
+			'imageStyle:inline',
+			'imageStyle:wrapText',
+			'imageStyle:breakText',
+			'|',
+			'resizeImage'
+		]
+	},
 	language: 'fr',
 	link: {
 		addTargetToExternalLinks: true,
@@ -215,6 +276,13 @@ const editorConfig = {
 					download: 'file'
 				}
 			}
+		}
+	},
+	list: {
+		properties: {
+			styles: true,
+			startIndex: true,
+			reversed: true
 		}
 	},
 	menuBar: {
@@ -275,6 +343,8 @@ const editorConfig = {
 	},
 	translations: [translations]
 };
+
+
 export class Wysiwyg
 {
   constructor()
