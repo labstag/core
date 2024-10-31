@@ -23,7 +23,7 @@ class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgra
     {
         $queryBuilder = $this->createQueryBuilder('u');
         $queryBuilder->where(
-            'u.username LIKE :username OR u.email LIKE :email'
+            'u.username = :username OR u.email = :email'
         );
         $data = new ArrayCollection(
             [
