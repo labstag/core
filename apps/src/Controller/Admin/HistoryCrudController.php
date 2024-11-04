@@ -28,20 +28,6 @@ class HistoryCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    private function setActionMoveChapter(Actions $actions): void
-    {
-        $action = Action::new('moveChapter', 'Déplacer un chapitre');
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
-        $action->linkToCrudAction('moveChapter');
-        $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
-
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
-    }
-
     #[Override]
     public function configureFields(string $pageName): iterable
     {
@@ -89,5 +75,19 @@ class HistoryCrudController extends AbstractCrudControllerLib
     public static function getEntityFqcn(): string
     {
         return History::class;
+    }
+
+    private function setActionMoveChapter(Actions $actions): void
+    {
+        $action = Action::new('moveChapter', 'Déplacer un chapitre');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToCrudAction('moveChapter');
+        $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
+
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
     }
 }

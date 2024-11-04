@@ -51,9 +51,9 @@ class BlockService
     public function getRegions(): array
     {
         return [
-            'header'  => 'header',
-            'footer'  => 'footer',
-            'content' => 'content',
+            'header' => 'header',
+            'footer' => 'footer',
+            'main'   => 'main',
         ];
     }
 }

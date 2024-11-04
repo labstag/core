@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Block;
@@ -72,6 +73,28 @@ class BlockCrudController extends AbstractCrudControllerLib
         foreach ($fields as $field) {
             yield $field;
         }
+
+        yield FormField::addTab('Config');
+        $choiceField = ChoiceField::new('roles');
+        $choiceField->hideOnIndex();
+        $choiceField->allowMultipleChoices();
+        $choiceField->setChoices($this->userService->getRoles());
+        yield $choiceField;
+        $textareaField = TextareaField::new('pages');
+        $textareaField->setHelp('Séparer les pages par des virgules');
+        $textareaField->hideOnIndex();
+        yield $textareaField;
+        $requestPathField = ChoiceField::new('request_path');
+        $requestPathField->renderExpanded();
+        $requestPathField->hideOnIndex();
+        $requestPathField->setRequired(true);
+        $requestPathField->setChoices(
+            [
+                'Afficher pour les pages listées' => '0',
+                'Masquer pour les pages listées'  => '1',
+            ]
+        );
+        yield $requestPathField;
     }
 
     #[Override]
