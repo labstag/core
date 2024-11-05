@@ -42,7 +42,7 @@ class Block
     #[ORM\Column]
     private ?bool $requestPath = null;
 
-    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $roles = null;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'])]
