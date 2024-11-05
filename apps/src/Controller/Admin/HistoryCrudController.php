@@ -5,10 +5,13 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Labstag\Entity\Chapter;
 use Labstag\Entity\History;
 use Labstag\Entity\Meta;
 use Labstag\Form\Paragraphs\HistoryType;
@@ -77,12 +80,45 @@ class HistoryCrudController extends AbstractCrudControllerLib
         return History::class;
     }
 
+    public function moveChapter(AdminContext $adminContext)
+    {
+        $request    = $adminContext->getRequest();
+        $repository = $this->getRepository();
+        $entityId   = $request->query->get('entityId');
+        $history    = $repository->find($entityId);
+        $generator  = $this->container->get(AdminUrlGenerator::class);
+        if ($request->isMethod('POST')) {
+            $repository = $this->getRepository(Chapter::class);
+            $chapters   = $request->get('chapter');
+            foreach ($chapters as $id => $position) {
+                $chapter = $repository->find($id);
+                if (!$chapter instanceof Chapter) {
+                    continue;
+                }
+
+                $chapter->setPosition($position);
+                $repository->persist($chapter);
+            }
+
+            $repository->flush();
+            $this->addFlash('success', 'Position mise à jour');
+
+            $url = $generator->setController(static::class)->setAction(Action::INDEX)->generateUrl();
+
+            return $this->redirect($url);
+        }
+
+        return $this->render(
+            'admin/history/order.html.twig',
+            [
+                'chapters' => $history->getChapters(),
+            ]
+        );
+    }
+
     private function setActionMoveChapter(Actions $actions): void
     {
         $action = Action::new('moveChapter', 'Déplacer un chapitre');
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
         $action->linkToCrudAction('moveChapter');
         $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
 

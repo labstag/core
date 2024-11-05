@@ -1,0 +1,30 @@
+{% block content_title 'Gestion des positions' %}
+{% block page_title 'Gestion des positions' %}
+{% block page_actions %}
+  <button class="action-saveAndReturn btn btn-primary action-save" type="submit" name="ea[newForm][btn]" value="saveAndReturn" data-action-name="saveAndReturn" form="position-History-form">
+      <span class="btn-label">Sauvegarder les modifications</span>
+  </button>
+{% endblock %}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+{% block main %}
+  <form method="POST" id="position-History-form">
+    {% set region = null %}
+    <fieldset>
+        <ul class="history-sort" id="sort_list">
+            {% for i, chapter in chapters %}
+                <li class="list-group-item">
+                <div class="d-flex">
+                    <div class="p-2">
+                    <i class="fas fa-arrows-alt"></i>
+                    <input type="hidden" value="{{ i+1 }}" id="{{ chapter.id }}" class="sort_input" name="chapter[{{ chapter.id }}]"/>
+                    </div>
+                    <div class="p-2">
+                    {{ chapter.title }}
+                    </div>
+                </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </fieldset>
+  </form>
+{% endblock %}
