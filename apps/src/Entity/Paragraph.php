@@ -74,6 +74,12 @@ class Paragraph implements Stringable
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $nbr = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $url = null;
+
     #[Override]
     public function __toString(): string
     {
@@ -263,6 +269,30 @@ class Paragraph implements Stringable
     public function setType(string $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getNbr(): ?int
+    {
+        return $this->nbr;
+    }
+
+    public function setNbr(?int $nbr): static
+    {
+        $this->nbr = $nbr;
+
+        return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(?string $url): static
+    {
+        $this->url = $url;
 
         return $this;
     }

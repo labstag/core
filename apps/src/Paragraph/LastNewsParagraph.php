@@ -5,6 +5,7 @@ namespace Labstag\Paragraph;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Lib\ParagraphLib;
+use Labstag\Repository\PostRepository;
 use Override;
 
 class LastNewsParagraph extends ParagraphLib
@@ -12,6 +13,7 @@ class LastNewsParagraph extends ParagraphLib
     #[Override]
     public function content(string $view, Paragraph $paragraph, ?array $data = null)
     {
+        /** @var PostRepository $repository  */
         $repository = $this->getRepository(Post::class);
         unset($repository);
 

@@ -5,6 +5,7 @@ namespace Labstag\Paragraph;
 use Labstag\Entity\History;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
+use Labstag\Repository\HistoryRepository;
 use Override;
 
 class HistoryListParagraph extends ParagraphLib
@@ -12,6 +13,7 @@ class HistoryListParagraph extends ParagraphLib
     #[Override]
     public function content(string $view, Paragraph $paragraph, ?array $data = null)
     {
+        /** @var HistoryRepository $repository  */
         $repository = $this->getRepository(History::class);
         unset($repository);
 
