@@ -132,7 +132,7 @@ class ParagraphService
     public function showContent(
         string $view,
         Paragraph $paragraph,
-        array $data
+        ?array $data = null
     )
     {
         $content = null;

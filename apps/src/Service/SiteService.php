@@ -3,6 +3,10 @@
 namespace Labstag\Service;
 
 use Exception;
+use Labstag\Controller\Admin\ChapterCrudController;
+use Labstag\Controller\Admin\HistoryCrudController;
+use Labstag\Controller\Admin\PageCrudController;
+use Labstag\Controller\Admin\PostCrudController;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Configuration;
 use Labstag\Entity\History;
@@ -50,6 +54,21 @@ class SiteService
         return $tab;
     }
 
+    public function getCrudController($entity)
+    {
+        $cruds  = $this->getDataCrudController();
+        $return = null;
+        foreach ($cruds as $object => $crud) {
+            if ($object != $entity) {
+                continue;
+            }
+
+            $return = $crud;
+        }
+
+        return $return;
+    }
+
     public function getDataByEntity(object $entity)
     {
         [
@@ -59,6 +78,7 @@ class SiteService
         ] = $this->getBlocks();
 
         $data = [
+            'entity'     => $entity,
             'paragraphs' => $entity->getParagraphs(),
             'img'        => $entity->getImg(),
             'tags'       => $entity->getTags(),
@@ -192,6 +212,16 @@ class SiteService
         }
 
         $this->configurationRepository->flush();
+    }
+
+    protected function getDataCrudController()
+    {
+        return [
+            History::class => HistoryCrudController::class,
+            Chapter::class => ChapterCrudController::class,
+            Page::class    => PageCrudController::class,
+            Post::class    => PostCrudController::class,
+        ];
     }
 
     protected function getMetaByEntity(Meta $meta)

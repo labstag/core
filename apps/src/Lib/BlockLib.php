@@ -2,8 +2,10 @@
 
 namespace Labstag\Lib;
 
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Block;
 use Labstag\Service\ParagraphService;
+use Labstag\Service\SiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Twig\Environment;
 
@@ -15,7 +17,9 @@ abstract class BlockLib extends AbstractController
     protected array $templates = [];
 
     public function __construct(
+        protected AdminUrlGenerator $adminUrlGenerator,
         protected ParagraphService $paragraphService,
+        protected SiteService $siteService,
         protected Environment $twigEnvironment
     )
     {
@@ -66,8 +70,8 @@ abstract class BlockLib extends AbstractController
 
         $htmltwig = '.html.twig';
         $files    = [
-            'block/'.$type.$htmltwig,
-            'block/default'.$htmltwig,
+            'blocks/'.$type.$htmltwig,
+            'blocks/default'.$htmltwig,
         ];
 
         $view   = end($files);

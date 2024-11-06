@@ -12,4 +12,11 @@ class EditoRepository extends ServiceEntityRepositoryLib
     {
         parent::__construct($managerRegistry, Edito::class);
     }
+
+    public function findLast()
+    {
+        $query = $this->createQueryBuilder('a')->where('a.enable = :enable')->setParameter('enable', true)->orderBy('a.createdAt', 'DESC')->setMaxResults(1)->getQuery();
+
+        return $query->getOneOrNullResult();
+    }
 }

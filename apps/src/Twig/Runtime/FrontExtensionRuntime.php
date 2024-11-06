@@ -32,6 +32,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     {
         // TODO
         unset($value);
+
         return 'Welcome !';
     }
 }

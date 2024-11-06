@@ -1,0 +1,12 @@
+<div id="{{ block_id(block) }}">
+    {% for label, messages in app.flashes %}
+        <div class="flash-{{ label }}">
+            <div>{{ label }}</div>
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</div>

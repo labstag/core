@@ -9,7 +9,7 @@ use Override;
 class TextImgParagraph extends ParagraphLib
 {
     #[Override]
-    public function content(string $view, Paragraph $paragraph, array $data)
+    public function content(string $view, Paragraph $paragraph, ?array $data = null)
     {
         return $this->render(
             $view,

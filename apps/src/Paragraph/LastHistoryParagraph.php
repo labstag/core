@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use Labstag\Entity\History;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Override;
@@ -9,8 +10,11 @@ use Override;
 class LastHistoryParagraph extends ParagraphLib
 {
     #[Override]
-    public function content(string $view, Paragraph $paragraph, array $data)
+    public function content(string $view, Paragraph $paragraph, ?array $data = null)
     {
+        $repository = $this->getRepository(History::class);
+        unset($repository);
+
         return $this->render(
             $view,
             [

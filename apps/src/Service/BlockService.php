@@ -4,12 +4,16 @@ namespace Labstag\Service;
 
 use Labstag\Entity\Block;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class BlockService
 {
     public function __construct(
         #[AutowireIterator('labstag.blocks')]
-        private readonly iterable $blocks
+        private readonly iterable $blocks,
+        protected AuthorizationCheckerInterface $authorizationChecker,
+        protected TokenStorageInterface $tokenStorage
     )
     {
     }
@@ -18,6 +22,10 @@ class BlockService
     {
         $tab = [];
         foreach ($blocks as $block) {
+            if (!$this->acces($block)) {
+                continue;
+            }
+
             $tab[] = [
                 'templates' => $this->templates($block),
                 'block'     => $block,
@@ -103,6 +111,27 @@ class BlockService
         }
 
         return $content;
+    }
+
+    protected function acces($block)
+    {
+        $roles = $block->getRoles();
+        if (is_null($roles) || 0 == count($roles)) {
+            return true;
+        }
+
+        foreach ($roles as $role) {
+            if ($this->isGranted($role)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function isGranted(mixed $attribute, mixed $subject = null): bool
+    {
+        return $this->authorizationChecker->isGranted($attribute, $subject);
     }
 
     private function templates(Block $block)

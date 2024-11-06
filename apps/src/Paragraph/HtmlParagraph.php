@@ -11,7 +11,7 @@ use Override;
 class HtmlParagraph extends ParagraphLib
 {
     #[Override]
-    public function content(string $view, Paragraph $paragraph, array $data)
+    public function content(string $view, Paragraph $paragraph, ?array $data = null)
     {
         return $this->render(
             $view,

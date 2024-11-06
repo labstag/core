@@ -7,7 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Edito;
-use Labstag\Entity\Meta;
 use Labstag\Form\Paragraphs\EditoType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
@@ -35,7 +34,6 @@ class EditoCrudController extends AbstractCrudControllerLib
         yield $this->addFieldImageUpload('img', $pageName);
         $fields = array_merge(
             $this->addFieldParagraphs($pageName, EditoType::class),
-            $this->addFieldMetas(),
             $this->addFieldRefUser()
         );
         foreach ($fields as $field) {
@@ -49,8 +47,6 @@ class EditoCrudController extends AbstractCrudControllerLib
         $edito = new $entityFqcn();
         $this->workflowService->init($edito);
         $edito->setRefuser($this->getUser());
-        $meta = new Meta();
-        $edito->setMeta($meta);
 
         return $edito;
     }

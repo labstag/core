@@ -9,7 +9,7 @@ use Override;
 class VideoParagraph extends ParagraphLib
 {
     #[Override]
-    public function content(string $view, Paragraph $paragraph, array $data)
+    public function content(string $view, Paragraph $paragraph, ?array $data = null)
     {
         return $this->render(
             $view,
@@ -23,9 +23,7 @@ class VideoParagraph extends ParagraphLib
     #[Override]
     public function getFields(Paragraph $paragraph): iterable
     {
-        unset($paragraph);
-
-        return [];
+        yield $this->addFieldImageUpload('img');
     }
 
     #[Override]

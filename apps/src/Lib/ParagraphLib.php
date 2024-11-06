@@ -2,6 +2,8 @@
 
 namespace Labstag\Lib;
 
+use Doctrine\Persistence\ManagerRegistry;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
@@ -10,8 +12,10 @@ use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
+use Labstag\Service\ParagraphService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Twig\Environment;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 abstract class ParagraphLib extends AbstractController
 {
@@ -21,12 +25,22 @@ abstract class ParagraphLib extends AbstractController
     protected array $templates = [];
 
     public function __construct(
+        protected ManagerRegistry $managerRegistry,
+        protected ParagraphService $paragraphService,
         protected Environment $twigEnvironment
     )
     {
     }
 
-    public function content(string $view, Paragraph $paragraph, array $data)
+    public function addFieldImageUpload(string $type)
+    {
+        $textField = TextField::new($type.'File');
+        $textField->setFormType(VichImageType::class);
+
+        return $textField;
+    }
+
+    public function content(string $view, Paragraph $paragraph, ?array $data = null)
     {
         unset($view, $paragraph, $data);
     }
@@ -66,6 +80,11 @@ abstract class ParagraphLib extends AbstractController
     public function useIn(): array
     {
         return [];
+    }
+
+    protected function getRepository(string $entity)
+    {
+        return $this->managerRegistry->getRepository($entity);
     }
 
     protected function getTemplateData(string $type)

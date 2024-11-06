@@ -2,20 +2,32 @@
 
 namespace Labstag\Paragraph;
 
+use Labstag\Entity\Edito;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
+use Labstag\Repository\EditoRepository;
 use Override;
 
 class EditoParagraph extends ParagraphLib
 {
     #[Override]
-    public function content(string $view, Paragraph $paragraph, array $data)
+    public function content(string $view, Paragraph $paragraph, ?array $data = null)
     {
+        /** @var EditoRepository $repository */
+        $repository = $this->getRepository(Edito::class);
+        $edito      = $repository->findLast();
+        if (!$edito instanceof Edito) {
+            return null;
+        }
+
+        $paragraphsedito = $this->paragraphService->generate($edito->getParagraphs());
+
         return $this->render(
             $view,
             [
-                'paragraph' => $paragraph,
-                'data'      => $data,
+                'paragraphsedito' => $paragraphsedito,
+                'paragraph'       => $paragraph,
+                'edito'           => $edito,
             ]
         );
     }

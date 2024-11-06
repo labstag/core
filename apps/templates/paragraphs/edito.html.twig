@@ -1,1 +1,8 @@
-<section id="{{ paragraph_id(paragraph) }}">Paragraph edito</section>
+<section id="{{ paragraph_id(paragraph) }}">
+    <h2>{{ edito.title }}</h2>
+    {% for tab in paragraphsedito %}
+        {{ debug_begin(tab) }}
+        {{ paragraph_show(tab) }}
+        {{ debug_end(tab) }}
+    {% endfor %}
+</section>
