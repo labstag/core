@@ -3,6 +3,7 @@
 namespace Labstag\Block;
 
 use Labstag\Entity\Block;
+use Labstag\Field\WysiwygField;
 use Labstag\Lib\BlockLib;
 use Override;
 
@@ -23,9 +24,9 @@ class HtmlBlock extends BlockLib
     #[Override]
     public function getFields(Block $block): iterable
     {
-        unset($block);
+        $wysiwygField = WysiwygField::new('content', 'Texte');
 
-        return [];
+        yield $wysiwygField;
     }
 
     #[Override]

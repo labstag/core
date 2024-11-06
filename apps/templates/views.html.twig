@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}{{ site_title(data) }}{% endblock %}</title>
         {% block meta %}
             <meta charset="UTF-8">
+            {{ site_metatags(data) }}
         {% endblock %}
         {% block stylesheets %}
             {{ encore_entry_link_tags('front') }}
         {% endblock %}
-
         {% block javascripts %}
             {{ encore_entry_script_tags('front') }}
         {% endblock %}

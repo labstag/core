@@ -58,7 +58,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         yield ParagraphParentField::new('parent', 'Parent');
         yield DateTimeField::new('created')->hideOnForm();
         yield DateTimeField::new('updated')->hideOnForm();
-        $fields = $this->paragraphService->getFieldsCrudEA($currentEntity);
+        $fields = $this->paragraphService->getFields($currentEntity);
         foreach ($fields as $field) {
             yield $field;
         }

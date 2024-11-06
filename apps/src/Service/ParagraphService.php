@@ -9,7 +9,6 @@ use Labstag\Interface\ParagraphInterface;
 use ReflectionClass;
 use stdClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use Symfony\Component\Form\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class ParagraphService
@@ -83,26 +82,7 @@ class ParagraphService
         return $object;
     }
 
-    public function getFields(Form $form, $paragraph)
-    {
-        if (!$paragraph instanceof Paragraph) {
-            return [];
-        }
-
-        $type   = $paragraph->getType();
-        $fields = [];
-        foreach ($this->paragraphs as $row) {
-            if ($row->getType() == $type) {
-                $fields = $row->getFields($form, $paragraph);
-
-                break;
-            }
-        }
-
-        return $fields;
-    }
-
-    public function getFieldsCrudEA($paragraph)
+    public function getFields($paragraph): iterable
     {
         if (!$paragraph instanceof Paragraph) {
             return [];

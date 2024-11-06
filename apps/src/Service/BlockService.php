@@ -42,7 +42,7 @@ class BlockService
         return $blocks;
     }
 
-    public function getFieldsCrudEA($block)
+    public function getFields($block): array
     {
         if (!$block instanceof Block) {
             return [];
@@ -52,7 +52,7 @@ class BlockService
         $fields = [];
         foreach ($this->blocks as $row) {
             if ($row->getType() == $type) {
-                $fields = $row->getFields($block);
+                $fields = iterator_to_array($row->getFields($block));
 
                 break;
             }

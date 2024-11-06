@@ -89,13 +89,14 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $user = $this->getReference('user_superadmin', User::class);
         $page->setRefuser($user);
         $page->setTitle($page->getType());
+
         $date = $generator->unique()->dateTimeBetween('- 8 month', 'now');
         if (isset($data['parent'])) {
             $parent = $this->getReference('page_'.$data['parent'], Page::class);
             $page->setPage($parent);
             $date = $generator->unique()->dateTimeBetween($page->getCreatedAt(), '+1 week');
         }
-        
+
         $page->setCreatedAt($date);
 
         $this->setReference('page_'.$page->getType(), $page);
