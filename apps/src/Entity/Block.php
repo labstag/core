@@ -39,8 +39,8 @@ class Block
     #[ORM\Column(length: 255)]
     private ?string $region = null;
 
-    #[ORM\Column]
-    private ?bool $requestPath = null;
+    #[ORM\Column()]
+    private bool $requestPath = false;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $roles = null;

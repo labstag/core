@@ -9,6 +9,18 @@ use Override;
 class FlashbagBlock extends BlockLib
 {
     #[Override]
+    public function content(string $view, Block $block, array $data)
+    {
+        return $this->render(
+            $view,
+            [
+                'block' => $block,
+                'data'  => $data,
+            ]
+        );
+    }
+
+    #[Override]
     public function getFields(Block $block): iterable
     {
         unset($block);

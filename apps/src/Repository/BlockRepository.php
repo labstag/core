@@ -19,7 +19,7 @@ class BlockRepository extends ServiceEntityRepositoryLib
         $queryBuilder->orderBy(
             "CASE 
                 WHEN b.region = 'header' THEN 1
-                WHEN b.region = 'content' THEN 2
+                WHEN b.region = 'main' THEN 2
                 WHEN b.region = 'footer' THEN 3
                 ELSE 4
             END",

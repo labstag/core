@@ -9,6 +9,25 @@ use Override;
 class ParagraphsBlock extends BlockLib
 {
     #[Override]
+    public function content(string $view, Block $block, array $data)
+    {
+        $paragraphs = $block->getParagraphs();
+        if (0 == count($paragraphs)) {
+            return null;
+        }
+
+        $paragraphs = $this->paragraphService->generate($paragraphs);
+
+        return $this->render(
+            $view,
+            [
+                'block'      => $block,
+                'paragraphs' => $paragraphs,
+            ]
+        );
+    }
+
+    #[Override]
     public function getFields(Block $block): iterable
     {
         unset($block);
@@ -25,6 +44,6 @@ class ParagraphsBlock extends BlockLib
     #[Override]
     public function getType(): string
     {
-        return 'pararaphs';
+        return 'paragraphs';
     }
 }

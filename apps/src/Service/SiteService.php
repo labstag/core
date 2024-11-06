@@ -9,6 +9,7 @@ use Labstag\Entity\History;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
+use Labstag\Repository\BlockRepository;
 use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\ConfigurationRepository;
 use Labstag\Repository\HistoryRepository;
@@ -23,6 +24,8 @@ class SiteService
 {
     public function __construct(
         protected ChapterRepository $chapterRepository,
+        protected BlockRepository $blockRepository,
+        protected BlockService $blockService,
         protected TokenStorageInterface $tokenStorage,
         protected RequestStack $requestStack,
         protected HistoryRepository $historyRepository,
@@ -49,9 +52,13 @@ class SiteService
 
     public function getDataByEntity(object $entity)
     {
+        [
+            $header,
+            $main,
+            $footer,
+        ] = $this->getBlocks();
+
         $data = [
-            'config'     => $this->getConfiguration(),
-            'meta'       => $this->getMetaByEntity($entity->getMeta()),
             'paragraphs' => $entity->getParagraphs(),
             'img'        => $entity->getImg(),
             'tags'       => $entity->getTags(),
@@ -62,7 +69,19 @@ class SiteService
             $data['categories'] = $entity->getCategories();
         }
 
-        return $data;
+        return [
+            'meta'   => $this->getMetaByEntity($entity->getMeta()),
+            'blocks' => [
+                'header' => $header,
+                'main'   => $main,
+                'footer' => $footer,
+            ],
+            'header' => $header,
+            'main'   => $main,
+            'footer' => $footer,
+            'config' => $this->getConfiguration(),
+            'data'   => $data,
+        ];
     }
 
     public function getEntityBySlug()
@@ -211,6 +230,31 @@ class SiteService
         }
 
         return $view;
+    }
+
+    private function getBlocks()
+    {
+        $query  = $this->blockRepository->findAllOrderedByRegion();
+        $blocks = $query->getQuery()->getResult();
+        $header = [];
+        $main   = [];
+        $footer = [];
+
+        foreach ($blocks as $block) {
+            if ('header' == $block->getRegion()) {
+                $header[] = $block;
+            } elseif ('main' == $block->getRegion()) {
+                $main[] = $block;
+            } elseif ('footer' == $block->getRegion()) {
+                $footer[] = $block;
+            }
+        }
+
+        return [
+            $this->blockService->generate($header),
+            $this->blockService->generate($main),
+            $this->blockService->generate($footer),
+        ];
     }
 
     private function getContentByType(string $type, $slug)

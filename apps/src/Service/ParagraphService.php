@@ -21,6 +21,19 @@ class ParagraphService
     {
     }
 
+    public function generate($paragraphs)
+    {
+        $tab = [];
+        foreach ($paragraphs as $paragraph) {
+            $tab[] = [
+                'templates' => $this->templates($paragraph),
+                'paragraph' => $paragraph,
+            ];
+        }
+
+        return $tab;
+    }
+
     public function getAll($entity): array
     {
         $paragraphs = [];
@@ -136,8 +149,39 @@ class ParagraphService
     }
 
     // TODO : show content
-    public function showContent(Paragraph $paragraph)
+    public function showContent(
+        string $view,
+        Paragraph $paragraph,
+        array $data
+    )
     {
-        unset($paragraph);
+        $content = null;
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph->getType() != $row->getType()) {
+                continue;
+            }
+
+            $content = $row->content($view, $paragraph, $data);
+
+            break;
+        }
+
+        return $content;
+    }
+
+    private function templates(Paragraph $paragraph)
+    {
+        $template = null;
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph->getType() != $row->getType()) {
+                continue;
+            }
+
+            $template = $row->templates();
+
+            break;
+        }
+
+        return $template;
     }
 }

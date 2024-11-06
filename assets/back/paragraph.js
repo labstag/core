@@ -159,7 +159,6 @@ export class Paragraphs {
   }
   list(data)
   {
-    document.querySelector('#paragraph-select').value = '';
     document.querySelector('.paragraphs-list').innerHTML = data;
     this.actionDelete();
     this.actionEdit();

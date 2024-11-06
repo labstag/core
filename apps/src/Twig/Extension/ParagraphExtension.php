@@ -16,7 +16,7 @@ class ParagraphExtension extends AbstractExtension
             new TwigFunction('paragraph_name', [ParagraphExtensionRuntime::class, 'getName']),
             new TwigFunction('paragraph_fond', [ParagraphExtensionRuntime::class, 'getFond']),
             new TwigFunction('paragraph_id', [ParagraphExtensionRuntime::class, 'getId']),
-            new TwigFunction('paragraph_show', [ParagraphExtensionRuntime::class, 'getShow']),
+            new TwigFunction('paragraph_show', [ParagraphExtensionRuntime::class, 'getShow'], ['is_safe' => ['html']]),
         ];
     }
 }

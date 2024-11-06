@@ -9,6 +9,26 @@ use Override;
 class ContentBlock extends BlockLib
 {
     #[Override]
+    public function content(string $view, Block $block, array $data)
+    {
+        $paragraphs = $data['paragraphs'];
+        if (0 == count($paragraphs)) {
+            return null;
+        }
+
+        $paragraphs = $this->paragraphService->generate($paragraphs);
+
+        return $this->render(
+            $view,
+            [
+                'block'      => $block,
+                'data'       => $data,
+                'paragraphs' => $paragraphs,
+            ]
+        );
+    }
+
+    #[Override]
     public function getFields(Block $block): iterable
     {
         unset($block);

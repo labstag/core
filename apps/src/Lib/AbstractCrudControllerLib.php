@@ -82,12 +82,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
         $type = $request->request->get('paragraph', null);
         if (!is_null($type)) {
+            dump($type);
             $repository = $this->getRepository();
             $entity     = $repository->find($entityId);
 
             $paragraph = new Paragraph();
-            $paragraph->setEnable(true);
-            $paragraph->setPosition(count($entity->getParagraphs()) + 1);
             $paragraph->setType($type);
             $entity->addParagraph($paragraph);
 

@@ -14,6 +14,19 @@ class BlockService
     {
     }
 
+    public function generate(array $blocks)
+    {
+        $tab = [];
+        foreach ($blocks as $block) {
+            $tab[] = [
+                'templates' => $this->templates($block),
+                'block'     => $block,
+            ];
+        }
+
+        return $tab;
+    }
+
     public function getAll($entity): array
     {
         $blocks = [];
@@ -48,6 +61,20 @@ class BlockService
         return $fields;
     }
 
+    public function getNameByCode($code)
+    {
+        $name = '';
+        foreach ($this->blocks as $block) {
+            if ($block->getType() == $code) {
+                $name = $block->getName();
+
+                break;
+            }
+        }
+
+        return $name;
+    }
+
     public function getRegions(): array
     {
         return [
@@ -55,5 +82,42 @@ class BlockService
             'footer' => 'footer',
             'main'   => 'main',
         ];
+    }
+
+    // TODO : show content
+    public function showContent(
+        string $view,
+        Block $block,
+        array $data
+    )
+    {
+        $content = null;
+        foreach ($this->blocks as $row) {
+            if ($block->getType() != $row->getType()) {
+                continue;
+            }
+
+            $content = $row->content($view, $block, $data);
+
+            break;
+        }
+
+        return $content;
+    }
+
+    private function templates(Block $block)
+    {
+        $template = null;
+        foreach ($this->blocks as $row) {
+            if ($block->getType() != $row->getType()) {
+                continue;
+            }
+
+            $template = $row->templates();
+
+            break;
+        }
+
+        return $template;
     }
 }

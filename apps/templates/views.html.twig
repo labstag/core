@@ -14,8 +14,16 @@
         {% endblock %}
     </head>
     <body>
-        {% include 'header.html.twig' %}
-        {% include 'main.html.twig' %}
-        {% include 'footer.html.twig' %}
+        {% for balise, blockposition in blocks %}
+            {% if blockposition|length != 0 %}
+                <{{ balise }}>
+                    {% for tab in blockposition %}
+                        {{ debug_begin(tab) }}
+                        {{ block_show(tab, data) }}
+                        {{ debug_end(tab) }}
+                    {% endfor %}
+                </{{ balise }}>
+            {% endif %}
+        {% endfor %}
     </body>
 </html>

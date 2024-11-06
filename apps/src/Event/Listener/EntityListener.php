@@ -3,24 +3,36 @@
 namespace Labstag\Event\Listener;
 
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
+use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Repository\PageRepository;
+use Labstag\Service\ParagraphService;
 use Labstag\Service\WorkflowService;
 
 #[AsDoctrineListener(event: Events::prePersist)]
+#[AsDoctrineListener(event: Events::postPersist)]
 final class EntityListener
 {
     public function __construct(
         protected PageRepository $pageRepository,
+        protected ParagraphService $paragraphService,
         protected WorkflowService $workflowService
     )
     {
+    }
+
+    public function postPersist(PostPersistEventArgs $postPersistEventArgs): void
+    {
+        $object        = $postPersistEventArgs->getObject();
+        $entityManager = $postPersistEventArgs->getObjectManager();
+        $this->postPersistParagraph($object, $entityManager);
     }
 
     public function prePersist(PrePersistEventArgs $prePersistEventArgs): void
@@ -30,6 +42,19 @@ final class EntityListener
         $this->prePersistChapter($object);
         $this->prePersistParagraph($object);
         $this->prePersistPage($object);
+    }
+
+    private function postPersistParagraph($object, ObjectManager $objectManager): void
+    {
+        if (!$object instanceof Paragraph) {
+            return;
+        }
+
+        if ('' != $object->getType()) {
+            return;
+        }
+
+        $objectManager->remove($object);
     }
 
     private function prePersistAddMeta($entity): void
@@ -95,6 +120,14 @@ final class EntityListener
             return;
         }
 
-        dd($entity);
+        $entity->setEnable(true);
+
+        $data = $this->paragraphService->getEntityParent($entity);
+        if (is_null($data) || is_null($data->value)) {
+            return;
+        }
+
+        $paragraphs = $data->value->getParagraphs();
+        $entity->setPosition(count($paragraphs));
     }
 }

@@ -9,6 +9,18 @@ use Override;
 class VideoParagraph extends ParagraphLib
 {
     #[Override]
+    public function content(string $view, Paragraph $paragraph, array $data)
+    {
+        return $this->render(
+            $view,
+            [
+                'paragraph' => $paragraph,
+                'data'      => $data,
+            ]
+        );
+    }
+
+    #[Override]
     public function getFields(Paragraph $paragraph): iterable
     {
         unset($paragraph);
