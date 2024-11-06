@@ -28,7 +28,6 @@
         "symfony/console": "7.1.*",
         "symfony/doctrine-messenger": "7.1.*",
         "symfony/dotenv": "7.1.*",
-        "symfony/event-dispatcher": "7.1.*",
         "symfony/flex": "2.4.*",
         "symfony/framework-bundle": "7.1.*",
         "symfony/mailer": "7.1.*",
