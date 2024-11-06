@@ -49,6 +49,7 @@ class HistoryFixtures extends FixtureLib implements DependentFixtureInterface
     {
         $meta    = new Meta();
         $history = new History();
+        $history->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
         $history->setMeta($meta);
         $history->setEnable((bool) random_int(0, 1));
         $history->setRefuser($this->getReference(array_rand($this->users), User::class));

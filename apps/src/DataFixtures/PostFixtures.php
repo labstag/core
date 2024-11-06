@@ -49,6 +49,7 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
     {
         $meta = new Meta();
         $post = new Post();
+        $post->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
         $post->setMeta($meta);
         $post->setEnable((bool) random_int(0, 1));
         $post->setRefuser($this->getReference(array_rand($this->users), User::class));

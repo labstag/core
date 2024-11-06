@@ -5,6 +5,7 @@ namespace Labstag\Controller\Admin;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Chapter;
@@ -33,6 +34,8 @@ class ChapterCrudController extends AbstractCrudControllerLib
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
         yield TextField::new('title');
+        yield DateTimeField::new('createdAt')->hideOnForm();
+        yield DateTimeField::new('updatedAt')->hideOnForm();
         $associationField = AssociationField::new('refhistory')->autocomplete();
         $user             = $this->getUser();
         $roles            = $user->getRoles();

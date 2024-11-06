@@ -2,10 +2,10 @@
 
 namespace Labstag\DataFixtures;
 
-use Override;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\Block;
 use Labstag\Lib\FixtureLib;
+use Override;
 
 class BlockFixtures extends FixtureLib
 {

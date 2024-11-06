@@ -11,6 +11,7 @@ abstract class BlockLib extends AbstractController
 {
 
     public $template;
+
     protected array $templates = [];
 
     public function __construct(

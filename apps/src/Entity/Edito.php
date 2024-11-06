@@ -53,15 +53,8 @@ class Edito
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $refuser = null;
 
-    /**
-     * @var Collection<int, Tag>
-     */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'editos', cascade: ['persist', 'detach'])]
-    private Collection $tags;
-
     public function __construct()
     {
-        $this->tags       = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
     }
 
@@ -70,16 +63,6 @@ class Edito
         if (!$this->paragraphs->contains($paragraph)) {
             $this->paragraphs->add($paragraph);
             $paragraph->setEdito($this);
-        }
-
-        return $this;
-    }
-
-    public function addTag(Tag $tag): static
-    {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addEdito($this);
         }
 
         return $this;
@@ -113,14 +96,6 @@ class Edito
         return $this->refuser;
     }
 
-    /**
-     * @return Collection<int, Tag>
-     */
-    public function getTags(): Collection
-    {
-        return $this->tags;
-    }
-
     public function getTitle(): ?string
     {
         return $this->title;
@@ -136,15 +111,6 @@ class Edito
         // set the owning side to null (unless already changed)
         if ($this->paragraphs->removeElement($paragraph) && $paragraph->getEdito() === $this) {
             $paragraph->setEdito(null);
-        }
-
-        return $this;
-    }
-
-    public function removeTag(Tag $tag): static
-    {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removeEdito($this);
         }
 
         return $this;

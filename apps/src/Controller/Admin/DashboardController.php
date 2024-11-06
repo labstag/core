@@ -80,8 +80,6 @@ class DashboardController extends AbstractDashboardController
         $tab = [
             'history' => HistoryTagCrudController::class,
             'chapter' => ChapterTagCrudController::class,
-            'edito'   => EditoTagCrudController::class,
-            'memo'    => MemoTagCrudController::class,
             'page'    => PageTagCrudController::class,
             'post'    => PostTagCrudController::class,
         ];
@@ -107,21 +105,9 @@ class DashboardController extends AbstractDashboardController
             ]
         );
 
-        yield MenuItem::subMenu('Edito')->setSubItems(
-            [
-                MenuItem::linkToCrud('List', 'fa fa-list', Edito::class),
-                MenuItem::linkToCrud('new', 'fa fa-list', Edito::class)->setAction(Action::NEW),
-                $tags['edito'],
-            ]
-        );
+        yield MenuItem::linkToCrud('Edito', 'fa fa-list', Edito::class);
 
-        yield MenuItem::subMenu('Memo')->setSubItems(
-            [
-                MenuItem::linkToCrud('List', 'fa fa-list', Memo::class),
-                MenuItem::linkToCrud('new', 'fa fa-list', Memo::class)->setAction(Action::NEW),
-                $tags['memo'],
-            ]
-        );
+        yield MenuItem::linkToCrud('Memo', 'fa fa-list', Memo::class);
 
         yield MenuItem::subMenu('Page')->setSubItems(
             [

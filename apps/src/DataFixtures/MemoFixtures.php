@@ -6,7 +6,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Memo;
-use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
 use Override;
@@ -24,7 +23,6 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            TagFixtures::class,
             UserFixtures::class,
         ];
     }
@@ -33,7 +31,6 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
     public function load(ObjectManager $objectManager): void
     {
         $this->users = $this->getIdentitiesByClass(User::class);
-        $this->tags  = $this->getIdentitiesByClass(Tag::class, 'memo');
         $this->loadForeach(self::NUMBER_MEMO, 'addMemo', $objectManager);
         $objectManager->flush();
     }
@@ -44,10 +41,10 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
     ): void
     {
         $memo = new Memo();
+        $memo->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
         $memo->setEnable((bool) random_int(0, 1));
         $memo->setRefuser($this->getReference(array_rand($this->users), User::class));
         $memo->setTitle($generator->unique()->colorName());
-        $this->addTagToEntity($memo);
         $this->addReference('memo_'.md5(uniqid()), $memo);
         $objectManager->persist($memo);
     }
