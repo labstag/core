@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Override;
@@ -21,9 +22,11 @@ class VideoParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getFields(Paragraph $paragraph): iterable
+    public function getFields(Paragraph $paragraph, $pageName): iterable
     {
-        yield $this->addFieldImageUpload('img');
+        unset($paragraph);
+        yield $this->addFieldImageUpload('img', $pageName);
+        yield UrlField::new('url');
     }
 
     #[Override]

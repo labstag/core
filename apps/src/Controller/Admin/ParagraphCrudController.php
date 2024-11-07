@@ -45,20 +45,22 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addFieldID();
         $choiceField = ChoiceField::new('fond', 'Fond');
         $choiceField->setChoices($this->paragraphService->getFonds());
         yield $choiceField;
-        $allTypes = array_flip($this->paragraphService->getAll(null));
-        yield TextField::new('type')->hideOnForm()->formatValue(
+        $allTypes  = array_flip($this->paragraphService->getAll(null));
+        $textField = TextField::new('type')->formatValue(
             static fn ($value) => $allTypes[$value] ?? null
         );
+        $textField->setDisabled(true);
+
+        yield $textField;
         yield ParagraphParentField::new('parent', 'Parent');
-        yield DateTimeField::new('created')->hideOnForm();
-        yield DateTimeField::new('updated')->hideOnForm();
-        $fields = $this->paragraphService->getFields($currentEntity);
+        yield DateTimeField::new('createdAt')->hideOnForm();
+        yield DateTimeField::new('updatedAt')->hideOnForm();
+        $fields = $this->paragraphService->getFields($currentEntity, $pageName);
         foreach ($fields as $field) {
             yield $field;
         }

@@ -68,7 +68,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         yield $this->addFieldBoolean();
         $fields = array_merge(
             $this->addFieldParagraphsForBlock($currentEntity, $pageName, BlockType::class),
-            $this->blockService->getFields($currentEntity)
+            $this->blockService->getFields($currentEntity, $pageName)
         );
         foreach ($fields as $field) {
             yield $field;

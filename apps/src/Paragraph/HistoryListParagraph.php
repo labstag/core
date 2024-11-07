@@ -13,7 +13,7 @@ class HistoryListParagraph extends ParagraphLib
     #[Override]
     public function content(string $view, Paragraph $paragraph, ?array $data = null)
     {
-        /** @var HistoryRepository $repository  */
+        /** @var HistoryRepository $repository */
         $repository = $this->getRepository(History::class);
         unset($repository);
 
@@ -27,11 +27,11 @@ class HistoryListParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getFields(Paragraph $paragraph): iterable
+    public function getFields(Paragraph $paragraph, $pageName): iterable
     {
-        unset($paragraph);
+        unset($paragraph, $pageName);
 
-        return [];
+        yield $this->addFieldIntegerNbr();
     }
 
     #[Override]

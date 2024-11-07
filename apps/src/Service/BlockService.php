@@ -50,7 +50,7 @@ class BlockService
         return $blocks;
     }
 
-    public function getFields($block): array
+    public function getFields($block, $pageName): array
     {
         if (!$block instanceof Block) {
             return [];
@@ -60,7 +60,7 @@ class BlockService
         $fields = [];
         foreach ($this->blocks as $row) {
             if ($row->getType() == $type) {
-                $fields = iterator_to_array($row->getFields($block));
+                $fields = iterator_to_array($row->getFields($block, $pageName));
 
                 break;
             }

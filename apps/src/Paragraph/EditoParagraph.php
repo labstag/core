@@ -33,9 +33,9 @@ class EditoParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getFields(Paragraph $paragraph): iterable
+    public function getFields(Paragraph $paragraph, $pageName): iterable
     {
-        unset($paragraph);
+        unset($paragraph, $pageName);
 
         return [];
     }

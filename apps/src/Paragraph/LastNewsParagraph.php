@@ -13,7 +13,7 @@ class LastNewsParagraph extends ParagraphLib
     #[Override]
     public function content(string $view, Paragraph $paragraph, ?array $data = null)
     {
-        /** @var PostRepository $repository  */
+        /** @var PostRepository $repository */
         $repository = $this->getRepository(Post::class);
         unset($repository);
 
@@ -27,11 +27,11 @@ class LastNewsParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getFields(Paragraph $paragraph): iterable
+    public function getFields(Paragraph $paragraph, $pageName): iterable
     {
-        unset($paragraph);
+        unset($paragraph, $pageName);
 
-        return [];
+        yield $this->addFieldIntegerNbr();
     }
 
     #[Override]

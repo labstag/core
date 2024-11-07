@@ -29,9 +29,9 @@ class ContentBlock extends BlockLib
     }
 
     #[Override]
-    public function getFields(Block $block): iterable
+    public function getFields(Block $block, $pageName): iterable
     {
-        unset($block);
+        unset($block, $pageName);
 
         return [];
     }

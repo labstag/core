@@ -82,7 +82,7 @@ class ParagraphService
         return $object;
     }
 
-    public function getFields($paragraph): iterable
+    public function getFields($paragraph, $pageName): iterable
     {
         if (!$paragraph instanceof Paragraph) {
             return [];
@@ -92,7 +92,7 @@ class ParagraphService
         $fields = [];
         foreach ($this->paragraphs as $row) {
             if ($row->getType() == $type) {
-                $fields = $row->getFields($paragraph);
+                $fields = $row->getFields($paragraph, $pageName);
 
                 break;
             }

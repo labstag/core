@@ -30,9 +30,9 @@ abstract class BlockLib extends AbstractController
         unset($view, $block, $data);
     }
 
-    public function getFields(Block $block): iterable
+    public function getFields(Block $block, $pageName): iterable
     {
-        unset($block);
+        unset($block, $pageName);
 
         return [];
     }

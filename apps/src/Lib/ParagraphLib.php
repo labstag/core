@@ -3,6 +3,9 @@
 namespace Labstag\Lib;
 
 use Doctrine\Persistence\ManagerRegistry;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
@@ -12,6 +15,7 @@ use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
+use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Twig\Environment;
@@ -25,6 +29,7 @@ abstract class ParagraphLib extends AbstractController
     protected array $templates = [];
 
     public function __construct(
+        protected FileService $fileService,
         protected ManagerRegistry $managerRegistry,
         protected ParagraphService $paragraphService,
         protected Environment $twigEnvironment
@@ -32,12 +37,28 @@ abstract class ParagraphLib extends AbstractController
     {
     }
 
-    public function addFieldImageUpload(string $type)
+    public function addFieldImageUpload(string $type, $pageName)
     {
-        $textField = TextField::new($type.'File');
-        $textField->setFormType(VichImageType::class);
+        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
+            $textField = TextField::new($type.'File');
+            $textField->setFormType(VichImageType::class);
 
-        return $textField;
+            return $textField;
+        }
+
+        $basePath   = $this->fileService->getBasePath(Paragraph::class, $type.'File');
+        $imageField = ImageField::new($type);
+        $imageField->setBasePath($basePath);
+
+        return $imageField;
+    }
+
+    public function addFieldIntegerNbr()
+    {
+        $integerField = IntegerField::new('nbr');
+        $integerField->setFormTypeOption('attr', ['min' => 1]);
+
+        return $integerField;
     }
 
     public function content(string $view, Paragraph $paragraph, ?array $data = null)
@@ -45,9 +66,9 @@ abstract class ParagraphLib extends AbstractController
         unset($view, $paragraph, $data);
     }
 
-    public function getFields(Paragraph $paragraph): iterable
+    public function getFields(Paragraph $paragraph, $pageName): iterable
     {
-        unset($paragraph);
+        unset($paragraph, $pageName);
 
         return [];
     }

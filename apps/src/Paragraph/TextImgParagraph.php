@@ -21,11 +21,10 @@ class TextImgParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getFields(Paragraph $paragraph): iterable
+    public function getFields(Paragraph $paragraph, $pageName): iterable
     {
         unset($paragraph);
-
-        return [];
+        yield $this->addFieldImageUpload('img', $pageName);
     }
 
     #[Override]

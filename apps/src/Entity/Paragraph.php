@@ -59,6 +59,9 @@ class Paragraph implements Stringable
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Memo $memo = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $nbr = null;
+
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Page $page = null;
 
@@ -73,9 +76,6 @@ class Paragraph implements Stringable
 
     #[ORM\Column(length: 255)]
     private ?string $type = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $nbr = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
@@ -136,6 +136,11 @@ class Paragraph implements Stringable
         return $this->memo;
     }
 
+    public function getNbr(): ?int
+    {
+        return $this->nbr;
+    }
+
     public function getPage(): ?Page
     {
         return $this->page;
@@ -159,6 +164,11 @@ class Paragraph implements Stringable
     public function getType(): ?string
     {
         return $this->type;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
     }
 
     public function isEnable(): ?bool
@@ -238,6 +248,13 @@ class Paragraph implements Stringable
         return $this;
     }
 
+    public function setNbr(?int $nbr): static
+    {
+        $this->nbr = $nbr;
+
+        return $this;
+    }
+
     public function setPage(?Page $page): static
     {
         $this->page = $page;
@@ -271,23 +288,6 @@ class Paragraph implements Stringable
         $this->type = $type;
 
         return $this;
-    }
-
-    public function getNbr(): ?int
-    {
-        return $this->nbr;
-    }
-
-    public function setNbr(?int $nbr): static
-    {
-        $this->nbr = $nbr;
-
-        return $this;
-    }
-
-    public function getUrl(): ?string
-    {
-        return $this->url;
     }
 
     public function setUrl(?string $url): static
