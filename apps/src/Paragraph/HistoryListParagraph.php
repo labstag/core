@@ -11,18 +11,15 @@ use Override;
 class HistoryListParagraph extends ParagraphLib
 {
     #[Override]
-    public function content(string $view, Paragraph $paragraph, ?array $data = null)
+    public function content(string $view, Paragraph $paragraph)
     {
-        /** @var HistoryRepository $repository */
-        $repository = $this->getRepository(History::class);
-        unset($repository);
+        if (!$this->isShow($paragraph)) {
+            return null;
+        }
 
         return $this->render(
             $view,
-            [
-                'paragraph' => $paragraph,
-                'data'      => $data,
-            ]
+            $this->getData($paragraph)
         );
     }
 
@@ -44,6 +41,32 @@ class HistoryListParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'history-list';
+    }
+
+    #[Override]
+    public function setData(Paragraph $paragraph, array $data)
+    {
+        /** @var HistoryRepository $repository */
+        $repository = $this->getRepository(History::class);
+
+        $pagination = $this->getPaginator(
+            $repository->getQueryPaginator(),
+            $paragraph->getNbr()
+        );
+
+        $this->setHeader(
+            $paragraph,
+            'history-list'
+        );
+
+        parent::setData(
+            $paragraph,
+            [
+                'pagination' => $pagination,
+                'paragraph'  => $paragraph,
+                'data'       => $data,
+            ]
+        );
     }
 
     #[Override]

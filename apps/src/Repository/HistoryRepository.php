@@ -12,4 +12,24 @@ class HistoryRepository extends ServiceEntityRepositoryLib
     {
         parent::__construct($managerRegistry, History::class);
     }
+
+    public function findLastByNbr(int $nbr)
+    {
+        return $this->getQueryBuilder()->setMaxResults($nbr)->getQuery()->getResult();
+    }
+
+    public function findTotalEnable()
+    {
+        return $this->getQueryBuilder()->select('count(a.id)')->getQuery()->getSingleScalarResult();
+    }
+
+    public function getQueryPaginator()
+    {
+        return $this->getQueryBuilder()->getQuery();
+    }
+
+    private function getQueryBuilder()
+    {
+        return $this->createQueryBuilder('a')->where('a.enable = :enable')->setParameter('enable', true)->orderBy('a.createdAt', 'DESC');
+    }
 }

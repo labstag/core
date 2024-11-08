@@ -10,21 +10,18 @@ use Override;
 class HtmlBlock extends BlockLib
 {
     #[Override]
-    public function content(string $view, Block $block, array $data)
+    public function content(string $view, Block $block)
     {
         return $this->render(
             $view,
-            [
-                'block' => $block,
-                'data'  => $data,
-            ]
+            $this->getData($block)
         );
     }
 
     #[Override]
     public function getFields(Block $block, $pageName): iterable
     {
-        unset($pageName);
+        unset($block, $pageName);
         $wysiwygField = WysiwygField::new('content', 'Texte');
 
         yield $wysiwygField;
@@ -40,5 +37,17 @@ class HtmlBlock extends BlockLib
     public function getType(): string
     {
         return 'html';
+    }
+
+    #[Override]
+    public function setData(Block $block, array $data)
+    {
+        parent::setData(
+            $block,
+            [
+                'block' => $block,
+                'data'  => $data,
+            ]
+        );
     }
 }

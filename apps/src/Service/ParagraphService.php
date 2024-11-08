@@ -20,12 +20,34 @@ class ParagraphService
     {
     }
 
-    public function generate($paragraphs)
+    public function content(
+        string $view,
+        Paragraph $paragraph
+    )
+    {
+        $content = null;
+
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph->getType() != $row->getType()) {
+                continue;
+            }
+
+            $content = $row->content($view, $paragraph);
+
+            break;
+        }
+
+        return $content;
+    }
+
+    public function generate(array $paragraphs, array $data)
     {
         $tab = [];
         foreach ($paragraphs as $paragraph) {
+            $this->setData($paragraph, $data);
+
             $tab[] = [
-                'templates' => $this->templates($paragraph),
+                'templates' => $this->templates('content', $paragraph),
                 'paragraph' => $paragraph,
             ];
         }
@@ -46,6 +68,22 @@ class ParagraphService
         }
 
         return $paragraphs;
+    }
+
+    public function getContents($paragraphs, $methods)
+    {
+        $content = [];
+        foreach ($paragraphs as $paragraph) {
+            $content = array_merge(
+                $content,
+                call_user_func_array([$this, $methods], [$paragraph['paragraph']])
+            );
+        }
+
+        return array_filter(
+            $content,
+            fn($row) => !is_null($row)
+        );
     }
 
     public function getEntityParent(?Paragraph $paragraph): ?object
@@ -114,6 +152,44 @@ class ParagraphService
         return [];
     }
 
+    public function getFooter(
+        Paragraph $paragraph
+    )
+    {
+        $header = [];
+
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph->getType() != $row->getType()) {
+                continue;
+            }
+
+            $header[] = $row->getFooter($paragraph);
+
+            break;
+        }
+
+        return $header;
+    }
+
+    public function getHeader(
+        Paragraph $paragraph
+    )
+    {
+        $header = [];
+
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph->getType() != $row->getType()) {
+                continue;
+            }
+
+            $header[] = $row->getHeader($paragraph);
+
+            break;
+        }
+
+        return $header;
+    }
+
     public function getNameByCode($code)
     {
         $name = '';
@@ -128,28 +204,27 @@ class ParagraphService
         return $name;
     }
 
-    // TODO : show content
-    public function showContent(
-        string $view,
-        Paragraph $paragraph,
-        ?array $data = null
+    public function setData(
+        ?Paragraph $paragraph,
+        array $data
     )
     {
-        $content = null;
+        if (is_null($paragraph)) {
+            return;
+        }
+
         foreach ($this->paragraphs as $row) {
             if ($paragraph->getType() != $row->getType()) {
                 continue;
             }
 
-            $content = $row->content($view, $paragraph, $data);
+            $row->setData($paragraph, $data);
 
             break;
         }
-
-        return $content;
     }
 
-    private function templates(Paragraph $paragraph)
+    private function templates(string $type, Paragraph $paragraph)
     {
         $template = null;
         foreach ($this->paragraphs as $row) {
@@ -157,7 +232,7 @@ class ParagraphService
                 continue;
             }
 
-            $template = $row->templates();
+            $template = $row->templates($type);
 
             break;
         }

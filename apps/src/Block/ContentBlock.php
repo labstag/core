@@ -9,22 +9,15 @@ use Override;
 class ContentBlock extends BlockLib
 {
     #[Override]
-    public function content(string $view, Block $block, array $data)
+    public function content(string $view, Block $block)
     {
-        $paragraphs = $data['paragraphs'];
-        if (0 == count($paragraphs)) {
+        if (!$this->isShow($block)) {
             return null;
         }
 
-        $paragraphs = $this->paragraphService->generate($paragraphs);
-
         return $this->render(
             $view,
-            [
-                'block'      => $block,
-                'data'       => $data,
-                'paragraphs' => $paragraphs,
-            ]
+            $this->getData($block)
         );
     }
 
@@ -46,5 +39,33 @@ class ContentBlock extends BlockLib
     public function getType(): string
     {
         return 'content';
+    }
+
+    #[Override]
+    public function setData(Block $block, array $data)
+    {
+        $paragraphs = $data['paragraphs'];
+        if (0 == count($paragraphs)) {
+            $this->setShow($block, false);
+
+            return;
+        }
+
+        $paragraphs = $this->paragraphService->generate(
+            $paragraphs,
+            $data
+        );
+
+        $this->setHeader($block, $this->paragraphService->getContents($paragraphs, 'getHeader'));
+        $this->setFooter($block, $this->paragraphService->getContents($paragraphs, 'getFooter'));
+
+        parent::setData(
+            $block,
+            [
+                'block'      => $block,
+                'data'       => $data,
+                'paragraphs' => $paragraphs,
+            ]
+        );
     }
 }

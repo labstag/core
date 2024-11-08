@@ -9,14 +9,11 @@ use Override;
 class BreadcrumbBlock extends BlockLib
 {
     #[Override]
-    public function content(string $view, Block $block, array $data)
+    public function content(string $view, Block $block)
     {
         return $this->render(
             $view,
-            [
-                'block' => $block,
-                'data'  => $data,
-            ]
+            $this->getData($block)
         );
     }
 
@@ -38,5 +35,17 @@ class BreadcrumbBlock extends BlockLib
     public function getType(): string
     {
         return 'breadcrumb';
+    }
+
+    #[Override]
+    public function setData(Block $block, array $data)
+    {
+        parent::setData(
+            $block,
+            [
+                'block' => $block,
+                'data'  => $data,
+            ]
+        );
     }
 }

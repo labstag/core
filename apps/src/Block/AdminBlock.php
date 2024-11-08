@@ -10,20 +10,15 @@ use Override;
 class AdminBlock extends BlockLib
 {
     #[Override]
-    public function content(string $view, Block $block, array $data)
+    public function content(string $view, Block $block)
     {
-        $url = $this->setUrl($data['entity']);
-        if (is_null($url)) {
+        if (!$this->isShow($block)) {
             return null;
         }
 
         return $this->render(
             $view,
-            [
-                'url'   => $url->generateUrl(),
-                'block' => $block,
-                'data'  => $data,
-            ]
+            $this->getData($block)
         );
     }
 
@@ -45,6 +40,26 @@ class AdminBlock extends BlockLib
     public function getType(): string
     {
         return 'admin';
+    }
+
+    #[Override]
+    public function setData(Block $block, array $data)
+    {
+        $url = $this->setUrl($data['entity']);
+        if (is_null($url)) {
+            $this->setShow($block, false);
+
+            return;
+        }
+
+        parent::setData(
+            $block,
+            [
+                'url'   => $url->generateUrl(),
+                'block' => $block,
+                'data'  => $data,
+            ]
+        );
     }
 
     protected function setUrl($entity)

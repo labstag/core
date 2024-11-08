@@ -21,11 +21,9 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         // ...
     }
 
-    public function path($value)
+    public function path($entity)
     {
-        // TODO
-        unset($value);
-        // ...
+        return $this->siteService->getSlugByEntity($entity);
     }
 
     public function title($value)

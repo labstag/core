@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Lib\ParagraphLib;
@@ -11,18 +12,15 @@ use Override;
 class LastNewsParagraph extends ParagraphLib
 {
     #[Override]
-    public function content(string $view, Paragraph $paragraph, ?array $data = null)
+    public function content(string $view, Paragraph $paragraph)
     {
-        /** @var PostRepository $repository */
-        $repository = $this->getRepository(Post::class);
-        unset($repository);
+        if (!$this->isShow($paragraph)) {
+            return null;
+        }
 
         return $this->render(
             $view,
-            [
-                'paragraph' => $paragraph,
-                'data'      => $data,
-            ]
+            $this->getData($paragraph)
         );
     }
 
@@ -31,6 +29,7 @@ class LastNewsParagraph extends ParagraphLib
     {
         unset($paragraph, $pageName);
 
+        yield TextField::new('title');
         yield $this->addFieldIntegerNbr();
     }
 
@@ -44,6 +43,27 @@ class LastNewsParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'last-news';
+    }
+
+    #[Override]
+    public function setData(Paragraph $paragraph, array $data)
+    {
+        /** @var PostRepository $repository */
+        $repository = $this->getRepository(Post::class);
+        $nbr        = $paragraph->getNbr();
+        $news       = $repository->findLastByNbr($nbr);
+        $total      = $repository->findTotalEnable();
+        $listing    = $this->siteService->getPageByType('post');
+        parent::setData(
+            $paragraph,
+            [
+                'listing'   => $listing,
+                'total'     => $total,
+                'news'      => $news,
+                'paragraph' => $paragraph,
+                'data'      => $data,
+            ]
+        );
     }
 
     #[Override]

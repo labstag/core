@@ -1,0 +1,11 @@
+<section id="{{ paragraph_id(paragraph) }}">
+    <h2>{{ paragraph.title }}</h2>
+    <ul>
+        {% for row in histories %}
+            <li>
+                {% include  "teasers/history.html.twig"  with {'history': row} %}
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ path('front', {'slug': listing.slug}) }}" class="btn btn-primary">{{ 'Read more' }}</a>
+</section>

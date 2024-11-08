@@ -9,14 +9,11 @@ use Override;
 class LinksBlock extends BlockLib
 {
     #[Override]
-    public function content(string $view, Block $block, array $data)
+    public function content(string $view, Block $block)
     {
         return $this->render(
             $view,
-            [
-                'block' => $block,
-                'data'  => $data,
-            ]
+            $this->getData($block)
         );
     }
 
@@ -38,5 +35,17 @@ class LinksBlock extends BlockLib
     public function getType(): string
     {
         return 'links';
+    }
+
+    #[Override]
+    public function setData(Block $block, array $data)
+    {
+        parent::setData(
+            $block,
+            [
+                'block' => $block,
+                'data'  => $data,
+            ]
+        );
     }
 }

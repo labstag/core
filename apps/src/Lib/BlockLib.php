@@ -14,6 +14,14 @@ abstract class BlockLib extends AbstractController
 
     public $template;
 
+    protected $data = [];
+
+    protected $footer = [];
+
+    protected $header = [];
+
+    protected $show = [];
+
     protected array $templates = [];
 
     public function __construct(
@@ -25,9 +33,16 @@ abstract class BlockLib extends AbstractController
     {
     }
 
-    public function content(string $view, Block $block, array $data)
+    public function content(string $view, Block $block)
     {
-        unset($view, $block, $data);
+        unset($view, $block);
+    }
+
+    public function getData(Block $block)
+    {
+        $blockId = $block->getId();
+
+        return $this->data[$blockId] ?? null;
     }
 
     public function getFields(Block $block, $pageName): iterable
@@ -35,6 +50,20 @@ abstract class BlockLib extends AbstractController
         unset($block, $pageName);
 
         return [];
+    }
+
+    public function getFooter(Block $block)
+    {
+        $blockId = $block->getId();
+
+        return $this->footer[$blockId] ?? null;
+    }
+
+    public function getHeader(Block $block)
+    {
+        $blockId = $block->getId();
+
+        return $this->header[$blockId] ?? null;
     }
 
     public function getName(): string
@@ -47,9 +76,36 @@ abstract class BlockLib extends AbstractController
         return '';
     }
 
-    public function templates(): array
+    public function isShow(Block $block)
     {
-        $data = $this->getTemplateData($this->getType());
+        $blockId = $block->getId();
+
+        return $this->show[$blockId] ?? true;
+    }
+
+    public function setData(Block $block, array $data)
+    {
+        $this->setShow($block, true);
+        $this->data[$block->getId()] = $data;
+    }
+
+    public function setFooter(Block $block, $data)
+    {
+        $blockId = $block->getId();
+
+        $this->footer[$blockId] = $data;
+    }
+
+    public function setHeader(Block $block, $data)
+    {
+        $blockId = $block->getId();
+
+        $this->header[$blockId] = $data;
+    }
+
+    public function templates(string $type): array
+    {
+        $data = $this->getTemplateContent($type, $this->getType());
         if ('dev' == $this->getParameter('kernel.debug')) {
             return $data;
         }
@@ -62,7 +118,7 @@ abstract class BlockLib extends AbstractController
         return [];
     }
 
-    protected function getTemplateData(string $type)
+    protected function getTemplateContent(string $folder, string $type)
     {
         if (isset($this->template[$type])) {
             return $this->templates[$type];
@@ -70,8 +126,8 @@ abstract class BlockLib extends AbstractController
 
         $htmltwig = '.html.twig';
         $files    = [
-            'blocks/'.$type.$htmltwig,
-            'blocks/default'.$htmltwig,
+            'blocks/'.$folder.'/'.$type.$htmltwig,
+            'blocks/'.$folder.'/default'.$htmltwig,
         ];
 
         $view   = end($files);
@@ -94,5 +150,10 @@ abstract class BlockLib extends AbstractController
         ];
 
         return $this->templates[$type];
+    }
+
+    protected function setShow(Block $block, $show)
+    {
+        $this->show[$block->getId()] = $show;
     }
 }

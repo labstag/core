@@ -11,14 +11,15 @@ use Override;
 class HtmlParagraph extends ParagraphLib
 {
     #[Override]
-    public function content(string $view, Paragraph $paragraph, ?array $data = null)
+    public function content(string $view, Paragraph $paragraph)
     {
+        if (!$this->isShow($paragraph)) {
+            return null;
+        }
+
         return $this->render(
             $view,
-            [
-                'paragraph' => $paragraph,
-                'data'      => $data,
-            ]
+            $this->getData($paragraph)
         );
     }
 
@@ -42,6 +43,18 @@ class HtmlParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'html';
+    }
+
+    #[Override]
+    public function setData(Paragraph $paragraph, array $data)
+    {
+        parent::setData(
+            $paragraph,
+            [
+                'paragraph' => $paragraph,
+                'data'      => $data,
+            ]
+        );
     }
 
     #[Override]

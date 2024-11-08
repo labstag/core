@@ -18,7 +18,26 @@ class BlockService
     {
     }
 
-    public function generate(array $blocks)
+    public function content(
+        string $view,
+        Block $block
+    )
+    {
+        $content = null;
+        foreach ($this->blocks as $row) {
+            if ($block->getType() != $row->getType()) {
+                continue;
+            }
+
+            $content = $row->content($view, $block);
+
+            break;
+        }
+
+        return $content;
+    }
+
+    public function generate(array $blocks, array $data)
     {
         $tab = [];
         foreach ($blocks as $block) {
@@ -26,8 +45,10 @@ class BlockService
                 continue;
             }
 
+            $this->setData($block, $data);
+
             $tab[] = [
-                'templates' => $this->templates($block),
+                'templates' => $this->templates('content', $block),
                 'block'     => $block,
             ];
         }
@@ -50,6 +71,22 @@ class BlockService
         return $blocks;
     }
 
+    public function getContents($blocks, $methods)
+    {
+        $content = [];
+        foreach ($blocks as $block) {
+            $content = array_merge(
+                $content,
+                call_user_func_array([$this, $methods], [$block['block']])
+            );
+        }
+
+        return array_filter(
+            $content,
+            fn($row) => !is_null($row)
+        );
+    }
+
     public function getFields($block, $pageName): array
     {
         if (!$block instanceof Block) {
@@ -67,6 +104,42 @@ class BlockService
         }
 
         return $fields;
+    }
+
+    public function getFooter(
+        Block $block
+    )
+    {
+        $footer = [];
+        foreach ($this->blocks as $row) {
+            if ($block->getType() != $row->getType()) {
+                continue;
+            }
+
+            $footer[] = $row->getFooter($block);
+
+            break;
+        }
+
+        return $footer;
+    }
+
+    public function getHeader(
+        Block $block
+    )
+    {
+        $header = [];
+        foreach ($this->blocks as $row) {
+            if ($block->getType() != $row->getType()) {
+                continue;
+            }
+
+            $header[] = $row->getHeader($block);
+
+            break;
+        }
+
+        return $header;
     }
 
     public function getNameByCode($code)
@@ -92,25 +165,24 @@ class BlockService
         ];
     }
 
-    // TODO : show content
-    public function showContent(
-        string $view,
-        Block $block,
+    public function setData(
+        ?Block $block,
         array $data
     )
     {
-        $content = null;
+        if (is_null($block)) {
+            return;
+        }
+
         foreach ($this->blocks as $row) {
             if ($block->getType() != $row->getType()) {
                 continue;
             }
 
-            $content = $row->content($view, $block, $data);
+            $row->setData($block, $data);
 
             break;
         }
-
-        return $content;
     }
 
     protected function acces($block)
@@ -134,7 +206,7 @@ class BlockService
         return $this->authorizationChecker->isGranted($attribute, $subject);
     }
 
-    private function templates(Block $block)
+    private function templates(string $type, Block $block)
     {
         $template = null;
         foreach ($this->blocks as $row) {
@@ -142,7 +214,7 @@ class BlockService
                 continue;
             }
 
-            $template = $row->templates();
+            $template = $row->templates($type);
 
             break;
         }

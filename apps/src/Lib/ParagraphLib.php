@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Knp\Component\Pager\PaginatorInterface;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
@@ -17,7 +18,9 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
+use Labstag\Service\SiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Environment;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
@@ -26,15 +29,54 @@ abstract class ParagraphLib extends AbstractController
 
     public $template;
 
+    protected $data = [];
+
+    protected $show = [];
+
     protected array $templates = [];
 
+    protected $header = [];
+
+    protected $footer = [];
+
     public function __construct(
+        protected RequestStack $requestStack,
+        protected PaginatorInterface $paginator,
         protected FileService $fileService,
+        protected SiteService $siteService,
         protected ManagerRegistry $managerRegistry,
         protected ParagraphService $paragraphService,
         protected Environment $twigEnvironment
     )
     {
+    }
+
+    public function getHeader(Paragraph $paragraph)
+    {
+        $paragraphId = $paragraph->getId();
+
+        return $this->header[$paragraphId] ?? null;
+    }
+
+    public function getFooter(Paragraph $paragraph)
+    {
+        $paragraphId = $paragraph->getId();
+
+        return $this->footer[$paragraphId] ?? null;
+    }
+
+    public function setHeader(Paragraph $paragraph, $data)
+    {
+        $paragraphId = $paragraph->getId();
+
+        $this->header[$paragraphId] = $data;
+    }
+
+    public function setFooter(Paragraph $paragraph, $data)
+    {
+        $paragraphId = $paragraph->getId();
+
+        $this->footer[$paragraphId] = $data;
     }
 
     public function addFieldImageUpload(string $type, $pageName)
@@ -61,9 +103,9 @@ abstract class ParagraphLib extends AbstractController
         return $integerField;
     }
 
-    public function content(string $view, Paragraph $paragraph, ?array $data = null)
+    public function content(string $view, Paragraph $paragraph)
     {
-        unset($view, $paragraph, $data);
+        unset($view, $paragraph);
     }
 
     public function getFields(Paragraph $paragraph, $pageName): iterable
@@ -88,9 +130,16 @@ abstract class ParagraphLib extends AbstractController
         return true;
     }
 
-    public function templates(): array
+    public function isShow(Paragraph $paragraph)
     {
-        $data = $this->getTemplateData($this->getType());
+        $paragraphId = $paragraph->getId();
+
+        return $this->show[$paragraphId] ?? true;
+    }
+
+    public function templates(string $type): array
+    {
+        $data = $this->getTemplateContent($type, $this->getType());
         if ('dev' == $this->getParameter('kernel.debug')) {
             return $data;
         }
@@ -103,12 +152,23 @@ abstract class ParagraphLib extends AbstractController
         return [];
     }
 
+    protected function getPaginator($query, $limit)
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        return $this->paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            $limit
+        );
+    }
+
     protected function getRepository(string $entity)
     {
         return $this->managerRegistry->getRepository($entity);
     }
 
-    protected function getTemplateData(string $type)
+    protected function getTemplateContent(string $folder, string $type)
     {
         if (isset($this->template[$type])) {
             return $this->templates[$type];
@@ -116,8 +176,8 @@ abstract class ParagraphLib extends AbstractController
 
         $htmltwig = '.html.twig';
         $files    = [
-            'paragraphs/'.$type.$htmltwig,
-            'paragraphs/default'.$htmltwig,
+            'paragraphs/'.$folder.'/'.$type.$htmltwig,
+            'paragraphs/'.$folder.'/default'.$htmltwig,
         ];
 
         $view   = end($files);
@@ -140,6 +200,24 @@ abstract class ParagraphLib extends AbstractController
         ];
 
         return $this->templates[$type];
+    }
+
+    protected function setShow(Paragraph $paragraph, $show)
+    {
+        $this->show[$paragraph->getId()] = $show;
+    }
+
+    public function setData(Paragraph $paragraph, array $data)
+    {
+        $this->setShow($paragraph, true);
+        $this->data[$paragraph->getId()] = $data;
+    }
+
+    public function getData(Paragraph $paragraph)
+    {
+        $paragraphId = $paragraph->getId();
+
+        return $this->data[$paragraphId] ?? [];
     }
 
     protected function useInAll(): array

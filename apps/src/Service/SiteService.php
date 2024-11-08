@@ -71,15 +71,9 @@ class SiteService
 
     public function getDataByEntity(object $entity)
     {
-        [
-            $header,
-            $main,
-            $footer,
-        ] = $this->getBlocks();
-
         $data = [
             'entity'     => $entity,
-            'paragraphs' => $entity->getParagraphs(),
+            'paragraphs' => $entity->getParagraphs()->getValues(),
             'img'        => $entity->getImg(),
             'tags'       => $entity->getTags(),
         ];
@@ -88,6 +82,22 @@ class SiteService
         if (in_array('getCategories', $methods)) {
             $data['categories'] = $entity->getCategories();
         }
+
+        [
+            $header,
+            $main,
+            $footer,
+        ]       = $this->getBlocks($data);
+        $blocks = array_merge(
+            $header,
+            $main,
+            $footer
+        );
+        $aaheader = $this->blockService->getContents($blocks, 'getHeader');
+        dump($aaheader);
+        $aafooter = $this->blockService->getContents($blocks, 'getFooter');
+
+        dump($aafooter);
 
         return [
             'meta'   => $this->getMetaByEntity($entity->getMeta()),
@@ -140,6 +150,13 @@ class SiteService
         }
 
         return $page;
+    }
+
+    public function getPageByType($type)
+    {
+        $types = $this->getPageByTypes();
+
+        return $types[$type] ?? null;
     }
 
     public function getSlugByEntity($entity)
@@ -262,7 +279,7 @@ class SiteService
         return $view;
     }
 
-    private function getBlocks()
+    private function getBlocks($data)
     {
         $query  = $this->blockRepository->findAllOrderedByRegion();
         $blocks = $query->getQuery()->getResult();
@@ -281,9 +298,9 @@ class SiteService
         }
 
         return [
-            $this->blockService->generate($header),
-            $this->blockService->generate($main),
-            $this->blockService->generate($footer),
+            $this->blockService->generate($header, $data),
+            $this->blockService->generate($main, $data),
+            $this->blockService->generate($footer, $data),
         ];
     }
 

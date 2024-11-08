@@ -29,7 +29,7 @@ class Block
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $pages = null;
 
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'block')]
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $paragraphs;
 

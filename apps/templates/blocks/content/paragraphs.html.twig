@@ -1,0 +1,7 @@
+<div id="{{ block_id(block) }}">
+    {% for tab in paragraphs %}
+        {{ debug_begin(tab) }}
+        {{ paragraph_show(tab) }}
+        {{ debug_end(tab) }}
+    {% endfor %}
+</div>
