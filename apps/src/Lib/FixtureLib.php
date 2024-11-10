@@ -6,6 +6,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
+use Faker\Provider\Youtube;
 use Labstag\Entity\Category;
 use Labstag\Entity\Tag;
 use Labstag\Service\FileService;
@@ -102,6 +103,7 @@ abstract class FixtureLib extends Fixture
     {
         $generator = Factory::create('fr_FR');
         $generator->addProvider(new PicsumProvider($generator));
+        $generator->addProvider(new Youtube($generator));
 
         return $generator;
     }

@@ -3,6 +3,8 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
+use Essence\Essence;
+use Essence\Media;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Override;
@@ -26,9 +28,35 @@ class VideoParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data)
     {
         $baseUrlVideo = $this->fileService->getBasePath(Paragraph::class, 'imgFile');
+        $url          = $paragraph->getUrl();
+        if ($url === null || $url === '' || $url === '0') {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
+        $essence = new Essence();
+
+        //Load any url:
+        $media = $essence->extract(
+            $url,
+            [
+                'maxwidth'  => 800,
+                'maxheight' => 600,
+            ]
+        );
+        if (!$media instanceof Media) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
+        dump($media);
+
         $this->setData(
             $paragraph,
             [
+                'html'         => $media->html,
                 'baseUrlVideo' => $baseUrlVideo,
                 'paragraph'    => $paragraph,
                 'data'         => $data,

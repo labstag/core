@@ -27,8 +27,12 @@ use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Override;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -50,6 +54,28 @@ class DashboardController extends AbstractDashboardController
             'admin/blank.html.twig',
             []
         );
+    }
+
+    #[Route('/admin/purge', name: 'admin_cacheclear')]
+    public function cacheclear(KernelInterface $kernel): Response
+    {
+        $total = $this->fileService->deletedFileByEntities();
+        if (0 != $total) {
+            $this->addFlash('success', $total.' fichier(s) supprimé(s)');
+        }
+
+        //execution de la commande en console
+        $application = new Application($kernel);
+        $application->setAutoExit(false);
+
+        $arrayInput = new ArrayInput(['cache:clear']);
+
+        $bufferedOutput = new BufferedOutput();
+        $application->run($arrayInput, $bufferedOutput);
+
+        $this->addFlash('success', 'Cache vidé');
+
+        return $this->redirectToRoute('admin');
     }
 
     #[Override]
@@ -134,7 +160,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Block', 'fa fa-user', Block::class);
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
         yield MenuItem::linkToRoute('Options', 'fas fa-cog', 'admin_option');
-        yield MenuItem::linkToRoute('Purge', 'fas fa-cog', 'admin_purge');
+        yield MenuItem::linkToRoute('Vider le cache', 'fas fa-trash', 'admin_cacheclear');
     }
 
     #[Override]
@@ -214,15 +240,6 @@ class DashboardController extends AbstractDashboardController
             'admin/option.html.twig',
             ['form' => $form]
         );
-    }
-
-    #[Route('/admin/purge', name: 'admin_purge')]
-    public function purge(): Response
-    {
-        $files = $this->fileService->deletedFileByEntities();
-        $this->addFlash('success', $files.' fichier(s) supprimé(s)');
-
-        return $this->redirect('admin');
     }
 
     protected function adminEmpty($entity)

@@ -166,7 +166,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph->setTitle('Dernière histoires');
         $paragraph->setType('video');
         $this->setImage($paragraph, 'imgFile');
-        $paragraph->setUrl('https://www.youtube.com/watch?v=JGwWNGJdvx8');
+        $paragraph->setUrl($generator->youtubeUri());
         $page->addParagraph($paragraph);
     }
 

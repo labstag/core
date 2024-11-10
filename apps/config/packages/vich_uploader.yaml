@@ -18,7 +18,7 @@ vich_uploader:
       namer:
         service: Vich\UploaderBundle\Naming\PropertyNamer
         options:
-          property: slug
+          property: title
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
