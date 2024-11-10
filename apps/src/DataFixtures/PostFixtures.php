@@ -51,6 +51,7 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
         $post = new Post();
         $post->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
         $post->setMeta($meta);
+        $this->setImage($post, 'imgFile');
         $post->setEnable((bool) random_int(0, 1));
         $post->setRefuser($this->getReference(array_rand($this->users), User::class));
         $post->setTitle($generator->unique()->colorName());

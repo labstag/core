@@ -14,6 +14,15 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
+    public function content($content)
+    {
+        if (is_null($content)) {
+            return null;
+        }
+
+        return $content->getContent();
+    }
+
     public function metatags($value)
     {
         // TODO

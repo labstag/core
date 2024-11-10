@@ -23,6 +23,7 @@ use Labstag\Entity\Post;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Form\Admin\OptionType;
+use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Override;
@@ -36,6 +37,7 @@ class DashboardController extends AbstractDashboardController
     public function __construct(
         protected EntityManagerInterface $entityManager,
         protected UserService $userService,
+        protected FileService $fileService,
         protected SiteService $siteService
     )
     {
@@ -132,15 +134,26 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Block', 'fa fa-user', Block::class);
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
         yield MenuItem::linkToRoute('Options', 'fas fa-cog', 'admin_option');
+        yield MenuItem::linkToRoute('Purge', 'fas fa-cog', 'admin_purge');
     }
 
     #[Override]
     public function configureUserMenu(UserInterface $user): UserMenu
     {
         $userMenu = parent::configureUserMenu($user);
-        if ($user instanceof User) {
-            $userMenu->setGravatarEmail($user->getEmail());
+        if (!$user instanceof User) {
+            return $userMenu;
         }
+
+        $avatar = $user->getAvatar();
+        if ('' != $avatar) {
+            $basePath = $this->fileService->getBasePath($user, 'avatarFile');
+            $userMenu->setAvatarUrl($basePath.'/'.$avatar);
+
+            return $userMenu;
+        }
+
+        $userMenu->setGravatarEmail($user->getEmail());
 
         return $userMenu;
     }
@@ -201,6 +214,15 @@ class DashboardController extends AbstractDashboardController
             'admin/option.html.twig',
             ['form' => $form]
         );
+    }
+
+    #[Route('/admin/purge', name: 'admin_purge')]
+    public function purge(): Response
+    {
+        $files = $this->fileService->deletedFileByEntities();
+        $this->addFlash('success', $files.' fichier(s) supprimé(s)');
+
+        return $this->redirect('admin');
     }
 
     protected function adminEmpty($entity)

@@ -31,13 +31,13 @@ abstract class ParagraphLib extends AbstractController
 
     protected $data = [];
 
-    protected $show = [];
-
-    protected array $templates = [];
+    protected $footer = [];
 
     protected $header = [];
 
-    protected $footer = [];
+    protected $show = [];
+
+    protected array $templates = [];
 
     public function __construct(
         protected RequestStack $requestStack,
@@ -49,34 +49,6 @@ abstract class ParagraphLib extends AbstractController
         protected Environment $twigEnvironment
     )
     {
-    }
-
-    public function getHeader(Paragraph $paragraph)
-    {
-        $paragraphId = $paragraph->getId();
-
-        return $this->header[$paragraphId] ?? null;
-    }
-
-    public function getFooter(Paragraph $paragraph)
-    {
-        $paragraphId = $paragraph->getId();
-
-        return $this->footer[$paragraphId] ?? null;
-    }
-
-    public function setHeader(Paragraph $paragraph, $data)
-    {
-        $paragraphId = $paragraph->getId();
-
-        $this->header[$paragraphId] = $data;
-    }
-
-    public function setFooter(Paragraph $paragraph, $data)
-    {
-        $paragraphId = $paragraph->getId();
-
-        $this->footer[$paragraphId] = $data;
     }
 
     public function addFieldImageUpload(string $type, $pageName)
@@ -108,11 +80,37 @@ abstract class ParagraphLib extends AbstractController
         unset($view, $paragraph);
     }
 
+    public function generate(Paragraph $paragraph, array $data)
+    {
+        unset($paragraph, $data);
+    }
+
+    public function getData(Paragraph $paragraph)
+    {
+        $paragraphId = $paragraph->getId();
+
+        return $this->data[$paragraphId] ?? [];
+    }
+
     public function getFields(Paragraph $paragraph, $pageName): iterable
     {
         unset($paragraph, $pageName);
 
         return [];
+    }
+
+    public function getFooter(Paragraph $paragraph)
+    {
+        $paragraphId = $paragraph->getId();
+
+        return $this->footer[$paragraphId] ?? null;
+    }
+
+    public function getHeader(Paragraph $paragraph)
+    {
+        $paragraphId = $paragraph->getId();
+
+        return $this->header[$paragraphId] ?? null;
     }
 
     public function getName(): string
@@ -139,12 +137,7 @@ abstract class ParagraphLib extends AbstractController
 
     public function templates(string $type): array
     {
-        $data = $this->getTemplateContent($type, $this->getType());
-        if ('dev' == $this->getParameter('kernel.debug')) {
-            return $data;
-        }
-
-        return [];
+        return $this->getTemplateContent($type, $this->getType());
     }
 
     public function useIn(): array
@@ -202,22 +195,29 @@ abstract class ParagraphLib extends AbstractController
         return $this->templates[$type];
     }
 
-    protected function setShow(Paragraph $paragraph, $show)
-    {
-        $this->show[$paragraph->getId()] = $show;
-    }
-
-    public function setData(Paragraph $paragraph, array $data)
+    protected function setData(Paragraph $paragraph, array $data)
     {
         $this->setShow($paragraph, true);
         $this->data[$paragraph->getId()] = $data;
     }
 
-    public function getData(Paragraph $paragraph)
+    protected function setFooter(Paragraph $paragraph, $data)
     {
         $paragraphId = $paragraph->getId();
 
-        return $this->data[$paragraphId] ?? [];
+        $this->footer[$paragraphId] = $data;
+    }
+
+    protected function setHeader(Paragraph $paragraph, $data)
+    {
+        $paragraphId = $paragraph->getId();
+
+        $this->header[$paragraphId] = $data;
+    }
+
+    protected function setShow(Paragraph $paragraph, $show)
+    {
+        $this->show[$paragraph->getId()] = $show;
     }
 
     protected function useInAll(): array

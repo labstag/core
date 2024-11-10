@@ -24,6 +24,37 @@ class NewsListParagraph extends ParagraphLib
     }
 
     #[Override]
+    public function generate(Paragraph $paragraph, array $data)
+    {
+        /** @var PostRepository $repository */
+        $repository = $this->getRepository(Post::class);
+
+        $pagination = $this->getPaginator(
+            $repository->getQueryPaginator(),
+            $paragraph->getNbr()
+        );
+        $baseUrlPost = $this->fileService->getBasePath(Post::class, 'imgFile');
+        $this->setData(
+            $paragraph,
+            [
+                'baseUrlPost' => $baseUrlPost,
+                'pagination'  => $pagination,
+                'paragraph'   => $paragraph,
+                'data'        => $data,
+            ]
+        );
+
+        $templates = $this->templates('header');
+        $this->setHeader(
+            $paragraph,
+            $this->render(
+                $templates['view'],
+                ['pagination' => $pagination]
+            )
+        );
+    }
+
+    #[Override]
     public function getFields(Paragraph $paragraph, $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -41,31 +72,6 @@ class NewsListParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'news-list';
-    }
-
-    #[Override]
-    public function setData(Paragraph $paragraph, array $data)
-    {
-        /** @var PostRepository $repository */
-        $repository = $this->getRepository(Post::class);
-
-        $pagination = $this->getPaginator(
-            $repository->getQueryPaginator(),
-            $paragraph->getNbr()
-        );
-
-        $this->setHeader(
-            $paragraph,
-            'news-list'
-        );
-        parent::setData(
-            $paragraph,
-            [
-                'pagination' => $pagination,
-                'paragraph'  => $paragraph,
-                'data'       => $data,
-            ]
-        );
     }
 
     #[Override]

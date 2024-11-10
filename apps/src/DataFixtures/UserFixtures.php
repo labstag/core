@@ -5,6 +5,7 @@ namespace Labstag\DataFixtures;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
+use Labstag\Service\FileService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
@@ -12,10 +13,12 @@ use Override;
 class UserFixtures extends FixtureLib
 {
     public function __construct(
+        protected FileService $fileService,
         protected WorkflowService $workflowService,
         protected UserService $userService
     )
     {
+        parent::__construct($fileService);
     }
 
     #[Override]
@@ -77,6 +80,7 @@ class UserFixtures extends FixtureLib
         $hash = $this->userService->hashPassword($user, $data['password']);
         $user->setEnable(true);
         $user->setPassword($hash);
+        $this->setImage($user, 'avatarFile');
 
         $this->addReference('user_'.$user->getUsername(), $user);
 

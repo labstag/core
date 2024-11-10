@@ -16,6 +16,7 @@ class FrontExtension extends AbstractExtension
             new TwigFunction('site_path', [FrontExtensionRuntime::class, 'path']),
             new TwigFunction('site_title', [FrontExtensionRuntime::class, 'title']),
             new TwigFunction('site_metatags', [FrontExtensionRuntime::class, 'metatags'], ['is_safe' => ['html']]),
+            new TwigFunction('site_content', [FrontExtensionRuntime::class, 'content'], ['is_safe' => ['html']]),
         ];
     }
 }

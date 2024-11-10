@@ -3,7 +3,9 @@
 namespace Labstag\Service;
 
 use Labstag\Entity\Block;
+use stdClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -45,7 +47,7 @@ class BlockService
                 continue;
             }
 
-            $this->setData($block, $data);
+            $this->setContents($block, $data);
 
             $tab[] = [
                 'templates' => $this->templates('content', $block),
@@ -71,20 +73,38 @@ class BlockService
         return $blocks;
     }
 
-    public function getContents($blocks, $methods)
+    public function getContents($blocks)
     {
-        $content = [];
+        $data         = new stdClass();
+        $data->header = [];
+        $data->footer = [];
         foreach ($blocks as $block) {
-            $content = array_merge(
-                $content,
-                call_user_func_array([$this, $methods], [$block['block']])
-            );
+            $header = $this->getHeader($block['block']);
+            $footer = $this->getFooter($block['block']);
+            if (is_array($header)) {
+                $data->header = array_merge($data->header, $header);
+            } elseif ($header instanceof Response) {
+                $data->header[] = $header;
+            }
+
+            if (is_array($footer)) {
+                $data->footer = array_merge($data->footer, $footer);
+            } elseif ($footer instanceof Response) {
+                $data->footer[] = $footer;
+            }
         }
 
-        return array_filter(
-            $content,
-            fn($row) => !is_null($row)
+        $data->header = array_filter(
+            $data->header,
+            fn ($row) => !is_null($row)
         );
+
+        $data->footer = array_filter(
+            $data->footer,
+            fn ($row) => !is_null($row)
+        );
+
+        return $data;
     }
 
     public function getFields($block, $pageName): array
@@ -110,13 +130,13 @@ class BlockService
         Block $block
     )
     {
-        $footer = [];
+        $footer = null;
         foreach ($this->blocks as $row) {
             if ($block->getType() != $row->getType()) {
                 continue;
             }
 
-            $footer[] = $row->getFooter($block);
+            $footer = $row->getFooter($block);
 
             break;
         }
@@ -128,13 +148,13 @@ class BlockService
         Block $block
     )
     {
-        $header = [];
+        $header = null;
         foreach ($this->blocks as $row) {
             if ($block->getType() != $row->getType()) {
                 continue;
             }
 
-            $header[] = $row->getHeader($block);
+            $header = $row->getHeader($block);
 
             break;
         }
@@ -165,7 +185,7 @@ class BlockService
         ];
     }
 
-    public function setData(
+    public function setContents(
         ?Block $block,
         array $data
     )
@@ -179,7 +199,7 @@ class BlockService
                 continue;
             }
 
-            $row->setData($block, $data);
+            $row->generate($block, $data);
 
             break;
         }

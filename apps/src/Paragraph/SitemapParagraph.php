@@ -22,6 +22,18 @@ class SitemapParagraph extends ParagraphLib
     }
 
     #[Override]
+    public function generate(Paragraph $paragraph, array $data)
+    {
+        $this->setData(
+            $paragraph,
+            [
+                'paragraph' => $paragraph,
+                'data'      => $data,
+            ]
+        );
+    }
+
+    #[Override]
     public function getFields(Paragraph $paragraph, $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -35,22 +47,12 @@ class SitemapParagraph extends ParagraphLib
         return 'Sitemap';
     }
 
-    #[Override]
+    #[Override
+
+    ]
     public function getType(): string
     {
         return 'sitemap';
-    }
-
-    #[Override]
-    public function setData(Paragraph $paragraph, array $data)
-    {
-        parent::setData(
-            $paragraph,
-            [
-                'paragraph' => $paragraph,
-                'data'      => $data,
-            ]
-        );
     }
 
     #[Override]

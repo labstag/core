@@ -18,6 +18,18 @@ class BreadcrumbBlock extends BlockLib
     }
 
     #[Override]
+    public function generate(Block $block, array $data)
+    {
+        $this->setData(
+            $block,
+            [
+                'block' => $block,
+                'data'  => $data,
+            ]
+        );
+    }
+
+    #[Override]
     public function getFields(Block $block, $pageName): iterable
     {
         unset($block, $pageName);
@@ -31,21 +43,11 @@ class BreadcrumbBlock extends BlockLib
         return 'Breadcrumb';
     }
 
-    #[Override]
+    #[Override
+
+    ]
     public function getType(): string
     {
         return 'breadcrumb';
-    }
-
-    #[Override]
-    public function setData(Block $block, array $data)
-    {
-        parent::setData(
-            $block,
-            [
-                'block' => $block,
-                'data'  => $data,
-            ]
-        );
     }
 }

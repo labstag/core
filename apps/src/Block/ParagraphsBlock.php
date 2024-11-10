@@ -22,6 +22,30 @@ class ParagraphsBlock extends BlockLib
     }
 
     #[Override]
+    public function generate(Block $block, array $data)
+    {
+        $paragraphs = $block->getParagraphs()->getValues();
+        if (0 == count($paragraphs)) {
+            $this->setShow($block, false);
+
+            return;
+        }
+
+        $paragraphs = $this->paragraphService->generate($paragraphs, $data);
+        $contents   = $this->paragraphService->getContents($paragraphs);
+        $this->setHeader($block, $contents->header);
+        $this->setFooter($block, $contents->footer);
+
+        $this->setData(
+            $block,
+            [
+                'block'      => $block,
+                'paragraphs' => $paragraphs,
+            ]
+        );
+    }
+
+    #[Override]
     public function getFields(Block $block, $pageName): iterable
     {
         unset($block, $pageName);
@@ -39,28 +63,5 @@ class ParagraphsBlock extends BlockLib
     public function getType(): string
     {
         return 'paragraphs';
-    }
-
-    #[Override]
-    public function setData(Block $block, array $data)
-    {
-        $paragraphs = $block->getParagraphs()->getValues();
-        if (0 == count($paragraphs)) {
-            $this->setShow($block, false);
-
-            return;
-        }
-
-        $paragraphs = $this->paragraphService->generate($paragraphs, $data);
-        $this->setHeader($block, $this->paragraphService->getContents($paragraphs, 'getHeader'));
-        $this->setFooter($block, $this->paragraphService->getContents($paragraphs, 'getFooter'));
-
-        parent::setData(
-            $block,
-            [
-                'block'      => $block,
-                'paragraphs' => $paragraphs,
-            ]
-        );
     }
 }

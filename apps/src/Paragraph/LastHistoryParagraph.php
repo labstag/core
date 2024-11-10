@@ -25,6 +25,30 @@ class LastHistoryParagraph extends ParagraphLib
     }
 
     #[Override]
+    public function generate(Paragraph $paragraph, array $data)
+    {
+        /** @var HistoryRepository $repository */
+        $repository     = $this->getRepository(History::class);
+        $nbr            = $paragraph->getNbr();
+        $histories      = $repository->findLastByNbr($nbr);
+        $total          = $repository->findTotalEnable();
+        $listing        = $this->siteService->getPageByType('history');
+        $baseUrlHistory = $this->fileService->getBasePath(History::class, 'imgFile');
+
+        $this->setData(
+            $paragraph,
+            [
+                'baseUrlHistory' => $baseUrlHistory,
+                'listing'        => $listing,
+                'total'          => $total,
+                'histories'      => $histories,
+                'paragraph'      => $paragraph,
+                'data'           => $data,
+            ]
+        );
+    }
+
+    #[Override]
     public function getFields(Paragraph $paragraph, $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -43,28 +67,6 @@ class LastHistoryParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'last-history';
-    }
-
-    #[Override]
-    public function setData(Paragraph $paragraph, array $data)
-    {
-        /** @var HistoryRepository $repository */
-        $repository = $this->getRepository(History::class);
-        $nbr        = $paragraph->getNbr();
-        $histories  = $repository->findLastByNbr($nbr);
-        $total      = $repository->findTotalEnable();
-        $listing    = $this->siteService->getPageByType('history');
-
-        parent::setData(
-            $paragraph,
-            [
-                'listing'   => $listing,
-                'total'     => $total,
-                'histories' => $histories,
-                'paragraph' => $paragraph,
-                'data'      => $data,
-            ]
-        );
     }
 
     #[Override]

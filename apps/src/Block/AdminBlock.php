@@ -23,6 +23,26 @@ class AdminBlock extends BlockLib
     }
 
     #[Override]
+    public function generate(Block $block, array $data)
+    {
+        $url = $this->setUrl($data['entity']);
+        if (is_null($url)) {
+            $this->setShow($block, false);
+
+            return;
+        }
+
+        $this->setData(
+            $block,
+            [
+                'url'   => $url->generateUrl(),
+                'block' => $block,
+                'data'  => $data,
+            ]
+        );
+    }
+
+    #[Override]
     public function getFields(Block $block, $pageName): iterable
     {
         unset($block, $pageName);
@@ -40,26 +60,6 @@ class AdminBlock extends BlockLib
     public function getType(): string
     {
         return 'admin';
-    }
-
-    #[Override]
-    public function setData(Block $block, array $data)
-    {
-        $url = $this->setUrl($data['entity']);
-        if (is_null($url)) {
-            $this->setShow($block, false);
-
-            return;
-        }
-
-        parent::setData(
-            $block,
-            [
-                'url'   => $url->generateUrl(),
-                'block' => $block,
-                'data'  => $data,
-            ]
-        );
     }
 
     protected function setUrl($entity)

@@ -12,6 +12,9 @@
         {% block javascripts %}
             {{ encore_entry_script_tags('front') }}
         {% endblock %}
+        {% for row in header %}
+            {{ site_content(row) }}
+        {% endfor %}
     </head>
     <body>
         {% for balise, blockposition in blocks %}
@@ -24,6 +27,9 @@
                     {% endfor %}
                 </{{ balise }}>
             {% endif %}
+        {% endfor %}
+        {% for row in footer %}
+            {{ site_content(row) }}
         {% endfor %}
     </body>
 </html>

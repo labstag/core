@@ -37,14 +37,16 @@ class EditoFixtures extends FixtureLib implements DependentFixtureInterface
 
     protected function addEdito(
         Generator $generator,
-        ObjectManager $objectManager
+        ObjectManager $objectManager,
+        int $index
     ): void
     {
         $edito = new Edito();
         $edito->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
-        $edito->setEnable((bool) random_int(0, 1));
+        $edito->setEnable($this->enable == $index);
         $edito->setRefuser($this->getReference(array_rand($this->users), User::class));
         $edito->setTitle($generator->unique()->colorName());
+        $this->setImage($edito, 'imgFile');
         $this->addReference('edito_'.md5(uniqid()), $edito);
         $objectManager->persist($edito);
     }

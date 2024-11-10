@@ -9,6 +9,7 @@ use Labstag\Interface\ParagraphInterface;
 use ReflectionClass;
 use stdClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class ParagraphService
@@ -44,7 +45,7 @@ class ParagraphService
     {
         $tab = [];
         foreach ($paragraphs as $paragraph) {
-            $this->setData($paragraph, $data);
+            $this->setContents($paragraph, $data);
 
             $tab[] = [
                 'templates' => $this->templates('content', $paragraph),
@@ -70,20 +71,38 @@ class ParagraphService
         return $paragraphs;
     }
 
-    public function getContents($paragraphs, $methods)
+    public function getContents($paragraphs)
     {
-        $content = [];
+        $data         = new stdClass();
+        $data->header = [];
+        $data->footer = [];
         foreach ($paragraphs as $paragraph) {
-            $content = array_merge(
-                $content,
-                call_user_func_array([$this, $methods], [$paragraph['paragraph']])
-            );
+            $header = $this->getHeader($paragraph['paragraph']);
+            $footer = $this->getFooter($paragraph['paragraph']);
+            if (is_array($header)) {
+                $data->header = array_merge($data->header, $header);
+            } elseif ($header instanceof Response) {
+                $data->header[] = $header;
+            }
+
+            if (is_array($footer)) {
+                $data->footer = array_merge($data->footer, $footer);
+            } elseif ($footer instanceof Response) {
+                $data->footer[] = $footer;
+            }
         }
 
-        return array_filter(
-            $content,
-            fn($row) => !is_null($row)
+        $data->header = array_filter(
+            $data->header,
+            fn ($row) => !is_null($row)
         );
+
+        $data->footer = array_filter(
+            $data->footer,
+            fn ($row) => !is_null($row)
+        );
+
+        return $data;
     }
 
     public function getEntityParent(?Paragraph $paragraph): ?object
@@ -105,7 +124,11 @@ class ParagraphService
                 continue;
             }
 
-            $class  = ClassUtils::getClass($value);
+            $class = ClassUtils::getClass($value);
+            if (!str_contains($class, 'Labstag\Entity')) {
+                continue;
+            }
+
             $entity = new $class();
             if ($entity instanceof ParagraphInterface) {
                 continue;
@@ -156,33 +179,33 @@ class ParagraphService
         Paragraph $paragraph
     )
     {
-        $header = [];
+        $footer = null;
 
         foreach ($this->paragraphs as $row) {
             if ($paragraph->getType() != $row->getType()) {
                 continue;
             }
 
-            $header[] = $row->getFooter($paragraph);
+            $footer = $row->getFooter($paragraph);
 
             break;
         }
 
-        return $header;
+        return $footer;
     }
 
     public function getHeader(
         Paragraph $paragraph
     )
     {
-        $header = [];
+        $header = null;
 
         foreach ($this->paragraphs as $row) {
             if ($paragraph->getType() != $row->getType()) {
                 continue;
             }
 
-            $header[] = $row->getHeader($paragraph);
+            $header = $row->getHeader($paragraph);
 
             break;
         }
@@ -204,7 +227,7 @@ class ParagraphService
         return $name;
     }
 
-    public function setData(
+    public function setContents(
         ?Paragraph $paragraph,
         array $data
     )
@@ -218,7 +241,7 @@ class ParagraphService
                 continue;
             }
 
-            $row->setData($paragraph, $data);
+            $row->generate($paragraph, $data);
 
             break;
         }

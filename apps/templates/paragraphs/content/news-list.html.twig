@@ -1,4 +1,12 @@
 <section id="{{ paragraph_id(paragraph) }}">
-    {{ knp_pagination_rel_links(pagination) }}
-    Paragraph news-list
+    <ul>
+        {% for row in pagination %}
+            <li>
+                {% include  "teasers/post.html.twig"  with {'post': row, 'basePathUrl': baseUrlPost} %}
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
 </section>

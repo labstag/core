@@ -1,4 +1,13 @@
 <section id="{{ paragraph_id(paragraph) }}">
     {{ knp_pagination_rel_links(pagination) }}
-    Paragraph history-list
+    <ul>
+        {% for row in pagination %}
+            <li>
+                {% include  "teasers/history.html.twig"  with {'history': row, 'basePathUrl': baseUrlHistory} %}
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="navigation">
+        {{ knp_pagination_render(pagination) }}
+    </div>
 </section>

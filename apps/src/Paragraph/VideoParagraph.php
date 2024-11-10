@@ -23,6 +23,20 @@ class VideoParagraph extends ParagraphLib
     }
 
     #[Override]
+    public function generate(Paragraph $paragraph, array $data)
+    {
+        $baseUrlVideo = $this->fileService->getBasePath(Paragraph::class, 'imgFile');
+        $this->setData(
+            $paragraph,
+            [
+                'baseUrlVideo' => $baseUrlVideo,
+                'paragraph'    => $paragraph,
+                'data'         => $data,
+            ]
+        );
+    }
+
+    #[Override]
     public function getFields(Paragraph $paragraph, $pageName): iterable
     {
         unset($paragraph);
@@ -40,18 +54,6 @@ class VideoParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'video';
-    }
-
-    #[Override]
-    public function setData(Paragraph $paragraph, array $data)
-    {
-        parent::setData(
-            $paragraph,
-            [
-                'paragraph' => $paragraph,
-                'data'      => $data,
-            ]
-        );
     }
 
     #[Override]

@@ -37,14 +37,16 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
 
     protected function addMemo(
         Generator $generator,
-        ObjectManager $objectManager
+        ObjectManager $objectManager,
+        int $index
     ): void
     {
         $memo = new Memo();
         $memo->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
-        $memo->setEnable((bool) random_int(0, 1));
+        $memo->setEnable($this->enable == $index);
         $memo->setRefuser($this->getReference(array_rand($this->users), User::class));
         $memo->setTitle($generator->unique()->colorName());
+        $this->setImage($memo, 'imgFile');
         $this->addReference('memo_'.md5(uniqid()), $memo);
         $objectManager->persist($memo);
     }

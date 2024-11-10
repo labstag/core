@@ -38,6 +38,11 @@ abstract class BlockLib extends AbstractController
         unset($view, $block);
     }
 
+    public function generate(Block $block, array $data)
+    {
+        unset($block, $data);
+    }
+
     public function getData(Block $block)
     {
         $blockId = $block->getId();
@@ -83,34 +88,9 @@ abstract class BlockLib extends AbstractController
         return $this->show[$blockId] ?? true;
     }
 
-    public function setData(Block $block, array $data)
-    {
-        $this->setShow($block, true);
-        $this->data[$block->getId()] = $data;
-    }
-
-    public function setFooter(Block $block, $data)
-    {
-        $blockId = $block->getId();
-
-        $this->footer[$blockId] = $data;
-    }
-
-    public function setHeader(Block $block, $data)
-    {
-        $blockId = $block->getId();
-
-        $this->header[$blockId] = $data;
-    }
-
     public function templates(string $type): array
     {
-        $data = $this->getTemplateContent($type, $this->getType());
-        if ('dev' == $this->getParameter('kernel.debug')) {
-            return $data;
-        }
-
-        return [];
+        return $this->getTemplateContent($type, $this->getType());
     }
 
     public function useIn(): array
@@ -150,6 +130,26 @@ abstract class BlockLib extends AbstractController
         ];
 
         return $this->templates[$type];
+    }
+
+    protected function setData(Block $block, array $data)
+    {
+        $this->setShow($block, true);
+        $this->data[$block->getId()] = $data;
+    }
+
+    protected function setFooter(Block $block, $data)
+    {
+        $blockId = $block->getId();
+
+        $this->footer[$blockId] = $data;
+    }
+
+    protected function setHeader(Block $block, $data)
+    {
+        $blockId = $block->getId();
+
+        $this->header[$blockId] = $data;
     }
 
     protected function setShow(Block $block, $show)

@@ -25,6 +25,29 @@ class LastNewsParagraph extends ParagraphLib
     }
 
     #[Override]
+    public function generate(Paragraph $paragraph, array $data)
+    {
+        /** @var PostRepository $repository */
+        $repository  = $this->getRepository(Post::class);
+        $nbr         = $paragraph->getNbr();
+        $news        = $repository->findLastByNbr($nbr);
+        $total       = $repository->findTotalEnable();
+        $listing     = $this->siteService->getPageByType('post');
+        $baseUrlPost = $this->fileService->getBasePath(Post::class, 'imgFile');
+        $this->setData(
+            $paragraph,
+            [
+                'baseUrlPost' => $baseUrlPost,
+                'listing'     => $listing,
+                'total'       => $total,
+                'news'        => $news,
+                'paragraph'   => $paragraph,
+                'data'        => $data,
+            ]
+        );
+    }
+
+    #[Override]
     public function getFields(Paragraph $paragraph, $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -43,27 +66,6 @@ class LastNewsParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'last-news';
-    }
-
-    #[Override]
-    public function setData(Paragraph $paragraph, array $data)
-    {
-        /** @var PostRepository $repository */
-        $repository = $this->getRepository(Post::class);
-        $nbr        = $paragraph->getNbr();
-        $news       = $repository->findLastByNbr($nbr);
-        $total      = $repository->findTotalEnable();
-        $listing    = $this->siteService->getPageByType('post');
-        parent::setData(
-            $paragraph,
-            [
-                'listing'   => $listing,
-                'total'     => $total,
-                'news'      => $news,
-                'paragraph' => $paragraph,
-                'data'      => $data,
-            ]
-        );
     }
 
     #[Override]

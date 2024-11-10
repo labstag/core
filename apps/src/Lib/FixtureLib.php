@@ -8,6 +8,10 @@ use Faker\Factory;
 use Faker\Generator;
 use Labstag\Entity\Category;
 use Labstag\Entity\Tag;
+use Labstag\Service\FileService;
+use Mmo\Faker\PicsumProvider;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 abstract class FixtureLib extends Fixture
 {
@@ -15,6 +19,14 @@ abstract class FixtureLib extends Fixture
     public array $categories = [];
 
     public array $tags = [];
+
+    protected $enable = null;
+
+    public function __construct(
+        protected FileService $fileService
+    )
+    {
+    }
 
     protected function addCategoryToEntity($entity)
     {
@@ -79,15 +91,42 @@ abstract class FixtureLib extends Fixture
         ObjectManager $objectManager
     ): void
     {
-        $generator = $this->setFaker();
+        $generator    = $this->setFaker();
+        $this->enable = random_int(1, $number);
         for ($index = 0; $index < $number; ++$index) {
-            call_user_func([$this, $method], $generator, $objectManager);
+            call_user_func([$this, $method], $generator, $objectManager, ($index + 1));
         }
     }
 
     protected function setFaker(): Generator
     {
-        return Factory::create('fr_FR');
+        $generator = Factory::create('fr_FR');
+        $generator->addProvider(new PicsumProvider($generator));
+
+        return $generator;
+    }
+
+    protected function setImage($entity, $type)
+    {
+        $generator = $this->setFaker();
+        $basePath  = $this->fileService->getFullBasePath($entity, $type);
+        $filePath  = $generator->image(
+            $basePath,
+            640,
+            480,
+            'cats',
+            false
+        );
+
+        $uploadedFile = new UploadedFile(
+            path: $basePath.'/'.$filePath,
+            originalName: basename($filePath),
+            mimeType: mime_content_type($basePath.'/'.$filePath),
+            test: true
+        );
+
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $propertyAccessor->setValue($entity, $type, $uploadedFile);
     }
 
     private function correctionArray($data)

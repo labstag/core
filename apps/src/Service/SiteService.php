@@ -93,11 +93,7 @@ class SiteService
             $main,
             $footer
         );
-        $aaheader = $this->blockService->getContents($blocks, 'getHeader');
-        dump($aaheader);
-        $aafooter = $this->blockService->getContents($blocks, 'getFooter');
-
-        dump($aafooter);
+        $contents = $this->blockService->getContents($blocks);
 
         return [
             'meta'   => $this->getMetaByEntity($entity->getMeta()),
@@ -106,9 +102,8 @@ class SiteService
                 'main'   => $main,
                 'footer' => $footer,
             ],
-            'header' => $header,
-            'main'   => $main,
-            'footer' => $footer,
+            'header' => $contents->header,
+            'footer' => $contents->footer,
             'config' => $this->getConfiguration(),
             'data'   => $data,
         ];

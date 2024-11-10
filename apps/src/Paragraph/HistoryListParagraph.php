@@ -24,6 +24,38 @@ class HistoryListParagraph extends ParagraphLib
     }
 
     #[Override]
+    public function generate(Paragraph $paragraph, array $data)
+    {
+        /** @var HistoryRepository $repository */
+        $repository = $this->getRepository(History::class);
+
+        $pagination = $this->getPaginator(
+            $repository->getQueryPaginator(),
+            $paragraph->getNbr()
+        );
+
+        $templates      = $this->templates('header');
+        $baseUrlHistory = $this->fileService->getBasePath(History::class, 'imgFile');
+        $this->setHeader(
+            $paragraph,
+            $this->render(
+                $templates['view'],
+                ['pagination' => $pagination]
+            )
+        );
+
+        $this->setData(
+            $paragraph,
+            [
+                'baseUrlHistory' => $baseUrlHistory,
+                'pagination'     => $pagination,
+                'paragraph'      => $paragraph,
+                'data'           => $data,
+            ]
+        );
+    }
+
+    #[Override]
     public function getFields(Paragraph $paragraph, $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -41,32 +73,6 @@ class HistoryListParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'history-list';
-    }
-
-    #[Override]
-    public function setData(Paragraph $paragraph, array $data)
-    {
-        /** @var HistoryRepository $repository */
-        $repository = $this->getRepository(History::class);
-
-        $pagination = $this->getPaginator(
-            $repository->getQueryPaginator(),
-            $paragraph->getNbr()
-        );
-
-        $this->setHeader(
-            $paragraph,
-            'history-list'
-        );
-
-        parent::setData(
-            $paragraph,
-            [
-                'pagination' => $pagination,
-                'paragraph'  => $paragraph,
-                'data'       => $data,
-            ]
-        );
     }
 
     #[Override]

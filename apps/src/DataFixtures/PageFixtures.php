@@ -7,6 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Category;
 use Labstag\Entity\Page;
+use Labstag\Entity\Paragraph;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
@@ -45,17 +46,22 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $page = new Page();
         $page->setType('home');
 
+        $this->setParagraphsHome($page);
+
         $home = $page;
 
         $page = new Page();
         $page->setTitle('Histoires');
         $page->setType('history');
 
+        $this->setParagraphsHistory($page);
+
         $histories = $page;
 
         $page = new Page();
         $page->setTitle('Posts');
         $page->setType('post');
+        $this->setParagraphsPost($page);
 
         $posts = $page;
 
@@ -64,6 +70,13 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $page->setType('page');
 
         $contact = $page;
+
+        $page = new Page();
+        $page->setTitle('Plan du site');
+        $page->setType('page');
+        $this->setParagraphsSitemap($page);
+
+        $sitemap = $page;
 
         return [
             ['entity' => $home],
@@ -77,6 +90,10 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             ],
             [
                 'entity' => $contact,
+                'parent' => 'home',
+            ],
+            [
+                'entity' => $sitemap,
                 'parent' => 'home',
             ],
 
@@ -98,8 +115,78 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         }
 
         $page->setCreatedAt($date);
+        $this->setImage($page, 'imgFile');
 
         $this->setReference('page_'.$page->getType(), $page);
         $objectManager->persist($page);
+    }
+
+    private function setParagraphsHistory(Page $page)
+    {
+        $paragraph = new Paragraph();
+        $paragraph->setTitle('Dernière histoires');
+        $paragraph->setType('history-list');
+        $paragraph->setNbr(20);
+
+        $page->addParagraph($paragraph);
+    }
+
+    private function setParagraphsHome(Page $page)
+    {
+        $generator = $this->setFaker();
+
+        $paragraph = new Paragraph();
+        $paragraph->setTitle('edito');
+        $paragraph->setType('edito');
+
+        $page->addParagraph($paragraph);
+
+        $paragraph = new Paragraph();
+        $paragraph->setTitle('Texte');
+        $paragraph->setType('text');
+        $paragraph->setContent($generator->text(500));
+
+        $page->addParagraph($paragraph);
+
+        $paragraph = new Paragraph();
+        $paragraph->setTitle('Dernière news');
+        $paragraph->setType('last-news');
+        $paragraph->setNbr(5);
+
+        $page->addParagraph($paragraph);
+
+        $paragraph = new Paragraph();
+        $paragraph->setTitle('Dernière histoires');
+        $paragraph->setType('last-history');
+        $paragraph->setNbr(5);
+
+        $page->addParagraph($paragraph);
+
+        $paragraph = new Paragraph();
+        $paragraph->setTitle('Dernière histoires');
+        $paragraph->setType('video');
+        $this->setImage($paragraph, 'imgFile');
+        $paragraph->setUrl('https://www.youtube.com/watch?v=JGwWNGJdvx8');
+        $page->addParagraph($paragraph);
+    }
+
+    private function setParagraphsPost(Page $page)
+    {
+        $paragraph = new Paragraph();
+        $paragraph->setTitle('Dernière histoires');
+        $paragraph->setType('news-list');
+        $paragraph->setNbr(20);
+
+        $page->addParagraph($paragraph);
+    }
+
+    private function setParagraphsSitemap(Page $page)
+    {
+        $paragraph = new Paragraph();
+        $paragraph->setTitle('Sitemap');
+        $paragraph->setType('sitemap');
+        $paragraph->setNbr(20);
+
+        $page->addParagraph($paragraph);
     }
 }

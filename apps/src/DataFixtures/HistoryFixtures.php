@@ -54,6 +54,7 @@ class HistoryFixtures extends FixtureLib implements DependentFixtureInterface
         $history->setEnable((bool) random_int(0, 1));
         $history->setRefuser($this->getReference(array_rand($this->users), User::class));
         $history->setTitle($generator->unique()->colorName());
+        $this->setImage($history, 'imgFile');
         $this->addTagToEntity($history);
         $this->addCategoryToEntity($history);
         $this->addReference('history_'.md5(uniqid()), $history);

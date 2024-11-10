@@ -3,7 +3,7 @@
     <ul>
         {% for row in histories %}
             <li>
-                {% include  "teasers/history.html.twig"  with {'history': row} %}
+                {% include  "teasers/history.html.twig"  with {'history': row, 'basePathUrl': baseUrlHistory} %}
             </li>
         {% endfor %}
     </ul>
