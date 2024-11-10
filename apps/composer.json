@@ -14,7 +14,7 @@
         "doctrine/dbal": "3.8.*",
         "doctrine/doctrine-bundle": "2.13.*",
         "doctrine/doctrine-migrations-bundle": "3.3.*",
-        "easycorp/easyadmin-bundle": "4.13.*",
+        "easycorp/easyadmin-bundle": "4.14.*",
         "essence/essence": "^3.5",
         "gedmo/doctrine-extensions": "3.17.*",
         "giggsey/libphonenumber-for-php": "8.13.*",
