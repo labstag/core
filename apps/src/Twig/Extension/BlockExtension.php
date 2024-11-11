@@ -15,6 +15,7 @@ class BlockExtension extends AbstractExtension
         return [
             new TwigFunction('block_name', [BlockExtensionRuntime::class, 'getName']),
             new TwigFunction('block_id', [BlockExtensionRuntime::class, 'getId']),
+            new TwigFunction('block_class', [BlockExtensionRuntime::class, 'getClass']),
             new TwigFunction('block_show', [BlockExtensionRuntime::class, 'getShow'], ['is_safe' => ['html']]),
         ];
     }

@@ -1,4 +1,4 @@
-<nav aria-label="breadcrumb" id="{{ block_id(block) }}">
+<nav aria-label="breadcrumb" id="{{ block_id(block) }}" class="{{ block_class(block) }}">
     <ol class="breadcrumb">
         {% for row in urls %}
             <li class="breadcrumb-item{% if loop.last %} active{% endif %}">

@@ -15,6 +15,11 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
+    public function getClass(Block $block): string
+    {
+        return $block->getType();
+    }
+
     public function getId(Block $block): string
     {
         return $block->getType().'-'.$block->getId();

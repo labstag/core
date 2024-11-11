@@ -1,4 +1,4 @@
-<div id="{{ block_id(block) }}">
+<div id="{{ block_id(block) }}" class="{{ block_class(block) }}">
     {% for label, messages in app.flashes %}
         <div class="flash-{{ label }}">
             <div>{{ label }}</div>

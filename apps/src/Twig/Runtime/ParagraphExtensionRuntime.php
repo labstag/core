@@ -15,6 +15,11 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
+    public function getClass(Paragraph $paragraph): string
+    {
+        return $paragraph->getType();
+    }
+
     public function getFond($code)
     {
         return $this->paragraphService->getFond($code);
