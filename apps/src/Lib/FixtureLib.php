@@ -117,6 +117,9 @@ abstract class FixtureLib extends Fixture
                 width: 800,
                 height: 600
             );
+            if (is_bool($filePath)) {
+                return;
+            }
 
             $uploadedFile = new UploadedFile(
                 path: $filePath,

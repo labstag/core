@@ -47,17 +47,8 @@ class BlockFixtures extends FixtureLib
 
     private function addParagraphsTest(Block $block)
     {
-        $generator = $this->setFaker();
-
         $paragraph = new Paragraph();
         $paragraph->setType('chapter-lastnext');
-
-        $block->addParagraph($paragraph);
-
-        $paragraph = new Paragraph();
-        $paragraph->setType('html');
-        $paragraph->setTitle($generator->unique()->colorName());
-        $paragraph->setContent($generator->unique()->text(1000));
 
         $block->addParagraph($paragraph);
     }
