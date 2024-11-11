@@ -7,6 +7,7 @@ use Labstag\Entity\Block;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Environment;
 
 abstract class BlockLib extends AbstractController
@@ -28,6 +29,7 @@ abstract class BlockLib extends AbstractController
         protected AdminUrlGenerator $adminUrlGenerator,
         protected ParagraphService $paragraphService,
         protected SiteService $siteService,
+        protected RequestStack $requestStack,
         protected Environment $twigEnvironment
     )
     {

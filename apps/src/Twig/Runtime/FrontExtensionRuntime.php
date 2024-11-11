@@ -6,11 +6,13 @@ use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Routing\RouterInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class FrontExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
+        protected RouterInterface $router,
         protected SiteService $siteService,
         protected ParameterBagInterface $parameterBag,
         protected FileService $fileService
@@ -36,7 +38,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
             }
         }
 
-        if ('' === $file || 'dev' == $this->parameterBag->get('kernel.environment')) {
+        if ('' === $file) {
             return 'https://picsum.photos/1200/1200?md5='.md5((string) $entity->getId());
         }
 
@@ -61,7 +63,9 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 
     public function path($entity)
     {
-        return $this->siteService->getSlugByEntity($entity);
+        $slug = $this->siteService->getSlugByEntity($entity);
+
+        return $this->router->generate('front', ['slug' => $slug]);
     }
 
     public function title($value)

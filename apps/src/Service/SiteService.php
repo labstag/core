@@ -109,11 +109,17 @@ class SiteService
         ];
     }
 
-    public function getEntityBySlug()
+    public function getEntity()
     {
         $request = $this->requestStack->getCurrentRequest();
         $slug    = $request->attributes->get('slug');
-        $types   = $this->getPageByTypes();
+
+        return $this->getEntityBySlug($slug);
+    }
+
+    public function getEntityBySlug($slug)
+    {
+        $types = $this->getPageByTypes();
         if ('' == $slug) {
             return $types['home'];
         }
@@ -157,27 +163,11 @@ class SiteService
     public function getSlugByEntity($entity)
     {
         $types = $this->getPageByTypes();
-        if ($entity instanceof Page) {
-            return $entity->getSlug();
-        }
+        $page  = $this->getSlugByEntityIfPage($entity);
+        $page  = ('' == $page) ? $this->getSlugByEntityIfPost($types, $entity) : $page;
+        $page  = ('' == $page) ? $this->getSlugByEntityIfHistory($types, $entity) : $page;
 
-        if ($entity instanceof Post) {
-            if (is_null($types['post']) || !$types['post'] instanceof Page) {
-                throw new Exception('Post page not found');
-            }
-
-            return $types['post']->getSlug().'/'.$entity->getSlug();
-        }
-
-        if ($entity instanceof History || $entity instanceof Chapter) {
-            if (is_null($types['history']) || !$types['history'] instanceof Page) {
-                throw new Exception('Post page not found');
-            }
-
-            return $types['history']->getSlug().'/'.$entity->getSlug();
-        }
-
-        return '';
+        return ('' == $page) ? $this->getSlugByEntityIfChapter($types, $entity) : $page;
     }
 
     public function getTypesPages()
@@ -306,20 +296,23 @@ class SiteService
         }
 
         $repos = [
-            $this->chapterRepository,
-            $this->historyRepository,
+            'history' => $this->historyRepository,
+            'chapter' => $this->chapterRepository,
         ];
-        $page = null;
-        foreach ($repos as $repo) {
-            $page = $repo->findOneBy(['slug' => $slug]);
-            if (is_null($page)) {
-                continue;
-            }
 
-            break;
+        if (1 == substr_count((string) $slug, '/')) {
+            [
+                $slughistory,
+                $slugchapter,
+            ]        = explode('/', (string) $slug);
+            $history = $repos['history']->findOneBy(['slug' => $slughistory]);
+            $chapter = $repos['chapter']->findOneBy(['slug' => $slugchapter]);
+            if ($history instanceof History && $chapter instanceof Chapter && $history->getId() === $chapter->getRefHistory()->getId()) {
+                return $chapter;
+            }
         }
 
-        return $page;
+        return $repos['history']->findOneBy(['slug' => $slug]);
     }
 
     private function getPageByTypes()
@@ -331,6 +324,54 @@ class SiteService
         }
 
         return $types;
+    }
+
+    private function getSlugByEntityIfChapter($types, $entity)
+    {
+        if (!$entity instanceof Chapter) {
+            return '';
+        }
+
+        if (is_null($types['history']) || !$types['history'] instanceof Page) {
+            throw new Exception('Post page not found');
+        }
+
+        return $types['history']->getSlug().'/'.$entity->getRefHistory()->getSlug().'/'.$entity->getSlug();
+    }
+
+    private function getSlugByEntityIfHistory($types, $entity)
+    {
+        if (!$entity instanceof History) {
+            return '';
+        }
+
+        if (is_null($types['history']) || !$types['history'] instanceof Page) {
+            throw new Exception('Post page not found');
+        }
+
+        return $types['history']->getSlug().'/'.$entity->getSlug();
+    }
+
+    private function getSlugByEntityIfPage($entity)
+    {
+        if (!$entity instanceof Page) {
+            return '';
+        }
+
+        return $entity->getSlug();
+    }
+
+    private function getSlugByEntityIfPost($types, $entity)
+    {
+        if (!$entity instanceof Post) {
+            return null;
+        }
+
+        if (is_null($types['post']) || !$types['post'] instanceof Page) {
+            throw new Exception('Post page not found');
+        }
+
+        return $types['post']->getSlug().'/'.$entity->getSlug();
     }
 
     private function getUser()

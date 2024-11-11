@@ -2,12 +2,15 @@
 
 namespace Labstag\Paragraph;
 
+use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\History;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
+use Labstag\Repository\ChapterRepository;
 use Override;
 
-class ChapterInfoParagraph extends ParagraphLib
+class ChapterListParagraph extends ParagraphLib
 {
     #[Override]
     public function content(string $view, Paragraph $paragraph)
@@ -25,15 +28,21 @@ class ChapterInfoParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data)
     {
-        if (!isset($data['entity']) || !$data['entity'] instanceof Chapter) {
+        if (!isset($data['entity']) || !$data['entity'] instanceof History) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
+        /** @var ChapterRepository $repository */
+        $repository = $this->getRepository(Chapter::class);
+
+        $chapters = $repository->getAllEnabledByHistory($data['entity']);
+
         $this->setData(
             $paragraph,
             [
+                'chapters'  => $chapters,
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]
@@ -51,7 +60,7 @@ class ChapterInfoParagraph extends ParagraphLib
     #[Override]
     public function getName(): string
     {
-        return 'Chapitre info';
+        return 'Chapter list';
     }
 
     #[Override
@@ -59,12 +68,14 @@ class ChapterInfoParagraph extends ParagraphLib
     ]
     public function getType(): string
     {
-        return 'chapter-info';
+        return 'chapter-list';
     }
 
     #[Override]
     public function useIn(): array
     {
-        return $this->useInAll();
+        return [
+            Block::class,
+        ];
     }
 }

@@ -4,13 +4,14 @@ namespace Labstag\Lib;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
 use Faker\Factory;
 use Faker\Generator;
 use Faker\Provider\Youtube;
 use Labstag\Entity\Category;
 use Labstag\Entity\Tag;
 use Labstag\Service\FileService;
-use Mmo\Faker\PicsumProvider;
+use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -102,7 +103,7 @@ abstract class FixtureLib extends Fixture
     protected function setFaker(): Generator
     {
         $generator = Factory::create('fr_FR');
-        $generator->addProvider(new PicsumProvider($generator));
+        $generator->addProvider(new FakerPicsumImagesProvider($generator));
         $generator->addProvider(new Youtube($generator));
 
         return $generator;
@@ -110,25 +111,25 @@ abstract class FixtureLib extends Fixture
 
     protected function setImage($entity, $type)
     {
-        $generator = $this->setFaker();
-        $basePath  = $this->fileService->getFullBasePath($entity, $type);
-        $filePath  = $generator->image(
-            $basePath,
-            640,
-            480,
-            'cats',
-            false
-        );
+        try {
+            $generator = $this->setFaker();
+            $filePath  = $generator->image(
+                width: 800,
+                height: 600
+            );
 
-        $uploadedFile = new UploadedFile(
-            path: $basePath.'/'.$filePath,
-            originalName: basename($filePath),
-            mimeType: mime_content_type($basePath.'/'.$filePath),
-            test: true
-        );
+            $uploadedFile = new UploadedFile(
+                path: $filePath,
+                originalName: basename($filePath),
+                mimeType: mime_content_type($filePath),
+                test: true
+            );
 
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        $propertyAccessor->setValue($entity, $type, $uploadedFile);
+            $propertyAccessor = PropertyAccess::createPropertyAccessor();
+            $propertyAccessor->setValue($entity, $type, $uploadedFile);
+        } catch (Exception $exception) {
+            echo $exception->getMessage();
+        }
     }
 
     private function correctionArray($data)

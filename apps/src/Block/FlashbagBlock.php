@@ -11,6 +11,10 @@ class FlashbagBlock extends BlockLib
     #[Override]
     public function content(string $view, Block $block)
     {
+        if (!$this->isShow($block)) {
+            return null;
+        }
+
         return $this->render(
             $view,
             $this->getData($block)

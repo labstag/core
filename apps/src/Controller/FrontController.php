@@ -15,7 +15,7 @@ class FrontController extends AbstractController
         SiteService $siteService
     ): Response
     {
-        $entity = $siteService->getEntityBySlug();
+        $entity = $siteService->getEntity();
         if (!is_object($entity)) {
             throw $this->createNotFoundException();
         }

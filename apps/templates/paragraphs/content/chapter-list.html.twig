@@ -1,0 +1,9 @@
+<section id="{{ paragraph_id(paragraph) }}">
+    <ul>
+        {% for row in chapters %}
+            <li>
+                {% include  "teasers/chapter.html.twig"  with {'chapter': row} %}
+            </li>
+        {% endfor %}
+    </ul>
+</section>

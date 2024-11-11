@@ -2,12 +2,13 @@
 
 namespace Labstag\Paragraph;
 
-use Labstag\Entity\Chapter;
+use Labstag\Entity\Block;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Post;
 use Labstag\Lib\ParagraphLib;
 use Override;
 
-class ChapterInfoParagraph extends ParagraphLib
+class HeadPostParagraph extends ParagraphLib
 {
     #[Override]
     public function content(string $view, Paragraph $paragraph)
@@ -25,7 +26,7 @@ class ChapterInfoParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data)
     {
-        if (!isset($data['entity']) || !$data['entity'] instanceof Chapter) {
+        if (!isset($data['entity']) || !$data['entity'] instanceof Post) {
             $this->setShow($paragraph, false);
 
             return;
@@ -34,6 +35,7 @@ class ChapterInfoParagraph extends ParagraphLib
         $this->setData(
             $paragraph,
             [
+                'post'      => $data['entity'],
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]
@@ -51,7 +53,7 @@ class ChapterInfoParagraph extends ParagraphLib
     #[Override]
     public function getName(): string
     {
-        return 'Chapitre info';
+        return 'Head post';
     }
 
     #[Override
@@ -59,12 +61,14 @@ class ChapterInfoParagraph extends ParagraphLib
     ]
     public function getType(): string
     {
-        return 'chapter-info';
+        return 'head-post';
     }
 
     #[Override]
     public function useIn(): array
     {
-        return $this->useInAll();
+        return [
+            Block::class,
+        ];
     }
 }

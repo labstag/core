@@ -7,7 +7,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Override;
 
-class ChapterInfoParagraph extends ParagraphLib
+class ChapterLastNextParagraph extends ParagraphLib
 {
     #[Override]
     public function content(string $view, Paragraph $paragraph)
@@ -51,7 +51,7 @@ class ChapterInfoParagraph extends ParagraphLib
     #[Override]
     public function getName(): string
     {
-        return 'Chapitre info';
+        return 'Chapitre last next';
     }
 
     #[Override
@@ -59,7 +59,7 @@ class ChapterInfoParagraph extends ParagraphLib
     ]
     public function getType(): string
     {
-        return 'chapter-info';
+        return 'chapter-lastnext';
     }
 
     #[Override]

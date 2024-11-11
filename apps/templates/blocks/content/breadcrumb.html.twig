@@ -1,1 +1,9 @@
-<div id="{{ block_id(block) }}">block breadcrumb</div>
+<nav aria-label="breadcrumb" id="{{ block_id(block) }}">
+    <ol class="breadcrumb">
+        {% for row in urls %}
+            <li class="breadcrumb-item{% if loop.last %} active{% endif %}">
+                <a href="{{ path('front', {'slug': row.url})}}">{{ row.title }}</a>
+            </li>
+        {% endfor %}
+    </ol>
+</nav>

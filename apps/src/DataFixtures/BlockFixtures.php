@@ -22,9 +22,38 @@ class BlockFixtures extends FixtureLib
         $objectManager->flush();
     }
 
-    private function addParagraphs(Block $block)
+    private function addParagraphsHead(Block $block)
+    {
+        $paragraph = new Paragraph();
+        $paragraph->setType('head-history');
+
+        $block->addParagraph($paragraph);
+
+        $paragraph = new Paragraph();
+        $paragraph->setType('head-post');
+
+        $block->addParagraph($paragraph);
+
+        $paragraph = new Paragraph();
+        $paragraph->setType('chapter-list');
+
+        $block->addParagraph($paragraph);
+
+        $paragraph = new Paragraph();
+        $paragraph->setType('chapter-info');
+
+        $block->addParagraph($paragraph);
+    }
+
+    private function addParagraphsTest(Block $block)
     {
         $generator = $this->setFaker();
+
+        $paragraph = new Paragraph();
+        $paragraph->setType('chapter-lastnext');
+
+        $block->addParagraph($paragraph);
+
         $paragraph = new Paragraph();
         $paragraph->setType('html');
         $paragraph->setTitle($generator->unique()->colorName());
@@ -62,6 +91,14 @@ class BlockFixtures extends FixtureLib
 
         $block = new Block();
         $block->setRegion('main');
+        $block->setTitle('Main Content');
+        $block->setType('paragraphs');
+
+        $this->addParagraphsHead($block);
+        yield $block;
+
+        $block = new Block();
+        $block->setRegion('main');
         $block->setTitle('Main HTML');
         $block->setType('html');
         yield $block;
@@ -77,7 +114,7 @@ class BlockFixtures extends FixtureLib
         $block->setTitle('Main Paragraphs');
         $block->setType('paragraphs');
 
-        $this->addParagraphs($block);
+        $this->addParagraphsTest($block);
         yield $block;
 
         $block = new Block();

@@ -18,7 +18,7 @@ class HistoryFixtures extends FixtureLib implements DependentFixtureInterface
     /**
      * @var int
      */
-    protected const NUMBER_HISTORY = 10;
+    protected const NUMBER_HISTORY = 50;
 
     protected array $users = [];
 
