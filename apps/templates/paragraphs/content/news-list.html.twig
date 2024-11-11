@@ -2,7 +2,7 @@
     <ul>
         {% for row in pagination %}
             <li>
-                {% include  "teasers/post.html.twig"  with {'post': row, 'basePathUrl': baseUrlPost} %}
+                {% include  "teasers/post.html.twig"  with {'post': row} %}
             </li>
         {% endfor %}
     </ul>

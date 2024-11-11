@@ -1,6 +1,6 @@
 <section id="{{ paragraph_id(paragraph) }}">
     {% if paragraph.img != '' %}
-        <img src="{{ asset(baseUrlVideo ~ '/' ~ paragraph.img) }}">
+        <img src="{{ site_asset(paragraph, 'img') }}">
     {% endif %}
     {{ html|raw }}
 Paragraph video</section>

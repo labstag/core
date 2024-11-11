@@ -28,22 +28,20 @@ class LastHistoryParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data)
     {
         /** @var HistoryRepository $repository */
-        $repository     = $this->getRepository(History::class);
-        $nbr            = $paragraph->getNbr();
-        $histories      = $repository->findLastByNbr($nbr);
-        $total          = $repository->findTotalEnable();
-        $listing        = $this->siteService->getPageByType('history');
-        $baseUrlHistory = $this->fileService->getBasePath(History::class, 'imgFile');
+        $repository = $this->getRepository(History::class);
+        $nbr        = $paragraph->getNbr();
+        $histories  = $repository->findLastByNbr($nbr);
+        $total      = $repository->findTotalEnable();
+        $listing    = $this->siteService->getPageByType('history');
 
         $this->setData(
             $paragraph,
             [
-                'baseUrlHistory' => $baseUrlHistory,
-                'listing'        => $listing,
-                'total'          => $total,
-                'histories'      => $histories,
-                'paragraph'      => $paragraph,
-                'data'           => $data,
+                'listing'   => $listing,
+                'total'     => $total,
+                'histories' => $histories,
+                'paragraph' => $paragraph,
+                'data'      => $data,
             ]
         );
     }

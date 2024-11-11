@@ -3,7 +3,7 @@
     <ul>
         {% for row in pagination %}
             <li>
-                {% include  "teasers/history.html.twig"  with {'history': row, 'basePathUrl': baseUrlHistory} %}
+                {% include  "teasers/history.html.twig"  with {'history': row} %}
             </li>
         {% endfor %}
     </ul>

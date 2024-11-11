@@ -2,27 +2,18 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Tag;
 use Labstag\Lib\FixtureLib;
 use Override;
 
-class TagFixtures extends FixtureLib implements DependentFixtureInterface
+class TagFixtures extends FixtureLib
 {
     /**
      * @var int
      */
     protected const NUMBER_TAGS = 30;
-
-    #[Override]
-    public function getDependencies(): array
-    {
-        return [
-            DataFixtures::class,
-        ];
-    }
 
     #[Override]
     public function load(ObjectManager $objectManager): void

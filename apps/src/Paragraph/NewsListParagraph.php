@@ -33,14 +33,12 @@ class NewsListParagraph extends ParagraphLib
             $repository->getQueryPaginator(),
             $paragraph->getNbr()
         );
-        $baseUrlPost = $this->fileService->getBasePath(Post::class, 'imgFile');
         $this->setData(
             $paragraph,
             [
-                'baseUrlPost' => $baseUrlPost,
-                'pagination'  => $pagination,
-                'paragraph'   => $paragraph,
-                'data'        => $data,
+                'pagination' => $pagination,
+                'paragraph'  => $paragraph,
+                'data'       => $data,
             ]
         );
 

@@ -2,27 +2,18 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Category;
 use Labstag\Lib\FixtureLib;
 use Override;
 
-class CategoryFixtures extends FixtureLib implements DependentFixtureInterface
+class CategoryFixtures extends FixtureLib
 {
     /**
      * @var int
      */
     protected const NUMBER_CATEGORY = 30;
-
-    #[Override]
-    public function getDependencies(): array
-    {
-        return [
-            DataFixtures::class,
-        ];
-    }
 
     #[Override]
     public function load(ObjectManager $objectManager): void

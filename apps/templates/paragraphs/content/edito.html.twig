@@ -1,7 +1,7 @@
 <section id="{{ paragraph_id(paragraph) }}">
     <h2>{{ paragraph.title }}</h2>
     <h3>{{ edito.title }}</h3>
-    <img src="{{ asset(basePathUrlEdito ~ '/' ~ edito.img) }}">
+    <img src="{{ site_asset(edito, 'img') }}">
     {% for tab in paragraphs %}
         {{ debug_begin(tab) }}
         {{ paragraph_show(tab) }}

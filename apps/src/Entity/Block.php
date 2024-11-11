@@ -8,10 +8,12 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Labstag\Repository\BlockRepository;
+use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
-class Block
+class Block implements Stringable
 {
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -58,6 +60,12 @@ class Block
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
+    }
+
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
     }
 
     public function addParagraph(Paragraph $paragraph): static

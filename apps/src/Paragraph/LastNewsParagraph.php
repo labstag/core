@@ -28,21 +28,19 @@ class LastNewsParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data)
     {
         /** @var PostRepository $repository */
-        $repository  = $this->getRepository(Post::class);
-        $nbr         = $paragraph->getNbr();
-        $news        = $repository->findLastByNbr($nbr);
-        $total       = $repository->findTotalEnable();
-        $listing     = $this->siteService->getPageByType('post');
-        $baseUrlPost = $this->fileService->getBasePath(Post::class, 'imgFile');
+        $repository = $this->getRepository(Post::class);
+        $nbr        = $paragraph->getNbr();
+        $news       = $repository->findLastByNbr($nbr);
+        $total      = $repository->findTotalEnable();
+        $listing    = $this->siteService->getPageByType('post');
         $this->setData(
             $paragraph,
             [
-                'baseUrlPost' => $baseUrlPost,
-                'listing'     => $listing,
-                'total'       => $total,
-                'news'        => $news,
-                'paragraph'   => $paragraph,
-                'data'        => $data,
+                'listing'   => $listing,
+                'total'     => $total,
+                'news'      => $news,
+                'paragraph' => $paragraph,
+                'data'      => $data,
             ]
         );
     }

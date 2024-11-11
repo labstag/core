@@ -196,6 +196,11 @@ class FileService
         return $this->parameterBag->get('kernel.project_dir').'/public'.$basePath;
     }
 
+    public function getMappingForEntity($entity)
+    {
+        return $this->propertyMappingFactory->fromObject($entity);
+    }
+
     protected function getRepository(string $entity)
     {
         return $this->managerRegistry->getRepository($entity);

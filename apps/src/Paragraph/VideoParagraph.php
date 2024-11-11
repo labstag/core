@@ -27,9 +27,8 @@ class VideoParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data)
     {
-        $baseUrlVideo = $this->fileService->getBasePath(Paragraph::class, 'imgFile');
-        $url          = $paragraph->getUrl();
-        if ($url === null || $url === '' || $url === '0') {
+        $url = $paragraph->getUrl();
+        if (null === $url || '' === $url || '0' === $url) {
             $this->setShow($paragraph, false);
 
             return;
@@ -51,15 +50,12 @@ class VideoParagraph extends ParagraphLib
             return;
         }
 
-        dump($media);
-
         $this->setData(
             $paragraph,
             [
-                'html'         => $media->html,
-                'baseUrlVideo' => $baseUrlVideo,
-                'paragraph'    => $paragraph,
-                'data'         => $data,
+                'html'      => $media->html,
+                'paragraph' => $paragraph,
+                'data'      => $data,
             ]
         );
     }

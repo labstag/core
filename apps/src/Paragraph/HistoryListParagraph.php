@@ -34,8 +34,7 @@ class HistoryListParagraph extends ParagraphLib
             $paragraph->getNbr()
         );
 
-        $templates      = $this->templates('header');
-        $baseUrlHistory = $this->fileService->getBasePath(History::class, 'imgFile');
+        $templates = $this->templates('header');
         $this->setHeader(
             $paragraph,
             $this->render(
@@ -47,10 +46,9 @@ class HistoryListParagraph extends ParagraphLib
         $this->setData(
             $paragraph,
             [
-                'baseUrlHistory' => $baseUrlHistory,
-                'pagination'     => $pagination,
-                'paragraph'      => $paragraph,
-                'data'           => $data,
+                'pagination' => $pagination,
+                'paragraph'  => $paragraph,
+                'data'       => $data,
             ]
         );
     }

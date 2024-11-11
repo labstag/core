@@ -2,23 +2,14 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\Block;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\FixtureLib;
 use Override;
 
-class BlockFixtures extends FixtureLib implements DependentFixtureInterface
+class BlockFixtures extends FixtureLib
 {
-    #[Override]
-    public function getDependencies(): array
-    {
-        return [
-            DataFixtures::class,
-        ];
-    }
-
     #[Override]
     public function load(ObjectManager $objectManager): void
     {

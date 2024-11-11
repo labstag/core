@@ -31,6 +31,8 @@ class EditoParagraph extends ParagraphLib
         $repository = $this->getRepository(Edito::class);
         $edito      = $repository->findLast();
         if (!$edito instanceof Edito) {
+            $this->setShow($paragraph, false);
+
             return;
         }
 
@@ -38,15 +40,13 @@ class EditoParagraph extends ParagraphLib
         $contents        = $this->paragraphService->getContents($paragraphsedito);
         $this->setHeader($paragraph, $contents->header);
         $this->setFooter($paragraph, $contents->footer);
-        $basePathUrlEdito = $this->fileService->getBasePath(Edito::class, 'imgFile');
 
         $this->setData(
             $paragraph,
             [
-                'basePathUrlEdito' => $basePathUrlEdito,
-                'paragraphs'       => $paragraphsedito,
-                'paragraph'        => $paragraph,
-                'edito'            => $edito,
+                'paragraphs' => $paragraphsedito,
+                'paragraph'  => $paragraph,
+                'edito'      => $edito,
             ]
         );
     }
