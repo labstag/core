@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\Block;
 use Labstag\Entity\Category;
@@ -81,8 +82,9 @@ class DashboardController extends AbstractDashboardController
     #[Override]
     public function configureDashboard(): Dashboard
     {
+        $data      = $this->siteService->getConfiguration();
         $dashboard = Dashboard::new();
-        $dashboard->setTitle('Www');
+        $dashboard->setTitle($data['site_name']);
         $dashboard->setTranslationDomain('admin');
         $dashboard->renderContentMaximized();
         $dashboard->setLocales($this->userService->getLanguages());
@@ -171,6 +173,11 @@ class DashboardController extends AbstractDashboardController
             return $userMenu;
         }
 
+        $userMenu->addMenuItems(
+            [
+                MenuItem::linkToRoute('Mon profil', 'fa fa-user', 'admin_profil'),
+            ]
+        );
         $avatar = $user->getAvatar();
         if ('' != $avatar) {
             $basePath = $this->fileService->getBasePath($user, 'avatarFile');
@@ -240,6 +247,20 @@ class DashboardController extends AbstractDashboardController
             'admin/option.html.twig',
             ['form' => $form]
         );
+    }
+
+    #[Route('/admin/profil', name: 'admin_profil')]
+    public function profil(Request $request): Response
+    {
+        $generator = $this->container->get(AdminUrlGenerator::class);
+
+        $generator->setAction(Action::EDIT);
+        $generator->setController(ProfilCrudController::class);
+        $generator->setEntityId($this->getUser()->getId());
+
+        $url = $generator->generateUrl();
+
+        return $this->redirect($url);
     }
 
     protected function adminEmpty($entity)

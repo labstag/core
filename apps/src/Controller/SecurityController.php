@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller;
 
+use Labstag\Service\SiteService;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,6 +12,12 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    public function __construct(
+        protected SiteService $siteService
+    )
+    {
+    }
+
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -34,6 +41,7 @@ class SecurityController extends AbstractController
     {
         $error        = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
+        $data         = $this->siteService->getConfiguration();
 
         return [
             // parameters usually defined in Symfony login forms
@@ -41,7 +49,7 @@ class SecurityController extends AbstractController
             'last_username'           => $lastUsername,
             'translation_domain'      => 'admin',
             'favicon_path'            => '/favicon-admin.svg',
-            'page_title'              => 'ACME login',
+            'page_title'              => $data['site_name'],
             'csrf_token_intention'    => 'authenticate',
             'target_path'             => $this->generateUrl('admin'),
             'username_label'          => 'Your username',
