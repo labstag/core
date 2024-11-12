@@ -19,6 +19,7 @@ vich_uploader:
         service: Vich\UploaderBundle\Naming\PropertyNamer
         options:
           property: title
+          transliterate: true
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
@@ -29,6 +30,7 @@ vich_uploader:
         service: Vich\UploaderBundle\Naming\PropertyNamer
         options:
           property: title
+          transliterate: true
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
@@ -39,6 +41,7 @@ vich_uploader:
         service: Vich\UploaderBundle\Naming\PropertyNamer
         options:
           property: title
+          transliterate: true
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
@@ -49,6 +52,7 @@ vich_uploader:
         service: Vich\UploaderBundle\Naming\PropertyNamer
         options:
           property: title
+          transliterate: true
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
@@ -59,6 +63,7 @@ vich_uploader:
         service: Vich\UploaderBundle\Naming\PropertyNamer
         options:
           property: title
+          transliterate: true
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
@@ -77,6 +82,7 @@ vich_uploader:
         service: Vich\UploaderBundle\Naming\PropertyNamer
         options:
           property: title
+          transliterate: true
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
