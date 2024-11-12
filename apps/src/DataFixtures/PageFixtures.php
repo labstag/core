@@ -43,40 +43,29 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
     private function data(): array
     {
-        $page = new Page();
-        $page->setType('home');
+        $home = new Page();
+        $home->setTitle('Accueil');
+        $home->setType('home');
+        $this->setParagraphsHome($home);
 
-        $this->setParagraphsHome($page);
+        $histories = new Page();
+        $histories->setTitle('Histoires');
+        $histories->setType('history');
+        $this->setParagraphsHistory($histories);
 
-        $home = $page;
+        $posts = new Page();
+        $posts->setTitle('Posts');
+        $posts->setType('post');
+        $this->setParagraphsPost($posts);
 
-        $page = new Page();
-        $page->setTitle('Histoires');
-        $page->setType('history');
+        $contact = new Page();
+        $contact->setTitle('Contact');
+        $contact->setType('page');
 
-        $this->setParagraphsHistory($page);
-
-        $histories = $page;
-
-        $page = new Page();
-        $page->setTitle('Posts');
-        $page->setType('post');
-        $this->setParagraphsPost($page);
-
-        $posts = $page;
-
-        $page = new Page();
-        $page->setTitle('Contact');
-        $page->setType('page');
-
-        $contact = $page;
-
-        $page = new Page();
-        $page->setTitle('Plan du site');
-        $page->setType('page');
-        $this->setParagraphsSitemap($page);
-
-        $sitemap = $page;
+        $sitemap = new Page();
+        $sitemap->setTitle('Plan du site');
+        $sitemap->setType('page');
+        $this->setParagraphsSitemap($sitemap);
 
         return [
             ['entity' => $home],
@@ -105,7 +94,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $page->setEnable(true);
         $user = $this->getReference('user_superadmin', User::class);
         $page->setRefuser($user);
-        $page->setTitle($page->getType());
 
         $date = $generator->unique()->dateTimeBetween('- 8 month', 'now');
         if (isset($data['parent'])) {

@@ -23,6 +23,11 @@ class PostRepository extends ServiceEntityRepositoryLib
         return $this->getQueryBuilder()->select('count(a.id)')->getQuery()->getSingleScalarResult();
     }
 
+    public function getAllActivate()
+    {
+        return $this->getQueryBuilder()->getQuery()->getResult();
+    }
+
     public function getQueryBuilder()
     {
         return $this->createQueryBuilder('a')->where('a.enable = :enable')->setParameter('enable', true)->orderBy('a.createdAt', 'DESC');

@@ -250,7 +250,7 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[Route('/admin/profil', name: 'admin_profil')]
-    public function profil(Request $request): Response
+    public function profil(): Response
     {
         $generator = $this->container->get(AdminUrlGenerator::class);
 

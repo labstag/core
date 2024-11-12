@@ -24,9 +24,11 @@ class SitemapParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data)
     {
+        $sitemap = $this->sitemapService->getData();
         $this->setData(
             $paragraph,
             [
+                'sitemap'   => $sitemap,
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]

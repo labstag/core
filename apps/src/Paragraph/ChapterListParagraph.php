@@ -37,7 +37,7 @@ class ChapterListParagraph extends ParagraphLib
         /** @var ChapterRepository $repository */
         $repository = $this->getRepository(Chapter::class);
 
-        $chapters = $repository->getAllEnabledByHistory($data['entity']);
+        $chapters = $repository->getAllActivateByHistory($data['entity']);
 
         $this->setData(
             $paragraph,

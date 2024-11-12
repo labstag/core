@@ -1,0 +1,10 @@
+<ul{% if key == '/' %} class="sitemap-main"{% endif %}>
+    {% for url, data in data %}
+        <li>
+            <a href="{{ site_path(data.entity) }}">{{ data.entity.title }}</a>
+            {% if data.parent|length != 0 %}
+                {% include  "paragraphs/scripts/sitemap.html.twig"  with {'key': url, 'data': data.parent} %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>

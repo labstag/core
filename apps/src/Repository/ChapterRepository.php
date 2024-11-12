@@ -16,7 +16,7 @@ class ChapterRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Chapter::class);
     }
 
-    public function getAllEnabledByHistory(History $history)
+    public function getAllActivateByHistory(History $history)
     {
         $data = new ArrayCollection(
             [

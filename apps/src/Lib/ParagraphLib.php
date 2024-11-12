@@ -18,6 +18,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
+use Labstag\Service\SitemapService;
 use Labstag\Service\SiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -40,6 +41,7 @@ abstract class ParagraphLib extends AbstractController
     protected array $templates = [];
 
     public function __construct(
+        protected SitemapService $sitemapService,
         protected RequestStack $requestStack,
         protected PaginatorInterface $paginator,
         protected FileService $fileService,

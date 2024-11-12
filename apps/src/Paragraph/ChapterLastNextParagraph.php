@@ -36,7 +36,7 @@ class ChapterLastNextParagraph extends ParagraphLib
 
         $repository = $this->getRepository(Chapter::class);
 
-        $chapters = $repository->getAllEnabledByHistory($history);
+        $chapters = $repository->getAllActivateByHistory($history);
 
         $this->setData(
             $paragraph,

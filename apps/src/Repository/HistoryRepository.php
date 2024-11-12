@@ -23,6 +23,11 @@ class HistoryRepository extends ServiceEntityRepositoryLib
         return $this->getQueryBuilder()->select('count(a.id)')->getQuery()->getSingleScalarResult();
     }
 
+    public function getAllActivate()
+    {
+        return $this->getQueryBuilder()->getQuery()->getResult();
+    }
+
     public function getQueryPaginator()
     {
         return $this->getQueryBuilder()->getQuery();

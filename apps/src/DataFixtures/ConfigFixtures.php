@@ -2,10 +2,10 @@
 
 namespace Labstag\DataFixtures;
 
-use Override;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\Configuration;
+use Override;
 
 class ConfigFixtures extends Fixture
 {

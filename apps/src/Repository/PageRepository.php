@@ -12,4 +12,9 @@ class PageRepository extends ServiceEntityRepositoryLib
     {
         parent::__construct($managerRegistry, Page::class);
     }
+
+    public function getAllActivate()
+    {
+        return $this->createQueryBuilder('a')->where('a.enable = :enable')->setParameter('enable', true)->orderBy('a.createdAt', 'DESC')->getQuery()->getResult();
+    }
 }
