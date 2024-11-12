@@ -64,6 +64,8 @@ jobs:
         run: npm run doctrine:schema:update
       - name: 'Run the fixtures'
         run: npm run doctrine:fixtures
+      - name: 'Delete old files'
+        run: npm run labstag:delete:oldfiles
     #   - name: 'Install Labstag'
     #     run: npm run cmd:labstag:all
     #   - name: Run Acceptance Tests

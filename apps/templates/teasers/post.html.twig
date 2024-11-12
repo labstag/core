@@ -1,4 +1,4 @@
 <a href="{{ site_path(post) }}">
-    <img src="{{ site_asset(post, 'img') }}">
+    <img src="{{ site_asset(post, 'img') }}" alt="{{ post.title|e('html_attr') }}">
     {{ post.title }}
 </a>

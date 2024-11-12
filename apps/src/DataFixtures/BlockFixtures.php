@@ -81,6 +81,12 @@ class BlockFixtures extends FixtureLib
 
         $block = new Block();
         $block->setRegion('main');
+        $block->setTitle('Main Hero');
+        $block->setType('hero');
+        yield $block;
+
+        $block = new Block();
+        $block->setRegion('main');
         $block->setTitle('Main Flashbag');
         $block->setType('flashbag');
         yield $block;
