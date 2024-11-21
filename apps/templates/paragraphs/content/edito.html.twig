@@ -1,13 +1,9 @@
 <section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
-    <div class="wrapper">
-        <img src="{{ site_asset(edito, 'img') }}" alt="{{ edito.title|e('html_attr') }}">
-        <h3>{{ edito.title }}</h3>
-        <div class="content">
-            {% for tab in paragraphs %}
-                {{ debug_begin(tab) }}
-                {{ paragraph_show(tab) }}
-                {{ debug_end(tab) }}
-            {% endfor %}
-        </div>
-    </div>
+    <div class="background" style="background-image: url('{{ site_asset(edito, 'img') }}')"></div>
+    <h3>{{ edito.title }}</h3>
+    {% for tab in paragraphs %}
+        {{ debug_begin(tab) }}
+        {{ paragraph_show(tab) }}
+        {{ debug_end(tab) }}
+    {% endfor %}
 </section>
