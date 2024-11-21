@@ -130,6 +130,7 @@
     "sortablejs": "1.15.*",
     "stylelint": "16.9.*",
     "stylelint-config-standard": "36.0.*",
+    "webfontloader": "1.6.*",
     "webpack": "5.95.*",
     "webpack-cli": "5.1.*",
     "webpack-notifier": "1.15.*"
@@ -139,6 +140,9 @@
     "@fortawesome/fontawesome-free": "6.6.*",
     "bootstrap": "5.3.*",
     "ckeditor5": "^43.2.0",
-    "tarteaucitronjs": "1.19.*"
+    "leaflet": "1.9.*",
+    "swiper": "11.1.*",
+    "tarteaucitronjs": "1.19.*",
+    "tom-select": "2.4.*"
   }
 }
