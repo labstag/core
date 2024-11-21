@@ -56,61 +56,61 @@ jobs:
           run: npm run lint:yaml
         - name: linter phpstan
           run: npm run lint:phpstan:0
-  launch:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
+    launch:
+        runs-on: ubuntu-22.04
+        steps:
+        - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive
-      - name: Repository lampy
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          ref: 'v2.0'
-          repository: koromerzhin/lampy
-          path: lampy
-      - uses: actions/setup-node@v4
-        with:
+        submodules: recursive
+        - name: Repository lampy
+          uses: actions/checkout@v4
+          with:
+            submodules: recursive
+            ref: 'v2.0'
+            repository: koromerzhin/lampy
+            path: lampy
+        - uses: actions/setup-node@v4
+          with:
           node-version: 21
-      - name: Install npm dependencies
-        run: npm install
-      - name: 'set .env'
-        run: 'cp apps/.env.test apps/.env'
-      - name: 'set .env'
-        run: 'cp .env.example .env'
-      - name: 'Encore build'
-        run: npm run encore:build
-      - name: 'SET BDD'
-        run: npm run bdd:mariadb
-      - name: 'Launch Lampy'
-        run: cd lampy && npm run exec
-      - name: 'Image pull'
-        run: npm run docker:getpull-image
-      - name: 'Build containers'
-        run: npm run docker:deploy
-      - name: 'Waiting'
-        run: npm run docker:waiting
-      - name: 'docker ls'
-        run: npm run docker:ls
-      - name: Add assets
-        run: npm run assets
-      - name: 'BDD MIGRATE'
-        run: npm run doctrine:migrate
-      - name: 'BDD Schema update'
-        run: npm run doctrine:schema:update
-      - name: 'Run the fixtures'
-        run: npm run doctrine:fixtures
-      - name: 'Delete old files'
-        run: npm run labstag:delete:oldfiles
-    #   - name: 'Install Labstag'
-    #     run: npm run cmd:labstag:all
-    #   - name: Run Acceptance Tests
-    #     run: npm run test:behat
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
-      - name: Archive screenshots
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshot
-          path: cypress/
+        - name: Install npm dependencies
+          run: npm install
+        - name: 'set .env'
+          run: 'cp apps/.env.test apps/.env'
+        - name: 'set .env'
+          run: 'cp .env.example .env'
+        - name: 'Encore build'
+          run: npm run encore:build
+        - name: 'SET BDD'
+          run: npm run bdd:mariadb
+        - name: 'Launch Lampy'
+          run: cd lampy && npm run exec
+        - name: 'Image pull'
+          run: npm run docker:getpull-image
+        - name: 'Build containers'
+          run: npm run docker:deploy
+        - name: 'Waiting'
+          run: npm run docker:waiting
+        - name: 'docker ls'
+          run: npm run docker:ls
+        - name: Add assets
+          run: npm run assets
+        - name: 'BDD MIGRATE'
+          run: npm run doctrine:migrate
+        - name: 'BDD Schema update'
+          run: npm run doctrine:schema:update
+        - name: 'Run the fixtures'
+          run: npm run doctrine:fixtures
+        - name: 'Delete old files'
+          run: npm run labstag:delete:oldfiles
+        #   - name: 'Install Labstag'
+        #     run: npm run cmd:labstag:all
+        #   - name: Run Acceptance Tests
+        #     run: npm run test:behat
+        - name: Cypress run
+          uses: cypress-io/github-action@v6
+        - name: Archive screenshots
+          uses: actions/upload-artifact@v4
+          with:
+            name: screenshot
+            path: cypress/
