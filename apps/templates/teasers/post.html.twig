@@ -1,14 +1,12 @@
-<div class="post-teaser">
-    <a href="{{ site_path(post) }}">
-        <img src="{{ site_asset(post, 'img') }}" alt="{{ post.title|e('html_attr') }}">
-        <div class="title">
-            {{ post.title }}
-        </div>
-        <div class="date">
-            {{ post.createdat|date('d/m/Y') }}
-        </div>
-        <div class="resume">
-            {{ post.resume|raw }}
-        </div>
-    </a>
-</div>
+<a href="{{ site_path(post) }}">
+    <img src="{{ site_asset(post, 'img') }}" alt="{{ post.title|e('html_attr') }}">
+    <div class="title">
+        {{ post.title }}
+    </div>
+    <div class="date">
+        {{ post.createdat|date('d/m/Y') }}
+    </div>
+    <div class="resume">
+        {{ post.resume|raw }}
+    </div>
+</a>

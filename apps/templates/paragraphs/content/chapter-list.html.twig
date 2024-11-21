@@ -4,7 +4,7 @@
     </div>
     <ul>
         {% for row in chapters %}
-            <li>
+            <li class="chapter-teaser">
                 {% include  "teasers/chapter.html.twig"  with {'chapter': row} %}
             </li>
         {% endfor %}

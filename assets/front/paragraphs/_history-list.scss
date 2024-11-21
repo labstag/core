@@ -25,6 +25,12 @@ section{
       ul {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
+        flex-wrap: wrap;
+        li {
+          flex: 1 0 calc(50% - 10px);
+          height: 100%;
+          box-sizing: border-box;
+        }
       }
     }
   }

@@ -9,7 +9,7 @@
         <div class="list">
             <ul>
                 {% for row in histories %}
-                    <li>
+                    <li class="history-teaser">
                         {% include  "teasers/history.html.twig"  with {'history': row} %}
                     </li>
                 {% endfor %}

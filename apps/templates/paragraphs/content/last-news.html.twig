@@ -9,7 +9,7 @@
         <div class="list">
             <ul>
                 {% for row in news %}
-                    <li>
+                    <li class="post-teaser">
                         {% include  "teasers/post.html.twig"  with {'post': row} %}
                     </li>
                 {% endfor %}

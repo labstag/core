@@ -1,14 +1,12 @@
-<div class="chapter-teaser">
-    <a href="{{ site_path(chapter) }}">
-        <img src="{{ site_asset(chapter, 'img') }}" alt="{{ chapter.title|e('html_attr') }}">
-        <div class="title">
-            {{ chapter.title }}
-        </div>
-        <div class="date">
-            {{ chapter.createdat|date('d/m/Y') }}
-        </div>
-        <div class="resume">
-            {{ chapter.resume|raw }}
-        </div>
-    </a>
-</div>
+<a href="{{ site_path(chapter) }}">
+    <img src="{{ site_asset(chapter, 'img') }}" alt="{{ chapter.title|e('html_attr') }}">
+    <div class="title">
+        {{ chapter.title }}
+    </div>
+    <div class="date">
+        {{ chapter.createdat|date('d/m/Y') }}
+    </div>
+    <div class="resume">
+        {{ chapter.resume|raw }}
+    </div>
+</a>

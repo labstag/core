@@ -4,7 +4,7 @@
     </div>
     <ul>
         {% for row in pagination %}
-            <li>
+            <li class="history-teaser">
                 {% include  "teasers/history.html.twig"  with {'history': row} %}
             </li>
         {% endfor %}
