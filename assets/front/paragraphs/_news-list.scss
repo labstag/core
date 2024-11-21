@@ -1,9 +1,11 @@
 section{
   &.news-list {
+    @include reusable-block;
+    margin-top: 2rem;
     margin-bottom: 2rem;
     .title {
       font-size: 1.5rem;
-      font-weight: 700;
+      font-weight: bold;
       margin-bottom: 1rem;
     }
     ul {
@@ -13,7 +15,7 @@ section{
       align-items: stretch;
       .title {
         font-size: 1rem;
-        font-weight: 300;
+        font-weight: bold;
         margin-bottom: 1rem;
         grid-area: title;
       }

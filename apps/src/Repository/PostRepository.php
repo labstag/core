@@ -15,26 +15,43 @@ class PostRepository extends ServiceEntityRepositoryLib
 
     public function findLastByNbr(int $nbr)
     {
-        return $this->getQueryBuilder()->setMaxResults($nbr)->getQuery()->getResult();
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder->setMaxResults($nbr);
+        $query = $queryBuilder->getQuery();
+        
+        return $query->getResult();
     }
 
     public function findTotalEnable()
     {
-        return $this->getQueryBuilder()->select('count(a.id)')->getQuery()->getSingleScalarResult();
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder->select('count(a.id)');
+        $query = $queryBuilder->getQuery();
+
+        return $query->getSingleScalarResult();
     }
 
     public function getAllActivate()
     {
-        return $this->getQueryBuilder()->getQuery()->getResult();
+        $queryBuilder = $this->getQueryBuilder();
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
     }
 
     public function getQueryBuilder()
     {
-        return $this->createQueryBuilder('a')->where('a.enable = :enable')->setParameter('enable', true)->orderBy('a.createdAt', 'DESC');
+        $queryBuilder = $this->createQueryBuilder('a');
+        $queryBuilder->where('a.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        
+        return $queryBuilder->orderBy('a.createdAt', 'DESC');
     }
 
     public function getQueryPaginator()
     {
-        return $this->getQueryBuilder()->getQuery();
+        $queryBuilder = $this->getQueryBuilder();
+        
+        return $queryBuilder->getQuery();
     }
 }

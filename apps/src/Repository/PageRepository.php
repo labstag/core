@@ -15,6 +15,12 @@ class PageRepository extends ServiceEntityRepositoryLib
 
     public function getAllActivate()
     {
-        return $this->createQueryBuilder('a')->where('a.enable = :enable')->setParameter('enable', true)->orderBy('a.createdAt', 'DESC')->getQuery()->getResult();
+        $queryBuilder = $this->createQueryBuilder('a');
+        $queryBuilder->where('a.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        $queryBuilder->orderBy('a.createdAt', 'DESC');
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
     }
 }

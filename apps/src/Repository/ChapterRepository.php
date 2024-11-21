@@ -25,6 +25,13 @@ class ChapterRepository extends ServiceEntityRepositoryLib
             ]
         );
 
-        return $this->createQueryBuilder('a')->where('a.enable = :enable')->andWhere('a.refhistory = :refhistory')->setParameters($data)->orderBy('a.position', 'ASC')->getQuery()->getResult();
+        $queryBuilder = $this->createQueryBuilder('a');
+        $queryBuilder->where('a.enable = :enable');
+        $queryBuilder->andWhere('a.refhistory = :refhistory');
+        $queryBuilder->setParameters($data);
+        $queryBuilder->orderBy('a.position', 'ASC');
+        $query = $queryBuilder->getQuery();
+        
+        return $query->getResult();
     }
 }
