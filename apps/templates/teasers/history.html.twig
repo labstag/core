@@ -1,4 +1,14 @@
-<a href="{{ site_path(history) }}">
-    <img src="{{ site_asset(history, 'img') }}" alt="{{ history.title|e('html_attr') }}">
-    {{ history.title }}
-</a>
+<div class="history-teaser">
+    <a href="{{ site_path(history) }}">
+        <img src="{{ site_asset(history, 'img') }}" alt="{{ history.title|e('html_attr') }}">
+        <div class="title">
+            {{ history.title }}
+        </div>
+        <div class="date">
+            {{ history.createdat|date('d/m/Y') }}
+        </div>
+        <div class="resume">
+            {{ history.resume|raw }}
+        </div>
+    </a>
+</div>

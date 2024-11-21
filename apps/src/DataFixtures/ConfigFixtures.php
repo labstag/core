@@ -18,16 +18,20 @@ class ConfigFixtures extends Fixture
             $configuration = new Configuration();
             $configuration->setName($key);
             $configuration->setValue($value);
+            $objectManager->persist($configuration);
         }
 
-        $objectManager->persist($configuration);
         $objectManager->flush();
     }
 
     private function setData()
     {
         return [
-            'site_name' => [
+            'title_format' => [
+                'type'  => 'string',
+                'value' => '%content_title% | %site_name%',
+            ],
+            'site_name'    => [
                 'type'  => 'string',
                 'value' => 'labstag',
             ],

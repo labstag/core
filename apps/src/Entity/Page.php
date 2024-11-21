@@ -5,6 +5,7 @@ namespace Labstag\Entity;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Sluggable\Handler\TreeSlugHandler;
@@ -83,6 +84,9 @@ class Page implements Stringable
     #[ORM\ManyToOne(inversedBy: 'pages', cascade: ['persist', 'detach'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $refuser = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $resume = null;
 
     /**
      * @var Collection<int, Tag>
@@ -201,6 +205,11 @@ class Page implements Stringable
         return $this->refuser;
     }
 
+    public function getResume(): ?string
+    {
+        return $this->resume;
+    }
+
     public function getSlug(): ?string
     {
         return $this->slug;
@@ -307,6 +316,13 @@ class Page implements Stringable
     public function setRefuser(?User $user): static
     {
         $this->refuser = $user;
+
+        return $this;
+    }
+
+    public function setResume(?string $resume): static
+    {
+        $this->resume = $resume;
 
         return $this;
     }

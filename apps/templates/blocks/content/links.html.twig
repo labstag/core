@@ -1,1 +1,11 @@
-<div id="{{ block_id(block) }}" class="{{ block_class(block) }}">block links</div>
+<div id="{{ block_id(block) }}" class="{{ block_class(block) }}">
+    <ul>
+        {% for link in links %}
+            <li>
+                <a href="{{ link.url }}"{% if link.blank %} target="_blank"{% endif %}{% if link.classes != '' %} class="{{ link.classes }}"{% endif %}>
+                    {{ link.title }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

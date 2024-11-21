@@ -4,6 +4,7 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\Block;
+use Labstag\Entity\Link;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\FixtureLib;
 use Override;
@@ -71,6 +72,7 @@ class BlockFixtures extends FixtureLib
         $block->setRegion('header');
         $block->setTitle('Header Link');
         $block->setType('links');
+        $this->addLinks($block);
         yield $block;
 
         $block = new Block();
@@ -129,6 +131,21 @@ class BlockFixtures extends FixtureLib
         $block->setRegion('footer');
         $block->setTitle('Footer Link');
         $block->setType('links');
+        $this->addLinks($block);
         yield $block;
+    }
+
+    private function addLinks(Block $block)
+    {
+        $generator = $this->setFaker();
+
+        $count = rand(1, 5);
+        foreach (range(1, $count) as $i) {
+            $link = new Link();
+            $link->setTitle($generator->sentence(1));
+            $link->setUrl($generator->url);
+            $link->setBlank($generator->boolean);
+            $block->addLink($link);
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\History;
@@ -54,7 +55,7 @@ class ChapterListParagraph extends ParagraphLib
     {
         unset($paragraph, $pageName);
 
-        return [];
+        yield TextField::new('title');
     }
 
     #[Override]

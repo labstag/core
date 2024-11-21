@@ -1,7 +1,12 @@
 <section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
-    <h2>{{ paragraph.title }}</h2>
-    <div>
-        <div>
+    <div class="wrapper">
+        <div class="title">
+            <h2>{{ paragraph.title }}</h2>
+        </div>
+        <div class="link">
+            <a href="{{ path('front', {'slug': listing.slug}) }}" class="btn">Voir toute les actualités</a>
+        </div>
+        <div class="list">
             <ul>
                 {% for row in news %}
                     <li>
@@ -10,6 +15,5 @@
                 {% endfor %}
             </ul>
         </div>
-        <div><a href="{{ path('front', {'slug': listing.slug}) }}" class="btn btn-primary">Voir toute les actualités</a></div>
     </div>
 </section>

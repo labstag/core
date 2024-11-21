@@ -95,7 +95,5 @@ class BreadcrumbBlock extends BlockLib
         }
 
         return $this->setBreadcrumb($urls, '');
-
-        return $urls;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Lib\ParagraphLib;
@@ -56,6 +57,8 @@ class NewsListParagraph extends ParagraphLib
     public function getFields(Paragraph $paragraph, $pageName): iterable
     {
         unset($paragraph, $pageName);
+
+        yield TextField::new('title');
 
         yield $this->addFieldIntegerNbr();
     }

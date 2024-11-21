@@ -5,6 +5,7 @@ namespace Labstag\Entity;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
@@ -63,6 +64,9 @@ class Chapter
     #[ORM\ManyToOne(inversedBy: 'chapters', cascade: ['persist', 'detach'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?History $refhistory = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $resume = null;
 
     /**
      * @var Collection<int, Tag>
@@ -132,6 +136,11 @@ class Chapter
     public function getRefhistory(): ?History
     {
         return $this->refhistory;
+    }
+
+    public function getResume(): ?string
+    {
+        return $this->resume;
     }
 
     public function getSlug(): ?string
@@ -216,6 +225,13 @@ class Chapter
     public function setRefhistory(?History $history): static
     {
         $this->refhistory = $history;
+
+        return $this;
+    }
+
+    public function setResume(?string $resume): static
+    {
+        $this->resume = $resume;
 
         return $this;
     }

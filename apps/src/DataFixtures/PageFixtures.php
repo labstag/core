@@ -92,6 +92,8 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
     private function setPage(ObjectManager $objectManager, Generator $generator, Page $page, array $data): void
     {
         $page->setEnable(true);
+        $page->setResume($generator->unique()->text(200));
+
         $user = $this->getReference('user_superadmin', User::class);
         $page->setRefuser($user);
 
@@ -111,6 +113,13 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
     private function setParagraphsHistory(Page $page)
     {
+        $generator = $this->setFaker();
+        $paragraph = new Paragraph();
+        $paragraph->setType('text');
+        $paragraph->setContent($generator->text(500));
+        
+        $page->addParagraph($paragraph);
+
         $paragraph = new Paragraph();
         $paragraph->setTitle('Dernière histoires');
         $paragraph->setType('history-list');
@@ -139,14 +148,14 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph = new Paragraph();
         $paragraph->setTitle('Dernière news');
         $paragraph->setType('last-news');
-        $paragraph->setNbr(5);
+        $paragraph->setNbr(4);
 
         $page->addParagraph($paragraph);
 
         $paragraph = new Paragraph();
         $paragraph->setTitle('Dernière histoires');
         $paragraph->setType('last-history');
-        $paragraph->setNbr(5);
+        $paragraph->setNbr(4);
 
         $page->addParagraph($paragraph);
 
@@ -160,8 +169,15 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
     private function setParagraphsPost(Page $page)
     {
+        $generator = $this->setFaker();
         $paragraph = new Paragraph();
-        $paragraph->setTitle('Dernière histoires');
+        $paragraph->setType('text');
+        $paragraph->setContent($generator->text(500));
+
+        $page->addParagraph($paragraph);
+
+        $paragraph = new Paragraph();
+        $paragraph->setTitle('Derniers posts');
         $paragraph->setType('news-list');
         $paragraph->setNbr(20);
 
@@ -170,6 +186,13 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
     private function setParagraphsSitemap(Page $page)
     {
+        $generator = $this->setFaker();
+        $paragraph = new Paragraph();
+        $paragraph->setType('text');
+        $paragraph->setContent($generator->text(500));
+
+        $page->addParagraph($paragraph);
+
         $paragraph = new Paragraph();
         $paragraph->setTitle('Sitemap');
         $paragraph->setType('sitemap');

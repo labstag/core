@@ -3,7 +3,6 @@
 namespace Labstag\Block;
 
 use Labstag\Entity\Block;
-use Labstag\Entity\Page;
 use Labstag\Lib\BlockLib;
 use Override;
 
@@ -26,7 +25,7 @@ class HeroBlock extends BlockLib
     public function generate(Block $block, array $data)
     {
         $paragraphs = $block->getParagraphs()->getValues();
-        if (0 == count($paragraphs) && !isset($data['entity']) && !$data['entity'] instanceof Page && 'home' == $data['entity']->getType()) {
+        if (0 == count($paragraphs) || $this->siteService->isHome($data)) {
             $this->setShow($block, false);
 
             return;

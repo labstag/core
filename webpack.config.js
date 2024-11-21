@@ -36,8 +36,8 @@ Encore
    * Each entry will result in one JavaScript file (e.g. app.js)
    * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
    */
-  .addEntry("front", ["./assets/front.js", "./assets/front.scss"])
-  .addEntry("back", ["./assets/back.js", "./assets/back.scss"])
+  .addEntry("front", "./assets/front.js")
+  .addEntry("back", "./assets/back.js")
 
   // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
   // .enableStimulusBridge('./assets/controllers.json')
@@ -142,6 +142,10 @@ Encore
       };
     }
   )
+  .configureBabelPresetEnv((config) => {
+    config.useBuiltIns = 'usage';
+    config.corejs = 3;
+})
   .addAliases({
     '@nm': path.resolve(__dirname, 'node_modules'),
     '@assets': path.resolve(__dirname, 'assets')

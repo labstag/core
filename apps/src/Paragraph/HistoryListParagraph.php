@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\History;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
@@ -58,6 +59,7 @@ class HistoryListParagraph extends ParagraphLib
     {
         unset($paragraph, $pageName);
 
+        yield TextField::new('title');
         yield $this->addFieldIntegerNbr();
     }
 

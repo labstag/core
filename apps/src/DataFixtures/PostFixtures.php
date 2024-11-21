@@ -49,6 +49,7 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
     {
         $meta = new Meta();
         $post = new Post();
+        $post->setResume($generator->unique()->text(200));
         $post->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
         $post->setMeta($meta);
         $this->setImage($post, 'imgFile');

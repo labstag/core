@@ -1,3 +1,9 @@
 <section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
-    HEAD POST
+    <div class="background" style="background-image: url('{{ site_asset(post, 'img') }}')"></div>
+    <div class="title">
+        {{ post.title }}
+    </div>
+    <div class="date">
+        {{ post.createdat|date('d/m/Y') }}
+    </div>
 </section>

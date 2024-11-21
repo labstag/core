@@ -1,0 +1,15 @@
+footer{
+  background-color: blueviolet;
+  padding: 50px;
+  .links{
+    margin: 20px;
+    ul{
+      display: flex;
+    }
+    a{
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+  }
+}

@@ -195,6 +195,11 @@ class SiteService
         // TODO : Prévoir de vérifier les droits de l'utilisateur
     }
 
+    public function isHome($data)
+    {
+        return isset($data['entity']) && $data['entity'] instanceof Page && 'home' == $data['entity']->getType();
+    }
+
     public function saveConfiguration($post)
     {
         foreach ($post as $name => $value) {
@@ -214,6 +219,27 @@ class SiteService
         }
 
         $this->configurationRepository->flush();
+    }
+
+    public function setTitle($entity)
+    {
+        if ($entity instanceof Page) {
+            return $entity->getTitle();
+        }
+
+        if ($entity instanceof Post) {
+            return $entity->getTitle();
+        }
+
+        if ($entity instanceof Chapter) {
+            return $this->setTitle($entity->getRefHistory()).' - '.$entity->getTitle();
+        }
+
+        if ($entity instanceof History) {
+            return $entity->getTitle();
+        }
+
+        return '';
     }
 
     protected function getDataCrudController()

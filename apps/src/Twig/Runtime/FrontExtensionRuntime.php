@@ -68,11 +68,25 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         return $this->router->generate('front', ['slug' => $slug]);
     }
 
-    public function title($value)
+    public function title($data)
     {
-        // TODO
-        unset($value);
+        $config    = $this->siteService->getConfiguration();
+        $siteTitle = $config['site_name'];
+        $format    = $config['title_format'];
+        if ($this->siteService->isHome($data)) {
+            return $siteTitle;
+        }
 
-        return 'Welcome !';
+        return str_replace(
+            [
+                '%content_title%',
+                '%site_name%',
+            ],
+            [
+                $this->siteService->setTitle($data['entity']),
+                $siteTitle,
+            ],
+            $format
+        );
     }
 }
