@@ -17,8 +17,9 @@ class PostRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->setMaxResults($nbr);
+
         $query = $queryBuilder->getQuery();
-        
+
         return $query->getResult();
     }
 
@@ -26,6 +27,7 @@ class PostRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->select('count(a.id)');
+
         $query = $queryBuilder->getQuery();
 
         return $query->getSingleScalarResult();
@@ -34,7 +36,7 @@ class PostRepository extends ServiceEntityRepositoryLib
     public function getAllActivate()
     {
         $queryBuilder = $this->getQueryBuilder();
-        $query = $queryBuilder->getQuery();
+        $query        = $queryBuilder->getQuery();
 
         return $query->getResult();
     }
@@ -44,14 +46,14 @@ class PostRepository extends ServiceEntityRepositoryLib
         $queryBuilder = $this->createQueryBuilder('a');
         $queryBuilder->where('a.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        
+
         return $queryBuilder->orderBy('a.createdAt', 'DESC');
     }
 
     public function getQueryPaginator()
     {
         $queryBuilder = $this->getQueryBuilder();
-        
+
         return $queryBuilder->getQuery();
     }
 }

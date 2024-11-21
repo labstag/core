@@ -23,6 +23,20 @@ class BlockFixtures extends FixtureLib
         $objectManager->flush();
     }
 
+    private function addLinks(Block $block)
+    {
+        $generator = $this->setFaker();
+
+        $count = random_int(1, 5);
+        for ($i = 1; $i <= $count; ++$i) {
+            $link = new Link();
+            $link->setTitle($generator->sentence(1));
+            $link->setUrl($generator->url);
+            $link->setBlank($generator->boolean);
+            $block->addLink($link);
+        }
+    }
+
     private function addParagraphsHead(Block $block)
     {
         $paragraph = new Paragraph();
@@ -133,19 +147,5 @@ class BlockFixtures extends FixtureLib
         $block->setType('links');
         $this->addLinks($block);
         yield $block;
-    }
-
-    private function addLinks(Block $block)
-    {
-        $generator = $this->setFaker();
-
-        $count = rand(1, 5);
-        foreach (range(1, $count) as $i) {
-            $link = new Link();
-            $link->setTitle($generator->sentence(1));
-            $link->setUrl($generator->url);
-            $link->setBlank($generator->boolean);
-            $block->addLink($link);
-        }
     }
 }

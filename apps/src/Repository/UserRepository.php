@@ -34,7 +34,7 @@ class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgra
         $queryBuilder->setParameters($data);
 
         $query = $queryBuilder->getQuery();
-        
+
         return $query->getOneOrNullResult();
     }
 

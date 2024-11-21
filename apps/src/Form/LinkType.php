@@ -2,9 +2,8 @@
 
 namespace Labstag\Form;
 
-use Labstag\Entity\Block;
+use Override;
 use Labstag\Entity\Link;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -13,24 +12,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LinkType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    #[Override]
+    public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
-        $builder->add(
+        $formBuilder->add(
             'title',
             TextType::class,
-            [
-                'label' => 'Titre',
-            ]
+            ['label' => 'Titre']
         );
-        $builder->add(
+        $formBuilder->add(
             'url',
             TextType::class,
-            [
-                'label' => 'Url',
-            ]
-
+            ['label' => 'Url']
         );
-        $builder->add(
+        $formBuilder->add(
             'blank',
             CheckboxType::class,
             [
@@ -38,21 +33,23 @@ class LinkType extends AbstractType
                 'required' => false,
             ]
         );
-        $builder->add(
+        $formBuilder->add(
             'classes',
             TextType::class,
             [
                 'label'    => 'Classes',
                 'required' => false,
             ]
-
         );
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
+    #[Override]
+    public function configureOptions(OptionsResolver $optionsResolver): void
     {
-        $resolver->setDefaults([
-            'data_class' => Link::class,
-        ]);
+        $optionsResolver->setDefaults(
+            [
+                'data_class' => Link::class,
+            ]
+        );
     }
 }

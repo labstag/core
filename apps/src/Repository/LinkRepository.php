@@ -11,9 +11,9 @@ use Labstag\Entity\Link;
  */
 class LinkRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Link::class);
+        parent::__construct($managerRegistry, Link::class);
     }
 
     //    /**

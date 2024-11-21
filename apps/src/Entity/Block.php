@@ -28,6 +28,12 @@ class Block implements Stringable
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
+    /**
+     * @var Collection<int, Link>
+     */
+    #[ORM\OneToMany(targetEntity: Link::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
+    private Collection $links;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $pages = null;
 
@@ -57,22 +63,26 @@ class Block implements Stringable
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
-    /**
-     * @var Collection<int, Link>
-     */
-    #[ORM\OneToMany(targetEntity: Link::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
-    private Collection $links;
-
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
-        $this->links = new ArrayCollection();
+        $this->links      = new ArrayCollection();
     }
 
     #[Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();
+    }
+
+    public function addLink(Link $link): static
+    {
+        if (!$this->links->contains($link)) {
+            $this->links->add($link);
+            $link->setBlock($this);
+        }
+
+        return $this;
     }
 
     public function addParagraph(Paragraph $paragraph): static
@@ -93,6 +103,14 @@ class Block implements Stringable
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    /**
+     * @return Collection<int, Link>
+     */
+    public function getLinks(): Collection
+    {
+        return $this->links;
     }
 
     public function getPages(): ?string
@@ -146,6 +164,16 @@ class Block implements Stringable
     public function isRequestPath(): ?bool
     {
         return $this->requestPath;
+    }
+
+    public function removeLink(Link $link): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->links->removeElement($link) && $link->getBlock() === $this) {
+            $link->setBlock(null);
+        }
+
+        return $this;
     }
 
     public function removeParagraph(Paragraph $paragraph): static
@@ -224,36 +252,6 @@ class Block implements Stringable
     public function setType(string $type): static
     {
         $this->type = $type;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Link>
-     */
-    public function getLinks(): Collection
-    {
-        return $this->links;
-    }
-
-    public function addLink(Link $link): static
-    {
-        if (!$this->links->contains($link)) {
-            $this->links->add($link);
-            $link->setBlock($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLink(Link $link): static
-    {
-        if ($this->links->removeElement($link)) {
-            // set the owning side to null (unless already changed)
-            if ($link->getBlock() === $this) {
-                $link->setBlock(null);
-            }
-        }
 
         return $this;
     }

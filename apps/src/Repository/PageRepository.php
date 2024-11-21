@@ -19,6 +19,7 @@ class PageRepository extends ServiceEntityRepositoryLib
         $queryBuilder->where('a.enable = :enable');
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->orderBy('a.createdAt', 'DESC');
+
         $query = $queryBuilder->getQuery();
 
         return $query->getResult();

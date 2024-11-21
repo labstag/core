@@ -17,6 +17,7 @@ class HistoryRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->setMaxResults($nbr);
+
         $query = $queryBuilder->getQuery();
 
         return $query->getResult();
@@ -26,15 +27,16 @@ class HistoryRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->select('count(a.id)');
+
         $query = $queryBuilder->getQuery();
-        
+
         return $query->getSingleScalarResult();
     }
 
     public function getAllActivate()
     {
         $queryBuilder = $this->getQueryBuilder();
-        $query = $queryBuilder->getQuery();
+        $query        = $queryBuilder->getQuery();
 
         return $query->getResult();
     }
@@ -42,6 +44,7 @@ class HistoryRepository extends ServiceEntityRepositoryLib
     public function getQueryPaginator()
     {
         $queryBuilder = $this->getQueryBuilder();
+
         return $queryBuilder->getQuery();
     }
 

@@ -117,7 +117,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph = new Paragraph();
         $paragraph->setType('text');
         $paragraph->setContent($generator->text(500));
-        
+
         $page->addParagraph($paragraph);
 
         $paragraph = new Paragraph();

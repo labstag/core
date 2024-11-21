@@ -27,7 +27,7 @@ class LinksBlock extends BlockLib
     public function generate(Block $block, array $data)
     {
         $links = $block->getLinks();
-        if (count($links) == 0) {
+        if (0 == count($links)) {
             $this()->setShow($block, false);
 
             return;

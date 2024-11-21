@@ -30,8 +30,9 @@ class ChapterRepository extends ServiceEntityRepositoryLib
         $queryBuilder->andWhere('a.refhistory = :refhistory');
         $queryBuilder->setParameters($data);
         $queryBuilder->orderBy('a.position', 'ASC');
+
         $query = $queryBuilder->getQuery();
-        
+
         return $query->getResult();
     }
 }

@@ -2,13 +2,24 @@
 
 namespace Labstag\Entity;
 
+use Stringable;
+use Override;
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\LinkRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: LinkRepository::class)]
-class Link
+class Link implements Stringable
 {
+
+    #[ORM\Column]
+    private bool $blank = false;
+
+    #[ORM\ManyToOne(inversedBy: 'links', cascade: ['persist', 'detach'])]
+    private ?Block $block = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $classes = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -22,23 +33,25 @@ class Link
     #[ORM\Column(length: 255)]
     private ?string $url = null;
 
-    #[ORM\Column]
-    private bool $blank = false;
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->title;
+    }
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $classes = null;
+    public function getBlock(): ?Block
+    {
+        return $this->block;
+    }
 
-    #[ORM\ManyToOne(inversedBy: 'links', cascade: ['persist', 'detach'])]
-    private ?Block $block = null;
+    public function getClasses(): ?string
+    {
+        return $this->classes;
+    }
 
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    public function __toString(): string
-    {
-        return (string) $this->title;
     }
 
     public function getTitle(): ?string
@@ -46,23 +59,9 @@ class Link
         return $this->title;
     }
 
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
     public function getUrl(): ?string
     {
         return $this->url;
-    }
-
-    public function setUrl(string $url): static
-    {
-        $this->url = $url;
-
-        return $this;
     }
 
     public function isBlank(): bool
@@ -77,9 +76,11 @@ class Link
         return $this;
     }
 
-    public function getClasses(): ?string
+    public function setBlock(?Block $block): static
     {
-        return $this->classes;
+        $this->block = $block;
+
+        return $this;
     }
 
     public function setClasses(?string $classes): static
@@ -89,14 +90,16 @@ class Link
         return $this;
     }
 
-    public function getBlock(): ?Block
+    public function setTitle(string $title): static
     {
-        return $this->block;
+        $this->title = $title;
+
+        return $this;
     }
 
-    public function setBlock(?Block $block): static
+    public function setUrl(string $url): static
     {
-        $this->block = $block;
+        $this->url = $url;
 
         return $this;
     }

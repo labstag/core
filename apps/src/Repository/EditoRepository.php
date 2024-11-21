@@ -20,6 +20,7 @@ class EditoRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->orderBy('a.createdAt', 'DESC');
         $queryBuilder->setMaxResults(1);
+
         $query = $queryBuilder->getQuery();
 
         return $query->getOneOrNullResult();
