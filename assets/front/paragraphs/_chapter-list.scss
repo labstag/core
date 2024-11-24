@@ -1,24 +1,22 @@
-section{
-  &.chapter-list {
-    margin-bottom: 2rem;
-    .title {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 1rem;
-    }
-    ul {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      align-items: stretch;
-    }
+.paragraph_chapter-list {
+  margin-bottom: 2rem;
+  .title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
 
-    @media (min-width: 769px) {
-      ul {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-      }
+  @media (min-width: 769px) {
+    ul {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 }

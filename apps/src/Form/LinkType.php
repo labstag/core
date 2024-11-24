@@ -2,8 +2,8 @@
 
 namespace Labstag\Form;
 
-use Override;
 use Labstag\Entity\Link;
+use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -41,6 +41,8 @@ class LinkType extends AbstractType
                 'required' => false,
             ]
         );
+
+        unset($options);
     }
 
     #[Override]

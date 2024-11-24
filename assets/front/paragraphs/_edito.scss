@@ -1,21 +1,18 @@
-section{
-  &.edito
-  {
-    padding-bottom: 2rem;
-    .background{
-      height: 80vh;
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center;
-    }
-    h3{
-      padding: 0 2rem;
-    }
-    img {
-      width: 100%;
-      height: 30vh;
-      object-fit: cover;
-      object-position: center;
-    }
+.paragraph_edito{
+  padding-bottom: 2rem;
+  .background{
+    height: 80vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+  h3{
+    padding: 0 2rem;
+  }
+  img {
+    width: 100%;
+    height: 30vh;
+    object-fit: cover;
+    object-position: center;
   }
 }

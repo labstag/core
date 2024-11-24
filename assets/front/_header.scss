@@ -3,7 +3,7 @@ $orange-dark: darken($orange, 30%);
 
 header{
   background-color: $orange;
-  .admin{
+  .block_admin{
     background-color: white;
     padding: 10px;
     text-align: right;
@@ -19,7 +19,7 @@ header{
       padding: 5px 10px;
     }
   }
-  .links{
+  .block_links{
     padding: 10px 25px 100px 25px;
     @include reusable-block;
     ul{
@@ -32,7 +32,7 @@ header{
     }
   }
   nav{
-    &.breadcrumb {
+    &.block_breadcrumb {
       padding: 10px;
       margin: 0px;
       list-style: none;
