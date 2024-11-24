@@ -1,27 +1,29 @@
 <section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
-    <ul>
-        {% for row in chapters %}
-            {% if row.position == position-1 %}
-                <li>
-                    <a href="{{ site_path(row) }}">
-                        Chapitre précédent
-                    </a>
-                </li>
-            {% endif %}
-        {% endfor %}
-        <li>
-            <a href="{{ site_path(history) }}">
-                Retourner au sommaire
-            </a>
-        </li>
-        {% for row in chapters %}
-            {% if row.position == position+1 %}
-                <li>
-                    <a href="{{ site_path(row) }}">
-                        Chapitre suivant
-                    </a>
-                </li>
-            {% endif %}
-        {% endfor %}
-    </ul>
+    <div class="wrapper">
+        <ul>
+            {% for row in chapters %}
+                {% if row.position == position-1 %}
+                    <li>
+                        <a href="{{ site_path(row) }}">
+                            Chapitre précédent
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            <li>
+                <a href="{{ site_path(history) }}">
+                    Retourner au sommaire
+                </a>
+            </li>
+            {% for row in chapters %}
+                {% if row.position == position+1 %}
+                    <li>
+                        <a href="{{ site_path(row) }}">
+                            Chapitre suivant
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
 </section>

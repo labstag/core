@@ -58,11 +58,6 @@ class BlockFixtures extends FixtureLib
         $paragraph->setType('chapter-list');
 
         $block->addParagraph($paragraph);
-
-        $paragraph = new Paragraph();
-        $paragraph->setType('chapter-info');
-
-        $block->addParagraph($paragraph);
     }
 
     private function addParagraphsTest(Block $block)

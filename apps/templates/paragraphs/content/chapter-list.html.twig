@@ -1,12 +1,14 @@
 <section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
-    <div class="title">
-        {{ paragraph.title }}
+    <div class="wrapper">
+        <div class="title">
+            {{ paragraph.title }}
+        </div>
+        <ul>
+            {% for row in chapters %}
+                <li class="chapter-teaser">
+                    {% include  "teasers/chapter.html.twig"  with {'chapter': row} %}
+                </li>
+            {% endfor %}
+        </ul>
     </div>
-    <ul>
-        {% for row in chapters %}
-            <li class="chapter-teaser">
-                {% include  "teasers/chapter.html.twig"  with {'chapter': row} %}
-            </li>
-        {% endfor %}
-    </ul>
 </section>

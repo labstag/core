@@ -3,6 +3,7 @@
 namespace Labstag\Block;
 
 use Labstag\Entity\Block;
+use Labstag\Entity\Page;
 use Labstag\Lib\BlockLib;
 use Override;
 
@@ -40,14 +41,20 @@ class ContentBlock extends BlockLib
         $this->setHeader($block, $contents->header);
         $this->setFooter($block, $contents->footer);
 
-        $this->setData(
-            $block,
-            [
-                'block'      => $block,
-                'data'       => $data,
-                'paragraphs' => $paragraphs,
-            ]
-        );
+        $tab = [
+            'block'      => $block,
+            'data'       => $data,
+            'paragraphs' => $paragraphs,
+        ];
+
+        if (!($data['entity'] instanceof Page && 'home' == $data['entity']->getType())) {
+            $aside = $this->getAside($data);
+            if (!is_null($aside)) {
+                $tab['aside'] = $aside;
+            }
+        }
+
+        $this->setData($block, $tab);
     }
 
     #[Override]
@@ -68,5 +75,12 @@ class ContentBlock extends BlockLib
     public function getType(): string
     {
         return 'content';
+    }
+
+    private function getAside($data)
+    {
+        unset($data);
+        // TODO: Implement getAside() method.
+
     }
 }

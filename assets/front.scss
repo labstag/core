@@ -8,6 +8,7 @@
 @import './wysiwyg';
 @import './front/header';
 @import './front/footer';
+@import './front/block/content';
 @import './front/paragraphs/chapter-list';
 @import './front/paragraphs/edito';
 @import './front/paragraphs/head-chapter';
@@ -22,6 +23,7 @@
 @import './front/teaser/history';
 @import './front/teaser/post';
 /* stylelint-enable */
+
 
 
 img {

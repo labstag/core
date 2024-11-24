@@ -1,6 +1,9 @@
 <section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
-    {% if paragraph.img != '' %}
-        <img src="{{ site_asset(paragraph, 'img') }}" alt="{{ paragraph.title|e('html_attr') }}">
-    {% endif %}
-    {{ html|raw }}
-Paragraph video</section>
+    <div class="wrapper">
+        {% if paragraph.img != '' %}
+            <img src="{{ site_asset(paragraph, 'img') }}" alt="{{ paragraph.title|e('html_attr') }}">
+        {% endif %}
+        {{ html|raw }}
+        Paragraph video
+    </div>
+</section>

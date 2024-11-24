@@ -1,0 +1,14 @@
+.block_content{
+  display: flex;
+  section:first-child{
+    margin: 0;
+    padding: 0;
+    flex: 1;
+  }
+  aside {
+    flex: 0 0 20%;
+    background-color: #ddd;
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+}
