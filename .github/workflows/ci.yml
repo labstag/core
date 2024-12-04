@@ -44,8 +44,8 @@ jobs:
         run: npm run download:phar
       - name: 'docker ls'
         run: npm run docker:ls
-      - name: "Sleep 50"
-        run: sleep 50
+      - name: "Sleep 30"
+        run: sleep 30
       - name: 'Symfony about'
         run: npm run symfony:about
       - name: linter PHP Code Sniffer
@@ -98,8 +98,8 @@ jobs:
         run: npm run docker:waiting
       - name: 'docker ls'
         run: npm run docker:ls
-      - name: "Sleep 50"
-        run: sleep 50
+      - name: "Sleep 30"
+        run: sleep 30
       - name: 'Symfony about'
         run: npm run symfony:about
       - name: Add assets
