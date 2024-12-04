@@ -46,6 +46,7 @@ class EditoFixtures extends FixtureLib implements DependentFixtureInterface
         $edito->setEnable($this->enable == $index);
         $edito->setRefuser($this->getReference(array_rand($this->users), User::class));
         $edito->setTitle($generator->unique()->colorName());
+        $this->addParagraphText($edito);
         $this->setImage($edito, 'imgFile');
         $this->addReference('edito_'.md5(uniqid()), $edito);
         $objectManager->persist($edito);

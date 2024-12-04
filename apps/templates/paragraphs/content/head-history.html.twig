@@ -1,12 +1,21 @@
 <section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
-    <div class="background" style="background-image: url('{{ site_asset(history, 'img') }}')"></div>
-    <div class="title">
-        {{ history.title }}
-    </div>
-    <div class="author">
-        {{ history.refuser.username }}
-    </div>
-    <div class="date">
-        {{ history.createdat|date('d/m/Y') }}
-    </div>
+	<div class="background" style="--image-url: url('{{ site_asset(history, 'img') }}')"></div>
+	<div class="wrapper">
+		{% if history.tags|length > 0 %}
+            <div class="tags">
+                {% for tag in history.tags %}
+                    <span class="tag-{{ tag.slug }}">{{ tag.title }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+		<div class="title">
+			{{ history.title }}
+		</div>
+		<div class="author">
+			{{ history.refuser.username }}
+		</div>
+		<div class="date">
+			{{ history.createdat|date('d/m/Y') }}
+		</div>
+	</div>
 </section>

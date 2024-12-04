@@ -21,6 +21,25 @@ class ParagraphService
     {
     }
 
+    public function addParagraph($entity, $type): ?Paragraph
+    {
+        $paragraph = null;
+        $all       = $this->getAll($entity::class);
+        foreach ($all as $row) {
+            if ($row != $type) {
+                continue;
+            }
+
+            $paragraph = new Paragraph();
+            $paragraph->setType($type);
+            $entity->addParagraph($paragraph);
+
+            break;
+        }
+
+        return $paragraph;
+    }
+
     public function content(
         string $view,
         Paragraph $paragraph

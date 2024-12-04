@@ -21,7 +21,6 @@ header{
   }
   .block_links{
     padding: 10px 25px 100px 25px;
-    @include reusable-block;
     ul{
       display: flex;
     }

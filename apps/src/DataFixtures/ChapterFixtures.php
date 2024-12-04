@@ -60,6 +60,7 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
         $chapter->setCreatedAt($generator->unique()->dateTimeBetween($dateHistory, '+ 1 month'));
         $chapter->setRefhistory($history);
         $chapter->setTitle($generator->unique()->colorName());
+        $this->addParagraphText($chapter);
         $this->setImage($chapter, 'imgFile');
         $this->addTagToEntity($chapter);
         $this->addReference('chapter_'.md5(uniqid()), $chapter);

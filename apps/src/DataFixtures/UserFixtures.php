@@ -6,6 +6,7 @@ use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
 use Labstag\Service\FileService;
+use Labstag\Service\ParagraphService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
@@ -13,12 +14,13 @@ use Override;
 class UserFixtures extends FixtureLib
 {
     public function __construct(
-        protected FileService $fileService,
+        FileService $fileService,
         protected WorkflowService $workflowService,
-        protected UserService $userService
+        protected UserService $userService,
+        ParagraphService $paragraphService
     )
     {
-        parent::__construct($fileService);
+        parent::__construct($fileService, $paragraphService);
     }
 
     #[Override]

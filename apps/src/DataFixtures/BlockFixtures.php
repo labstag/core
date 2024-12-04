@@ -5,7 +5,6 @@ namespace Labstag\DataFixtures;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\Block;
 use Labstag\Entity\Link;
-use Labstag\Entity\Paragraph;
 use Labstag\Lib\FixtureLib;
 use Override;
 
@@ -39,33 +38,15 @@ class BlockFixtures extends FixtureLib
 
     private function addParagraphsHead(Block $block)
     {
-        $paragraph = new Paragraph();
-        $paragraph->setType('head-history');
-
-        $block->addParagraph($paragraph);
-
-        $paragraph = new Paragraph();
-        $paragraph->setType('head-post');
-
-        $block->addParagraph($paragraph);
-
-        $paragraph = new Paragraph();
-        $paragraph->setType('head-chapter');
-
-        $block->addParagraph($paragraph);
-
-        $paragraph = new Paragraph();
-        $paragraph->setType('chapter-list');
-
-        $block->addParagraph($paragraph);
+        $this->paragraphService->addParagraph($block, 'head-history');
+        $this->paragraphService->addParagraph($block, 'head-post');
+        $this->paragraphService->addParagraph($block, 'head-chapter');
+        $this->paragraphService->addParagraph($block, 'chapter-list');
     }
 
     private function addParagraphsTest(Block $block)
     {
-        $paragraph = new Paragraph();
-        $paragraph->setType('chapter-lastnext');
-
-        $block->addParagraph($paragraph);
+        $this->paragraphService->addParagraph($block, 'chapter-lastnext');
     }
 
     private function data(): iterable
@@ -120,6 +101,8 @@ class BlockFixtures extends FixtureLib
         $block->setRegion('main');
         $block->setTitle('Main Content');
         $block->setType('content');
+
+        $this->addParagraphsTest($block);
         yield $block;
 
         $block = new Block();

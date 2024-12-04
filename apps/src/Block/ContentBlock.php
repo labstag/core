@@ -81,6 +81,5 @@ class ContentBlock extends BlockLib
     {
         unset($data);
         // TODO: Implement getAside() method.
-
     }
 }

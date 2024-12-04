@@ -2,7 +2,6 @@ footer{
   background-color: blueviolet;
   padding: 50px;
   .block_links{
-    @include reusable-block;
     ul{
       display: flex;
     }

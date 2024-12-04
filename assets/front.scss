@@ -18,13 +18,21 @@
 @import './front/paragraphs/last-history';
 @import './front/paragraphs/last-news';
 @import './front/paragraphs/news-list';
+@import './front/paragraphs/sitemap';
 @import './front/paragraphs/text';
 @import './front/teaser/chapter';
 @import './front/teaser/history';
 @import './front/teaser/post';
 /* stylelint-enable */
 
+.wrapper {
+  max-width: 80%;
+  margin: 0 auto;
 
+  .wrapper{
+    max-width: 100%;
+  }
+}
 
 img {
   max-width: 100%;

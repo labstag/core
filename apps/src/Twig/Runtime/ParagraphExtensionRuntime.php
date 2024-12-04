@@ -27,7 +27,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
 
     public function getId(Paragraph $paragraph): string
     {
-        return $paragraph->getType().'-'.$paragraph->getId();
+        return 'paragraph_'.$paragraph->getType().'-'.$paragraph->getId();
     }
 
     public function getName($code)

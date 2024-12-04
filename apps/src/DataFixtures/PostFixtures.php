@@ -56,6 +56,7 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
         $post->setEnable((bool) random_int(0, 1));
         $post->setRefuser($this->getReference(array_rand($this->users), User::class));
         $post->setTitle($generator->unique()->colorName());
+        $this->addParagraphText($post);
         $this->addTagToEntity($post);
         $this->addCategoryToEntity($post);
         $this->addReference('post_'.md5(uniqid()), $post);

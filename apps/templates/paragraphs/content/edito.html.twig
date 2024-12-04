@@ -1,6 +1,6 @@
 <section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+        <div class="background" style="--image-url: url('{{ site_asset(edito, 'img') }}')"></div>
     <div class="wrapper">
-        <div class="background" style="background-image: url('{{ site_asset(edito, 'img') }}')"></div>
         <h3>{{ edito.title }}</h3>
         {% for tab in paragraphs %}
             {{ debug_begin(tab) }}

@@ -1,5 +1,12 @@
 <a href="{{ site_path(chapter) }}">
     <img src="{{ site_asset(chapter, 'img') }}" alt="{{ chapter.title|e('html_attr') }}">
+    {% if chapter.tags|length > 0 %}
+        <div class="tags">
+            {% for tag in chapter.tags %}
+                <span class="tag-{{ tag.slug }}">{{ tag.title }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
     <div class="title">
         {{ chapter.title }}
     </div>

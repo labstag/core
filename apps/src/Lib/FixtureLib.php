@@ -9,8 +9,10 @@ use Faker\Factory;
 use Faker\Generator;
 use Faker\Provider\Youtube;
 use Labstag\Entity\Category;
+use Labstag\Entity\Paragraph;
 use Labstag\Entity\Tag;
 use Labstag\Service\FileService;
+use Labstag\Service\ParagraphService;
 use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -25,7 +27,8 @@ abstract class FixtureLib extends Fixture
     protected $enable = null;
 
     public function __construct(
-        protected FileService $fileService
+        protected FileService $fileService,
+        protected ParagraphService $paragraphService
     )
     {
     }
@@ -48,6 +51,16 @@ abstract class FixtureLib extends Fixture
             $category = $this->getReference($categoryId, Category::class);
             $entity->addCategory($category);
         }
+    }
+
+    protected function addParagraphText($entity)
+    {
+        $generator = $this->setFaker();
+        $paragraph = new Paragraph();
+        $paragraph->setType('text');
+        $paragraph->setContent($generator->text(500));
+
+        $entity->addParagraph($paragraph);
     }
 
     protected function addTagToEntity($entity)

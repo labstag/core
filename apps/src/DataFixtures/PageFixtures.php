@@ -7,7 +7,6 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Category;
 use Labstag\Entity\Page;
-use Labstag\Entity\Paragraph;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
@@ -113,91 +112,47 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
     private function setParagraphsHistory(Page $page)
     {
-        $generator = $this->setFaker();
-        $paragraph = new Paragraph();
-        $paragraph->setType('text');
-        $paragraph->setContent($generator->text(500));
-
-        $page->addParagraph($paragraph);
-
-        $paragraph = new Paragraph();
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'history-list');
         $paragraph->setTitle('Dernière histoires');
-        $paragraph->setType('history-list');
         $paragraph->setNbr(20);
-
-        $page->addParagraph($paragraph);
     }
 
     private function setParagraphsHome(Page $page)
     {
         $generator = $this->setFaker();
-
-        $paragraph = new Paragraph();
+        $paragraph = $this->paragraphService->addParagraph($page, 'edito');
         $paragraph->setTitle('edito');
-        $paragraph->setType('edito');
 
-        $page->addParagraph($paragraph);
-
-        $paragraph = new Paragraph();
-        $paragraph->setTitle('Texte');
-        $paragraph->setType('text');
-        $paragraph->setContent($generator->text(500));
-
-        $page->addParagraph($paragraph);
-
-        $paragraph = new Paragraph();
-        $paragraph->setTitle('Dernière news');
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'last-news');
         $paragraph->setType('last-news');
         $paragraph->setNbr(4);
 
-        $page->addParagraph($paragraph);
-
-        $paragraph = new Paragraph();
+        $paragraph = $this->paragraphService->addParagraph($page, 'last-history');
         $paragraph->setTitle('Dernière histoires');
-        $paragraph->setType('last-history');
         $paragraph->setNbr(4);
 
-        $page->addParagraph($paragraph);
-
-        $paragraph = new Paragraph();
-        $paragraph->setTitle('Dernière histoires');
+        $paragraph = $this->paragraphService->addParagraph($page, 'video');
+        $paragraph->setTitle('Vidéo');
         $paragraph->setType('video');
         $this->setImage($paragraph, 'imgFile');
         $paragraph->setUrl($generator->youtubeUri());
-        $page->addParagraph($paragraph);
     }
 
     private function setParagraphsPost(Page $page)
     {
-        $generator = $this->setFaker();
-        $paragraph = new Paragraph();
-        $paragraph->setType('text');
-        $paragraph->setContent($generator->text(500));
-
-        $page->addParagraph($paragraph);
-
-        $paragraph = new Paragraph();
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'news-list');
         $paragraph->setTitle('Derniers posts');
-        $paragraph->setType('news-list');
         $paragraph->setNbr(20);
-
-        $page->addParagraph($paragraph);
     }
 
     private function setParagraphsSitemap(Page $page)
     {
-        $generator = $this->setFaker();
-        $paragraph = new Paragraph();
-        $paragraph->setType('text');
-        $paragraph->setContent($generator->text(500));
-
-        $page->addParagraph($paragraph);
-
-        $paragraph = new Paragraph();
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'sitemap');
         $paragraph->setTitle('Sitemap');
-        $paragraph->setType('sitemap');
         $paragraph->setNbr(20);
-
-        $page->addParagraph($paragraph);
     }
 }
