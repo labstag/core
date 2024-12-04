@@ -81,9 +81,6 @@
         "symfony/polyfill-php82": "*"
     },
     "scripts": {
-        "post-root-package-install": [
-          "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ],
         "rector": "rector process --clear-cache",
         "rector-dry": "rector process --clear-cache --dry-run",
         "phpmnd": "phpmnd src features/bootstrap tests",
