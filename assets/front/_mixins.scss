@@ -18,6 +18,34 @@
     position: relative;
     z-index: 2;
   }
+  .tags{
+    span{
+      display: inline-block;
+      padding: .25em .4em;
+      font-size: 75%;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      background-color: #007bff;
+      color: #fff;
+    }
+  }
+  .categories{
+    span{
+      display: inline-block;
+      padding: .25em .4em;
+      font-size: 75%;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      background-color: #6f42c1;
+      color: #fff;
+    }
+  }
   .title {
     font-family: 'Roboto', sans-serif;
     font-size: 1.5rem;
@@ -27,4 +55,35 @@
   .date{
     
   } 
+}
+@mixin teaser()
+{
+  background: linear-gradient(to bottom, rgba(128, 128, 128, 0.2), rgba(128, 128, 128, 0.8));
+  padding: 1rem;
+  .tags{
+    span{
+      display: inline-block;
+      padding: .25em .4em;
+      font-size: 75%;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      background-color: #007bff;
+      color: #fff;
+    }
+  }
+  .title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  .resume{
+    padding-top: 1rem;
+  }
+  img {
+    padding-bottom: 5px;
+  }
 }
