@@ -92,8 +92,12 @@ jobs:
         run: npm run docker:deploy
       - name: 'Waiting'
         run: npm run docker:waiting
+      - name: "install PHAR"
+        run: npm run download:phar
       - name: 'docker ls'
         run: npm run docker:ls
+      - name: Add assets
+        run: npm run assets
       - name: 'BDD MIGRATE'
         run: npm run doctrine:migrate
       - name: 'BDD Schema update'
