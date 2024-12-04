@@ -5,10 +5,19 @@ namespace Labstag\Twig\Extension;
 use Labstag\Twig\Runtime\FrontExtensionRuntime;
 use Override;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class FrontExtension extends AbstractExtension
 {
+    #[Override]
+    public function getFilters()
+    {
+        return [
+            new TwigFilter('enable', [FrontExtensionRuntime::class, 'enable']),
+        ];
+    }
+
     #[Override]
     public function getFunctions(): array
     {

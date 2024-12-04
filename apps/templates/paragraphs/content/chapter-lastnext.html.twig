@@ -4,22 +4,22 @@
             {% for row in chapters %}
                 {% if row.position == position-1 %}
                     <li>
-                        <a href="{{ site_path(row) }}">
-                            Chapitre précédent
+                        <a href="{{ site_path(row) }}" class="btn">
+                            {{ 'Previous chapter'|trans }}
                         </a>
                     </li>
                 {% endif %}
             {% endfor %}
             <li>
-                <a href="{{ site_path(history) }}">
-                    Retourner au sommaire
+                <a href="{{ site_path(history) }}" class="btn">
+                    {{ 'Return to summary'|trans }}
                 </a>
             </li>
             {% for row in chapters %}
                 {% if row.position == position+1 %}
                     <li>
-                        <a href="{{ site_path(row) }}">
-                            Chapitre suivant
+                        <a href="{{ site_path(row) }}" class="btn">
+                            {{ 'Next chapter'|trans }}
                         </a>
                     </li>
                 {% endif %}

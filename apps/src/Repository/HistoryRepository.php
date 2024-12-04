@@ -26,7 +26,7 @@ class HistoryRepository extends ServiceEntityRepositoryLib
     public function findTotalEnable()
     {
         $queryBuilder = $this->getQueryBuilder();
-        $queryBuilder->select('count(a.id)');
+        $queryBuilder->select('count(h.id)');
 
         $query = $queryBuilder->getQuery();
 
@@ -50,12 +50,12 @@ class HistoryRepository extends ServiceEntityRepositoryLib
 
     private function getQueryBuilder()
     {
-        $queryBuilder = $this->createQueryBuilder('a');
-        $queryBuilder->where('a.enable = :enable');
-        $queryBuilder->leftJoin('a.chapters', 'c');
+        $queryBuilder = $this->createQueryBuilder('h');
+        $queryBuilder->innerJoin('h.chapters', 'c');
+        $queryBuilder->where('h.enable = :enable');
         $queryBuilder->andWhere('c.enable = :enable');
         $queryBuilder->setParameter('enable', true);
 
-        return $queryBuilder->orderBy('a.createdAt', 'DESC');
+        return $queryBuilder->orderBy('h.createdAt', 'DESC');
     }
 }

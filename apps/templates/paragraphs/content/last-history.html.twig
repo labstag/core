@@ -4,7 +4,9 @@
             <h2>{{ paragraph.title }}</h2>
         </div>
         <div class="link">
-            <a href="{{ path('front', {'slug': listing.slug}) }}" class="btn">Voir toutes les histoires</a>
+            <a href="{{ path('front', {'slug': listing.slug}) }}" class="btn">
+                {{ 'See all stories'|trans }}
+            </a>
         </div>
         <div class="list">
             <ul>

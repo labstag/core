@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use DOMDocument;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Essence\Essence;
 use Essence\Media;
@@ -11,19 +12,6 @@ use Override;
 
 class VideoParagraph extends ParagraphLib
 {
-    #[Override]
-    public function content(string $view, Paragraph $paragraph)
-    {
-        if (!$this->isShow($paragraph)) {
-            return null;
-        }
-
-        return $this->render(
-            $view,
-            $this->getData($paragraph)
-        );
-    }
-
     #[Override]
     public function generate(Paragraph $paragraph, array $data)
     {
@@ -50,10 +38,19 @@ class VideoParagraph extends ParagraphLib
             return;
         }
 
+        $html = $media->html;
+        $oembed = $this->getOEmbedUrl($html);
+        if (is_null($oembed)) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         $this->setData(
             $paragraph,
             [
-                'html'      => $media->html,
+                'image'     => $media->thumbnailUrl,
+                'oembed'    => $oembed,
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]
@@ -84,5 +81,20 @@ class VideoParagraph extends ParagraphLib
     public function useIn(): array
     {
         return $this->useInAll();
+    }
+
+    private function getOEmbedUrl($html)
+    {
+        $domDocument = new DOMDocument();
+        $domDocument->loadHTML($html);
+
+        $domNodeList = $domDocument->getElementsByTagName('iframe');
+        if (0 == count($domNodeList)) {
+            return null;
+        }
+
+        $iframe = $domNodeList->item(0);
+
+        return $iframe->getAttribute('src');
     }
 }

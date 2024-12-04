@@ -9,19 +9,6 @@ use Override;
 class SitemapParagraph extends ParagraphLib
 {
     #[Override]
-    public function content(string $view, Paragraph $paragraph)
-    {
-        if (!$this->isShow($paragraph)) {
-            return null;
-        }
-
-        return $this->render(
-            $view,
-            $this->getData($paragraph)
-        );
-    }
-
-    #[Override]
     public function generate(Paragraph $paragraph, array $data)
     {
         $sitemap = $this->sitemapService->getData();

@@ -54,6 +54,18 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         return $content->getContent();
     }
 
+    public function enable($entities)
+    {
+        $data = [];
+        foreach ($entities as $entity) {
+            if ($entity->isEnable()) {
+                $data[] = $entity;
+            }
+        }
+
+        return $data;
+    }
+
     public function metatags($value)
     {
         // TODO

@@ -79,7 +79,14 @@ abstract class ParagraphLib extends AbstractController
 
     public function content(string $view, Paragraph $paragraph)
     {
-        unset($view, $paragraph);
+        if (!$this->isShow($paragraph)) {
+            return null;
+        }
+
+        return $this->render(
+            $view,
+            $this->getData($paragraph)
+        );
     }
 
     public function generate(Paragraph $paragraph, array $data)

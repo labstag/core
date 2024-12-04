@@ -1,3 +1,4 @@
+{% set chapters = history.chapters|enable %}
 <section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
 	<div class="background" style="--image-url: url('{{ site_asset(history, 'img') }}')"></div>
 	<div class="wrapper">
@@ -12,10 +13,13 @@
 			{{ history.title }}
 		</div>
 		<div class="author">
-			{{ history.refuser.username }}
+            {{ 'Author : %author%'|trans({ '%author%': history.refuser.username }) }}
 		</div>
+        <div class="chapters">
+            {{ 'Number of chapters : %count%'|trans({ '%count%': chapters|length }) }}
+        </div>
 		<div class="date">
-			{{ history.createdat|date('d/m/Y') }}
+            {{ 'Date of creation : %date%'|trans({ '%date%': history.createdat|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
 		</div>
 	</div>
 </section>

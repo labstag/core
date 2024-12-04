@@ -14,9 +14,9 @@
   .title {
     font-family: 'Roboto', sans-serif;
     font-size: 1.2rem;
+    padding-top: 2px;
     font-weight: 350;
-    margin-bottom: 1rem;
-    grid-area: title;
+    padding: 8px 0;
   }
 
   .link {
@@ -45,7 +45,7 @@
     .title {
       font-size: 1rem;
       font-weight: bold;
-      margin-bottom: 1rem;
+      padding: 8px 0;
       grid-area: title;
     }
   }

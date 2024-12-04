@@ -11,19 +11,6 @@ use Override;
 class HeadPostParagraph extends ParagraphLib
 {
     #[Override]
-    public function content(string $view, Paragraph $paragraph)
-    {
-        if (!$this->isShow($paragraph)) {
-            return null;
-        }
-
-        return $this->render(
-            $view,
-            $this->getData($paragraph)
-        );
-    }
-
-    #[Override]
     public function generate(Paragraph $paragraph, array $data)
     {
         if (!isset($data['entity']) || !$data['entity'] instanceof Post) {

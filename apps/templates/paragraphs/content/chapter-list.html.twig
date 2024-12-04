@@ -1,8 +1,10 @@
 <section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
     <div class="wrapper">
-        <div class="title">
-            {{ paragraph.title }}
-        </div>
+        {% if paragraph.title|length != 0 %}
+            <div class="title">
+                {{ paragraph.title }}
+            </div>
+        {% endif %}
         <ul>
             {% for row in chapters %}
                 <li class="chapter-teaser">

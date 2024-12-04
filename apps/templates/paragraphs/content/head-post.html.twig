@@ -19,7 +19,7 @@
             </div>
         {% endif %}
 		<div class="date">
-			{{ post.createdat|date('d/m/Y') }}
+            {{ 'Date of creation : %date%'|trans({ '%date%': post.createdat|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
 		</div>
 	</div>
 </section>

@@ -14,19 +14,6 @@ use Override;
 class ChapterListParagraph extends ParagraphLib
 {
     #[Override]
-    public function content(string $view, Paragraph $paragraph)
-    {
-        if (!$this->isShow($paragraph)) {
-            return null;
-        }
-
-        return $this->render(
-            $view,
-            $this->getData($paragraph)
-        );
-    }
-
-    #[Override]
     public function generate(Paragraph $paragraph, array $data)
     {
         if (!isset($data['entity']) || !$data['entity'] instanceof History) {
@@ -37,8 +24,12 @@ class ChapterListParagraph extends ParagraphLib
 
         /** @var ChapterRepository $repository */
         $repository = $this->getRepository(Chapter::class);
+        $chapters   = $repository->getAllActivateByHistory($data['entity']);
+        if (0 == count($chapters)) {
+            $this->setShow($paragraph, false);
 
-        $chapters = $repository->getAllActivateByHistory($data['entity']);
+            return;
+        }
 
         $this->setData(
             $paragraph,

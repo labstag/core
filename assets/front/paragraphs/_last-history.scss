@@ -15,7 +15,7 @@
     font-family: 'Roboto', sans-serif;
     font-size: 1.2rem;
     font-weight: 350;
-    margin-bottom: 1rem;
+    padding: 8px 0;
     grid-area: title;
   }
 
@@ -45,7 +45,7 @@
     .title {
       font-size: 1rem;
       font-weight: bold;
-      margin-bottom: 1rem;
+      padding: 8px 0;
       grid-area: title;
     }
   }

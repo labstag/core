@@ -11,7 +11,7 @@
         {{ chapter.title }}
     </div>
     <div class="date">
-        {{ chapter.createdat|date('d/m/Y') }}
+        {{ 'Date of creation : %date%'|trans({ '%date%': chapter.createdat|date('d/m/Y') }) }}
     </div>
     <div class="resume">
         {{ chapter.resume|raw }}

@@ -1,4 +1,6 @@
 .paragraph_chapter-list {
+  position: relative;
+  z-index: 0;
   margin-bottom: 2rem;
   .title {
     font-family: 'Roboto', sans-serif;

@@ -1,10 +1,7 @@
-$orange: #ffa500;
-$orange-dark: darken($orange, 30%);
-
 header{
-  background-color: $orange;
+  background-color: #1d2327;
   .block_admin{
-    background-color: white;
+    background-color: black;
     padding: 10px;
     text-align: right;
     display: flex;
@@ -15,7 +12,6 @@ header{
     a{
       color: white;
       text-decoration: none;
-      background-color: $orange-dark;
       padding: 5px 10px;
     }
   }

@@ -11,6 +11,7 @@
             {{ encore_entry_link_tags('front') }}
         {% endblock %}
         {% block javascripts %}
+            <script type="text/javascript" src="{{ asset('assets/tarteaucitron/tarteaucitron.js') }}"></script>
             {{ encore_entry_script_tags('front') }}
         {% endblock %}
         {% for row in header %}

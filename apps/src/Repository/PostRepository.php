@@ -26,7 +26,7 @@ class PostRepository extends ServiceEntityRepositoryLib
     public function findTotalEnable()
     {
         $queryBuilder = $this->getQueryBuilder();
-        $queryBuilder->select('count(a.id)');
+        $queryBuilder->select('count(p.id)');
 
         $query = $queryBuilder->getQuery();
 
@@ -43,11 +43,11 @@ class PostRepository extends ServiceEntityRepositoryLib
 
     public function getQueryBuilder()
     {
-        $queryBuilder = $this->createQueryBuilder('a');
-        $queryBuilder->where('a.enable = :enable');
+        $queryBuilder = $this->createQueryBuilder('p');
+        $queryBuilder->where('p.enable = :enable');
         $queryBuilder->setParameter('enable', true);
 
-        return $queryBuilder->orderBy('a.createdAt', 'DESC');
+        return $queryBuilder->orderBy('p.createdAt', 'DESC');
     }
 
     public function getQueryPaginator()
