@@ -94,8 +94,6 @@ jobs:
         run: npm run docker:waiting
       - name: 'docker ls'
         run: npm run docker:ls
-      - name: Add assets
-        run: npm run assets
       - name: 'BDD MIGRATE'
         run: npm run doctrine:migrate
       - name: 'BDD Schema update'
