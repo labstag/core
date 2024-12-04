@@ -44,6 +44,8 @@ jobs:
         run: npm run download:phar
       - name: 'docker ls'
         run: npm run docker:ls
+      - name: 'Symfony about'
+        run: npm run symfony:about
       - name: linter PHP Code Sniffer
         run: npm run lint:phpcs:error
       - name: linter PHP MD
@@ -92,10 +94,10 @@ jobs:
         run: npm run docker:deploy
       - name: 'Waiting'
         run: npm run docker:waiting
-      - name: "install PHAR"
-        run: npm run download:phar
       - name: 'docker ls'
         run: npm run docker:ls
+      - name: 'Symfony about'
+        run: npm run symfony:about
       - name: Add assets
         run: npm run assets
       - name: 'BDD MIGRATE'
