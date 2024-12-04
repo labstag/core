@@ -44,6 +44,10 @@ jobs:
         run: npm run download:phar
       - name: 'docker ls'
         run: npm run docker:ls
+      - name: "Sleep 30"
+        run: sleep 30
+      - name: 'Symfony about'
+        run: npm run symfony:about
       - name: linter PHP Code Sniffer
         run: npm run lint:phpcs:error
       - name: linter PHP MD
@@ -58,6 +62,7 @@ jobs:
         run: npm run lint:phpstan:0
   launch:
     runs-on: ubuntu-22.04
+    needs: linter
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -93,6 +98,12 @@ jobs:
         run: npm run docker:waiting
       - name: 'docker ls'
         run: npm run docker:ls
+      - name: "Sleep 30"
+        run: sleep 30
+      - name: 'Symfony about'
+        run: npm run symfony:about
+      - name: Add assets
+        run: npm run assets
       - name: 'BDD MIGRATE'
         run: npm run doctrine:migrate
       - name: 'BDD Schema update'
@@ -105,8 +116,6 @@ jobs:
       #     run: npm run cmd:labstag:all
       #   - name: Run Acceptance Tests
       #     run: npm run test:behat
-      - name: Add assets
-        run: npm run assets
       - name: Cypress run
         uses: cypress-io/github-action@v6
       - name: Archive screenshots

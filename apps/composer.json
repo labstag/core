@@ -47,10 +47,10 @@
         "bin-dir": "bin/",
         "optimize-autoloader": true,
         "preferred-install": {
-          "*": "dist"
+            "*": "dist"
         },
         "platform": {
-          "php": "8.3"
+            "php": "8.3"
         },
         "sort-packages": true,
         "allow-plugins": {
