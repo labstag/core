@@ -93,8 +93,6 @@ jobs:
         run: npm run docker:waiting
       - name: 'docker ls'
         run: npm run docker:ls
-      - name: Add assets
-        run: npm run assets
       - name: 'BDD MIGRATE'
         run: npm run doctrine:migrate
       - name: 'BDD Schema update'
@@ -107,6 +105,8 @@ jobs:
       #     run: npm run cmd:labstag:all
       #   - name: Run Acceptance Tests
       #     run: npm run test:behat
+      - name: Add assets
+        run: npm run assets
       - name: Cypress run
         uses: cypress-io/github-action@v6
       - name: Archive screenshots
