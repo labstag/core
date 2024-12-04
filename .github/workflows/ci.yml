@@ -58,6 +58,7 @@ jobs:
         run: npm run lint:phpstan:0
   launch:
     runs-on: ubuntu-22.04
+    needs: linter
     steps:
       - name: Checkout
         uses: actions/checkout@v4
