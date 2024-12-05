@@ -38,7 +38,7 @@ class VideoParagraph extends ParagraphLib
             return;
         }
 
-        $html = $media->html;
+        $html   = $media->html;
         $oembed = $this->getOEmbedUrl($html);
         if (is_null($oembed)) {
             $this->setShow($paragraph, false);
@@ -50,7 +50,7 @@ class VideoParagraph extends ParagraphLib
             $paragraph,
             [
                 'image'     => $media->thumbnailUrl,
-                'oembed'    => $oembed,
+                'oembed'    => $this->parseUrlAndAddAutoplay($oembed),
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]
@@ -96,5 +96,23 @@ class VideoParagraph extends ParagraphLib
         $iframe = $domNodeList->item(0);
 
         return $iframe->getAttribute('src');
+    }
+
+    private function parseUrlAndAddAutoplay($url)
+    {
+        $parse = parse_url((string) $url);
+        parse_str($parse['query'] !== '' && $parse['query'] !== '0' ? $parse['query'] : '', $args);
+        $args['autoplay'] = 1;
+
+        $newArgs        = http_build_query($args);
+        $parse['query'] = $newArgs;
+
+        return sprintf(
+            '%s://%s%s?%s',
+            $parse['scheme'],
+            $parse['host'],
+            $parse['path'],
+            $parse['query']
+        );
     }
 }

@@ -1,5 +1,6 @@
 import WebFont from 'webfontloader';
 import svg4everybody from 'svg4everybody';
+import { Video } from './front/js/video';
 
 WebFont.load({
   google: {
@@ -9,4 +10,7 @@ WebFont.load({
 
 
 import './front/index.scss';
-svg4everybody();
+document.addEventListener('DOMContentLoaded', function () {
+  svg4everybody();
+  new Video();
+});
