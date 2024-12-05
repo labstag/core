@@ -11,6 +11,7 @@
       box-sizing: border-box;
     }
     .video{
+      padding: 0px;
       @include video();
     }
     @media(min-width: 768px){
