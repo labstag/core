@@ -3,6 +3,7 @@
 namespace Labstag\Paragraph;
 
 use Labstag\Entity\Paragraph;
+use Labstag\Field\WysiwygField;
 use Labstag\Lib\ParagraphLib;
 use Override;
 
@@ -25,6 +26,9 @@ class TextImgParagraph extends ParagraphLib
     {
         unset($paragraph);
         yield $this->addFieldImageUpload('img', $pageName);
+        $wysiwygField = WysiwygField::new('content', 'Texte');
+
+        yield $wysiwygField;
     }
 
     #[Override]

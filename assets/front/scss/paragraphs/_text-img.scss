@@ -1,0 +1,25 @@
+.paragraph_text-img {
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    .text,
+    .image{
+      padding: 2rem;
+      flex: 0 0 100%;
+      box-sizing: border-box;
+    }
+    .image{
+      max-width: 100%;
+      height: auto;
+    }
+    @media(min-width: 768px){
+      flex-direction: row;
+      .text,
+      .image{
+        flex: 0 0 50%;
+      }
+    }
+  }
+}
