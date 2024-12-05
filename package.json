@@ -143,6 +143,7 @@
     "ckeditor5": "43.0.*",
     "dotenv-webpack": "8.1.*",
     "flag-icon-css": "4.1.*",
+    "flag-icons": "7.2.*",
     "leaflet": "1.9.*",
     "leaflet.markercluster": "1.5.*",
     "object-fit-images": "3.2.*",
