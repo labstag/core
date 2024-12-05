@@ -1,4 +1,5 @@
 import WebFont from 'webfontloader';
+import svg4everybody from 'svg4everybody';
 
 WebFont.load({
   google: {
@@ -7,4 +8,5 @@ WebFont.load({
 });
 
 
-import './front.scss';
+import './front/index.scss';
+svg4everybody();

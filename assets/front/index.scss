@@ -1,0 +1,58 @@
+@charset "UTF-8";
+@import "@fortawesome/fontawesome-free/scss/brands.scss";
+@import "@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "@fortawesome/fontawesome-free/scss/regular.scss";
+@import "@fortawesome/fontawesome-free/scss/solid.scss";
+@import "flag-icon-css/css/flag-icons.min.css";
+/* stylelint-disable */
+@import './scss/reset';
+@import './scss/mixins';
+@import './scss/btn';
+@import './scss/hn';
+@import './scss/pagination';
+@import './../wysiwyg';
+@import './scss/header';
+@import './scss/footer';
+@import './scss/block/content';
+@import './scss/paragraphs/video';
+@import './scss/paragraphs/chapter-list';
+@import './scss/paragraphs/chapter-lastnext';
+@import './scss/paragraphs/edito';
+@import './scss/paragraphs/head-chapter';
+@import './scss/paragraphs/head-history';
+@import './scss/paragraphs/head-post';
+@import './scss/paragraphs/history-list';
+@import './scss/paragraphs/last-history';
+@import './scss/paragraphs/last-news';
+@import './scss/paragraphs/news-list';
+@import './scss/paragraphs/sitemap';
+@import './scss/paragraphs/text';
+@import './scss/teaser/chapter';
+@import './scss/teaser/history';
+@import './scss/teaser/post';
+/* stylelint-enable */
+
+body {
+  background-color: #1f1f1f;
+  color: #d1d7e0;
+}
+section{
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.wrapper {
+  max-width: 80%;
+  margin: 0 auto;
+
+  .wrapper{
+    max-width: 100%;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
