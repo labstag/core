@@ -30,9 +30,13 @@ abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function flush(): void
+    public function flush($counter = 0): void
     {
-        $this->getEntityManager()->flush();
+        $entityManager = $this->getEntityManager();
+        if ($counter == 0 || $counter % 20 == 0){
+            $entityManager->flush();
+            $entityManager->clear();
+        }
     }
 
     /**
