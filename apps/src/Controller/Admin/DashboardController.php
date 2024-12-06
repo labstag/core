@@ -15,6 +15,7 @@ use Labstag\Entity\Block;
 use Labstag\Entity\Category;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
+use Labstag\Entity\GeoCode;
 use Labstag\Entity\History;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Meta;
@@ -160,6 +161,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Meta', 'fa fa-list', Meta::class);
         yield MenuItem::linkToCrud('Paragraph', 'fa fa-user', Paragraph::class);
         yield MenuItem::linkToCrud('Block', 'fa fa-user', Block::class);
+        yield MenuItem::linkToCrud('Géocode', 'fa fa-user', GeoCode::class);
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
         yield MenuItem::linkToRoute('Options', 'fas fa-cog', 'admin_option');
         yield MenuItem::linkToRoute('Vider le cache', 'fas fa-trash', 'admin_cacheclear');

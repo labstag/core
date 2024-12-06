@@ -17,14 +17,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     name: 'labstag:geocode:install',
     description: 'Retrieve geocodes',
 )]
-class LabstagGeocodeInstallCommand extends Command
+class GeocodeInstallCommand extends Command
 {
     public function __construct(
         private GeocodeService $geocodeService,
         private GeoCodeRepository $geoCodeRepository
     )
     {
-        
+        parent::__construct();
     }
 
     protected function configure(): void

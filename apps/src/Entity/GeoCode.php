@@ -58,6 +58,11 @@ class GeoCode
     #[ORM\Column(type: 'string', length: 100)]
     private string $stateName;
 
+    public function __toString(): string
+    {
+        return (string) $this->getPlaceName();
+    }
+
     public function getAccuracy(): ?int
     {
         return $this->accuracy;
