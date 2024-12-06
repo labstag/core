@@ -4,10 +4,13 @@ namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Form\Paragraphs\ChapterType;
@@ -62,6 +65,15 @@ class ChapterCrudController extends AbstractCrudControllerLib
         foreach ($fields as $field) {
             yield $field;
         }
+    }
+
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $filters->add(BooleanFilter::new('enable'));
+        $filters->add(EntityFilter::new('refhistory'));
+
+        return $filters;
     }
 
     #[Override]

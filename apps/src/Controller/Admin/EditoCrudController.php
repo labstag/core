@@ -3,9 +3,12 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Edito;
 use Labstag\Form\Paragraphs\EditoType;
 use Labstag\Lib\AbstractCrudControllerLib;
@@ -39,6 +42,15 @@ class EditoCrudController extends AbstractCrudControllerLib
         foreach ($fields as $field) {
             yield $field;
         }
+    }
+
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $filters->add(EntityFilter::new('refuser'));
+        $filters->add(BooleanFilter::new('enable'));
+
+        return $filters;
     }
 
     #[Override]

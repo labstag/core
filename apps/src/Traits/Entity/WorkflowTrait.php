@@ -2,23 +2,34 @@
 
 namespace Labstag\Traits\Entity;
 
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 trait WorkflowTrait
 {
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $currentPlace = [];
+    private ?array $stage = [];
 
-    public function getCurrentPlace(): array
+    #[Gedmo\Timestampable(on: 'change', field: ['stage'])]
+    #[ORM\Column(name: 'stage_changed', type: 'datetime', nullable: true)]
+    private DateTime $stateChanged;
+
+    public function getStage(): array
     {
-        return $this->currentPlace;
+        return $this->stage;
     }
 
-    public function setCurrentPlace(array $currentPlace, array $context = []): void
+    public function getStateChanged(): DateTime
+    {
+        return $this->stateChanged;
+    }
+
+    public function setStage(array $stage, array $context = []): void
     {
         unset($context);
-        $this->currentPlace = $currentPlace;
+        $this->stage = $stage;
     }
 }
