@@ -74,6 +74,11 @@ class Chapter
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'chapters', cascade: ['persist', 'detach'])]
     private Collection $tags;
 
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
+    }
+
     public function __construct()
     {
         $this->tags       = new ArrayCollection();

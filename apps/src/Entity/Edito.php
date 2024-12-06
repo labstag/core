@@ -53,6 +53,11 @@ class Edito
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $refuser = null;
 
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
+    }
+
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
