@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use Stringable;
+use Override;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
@@ -11,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[ORM\Entity(repositoryClass: GeoCodeRepository::class)]
-class GeoCode
+class GeoCode implements Stringable
 {
     use SoftDeleteableEntity;
 
@@ -58,6 +60,7 @@ class GeoCode
     #[ORM\Column(type: 'string', length: 100)]
     private string $stateName;
 
+    #[Override]
     public function __toString(): string
     {
         return (string) $this->getPlaceName();

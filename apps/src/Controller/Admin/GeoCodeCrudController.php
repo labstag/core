@@ -2,11 +2,13 @@
 
 namespace Labstag\Controller\Admin;
 
+use Override;
 use Labstag\Entity\GeoCode;
 use Labstag\Lib\AbstractCrudControllerLib;
 
 class GeoCodeCrudController extends AbstractCrudControllerLib
 {
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return GeoCode::class;

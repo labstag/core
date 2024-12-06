@@ -101,7 +101,7 @@ class VideoParagraph extends ParagraphLib
     private function parseUrlAndAddAutoplay($url)
     {
         $parse = parse_url((string) $url);
-        parse_str($parse['query'] !== '' && $parse['query'] !== '0' ? $parse['query'] : '', $args);
+        parse_str('' !== $parse['query'] && '0' !== $parse['query'] ? $parse['query'] : '', $args);
         $args['autoplay'] = 1;
 
         $newArgs        = http_build_query($args);

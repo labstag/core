@@ -33,7 +33,7 @@ abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
     public function flush($counter = 0): void
     {
         $entityManager = $this->getEntityManager();
-        if ($counter == 0 || $counter % 20 == 0){
+        if (0 == $counter || 0 == $counter % 20) {
             $entityManager->flush();
             $entityManager->clear();
         }

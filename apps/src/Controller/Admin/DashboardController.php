@@ -104,7 +104,7 @@ class DashboardController extends AbstractDashboardController
         ];
         $categories = [];
         foreach ($tab as $key => $value) {
-            $categories[$key] = MenuItem::linkToCrud('Category', 'fa fa-list', Category::class);
+            $categories[$key] = MenuItem::linkToCrud('Category', 'fas fa-hastag', Category::class);
             $categories[$key]->setController($value);
         }
 
@@ -116,14 +116,14 @@ class DashboardController extends AbstractDashboardController
         ];
         $tags = [];
         foreach ($tab as $key => $value) {
-            $tags[$key] = MenuItem::linkToCrud('Tag', 'fa fa-list', Tag::class);
+            $tags[$key] = MenuItem::linkToCrud('Tag', 'fas fa-tags', Tag::class);
             $tags[$key]->setController($value);
         }
 
         yield MenuItem::subMenu('History')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', History::class),
-                MenuItem::linkToCrud('new', 'fa fa-list', History::class)->setAction(Action::NEW),
+                MenuItem::linkToCrud('new', 'fas fa-plus', History::class)->setAction(Action::NEW),
                 $categories['history'],
                 $tags['history'],
             ]
@@ -131,40 +131,41 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu('Chapter')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Chapter::class),
-                MenuItem::linkToCrud('new', 'fa fa-list', Chapter::class)->setAction(Action::NEW),
+                MenuItem::linkToCrud('new', 'fas fa-plus', Chapter::class)->setAction(Action::NEW),
                 $tags['chapter'],
             ]
         );
 
-        yield MenuItem::linkToCrud('Edito', 'fa fa-list', Edito::class);
+        yield MenuItem::linkToCrud('Edito', 'fas fa-info', Edito::class);
 
-        yield MenuItem::linkToCrud('Memo', 'fa fa-list', Memo::class);
+        yield MenuItem::linkToCrud('Memo', 'fas fa-memory', Memo::class);
 
-        yield MenuItem::subMenu('Page')->setSubItems(
+        yield MenuItem::subMenu('Page', 'fas fa-columns')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Page::class),
-                MenuItem::linkToCrud('new', 'fa fa-list', Page::class)->setAction(Action::NEW),
+                MenuItem::linkToCrud('new', 'fas fa-plus', Page::class)->setAction(Action::NEW),
                 $categories['page'],
                 $tags['page'],
             ]
         );
 
-        yield MenuItem::subMenu('Post')->setSubItems(
+        yield MenuItem::subMenu('Post', 'fas fa-newspaper')->setSubItems(
             [
                 MenuItem::linkToCrud('List', 'fa fa-list', Post::class),
-                MenuItem::linkToCrud('new', 'fa fa-list', Post::class)->setAction(Action::NEW),
+                MenuItem::linkToCrud('new', 'fas fa-plus', Post::class)->setAction(Action::NEW),
                 $categories['post'],
                 $tags['post'],
             ]
         );
 
-        yield MenuItem::linkToCrud('Meta', 'fa fa-list', Meta::class);
-        yield MenuItem::linkToCrud('Paragraph', 'fa fa-user', Paragraph::class);
-        yield MenuItem::linkToCrud('Block', 'fa fa-user', Block::class);
-        yield MenuItem::linkToCrud('Géocode', 'fa fa-user', GeoCode::class);
+        yield MenuItem::linkToCrud('Meta', 'fa fa-file-alt', Meta::class);
+        yield MenuItem::linkToCrud('Paragraph', 'fa fa-paragraph', Paragraph::class);
+        yield MenuItem::linkToCrud('Block', 'fa fa-cubes', Block::class);
+        yield MenuItem::linkToCrud('Géocode', 'fas fa-map-signs', GeoCode::class);
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
         yield MenuItem::linkToRoute('Options', 'fas fa-cog', 'admin_option');
         yield MenuItem::linkToRoute('Vider le cache', 'fas fa-trash', 'admin_cacheclear');
+        yield MenuItem::linkToRoute('Voir le site', 'fas fa-laptop-house', 'front');
     }
 
     #[Override]

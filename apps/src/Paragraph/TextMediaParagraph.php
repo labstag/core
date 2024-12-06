@@ -58,39 +58,6 @@ class TextMediaParagraph extends ParagraphLib
         );
     }
 
-    private function parseUrlAndAddAutoplay($url)
-    {
-        $parse = parse_url((string) $url);
-        parse_str($parse['query'] !== '' && $parse['query'] !== '0' ? $parse['query'] : '', $args);
-        $args['autoplay'] = 1;
-
-        $newArgs        = http_build_query($args);
-        $parse['query'] = $newArgs;
-
-        return sprintf(
-            '%s://%s%s?%s',
-            $parse['scheme'],
-            $parse['host'],
-            $parse['path'],
-            $parse['query']
-        );
-    }
-
-    private function getOEmbedUrl($html)
-    {
-        $domDocument = new DOMDocument();
-        $domDocument->loadHTML($html);
-
-        $domNodeList = $domDocument->getElementsByTagName('iframe');
-        if (0 == count($domNodeList)) {
-            return null;
-        }
-
-        $iframe = $domNodeList->item(0);
-
-        return $iframe->getAttribute('src');
-    }
-
     #[Override]
     public function getFields(Paragraph $paragraph, $pageName): iterable
     {
@@ -120,5 +87,38 @@ class TextMediaParagraph extends ParagraphLib
     public function useIn(): array
     {
         return $this->useInAll();
+    }
+
+    private function getOEmbedUrl($html)
+    {
+        $domDocument = new DOMDocument();
+        $domDocument->loadHTML($html);
+
+        $domNodeList = $domDocument->getElementsByTagName('iframe');
+        if (0 == count($domNodeList)) {
+            return null;
+        }
+
+        $iframe = $domNodeList->item(0);
+
+        return $iframe->getAttribute('src');
+    }
+
+    private function parseUrlAndAddAutoplay($url)
+    {
+        $parse = parse_url((string) $url);
+        parse_str('' !== $parse['query'] && '0' !== $parse['query'] ? $parse['query'] : '', $args);
+        $args['autoplay'] = 1;
+
+        $newArgs        = http_build_query($args);
+        $parse['query'] = $newArgs;
+
+        return sprintf(
+            '%s://%s%s?%s',
+            $parse['scheme'],
+            $parse['host'],
+            $parse['path'],
+            $parse['query']
+        );
     }
 }

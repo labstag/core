@@ -6,7 +6,7 @@ framework:
         enabled: true
       marking_store:
         type: 'method'
-        property: 'currentPlace'
+        property: 'state'
       supports:
       - Labstag\Entity\Chapter
       initial_marking: start
@@ -35,7 +35,7 @@ framework:
         enabled: "%kernel.debug%"
       marking_store:
         type: 'method'
-        property: 'currentPlace'
+        property: 'state'
       supports:
       - Labstag\Entity\Edito
       initial_marking: start
@@ -64,7 +64,7 @@ framework:
         enabled: "%kernel.debug%"
       marking_store:
         type: 'method'
-        property: 'currentPlace'
+        property: 'state'
       supports:
       - Labstag\Entity\History
       initial_marking: start
@@ -93,7 +93,7 @@ framework:
         enabled: "%kernel.debug%"
       marking_store:
         type: 'method'
-        property: 'currentPlace'
+        property: 'state'
       supports:
       - Labstag\Entity\Memo
       initial_marking: start
@@ -122,7 +122,7 @@ framework:
         enabled: "%kernel.debug%"
       marking_store:
         type: 'method'
-        property: 'currentPlace'
+        property: 'state'
       supports:
       - Labstag\Entity\Post
       initial_marking: start
@@ -151,7 +151,7 @@ framework:
         enabled: "%kernel.debug%"
       marking_store:
         type: 'method'
-        property: 'currentPlace'
+        property: 'state'
       supports:
       - Labstag\Entity\User
       initial_marking: start

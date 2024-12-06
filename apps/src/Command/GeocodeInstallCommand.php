@@ -2,6 +2,7 @@
 
 namespace Labstag\Command;
 
+use Override;
 use Exception;
 use Labstag\Repository\GeoCodeRepository;
 use Labstag\Service\GeocodeService;
@@ -20,18 +21,20 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class GeocodeInstallCommand extends Command
 {
     public function __construct(
-        private GeocodeService $geocodeService,
-        private GeoCodeRepository $geoCodeRepository
+        private readonly GeocodeService $geocodeService,
+        private readonly GeoCodeRepository $geoCodeRepository
     )
     {
         parent::__construct();
     }
 
+    #[Override]
     protected function configure(): void
     {
         $this->addArgument('country', InputArgument::REQUIRED, 'country code');
     }
 
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
@@ -42,7 +45,7 @@ class GeocodeInstallCommand extends Command
             throw new Exception('Argument country invalide');
         }
 
-        if (empty($country)) {
+        if ($country === '' || $country === '0') {
             $symfonyStyle->note(
                 sprintf(
                     'Argument countrie obligatoire: %s',
@@ -50,7 +53,7 @@ class GeocodeInstallCommand extends Command
                 )
             );
 
-            return COMMAND::FAILURE;
+            return Command::FAILURE;
         }
 
         $csv = $this->geocodeService->csv($country);
@@ -59,7 +62,7 @@ class GeocodeInstallCommand extends Command
                 ['fichier inexistant']
             );
 
-            return COMMAND::FAILURE;
+            return Command::FAILURE;
         }
 
         $progressBar = new ProgressBar($output, is_countable($csv) ? count($csv) : 0);
@@ -69,7 +72,7 @@ class GeocodeInstallCommand extends Command
         foreach ($table as $row) {
             $entity = $this->geocodeService->add($row);
             $this->geoCodeRepository->persist($entity);
-            $counter++;
+            ++$counter;
             $this->geoCodeRepository->flush($counter);
             $progressBar->advance();
         }

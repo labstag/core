@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use Stringable;
+use Override;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,7 +20,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: EditoRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Edito
+class Edito implements Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableEntity;
@@ -53,14 +55,15 @@ class Edito
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $refuser = null;
 
-    public function __toString(): string
-    {
-        return (string) $this->getTitle();
-    }
-
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
+    }
+
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
     }
 
     public function addParagraph(Paragraph $paragraph): static
