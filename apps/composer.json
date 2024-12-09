@@ -111,7 +111,7 @@
     },
     "require-dev": {
         "aalaap/faker-youtube": "2.0.*",
-        "doctrine/doctrine-fixtures-bundle": "3.7.*",
+        "doctrine/doctrine-fixtures-bundle": "4.0.*",
         "fakerphp/faker": "1.24.*",
         "mmo/faker-images": "0.9.*",
         "phpstan/phpdoc-parser": "1.32.*",
