@@ -2,6 +2,7 @@
 docker-compose-*.yml
 !docker-compose-lampy.yml
 .env
+/apps/stars.json
 /apps/*.cache
 /apps/.env
 /apps/.phpcs-cache

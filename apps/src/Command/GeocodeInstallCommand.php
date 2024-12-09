@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'labstag:geocode:install',
+    name: 'labstag:geocode-install',
     description: 'Retrieve geocodes',
 )]
 class GeocodeInstallCommand extends Command
@@ -48,7 +48,7 @@ class GeocodeInstallCommand extends Command
         if ($country === '' || $country === '0') {
             $symfonyStyle->note(
                 sprintf(
-                    'Argument countrie obligatoire: %s',
+                    'Argument country invalide: %s',
                     $country
                 )
             );
@@ -81,7 +81,7 @@ class GeocodeInstallCommand extends Command
 
         $progressBar->finish();
         $symfonyStyle->newLine();
-        $symfonyStyle->success("Fin d'enregistrement");
+        $symfonyStyle->success('Geocodes retrieved');
 
         return Command::SUCCESS;
     }

@@ -22,6 +22,7 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
+use Labstag\Entity\Star;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Form\Admin\OptionType;
@@ -162,6 +163,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Paragraph', 'fa fa-paragraph', Paragraph::class);
         yield MenuItem::linkToCrud('Block', 'fa fa-cubes', Block::class);
         yield MenuItem::linkToCrud('Géocode', 'fas fa-map-signs', GeoCode::class);
+        yield MenuItem::linkToCrud('Star', 'fas fa-star', Star::class);
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
         yield MenuItem::linkToRoute('Options', 'fas fa-cog', 'admin_option');
         yield MenuItem::linkToRoute('Vider le cache', 'fas fa-trash', 'admin_cacheclear');

@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'labstag:delete:oldfiles',
+    name: 'labstag:delete-oldfiles',
     description: 'Delete old files',
 )]
 class DeleteOldFilesCommand extends Command
