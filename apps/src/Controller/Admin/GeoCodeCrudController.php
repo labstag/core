@@ -2,9 +2,9 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use Labstag\Entity\GeoCode;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Override;
 
 class GeoCodeCrudController extends AbstractCrudControllerLib
 {

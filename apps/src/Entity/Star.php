@@ -13,42 +13,45 @@ class Star
 {
     use TimestampableEntity;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
+    private ?bool $enable = null;
+
+    #[ORM\Column]
+    private ?int $forks = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: 'guid', unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $language = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $license = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $repository = null;
+
     #[ORM\Column]
-    private ?int $forks = null;
+    private ?int $stargazers = null;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $repository = null;
-
-    #[ORM\Column(length: 255)]
     private ?string $url = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $license = null;
-
-    #[ORM\Column]
-    private ?int $stargazers = null;
 
     #[ORM\Column]
     private ?int $watchers = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
-    private ?bool $enable = null;
-
-    public function getId(): ?string
+    public function getDescription(): ?string
     {
-        return $this->id;
+        return $this->description;
     }
 
     public function getForks(): ?int
@@ -56,23 +59,19 @@ class Star
         return $this->forks;
     }
 
-    public function setForks(int $forks): static
+    public function getId(): ?string
     {
-        $this->forks = $forks;
-
-        return $this;
+        return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getLanguage(): ?string
     {
-        return $this->title;
+        return $this->language;
     }
 
-    public function setTitle(string $title): static
+    public function getLicense(): ?string
     {
-        $this->title = $title;
-
-        return $this;
+        return $this->license;
     }
 
     public function getRepository(): ?string
@@ -80,11 +79,14 @@ class Star
         return $this->repository;
     }
 
-    public function setRepository(string $repository): static
+    public function getStargazers(): ?int
     {
-        $this->repository = $repository;
+        return $this->stargazers;
+    }
 
-        return $this;
+    public function getTitle(): ?string
+    {
+        return $this->title;
     }
 
     public function getUrl(): ?string
@@ -92,16 +94,14 @@ class Star
         return $this->url;
     }
 
-    public function setUrl(string $url): static
+    public function getWatchers(): ?int
     {
-        $this->url = $url;
-
-        return $this;
+        return $this->watchers;
     }
 
-    public function getDescription(): ?string
+    public function isEnable(): ?bool
     {
-        return $this->description;
+        return $this->enable;
     }
 
     public function setDescription(?string $description): static
@@ -111,9 +111,25 @@ class Star
         return $this;
     }
 
-    public function getLicense(): ?string
+    public function setEnable(bool $enable): static
     {
-        return $this->license;
+        $this->enable = $enable;
+
+        return $this;
+    }
+
+    public function setForks(int $forks): static
+    {
+        $this->forks = $forks;
+
+        return $this;
+    }
+
+    public function setLanguage(?string $language): static
+    {
+        $this->language = $language;
+
+        return $this;
     }
 
     public function setLicense(?string $license): static
@@ -123,9 +139,11 @@ class Star
         return $this;
     }
 
-    public function getStargazers(): ?int
+    public function setRepository(string $repository): static
     {
-        return $this->stargazers;
+        $this->repository = $repository;
+
+        return $this;
     }
 
     public function setStargazers(int $stargazers): static
@@ -135,26 +153,23 @@ class Star
         return $this;
     }
 
-    public function getWatchers(): ?int
+    public function setTitle(string $title): static
     {
-        return $this->watchers;
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function setUrl(string $url): static
+    {
+        $this->url = $url;
+
+        return $this;
     }
 
     public function setWatchers(int $watchers): static
     {
         $this->watchers = $watchers;
-
-        return $this;
-    }
-
-    public function isEnable(): ?bool
-    {
-        return $this->enable;
-    }
-
-    public function setEnable(bool $enable): static
-    {
-        $this->enable = $enable;
 
         return $this;
     }

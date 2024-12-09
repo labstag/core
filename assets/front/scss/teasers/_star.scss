@@ -1,0 +1,27 @@
+.star-teaser{
+  @include teaser();
+  a{
+    color: white;
+  }
+  .description {
+    padding: 20px;
+  }
+  .title{
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 0.8rem;
+    font-family: "Roboto", sans-serif;
+    text-transform: uppercase;
+  }
+  ul{
+    display: block;
+    padding-top: 20px;
+    padding-left: 40px;
+    b{
+      font-weight: bold;
+    }
+    li{
+      padding-bottom: 10px;
+    }
+  }
+}

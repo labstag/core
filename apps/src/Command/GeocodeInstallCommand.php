@@ -2,10 +2,10 @@
 
 namespace Labstag\Command;
 
-use Override;
 use Exception;
 use Labstag\Repository\GeoCodeRepository;
 use Labstag\Service\GeocodeService;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -45,7 +45,7 @@ class GeocodeInstallCommand extends Command
             throw new Exception('Argument country invalide');
         }
 
-        if ($country === '' || $country === '0') {
+        if ('' === $country || '0' === $country) {
             $symfonyStyle->note(
                 sprintf(
                     'Argument country invalide: %s',
