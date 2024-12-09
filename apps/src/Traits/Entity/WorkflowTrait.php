@@ -11,15 +11,15 @@ trait WorkflowTrait
 {
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $stage = [];
+    private ?array $state = [];
 
-    #[Gedmo\Timestampable(on: 'change', field: ['stage'])]
-    #[ORM\Column(name: 'stage_changed', type: 'datetime', nullable: true)]
+    #[Gedmo\Timestampable(on: 'change', field: ['state'])]
+    #[ORM\Column(name: 'state_changed', type: 'datetime', nullable: true)]
     private DateTime $stateChanged;
 
-    public function getStage(): array
+    public function getState(): array
     {
-        return $this->stage;
+        return $this->state;
     }
 
     public function getStateChanged(): DateTime
@@ -27,9 +27,9 @@ trait WorkflowTrait
         return $this->stateChanged;
     }
 
-    public function setStage(array $stage, array $context = []): void
+    public function setState(array $state, array $context = []): void
     {
         unset($context);
-        $this->stage = $stage;
+        $this->state = $state;
     }
 }
