@@ -17,7 +17,7 @@ jobs:
           path: lampy
       - uses: actions/setup-node@v4
         with:
-          node-version: 21
+          node-version: 22
       - name: Install npm dependencies
         run: npm install
       - name: 'set .env'
@@ -77,7 +77,7 @@ jobs:
           path: lampy
       - uses: actions/setup-node@v4
         with:
-          node-version: 21
+          node-version: 22
       - name: Install npm dependencies
         run: npm install
       - name: 'set .env'
