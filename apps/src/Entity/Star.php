@@ -1,0 +1,161 @@
+<?php
+
+namespace Labstag\Entity;
+
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Labstag\Repository\StarRepository;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+
+#[ORM\Entity(repositoryClass: StarRepository::class)]
+class Star
+{
+    use TimestampableEntity;
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: 'guid', unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
+
+    #[ORM\Column]
+    private ?int $forks = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $title = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $repository = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $url = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $license = null;
+
+    #[ORM\Column]
+    private ?int $stargazers = null;
+
+    #[ORM\Column]
+    private ?int $watchers = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
+    private ?bool $enable = null;
+
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    public function getForks(): ?int
+    {
+        return $this->forks;
+    }
+
+    public function setForks(int $forks): static
+    {
+        $this->forks = $forks;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getRepository(): ?string
+    {
+        return $this->repository;
+    }
+
+    public function setRepository(string $repository): static
+    {
+        $this->repository = $repository;
+
+        return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(string $url): static
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getLicense(): ?string
+    {
+        return $this->license;
+    }
+
+    public function setLicense(?string $license): static
+    {
+        $this->license = $license;
+
+        return $this;
+    }
+
+    public function getStargazers(): ?int
+    {
+        return $this->stargazers;
+    }
+
+    public function setStargazers(int $stargazers): static
+    {
+        $this->stargazers = $stargazers;
+
+        return $this;
+    }
+
+    public function getWatchers(): ?int
+    {
+        return $this->watchers;
+    }
+
+    public function setWatchers(int $watchers): static
+    {
+        $this->watchers = $watchers;
+
+        return $this;
+    }
+
+    public function isEnable(): ?bool
+    {
+        return $this->enable;
+    }
+
+    public function setEnable(bool $enable): static
+    {
+        $this->enable = $enable;
+
+        return $this;
+    }
+}

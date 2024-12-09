@@ -35,7 +35,6 @@ abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
         if (0 == $counter || 0 == $counter % 20) {
             $entityManager->flush();
-            $entityManager->clear();
         }
     }
 
