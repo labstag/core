@@ -1510,16 +1510,16 @@
         },
         {
             "name": "easycorp/easyadmin-bundle",
-            "version": "v4.20.1",
+            "version": "v4.20.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EasyCorp/EasyAdminBundle.git",
-                "reference": "fca5171a0897f96888634bd8e89c462247dc53ba"
+                "reference": "b65b73b0980dabf6b46259e9eeb16931701422eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/fca5171a0897f96888634bd8e89c462247dc53ba",
-                "reference": "fca5171a0897f96888634bd8e89c462247dc53ba",
+                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/b65b73b0980dabf6b46259e9eeb16931701422eb",
+                "reference": "b65b73b0980dabf6b46259e9eeb16931701422eb",
                 "shasum": ""
             },
             "require": {
@@ -1596,7 +1596,7 @@
             ],
             "support": {
                 "issues": "https://github.com/EasyCorp/EasyAdminBundle/issues",
-                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.20.1"
+                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.20.2"
             },
             "funding": [
                 {
@@ -1604,7 +1604,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-12-07T16:14:02+00:00"
+            "time": "2024-12-09T19:02:47+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -5808,8 +5808,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
@@ -6053,8 +6053,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
@@ -6211,8 +6211,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
@@ -6293,8 +6293,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
                 }
             },
             "autoload": {
@@ -7899,16 +7899,16 @@
         },
         {
             "name": "symfony/ux-twig-component",
-            "version": "v2.22.0",
+            "version": "v2.22.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-twig-component.git",
-                "reference": "03177a494399fbdcbb1f5f2aee017ccf8df581d9"
+                "reference": "9b347f6ca2d9e18cee630787f0a6aa453982bf18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-twig-component/zipball/03177a494399fbdcbb1f5f2aee017ccf8df581d9",
-                "reference": "03177a494399fbdcbb1f5f2aee017ccf8df581d9",
+                "url": "https://api.github.com/repos/symfony/ux-twig-component/zipball/9b347f6ca2d9e18cee630787f0a6aa453982bf18",
+                "reference": "9b347f6ca2d9e18cee630787f0a6aa453982bf18",
                 "shasum": ""
             },
             "require": {
@@ -7962,7 +7962,7 @@
                 "twig"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-twig-component/tree/v2.22.0"
+                "source": "https://github.com/symfony/ux-twig-component/tree/v2.22.1"
             },
             "funding": [
                 {
@@ -7978,7 +7978,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-23T06:59:34+00:00"
+            "time": "2024-12-07T18:05:50+00:00"
         },
         {
             "name": "symfony/validator",
@@ -8918,16 +8918,16 @@
         },
         {
             "name": "doctrine/data-fixtures",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/data-fixtures.git",
-                "reference": "eddc4c37beff550a9172a449ab285f4511573dc8"
+                "reference": "2ae45139f148c9272c49a521d82cc50491355a99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/data-fixtures/zipball/eddc4c37beff550a9172a449ab285f4511573dc8",
-                "reference": "eddc4c37beff550a9172a449ab285f4511573dc8",
+                "url": "https://api.github.com/repos/doctrine/data-fixtures/zipball/2ae45139f148c9272c49a521d82cc50491355a99",
+                "reference": "2ae45139f148c9272c49a521d82cc50491355a99",
                 "shasum": ""
             },
             "require": {
@@ -8981,7 +8981,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/data-fixtures/issues",
-                "source": "https://github.com/doctrine/data-fixtures/tree/2.0.0"
+                "source": "https://github.com/doctrine/data-fixtures/tree/2.0.1"
             },
             "funding": [
                 {
@@ -8997,7 +8997,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-06T07:58:24+00:00"
+            "time": "2024-12-10T07:03:23+00:00"
         },
         {
             "name": "doctrine/doctrine-fixtures-bundle",
@@ -12308,7 +12308,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -12316,7 +12316,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "platform-overrides": {
         "php": "8.3"
     },
