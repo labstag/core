@@ -97,7 +97,7 @@ class DashboardController extends AbstractDashboardController
     #[Override]
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home', $this->generateUrl('admin'));
+        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         $tab = [
             'history' => HistoryCategoryCrudController::class,
             'page'    => PageCategoryCrudController::class,
