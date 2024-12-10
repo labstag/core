@@ -12,14 +12,16 @@
 		<div class="title">
 			{{ history.title }}
 		</div>
-		<div class="author">
-            {{ 'Author : %author%'|trans({ '%author%': history.refuser.username }) }}
-		</div>
+        {% if configuration.user_show %}
+            <div class="author">
+                {{ 'Author : %author%'|trans({ '%author%': history.refuser.username }) }}
+            </div>
+        {% endif %}
         <div class="chapters">
             {{ 'Number of chapters : %count%'|trans({ '%count%': chapters|length }) }}
         </div>
 		<div class="date">
-            {{ 'Date of creation : %date%'|trans({ '%date%': history.createdat|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
+            {{ 'Creation date : %date%'|trans({ '%date%': history.createdat|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
 		</div>
 	</div>
 </section>

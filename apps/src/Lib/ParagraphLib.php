@@ -207,6 +207,9 @@ abstract class ParagraphLib extends AbstractController
     protected function setData(Paragraph $paragraph, array $data)
     {
         $this->setShow($paragraph, true);
+
+        $data['configuration'] = $this->siteService->getConfiguration();
+
         $this->data[$paragraph->getId()] = $data;
     }
 

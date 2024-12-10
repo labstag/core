@@ -11,8 +11,13 @@
         {{ chapter.title }}
     </div>
     <div class="date">
-        {{ 'Date of creation : %date%'|trans({ '%date%': chapter.createdat|date('d/m/Y') }) }}
+        {{ 'Creation date : %date%'|trans({ '%date%': chapter.createdat|date('d/m/Y') }) }}
     </div>
+    {% if configuration.user_show %}
+        <div class="author">
+            {{ 'Author : %author%'|trans({ '%author%': chapter.refhistory.refuser.username }) }}
+        </div>
+    {% endif %}
     <div class="resume">
         {{ chapter.resume|raw }}
     </div>

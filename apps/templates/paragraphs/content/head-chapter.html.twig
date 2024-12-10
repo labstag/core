@@ -11,11 +11,13 @@
 		<div class="title">
 			{{ chapter.title }}
 		</div>
-		<div class="author">
-            {{ 'Author : %author%'|trans({ '%author%': chapter.refhistory.refuser.username }) }}
-		</div>
+        {% if configuration.user_show %}
+            <div class="author">
+                {{ 'Author : %author%'|trans({ '%author%': chapter.refhistory.refuser.username }) }}
+            </div>
+        {% endif %}
 		<div class="date">
-            {{ 'Date of creation : %date%'|trans({ '%date%': chapter.createdat|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
+            {{ 'Creation date : %date%'|trans({ '%date%': chapter.createdat|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
 		</div>
 	</div>
 </section>
