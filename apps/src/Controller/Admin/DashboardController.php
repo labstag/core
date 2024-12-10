@@ -36,7 +36,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class DashboardController extends AbstractDashboardController
@@ -50,7 +50,7 @@ class DashboardController extends AbstractDashboardController
     {
     }
 
-    #[Route('/admin/blank', name: 'admin_blank')]
+    #[Route('/admin/{_locale}/blank', name: 'admin_blank')]
     public function blank(): Response
     {
         return $this->render(
@@ -59,7 +59,7 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
-    #[Route('/admin/purge', name: 'admin_cacheclear')]
+    #[Route('/admin/{_locale}/purge', name: 'admin_cacheclear')]
     public function cacheclear(KernelInterface $kernel): Response
     {
         $total = $this->fileService->deletedFileByEntities();
@@ -97,7 +97,7 @@ class DashboardController extends AbstractDashboardController
     #[Override]
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home', $this->generateUrl('admin'));
         $tab = [
             'history' => HistoryCategoryCrudController::class,
             'page'    => PageCategoryCrudController::class,
@@ -105,7 +105,7 @@ class DashboardController extends AbstractDashboardController
         ];
         $categories = [];
         foreach ($tab as $key => $value) {
-            $categories[$key] = MenuItem::linkToCrud('Category', 'fas fa-hastag', Category::class);
+            $categories[$key] = MenuItem::linkToCrud('Category', 'fas fa-hashtag', Category::class);
             $categories[$key]->setController($value);
         }
 
@@ -196,8 +196,8 @@ class DashboardController extends AbstractDashboardController
         return $userMenu;
     }
 
-    #[Route('/admin/restore', name: 'admin_restore')]
-    #[Route('/admin/empty', name: 'admin_empty')]
+    #[Route('/admin/{_locale}/restore', name: 'admin_restore')]
+    #[Route('/admin/{_locale}/empty', name: 'admin_empty')]
     public function emptyOrRestore(AdminContext $adminContext): Response
     {
         $this->entityManager->getFilters()->disable('softdeleteable');
@@ -219,7 +219,7 @@ class DashboardController extends AbstractDashboardController
         return $this->redirect($referer);
     }
 
-    #[Route('/admin', name: 'admin')]
+    #[Route('/admin/{_locale}', name: 'admin', defaults: ['_locale' => 'fr'])]
     #[Override]
     public function index(): Response
     {
@@ -229,7 +229,7 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
-    #[Route('/admin/option', name: 'admin_option')]
+    #[Route('/admin/{_locale}/option', name: 'admin_option')]
     public function option(Request $request): Response
     {
         $data = $this->siteService->getConfiguration();
@@ -254,7 +254,7 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
-    #[Route('/admin/profil', name: 'admin_profil')]
+    #[Route('/admin/{_locale}/profil', name: 'admin_profil')]
     public function profil(): Response
     {
         $generator = $this->container->get(AdminUrlGenerator::class);

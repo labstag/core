@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'labstag:star-add',
-    description: 'Get all star github with gh api --paginate /user/starred --jq  | jq -s > stars.json',
+    description: 'Get all star github with npm run star:get',
 )]
 class StarAddCommand extends Command
 {

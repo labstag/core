@@ -5,9 +5,11 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
 use Labstag\Lib\AbstractCrudControllerLib;
@@ -64,6 +66,14 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         foreach ($fields as $field) {
             yield $field;
         }
+    }
+
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $filters->add(ChoiceFilter::new('type', 'Type')->setChoices($this->paragraphService->getAll(null)));
+
+        return $filters;
     }
 
     #[Override]

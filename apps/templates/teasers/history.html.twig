@@ -11,11 +11,13 @@
     <div class="title">
         {{ history.title }}
     </div>
-    <div class="author">
-        {{ 'Author : %author%'|trans({ '%author%': history.refuser.username }) }}
-    </div>
+    {% if configuration.user_show %}
+        <div class="author">
+            {{ 'Author : %author%'|trans({ '%author%': history.refuser.username }) }}
+        </div>
+    {% endif %}
     <div class="date">
-        {{ 'Date of creation : %date%'|trans({ '%date%': history.createdat|date('d/m/Y') }) }}
+        {{ 'Creation date : %date%'|trans({ '%date%': history.createdat|date('d/m/Y') }) }}
     </div>
     <div class="chapters">
         {{ 'Number of chapters : %count%'|trans({ '%count%': chapters|length }) }}

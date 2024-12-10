@@ -18,7 +18,6 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         protected FileService $fileService
     )
     {
-        // Inject dependencies if needed
     }
 
     public function asset($entity, $field)

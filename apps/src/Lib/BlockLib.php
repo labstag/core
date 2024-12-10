@@ -137,6 +137,9 @@ abstract class BlockLib extends AbstractController
     protected function setData(Block $block, array $data)
     {
         $this->setShow($block, true);
+
+        $data['configuration'] = $this->siteService->getConfiguration();
+
         $this->data[$block->getId()] = $data;
     }
 

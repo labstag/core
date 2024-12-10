@@ -13,13 +13,33 @@ class StarRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Star::class);
     }
 
+    public function findAllLanguage()
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+
+        $query = $queryBuilder->select('s.language, count(s.id) as count');
+        $query->groupBy('s.language');
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function findAllLicense()
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+
+        $query = $queryBuilder->select('s.license, count(s.id) as count');
+        $query->groupBy('s.license');
+
+        return $query->getQuery()->getResult();
+    }
+
     public function getQueryBuilder()
     {
-        $queryBuilder = $this->createQueryBuilder('p');
-        $queryBuilder->where('p.enable = :enable');
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->where('s.enable = :enable');
         $queryBuilder->setParameter('enable', true);
 
-        return $queryBuilder->orderBy('p.title', 'ASC');
+        return $queryBuilder->orderBy('s.title', 'ASC');
     }
 
     public function getQueryPaginator()

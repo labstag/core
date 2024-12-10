@@ -37,7 +37,8 @@ class SitemapService
     {
         $tabs = [];
         foreach ($urls as $url => $data) {
-            if (str_starts_with((string) $url, (string) $parent) && !isset($this->parent[$url])) {
+            $result = str_replace((string) $parent, '', (string) $url);
+            if (str_starts_with((string) $url, (string) $parent) && !isset($this->parent[$url]) && $this->verifFirstChar($result)) {
                 $this->parent[$url] = true;
                 $data['parent']     = $this->setTabsByParent($urls, $url);
                 $tabs[$url]         = $data;
@@ -45,6 +46,13 @@ class SitemapService
         }
 
         return $tabs;
+    }
+
+    protected function verifFirstChar(string $url)
+    {
+        $result = substr($url, 0, 1);
+
+        return $result != '-';
     }
 
     protected function getRepository(string $entity)

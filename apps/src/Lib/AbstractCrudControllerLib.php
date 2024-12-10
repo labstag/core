@@ -442,24 +442,14 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function setActionPublic(Actions $actions): void
     {
-        $action = Action::new('linkPublic', 'Voir la page');
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
-        $action->linkToCrudAction('linkPublic');
-        $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
+        $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
 
+        $action = $this->setLinkPublicAction();
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
 
-        $w3caction = Action::new('linkw3CValidator', 'W3C Validator');
-        $w3caction->setHtmlAttributes(
-            ['target' => '_blank']
-        );
-        $w3caction->linkToCrudAction('linkw3CValidator');
-        $w3caction->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
-
+        $w3caction = $this->setW3cValidatorAction();
         $actions->add(Crud::PAGE_EDIT, $w3caction);
         $actions->add(Crud::PAGE_INDEX, $w3caction);
         $actions->add(Crud::PAGE_DETAIL, $w3caction);
@@ -496,5 +486,29 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         }
 
         return $queryBuilder;
+    }
+
+    private function setLinkPublicAction()
+    {
+        $action = Action::new('linkPublic', 'Voir la page');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToCrudAction('linkPublic');
+        $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
+
+        return $action;
+    }
+
+    private function setW3cValidatorAction()
+    {
+        $action = Action::new('linkw3CValidator', 'W3C Validator');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToCrudAction('linkw3CValidator');
+        $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
+
+        return $action;
     }
 }
