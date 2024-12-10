@@ -48,16 +48,16 @@ class SitemapService
         return $tabs;
     }
 
+    protected function getRepository(string $entity)
+    {
+        return $this->managerRegistry->getRepository($entity);
+    }
+
     protected function verifFirstChar(string $url)
     {
         $result = substr($url, 0, 1);
 
-        return $result != '-';
-    }
-
-    protected function getRepository(string $entity)
-    {
-        return $this->managerRegistry->getRepository($entity);
+        return '-' !== $result;
     }
 
     private function formatData($entity)

@@ -47,15 +47,26 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filterFields = ['countryCode', 'stateName', 'provinceName', 'communityName'];
-        foreach ($filterFields as $field) {
-            $filters->add(ChoiceFilter::new($field)->setChoices($this->getAllData($field)));
+        $filterFields = [
+            'countryCode',
+            'stateName',
+            'provinceName',
+            'communityName',
+        ];
+        foreach ($filterFields as $filterField) {
+            $filters->add(ChoiceFilter::new($filterField)->setChoices($this->getAllData($filterField)));
         }
 
         $filters->add(TextFilter::new('placeName'));
         $filters->add(TextFilter::new('postalCode'));
 
         return $filters;
+    }
+
+    #[Override]
+    public static function getEntityFqcn(): string
+    {
+        return GeoCode::class;
     }
 
     private function getAllData($type)
@@ -70,11 +81,5 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         }
 
         return $data;
-    }
-
-    #[Override]
-    public static function getEntityFqcn(): string
-    {
-        return GeoCode::class;
     }
 }
