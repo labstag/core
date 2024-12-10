@@ -26,13 +26,6 @@ class Tag implements Stringable
     private Collection $chapters;
 
     /**
-     * @var Collection<int, Edito>
-     */
-    #[ORM\ManyToMany(targetEntity: Edito::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
-    #[ORM\JoinTable(name: 'tag_edito')]
-    private Collection $editos;
-
-    /**
      * @var Collection<int, History>
      */
     #[ORM\ManyToMany(targetEntity: History::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
@@ -44,13 +37,6 @@ class Tag implements Stringable
     #[ORM\Column(type: 'guid', unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
-
-    /**
-     * @var Collection<int, Memo>
-     */
-    #[ORM\ManyToMany(targetEntity: Memo::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
-    #[ORM\JoinTable(name: 'tag_memo')]
-    private Collection $memos;
 
     /**
      * @var Collection<int, Page>
@@ -81,8 +67,6 @@ class Tag implements Stringable
         $this->posts     = new ArrayCollection();
         $this->pages     = new ArrayCollection();
         $this->histories = new ArrayCollection();
-        $this->editos    = new ArrayCollection();
-        $this->memos     = new ArrayCollection();
         $this->chapters  = new ArrayCollection();
     }
 
@@ -101,28 +85,10 @@ class Tag implements Stringable
         return $this;
     }
 
-    public function addEdito(Edito $edito): static
-    {
-        if (!$this->editos->contains($edito)) {
-            $this->editos->add($edito);
-        }
-
-        return $this;
-    }
-
     public function addHistory(History $history): static
     {
         if (!$this->histories->contains($history)) {
             $this->histories->add($history);
-        }
-
-        return $this;
-    }
-
-    public function addMemo(Memo $memo): static
-    {
-        if (!$this->memos->contains($memo)) {
-            $this->memos->add($memo);
         }
 
         return $this;
@@ -155,14 +121,6 @@ class Tag implements Stringable
     }
 
     /**
-     * @return Collection<int, Edito>
-     */
-    public function getEditos(): Collection
-    {
-        return $this->editos;
-    }
-
-    /**
      * @return Collection<int, History>
      */
     public function getHistories(): Collection
@@ -173,14 +131,6 @@ class Tag implements Stringable
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    /**
-     * @return Collection<int, Memo>
-     */
-    public function getMemos(): Collection
-    {
-        return $this->memos;
     }
 
     /**
@@ -221,23 +171,9 @@ class Tag implements Stringable
         return $this;
     }
 
-    public function removeEdito(Edito $edito): static
-    {
-        $this->editos->removeElement($edito);
-
-        return $this;
-    }
-
     public function removeHistory(History $history): static
     {
         $this->histories->removeElement($history);
-
-        return $this;
-    }
-
-    public function removeMemo(Memo $memo): static
-    {
-        $this->memos->removeElement($memo);
 
         return $this;
     }
