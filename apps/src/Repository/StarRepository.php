@@ -13,22 +13,12 @@ class StarRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Star::class);
     }
 
-    public function findAllLanguage()
+    public function findAllData($type)
     {
         $queryBuilder = $this->createQueryBuilder('s');
 
-        $query = $queryBuilder->select('s.language, count(s.id) as count');
-        $query->groupBy('s.language');
-
-        return $query->getQuery()->getResult();
-    }
-
-    public function findAllLicense()
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-
-        $query = $queryBuilder->select('s.license, count(s.id) as count');
-        $query->groupBy('s.license');
+        $query = $queryBuilder->select('s.'.$type.', count(s.id) as count');
+        $query->groupBy('s.'.$type);
 
         return $query->getQuery()->getResult();
     }

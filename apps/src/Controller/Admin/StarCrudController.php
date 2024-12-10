@@ -57,8 +57,8 @@ class StarCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(ChoiceFilter::new('license')->setChoices($this->getallLicense()));
-        $filters->add(ChoiceFilter::new('language')->setChoices($this->getallLanguages()));
+        $filters->add(ChoiceFilter::new('license')->setChoices($this->getallData('license')));
+        $filters->add(ChoiceFilter::new('language')->setChoices($this->getallData('language')));
         $filters->add(NumericFilter::new('stargazers'));
         $filters->add(NumericFilter::new('watchers'));
         $filters->add(NumericFilter::new('forks'));
@@ -73,29 +73,15 @@ class StarCrudController extends AbstractCrudControllerLib
         return Star::class;
     }
 
-    private function getallLanguages()
+    private function getAllData($type)
     {
         $repository = $this->getRepository();
 
-        $all = $repository->findAllLanguage();
+        $all = $repository->findAllData($type);
 
         $data = [];
         foreach ($all as $row) {
-            $data[$row['language']] = $row['language'];
-        }
-
-        return $data;
-    }
-
-    private function getallLicense()
-    {
-        $repository = $this->getRepository();
-
-        $all = $repository->findAllLicense();
-
-        $data = [];
-        foreach ($all as $row) {
-            $data[$row['license']] = $row['license'];
+            $data[$row[$type]] = $row[$type];
         }
 
         return $data;

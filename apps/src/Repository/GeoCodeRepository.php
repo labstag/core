@@ -12,4 +12,14 @@ class GeoCodeRepository extends ServiceEntityRepositoryLib
     {
         parent::__construct($managerRegistry, GeoCode::class);
     }
+
+    public function findAllData($type)
+    {
+        $queryBuilder = $this->createQueryBuilder('g');
+
+        $query = $queryBuilder->select('g.'.$type.', count(g.id) as count');
+        $query->groupBy('g.'.$type);
+
+        return $query->getQuery()->getResult();
+    }
 }
