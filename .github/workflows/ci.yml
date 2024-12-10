@@ -108,7 +108,7 @@ jobs:
         run: npm run doctrine:migrate
       - name: 'BDD Schema update'
         run: npm run doctrine:schema:update
-      - name: 'BDD Schema update'
+      - name: 'BDD Schema validate'
         run: npm run doctrine:schema:validate
       - name: 'Run the fixtures'
         run: npm run doctrine:fixtures
