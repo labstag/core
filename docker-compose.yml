@@ -9,7 +9,7 @@ services:
     depends_on:
       - phpfpm
     volumes:
-      - ${PWD}/apps:/var/www/:delegated
+      - ${PWD}/apps:/var/www/:rw
       - ${PWD}/conf/httpd.conf:/usr/local/apache2/conf/httpd.conf
     networks:
       - net
@@ -22,7 +22,7 @@ services:
       - mailhog
       - redis
     volumes:
-      - ${PWD}/apps:/var/www/:delegated
+      - ${PWD}/apps:/var/www/:rw
       - ${PWD}/conf/php.ini-development:/usr/local/etc/php/php.ini
       - ${PWD}/conf/docker-php-ram-limit.ini:/usr/local/etc/php/conf.d/docker-php-ram-limit.ini
     networks:
