@@ -42,7 +42,7 @@ class ConfigFixtures extends Fixture
             'user_link'    => [
                 'type'  => 'boolean',
                 'value' => false,
-            ]
+            ],
         ];
     }
 }
