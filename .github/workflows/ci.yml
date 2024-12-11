@@ -105,9 +105,9 @@ jobs:
       - name: "Sleep 30"
         run: sleep 30
       - name: 'CHOWN'
-        run: sudo chown -R $USER:$USER ./apps
+        run: sudo chown -R $USER:$USER ./apps/public
       - name: 'CHMOD'
-        run: sudo chmod -R 775 ./apps
+        run: sudo chmod -R 775 ./apps/public
       - name: 'Symfony about'
         run: npm run symfony:about
       - name: Add assets
