@@ -6,7 +6,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "beberlei/doctrineextensions": "1.5.*",
@@ -40,8 +40,8 @@
         "symfony/webpack-encore-bundle": "2.2.*",
         "symfony/workflow": "7.1.*",
         "symfony/yaml": "7.1.*",
-        "twig/extra-bundle": "3.16.*",
-        "twig/intl-extra": "3.16.*",
+        "twig/extra-bundle": "3.17.*",
+        "twig/intl-extra": "3.17.*",
         "vich/uploader-bundle": "2.4.*"
     },
     "config": {
@@ -51,7 +51,7 @@
             "*": "dist"
         },
         "platform": {
-            "php": "8.3"
+            "php": "8.4"
         },
         "sort-packages": true,
         "allow-plugins": {
