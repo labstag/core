@@ -11,7 +11,7 @@ trait WorkflowTrait
 {
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $state = [];
+    private ?array $state = ['start'];
 
     #[Gedmo\Timestampable(on: 'change', field: ['state'])]
     #[ORM\Column(name: 'state_changed', type: 'datetime', nullable: true)]

@@ -13,22 +13,22 @@ framework:
       places:
       - start
       - draft
-      - relecture
-      - publie
-      - rejete
+      - rereading
+      - published
+      - rejected
       transitions:
-        relire:
+        reread:
           from: draft
-          to: relecture
-        corriger:
-          from: relecture
+          to: rereading
+        correct:
+          from: rereading
           to: draft
-        publier:
-          from: relecture
-          to: publie
-        rejeter:
-          from: relecture
-          to: rejete
+        publish:
+          from: rereading
+          to: published
+        reject:
+          from: rereading
+          to: rejected
     edito:
       type: 'workflow'
       audit_trail:
@@ -42,22 +42,22 @@ framework:
       places:
       - start
       - draft
-      - relecture
-      - publie
-      - rejete
+      - rereading
+      - published
+      - rejected
       transitions:
-        relire:
+        reread:
           from: draft
-          to: relecture
-        corriger:
-          from: relecture
+          to: rereading
+        fix:
+          from: rereading
           to: draft
-        publier:
-          from: relecture
-          to: publie
-        rejeter:
-          from: relecture
-          to: rejete
+        publish:
+          from: rereading
+          to: published
+        reject:
+          from: rereading
+          to: rejected
     history:
       type: 'workflow'
       audit_trail:
@@ -71,22 +71,22 @@ framework:
       places:
       - start
       - draft
-      - relecture
-      - publie
-      - rejete
+      - rereading
+      - published
+      - rejected
       transitions:
-        relire:
+        reread:
           from: draft
-          to: relecture
-        corriger:
-          from: relecture
+          to: rereading
+        fix:
+          from: rereading
           to: draft
-        publier:
-          from: relecture
-          to: publie
-        rejeter:
-          from: relecture
-          to: rejete
+        publish:
+          from: rereading
+          to: published
+        reject:
+          from: rereading
+          to: rejected
     memo:
       type: 'workflow'
       audit_trail:
@@ -100,22 +100,22 @@ framework:
       places:
       - start
       - draft
-      - relecture
-      - publie
-      - rejete
+      - rereading
+      - published
+      - rejected
       transitions:
-        relire:
+        reread:
           from: draft
-          to: relecture
-        corriger:
-          from: relecture
+          to: rereading
+        fix:
+          from: rereading
           to: draft
-        publier:
-          from: relecture
-          to: publie
-        rejeter:
-          from: relecture
-          to: rejete
+        publish:
+          from: rereading
+          to: published
+        reject:
+          from: rereading
+          to: rejected
     post:
       type: 'workflow'
       audit_trail:
@@ -129,22 +129,22 @@ framework:
       places:
       - start
       - draft
-      - relecture
-      - publie
-      - rejete
+      - rereading
+      - published
+      - rejected
       transitions:
-        relire:
+        reread:
           from: draft
-          to: relecture
-        corriger:
-          from: relecture
+          to: rereading
+        fix:
+          from: rereading
           to: draft
-        publier:
-          from: relecture
-          to: publie
-        rejeter:
-          from: relecture
-          to: rejete
+        publish:
+          from: rereading
+          to: published
+        reject:
+          from: rereading
+          to: rejected
     user:
       type: 'workflow'
       audit_trail:
@@ -157,26 +157,26 @@ framework:
       initial_marking: start
       places:
       - start
-      - nonverifier
-      - valider
+      - unverifed
+      - valid
       - lostpassword
       - disable
       transitions:
         submit:
           from: start
-          to: nonverifier
-        validation:
-          from: nonverifier
-          to: valider
+          to: unverifed
+        approval:
+          from: unverifed
+          to: valid
         passwordlost:
-          from: valider
+          from: valid
           to: lostpassword
         changepassword:
           from: lostpassword
-          to: valider
-        desactiver:
-          from: valider
+          to: valid
+        deactivate:
+          from: valid
           to: disable
-        activer:
+        activate:
           from: disable
-          to: valider
+          to: valid
