@@ -35,6 +35,14 @@ class ConfigFixtures extends Fixture
                 'type'  => 'string',
                 'value' => 'labstag',
             ],
+            'user_show' => [
+                'type' => 'boolean',
+                'value' => false,
+            ],
+            'user_link' => [
+                'type' => 'boolean',
+                'value' => false,
+            ]
         ];
     }
 }
