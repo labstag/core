@@ -130,7 +130,7 @@
     "postcss-discard-comments": "7.0.*",
     "postcss-loader": "8.1.*",
     "regenerator-runtime": "0.14.*",
-    "sass": "1.64.*",
+    "sass": "1.83.*",
     "sass-loader": "16.0.*",
     "stylelint": "16.9.*",
     "stylelint-config-standard": "36.0.*",
