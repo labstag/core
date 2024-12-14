@@ -11,6 +11,7 @@ use Labstag\Entity\Meta;
 use Labstag\Field\MetaParentField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class MetaCrudController extends AbstractCrudControllerLib
 {
@@ -28,11 +29,11 @@ class MetaCrudController extends AbstractCrudControllerLib
     {
         unset($pageName);
         yield $this->addFieldID();
-        yield TextField::new('title');
-        yield TextField::new('keywords');
-        yield TextField::new('description');
-        yield DateTimeField::new('createdAt')->hideOnForm();
-        yield DateTimeField::new('updatedAt')->hideOnForm();
+        yield $this->addFieldTitle();
+        yield TextField::new('keywords', new TranslatableMessage('Keywords'));
+        yield TextField::new('description', new TranslatableMessage('Description'));
+        yield $this->addCreatedAtField();
+        yield $this->addUpdatedAtField();
         yield MetaParentField::new('parent', 'Parent');
     }
 

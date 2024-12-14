@@ -14,6 +14,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ParagraphCrudController extends AbstractCrudControllerLib
 {
@@ -49,19 +50,19 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addFieldID();
-        $choiceField = ChoiceField::new('fond', 'Fond');
+        $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'));
         $choiceField->setChoices($this->paragraphService->getFonds());
         yield $choiceField;
         $allTypes  = array_flip($this->paragraphService->getAll(null));
-        $textField = TextField::new('type')->formatValue(
+        $textField = TextField::new('type', new TranslatableMessage('Type'))->formatValue(
             static fn ($value) => $allTypes[$value] ?? null
         );
         $textField->setDisabled(true);
 
         yield $textField;
-        yield ParagraphParentField::new('parent', 'Parent');
-        yield DateTimeField::new('createdAt')->hideOnForm();
-        yield DateTimeField::new('updatedAt')->hideOnForm();
+        yield ParagraphParentField::new('parent', new TranslatableMessage('Parent'));
+        yield $this->addCreatedAtField();
+        yield $this->addUpdatedAtField();
         $fields = $this->paragraphService->getFields($currentEntity, $pageName);
         foreach ($fields as $field) {
             yield $field;
@@ -71,7 +72,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(ChoiceFilter::new('type', 'Type')->setChoices($this->paragraphService->getAll(null)));
+        $filters->add(ChoiceFilter::new('type', new TranslatableMessage('Type'))->setChoices($this->paragraphService->getAll(null)));
 
         return $filters;
     }

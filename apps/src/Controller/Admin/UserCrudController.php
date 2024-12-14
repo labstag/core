@@ -20,6 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class UserCrudController extends AbstractCrudControllerLib
 {
@@ -35,24 +36,24 @@ class UserCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('username');
-        yield EmailField::new('email');
+        yield TextField::new('username', new TranslatableMessage('Username'));
+        yield EmailField::new('email', new TranslatableMessage('Email'));
         yield $this->addFieldBoolean();
-        $choiceField = ChoiceField::new('roles');
+        $choiceField = ChoiceField::new('roles', new TranslatableMessage('Roles'));
         $choiceField->allowMultipleChoices();
         $choiceField->setChoices($this->userService->getRoles());
         yield $choiceField;
-        $textField = TextField::new('password');
+        $textField = TextField::new('password', new TranslatableMessage('Password'));
         $textField->setFormType(RepeatedType::class);
         $textField->setFormTypeOptions(
             [
                 'type'           => PasswordType::class,
                 'first_options'  => [
-                    'label' => 'Mot de passe',
+                    'label' => new TranslatableMessage('Password'),
                     'attr'  => ['autocomplete' => 'new-password'],
                 ],
                 'second_options' => [
-                    'label' => 'Répéter le mot de passe',
+                    'label' => new TranslatableMessage('Repeat Password'),
                     'attr'  => ['autocomplete' => 'new-password'],
                 ],
                 'mapped'         => false,
@@ -61,23 +62,23 @@ class UserCrudController extends AbstractCrudControllerLib
         $textField->setRequired(Crud::PAGE_NEW === $pageName);
         $textField->onlyOnForms();
         yield $textField;
-        $languageField = ChoiceField::new('language');
+        $languageField = ChoiceField::new('language', new TranslatableMessage('Language'));
         $languageField->setChoices($this->userService->getLanguagesForChoices());
         yield $languageField;
         yield $this->addFieldImageUpload('avatar', $pageName);
-        yield CollectionField::new('histories')->onlyOnDetail();
-        yield CollectionField::new('editos')->onlyOnDetail()->formatValue(
+        yield CollectionField::new('histories', new TranslatableMessage('Histories'))->onlyOnDetail();
+        yield CollectionField::new('editos', new TranslatableMessage('Editos'))->onlyOnDetail()->formatValue(
             fn ($entity) => count($entity)
         );
 
         $tab = [
-            'editos',
-            'memos',
-            'pages',
-            'posts',
+            'editos' => new TranslatableMessage('editos'),
+            'memos'  => new TranslatableMessage('memos'),
+            'pages'  => new TranslatableMessage('pages'),
+            'posts'  => new TranslatableMessage('posts'),
         ];
-        foreach ($tab as $key) {
-            $collectionField = CollectionField::new($key);
+        foreach ($tab as $key => $label) {
+            $collectionField = CollectionField::new($key, $label);
             $collectionField->onlyOnDetail();
             $collectionField->formatValue(fn ($value) => count($value));
             yield $collectionField;
@@ -87,7 +88,7 @@ class UserCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(BooleanFilter::new('enable'));
+        $this->addFilterEnable($filters);
 
         return $filters;
     }

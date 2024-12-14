@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 use Labstag\Entity\Star;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class StarCrudController extends AbstractCrudControllerLib
 {
@@ -42,27 +43,27 @@ class StarCrudController extends AbstractCrudControllerLib
     {
         unset($pageName);
         yield $this->addFieldID();
-        yield TextField::new('title');
-        yield TextField::new('language');
-        yield TextField::new('repository');
-        yield UrlField::new('url');
-        yield TextEditorField::new('description')->hideOnIndex();
-        yield TextField::new('license');
-        yield IntegerField::new('stargazers');
-        yield IntegerField::new('watchers');
-        yield IntegerField::new('forks');
+        yield $this->addFieldTitle();
+        yield TextField::new('language', new TranslatableMessage('Language'));
+        yield TextField::new('repository', new TranslatableMessage('Repository'));
+        yield UrlField::new('url', new TranslatableMessage('Url'));
+        yield TextEditorField::new('description', new TranslatableMessage('Description'))->hideOnIndex();
+        yield TextField::new('license', new TranslatableMessage('License'));
+        yield IntegerField::new('stargazers', new TranslatableMessage('Stargazers'));
+        yield IntegerField::new('watchers', new TranslatableMessage('Watchers'));
+        yield IntegerField::new('forks', new TranslatableMessage('Forks'));
         yield $this->addFieldBoolean();
     }
 
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(ChoiceFilter::new('license')->setChoices($this->getallData('license')));
-        $filters->add(ChoiceFilter::new('language')->setChoices($this->getallData('language')));
-        $filters->add(NumericFilter::new('stargazers'));
-        $filters->add(NumericFilter::new('watchers'));
-        $filters->add(NumericFilter::new('forks'));
-        $filters->add(BooleanFilter::new('enable'));
+        $filters->add(ChoiceFilter::new('license', new TranslatableMessage('License'))->setChoices($this->getallData('license')));
+        $filters->add(ChoiceFilter::new('language', new TranslatableMessage('Language'))->setChoices($this->getallData('language')));
+        $filters->add(NumericFilter::new('stargazers', new TranslatableMessage('stargazers')));
+        $filters->add(NumericFilter::new('watchers', new TranslatableMessage('watchers')));
+        $filters->add(NumericFilter::new('forks', new TranslatableMessage('forks')));
+        $this->addFilterEnable($filters);
 
         return $filters;
     }

@@ -13,6 +13,7 @@ use Labstag\Entity\Memo;
 use Labstag\Form\Paragraphs\MemoType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class MemoCrudController extends AbstractCrudControllerLib
 {
@@ -28,12 +29,12 @@ class MemoCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield FormField::addTab('Principal');
+        yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield $this->addFieldBoolean();
-        yield TextField::new('title');
-        yield DateTimeField::new('createdAt')->hideOnForm();
-        yield DateTimeField::new('updatedAt')->hideOnForm();
+        yield $this->addFieldTitle();
+        yield $this->addCreatedAtField();
+        yield $this->addUpdatedAtField();
         yield $this->addFieldImageUpload('img', $pageName);
         $fields = array_merge(
             $this->addFieldParagraphs($pageName, MemoType::class),
@@ -47,8 +48,8 @@ class MemoCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(EntityFilter::new('refuser'));
-        $filters->add(BooleanFilter::new('enable'));
+        $this->addFilterRefUser($filters);
+        $this->addFilterEnable($filters);
 
         return $filters;
     }

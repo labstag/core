@@ -26,6 +26,7 @@ use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class BlockCrudController extends AbstractCrudControllerLib
 {
@@ -45,7 +46,7 @@ class BlockCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $action = Action::new('positionBlock', 'Changer la position', 'fas fa-arrows-alt');
+        $action = Action::new('positionBlock', new TranslatableMessage('Change Position'), 'fas fa-arrows-alt');
         $action->displayAsLink();
         $action->linkToCrudAction('positionBlock');
         $action->createAsGlobalAction();
@@ -59,11 +60,11 @@ class BlockCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        yield FormField::addTab('Principal');
+        yield $this->addTabPrincipal();
         yield $this->addFieldID();
-        yield TextField::new('title');
-        yield ChoiceField::new('region')->setChoices($this->blockService->getRegions());
-        $numberField = NumberField::new('position')->hideOnForm();
+        yield $this->addFieldTitle();
+        yield ChoiceField::new('region', new TranslatableMessage('Region'))->setChoices($this->blockService->getRegions());
+        $numberField = NumberField::new('position', new TranslatableMessage('Position'))->hideOnForm();
         yield $numberField;
         $allTypes = array_flip($this->blockService->getAll(null));
         yield $this->getChoiceType($pageName, $allTypes);
@@ -76,24 +77,24 @@ class BlockCrudController extends AbstractCrudControllerLib
             yield $field;
         }
 
-        yield FormField::addTab('Config');
-        $choiceField = ChoiceField::new('roles');
+        yield FormField::addTab(new TranslatableMessage('Config'));
+        $choiceField = ChoiceField::new('roles', new TranslatableMessage('Roles'));
         $choiceField->hideOnIndex();
         $choiceField->allowMultipleChoices();
         $choiceField->setChoices($this->userService->getRoles());
         yield $choiceField;
-        $textareaField = TextareaField::new('pages');
-        $textareaField->setHelp('Séparer les pages par des virgules');
+        $textareaField = TextareaField::new('pages', new TranslatableMessage('Pages'));
+        $textareaField->setHelp(new TranslatableMessage('Separate pages with commas'));
         $textareaField->hideOnIndex();
         yield $textareaField;
-        $requestPathField = ChoiceField::new('request_path');
+        $requestPathField = ChoiceField::new('request_path', new TranslatableMessage('Request Path'));
         $requestPathField->renderExpanded();
         $requestPathField->hideOnIndex();
         $requestPathField->setRequired(true);
         $requestPathField->setChoices(
             [
-                'Afficher pour les pages listées' => '0',
-                'Masquer pour les pages listées'  => '1',
+                new TranslatableMessage('Show for listed pages')          => '0',
+                new TranslatableMessage('Masquer pour les pages listées') => '1',
             ]
         );
         yield $requestPathField;
@@ -102,7 +103,7 @@ class BlockCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(BooleanFilter::new('enable'));
+        $this->addFilterEnable($filters);
 
         return $filters;
     }
@@ -186,13 +187,13 @@ class BlockCrudController extends AbstractCrudControllerLib
     private function getChoiceType($pageName, $allTypes)
     {
         if ('new' === $pageName) {
-            $field = ChoiceField::new('type');
+            $field = ChoiceField::new('type', new TranslatableMessage('Type'));
             $field->setChoices(array_flip($allTypes));
 
             return $field;
         }
 
-        $field = TextField::new('type');
+        $field = TextField::new('type', new TranslatableMessage('Type'));
         $field->formatValue(
             static fn ($value) => $allTypes[$value] ?? null
         );
