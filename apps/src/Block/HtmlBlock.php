@@ -6,6 +6,7 @@ use Labstag\Entity\Block;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\BlockLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class HtmlBlock extends BlockLib
 {
@@ -38,7 +39,7 @@ class HtmlBlock extends BlockLib
     public function getFields(Block $block, $pageName): iterable
     {
         unset($block, $pageName);
-        $wysiwygField = WysiwygField::new('content', 'Texte');
+        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Content'));
 
         yield $wysiwygField;
     }

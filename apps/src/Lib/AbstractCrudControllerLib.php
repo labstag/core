@@ -15,11 +15,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphsField;
@@ -35,6 +38,7 @@ use Override;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 abstract class AbstractCrudControllerLib extends AbstractCrudController
@@ -52,10 +56,40 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     {
     }
 
+    public function addFieldTitle()
+    {
+        return TextField::new('title', new TranslatableMessage('Title'));
+    }
+
+    public function addFilterRefUser($filters)
+    {
+        $filters->add(EntityFilter::new('refuser', new TranslatableMessage('Refuser')));
+    }
+
+    public function addFilterEnable($filters)
+    {
+        $filters->add(BooleanFilter::new('enable', new TranslatableMessage('Enable')));
+    }
+
+    public function addCreatedAtField()
+    {
+        return DateTimeField::new('createdAt')->hideOnForm();
+    }
+
+    public function addUpdatedAtField()
+    {
+        return DateTimeField::new('updatedAt')->hideOnForm();
+    }
+
+    public function addTabPrincipal()
+    {
+        return FormField::addTab(new TranslatableMessage('Principal'));
+    }
+
     public function addFieldImageUpload(string $type, string $pageName)
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $imageField = TextField::new($type.'File');
+            $imageField = TextField::new($type.'File', new TranslatableMessage('Image'));
             $imageField->setFormType(VichImageType::class);
 
             return $imageField;
@@ -212,7 +246,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     {
         $request      = $this->container->get('request_stack')->getCurrentRequest();
         $action       = $request->query->get('action', null);
-        $booleanField = BooleanField::new('enable');
+        $booleanField = BooleanField::new('enable', new TranslatableMessage('Enable'));
         $booleanField->renderAsSwitch(empty($action));
 
         return $booleanField;
@@ -220,7 +254,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFieldCategories(string $type)
     {
-        $associationField = AssociationField::new('categories')->autocomplete();
+        $associationField = AssociationField::new('categories', new TranslatableMessage('Categories'))->autocomplete();
         $associationField->setTemplatePath('admin/field/categories.html.twig');
         $associationField->setFormTypeOption('by_reference', false);
         $associationField->setQueryBuilder(
@@ -236,7 +270,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFieldID()
     {
-        $idField = IdField::new('id');
+        $idField = IdField::new('id', new TranslatableMessage('ID'));
         $idField->onlyOnDetail();
 
         return $idField;
@@ -245,10 +279,10 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     protected function addFieldMetas(): array
     {
         return [
-            FormField::addTab('SEO'),
-            TextField::new('meta.title')->hideOnIndex(),
-            TextField::new('meta.keywords')->hideOnIndex(),
-            TextField::new('meta.description')->hideOnIndex(),
+            FormField::addTab(new TranslatableMessage('SEO')),
+            TextField::new('meta.title', new TranslatableMessage('Title'))->hideOnIndex(),
+            TextField::new('meta.keywords', new TranslatableMessage('Keywords'))->hideOnIndex(),
+            TextField::new('meta.description', new TranslatableMessage('Description'))->hideOnIndex(),
         ];
     }
 
@@ -263,15 +297,15 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         }
 
         if ('edit' !== $pageName) {
-            $fields[] = ParagraphsField::new('paragraphs');
+            $fields[] = ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'));
 
             return $fields;
         }
 
-        $fields[] = FormField::addTab('Paragraphs')->hideWhenCreating();
-        $fields[] = ParagraphsField::new('paragraphs')->hideWhenCreating();
+        $fields[] = FormField::addTab(new TranslatableMessage('Paragraphs'))->hideWhenCreating();
+        $fields[] = ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'))->hideWhenCreating();
 
-        // $collectionField = CollectionField::new('paragraphs');
+        // $collectionField = CollectionField::new('paragraphs', new TranslatableMessage('Paragraphs'));
         // $collectionField->setEntryType($form);
         // $collectionField->setDefaultColumns('col-md-12 col-xxl-12');
         // $collectionField->setFormTypeOption(
@@ -297,8 +331,8 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             return [];
         }
 
-        $data[]           = FormField::addTab('refuser');
-        $associationField = AssociationField::new('refuser');
+        $data[]           = FormField::addTab(new TranslatableMessage('refuser'));
+        $associationField = AssociationField::new('refuser', new TranslatableMessage('Refuser'));
         $associationField->autocomplete();
         $associationField->setSortProperty('username');
 
@@ -315,7 +349,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFieldSlug()
     {
-        $slugField = SlugField::new('slug');
+        $slugField = SlugField::new('slug', new TranslatableMessage('Slug'));
         $slugField->hideOnIndex();
         $slugField->setFormTypeOptions(
             ['required' => false]
@@ -330,7 +364,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFieldTags(string $type)
     {
-        $associationField = AssociationField::new('tags')->autocomplete();
+        $associationField = AssociationField::new('tags', new TranslatableMessage('Tags'))->autocomplete();
         $associationField->setTemplatePath('admin/field/tags.html.twig');
         $associationField->setFormTypeOption('by_reference', false);
         $associationField->setQueryBuilder(
@@ -375,7 +409,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             return;
         }
 
-        $action    = Action::new('trash', 'Trash', 'fa fa-trash');
+        $action    = Action::new('trash', new TranslatableMessage('Trash'), 'fa fa-trash');
         $generator = $this->container->get(AdminUrlGenerator::class);
         $generator->setAction(Action::INDEX);
         $generator->setController(static::class);
@@ -394,13 +428,13 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             return;
         }
 
-        $action = Action::new('list', 'Liste', 'fa fa-list');
+        $action = Action::new('list', new TranslatableMessage('List'), 'fa fa-list');
         $action->linkToCrudAction(Crud::PAGE_INDEX);
         $action->createAsGlobalAction();
 
         $actions->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('empty', 'Vider', 'fa fa-trash');
+        $action = Action::new('empty', new TranslatableMessage('Empty'), 'fa fa-trash');
         $action->linkToRoute(
             'admin_empty',
             [
@@ -413,7 +447,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
         $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
 
-        $action = Action::new('restore', 'Restore');
+        $action = Action::new('restore', new TranslatableMessage('Restore'));
         $action->linkToRoute(
             'admin_restore',
             static fn ($entity) => [
@@ -490,7 +524,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     private function setLinkPublicAction()
     {
-        $action = Action::new('linkPublic', 'Voir la page');
+        $action = Action::new('linkPublic', new TranslatableMessage('View Page'));
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
@@ -502,7 +536,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     private function setW3cValidatorAction()
     {
-        $action = Action::new('linkw3CValidator', 'W3C Validator');
+        $action = Action::new('linkw3CValidator', new TranslatableMessage('W3C Validator'));
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );

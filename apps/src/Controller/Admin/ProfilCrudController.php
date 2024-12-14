@@ -13,6 +13,7 @@ use Labstag\Entity\User;
 use Override;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ProfilCrudController extends UserCrudController
 {
@@ -38,19 +39,19 @@ class ProfilCrudController extends UserCrudController
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('username');
-        yield EmailField::new('email');
-        $textField = TextField::new('password');
+        yield TextField::new('username', new TranslatableMessage('Username'));
+        yield EmailField::new('email', new TranslatableMessage('Email'));
+        $textField = TextField::new('password', new TranslatableMessage('Password'));
         $textField->setFormType(RepeatedType::class);
         $textField->setFormTypeOptions(
             [
                 'type'           => PasswordType::class,
                 'first_options'  => [
-                    'label' => 'Mot de passe',
+                    'label' => new TranslatableMessage('Password'),
                     'attr'  => ['autocomplete' => 'new-password'],
                 ],
                 'second_options' => [
-                    'label' => 'Répéter le mot de passe',
+                    'label' => new TranslatableMessage('Repeat Password'),
                     'attr'  => ['autocomplete' => 'new-password'],
                 ],
                 'mapped'         => false,
@@ -59,23 +60,23 @@ class ProfilCrudController extends UserCrudController
         $textField->setRequired(Crud::PAGE_NEW === $pageName);
         $textField->onlyOnForms();
         yield $textField;
-        $choiceField = ChoiceField::new('language');
+        $choiceField = ChoiceField::new('language', new TranslatableMessage('Language'));
         $choiceField->setChoices($this->userService->getLanguagesForChoices());
         yield $choiceField;
         yield $this->addFieldImageUpload('avatar', $pageName);
-        yield CollectionField::new('histories')->onlyOnDetail();
-        yield CollectionField::new('editos')->onlyOnDetail()->formatValue(
+        yield CollectionField::new('histories', new TranslatableMessage('Histories'))->onlyOnDetail();
+        yield CollectionField::new('editos', new TranslatableMessage('Editos'))->onlyOnDetail()->formatValue(
             fn ($entity) => count($entity)
         );
 
         $tab = [
-            'editos',
-            'memos',
-            'pages',
-            'posts',
+            'editos' => new TranslatableMessage('Editos'),
+            'memos'  => new TranslatableMessage('memos'),
+            'pages'  => new TranslatableMessage('pages'),
+            'posts'  => new TranslatableMessage('posts'),
         ];
-        foreach ($tab as $key) {
-            $collectionField = CollectionField::new($key);
+        foreach ($tab as $key => $label) {
+            $collectionField = CollectionField::new($key, $label);
             $collectionField->onlyOnDetail();
             $collectionField->formatValue(fn ($value) => count($value));
             yield $collectionField;

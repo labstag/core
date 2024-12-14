@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Tag;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 abstract class TagCrudController extends AbstractCrudControllerLib
 {
@@ -26,7 +27,7 @@ abstract class TagCrudController extends AbstractCrudControllerLib
         return [
             $this->addFieldID(),
             $this->addFieldSlug(),
-            TextField::new('title'),
+            $this->addFieldTitle(),
         ];
     }
 

@@ -16,6 +16,7 @@ use Labstag\Entity\Page;
 use Labstag\Form\Paragraphs\PageType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class PageCrudController extends AbstractCrudControllerLib
 {
@@ -33,7 +34,7 @@ class PageCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        yield FormField::addTab('Principal');
+        yield $this->addTabPrincipal();
         yield $this->addFieldID();
         if ($currentEntity instanceof Page && 'home' != $currentEntity->getType()) {
             yield $this->addFieldSlug();
@@ -45,10 +46,10 @@ class PageCrudController extends AbstractCrudControllerLib
             yield $fieldChoice;
         }
 
-        yield TextField::new('title');
-        yield AssociationField::new('page')->autocomplete();
-        yield DateTimeField::new('createdAt')->hideOnForm();
-        yield DateTimeField::new('updatedAt')->hideOnForm();
+        yield $this->addFieldTitle();
+        yield AssociationField::new('page', new TranslatableMessage('Page'))->autocomplete();
+        yield $this->addCreatedAtField();
+        yield $this->addUpdatedAtField();
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('page');
         yield $this->addFieldCategories('page');
@@ -65,9 +66,9 @@ class PageCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(EntityFilter::new('refuser'));
-        $filters->add(BooleanFilter::new('enable'));
-        $filters->add(EntityFilter::new('page'));
+        $this->addFilterRefUser($filters);
+        $this->addFilterEnable($filters);
+        $filters->add(EntityFilter::new('page', new TranslatableMessage('Page')));
 
         return $filters;
     }
@@ -102,7 +103,7 @@ class PageCrudController extends AbstractCrudControllerLib
             return null;
         }
 
-        $choiceField = ChoiceField::new('type');
+        $choiceField = ChoiceField::new('type', new TranslatableMessage('Type'));
         $choiceField->setChoices($this->siteService->getTypesPages());
         $choiceField->setRequired(true);
 

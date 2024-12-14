@@ -20,6 +20,7 @@ use Labstag\Entity\Meta;
 use Labstag\Form\Paragraphs\HistoryType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class HistoryCrudController extends AbstractCrudControllerLib
 {
@@ -37,13 +38,13 @@ class HistoryCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield FormField::addTab('Principal');
+        yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
-        yield TextField::new('title');
-        yield DateTimeField::new('createdAt')->hideOnForm();
-        yield DateTimeField::new('updatedAt')->hideOnForm();
+        yield $this->addFieldTitle();
+        yield $this->addCreatedAtField();
+        yield $this->addUpdatedAtField();
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('history');
         yield $this->addFieldCategories('history');
@@ -51,7 +52,7 @@ class HistoryCrudController extends AbstractCrudControllerLib
         $collectionField->onlyOnIndex();
         $collectionField->formatValue(fn ($value) => count($value));
         yield $collectionField;
-        $collectionField = CollectionField::new('chapters');
+        $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
         $collectionField->setTemplatePath('admin/field/chapters.html.twig');
         $collectionField->onlyOnDetail();
         yield $collectionField;
@@ -68,8 +69,8 @@ class HistoryCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(EntityFilter::new('refuser'));
-        $filters->add(BooleanFilter::new('enable'));
+        $this->addFilterRefUser($filters);
+        $this->addFilterEnable($filters);
 
         return $filters;
     }
@@ -130,7 +131,7 @@ class HistoryCrudController extends AbstractCrudControllerLib
 
     private function setActionMoveChapter(Actions $actions): void
     {
-        $action = Action::new('moveChapter', 'Déplacer un chapitre');
+        $action = Action::new('moveChapter', new TranslatableMessage('Move a chapter'));
         $action->linkToCrudAction('moveChapter');
         $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
 

@@ -16,6 +16,7 @@ use Labstag\Entity\Meta;
 use Labstag\Form\Paragraphs\ChapterType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ChapterCrudController extends AbstractCrudControllerLib
 {
@@ -32,13 +33,13 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield FormField::addTab('Principal');
+        yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
-        yield TextField::new('title');
-        yield DateTimeField::new('createdAt')->hideOnForm();
-        yield DateTimeField::new('updatedAt')->hideOnForm();
+        yield $this->addFieldTitle();
+        yield $this->addCreatedAtField();
+        yield $this->addUpdatedAtField();
         $associationField = AssociationField::new('refhistory')->autocomplete();
         $user             = $this->getUser();
         $roles            = $user->getRoles();
@@ -70,8 +71,8 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(BooleanFilter::new('enable'));
-        $filters->add(EntityFilter::new('refhistory'));
+        $this->addFilterEnable($filters);
+        $filters->add(EntityFilter::new('refhistory', new TranslatableMessage('History')));
 
         return $filters;
     }

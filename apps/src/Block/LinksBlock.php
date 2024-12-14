@@ -7,6 +7,7 @@ use Labstag\Entity\Block;
 use Labstag\Form\LinkType;
 use Labstag\Lib\BlockLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class LinksBlock extends BlockLib
 {
@@ -48,7 +49,7 @@ class LinksBlock extends BlockLib
     {
         unset($block, $pageName);
 
-        $collectionField = CollectionField::new('links');
+        $collectionField = CollectionField::new('links', new TranslatableMessage('Links'));
         $collectionField->allowAdd(true);
         $collectionField->allowDelete(true);
         $collectionField->setEntryType(LinkType::class);

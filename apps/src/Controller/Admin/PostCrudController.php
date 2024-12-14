@@ -14,6 +14,7 @@ use Labstag\Entity\Post;
 use Labstag\Form\Paragraphs\PostType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class PostCrudController extends AbstractCrudControllerLib
 {
@@ -30,13 +31,13 @@ class PostCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield FormField::addTab('Principal');
+        yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
-        yield TextField::new('title');
-        yield DateTimeField::new('createdAt')->hideOnForm();
-        yield DateTimeField::new('updatedAt')->hideOnForm();
+        yield $this->addFieldTitle();
+        yield $this->addCreatedAtField();
+        yield $this->addUpdatedAtField();
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('post');
         yield $this->addFieldCategories('post');
@@ -53,8 +54,8 @@ class PostCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(EntityFilter::new('refuser'));
-        $filters->add(BooleanFilter::new('enable'));
+        $this->addFilterRefUser($filters);
+        $this->addFilterEnable($filters);
 
         return $filters;
     }
