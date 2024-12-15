@@ -26,6 +26,7 @@ use Labstag\Entity\Star;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Form\Admin\OptionType;
+use Labstag\Repository\ConfigurationRepository;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
@@ -86,7 +87,7 @@ class DashboardController extends AbstractDashboardController
     {
         $data      = $this->siteService->getConfiguration();
         $dashboard = Dashboard::new();
-        $dashboard->setTitle($data['site_name']);
+        $dashboard->setTitle($data->getSiteName());
         $dashboard->setTranslationDomain('admin');
         $dashboard->renderContentMaximized();
         $dashboard->setLocales($this->userService->getLanguages());
@@ -165,7 +166,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Géocode', 'fas fa-map-signs', GeoCode::class);
         yield MenuItem::linkToCrud('Star', 'fas fa-star', Star::class);
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
-        yield MenuItem::linkToRoute('Options', 'fas fa-cog', 'admin_option');
+        yield MenuItem::linkToRoute('Options', 'fas fa-cog', 'admin_config');
         yield MenuItem::linkToRoute('Vider le cache', 'fas fa-trash', 'admin_cacheclear');
         yield MenuItem::linkToRoute('Voir le site', 'fas fa-laptop-house', 'front');
     }
@@ -229,29 +230,24 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
-    #[Route('/admin/{_locale}/option', name: 'admin_option')]
-    public function option(Request $request): Response
+    #[Route('/admin/{_locale}/config', name: 'admin_config')]
+    public function config(ConfigurationRepository $configurationRepository)
     {
-        $data = $this->siteService->getConfiguration();
-        $form = $this->createForm(
-            OptionType::class,
-            $data,
-            [
-                'attr' => ['id' => 'form_options'],
-            ]
-        );
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $post = $form->getData();
-            $this->addFlash('success', 'Options mis à jour');
-            // TODO : Sauvegarde données
-            $this->siteService->saveConfiguration($post);
+        $configuration   = null;
+        $configurations = $configurationRepository->findAll();
+        $generator = $this->container->get(AdminUrlGenerator::class);
+        $configuration   = (0 != count($configurations)) ? $configurations[0] : null;
+        if (is_null($configuration)) {
+            return $this->redirectToRoute('admin');
         }
 
-        return $this->render(
-            'admin/option.html.twig',
-            ['form' => $form]
-        );
+        $generator->setAction(Action::EDIT);
+        $generator->setController(ConfigurationCrudController::class);
+        $generator->setEntityId($configuration->getId());
+
+        $url = $generator->generateUrl();
+
+        return $this->redirect($url);
     }
 
     #[Route('/admin/{_locale}/profil', name: 'admin_profil')]

@@ -44,14 +44,8 @@ class SiteService
     public function getConfiguration()
     {
         $configurations = $this->configurationRepository->findAll();
-        $tab            = [];
-        foreach ($configurations as $configuration) {
-            $data = $configuration->getValue();
 
-            $tab[$configuration->getName()] = $data['value'];
-        }
-
-        return $tab;
+        return $configurations[0] ?? null;
     }
 
     public function getCrudController($entity)

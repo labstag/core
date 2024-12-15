@@ -93,8 +93,8 @@ class BlockCrudController extends AbstractCrudControllerLib
         $requestPathField->setRequired(true);
         $requestPathField->setChoices(
             [
-                new TranslatableMessage('Show for listed pages')          => '0',
-                new TranslatableMessage('Masquer pour les pages listées') => '1',
+                (string) new TranslatableMessage('Show for listed pages') => '0',
+                (string) new TranslatableMessage('Hide for listed pages') => '1',
             ]
         );
         yield $requestPathField;

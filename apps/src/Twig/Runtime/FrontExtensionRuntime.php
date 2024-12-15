@@ -82,8 +82,8 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     public function title($data)
     {
         $config    = $this->siteService->getConfiguration();
-        $siteTitle = $config['site_name'];
-        $format    = $config['title_format'];
+        $siteTitle = $config->getSiteName();
+        $format    = $config->getTitleFormat();
         if ($this->siteService->isHome($data)) {
             return $siteTitle;
         }
