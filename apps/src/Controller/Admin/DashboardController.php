@@ -16,7 +16,7 @@ use Labstag\Entity\Category;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
 use Labstag\Entity\GeoCode;
-use Labstag\Entity\History;
+use Labstag\Entity\Story;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
@@ -99,9 +99,9 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         $tab = [
-            'history' => HistoryCategoryCrudController::class,
-            'page'    => PageCategoryCrudController::class,
-            'post'    => PostCategoryCrudController::class,
+            'story' => StoryCategoryCrudController::class,
+            'page'  => PageCategoryCrudController::class,
+            'post'  => PostCategoryCrudController::class,
         ];
         $categories = [];
         foreach ($tab as $key => $value) {
@@ -110,7 +110,7 @@ class DashboardController extends AbstractDashboardController
         }
 
         $tab = [
-            'history' => HistoryTagCrudController::class,
+            'story'   => StoryTagCrudController::class,
             'chapter' => ChapterTagCrudController::class,
             'page'    => PageTagCrudController::class,
             'post'    => PostTagCrudController::class,
@@ -121,12 +121,12 @@ class DashboardController extends AbstractDashboardController
             $tags[$key]->setController($value);
         }
 
-        yield MenuItem::subMenu('History')->setSubItems(
+        yield MenuItem::subMenu('Story')->setSubItems(
             [
-                MenuItem::linkToCrud('List', 'fa fa-list', History::class),
-                MenuItem::linkToCrud('new', 'fas fa-plus', History::class)->setAction(Action::NEW),
-                $categories['history'],
-                $tags['history'],
+                MenuItem::linkToCrud('List', 'fa fa-list', Story::class),
+                MenuItem::linkToCrud('new', 'fas fa-plus', Story::class)->setAction(Action::NEW),
+                $categories['story'],
+                $tags['story'],
             ]
         );
         yield MenuItem::subMenu('Chapter')->setSubItems(

@@ -29,7 +29,7 @@ class TagFixtures extends FixtureLib
     {
         $tab = [
             'chapter',
-            'history',
+            'story',
             'page',
             'post',
         ];

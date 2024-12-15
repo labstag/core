@@ -66,7 +66,7 @@ class UserCrudController extends AbstractCrudControllerLib
         $languageField->setChoices($this->userService->getLanguagesForChoices());
         yield $languageField;
         yield $this->addFieldImageUpload('avatar', $pageName);
-        yield CollectionField::new('histories', new TranslatableMessage('Histories'))->onlyOnDetail();
+        yield CollectionField::new('stories', new TranslatableMessage('Histories'))->onlyOnDetail();
         yield CollectionField::new('editos', new TranslatableMessage('Editos'))->onlyOnDetail()->formatValue(
             fn ($entity) => count($entity)
         );

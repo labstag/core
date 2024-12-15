@@ -28,7 +28,7 @@ class CategoryFixtures extends FixtureLib
     ): void
     {
         $tab = [
-            'history',
+            'story',
             'page',
             'post',
         ];

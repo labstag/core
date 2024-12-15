@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Chapter;
-use Labstag\Entity\History;
+use Labstag\Entity\Story;
 use Labstag\Lib\ServiceEntityRepositoryLib;
 
 class ChapterRepository extends ServiceEntityRepositoryLib
@@ -16,18 +16,18 @@ class ChapterRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Chapter::class);
     }
 
-    public function getAllActivateByHistory(History $history)
+    public function getAllActivateByStory(Story $story)
     {
         $data = new ArrayCollection(
             [
                 new Parameter('enable', true),
-                new Parameter('refhistory', $history),
+                new Parameter('refstory', $story),
             ]
         );
 
         $queryBuilder = $this->createQueryBuilder('a');
         $queryBuilder->where('a.enable = :enable');
-        $queryBuilder->andWhere('a.refhistory = :refhistory');
+        $queryBuilder->andWhere('a.refstory = :refstory');
         $queryBuilder->setParameters($data);
         $queryBuilder->orderBy('a.position', 'ASC');
 

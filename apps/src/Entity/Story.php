@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Labstag\Repository\HistoryRepository;
+use Labstag\Repository\StoryRepository;
 use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
 use Stringable;
@@ -18,10 +18,10 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-#[ORM\Entity(repositoryClass: HistoryRepository::class)]
+#[ORM\Entity(repositoryClass: StoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class History implements Stringable
+class Story implements Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableEntity;
@@ -40,10 +40,10 @@ class History implements Stringable
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'histories', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
     private Collection $categories;
 
-    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'refhistory', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'refstory', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $chapters;
 
@@ -56,21 +56,21 @@ class History implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $img = null;
 
-    #[Vich\UploadableField(mapping: 'history', fileNameProperty: 'img')]
+    #[Vich\UploadableField(mapping: 'story', fileNameProperty: 'img')]
     private ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'history', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'story', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'history', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'story', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'histories', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(inversedBy: 'stories', cascade: ['persist', 'detach'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $refuser = null;
 
@@ -80,7 +80,7 @@ class History implements Stringable
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'histories', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
     private Collection $tags;
 
     public function __construct()
@@ -101,7 +101,7 @@ class History implements Stringable
     {
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
-            $category->addHistory($this);
+            $category->addStory($this);
         }
 
         return $this;
@@ -111,7 +111,7 @@ class History implements Stringable
     {
         if (!$this->chapters->contains($chapter)) {
             $this->chapters->add($chapter);
-            $chapter->setRefhistory($this);
+            $chapter->setRefstory($this);
         }
 
         return $this;
@@ -121,7 +121,7 @@ class History implements Stringable
     {
         if (!$this->paragraphs->contains($paragraph)) {
             $this->paragraphs->add($paragraph);
-            $paragraph->setHistory($this);
+            $paragraph->setStory($this);
         }
 
         return $this;
@@ -131,7 +131,7 @@ class History implements Stringable
     {
         if (!$this->tags->contains($tag)) {
             $this->tags->add($tag);
-            $tag->addHistory($this);
+            $tag->addStory($this);
         }
 
         return $this;
@@ -217,7 +217,7 @@ class History implements Stringable
     public function removeCategory(Category $category): static
     {
         if ($this->categories->removeElement($category)) {
-            $category->removeHistory($this);
+            $category->removeStory($this);
         }
 
         return $this;
@@ -226,8 +226,8 @@ class History implements Stringable
     public function removeChapter(Chapter $chapter): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->chapters->removeElement($chapter) && $chapter->getRefhistory() === $this) {
-            $chapter->setRefhistory(null);
+        if ($this->chapters->removeElement($chapter) && $chapter->getRefstory() === $this) {
+            $chapter->setRefstory(null);
         }
 
         return $this;
@@ -236,8 +236,8 @@ class History implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getHistory() === $this) {
-            $paragraph->setHistory(null);
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this) {
+            $paragraph->setStory(null);
         }
 
         return $this;
@@ -246,7 +246,7 @@ class History implements Stringable
     public function removeTag(Tag $tag): static
     {
         if ($this->tags->removeElement($tag)) {
-            $tag->removeHistory($this);
+            $tag->removeStory($this);
         }
 
         return $this;

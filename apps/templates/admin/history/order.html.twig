@@ -1,16 +1,16 @@
 {% block content_title 'Gestion des positions' %}
 {% block page_title 'Gestion des positions' %}
 {% block page_actions %}
-  <button class="action-saveAndReturn btn btn-primary action-save" type="submit" name="ea[newForm][btn]" value="saveAndReturn" data-action-name="saveAndReturn" form="position-History-form">
+  <button class="action-saveAndReturn btn btn-primary action-save" type="submit" name="ea[newForm][btn]" value="saveAndReturn" data-action-name="saveAndReturn" form="position-Story-form">
       <span class="btn-label">Sauvegarder les modifications</span>
   </button>
 {% endblock %}
 {% extends '@EasyAdmin/page/content.html.twig' %}
 {% block main %}
-  <form method="POST" id="position-History-form">
+  <form method="POST" id="position-Story-form">
     {% set region = null %}
     <fieldset>
-        <ul class="history-sort" id="sort_list">
+        <ul class="story-sort" id="sort_list">
             {% for i, chapter in chapters %}
                 <li class="list-group-item">
                 <div class="d-flex">

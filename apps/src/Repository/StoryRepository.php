@@ -3,14 +3,14 @@
 namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Labstag\Entity\History;
+use Labstag\Entity\Story;
 use Labstag\Lib\ServiceEntityRepositoryLib;
 
-class HistoryRepository extends ServiceEntityRepositoryLib
+class StoryRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($managerRegistry, History::class);
+        parent::__construct($managerRegistry, Story::class);
     }
 
     public function findLastByNbr(int $nbr)

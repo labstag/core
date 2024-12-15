@@ -9,13 +9,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use Override;
 
-class HistoryTagCrudController extends TagCrudController
+class StoryTagCrudController extends TagCrudController
 {
     #[Override]
     public function configureFields(string $pageName): iterable
     {
         $data   = parent::configureFields($pageName);
-        $data[] = $this->addFieldTotalChild('histories');
+        $data[] = $this->addFieldTotalChild('stories');
 
         return $data;
     }
@@ -24,7 +24,7 @@ class HistoryTagCrudController extends TagCrudController
     public function createEntity(string $entityFqcn)
     {
         $tag = new $entityFqcn();
-        $tag->setType('history');
+        $tag->setType('story');
 
         return $tag;
     }
@@ -39,7 +39,7 @@ class HistoryTagCrudController extends TagCrudController
     {
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
         $queryBuilder->andWhere('entity.type = :type');
-        $queryBuilder->setParameter('type', 'history');
+        $queryBuilder->setParameter('type', 'story');
 
         return $queryBuilder;
     }

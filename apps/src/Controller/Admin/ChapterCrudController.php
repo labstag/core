@@ -40,7 +40,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         yield $this->addFieldTitle();
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();
-        $associationField = AssociationField::new('refhistory')->autocomplete();
+        $associationField = AssociationField::new('refstory')->autocomplete();
         $user             = $this->getUser();
         $roles            = $user->getRoles();
         if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
@@ -72,7 +72,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
-        $filters->add(EntityFilter::new('refhistory', new TranslatableMessage('History')));
+        $filters->add(EntityFilter::new('refstory', new TranslatableMessage('Story')));
 
         return $filters;
     }

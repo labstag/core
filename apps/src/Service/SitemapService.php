@@ -4,7 +4,7 @@ namespace Labstag\Service;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Chapter;
-use Labstag\Entity\History;
+use Labstag\Entity\Story;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Repository\ChapterRepository;
@@ -69,15 +69,15 @@ class SitemapService
         ];
     }
 
-    private function getDataChaptersByHistory($history)
+    private function getDataChaptersByStory($story)
     {
-        if (!$history instanceof History) {
+        if (!$story instanceof Story) {
             return [];
         }
 
         /** @var ChapterRepository $repository */
         $repository = $this->getRepository(Chapter::class);
-        $data       = $repository->getAllActivateByHistory($history);
+        $data       = $repository->getAllActivateByStory($story);
 
         return $this->setTabs($data);
     }
@@ -92,7 +92,7 @@ class SitemapService
 
     private function getDataHistories()
     {
-        return $this->getDataFromRepository(History::class);
+        return $this->getDataFromRepository(Story::class);
     }
 
     private function getDataPages()
@@ -112,7 +112,7 @@ class SitemapService
             $tabs = array_merge(
                 $tabs,
                 $this->formatData($row),
-                $this->getDataChaptersByHistory($row)
+                $this->getDataChaptersByStory($row)
             );
         }
 

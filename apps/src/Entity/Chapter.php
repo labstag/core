@@ -65,7 +65,7 @@ class Chapter implements Stringable
 
     #[ORM\ManyToOne(inversedBy: 'chapters', cascade: ['persist', 'detach'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?History $refhistory = null;
+    private ?Story $refstory = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $resume = null;
@@ -141,9 +141,9 @@ class Chapter implements Stringable
         return $this->position;
     }
 
-    public function getRefhistory(): ?History
+    public function getRefstory(): ?Story
     {
-        return $this->refhistory;
+        return $this->refstory;
     }
 
     public function getResume(): ?string
@@ -230,9 +230,9 @@ class Chapter implements Stringable
         return $this;
     }
 
-    public function setRefhistory(?History $history): static
+    public function setRefstory(?Story $story): static
     {
-        $this->refhistory = $history;
+        $this->refstory = $story;
 
         return $this;
     }

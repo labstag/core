@@ -3,17 +3,17 @@
 namespace Labstag\Paragraph;
 
 use Labstag\Entity\Block;
-use Labstag\Entity\History;
+use Labstag\Entity\Story;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Override;
 
-class HeadHistoryParagraph extends ParagraphLib
+class HeadStoryParagraph extends ParagraphLib
 {
     #[Override]
     public function generate(Paragraph $paragraph, array $data)
     {
-        if (!isset($data['entity']) || !$data['entity'] instanceof History) {
+        if (!isset($data['entity']) || !$data['entity'] instanceof Story) {
             $this->setShow($paragraph, false);
 
             return;
@@ -22,7 +22,7 @@ class HeadHistoryParagraph extends ParagraphLib
         $this->setData(
             $paragraph,
             [
-                'history'   => $data['entity'],
+                'story'     => $data['entity'],
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]
@@ -40,7 +40,7 @@ class HeadHistoryParagraph extends ParagraphLib
     #[Override]
     public function getName(): string
     {
-        return 'Head history';
+        return 'Head story';
     }
 
     #[Override
@@ -48,7 +48,7 @@ class HeadHistoryParagraph extends ParagraphLib
     ]
     public function getType(): string
     {
-        return 'head-history';
+        return 'head-story';
     }
 
     #[Override]

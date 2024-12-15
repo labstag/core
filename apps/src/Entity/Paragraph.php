@@ -42,7 +42,7 @@ class Paragraph implements Stringable
     private ?string $fond = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?History $history = null;
+    private ?Story $story = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -111,9 +111,9 @@ class Paragraph implements Stringable
         return $this->fond;
     }
 
-    public function getHistory(): ?History
+    public function getStory(): ?Story
     {
-        return $this->history;
+        return $this->story;
     }
 
     public function getId(): ?string
@@ -218,9 +218,9 @@ class Paragraph implements Stringable
         return $this;
     }
 
-    public function setHistory(?History $history): static
+    public function setStory(?Story $story): static
     {
-        $this->history = $history;
+        $this->story = $story;
 
         return $this;
     }

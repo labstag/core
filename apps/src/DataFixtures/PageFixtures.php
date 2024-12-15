@@ -47,10 +47,10 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $home->setType('home');
         $this->setParagraphsHome($home);
 
-        $histories = new Page();
-        $histories->setTitle('Histoires');
-        $histories->setType('history');
-        $this->setParagraphsHistory($histories);
+        $stories = new Page();
+        $stories->setTitle('Histoires');
+        $stories->setType('story');
+        $this->setParagraphsStory($stories);
 
         $posts = new Page();
         $posts->setTitle('Posts');
@@ -69,7 +69,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         return [
             ['entity' => $home],
             [
-                'entity' => $histories,
+                'entity' => $stories,
                 'parent' => 'home',
             ],
             [
@@ -110,10 +110,10 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $objectManager->persist($page);
     }
 
-    private function setParagraphsHistory(Page $page)
+    private function setParagraphsStory(Page $page)
     {
         $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'history-list');
+        $paragraph = $this->paragraphService->addParagraph($page, 'story-list');
         $paragraph->setTitle('Dernière histoires');
         $paragraph->setNbr(20);
     }
@@ -129,7 +129,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph->setType('last-news');
         $paragraph->setNbr(4);
 
-        $paragraph = $this->paragraphService->addParagraph($page, 'last-history');
+        $paragraph = $this->paragraphService->addParagraph($page, 'last-story');
         $paragraph->setTitle('Dernière histoires');
         $paragraph->setNbr(4);
 

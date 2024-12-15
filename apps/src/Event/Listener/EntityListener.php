@@ -86,8 +86,8 @@ final class EntityListener
             return;
         }
 
-        $history  = $entity->getRefhistory();
-        $chapters = $history->getChapters();
+        $story  = $entity->getRefstory();
+        $chapters = $story->getChapters();
         $entity->setPosition(count($chapters) + 1);
     }
 

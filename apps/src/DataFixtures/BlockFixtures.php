@@ -38,7 +38,7 @@ class BlockFixtures extends FixtureLib
 
     private function addParagraphsHead(Block $block)
     {
-        $this->paragraphService->addParagraph($block, 'head-history');
+        $this->paragraphService->addParagraph($block, 'head-story');
         $this->paragraphService->addParagraph($block, 'head-post');
         $this->paragraphService->addParagraph($block, 'head-chapter');
         $this->paragraphService->addParagraph($block, 'chapter-list');

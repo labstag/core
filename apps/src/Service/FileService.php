@@ -6,7 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
-use Labstag\Entity\History;
+use Labstag\Entity\Story;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
@@ -34,8 +34,8 @@ class FileService
         protected LocalFilesystemAdapter $chapterAdapter,
         #[Autowire(service: 'flysystem.adapter.edito.storage')]
         protected LocalFilesystemAdapter $editoAdapter,
-        #[Autowire(service: 'flysystem.adapter.history.storage')]
-        protected LocalFilesystemAdapter $historyAdapter,
+        #[Autowire(service: 'flysystem.adapter.story.storage')]
+        protected LocalFilesystemAdapter $storyAdapter,
         #[Autowire(service: 'flysystem.adapter.memo.storage')]
         protected LocalFilesystemAdapter $memoAdapter,
         #[Autowire(service: 'flysystem.adapter.page.storage')]
@@ -242,7 +242,7 @@ class FileService
             'avatar'    => $this->avatarAdapter,
             'chapter'   => $this->chapterAdapter,
             'edito'     => $this->editoAdapter,
-            'history'   => $this->historyAdapter,
+            'story'     => $this->storyAdapter,
             'memo'      => $this->memoAdapter,
             'page'      => $this->pageAdapter,
             'paragraph' => $this->paragraphAdapter,
@@ -256,7 +256,7 @@ class FileService
             'avatar'    => User::class,
             'chapter'   => Chapter::class,
             'edito'     => Edito::class,
-            'history'   => History::class,
+            'story'     => Story::class,
             'memo'      => Memo::class,
             'page'      => Page::class,
             'paragraph' => Paragraph::class,
