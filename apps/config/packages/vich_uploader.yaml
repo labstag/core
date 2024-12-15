@@ -12,6 +12,17 @@ vich_uploader:
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
+    configuration:
+      uri_prefix: /uploads/configuration
+      upload_destination: configuration.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: title
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
     chapter:
       uri_prefix: /uploads/chapter
       upload_destination: chapter.storage

@@ -86,10 +86,10 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return FormField::addTab(new TranslatableMessage('Principal'));
     }
 
-    public function addFieldImageUpload(string $type, string $pageName)
+    public function addFieldImageUpload(string $type, string $pageName, ?string $label = null)
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $imageField = TextField::new($type.'File', new TranslatableMessage('Image'));
+            $imageField = TextField::new($type.'File', is_null($label) ? new TranslatableMessage('Image') : $label);
             $imageField->setFormType(VichImageType::class);
 
             return $imageField;
@@ -97,7 +97,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
         $entity     = $this->getEntityFqcn();
         $basePath   = $this->fileService->getBasePath($entity, $type.'File');
-        $imageField = ImageField::new($type);
+        $imageField = ImageField::new($type, is_null($label) ? new TranslatableMessage('Image') : $label);
         $imageField->setBasePath($basePath);
 
         return $imageField;

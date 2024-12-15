@@ -12,7 +12,7 @@
 		<div class="title">
 			{{ story.title }}
 		</div>
-        {% if configuration.user_show %}
+        {% if configuration.usershow %}
             <div class="author">
                 {{ 'Author : %author%'|trans({ '%author%': story.refuser.username }) }}
             </div>

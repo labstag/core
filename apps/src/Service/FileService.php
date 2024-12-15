@@ -5,6 +5,7 @@ namespace Labstag\Service;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\Configuration;
 use Labstag\Entity\Edito;
 use Labstag\Entity\Story;
 use Labstag\Entity\Memo;
@@ -28,6 +29,8 @@ class FileService
         protected LocalFilesystemAdapter $privateAdapter,
         #[Autowire(service: 'flysystem.adapter.public.storage')]
         protected LocalFilesystemAdapter $publicAdapter,
+        #[Autowire(service: 'flysystem.adapter.configuration.storage')]
+        protected LocalFilesystemAdapter $configurationAdapter,
         #[Autowire(service: 'flysystem.adapter.avatar.storage')]
         protected LocalFilesystemAdapter $avatarAdapter,
         #[Autowire(service: 'flysystem.adapter.chapter.storage')]
@@ -237,30 +240,32 @@ class FileService
     private function getDataStorage(): array
     {
         return [
-            'private'   => $this->privateAdapter,
-            'public'    => $this->publicAdapter,
-            'avatar'    => $this->avatarAdapter,
-            'chapter'   => $this->chapterAdapter,
-            'edito'     => $this->editoAdapter,
-            'story'     => $this->storyAdapter,
-            'memo'      => $this->memoAdapter,
-            'page'      => $this->pageAdapter,
-            'paragraph' => $this->paragraphAdapter,
-            'post'      => $this->postAdapter,
+            'private'       => $this->privateAdapter,
+            'public'        => $this->publicAdapter,
+            'configuration' => $this->configurationAdapter,
+            'avatar'        => $this->avatarAdapter,
+            'chapter'       => $this->chapterAdapter,
+            'edito'         => $this->editoAdapter,
+            'story'         => $this->storyAdapter,
+            'memo'          => $this->memoAdapter,
+            'page'          => $this->pageAdapter,
+            'paragraph'     => $this->paragraphAdapter,
+            'post'          => $this->postAdapter,
         ];
     }
 
     private function getEntity(): array
     {
         return [
-            'avatar'    => User::class,
-            'chapter'   => Chapter::class,
-            'edito'     => Edito::class,
-            'story'     => Story::class,
-            'memo'      => Memo::class,
-            'page'      => Page::class,
-            'paragraph' => Paragraph::class,
-            'post'      => Post::class,
+            'avatar'        => User::class,
+            'chapter'       => Chapter::class,
+            'configuration' => Configuration::class,
+            'edito'         => Edito::class,
+            'story'         => Story::class,
+            'memo'          => Memo::class,
+            'page'          => Page::class,
+            'paragraph'     => Paragraph::class,
+            'post'          => Post::class,
         ];
     }
 
