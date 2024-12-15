@@ -13,7 +13,7 @@ class StarParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data)
     {
-        /** @var HistoryRepository $repository */
+        /** @var StoryRepository $repository */
         $repository = $this->getRepository(Star::class);
 
         $pagination = $this->getPaginator(

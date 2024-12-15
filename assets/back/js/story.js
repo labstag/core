@@ -1,12 +1,12 @@
 import Sortable from 'sortablejs';
 
-export class History {
+export class Story {
   constructor()
   {
     this.actionSort()
   }
   actionSort() {
-    document.querySelectorAll(".history-sort").forEach(
+    document.querySelectorAll(".story-sort").forEach(
       (element) =>{
         var elementSortable = document.getElementById(element.id);
         if (elementSortable != undefined) {
@@ -14,7 +14,7 @@ export class History {
             elementSortable,
             {
               onChange: function (event) {
-                document.querySelectorAll(".history-sort").forEach(
+                document.querySelectorAll(".story-sort").forEach(
                   (sortList) => {
                   sortList.querySelectorAll("input").forEach(
                     (input, position) => {

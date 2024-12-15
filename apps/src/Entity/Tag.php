@@ -26,11 +26,11 @@ class Tag implements Stringable
     private Collection $chapters;
 
     /**
-     * @var Collection<int, History>
+     * @var Collection<int, Story>
      */
-    #[ORM\ManyToMany(targetEntity: History::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
-    #[ORM\JoinTable(name: 'tag_history')]
-    private Collection $histories;
+    #[ORM\ManyToMany(targetEntity: Story::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
+    #[ORM\JoinTable(name: 'tag_story')]
+    private Collection $stories;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -66,7 +66,7 @@ class Tag implements Stringable
     {
         $this->posts     = new ArrayCollection();
         $this->pages     = new ArrayCollection();
-        $this->histories = new ArrayCollection();
+        $this->stories = new ArrayCollection();
         $this->chapters  = new ArrayCollection();
     }
 
@@ -85,10 +85,10 @@ class Tag implements Stringable
         return $this;
     }
 
-    public function addHistory(History $history): static
+    public function addStory(Story $story): static
     {
-        if (!$this->histories->contains($history)) {
-            $this->histories->add($history);
+        if (!$this->stories->contains($story)) {
+            $this->stories->add($story);
         }
 
         return $this;
@@ -121,11 +121,11 @@ class Tag implements Stringable
     }
 
     /**
-     * @return Collection<int, History>
+     * @return Collection<int, Story>
      */
     public function getHistories(): Collection
     {
-        return $this->histories;
+        return $this->stories;
     }
 
     public function getId(): ?string
@@ -171,9 +171,9 @@ class Tag implements Stringable
         return $this;
     }
 
-    public function removeHistory(History $history): static
+    public function removeStory(Story $story): static
     {
-        $this->histories->removeElement($history);
+        $this->stories->removeElement($story);
 
         return $this;
     }

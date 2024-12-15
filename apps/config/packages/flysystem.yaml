@@ -21,10 +21,10 @@ flysystem:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/uploads/edito'
-    history.storage:
+    story.storage:
       adapter: 'local'
       options:
-        directory: '%kernel.project_dir%/public/uploads/history'
+        directory: '%kernel.project_dir%/public/uploads/story'
     memo.storage:
       adapter: 'local'
       options:

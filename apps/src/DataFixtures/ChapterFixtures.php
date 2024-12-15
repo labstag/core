@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Chapter;
-use Labstag\Entity\History;
+use Labstag\Entity\Story;
 use Labstag\Entity\Tag;
 use Labstag\Lib\FixtureLib;
 use Override;
@@ -18,7 +18,7 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
      */
     protected const NUMBER_CHAPTER = 50;
 
-    protected array $histories = [];
+    protected array $stories = [];
 
     protected array $position = [];
 
@@ -27,14 +27,14 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
     {
         return [
             TagFixtures::class,
-            HistoryFixtures::class,
+            StoryFixtures::class,
         ];
     }
 
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
-        $this->histories = $this->getIdentitiesByClass(History::class);
+        $this->stories = $this->getIdentitiesByClass(Story::class);
         $this->tags      = $this->getIdentitiesByClass(Tag::class, 'chapter');
         $this->loadForeach(self::NUMBER_CHAPTER, 'addChapter', $objectManager);
         $objectManager->flush();
@@ -45,26 +45,26 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
         ObjectManager $objectManager
     ): void
     {
-        $historyId = array_rand($this->histories);
-        if (!isset($this->position[$historyId])) {
-            $this->position[$historyId] = [];
+        $storyId = array_rand($this->stories);
+        if (!isset($this->position[$storyId])) {
+            $this->position[$storyId] = [];
         }
 
         $chapter = new Chapter();
         $chapter->setEnable((bool) random_int(0, 1));
-        $chapter->setPosition(count($this->position[$historyId]) + 1);
+        $chapter->setPosition(count($this->position[$storyId]) + 1);
 
-        $history     = $this->getReference($historyId, History::class);
-        $dateHistory = $history->getCreatedAt();
+        $story     = $this->getReference($storyId, Story::class);
+        $dateStory = $story->getCreatedAt();
         $chapter->setResume($generator->unique()->text(200));
-        $chapter->setCreatedAt($generator->unique()->dateTimeBetween($dateHistory, '+ 1 month'));
-        $chapter->setRefhistory($history);
+        $chapter->setCreatedAt($generator->unique()->dateTimeBetween($dateStory, '+ 1 month'));
+        $chapter->setRefstory($story);
         $chapter->setTitle($generator->unique()->colorName());
         $this->addParagraphText($chapter);
         $this->setImage($chapter, 'imgFile');
         $this->addTagToEntity($chapter);
         $this->addReference('chapter_'.md5(uniqid()), $chapter);
-        $this->position[$historyId][] = $chapter;
+        $this->position[$storyId][] = $chapter;
         $objectManager->persist($chapter);
     }
 }

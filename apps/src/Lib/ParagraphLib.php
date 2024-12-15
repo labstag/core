@@ -11,7 +11,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
-use Labstag\Entity\History;
+use Labstag\Entity\Story;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
@@ -238,7 +238,7 @@ abstract class ParagraphLib extends AbstractController
             Block::class,
             Chapter::class,
             Edito::class,
-            History::class,
+            Story::class,
             Memo::class,
             Page::class,
             Post::class,

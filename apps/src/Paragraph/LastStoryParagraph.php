@@ -3,40 +3,31 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Entity\History;
+use Labstag\Entity\Story;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
-use Labstag\Repository\HistoryRepository;
+use Labstag\Repository\StoryRepository;
 use Override;
 
-class HistoryListParagraph extends ParagraphLib
+class LastStoryParagraph extends ParagraphLib
 {
     #[Override]
     public function generate(Paragraph $paragraph, array $data)
     {
-        /** @var HistoryRepository $repository */
-        $repository = $this->getRepository(History::class);
-
-        $pagination = $this->getPaginator(
-            $repository->getQueryPaginator(),
-            $paragraph->getNbr()
-        );
-
-        $templates = $this->templates('header');
-        $this->setHeader(
-            $paragraph,
-            $this->render(
-                $templates['view'],
-                ['pagination' => $pagination]
-            )
-        );
-
+        /** @var StoryRepository $repository */
+        $repository = $this->getRepository(Story::class);
+        $nbr        = $paragraph->getNbr();
+        $stories  = $repository->findLastByNbr($nbr);
+        $total      = $repository->findTotalEnable();
+        $listing    = $this->siteService->getPageByType('story');
         $this->setData(
             $paragraph,
             [
-                'pagination' => $pagination,
-                'paragraph'  => $paragraph,
-                'data'       => $data,
+                'listing'   => $listing,
+                'total'     => $total,
+                'stories'   => $stories,
+                'paragraph' => $paragraph,
+                'data'      => $data,
             ]
         );
     }
@@ -53,13 +44,13 @@ class HistoryListParagraph extends ParagraphLib
     #[Override]
     public function getName(): string
     {
-        return 'History list';
+        return 'Last story';
     }
 
     #[Override]
     public function getType(): string
     {
-        return 'history-list';
+        return 'last-story';
     }
 
     #[Override]

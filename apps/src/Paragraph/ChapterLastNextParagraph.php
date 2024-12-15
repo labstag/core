@@ -19,18 +19,18 @@ class ChapterLastNextParagraph extends ParagraphLib
         }
 
         $chapter = $data['entity'];
-        $history = $chapter->getRefHistory();
+        $story = $chapter->getRefStory();
 
         $repository = $this->getRepository(Chapter::class);
 
-        $chapters = $repository->getAllActivateByHistory($history);
+        $chapters = $repository->getAllActivateByStory($story);
 
         $this->setData(
             $paragraph,
             [
                 'position'  => $chapter->getPosition(),
                 'chapters'  => $chapters,
-                'history'   => $history,
+                'story'     => $story,
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]

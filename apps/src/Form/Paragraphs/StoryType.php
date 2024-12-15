@@ -2,17 +2,17 @@
 
 namespace Labstag\Form\Paragraphs;
 
-use Labstag\Entity\History;
+use Labstag\Entity\Story;
 use Labstag\Lib\ParagraphAbstractTypeLib;
 use Override;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class HistoryType extends ParagraphAbstractTypeLib
+class StoryType extends ParagraphAbstractTypeLib
 {
     #[Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
-        $this->setEntity(History::class);
+        $this->setEntity(Story::class);
         parent::buildForm($formBuilder, $options);
     }
 }

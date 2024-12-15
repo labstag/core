@@ -53,10 +53,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     private ?bool $enable = null;
 
     /**
-     * @var Collection<int, History>
+     * @var Collection<int, Story>
      */
-    #[ORM\OneToMany(targetEntity: History::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
-    private Collection $histories;
+    #[ORM\OneToMany(targetEntity: Story::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
+    private Collection $stories;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -102,7 +102,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
 
     public function __construct()
     {
-        $this->histories = new ArrayCollection();
+        $this->stories = new ArrayCollection();
         $this->editos    = new ArrayCollection();
         $this->memos     = new ArrayCollection();
         $this->pages     = new ArrayCollection();
@@ -147,11 +147,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return $this;
     }
 
-    public function addHistory(History $history): static
+    public function addStory(Story $story): static
     {
-        if (!$this->histories->contains($history)) {
-            $this->histories->add($history);
-            $history->setRefuser($this);
+        if (!$this->stories->contains($story)) {
+            $this->stories->add($story);
+            $story->setRefuser($this);
         }
 
         return $this;
@@ -221,11 +221,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     }
 
     /**
-     * @return Collection<int, History>
+     * @return Collection<int, Story>
      */
     public function getHistories(): Collection
     {
-        return $this->histories;
+        return $this->stories;
     }
 
     public function getId(): ?string
@@ -317,11 +317,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return $this;
     }
 
-    public function removeHistory(History $history): static
+    public function removeStory(Story $story): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->histories->removeElement($history) && $history->getRefuser() === $this) {
-            $history->setRefuser(null);
+        if ($this->stories->removeElement($story) && $story->getRefuser() === $this) {
+            $story->setRefuser(null);
         }
 
         return $this;

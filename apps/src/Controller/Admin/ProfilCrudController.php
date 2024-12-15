@@ -64,7 +64,7 @@ class ProfilCrudController extends UserCrudController
         $choiceField->setChoices($this->userService->getLanguagesForChoices());
         yield $choiceField;
         yield $this->addFieldImageUpload('avatar', $pageName);
-        yield CollectionField::new('histories', new TranslatableMessage('Histories'))->onlyOnDetail();
+        yield CollectionField::new('stories', new TranslatableMessage('Histories'))->onlyOnDetail();
         yield CollectionField::new('editos', new TranslatableMessage('Editos'))->onlyOnDetail()->formatValue(
             fn ($entity) => count($entity)
         );

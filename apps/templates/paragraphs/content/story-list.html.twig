@@ -4,9 +4,9 @@
             {{ paragraph.title }}
         </div>
         <ul>
-            {% for row in pagination %}
-                <li class="history-teaser">
-                    {% include  "teasers/history.html.twig"  with {'history': row} %}
+            {% for story in pagination %}
+                <li class="story-teaser">
+                    {% include  "teasers/story.html.twig"  with {'story': story} %}
                 </li>
             {% endfor %}
         </ul>

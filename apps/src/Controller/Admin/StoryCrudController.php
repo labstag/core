@@ -15,14 +15,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Chapter;
-use Labstag\Entity\History;
+use Labstag\Entity\Story;
 use Labstag\Entity\Meta;
-use Labstag\Form\Paragraphs\HistoryType;
+use Labstag\Form\Paragraphs\StoryType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class HistoryCrudController extends AbstractCrudControllerLib
+class StoryCrudController extends AbstractCrudControllerLib
 {
     #[Override]
     public function configureActions(Actions $actions): Actions
@@ -46,8 +46,8 @@ class HistoryCrudController extends AbstractCrudControllerLib
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();
         yield $this->addFieldImageUpload('img', $pageName);
-        yield $this->addFieldTags('history');
-        yield $this->addFieldCategories('history');
+        yield $this->addFieldTags('story');
+        yield $this->addFieldCategories('story');
         $collectionField = CollectionField::new('chapters');
         $collectionField->onlyOnIndex();
         $collectionField->formatValue(fn ($value) => count($value));
@@ -57,7 +57,7 @@ class HistoryCrudController extends AbstractCrudControllerLib
         $collectionField->onlyOnDetail();
         yield $collectionField;
         $fields = array_merge(
-            $this->addFieldParagraphs($pageName, HistoryType::class),
+            $this->addFieldParagraphs($pageName, StoryType::class),
             $this->addFieldMetas(),
             $this->addFieldRefUser()
         );
@@ -78,19 +78,19 @@ class HistoryCrudController extends AbstractCrudControllerLib
     #[Override]
     public function createEntity(string $entityFqcn)
     {
-        $history = new $entityFqcn();
-        $this->workflowService->init($history);
-        $history->setRefuser($this->getUser());
+        $story = new $entityFqcn();
+        $this->workflowService->init($story);
+        $story->setRefuser($this->getUser());
         $meta = new Meta();
-        $history->setMeta($meta);
+        $story->setMeta($meta);
 
-        return $history;
+        return $story;
     }
 
     #[Override]
     public static function getEntityFqcn(): string
     {
-        return History::class;
+        return Story::class;
     }
 
     public function moveChapter(AdminContext $adminContext)
@@ -98,7 +98,7 @@ class HistoryCrudController extends AbstractCrudControllerLib
         $request    = $adminContext->getRequest();
         $repository = $this->getRepository();
         $entityId   = $request->query->get('entityId');
-        $history    = $repository->find($entityId);
+        $story    = $repository->find($entityId);
         $generator  = $this->container->get(AdminUrlGenerator::class);
         if ($request->isMethod('POST')) {
             $repository = $this->getRepository(Chapter::class);
@@ -122,9 +122,9 @@ class HistoryCrudController extends AbstractCrudControllerLib
         }
 
         return $this->render(
-            'admin/history/order.html.twig',
+            'admin/story/order.html.twig',
             [
-                'chapters' => $history->getChapters(),
+                'chapters' => $story->getChapters(),
             ]
         );
     }

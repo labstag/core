@@ -4,19 +4,19 @@ namespace Labstag\Service;
 
 use Exception;
 use Labstag\Controller\Admin\ChapterCrudController;
-use Labstag\Controller\Admin\HistoryCrudController;
+use Labstag\Controller\Admin\StoryCrudController;
 use Labstag\Controller\Admin\PageCrudController;
 use Labstag\Controller\Admin\PostCrudController;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Configuration;
-use Labstag\Entity\History;
+use Labstag\Entity\Story;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Repository\BlockRepository;
 use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\ConfigurationRepository;
-use Labstag\Repository\HistoryRepository;
+use Labstag\Repository\StoryRepository;
 use Labstag\Repository\PageRepository;
 use Labstag\Repository\PostRepository;
 use ReflectionClass;
@@ -32,7 +32,7 @@ class SiteService
         protected BlockService $blockService,
         protected TokenStorageInterface $tokenStorage,
         protected RequestStack $requestStack,
-        protected HistoryRepository $historyRepository,
+        protected StoryRepository $storyRepository,
         protected PageRepository $pageRepository,
         protected PostRepository $postRepository,
         protected Environment $twigEnvironment,
@@ -165,7 +165,7 @@ class SiteService
         $types = $this->getPageByTypes();
         $page  = $this->getSlugByEntityIfPage($entity);
         $page  = ('' == $page) ? $this->getSlugByEntityIfPost($types, $entity) : $page;
-        $page  = ('' == $page) ? $this->getSlugByEntityIfHistory($types, $entity) : $page;
+        $page  = ('' == $page) ? $this->getSlugByEntityIfStory($types, $entity) : $page;
 
         return ('' == $page) ? $this->getSlugByEntityIfChapter($types, $entity) : $page;
     }
@@ -175,7 +175,7 @@ class SiteService
         return [
             'Home'      => 'home',
             'Posts'     => 'post',
-            'Histoires' => 'history',
+            'Histoires' => 'story',
             'Page'      => 'page',
         ];
     }
@@ -232,10 +232,10 @@ class SiteService
         }
 
         if ($entity instanceof Chapter) {
-            return $this->setTitle($entity->getRefHistory()).' - '.$entity->getTitle();
+            return $this->setTitle($entity->getRefStory()).' - '.$entity->getTitle();
         }
 
-        if ($entity instanceof History) {
+        if ($entity instanceof Story) {
             return $entity->getTitle();
         }
 
@@ -245,7 +245,7 @@ class SiteService
     protected function getDataCrudController()
     {
         return [
-            History::class => HistoryCrudController::class,
+            Story::class   => StoryCrudController::class,
             Chapter::class => ChapterCrudController::class,
             Page::class    => PageCrudController::class,
             Post::class    => PostCrudController::class,
@@ -261,7 +261,7 @@ class SiteService
     {
         return [
             'chapter' => $this->chapterRepository,
-            'history' => $this->historyRepository,
+            'story'   => $this->storyRepository,
             'page'    => $this->pageRepository,
             'post'    => $this->postRepository,
         ];
@@ -322,23 +322,23 @@ class SiteService
         }
 
         $repos = [
-            'history' => $this->historyRepository,
+            'story'   => $this->storyRepository,
             'chapter' => $this->chapterRepository,
         ];
 
         if (1 == substr_count((string) $slug, '/')) {
             [
-                $slughistory,
+                $slugstory,
                 $slugchapter,
             ]        = explode('/', (string) $slug);
-            $history = $repos['history']->findOneBy(['slug' => $slughistory]);
+            $story = $repos['story']->findOneBy(['slug' => $slugstory]);
             $chapter = $repos['chapter']->findOneBy(['slug' => $slugchapter]);
-            if ($history instanceof History && $chapter instanceof Chapter && $history->getId() === $chapter->getRefHistory()->getId()) {
+            if ($story instanceof Story && $chapter instanceof Chapter && $story->getId() === $chapter->getRefStory()->getId()) {
                 return $chapter;
             }
         }
 
-        return $repos['history']->findOneBy(['slug' => $slug]);
+        return $repos['story']->findOneBy(['slug' => $slug]);
     }
 
     private function getPageByTypes()
@@ -358,24 +358,24 @@ class SiteService
             return '';
         }
 
-        if (is_null($types['history']) || !$types['history'] instanceof Page) {
+        if (is_null($types['story']) || !$types['story'] instanceof Page) {
             throw new Exception('Post page not found');
         }
 
-        return $types['history']->getSlug().'/'.$entity->getRefHistory()->getSlug().'/'.$entity->getSlug();
+        return $types['story']->getSlug().'/'.$entity->getRefStory()->getSlug().'/'.$entity->getSlug();
     }
 
-    private function getSlugByEntityIfHistory($types, $entity)
+    private function getSlugByEntityIfStory($types, $entity)
     {
-        if (!$entity instanceof History) {
+        if (!$entity instanceof Story) {
             return '';
         }
 
-        if (is_null($types['history']) || !$types['history'] instanceof Page) {
+        if (is_null($types['story']) || !$types['story'] instanceof Page) {
             throw new Exception('Post page not found');
         }
 
-        return $types['history']->getSlug().'/'.$entity->getSlug();
+        return $types['story']->getSlug().'/'.$entity->getSlug();
     }
 
     private function getSlugByEntityIfPage($entity)
