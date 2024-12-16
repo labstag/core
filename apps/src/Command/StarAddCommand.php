@@ -4,6 +4,7 @@ namespace Labstag\Command;
 
 use Labstag\Entity\Star;
 use Labstag\Repository\StarRepository;
+use NumberFormatter;
 use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -20,11 +21,27 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class StarAddCommand extends Command
 {
+
+    private int $add = 0;
+
+    private int $update = 0;
+
     public function __construct(
         protected StarRepository $starRepository
     )
     {
         parent::__construct();
+    }
+
+    protected function addOrUpdate($entity)
+    {
+        if (is_null($entity->getId())) {
+            ++$this->add;
+
+            return;
+        }
+
+        ++$this->update;
     }
 
     #[Override]
@@ -54,8 +71,7 @@ class StarAddCommand extends Command
             return Command::FAILURE;
         }
 
-        $counter = 0;
-
+        $counter  = 0;
         $dataJson = [];
         foreach ($data as $page) {
             $dataJson = array_merge($dataJson, $page);
@@ -66,6 +82,7 @@ class StarAddCommand extends Command
         foreach ($dataJson as $data) {
             if (true != $data['private']) {
                 $star = $this->setStar($data);
+                $this->addOrUpdate($star);
             }
 
             ++$counter;
@@ -79,6 +96,14 @@ class StarAddCommand extends Command
         $progressBar->finish();
 
         $symfonyStyle->success('All star added');
+        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
+        $symfonyStyle->success(
+            sprintf(
+                'Added: %d, Updated: %d',
+                $numberFormatter->format($this->add),
+                $numberFormatter->format($this->update)
+            )
+        );
 
         return Command::SUCCESS;
     }
@@ -107,6 +132,7 @@ class StarAddCommand extends Command
                 'repository' => $data['git_url'],
             ]
         );
+
         if (!$star instanceof Star) {
             $star = new Star();
             $star->setTitle($data['full_name']);

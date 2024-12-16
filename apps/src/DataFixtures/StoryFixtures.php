@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Category;
-use Labstag\Entity\Story;
 use Labstag\Entity\Meta;
+use Labstag\Entity\Story;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
@@ -47,7 +47,7 @@ class StoryFixtures extends FixtureLib implements DependentFixtureInterface
         ObjectManager $objectManager
     ): void
     {
-        $meta    = new Meta();
+        $meta  = new Meta();
         $story = new Story();
         $story->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
         $story->setMeta($meta);

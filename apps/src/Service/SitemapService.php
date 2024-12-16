@@ -4,9 +4,9 @@ namespace Labstag\Service;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Chapter;
-use Labstag\Entity\Story;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
+use Labstag\Entity\Story;
 use Labstag\Repository\ChapterRepository;
 
 class SitemapService

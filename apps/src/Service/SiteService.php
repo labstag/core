@@ -4,21 +4,21 @@ namespace Labstag\Service;
 
 use Exception;
 use Labstag\Controller\Admin\ChapterCrudController;
-use Labstag\Controller\Admin\StoryCrudController;
 use Labstag\Controller\Admin\PageCrudController;
 use Labstag\Controller\Admin\PostCrudController;
+use Labstag\Controller\Admin\StoryCrudController;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Configuration;
-use Labstag\Entity\Story;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
+use Labstag\Entity\Story;
 use Labstag\Repository\BlockRepository;
 use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\ConfigurationRepository;
-use Labstag\Repository\StoryRepository;
 use Labstag\Repository\PageRepository;
 use Labstag\Repository\PostRepository;
+use Labstag\Repository\StoryRepository;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -325,7 +325,7 @@ class SiteService
                 $slugstory,
                 $slugchapter,
             ]        = explode('/', (string) $slug);
-            $story = $repos['story']->findOneBy(['slug' => $slugstory]);
+            $story   = $repos['story']->findOneBy(['slug' => $slugstory]);
             $chapter = $repos['chapter']->findOneBy(['slug' => $slugchapter]);
             if ($story instanceof Story && $chapter instanceof Chapter && $story->getId() === $chapter->getRefStory()->getId()) {
                 return $chapter;
@@ -359,19 +359,6 @@ class SiteService
         return $types['story']->getSlug().'/'.$entity->getRefStory()->getSlug().'/'.$entity->getSlug();
     }
 
-    private function getSlugByEntityIfStory($types, $entity)
-    {
-        if (!$entity instanceof Story) {
-            return '';
-        }
-
-        if (is_null($types['story']) || !$types['story'] instanceof Page) {
-            throw new Exception('Post page not found');
-        }
-
-        return $types['story']->getSlug().'/'.$entity->getSlug();
-    }
-
     private function getSlugByEntityIfPage($entity)
     {
         if (!$entity instanceof Page) {
@@ -392,6 +379,19 @@ class SiteService
         }
 
         return $types['post']->getSlug().'/'.$entity->getSlug();
+    }
+
+    private function getSlugByEntityIfStory($types, $entity)
+    {
+        if (!$entity instanceof Story) {
+            return '';
+        }
+
+        if (is_null($types['story']) || !$types['story'] instanceof Page) {
+            throw new Exception('Post page not found');
+        }
+
+        return $types['story']->getSlug().'/'.$entity->getSlug();
     }
 
     private function getUser()

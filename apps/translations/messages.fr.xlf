@@ -361,6 +361,46 @@
         <source>Accuracy</source>
         <target>__Accuracy</target>
       </trans-unit>
+      <trans-unit id="02M_HfV" resname="Title format">
+        <source>Title format</source>
+        <target>__Title format</target>
+      </trans-unit>
+      <trans-unit id="uCtVl2y" resname="Site name">
+        <source>Site name</source>
+        <target>__Site name</target>
+      </trans-unit>
+      <trans-unit id="naxmhLd" resname="Show user">
+        <source>Show user</source>
+        <target>__Show user</target>
+      </trans-unit>
+      <trans-unit id="J2Wwgz2" resname="Link user">
+        <source>Link user</source>
+        <target>__Link user</target>
+      </trans-unit>
+      <trans-unit id="N1SzGat" resname="Medias">
+        <source>Medias</source>
+        <target>__Medias</target>
+      </trans-unit>
+      <trans-unit id="8oJeBOq" resname="Logo">
+        <source>Logo</source>
+        <target>__Logo</target>
+      </trans-unit>
+      <trans-unit id="R0dXQp4" resname="placeholder">
+        <source>placeholder</source>
+        <target>__placeholder</target>
+      </trans-unit>
+      <trans-unit id="c9N49TA" resname="favicon">
+        <source>favicon</source>
+        <target>__favicon</target>
+      </trans-unit>
+      <trans-unit id="lJaZUJe" resname="Hide for listed pages">
+        <source>Hide for listed pages</source>
+        <target>__Hide for listed pages</target>
+      </trans-unit>
+      <trans-unit id="2JP4yCD" resname="Story">
+        <source>Story</source>
+        <target>__Story</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

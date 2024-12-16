@@ -5,25 +5,17 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use Override;
-use Labstag\Entity\Configuration;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Entity\Configuration;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ConfigurationCrudController extends AbstractCrudControllerLib
 {
     #[Override]
-    public static function getEntityFqcn(): string
-    {
-        return Configuration::class;
-    }
-
     public function configureActions(Actions $actions): Actions
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
@@ -44,5 +36,11 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
         yield $this->addFieldImageUpload('logo', $pageName, new TranslatableMessage('Logo'));
         yield $this->addFieldImageUpload('placeholder', $pageName, new TranslatableMessage('placeholder'));
         yield $this->addFieldImageUpload('favicon', $pageName, new TranslatableMessage('favicon'));
+    }
+
+    #[Override]
+    public static function getEntityFqcn(): string
+    {
+        return Configuration::class;
     }
 }

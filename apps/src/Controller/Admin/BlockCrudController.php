@@ -18,7 +18,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Block;
 use Labstag\Form\Paragraphs\BlockType;
@@ -171,7 +170,7 @@ class BlockCrudController extends AbstractCrudControllerLib
             }
 
             $repository->flush();
-            $this->addFlash('success', 'Position mise à jour');
+            $this->addFlash('success', new TranslatableMessage('Position updated'));
 
             $url = $generator->setController(static::class)->setAction(Action::INDEX)->generateUrl();
 

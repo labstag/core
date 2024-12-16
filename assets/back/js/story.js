@@ -13,7 +13,7 @@ export class Story {
           Sortable.create(
             elementSortable,
             {
-              onChange: function (event) {
+              onChange: function () {
                 document.querySelectorAll(".story-sort").forEach(
                   (sortList) => {
                   sortList.querySelectorAll("input").forEach(

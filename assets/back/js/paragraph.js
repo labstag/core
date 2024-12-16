@@ -23,7 +23,7 @@ export class Paragraphs {
         var elementSortable = document.getElementById(element.id);
         if (elementSortable != undefined) {
           Sortable.create(elementSortable, {
-            onChange: function (event) {
+            onChange: function () {
               document.querySelectorAll(".sort-list").forEach(element => {
                 element.querySelectorAll(".sort_input").forEach((input, position) => {
                   input.value = position + 1;
@@ -45,7 +45,7 @@ export class Paragraphs {
         var elementSortable = document.getElementById(element.id);
         if (elementSortable != undefined) {
           Sortable.create(elementSortable, {
-            onEnd: async (event) => {
+            onEnd: async () => {
               var paragraphs = [];
               document.querySelectorAll(".paragraphs-list tbody tr").forEach(tr => {
                 paragraphs.push(tr.dataset.id);
@@ -72,7 +72,7 @@ export class Paragraphs {
       element => {
         element.addEventListener(
           'hide.bs.modal',
-          (event) => {
+          () => {
             document.querySelector('#paragraph-refresh').click();
             document.querySelector('#paragraph-iframe').src = document.querySelector('#paragraph-iframe').dataset.src;
           }
@@ -85,7 +85,7 @@ export class Paragraphs {
     document.querySelectorAll('.paragraph-edit').forEach(element => {
       element.addEventListener(
         'click',
-        (event) => {
+        () => {
           document.querySelector(element.dataset.target).src = element.href;
         }  
       );
@@ -97,7 +97,7 @@ export class Paragraphs {
       element => {
         element.addEventListener(
           'click',
-          async (event) => {
+          async () => {
             const dataParagraph = document.querySelector('.paragraphs-list').closest('.paragraph-data');
             const data = await fetch(dataParagraph.dataset.urlAdd, {
               method: 'POST',

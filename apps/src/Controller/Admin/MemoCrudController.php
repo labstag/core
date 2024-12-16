@@ -4,16 +4,10 @@ namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Memo;
 use Labstag\Form\Paragraphs\MemoType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
-use Symfony\Component\Translation\TranslatableMessage;
 
 class MemoCrudController extends AbstractCrudControllerLib
 {
@@ -43,6 +37,9 @@ class MemoCrudController extends AbstractCrudControllerLib
         foreach ($fields as $field) {
             yield $field;
         }
+
+        yield $this->addFieldWorkflow();
+        yield $this->addFieldState();
     }
 
     #[Override]

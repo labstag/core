@@ -8,15 +8,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Chapter;
-use Labstag\Entity\Story;
 use Labstag\Entity\Meta;
+use Labstag\Entity\Story;
 use Labstag\Form\Paragraphs\StoryType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
@@ -64,6 +59,9 @@ class StoryCrudController extends AbstractCrudControllerLib
         foreach ($fields as $field) {
             yield $field;
         }
+
+        yield $this->addFieldWorkflow();
+        yield $this->addFieldState();
     }
 
     #[Override]
@@ -98,7 +96,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         $request    = $adminContext->getRequest();
         $repository = $this->getRepository();
         $entityId   = $request->query->get('entityId');
-        $story    = $repository->find($entityId);
+        $story      = $repository->find($entityId);
         $generator  = $this->container->get(AdminUrlGenerator::class);
         if ($request->isMethod('POST')) {
             $repository = $this->getRepository(Chapter::class);
@@ -114,7 +112,7 @@ class StoryCrudController extends AbstractCrudControllerLib
             }
 
             $repository->flush();
-            $this->addFlash('success', 'Position mise à jour');
+            $this->addFlash('success', new TranslatableMessage('Position updated'));
 
             $url = $generator->setController(static::class)->setAction(Action::INDEX)->generateUrl();
 

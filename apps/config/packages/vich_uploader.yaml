@@ -16,10 +16,7 @@ vich_uploader:
       uri_prefix: /uploads/configuration
       upload_destination: configuration.storage
       namer:
-        service: Vich\UploaderBundle\Naming\PropertyNamer
-        options:
-          property: title
-          transliterate: true
+        service: Vich\UploaderBundle\Naming\OrignameNamer
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true

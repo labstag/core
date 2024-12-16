@@ -24,9 +24,6 @@ class Meta implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Story $story = null;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -41,6 +38,9 @@ class Meta implements Stringable
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
     private ?Post $post = null;
+
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
+    private ?Story $story = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
@@ -59,11 +59,6 @@ class Meta implements Stringable
     public function getDescription(): ?string
     {
         return $this->description;
-    }
-
-    public function getStory(): ?Story
-    {
-        return $this->story;
     }
 
     public function getId(): ?string
@@ -86,6 +81,11 @@ class Meta implements Stringable
         return $this->post;
     }
 
+    public function getStory(): ?Story
+    {
+        return $this->story;
+    }
+
     public function getTitle(): ?string
     {
         return $this->title;
@@ -106,18 +106,6 @@ class Meta implements Stringable
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function setStory(Story $story): static
-    {
-        // set the owning side of the relation if necessary
-        if ($story->getMeta() !== $this) {
-            $story->setMeta($this);
-        }
-
-        $this->story = $story;
 
         return $this;
     }
@@ -149,6 +137,18 @@ class Meta implements Stringable
         }
 
         $this->post = $post;
+
+        return $this;
+    }
+
+    public function setStory(Story $story): static
+    {
+        // set the owning side of the relation if necessary
+        if ($story->getMeta() !== $this) {
+            $story->setMeta($this);
+        }
+
+        $this->story = $story;
 
         return $this;
     }

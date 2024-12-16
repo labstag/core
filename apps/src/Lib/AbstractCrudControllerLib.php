@@ -56,78 +56,6 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     {
     }
 
-    public function addFieldTitle()
-    {
-        return TextField::new('title', new TranslatableMessage('Title'));
-    }
-
-    public function addFilterRefUser($filters)
-    {
-        $filters->add(EntityFilter::new('refuser', new TranslatableMessage('Refuser')));
-    }
-
-    public function addFilterEnable($filters)
-    {
-        $filters->add(BooleanFilter::new('enable', new TranslatableMessage('Enable')));
-    }
-
-    public function addCreatedAtField()
-    {
-        return DateTimeField::new('createdAt')->hideOnForm();
-    }
-
-    public function addUpdatedAtField()
-    {
-        return DateTimeField::new('updatedAt')->hideOnForm();
-    }
-
-    public function addTabPrincipal()
-    {
-        return FormField::addTab(new TranslatableMessage('Principal'));
-    }
-
-    public function addFieldImageUpload(string $type, string $pageName, ?string $label = null)
-    {
-        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $imageField = TextField::new($type.'File', is_null($label) ? new TranslatableMessage('Image') : $label);
-            $imageField->setFormType(VichImageType::class);
-
-            return $imageField;
-        }
-
-        $entity     = $this->getEntityFqcn();
-        $basePath   = $this->fileService->getBasePath($entity, $type.'File');
-        $imageField = ImageField::new($type, is_null($label) ? new TranslatableMessage('Image') : $label);
-        $imageField->setBasePath($basePath);
-
-        return $imageField;
-    }
-
-    public function addParagraph(
-        AdminContext $adminContext
-    )
-    {
-        $request  = $adminContext->getRequest();
-        $entityId = $request->query->get('entityId');
-
-        $generator = $this->container->get(AdminUrlGenerator::class);
-        $generator->setAction('listParagraph');
-        $generator->setEntityId($entityId);
-
-        $type = $request->request->get('paragraph', null);
-        if (!is_null($type)) {
-            $repository = $this->getRepository();
-            $entity     = $repository->find($entityId);
-
-            $this->paragraphService->addParagraph($entity, $type);
-            $repository->save($entity);
-        }
-
-        $url = $generator->generateUrl();
-
-        return $this->redirect($url);
-    }
-
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
@@ -242,6 +170,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->redirect($url);
     }
 
+    protected function addCreatedAtField()
+    {
+        return DateTimeField::new('createdAt')->hideOnForm();
+    }
+
     protected function addFieldBoolean()
     {
         $request      = $this->container->get('request_stack')->getCurrentRequest();
@@ -274,6 +207,23 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $idField->onlyOnDetail();
 
         return $idField;
+    }
+
+    protected function addFieldImageUpload(string $type, string $pageName, ?string $label = null)
+    {
+        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
+            $imageField = TextField::new($type.'File', is_null($label) ? new TranslatableMessage('Image') : $label);
+            $imageField->setFormType(VichImageType::class);
+
+            return $imageField;
+        }
+
+        $entity     = $this->getEntityFqcn();
+        $basePath   = $this->fileService->getBasePath($entity, $type.'File');
+        $imageField = ImageField::new($type, is_null($label) ? new TranslatableMessage('Image') : $label);
+        $imageField->setBasePath($basePath);
+
+        return $imageField;
     }
 
     protected function addFieldMetas(): array
@@ -362,6 +312,15 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $slugField;
     }
 
+    protected function addFieldState()
+    {
+        $textField = TextField::new('states', new TranslatableMessage('States'));
+        $textField->setTemplatePath('admin/field/states.html.twig');
+        $textField->onlyOnIndex();
+
+        return $textField;
+    }
+
     protected function addFieldTags(string $type)
     {
         $associationField = AssociationField::new('tags', new TranslatableMessage('Tags'))->autocomplete();
@@ -378,6 +337,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $associationField;
     }
 
+    protected function addFieldTitle()
+    {
+        return TextField::new('title', new TranslatableMessage('Title'));
+    }
+
     protected function addFieldTotalChild(string $type)
     {
         $collectionField = CollectionField::new($type);
@@ -385,6 +349,60 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $collectionField->formatValue(fn ($value) => count($value));
 
         return $collectionField;
+    }
+
+    protected function addFieldWorkflow()
+    {
+        $textField = TextField::new('workflow', new TranslatableMessage('Workflow'));
+        $textField->setTemplatePath('admin/field/workflow.html.twig');
+        $textField->onlyOnIndex();
+
+        return $textField;
+    }
+
+    protected function addFilterEnable($filters)
+    {
+        $filters->add(BooleanFilter::new('enable', new TranslatableMessage('Enable')));
+    }
+
+    protected function addFilterRefUser($filters)
+    {
+        $filters->add(EntityFilter::new('refuser', new TranslatableMessage('Refuser')));
+    }
+
+    protected function addParagraph(
+        AdminContext $adminContext
+    )
+    {
+        $request  = $adminContext->getRequest();
+        $entityId = $request->query->get('entityId');
+
+        $generator = $this->container->get(AdminUrlGenerator::class);
+        $generator->setAction('listParagraph');
+        $generator->setEntityId($entityId);
+
+        $type = $request->request->get('paragraph', null);
+        if (!is_null($type)) {
+            $repository = $this->getRepository();
+            $entity     = $repository->find($entityId);
+
+            $this->paragraphService->addParagraph($entity, $type);
+            $repository->save($entity);
+        }
+
+        $url = $generator->generateUrl();
+
+        return $this->redirect($url);
+    }
+
+    protected function addTabPrincipal()
+    {
+        return FormField::addTab(new TranslatableMessage('Principal'));
+    }
+
+    protected function addUpdatedAtField()
+    {
+        return DateTimeField::new('updatedAt')->hideOnForm();
     }
 
     protected function configureActionsBtn(Actions $actions): void

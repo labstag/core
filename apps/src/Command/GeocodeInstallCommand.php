@@ -5,6 +5,7 @@ namespace Labstag\Command;
 use Exception;
 use Labstag\Repository\GeoCodeRepository;
 use Labstag\Service\GeocodeService;
+use NumberFormatter;
 use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -20,12 +21,28 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class GeocodeInstallCommand extends Command
 {
+
+    private int $add = 0;
+
+    private int $update = 0;
+
     public function __construct(
         private readonly GeocodeService $geocodeService,
         private readonly GeoCodeRepository $geoCodeRepository
     )
     {
         parent::__construct();
+    }
+
+    protected function addOrUpdate($entity)
+    {
+        if (is_null($entity->getId())) {
+            ++$this->add;
+
+            return;
+        }
+
+        ++$this->update;
     }
 
     #[Override]
@@ -59,7 +76,7 @@ class GeocodeInstallCommand extends Command
         $csv = $this->geocodeService->csv($country);
         if ([] == $csv) {
             $symfonyStyle->warning(
-                ['fichier inexistant']
+                ['file not found']
             );
 
             return Command::FAILURE;
@@ -71,6 +88,8 @@ class GeocodeInstallCommand extends Command
         $counter = 0;
         foreach ($table as $row) {
             $entity = $this->geocodeService->add($row);
+            $this->addOrUpdate($entity);
+
             $this->geoCodeRepository->persist($entity);
             ++$counter;
             $this->geoCodeRepository->flush($counter);
@@ -82,6 +101,15 @@ class GeocodeInstallCommand extends Command
         $progressBar->finish();
         $symfonyStyle->newLine();
         $symfonyStyle->success('Geocodes retrieved');
+
+        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
+        $symfonyStyle->success(
+            sprintf(
+                'Added: %d, Updated: %d',
+                $numberFormatter->format($this->add),
+                $numberFormatter->format($this->update)
+            )
+        );
 
         return Command::SUCCESS;
     }

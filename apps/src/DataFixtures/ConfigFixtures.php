@@ -2,12 +2,12 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\Configuration;
+use Labstag\Lib\FixtureLib;
 use Override;
 
-class ConfigFixtures extends Fixture
+class ConfigFixtures extends FixtureLib
 {
     #[Override]
     public function load(ObjectManager $objectManager): void
@@ -17,6 +17,8 @@ class ConfigFixtures extends Fixture
         $configuration->setSiteName('Labstag');
         $configuration->setUserShow(false);
         $configuration->setUserLink(false);
+        $this->setImage($configuration, 'logoFile');
+        $this->setImage($configuration, 'placeholderFile');
 
         $objectManager->persist($configuration);
 

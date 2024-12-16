@@ -6,10 +6,6 @@ use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
@@ -40,23 +36,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         yield $this->addFieldTitle();
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();
-        $associationField = AssociationField::new('refstory')->autocomplete();
-        $user             = $this->getUser();
-        $roles            = $user->getRoles();
-        if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
-            $idUser = $user->getId();
-            $associationField->setQueryBuilder(
-                function (QueryBuilder $queryBuilder) use ($idUser)
-                {
-                    $queryBuilder->leftjoin('entity.refuser', 'refuser');
-                    $queryBuilder->andWhere('refuser.id = :id');
-                    $queryBuilder->setParameter('id', $idUser);
-                }
-            );
-        }
-
-        $associationField->setSortProperty('title');
-        yield $associationField;
+        yield $this->addFieldRefStory();
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('chapter');
         $fields = array_merge(
@@ -66,6 +46,9 @@ class ChapterCrudController extends AbstractCrudControllerLib
         foreach ($fields as $field) {
             yield $field;
         }
+
+        yield $this->addFieldWorkflow();
+        yield $this->addFieldState();
     }
 
     #[Override]
@@ -92,5 +75,26 @@ class ChapterCrudController extends AbstractCrudControllerLib
     public static function getEntityFqcn(): string
     {
         return Chapter::class;
+    }
+
+    private function addFieldRefStory()
+    {
+        $associationField = AssociationField::new('refstory')->autocomplete();
+        $user             = $this->getUser();
+        $roles            = $user->getRoles();
+        if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
+            $idUser = $user->getId();
+            $associationField->setQueryBuilder(
+                function (QueryBuilder $queryBuilder) use ($idUser)
+                {
+                    $queryBuilder->leftjoin('entity.refuser', 'refuser');
+                    $queryBuilder->andWhere('refuser.id = :id');
+                    $queryBuilder->setParameter('id', $idUser);
+                }
+            );
+        }
+
+        $associationField->setSortProperty('title');
+        yield $associationField;
     }
 }

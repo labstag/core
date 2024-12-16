@@ -3,8 +3,8 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Entity\Story;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Story;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\StoryRepository;
 use Override;
@@ -17,7 +17,7 @@ class LastStoryParagraph extends ParagraphLib
         /** @var StoryRepository $repository */
         $repository = $this->getRepository(Story::class);
         $nbr        = $paragraph->getNbr();
-        $stories  = $repository->findLastByNbr($nbr);
+        $stories    = $repository->findLastByNbr($nbr);
         $total      = $repository->findTotalEnable();
         $listing    = $this->siteService->getPageByType('story');
         $this->setData(
