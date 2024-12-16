@@ -121,14 +121,13 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
         $tab = [
-            'story' => StoryCategoryCrudController::class,
-            'page'  => PageCategoryCrudController::class,
-            'post'  => PostCategoryCrudController::class,
+            'story' => StoryCategoryCrudController::getEntityFqcn(),
+            'page'  => PageCategoryCrudController::getEntityFqcn(),
+            'post'  => PostCategoryCrudController::getEntityFqcn(),
         ];
         $categories = [];
-        foreach ($tab as $key => $value) {
-            $categories[$key] = MenuItem::linkToCrud(new TranslatableMessage('Category'), 'fas fa-hashtag', Category::class);
-            $categories[$key]->setController($value);
+        foreach ($tab as $key => $crud) {
+            $categories[$key] = MenuItem::linkToCrud(new TranslatableMessage('Category'), 'fas fa-hashtag', $crud);
         }
 
         $tab = [
@@ -145,28 +144,28 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::subMenu(new TranslatableMessage('Story'))->setSubItems(
             [
-                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', Story::class),
-                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', Story::class)->setAction(Action::NEW),
+                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', StoryCrudController::getEntityFqcn()),
+                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', StoryCrudController::getEntityFqcn())->setAction(Action::NEW),
                 $categories['story'],
                 $tags['story'],
             ]
         );
         yield MenuItem::subMenu(new TranslatableMessage('Chapter'))->setSubItems(
             [
-                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', Chapter::class),
-                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', Chapter::class)->setAction(Action::NEW),
+                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', ChapterCrudController::getEntityFqcn()),
+                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', ChapterCrudController::getEntityFqcn())->setAction(Action::NEW),
                 $tags['chapter'],
             ]
         );
 
-        yield MenuItem::linkToCrud(new TranslatableMessage('Edito'), 'fas fa-info', Edito::class);
+        yield MenuItem::linkToCrud(new TranslatableMessage('Edito'), 'fas fa-info', EditoCrudController::getEntityFqcn());
 
-        yield MenuItem::linkToCrud(new TranslatableMessage('Memo'), 'fas fa-memory', Memo::class);
+        yield MenuItem::linkToCrud(new TranslatableMessage('Memo'), 'fas fa-memory', MemoCrudController::getEntityFqcn());
 
         yield MenuItem::subMenu(new TranslatableMessage('Page'), 'fas fa-columns')->setSubItems(
             [
-                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', Page::class),
-                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', Page::class)->setAction(Action::NEW),
+                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', PageCrudController::getEntityFqcn()),
+                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', PageCrudController::getEntityFqcn())->setAction(Action::NEW),
                 $categories['page'],
                 $tags['page'],
             ]
@@ -174,19 +173,19 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::subMenu(new TranslatableMessage('Post'), 'fas fa-newspaper')->setSubItems(
             [
-                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', Post::class),
-                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', Post::class)->setAction(Action::NEW),
+                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', PostCrudController::getEntityFqcn()),
+                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', PostCrudController::getEntityFqcn())->setAction(Action::NEW),
                 $categories['post'],
                 $tags['post'],
             ]
         );
 
-        yield MenuItem::linkToCrud(new TranslatableMessage('Meta'), 'fa fa-file-alt', Meta::class);
-        yield MenuItem::linkToCrud(new TranslatableMessage('Paragraph'), 'fa fa-paragraph', Paragraph::class);
-        yield MenuItem::linkToCrud(new TranslatableMessage('Block'), 'fa fa-cubes', Block::class);
-        yield MenuItem::linkToCrud(new TranslatableMessage('Géocode'), 'fas fa-map-signs', GeoCode::class);
-        yield MenuItem::linkToCrud(new TranslatableMessage('Star'), 'fas fa-star', Star::class);
-        yield MenuItem::linkToCrud(new TranslatableMessage('User'), 'fa fa-user', User::class);
+        yield MenuItem::linkToCrud(new TranslatableMessage('Meta'), 'fa fa-file-alt', MetaCrudController::getEntityFqcn());
+        yield MenuItem::linkToCrud(new TranslatableMessage('Paragraph'), 'fa fa-paragraph', ParagraphCrudController::getEntityFqcn());
+        yield MenuItem::linkToCrud(new TranslatableMessage('Block'), 'fa fa-cubes', BlockCrudController::getEntityFqcn());
+        yield MenuItem::linkToCrud(new TranslatableMessage('Géocode'), 'fas fa-map-signs', GeoCodeCrudController::getEntityFqcn());
+        yield MenuItem::linkToCrud(new TranslatableMessage('Star'), 'fas fa-star', StarCrudController::getEntityFqcn());
+        yield MenuItem::linkToCrud(new TranslatableMessage('User'), 'fa fa-user', UserCrudController::getEntityFqcn());
         yield MenuItem::linkToRoute(new TranslatableMessage('Options'), 'fas fa-cog', 'admin_config');
         yield MenuItem::linkToRoute(new TranslatableMessage('Clear Cache'), 'fas fa-trash', 'admin_cacheclear');
         yield MenuItem::linkToRoute(new TranslatableMessage('View Site'), 'fas fa-laptop-house', 'front')->setLinkTarget('_blank');
