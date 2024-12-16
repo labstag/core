@@ -124,7 +124,7 @@
     "@symfony/webpack-encore": "5.0.*",
     "autoprefixer": "10.4.*",
     "clean-webpack-plugin": "4.0.*",
-    "core-js": "3.38.*",
+    "core-js": "3.39.*",
     "eslint": "9.17.*",
     "file-loader": "6.2.*",
     "globals": "15.13.*",
