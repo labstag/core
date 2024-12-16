@@ -23,31 +23,31 @@ class WorkflowSubscriber implements EventSubscriberInterface
 
     public function onWorkflowChapterTransition(Event $event): void
     {
-        // ...
+        unset($event);
     }
 
     public function onWorkflowEditoTransition(Event $event): void
     {
-        // ...
+        unset($event);
     }
 
     public function onWorkflowMemoTransition(Event $event): void
     {
-        // ...
+        unset($event);
     }
 
     public function onWorkflowPostTransition(Event $event): void
     {
-        // ...
+        unset($event);
     }
 
     public function onWorkflowStoryTransition(Event $event): void
     {
-        // ...
+        unset($event);
     }
 
     public function onWorkflowUserTransition(Event $event): void
     {
-        // ...
+        unset($event);
     }
 }
