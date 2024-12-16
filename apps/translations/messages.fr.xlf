@@ -401,6 +401,118 @@
         <source>Story</source>
         <target>__Story</target>
       </trans-unit>
+      <trans-unit id="Uk0.jCs" resname="States">
+        <source>States</source>
+        <target>__States</target>
+      </trans-unit>
+      <trans-unit id="d8oLn3R" resname="Workflow">
+        <source>Workflow</source>
+        <target>__Workflow</target>
+      </trans-unit>
+      <trans-unit id="5zoRrqi" resname="Position updated">
+        <source>Position updated</source>
+        <target>__Position updated</target>
+      </trans-unit>
+      <trans-unit id="Ln7YVD_" resname="%total% file(s) deleted">
+        <source>%total% file(s) deleted</source>
+        <target>__%total% file(s) deleted</target>
+      </trans-unit>
+      <trans-unit id="0b6nDKh" resname="Cache cleared">
+        <source>Cache cleared</source>
+        <target>__Cache cleared</target>
+      </trans-unit>
+      <trans-unit id="Lo5Tyd8" resname="The status has been successfully changed">
+        <source>The status has been successfully changed</source>
+        <target>__The status has been successfully changed</target>
+      </trans-unit>
+      <trans-unit id="xHsbIh6" resname="Dashboard">
+        <source>Dashboard</source>
+        <target>__Dashboard</target>
+      </trans-unit>
+      <trans-unit id="tceoGZr" resname="Category">
+        <source>Category</source>
+        <target>__Category</target>
+      </trans-unit>
+      <trans-unit id="DxuZnkH" resname="Tag">
+        <source>Tag</source>
+        <target>__Tag</target>
+      </trans-unit>
+      <trans-unit id="fcdWVrX" resname="New">
+        <source>New</source>
+        <target>__New</target>
+      </trans-unit>
+      <trans-unit id="Jgt911I" resname="Chapter">
+        <source>Chapter</source>
+        <target>__Chapter</target>
+      </trans-unit>
+      <trans-unit id="42BpiMZ" resname="Edito">
+        <source>Edito</source>
+        <target>__Edito</target>
+      </trans-unit>
+      <trans-unit id="xt97jHh" resname="Memo">
+        <source>Memo</source>
+        <target>__Memo</target>
+      </trans-unit>
+      <trans-unit id="w.dQP27" resname="Post">
+        <source>Post</source>
+        <target>__Post</target>
+      </trans-unit>
+      <trans-unit id="qzknPLP" resname="Meta">
+        <source>Meta</source>
+        <target>__Meta</target>
+      </trans-unit>
+      <trans-unit id="Jh9HUjE" resname="Paragraph">
+        <source>Paragraph</source>
+        <target>__Paragraph</target>
+      </trans-unit>
+      <trans-unit id="3XvGnXJ" resname="Block">
+        <source>Block</source>
+        <target>__Block</target>
+      </trans-unit>
+      <trans-unit id="qKiRrNv" resname="Géocode">
+        <source>Géocode</source>
+        <target>__Géocode</target>
+      </trans-unit>
+      <trans-unit id=".8BOH83" resname="Star">
+        <source>Star</source>
+        <target>__Star</target>
+      </trans-unit>
+      <trans-unit id="TkiKoB6" resname="User">
+        <source>User</source>
+        <target>__User</target>
+      </trans-unit>
+      <trans-unit id="IkIkCgL" resname="Options">
+        <source>Options</source>
+        <target>__Options</target>
+      </trans-unit>
+      <trans-unit id="SktrpBg" resname="Clear Cache">
+        <source>Clear Cache</source>
+        <target>__Clear Cache</target>
+      </trans-unit>
+      <trans-unit id="iMOBY9t" resname="View Site">
+        <source>View Site</source>
+        <target>__View Site</target>
+      </trans-unit>
+      <trans-unit id="e.aJs1K" resname="My profile">
+        <source>My profile</source>
+        <target>__My profile</target>
+      </trans-unit>
+      <trans-unit id="Bsubvwg" resname="Route not found">
+        <source>Route not found</source>
+        <target>__Route not found</target>
+      </trans-unit>
+      <trans-unit id="zgBhG2L" resname="Data not found">
+        <source>Data not found</source>
+        <target>__Data not found</target>
+      </trans-unit>
+      <trans-unit id="qETlmlV" resname="Method not found">
+        <source>Method not found</source>
+        <target>__Method not found</target>
+      </trans-unit>
+      <trans-unit id="4mK5QAH" resname="Entity not found">
+        <source>Entity not found</source>
+        <target>__Entity not found</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -57,6 +57,9 @@ class PageCrudController extends AbstractCrudControllerLib
         foreach ($fields as $field) {
             yield $field;
         }
+
+        yield $this->addFieldWorkflow();
+        yield $this->addFieldState();
     }
 
     #[Override]
