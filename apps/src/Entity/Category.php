@@ -24,12 +24,6 @@ class Category implements Stringable
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent', cascade: ['persist', 'detach'])]
     private Collection $children;
 
-    /**
-     * @var Collection<int, Story>
-     */
-    #[ORM\ManyToMany(targetEntity: Story::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
-    private Collection $stories;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -56,6 +50,12 @@ class Category implements Stringable
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $slug = null;
 
+    /**
+     * @var Collection<int, Story>
+     */
+    #[ORM\ManyToMany(targetEntity: Story::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
+    private Collection $stories;
+
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
@@ -64,10 +64,10 @@ class Category implements Stringable
 
     public function __construct()
     {
-        $this->children  = new ArrayCollection();
-        $this->stories = new ArrayCollection();
-        $this->pages     = new ArrayCollection();
-        $this->posts     = new ArrayCollection();
+        $this->children = new ArrayCollection();
+        $this->stories  = new ArrayCollection();
+        $this->pages    = new ArrayCollection();
+        $this->posts    = new ArrayCollection();
     }
 
     #[Override]
@@ -86,15 +86,6 @@ class Category implements Stringable
         return $this;
     }
 
-    public function addStory(Story $story): static
-    {
-        if (!$this->stories->contains($story)) {
-            $this->stories->add($story);
-        }
-
-        return $this;
-    }
-
     public function addPage(Page $page): static
     {
         if (!$this->pages->contains($page)) {
@@ -108,6 +99,15 @@ class Category implements Stringable
     {
         if (!$this->posts->contains($post)) {
             $this->posts->add($post);
+        }
+
+        return $this;
+    }
+
+    public function addStory(Story $story): static
+    {
+        if (!$this->stories->contains($story)) {
+            $this->stories->add($story);
         }
 
         return $this;
@@ -180,13 +180,6 @@ class Category implements Stringable
         return $this;
     }
 
-    public function removeStory(Story $story): static
-    {
-        $this->stories->removeElement($story);
-
-        return $this;
-    }
-
     public function removePage(Page $page): static
     {
         $this->pages->removeElement($page);
@@ -197,6 +190,13 @@ class Category implements Stringable
     public function removePost(Post $post): static
     {
         $this->posts->removeElement($post);
+
+        return $this;
+    }
+
+    public function removeStory(Story $story): static
+    {
+        $this->stories->removeElement($story);
 
         return $this;
     }

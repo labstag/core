@@ -55,7 +55,12 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
             'communityName' => new TranslatableMessage('Community'),
         ];
         foreach ($filterFields as $filterField => $label) {
-            $filters->add(ChoiceFilter::new($filterField, $label)->setChoices($this->getAllData($filterField)));
+            $data = $this->getAllData($filterField);
+            if (0 == count($data)) {
+                continue;
+            }
+
+            $filters->add(ChoiceFilter::new($filterField, $label)->setChoices($data));
         }
 
         $filters->add(TextFilter::new('placeName', new TranslatableMessage('Place')));

@@ -13,7 +13,7 @@ export class Block {
           Sortable.create(
             elementSortable,
             {
-              onChange: function (event) {
+              onChange: function () {
                 document.querySelectorAll(".block-sort").forEach(
                   (sortList) => {
                   sortList.querySelectorAll("input").forEach(

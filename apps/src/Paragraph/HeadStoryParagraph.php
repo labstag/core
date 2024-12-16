@@ -3,8 +3,8 @@
 namespace Labstag\Paragraph;
 
 use Labstag\Entity\Block;
-use Labstag\Entity\Story;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Story;
 use Labstag\Lib\ParagraphLib;
 use Override;
 

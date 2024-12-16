@@ -25,13 +25,6 @@ class Tag implements Stringable
     #[ORM\JoinTable(name: 'tag_chapter')]
     private Collection $chapters;
 
-    /**
-     * @var Collection<int, Story>
-     */
-    #[ORM\ManyToMany(targetEntity: Story::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
-    #[ORM\JoinTable(name: 'tag_story')]
-    private Collection $stories;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -56,6 +49,13 @@ class Tag implements Stringable
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     private ?string $slug = null;
 
+    /**
+     * @var Collection<int, Story>
+     */
+    #[ORM\ManyToMany(targetEntity: Story::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
+    #[ORM\JoinTable(name: 'tag_story')]
+    private Collection $stories;
+
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
@@ -64,10 +64,10 @@ class Tag implements Stringable
 
     public function __construct()
     {
-        $this->posts     = new ArrayCollection();
-        $this->pages     = new ArrayCollection();
-        $this->stories = new ArrayCollection();
-        $this->chapters  = new ArrayCollection();
+        $this->posts    = new ArrayCollection();
+        $this->pages    = new ArrayCollection();
+        $this->stories  = new ArrayCollection();
+        $this->chapters = new ArrayCollection();
     }
 
     #[Override]
@@ -80,15 +80,6 @@ class Tag implements Stringable
     {
         if (!$this->chapters->contains($chapter)) {
             $this->chapters->add($chapter);
-        }
-
-        return $this;
-    }
-
-    public function addStory(Story $story): static
-    {
-        if (!$this->stories->contains($story)) {
-            $this->stories->add($story);
         }
 
         return $this;
@@ -107,6 +98,15 @@ class Tag implements Stringable
     {
         if (!$this->posts->contains($post)) {
             $this->posts->add($post);
+        }
+
+        return $this;
+    }
+
+    public function addStory(Story $story): static
+    {
+        if (!$this->stories->contains($story)) {
+            $this->stories->add($story);
         }
 
         return $this;
@@ -171,13 +171,6 @@ class Tag implements Stringable
         return $this;
     }
 
-    public function removeStory(Story $story): static
-    {
-        $this->stories->removeElement($story);
-
-        return $this;
-    }
-
     public function removePage(Page $page): static
     {
         $this->pages->removeElement($page);
@@ -188,6 +181,13 @@ class Tag implements Stringable
     public function removePost(Post $post): static
     {
         $this->posts->removeElement($post);
+
+        return $this;
+    }
+
+    public function removeStory(Story $story): static
+    {
+        $this->stories->removeElement($story);
 
         return $this;
     }

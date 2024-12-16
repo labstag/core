@@ -41,9 +41,6 @@ class Paragraph implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $fond = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Story $story = null;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -70,6 +67,9 @@ class Paragraph implements Stringable
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Post $post = null;
+
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    private ?Story $story = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
@@ -111,11 +111,6 @@ class Paragraph implements Stringable
         return $this->fond;
     }
 
-    public function getStory(): ?Story
-    {
-        return $this->story;
-    }
-
     public function getId(): ?string
     {
         return $this->id;
@@ -154,6 +149,11 @@ class Paragraph implements Stringable
     public function getPost(): ?Post
     {
         return $this->post;
+    }
+
+    public function getStory(): ?Story
+    {
+        return $this->story;
     }
 
     public function getTitle(): ?string
@@ -218,13 +218,6 @@ class Paragraph implements Stringable
         return $this;
     }
 
-    public function setStory(?Story $story): static
-    {
-        $this->story = $story;
-
-        return $this;
-    }
-
     public function setImg(?string $img): void
     {
         $this->img = $img;
@@ -272,6 +265,13 @@ class Paragraph implements Stringable
     public function setPost(?Post $post): static
     {
         $this->post = $post;
+
+        return $this;
+    }
+
+    public function setStory(?Story $story): static
+    {
+        $this->story = $story;
 
         return $this;
     }

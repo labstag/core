@@ -110,14 +110,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $objectManager->persist($page);
     }
 
-    private function setParagraphsStory(Page $page)
-    {
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'story-list');
-        $paragraph->setTitle('Dernière histoires');
-        $paragraph->setNbr(20);
-    }
-
     private function setParagraphsHome(Page $page)
     {
         $generator = $this->setFaker();
@@ -126,6 +118,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'last-news');
+        $paragraph->setTitle('Dernières news');
         $paragraph->setType('last-news');
         $paragraph->setNbr(4);
 
@@ -153,6 +146,14 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'sitemap');
         $paragraph->setTitle('Sitemap');
+        $paragraph->setNbr(20);
+    }
+
+    private function setParagraphsStory(Page $page)
+    {
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'story-list');
+        $paragraph->setTitle('Dernière histoires');
         $paragraph->setNbr(20);
     }
 }

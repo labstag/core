@@ -16,29 +16,29 @@ use Labstag\Entity\Category;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
 use Labstag\Entity\GeoCode;
-use Labstag\Entity\Story;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Star;
+use Labstag\Entity\Story;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
-use Labstag\Form\Admin\OptionType;
 use Labstag\Repository\ConfigurationRepository;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
+use Labstag\Service\WorkflowService;
 use Override;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class DashboardController extends AbstractDashboardController
 {
@@ -46,6 +46,7 @@ class DashboardController extends AbstractDashboardController
         protected EntityManagerInterface $entityManager,
         protected UserService $userService,
         protected FileService $fileService,
+        protected WorkflowService $workflowService,
         protected SiteService $siteService
     )
     {
@@ -65,7 +66,7 @@ class DashboardController extends AbstractDashboardController
     {
         $total = $this->fileService->deletedFileByEntities();
         if (0 != $total) {
-            $this->addFlash('success', $total.' fichier(s) supprimé(s)');
+            $this->addFlash('success', new TranslatableMessage('%total% file(s) deleted', ['%total%' => $total]));
         }
 
         //execution de la commande en console
@@ -77,9 +78,29 @@ class DashboardController extends AbstractDashboardController
         $bufferedOutput = new BufferedOutput();
         $application->run($arrayInput, $bufferedOutput);
 
-        $this->addFlash('success', 'Cache vidé');
+        $this->addFlash('success', new TranslatableMessage('Cache cleared'));
 
         return $this->redirectToRoute('admin');
+    }
+
+    #[Route('/admin/{_locale}/config', name: 'admin_config')]
+    public function config(ConfigurationRepository $configurationRepository)
+    {
+        $configuration  = null;
+        $configurations = $configurationRepository->findAll();
+        $generator      = $this->container->get(AdminUrlGenerator::class);
+        $configuration  = (0 != count($configurations)) ? $configurations[0] : null;
+        if (is_null($configuration)) {
+            return $this->redirectToRoute('admin');
+        }
+
+        $generator->setAction(Action::EDIT);
+        $generator->setController(ConfigurationCrudController::class);
+        $generator->setEntityId($configuration->getId());
+
+        $url = $generator->generateUrl();
+
+        return $this->redirect($url);
     }
 
     #[Override]
@@ -168,7 +189,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
         yield MenuItem::linkToRoute('Options', 'fas fa-cog', 'admin_config');
         yield MenuItem::linkToRoute('Vider le cache', 'fas fa-trash', 'admin_cacheclear');
-        yield MenuItem::linkToRoute('Voir le site', 'fas fa-laptop-house', 'front');
+        yield MenuItem::linkToRoute('Voir le site', 'fas fa-laptop-house', 'front')->setLinkTarget('_blank');
     }
 
     #[Override]
@@ -230,26 +251,6 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
-    #[Route('/admin/{_locale}/config', name: 'admin_config')]
-    public function config(ConfigurationRepository $configurationRepository)
-    {
-        $configuration   = null;
-        $configurations = $configurationRepository->findAll();
-        $generator = $this->container->get(AdminUrlGenerator::class);
-        $configuration   = (0 != count($configurations)) ? $configurations[0] : null;
-        if (is_null($configuration)) {
-            return $this->redirectToRoute('admin');
-        }
-
-        $generator->setAction(Action::EDIT);
-        $generator->setController(ConfigurationCrudController::class);
-        $generator->setEntityId($configuration->getId());
-
-        $url = $generator->generateUrl();
-
-        return $this->redirect($url);
-    }
-
     #[Route('/admin/{_locale}/profil', name: 'admin_profil')]
     public function profil(): Response
     {
@@ -262,6 +263,24 @@ class DashboardController extends AbstractDashboardController
         $url = $generator->generateUrl();
 
         return $this->redirect($url);
+    }
+
+    #[Route('/admin/{_locale}/workflow', name: 'admin_workflow')]
+    public function workflow(AdminContext $adminContext): Response
+    {
+        $request = $adminContext->getRequest();
+        $referer = $request->headers->get('referer');
+        if (null === $referer || '' === $referer || '0' === $referer) {
+            return $this->redirectToRoute('admin');
+        }
+
+        $entity     = $request->query->get('entity', null);
+        $transition = $request->query->get('transition', null);
+        $uid        = $request->query->get('uid', null);
+
+        $this->workflowService->change($entity, $transition, $uid);
+
+        return $this->redirect($referer);
     }
 
     protected function adminEmpty($entity)

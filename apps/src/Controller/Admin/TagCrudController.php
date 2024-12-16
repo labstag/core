@@ -3,11 +3,9 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Tag;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
-use Symfony\Component\Translation\TranslatableMessage;
 
 abstract class TagCrudController extends AbstractCrudControllerLib
 {

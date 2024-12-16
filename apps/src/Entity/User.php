@@ -52,12 +52,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     #[ORM\Column(type: 'boolean', options: ['default' => 1])]
     private ?bool $enable = null;
 
-    /**
-     * @var Collection<int, Story>
-     */
-    #[ORM\OneToMany(targetEntity: Story::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
-    private Collection $stories;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -97,16 +91,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     #[ORM\Column]
     private array $roles = ['ROLE_USER'];
 
+    /**
+     * @var Collection<int, Story>
+     */
+    #[ORM\OneToMany(targetEntity: Story::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
+    private Collection $stories;
+
     #[ORM\Column(length: 255, unique: true)]
     private ?string $username = null;
 
     public function __construct()
     {
         $this->stories = new ArrayCollection();
-        $this->editos    = new ArrayCollection();
-        $this->memos     = new ArrayCollection();
-        $this->pages     = new ArrayCollection();
-        $this->posts     = new ArrayCollection();
+        $this->editos  = new ArrayCollection();
+        $this->memos   = new ArrayCollection();
+        $this->pages   = new ArrayCollection();
+        $this->posts   = new ArrayCollection();
     }
 
     public function __serialize(): array
@@ -147,16 +147,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return $this;
     }
 
-    public function addStory(Story $story): static
-    {
-        if (!$this->stories->contains($story)) {
-            $this->stories->add($story);
-            $story->setRefuser($this);
-        }
-
-        return $this;
-    }
-
     public function addMemo(Memo $memo): static
     {
         if (!$this->memos->contains($memo)) {
@@ -182,6 +172,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         if (!$this->posts->contains($post)) {
             $this->posts->add($post);
             $post->setRefuser($this);
+        }
+
+        return $this;
+    }
+
+    public function addStory(Story $story): static
+    {
+        if (!$this->stories->contains($story)) {
+            $this->stories->add($story);
+            $story->setRefuser($this);
         }
 
         return $this;
@@ -317,16 +317,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return $this;
     }
 
-    public function removeStory(Story $story): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->stories->removeElement($story) && $story->getRefuser() === $this) {
-            $story->setRefuser(null);
-        }
-
-        return $this;
-    }
-
     public function removeMemo(Memo $memo): static
     {
         // set the owning side to null (unless already changed)
@@ -352,6 +342,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         // set the owning side to null (unless already changed)
         if ($this->posts->removeElement($post) && $post->getRefuser() === $this) {
             $post->setRefuser(null);
+        }
+
+        return $this;
+    }
+
+    public function removeStory(Story $story): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->stories->removeElement($story) && $story->getRefuser() === $this) {
+            $story->setRefuser(null);
         }
 
         return $this;

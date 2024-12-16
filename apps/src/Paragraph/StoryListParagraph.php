@@ -3,8 +3,8 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Entity\Story;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Story;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\StoryRepository;
 use Override;

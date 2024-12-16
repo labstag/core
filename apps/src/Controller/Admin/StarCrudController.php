@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 use Labstag\Entity\Star;
@@ -58,8 +57,16 @@ class StarCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(ChoiceFilter::new('license', new TranslatableMessage('License'))->setChoices($this->getallData('license')));
-        $filters->add(ChoiceFilter::new('language', new TranslatableMessage('Language'))->setChoices($this->getallData('language')));
+        $licences = $this->getallData('license');
+        if (0 != count($licences)) {
+            $filters->add(ChoiceFilter::new('license', new TranslatableMessage('License'))->setChoices($licences));
+        }
+
+        $languages = $this->getallData('language');
+        if (0 != count($languages)) {
+            $filters->add(ChoiceFilter::new('language', new TranslatableMessage('Language'))->setChoices($languages));
+        }
+
         $filters->add(NumericFilter::new('stargazers', new TranslatableMessage('stargazers')));
         $filters->add(NumericFilter::new('watchers', new TranslatableMessage('watchers')));
         $filters->add(NumericFilter::new('forks', new TranslatableMessage('forks')));

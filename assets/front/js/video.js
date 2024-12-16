@@ -1,6 +1,3 @@
-import { ImageTextAlternativeCommand } from 'ckeditor5';
-import Postmate from 'postmate';
-
 export class Video
 {
   constructor()

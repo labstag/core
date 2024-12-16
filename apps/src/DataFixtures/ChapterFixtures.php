@@ -18,9 +18,9 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
      */
     protected const NUMBER_CHAPTER = 50;
 
-    protected array $stories = [];
-
     protected array $position = [];
+
+    protected array $stories = [];
 
     #[Override]
     public function getDependencies(): array
@@ -35,7 +35,7 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
     public function load(ObjectManager $objectManager): void
     {
         $this->stories = $this->getIdentitiesByClass(Story::class);
-        $this->tags      = $this->getIdentitiesByClass(Tag::class, 'chapter');
+        $this->tags    = $this->getIdentitiesByClass(Tag::class, 'chapter');
         $this->loadForeach(self::NUMBER_CHAPTER, 'addChapter', $objectManager);
         $objectManager->flush();
     }

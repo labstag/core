@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use Labstag\Entity\User;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
@@ -83,6 +82,9 @@ class UserCrudController extends AbstractCrudControllerLib
             $collectionField->formatValue(fn ($value) => count($value));
             yield $collectionField;
         }
+
+        yield $this->addFieldWorkflow();
+        yield $this->addFieldState();
     }
 
     #[Override]

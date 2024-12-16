@@ -2,7 +2,11 @@
 
 namespace Labstag\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 
@@ -10,9 +14,36 @@ class WorkflowService
 {
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
-        protected Registry $workflowRegistry
+        protected Registry $workflowRegistry,
+        protected RequestStack $requestStack,
+        protected EntityManagerInterface $entityManager
     )
     {
+    }
+
+    public function change($entity, $transition, $uid)
+    {
+        $entityRepository = $this->entityManager->getRepository($entity);
+
+        $object = $entityRepository->find($uid);
+        if (!$this->workflowRegistry->has($object)) {
+            return;
+        }
+
+        $workflow = $this->workflowRegistry->get($object);
+        if (!$workflow->can($object, $transition)) {
+            return;
+        }
+
+        $workflow->apply($object, $transition);
+        $this->entityManager->flush();
+
+        $session = $this->requestStack->getSession();
+        if (!$session instanceof FlashBagAwareSessionInterface) {
+            return;
+        }
+
+        $session->getFlashBag()->add('success', new TranslatableMessage('The status has been successfully changed'));
     }
 
     public function init($entity)

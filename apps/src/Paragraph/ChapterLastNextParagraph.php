@@ -19,7 +19,7 @@ class ChapterLastNextParagraph extends ParagraphLib
         }
 
         $chapter = $data['entity'];
-        $story = $chapter->getRefStory();
+        $story   = $chapter->getRefStory();
 
         $repository = $this->getRepository(Chapter::class);
 
