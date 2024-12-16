@@ -134,7 +134,7 @@
     "regenerator-runtime": "0.14.*",
     "sass": "1.64.*",
     "sass-loader": "16.0.*",
-    "stylelint": "16.9.*",
+    "stylelint": "16.12.*",
     "stylelint-config-standard": "36.0.*",
     "webfontloader": "1.6.*",
     "webpack": "5.97.*",
