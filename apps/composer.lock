@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1b6861f606dd03fb19c29db98a428f8d",
+    "content-hash": "443ef0d67f6c08f618f666767d761c84",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -8758,16 +8758,16 @@
         },
         {
             "name": "vich/uploader-bundle",
-            "version": "v2.4.3",
+            "version": "v2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dustin10/VichUploaderBundle.git",
-                "reference": "7925bea64df77991caacf8967f602efb268a3724"
+                "reference": "4f1c098b3ec46b1aaf137bec6ecb49dbbaff4e0d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dustin10/VichUploaderBundle/zipball/7925bea64df77991caacf8967f602efb268a3724",
-                "reference": "7925bea64df77991caacf8967f602efb268a3724",
+                "url": "https://api.github.com/repos/dustin10/VichUploaderBundle/zipball/4f1c098b3ec46b1aaf137bec6ecb49dbbaff4e0d",
+                "reference": "4f1c098b3ec46b1aaf137bec6ecb49dbbaff4e0d",
                 "shasum": ""
             },
             "require": {
@@ -8819,7 +8819,6 @@
                 "yoast/phpunit-polyfills": "^2.0"
             },
             "suggest": {
-                "doctrine/annotations": "If you use doctrine/doctrine-bundle >2.7, this package is required to use annotations",
                 "doctrine/doctrine-bundle": "For integration with Doctrine",
                 "doctrine/mongodb-odm-bundle": "For integration with Doctrine ODM",
                 "doctrine/orm": "For integration with Doctrine ORM",
@@ -8861,9 +8860,9 @@
             ],
             "support": {
                 "issues": "https://github.com/dustin10/VichUploaderBundle/issues",
-                "source": "https://github.com/dustin10/VichUploaderBundle/tree/v2.4.3"
+                "source": "https://github.com/dustin10/VichUploaderBundle/tree/v2.5.0"
             },
-            "time": "2024-11-18T06:29:52+00:00"
+            "time": "2024-12-09T07:56:52+00:00"
         }
     ],
     "packages-dev": [
