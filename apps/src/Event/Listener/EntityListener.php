@@ -15,12 +15,16 @@ use Labstag\Entity\Post;
 use Labstag\Repository\PageRepository;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\WorkflowService;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Workflow\Registry;
 
 #[AsDoctrineListener(event: Events::prePersist)]
 #[AsDoctrineListener(event: Events::postPersist)]
 final class EntityListener
 {
     public function __construct(
+        #[Autowire(service: 'workflow.registry')]
+        protected Registry $workflowRegistry,
         protected PageRepository $pageRepository,
         protected ParagraphService $paragraphService,
         protected WorkflowService $workflowService
@@ -38,10 +42,26 @@ final class EntityListener
     public function prePersist(PrePersistEventArgs $prePersistEventArgs): void
     {
         $object = $prePersistEventArgs->getObject();
+        $this->initWorkflow($object);
         $this->prePersistAddMeta($object);
         $this->prePersistChapter($object);
         $this->prePersistParagraph($object);
         $this->prePersistPage($object);
+    }
+
+    private function initworkflow($object)
+    {
+        $this->workflowService->init($object);
+        if (!is_object($object) || !$this->workflowRegistry->has($object)) {
+            return;
+        }
+
+        $workflow = $this->workflowRegistry->get($object);
+        if (!$workflow->can($object, 'submit')) {
+            return;
+        }
+
+        $workflow->apply($object, 'submit');
     }
 
     private function postPersistParagraph($object, ObjectManager $objectManager): void

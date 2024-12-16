@@ -17,6 +17,9 @@ framework:
       - published
       - rejected
       transitions:
+        submit:
+          from: start
+          to: draft
         reread:
           from: draft
           to: rereading
@@ -46,6 +49,9 @@ framework:
       - published
       - rejected
       transitions:
+        submit:
+          from: start
+          to: draft
         reread:
           from: draft
           to: rereading
@@ -75,6 +81,9 @@ framework:
       - published
       - rejected
       transitions:
+        submit:
+          from: start
+          to: draft
         reread:
           from: draft
           to: rereading
@@ -104,6 +113,9 @@ framework:
       - published
       - rejected
       transitions:
+        submit:
+          from: start
+          to: draft
         reread:
           from: draft
           to: rereading
@@ -133,6 +145,41 @@ framework:
       - published
       - rejected
       transitions:
+        submit:
+          from: start
+          to: draft
+        reread:
+          from: draft
+          to: rereading
+        fix:
+          from: rereading
+          to: draft
+        publish:
+          from: rereading
+          to: published
+        reject:
+          from: rereading
+          to: rejected
+    page:
+      type: 'workflow'
+      audit_trail:
+        enabled: "%kernel.debug%"
+      marking_store:
+        type: 'method'
+        property: 'state'
+      supports:
+      - Labstag\Entity\Page
+      initial_marking: start
+      places:
+      - start
+      - draft
+      - rereading
+      - published
+      - rejected
+      transitions:
+        submit:
+          from: start
+          to: draft
         reread:
           from: draft
           to: rereading

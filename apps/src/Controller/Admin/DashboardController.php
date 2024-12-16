@@ -119,7 +119,7 @@ class DashboardController extends AbstractDashboardController
     #[Override]
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+        yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
         $tab = [
             'story' => StoryCategoryCrudController::class,
             'page'  => PageCategoryCrudController::class,
@@ -127,7 +127,7 @@ class DashboardController extends AbstractDashboardController
         ];
         $categories = [];
         foreach ($tab as $key => $value) {
-            $categories[$key] = MenuItem::linkToCrud('Category', 'fas fa-hashtag', Category::class);
+            $categories[$key] = MenuItem::linkToCrud(new TranslatableMessage('Category'), 'fas fa-hashtag', Category::class);
             $categories[$key]->setController($value);
         }
 
@@ -139,57 +139,57 @@ class DashboardController extends AbstractDashboardController
         ];
         $tags = [];
         foreach ($tab as $key => $value) {
-            $tags[$key] = MenuItem::linkToCrud('Tag', 'fas fa-tags', Tag::class);
+            $tags[$key] = MenuItem::linkToCrud(new TranslatableMessage('Tag'), 'fas fa-tags', Tag::class);
             $tags[$key]->setController($value);
         }
 
-        yield MenuItem::subMenu('Story')->setSubItems(
+        yield MenuItem::subMenu(new TranslatableMessage('Story'))->setSubItems(
             [
-                MenuItem::linkToCrud('List', 'fa fa-list', Story::class),
-                MenuItem::linkToCrud('new', 'fas fa-plus', Story::class)->setAction(Action::NEW),
+                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', Story::class),
+                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', Story::class)->setAction(Action::NEW),
                 $categories['story'],
                 $tags['story'],
             ]
         );
-        yield MenuItem::subMenu('Chapter')->setSubItems(
+        yield MenuItem::subMenu(new TranslatableMessage('Chapter'))->setSubItems(
             [
-                MenuItem::linkToCrud('List', 'fa fa-list', Chapter::class),
-                MenuItem::linkToCrud('new', 'fas fa-plus', Chapter::class)->setAction(Action::NEW),
+                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', Chapter::class),
+                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', Chapter::class)->setAction(Action::NEW),
                 $tags['chapter'],
             ]
         );
 
-        yield MenuItem::linkToCrud('Edito', 'fas fa-info', Edito::class);
+        yield MenuItem::linkToCrud(new TranslatableMessage('Edito'), 'fas fa-info', Edito::class);
 
-        yield MenuItem::linkToCrud('Memo', 'fas fa-memory', Memo::class);
+        yield MenuItem::linkToCrud(new TranslatableMessage('Memo'), 'fas fa-memory', Memo::class);
 
-        yield MenuItem::subMenu('Page', 'fas fa-columns')->setSubItems(
+        yield MenuItem::subMenu(new TranslatableMessage('Page'), 'fas fa-columns')->setSubItems(
             [
-                MenuItem::linkToCrud('List', 'fa fa-list', Page::class),
-                MenuItem::linkToCrud('new', 'fas fa-plus', Page::class)->setAction(Action::NEW),
+                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', Page::class),
+                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', Page::class)->setAction(Action::NEW),
                 $categories['page'],
                 $tags['page'],
             ]
         );
 
-        yield MenuItem::subMenu('Post', 'fas fa-newspaper')->setSubItems(
+        yield MenuItem::subMenu(new TranslatableMessage('Post'), 'fas fa-newspaper')->setSubItems(
             [
-                MenuItem::linkToCrud('List', 'fa fa-list', Post::class),
-                MenuItem::linkToCrud('new', 'fas fa-plus', Post::class)->setAction(Action::NEW),
+                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', Post::class),
+                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', Post::class)->setAction(Action::NEW),
                 $categories['post'],
                 $tags['post'],
             ]
         );
 
-        yield MenuItem::linkToCrud('Meta', 'fa fa-file-alt', Meta::class);
-        yield MenuItem::linkToCrud('Paragraph', 'fa fa-paragraph', Paragraph::class);
-        yield MenuItem::linkToCrud('Block', 'fa fa-cubes', Block::class);
-        yield MenuItem::linkToCrud('Géocode', 'fas fa-map-signs', GeoCode::class);
-        yield MenuItem::linkToCrud('Star', 'fas fa-star', Star::class);
-        yield MenuItem::linkToCrud('User', 'fa fa-user', User::class);
-        yield MenuItem::linkToRoute('Options', 'fas fa-cog', 'admin_config');
-        yield MenuItem::linkToRoute('Vider le cache', 'fas fa-trash', 'admin_cacheclear');
-        yield MenuItem::linkToRoute('Voir le site', 'fas fa-laptop-house', 'front')->setLinkTarget('_blank');
+        yield MenuItem::linkToCrud(new TranslatableMessage('Meta'), 'fa fa-file-alt', Meta::class);
+        yield MenuItem::linkToCrud(new TranslatableMessage('Paragraph'), 'fa fa-paragraph', Paragraph::class);
+        yield MenuItem::linkToCrud(new TranslatableMessage('Block'), 'fa fa-cubes', Block::class);
+        yield MenuItem::linkToCrud(new TranslatableMessage('Géocode'), 'fas fa-map-signs', GeoCode::class);
+        yield MenuItem::linkToCrud(new TranslatableMessage('Star'), 'fas fa-star', Star::class);
+        yield MenuItem::linkToCrud(new TranslatableMessage('User'), 'fa fa-user', User::class);
+        yield MenuItem::linkToRoute(new TranslatableMessage('Options'), 'fas fa-cog', 'admin_config');
+        yield MenuItem::linkToRoute(new TranslatableMessage('Clear Cache'), 'fas fa-trash', 'admin_cacheclear');
+        yield MenuItem::linkToRoute(new TranslatableMessage('View Site'), 'fas fa-laptop-house', 'front')->setLinkTarget('_blank');
     }
 
     #[Override]
@@ -202,7 +202,7 @@ class DashboardController extends AbstractDashboardController
 
         $userMenu->addMenuItems(
             [
-                MenuItem::linkToRoute('Mon profil', 'fa fa-user', 'admin_profil'),
+                MenuItem::linkToRoute(new TranslatableMessage('My profile'), 'fa fa-user', 'admin_profil'),
             ]
         );
         $avatar = $user->getAvatar();
@@ -235,7 +235,7 @@ class DashboardController extends AbstractDashboardController
         match ($routeName) {
             'admin_restore' => $this->adminRestore($entity, $uuid),
             'admin_empty'   => $this->adminEmpty($entity),
-            default         => throw new Exception('Route not found'),
+            default         => throw new Exception(new TranslatableMessage('Route not found')),
         };
 
         return $this->redirect($referer);
@@ -299,12 +299,12 @@ class DashboardController extends AbstractDashboardController
         $repository = $this->getRepository($entity);
         $data       = $repository->find($uuid);
         if (is_null($data)) {
-            throw new Exception('Data not found');
+            throw new Exception(new TranslatableMessage('Data not found'));
         }
 
         $methods = get_class_methods($data);
         if (!in_array('isDeleted', $methods)) {
-            throw new Exception('Method not found');
+            throw new Exception(new TranslatableMessage('Method not found'));
         }
 
         if ($data->isDeleted()) {
@@ -319,7 +319,7 @@ class DashboardController extends AbstractDashboardController
         try {
             $repository = $this->entityManager->getRepository($entity);
         } catch (Exception) {
-            throw new Exception('Entity not found');
+            throw new Exception(new TranslatableMessage('Entity not found'));
         }
 
         return $repository;
