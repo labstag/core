@@ -22,10 +22,9 @@ class Link implements Stringable
     private ?string $classes = null;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: 'guid', unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
@@ -49,7 +48,7 @@ class Link implements Stringable
         return $this->classes;
     }
 
-    public function getId(): ?string
+    public function getId(): ?int
     {
         return $this->id;
     }
