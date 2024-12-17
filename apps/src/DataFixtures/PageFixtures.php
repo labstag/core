@@ -52,10 +52,15 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $stories->setType('story');
         $this->setParagraphsStory($stories);
 
-        $posts = new Page();
-        $posts->setTitle('Posts');
-        $posts->setType('post');
-        $this->setParagraphsPost($posts);
+        $post = new Page();
+        $post->setTitle('Posts');
+        $post->setType('post');
+        $this->setParagraphsPost($post);
+
+        $star = new Page();
+        $star->setTitle('Mes étoiles github');
+        $star->setType('page');
+        $this->setParagraphsStar($star);
 
         $contact = new Page();
         $contact->setTitle('Contact');
@@ -73,7 +78,11 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
                 'parent' => 'home',
             ],
             [
-                'entity' => $posts,
+                'entity' => $post,
+                'parent' => 'home',
+            ],
+            [
+                'entity' => $star,
                 'parent' => 'home',
             ],
             [
@@ -146,6 +155,14 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'sitemap');
         $paragraph->setTitle('Sitemap');
+        $paragraph->setNbr(20);
+    }
+
+    private function setParagraphsStar(Page $page)
+    {
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'star');
+        $paragraph->setTitle('Mes étoiles github');
         $paragraph->setNbr(20);
     }
 
