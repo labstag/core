@@ -53,10 +53,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     private ?bool $enable = null;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: 'guid', unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
     #[ORM\Column(length: 2, options: ['default' => 'fr'])]
     private ?string $language = null;
@@ -228,7 +227,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return $this->stories;
     }
 
-    public function getId(): ?string
+    public function getId(): ?int
     {
         return $this->id;
     }

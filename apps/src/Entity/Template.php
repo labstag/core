@@ -22,10 +22,9 @@ class Template
     private ?string $html = null;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: 'guid', unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $text = null;
@@ -43,7 +42,7 @@ class Template
         return $this->html;
     }
 
-    public function getId(): ?string
+    public function getId(): ?int
     {
         return $this->id;
     }

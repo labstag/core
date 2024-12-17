@@ -48,10 +48,9 @@ class Story implements Stringable
     private Collection $chapters;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: 'guid', unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $img = null;
@@ -153,7 +152,7 @@ class Story implements Stringable
         return $this->chapters;
     }
 
-    public function getId(): ?string
+    public function getId(): ?int
     {
         return $this->id;
     }
