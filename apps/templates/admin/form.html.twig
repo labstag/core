@@ -6,10 +6,10 @@
   {% include "admin/modal/paragraph.html.twig" %}
   <div
     class="paragraph-data"
-    {# data-url-add="{{ ea_url().setController(controller).setAction('addParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
+    data-url-add="{{ ea_url().setController(controller).setAction('addParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
     data-url-delete="{{ ea_url().setController(controller).setAction('deleteParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
     data-url-update="{{ ea_url().setController(controller).setAction('updateParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
-    data-url-list="{{ ea_url().setController(controller).setAction('listParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}" #}
+    data-url-list="{{ ea_url().setController(controller).setAction('listParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
   >
     {% set list = ea_crud_form.ea_field.customOptions.get('paragraphs') %}
     <div class="row">
