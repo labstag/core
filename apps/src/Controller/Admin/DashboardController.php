@@ -96,7 +96,7 @@ class DashboardController extends AbstractDashboardController
     {
         $data      = $this->siteService->getConfiguration();
         $dashboard = Dashboard::new();
-        $dashboard->setTitle($data->getSiteName());
+        $dashboard->setTitle($data->getName());
         $dashboard->setTranslationDomain('admin');
         $dashboard->renderContentMaximized();
         $dashboard->setLocales($this->userService->getLanguages());
@@ -175,7 +175,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud(new TranslatableMessage('Star'), 'fas fa-star', StarCrudController::getEntityFqcn());
         yield MenuItem::linkToCrud(new TranslatableMessage('User'), 'fa fa-user', UserCrudController::getEntityFqcn());
         yield MenuItem::linkToRoute(new TranslatableMessage('Options'), 'fas fa-cog', 'admin_config');
-        
+
         yield MenuItem::subMenu(new TranslatableMessage('Templates'))->setSubItems(
             [
                 MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', TemplateCrudController::getEntityFqcn()),

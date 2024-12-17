@@ -4,10 +4,9 @@ namespace Labstag\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Labstag\Repository\TemplateRepository;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Labstag\Repository\TemplateRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: TemplateRepository::class)]
@@ -16,27 +15,42 @@ class Template
     use SoftDeleteableEntity;
     use TimestampableEntity;
 
+    #[ORM\Column(length: 255)]
+    private ?string $code = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $html = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: 'guid', unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $html = null;
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $text = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $code = null;
+    private ?string $title = null;
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function getHtml(): ?string
+    {
+        return $this->html;
+    }
 
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    public function getText(): ?string
+    {
+        return $this->text;
     }
 
     public function getTitle(): ?string
@@ -44,16 +58,11 @@ class Template
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function setCode(string $code): static
     {
-        $this->title = $title;
+        $this->code = $code;
 
         return $this;
-    }
-
-    public function getHtml(): ?string
-    {
-        return $this->html;
     }
 
     public function setHtml(?string $html): static
@@ -63,11 +72,6 @@ class Template
         return $this;
     }
 
-    public function getText(): ?string
-    {
-        return $this->text;
-    }
-
     public function setText(?string $text): static
     {
         $this->text = $text;
@@ -75,14 +79,9 @@ class Template
         return $this;
     }
 
-    public function getCode(): ?string
+    public function setTitle(string $title): static
     {
-        return $this->code;
-    }
-
-    public function setCode(string $code): static
-    {
-        $this->code = $code;
+        $this->title = $title;
 
         return $this;
     }

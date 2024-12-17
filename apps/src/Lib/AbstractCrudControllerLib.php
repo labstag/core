@@ -56,6 +56,31 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     {
     }
 
+    public function addParagraph(
+        AdminContext $adminContext
+    )
+    {
+        $request  = $adminContext->getRequest();
+        $entityId = $request->query->get('entityId');
+
+        $generator = $this->container->get(AdminUrlGenerator::class);
+        $generator->setAction('listParagraph');
+        $generator->setEntityId($entityId);
+
+        $type = $request->request->get('paragraph', null);
+        if (!is_null($type)) {
+            $repository = $this->getRepository();
+            $entity     = $repository->find($entityId);
+
+            $this->paragraphService->addParagraph($entity, $type);
+            $repository->save($entity);
+        }
+
+        $url = $generator->generateUrl();
+
+        return $this->redirect($url);
+    }
+
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
@@ -368,31 +393,6 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     protected function addFilterRefUser($filters)
     {
         $filters->add(EntityFilter::new('refuser', new TranslatableMessage('Refuser')));
-    }
-
-    protected function addParagraph(
-        AdminContext $adminContext
-    )
-    {
-        $request  = $adminContext->getRequest();
-        $entityId = $request->query->get('entityId');
-
-        $generator = $this->container->get(AdminUrlGenerator::class);
-        $generator->setAction('listParagraph');
-        $generator->setEntityId($entityId);
-
-        $type = $request->request->get('paragraph', null);
-        if (!is_null($type)) {
-            $repository = $this->getRepository();
-            $entity     = $repository->find($entityId);
-
-            $this->paragraphService->addParagraph($entity, $type);
-            $repository->save($entity);
-        }
-
-        $url = $generator->generateUrl();
-
-        return $this->redirect($url);
     }
 
     protected function addTabPrincipal()

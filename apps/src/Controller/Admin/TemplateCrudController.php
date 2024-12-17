@@ -13,11 +13,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class TemplateCrudController extends AbstractCrudControllerLib
 {
-    public static function getEntityFqcn(): string
-    {
-        return Template::class;
-    }
-    
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -27,6 +22,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addFieldID();
@@ -34,5 +30,11 @@ class TemplateCrudController extends AbstractCrudControllerLib
         yield TextField::new('code', new TranslatableMessage('code'));
         yield WysiwygField::new('html', new TranslatableMessage('html'));
         yield TextareaField::new('text', new TranslatableMessage('text'));
+    }
+
+    #[Override]
+    public static function getEntityFqcn(): string
+    {
+        return Template::class;
     }
 }

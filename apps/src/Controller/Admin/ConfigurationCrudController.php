@@ -6,9 +6,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Labstag\Entity\Configuration;
+use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -19,6 +22,7 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
     public function configureActions(Actions $actions): Actions
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+        $actions->remove(Crud::PAGE_INDEX, Action::DELETE);
         $actions->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN);
 
         return $actions;
@@ -29,7 +33,11 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
     {
         yield $this->addTabPrincipal();
         yield TextField::new('title_format', new TranslatableMessage('Title format'));
-        yield TextField::new('site_name', new TranslatableMessage('Site name'));
+        yield TextField::new('name', new TranslatableMessage('Site name'));
+        yield EmailField::new('email', new TranslatableMessage('Email'));
+        yield UrlField::new('url', new TranslatableMessage('Url'));
+        yield EmailField::new('noreply', new TranslatableMessage('Email no-reply'));
+        yield WysiwygField::new('Copyright', new TranslatableMessage('Copyright'));
         yield BooleanField::new('user_show', new TranslatableMessage('Show user'));
         yield BooleanField::new('user_link', new TranslatableMessage('Link user'));
         yield FormField::addTab(new TranslatableMessage('Medias'));

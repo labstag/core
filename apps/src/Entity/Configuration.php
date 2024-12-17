@@ -16,6 +16,12 @@ class Configuration
 {
     use TimestampableEntity;
 
+    #[ORM\Column(length: 255)]
+    private ?string $copyright = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $email = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $favicon = null;
 
@@ -34,6 +40,12 @@ class Configuration
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'logo')]
     private ?File $logoFile = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $noreply = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $placeholder = null;
 
@@ -41,16 +53,26 @@ class Configuration
     private ?File $placeholderFile = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $siteName = null;
+    private ?string $titleFormat = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $titleFormat = null;
+    private ?string $url = null;
 
     #[ORM\Column]
     private bool $userLink = false;
 
     #[ORM\Column]
     private bool $userShow = false;
+
+    public function getCopyright(): ?string
+    {
+        return $this->copyright;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
 
     public function getFavicon(): ?string
     {
@@ -77,6 +99,16 @@ class Configuration
         return $this->logoFile;
     }
 
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function getNoreply(): ?string
+    {
+        return $this->noreply;
+    }
+
     public function getPlaceholder(): ?string
     {
         return $this->placeholder;
@@ -87,14 +119,14 @@ class Configuration
         return $this->placeholderFile;
     }
 
-    public function getSiteName(): ?string
-    {
-        return $this->siteName;
-    }
-
     public function getTitleFormat(): ?string
     {
         return $this->titleFormat;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
     }
 
     public function isUserLink(): ?bool
@@ -105,6 +137,20 @@ class Configuration
     public function isUserShow(): ?bool
     {
         return $this->userShow;
+    }
+
+    public function setCopyright(string $copyright): static
+    {
+        $this->copyright = $copyright;
+
+        return $this;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
     }
 
     public function setFavicon(?string $favicon): void
@@ -139,6 +185,20 @@ class Configuration
         }
     }
 
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function setNoreply(string $noreply): static
+    {
+        $this->noreply = $noreply;
+
+        return $this;
+    }
+
     public function setPlaceholder(?string $placeholder): void
     {
         $this->placeholder = $placeholder;
@@ -155,16 +215,16 @@ class Configuration
         }
     }
 
-    public function setSiteName(string $siteName): static
+    public function setTitleFormat(string $titleFormat): static
     {
-        $this->siteName = $siteName;
+        $this->titleFormat = $titleFormat;
 
         return $this;
     }
 
-    public function setTitleFormat(string $titleFormat): static
+    public function setUrl(string $url): static
     {
-        $this->titleFormat = $titleFormat;
+        $this->url = $url;
 
         return $this;
     }
