@@ -81,12 +81,13 @@ class GeocodeInstallCommand extends Command
 
             return Command::FAILURE;
         }
-
-        $progressBar = new ProgressBar($output, is_countable($csv) ? count($csv) : 0);
-        $table       = $this->geocodeService->tables($csv);
+        
+        $table = $this->geocodeService->tables($csv);
+        $progressBar = new ProgressBar($output, is_countable($table) ? count($table) : 0);
         $progressBar->start();
         $counter = 0;
         foreach ($table as $row) {
+
             $entity = $this->geocodeService->add($row);
             $this->addOrUpdate($entity);
 

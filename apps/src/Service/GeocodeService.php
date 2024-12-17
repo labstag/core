@@ -82,12 +82,6 @@ class GeocodeService
 
     public function tables(array $csv): array
     {
-        $data = [];
-        foreach ($csv as $line) {
-            $row    = str_getcsv((string) $line, "\t");
-            $data[] = $row;
-        }
-
-        return $data;
+        return array_map(fn($line) => str_getcsv((string) $line, "\t"), $csv);
     }
 }

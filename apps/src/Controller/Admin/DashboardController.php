@@ -11,18 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
-use Labstag\Entity\Block;
-use Labstag\Entity\Category;
-use Labstag\Entity\Chapter;
-use Labstag\Entity\Edito;
-use Labstag\Entity\GeoCode;
-use Labstag\Entity\Memo;
-use Labstag\Entity\Meta;
-use Labstag\Entity\Page;
-use Labstag\Entity\Paragraph;
-use Labstag\Entity\Post;
-use Labstag\Entity\Star;
-use Labstag\Entity\Story;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Repository\ConfigurationRepository;
@@ -187,6 +175,13 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud(new TranslatableMessage('Star'), 'fas fa-star', StarCrudController::getEntityFqcn());
         yield MenuItem::linkToCrud(new TranslatableMessage('User'), 'fa fa-user', UserCrudController::getEntityFqcn());
         yield MenuItem::linkToRoute(new TranslatableMessage('Options'), 'fas fa-cog', 'admin_config');
+        
+        yield MenuItem::subMenu(new TranslatableMessage('Templates'))->setSubItems(
+            [
+                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', TemplateCrudController::getEntityFqcn()),
+                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', TemplateCrudController::getEntityFqcn())->setAction(Action::NEW),
+            ]
+        );
         yield MenuItem::linkToRoute(new TranslatableMessage('Clear Cache'), 'fas fa-trash', 'admin_cacheclear');
         yield MenuItem::linkToRoute(new TranslatableMessage('View Site'), 'fas fa-laptop-house', 'front')->setLinkTarget('_blank');
     }
