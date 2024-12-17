@@ -176,7 +176,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud(new TranslatableMessage('User'), 'fa fa-user', UserCrudController::getEntityFqcn());
         yield MenuItem::linkToRoute(new TranslatableMessage('Options'), 'fas fa-cog', 'admin_config');
 
-        yield MenuItem::subMenu(new TranslatableMessage('Templates'))->setSubItems(
+        yield MenuItem::subMenu(new TranslatableMessage('Templates'), 'fas fa-code')->setSubItems(
             [
                 MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', TemplateCrudController::getEntityFqcn()),
                 MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', TemplateCrudController::getEntityFqcn())->setAction(Action::NEW),
