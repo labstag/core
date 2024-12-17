@@ -1,6 +1,5 @@
 import {
 	ClassicEditor,
-	AccessibilityHelp,
 	Alignment,
 	Autoformat,
 	AutoImage,
@@ -9,6 +8,7 @@ import {
 	Base64UploadAdapter,
 	BlockQuote,
 	Bold,
+	Bookmark,
 	Code,
 	CodeBlock,
 	Essentials,
@@ -43,12 +43,12 @@ import {
 	ListProperties,
 	Markdown,
 	MediaEmbed,
+	Mention,
 	PageBreak,
 	Paragraph,
 	PasteFromMarkdownExperimental,
 	PasteFromOffice,
 	RemoveFormat,
-	SelectAll,
 	ShowBlocks,
 	SourceEditing,
 	SpecialCharacters,
@@ -72,17 +72,18 @@ import {
 	TextTransformation,
 	TodoList,
 	Underline,
-	Undo
+	WordCount
 } from 'ckeditor5';
 
 import translations from 'ckeditor5/translations/fr.js';
 
+/**
+ * Create a free account with a trial: https://portal.ckeditor.com/checkout?plan=free
+ */
+
 const editorConfig = {
 	toolbar: {
 		items: [
-			'undo',
-			'redo',
-			'|',
 			'sourceEditing',
 			'showBlocks',
 			'|',
@@ -116,7 +117,6 @@ const editorConfig = {
 		shouldNotGroupWhenFull: false
 	},
 	plugins: [
-		AccessibilityHelp,
 		Alignment,
 		Autoformat,
 		AutoImage,
@@ -125,6 +125,7 @@ const editorConfig = {
 		Base64UploadAdapter,
 		BlockQuote,
 		Bold,
+		Bookmark,
 		Code,
 		CodeBlock,
 		Essentials,
@@ -159,12 +160,12 @@ const editorConfig = {
 		ListProperties,
 		Markdown,
 		MediaEmbed,
+		Mention,
 		PageBreak,
 		Paragraph,
 		PasteFromMarkdownExperimental,
 		PasteFromOffice,
 		RemoveFormat,
-		SelectAll,
 		ShowBlocks,
 		SourceEditing,
 		SpecialCharacters,
@@ -188,7 +189,7 @@ const editorConfig = {
 		TextTransformation,
 		TodoList,
 		Underline,
-		Undo
+		WordCount
 	],
 	fontFamily: {
 		supportAllValues: true
@@ -265,6 +266,7 @@ const editorConfig = {
 		]
 	},
 	language: 'fr',
+	licenseKey: process.env.CKEDITOR_LICENSE_KEY,
 	link: {
 		addTargetToExternalLinks: true,
 		defaultProtocol: 'https://',
@@ -284,6 +286,16 @@ const editorConfig = {
 			startIndex: true,
 			reversed: true
 		}
+	},
+	mention: {
+		feeds: [
+			{
+				marker: '@',
+				feed: [
+					/* See: https://ckeditor.com/docs/ckeditor5/latest/features/mentions.html */
+				]
+			}
+		]
 	},
 	menuBar: {
 		isVisible: true
