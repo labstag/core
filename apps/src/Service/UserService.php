@@ -42,6 +42,18 @@ class UserService
         ];
     }
 
+    public function getTemplates(): array
+    {
+        return [
+            'user_check'                  => 'Confirmation création compte',
+            'user_check_oauthconnectuser' => 'Nouvelle association',
+            'user_check_mail'             => 'Ajout nouveau courriel',
+            'user_change-email-principal' => 'Changement de courriel principal',
+            'user_password-lost'          => 'Demande de nouveau mot de passe',
+            'user_password-change'        => 'Mot de passe changé',
+        ];
+    }
+
     public function hashPassword(User $user, string $password): string
     {
         return $this->userPasswordHasher->hashPassword($user, $password);

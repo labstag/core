@@ -14,7 +14,11 @@ class ConfigFixtures extends FixtureLib
     {
         $configuration = new Configuration();
         $configuration->setTitleFormat('%content_title% | %site_name%');
-        $configuration->setSiteName('Labstag');
+        $configuration->setName('Labstag');
+        $configuration->setCopyright('Copyright since 1999');
+        $configuration->setEmail('contact@labstag.traefik.me');
+        $configuration->setUrl('https://labstag.traefik.me');
+        $configuration->setNoreply('no-reply@labstag.traefik.me');
         $configuration->setUserShow(false);
         $configuration->setUserLink(false);
         $this->setImage($configuration, 'logoFile');
