@@ -537,6 +537,38 @@
         <source>Templates</source>
         <target>Modèles</target>
       </trans-unit>
+      <trans-unit id="3Nqz8.3" resname="Creation Date">
+        <source>Creation Date</source>
+        <target>Date de création</target>
+      </trans-unit>
+      <trans-unit id="tQhf744" resname="Last Modified">
+        <source>Last Modified</source>
+        <target>Dernière modification</target>
+      </trans-unit>
+      <trans-unit id="1_MZEgP" resname="Actions">
+        <source>Actions</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="516349u" resname="Save changes">
+        <source>Save changes</source>
+        <target>Sauvegarder les modifications</target>
+      </trans-unit>
+      <trans-unit id="qNghuqo" resname="Close">
+        <source>Close</source>
+        <target>Fermer</target>
+      </trans-unit>
+      <trans-unit id="iIh4lNe" resname="Add paragraph">
+        <source>Add paragraph</source>
+        <target>Ajouter un paragraphe</target>
+      </trans-unit>
+      <trans-unit id="g.hyGgB" resname="Add">
+        <source>Add</source>
+        <target>Ajouter</target>
+      </trans-unit>
+      <trans-unit id="njo9Voz" resname="Refresh">
+        <source>Refresh</source>
+        <target>Rafraîchir</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
