@@ -8,6 +8,7 @@ use Labstag\Entity\Memo;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
 use Labstag\Entity\User;
+use Labstag\Service\UserService;
 use Override;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\Event;
@@ -15,6 +16,12 @@ use Symfony\Component\Workflow\Transition;
 
 class WorkflowSubscriber implements EventSubscriberInterface
 {
+    public function __construct(
+        protected UserService $userService
+    )
+    {
+    }
+
     #[Override]
     public static function getSubscribedEvents(): array
     {
@@ -92,12 +99,6 @@ class WorkflowSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ('submit' == $transition) {
-            dump('aa');
-        }
-
-        if ('passwordlost' == $transition) {
-            dump('bb');
-        }
+        $this->userService->actionWithTransition($transition, $entity);
     }
 }

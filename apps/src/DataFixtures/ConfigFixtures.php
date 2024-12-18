@@ -2,13 +2,22 @@
 
 namespace Labstag\DataFixtures;
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\Configuration;
 use Labstag\Lib\FixtureLib;
 use Override;
 
-class ConfigFixtures extends FixtureLib
+class ConfigFixtures extends FixtureLib implements DependentFixtureInterface
 {
+    #[Override]
+    public function getDependencies(): array
+    {
+        return [
+            TemplateFixtures::class,
+        ];
+    }
+
     #[Override]
     public function load(ObjectManager $objectManager): void
     {

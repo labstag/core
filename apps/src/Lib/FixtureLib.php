@@ -13,6 +13,9 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Tag;
 use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
+use Labstag\Service\TemplateService;
+use Labstag\Service\UserService;
+use Labstag\Service\WorkflowService;
 use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -27,6 +30,9 @@ abstract class FixtureLib extends Fixture
     protected $enable = null;
 
     public function __construct(
+        protected TemplateService $templateService,
+        protected WorkflowService $workflowService,
+        protected UserService $userService,
         protected FileService $fileService,
         protected ParagraphService $paragraphService
     )
