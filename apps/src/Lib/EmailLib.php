@@ -116,8 +116,20 @@ abstract class EmailLib extends Email
     #[Override]
     public function subject(string $subject): static
     {
-        $entity  = $this->getEntity();
-        $subject = $this->replace($entity->getTitle());
+        $configuration = $this->siteService->getConfiguration();
+        $entity        = $this->getEntity();
+        $subject       = str_replace(
+            [
+                '%content_title%',
+                '%site_name%',
+            ],
+            [
+                $this->replace($entity->getTitle()),
+                $configuration->getName(),
+            ],
+            $configuration->getTitleFormat()
+        );
+        
 
         return parent::subject($subject);
     }
