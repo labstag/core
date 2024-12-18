@@ -10,6 +10,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Labstag\Repository\BlockRepository;
 use Override;
 use Stringable;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
 class Block implements Stringable
@@ -22,9 +23,10 @@ class Block implements Stringable
     private ?bool $enable = null;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: 'guid', unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
 
     /**
      * @var Collection<int, Link>
@@ -98,7 +100,7 @@ class Block implements Stringable
         return $this->content;
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

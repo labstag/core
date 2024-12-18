@@ -14,6 +14,7 @@ use Labstag\Repository\PostRepository;
 use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
 use Stringable;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
@@ -43,9 +44,10 @@ class Post implements Stringable
     private Collection $categories;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: 'guid', unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $img = null;
@@ -128,7 +130,7 @@ class Post implements Stringable
         return $this->categories;
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

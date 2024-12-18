@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class WorkflowService
 {
@@ -46,13 +47,22 @@ class WorkflowService
         $session->getFlashBag()->add('success', new TranslatableMessage('The status has been successfully changed'));
     }
 
-    public function init($entity)
+    public function get($entity)
     {
         if (!$this->workflowRegistry->has($entity)) {
+            return null;
+        }
+
+        return $this->workflowRegistry->get($entity);
+    }
+
+    public function init($entity)
+    {
+        $workflow = $this->get($entity);
+        if (!$workflow instanceof WorkflowInterface) {
             return;
         }
 
-        $workflow       = $this->workflowRegistry->get($entity);
         $initialMarking = new Marking();
         $definition     = $workflow->getDefinition();
         $initialPlaces  = $definition->getInitialPlaces();
