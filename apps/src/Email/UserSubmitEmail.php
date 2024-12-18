@@ -41,9 +41,10 @@ class UserSubmitEmail extends EmailLib
 
     protected function replaceLinkApproval()
     {
-        $entity = $this->data['user'];
+        $configuration = $this->siteService->getConfiguration();
+        $entity        = $this->data['user'];
 
-        return $this->router->generate(
+        return $configuration->getUrl().$this->router->generate(
             'admin_workflow',
             [
                 '_locale'    => 'fr',

@@ -129,7 +129,6 @@ abstract class EmailLib extends Email
             ],
             $configuration->getTitleFormat()
         );
-        
 
         return parent::subject($subject);
     }
