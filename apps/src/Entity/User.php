@@ -13,7 +13,6 @@ use Labstag\Repository\UserRepository;
 use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
 use Stringable;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
