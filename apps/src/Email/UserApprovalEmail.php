@@ -1,11 +1,11 @@
 <?php
 
-namespace Labstag\Template;
+namespace Labstag\Email;
 
-use Labstag\Lib\TemplateLib;
+use Labstag\Lib\EmailLib;
 use Override;
 
-class UserApprovalTemplate extends TemplateLib
+class UserApprovalEmail extends EmailLib
 {
     #[Override]
     public function getName(): string

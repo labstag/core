@@ -6,7 +6,7 @@ use Labstag\Repository\TemplateRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Twig\Environment;
 
-abstract class TemplateLib extends AbstractController
+abstract class EmailLib extends AbstractController
 {
 
     public $template;
@@ -108,8 +108,8 @@ abstract class TemplateLib extends AbstractController
 
         $twig  = '.'.$type.'.twig';
         $files = [
-            'templates/'.$folder.$twig,
-            'templates/default'.$twig,
+            'emails/'.$folder.$twig,
+            'emails/default'.$twig,
         ];
 
         $view   = end($files);

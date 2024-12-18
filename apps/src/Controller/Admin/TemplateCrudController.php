@@ -34,7 +34,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
         $textareaField = TextareaField::new('text', new TranslatableMessage('text'))->onlyOnForms();
 
         if (!is_null($currentEntity)) {
-            $template = $this->templateService->get($currentEntity->getCode());
+            $template = $this->emailService->get($currentEntity->getCode());
             if (!is_null($template)) {
                 $wysiwygField->setHelp($template->getHelp());
                 $textareaField->setHelp($template->getHelp());

@@ -4,29 +4,29 @@ namespace Labstag\Service;
 
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
-class TemplateService
+class EmailService
 {
     public function __construct(
-        #[AutowireIterator('labstag.templates')]
-        private readonly iterable $templates
+        #[AutowireIterator('labstag.emails')]
+        private readonly iterable $emails
     )
     {
     }
 
     public function all()
     {
-        return $this->templates;
+        return $this->emails;
     }
 
     public function get(string $code, array $data = [])
     {
         $template = null;
-        foreach ($this->templates as $row) {
-            if ($row->getType() != $code) {
+        foreach ($this->emails as $email) {
+            if ($email->getType() != $code) {
                 continue;
             }
 
-            $template = $row;
+            $template = $email;
             $template->setData($data);
 
             break;

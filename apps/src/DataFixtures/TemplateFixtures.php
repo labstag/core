@@ -24,7 +24,7 @@ class TemplateFixtures extends FixtureLib
             $objectManager->persist($template);
         }
 
-        $templates = $this->templateService->all();
+        $templates = $this->emailService->all();
 
         foreach ($templates as $row) {
             $template = new Template();
