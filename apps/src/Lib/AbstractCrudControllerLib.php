@@ -32,6 +32,7 @@ use Labstag\Service\BlockService;
 use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
+use Labstag\Service\TemplateService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
@@ -44,6 +45,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 abstract class AbstractCrudControllerLib extends AbstractCrudController
 {
     public function __construct(
+        protected TemplateService $templateService,
         protected TagRepository $tagRepository,
         protected FileService $fileService,
         protected SiteService $siteService,

@@ -2,25 +2,20 @@
 
 namespace Labstag\DataFixtures;
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
-use Labstag\Service\FileService;
-use Labstag\Service\ParagraphService;
-use Labstag\Service\UserService;
-use Labstag\Service\WorkflowService;
 use Override;
 
-class UserFixtures extends FixtureLib
+class UserFixtures extends FixtureLib implements DependentFixtureInterface
 {
-    public function __construct(
-        FileService $fileService,
-        protected WorkflowService $workflowService,
-        protected UserService $userService,
-        ParagraphService $paragraphService
-    )
+    #[Override]
+    public function getDependencies(): array
     {
-        parent::__construct($fileService, $paragraphService);
+        return [
+            ConfigFixtures::class,
+        ];
     }
 
     #[Override]

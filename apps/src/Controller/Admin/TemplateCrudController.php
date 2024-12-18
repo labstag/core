@@ -25,12 +25,24 @@ class TemplateCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
+        $currentEntity = $this->getContext()->getEntity()->getInstance();
         unset($pageName);
         yield $this->addFieldID();
         yield $this->addFieldTitle();
         yield TextField::new('code', new TranslatableMessage('code'));
-        yield WysiwygField::new('html', new TranslatableMessage('html'));
-        yield TextareaField::new('text', new TranslatableMessage('text'));
+        $wysiwygField  = WysiwygField::new('html', new TranslatableMessage('html'))->onlyOnForms();
+        $textareaField = TextareaField::new('text', new TranslatableMessage('text'))->onlyOnForms();
+
+        if (!is_null($currentEntity)) {
+            $template = $this->templateService->get($currentEntity->getCode());
+            if (!is_null($template)) {
+                $wysiwygField->setHelp($template->getHelp());
+                $textareaField->setHelp($template->getHelp());
+            }
+        }
+
+        yield $wysiwygField;
+        yield $textareaField;
     }
 
     #[Override]

@@ -107,49 +107,8 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
-        $tab = [
-            'story' => [
-                'crud'       => StoryCategoryCrudController::getEntityFqcn(),
-                'controller' => StoryCategoryCrudController::class,
-            ],
-            'page'  => [
-                'crud'       => PageCategoryCrudController::getEntityFqcn(),
-                'controller' => PageCategoryCrudController::class,
-            ],
-            'post'  => [
-                'crud'       => PostCategoryCrudController::getEntityFqcn(),
-                'controller' => PostCategoryCrudController::class,
-            ],
-        ];
-        $categories = [];
-        foreach ($tab as $key => $data) {
-            $categories[$key] = MenuItem::linkToCrud(new TranslatableMessage('Category'), 'fas fa-hashtag', $data['crud']);
-            $categories[$key]->setController($data['controller']);
-        }
-
-        $tab = [
-            'story'   => [
-                'crud'       => StoryTagCrudController::getEntityFqcn(),
-                'controller' => StoryTagCrudController::class,
-            ],
-            'chapter' => [
-                'crud'       => ChapterTagCrudController::getEntityFqcn(),
-                'controller' => ChapterTagCrudController::class,
-            ],
-            'page'    => [
-                'crud'       => PageTagCrudController::getEntityFqcn(),
-                'controller' => PageTagCrudController::class,
-            ],
-            'post'    => [
-                'crud'       => PostTagCrudController::getEntityFqcn(),
-                'controller' => PostTagCrudController::class,
-            ],
-        ];
-        $tags = [];
-        foreach ($tab as $key => $data) {
-            $tags[$key] = MenuItem::linkToCrud(new TranslatableMessage('Tag'), 'fas fa-tags', $data['crud']);
-            $tags[$key]->setController($data['controller']);
-        }
+        $categories = $this->setCategories();
+        $tags       = $this->setTags();
 
         yield MenuItem::subMenu(new TranslatableMessage('Story'))->setSubItems(
             [
@@ -338,5 +297,59 @@ class DashboardController extends AbstractDashboardController
         }
 
         return $repository;
+    }
+
+    private function setCategories()
+    {
+        $tab = [
+            'story' => [
+                'crud'       => StoryCategoryCrudController::getEntityFqcn(),
+                'controller' => StoryCategoryCrudController::class,
+            ],
+            'page'  => [
+                'crud'       => PageCategoryCrudController::getEntityFqcn(),
+                'controller' => PageCategoryCrudController::class,
+            ],
+            'post'  => [
+                'crud'       => PostCategoryCrudController::getEntityFqcn(),
+                'controller' => PostCategoryCrudController::class,
+            ],
+        ];
+        $categories = [];
+        foreach ($tab as $key => $data) {
+            $categories[$key] = MenuItem::linkToCrud(new TranslatableMessage('Category'), 'fas fa-hashtag', $data['crud']);
+            $categories[$key]->setController($data['controller']);
+        }
+
+        return $categories;
+    }
+
+    private function setTags()
+    {
+        $tab = [
+            'story'   => [
+                'crud'       => StoryTagCrudController::getEntityFqcn(),
+                'controller' => StoryTagCrudController::class,
+            ],
+            'chapter' => [
+                'crud'       => ChapterTagCrudController::getEntityFqcn(),
+                'controller' => ChapterTagCrudController::class,
+            ],
+            'page'    => [
+                'crud'       => PageTagCrudController::getEntityFqcn(),
+                'controller' => PageTagCrudController::class,
+            ],
+            'post'    => [
+                'crud'       => PostTagCrudController::getEntityFqcn(),
+                'controller' => PostTagCrudController::class,
+            ],
+        ];
+        $tags = [];
+        foreach ($tab as $key => $data) {
+            $tags[$key] = MenuItem::linkToCrud(new TranslatableMessage('Tag'), 'fas fa-tags', $data['crud']);
+            $tags[$key]->setController($data['controller']);
+        }
+
+        return $tags;
     }
 }

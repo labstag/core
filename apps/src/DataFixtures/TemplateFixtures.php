@@ -5,25 +5,33 @@ namespace Labstag\DataFixtures;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\Template;
 use Labstag\Lib\FixtureLib;
-use Labstag\Service\UserService;
 use Override;
 
 class TemplateFixtures extends FixtureLib
 {
-    public function __construct(
-        protected UserService $userService
-    )
-    {
-    }
-
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
-        $data = $this->data();
+        $data      = $this->data();
+        $generator = $this->setFaker();
         foreach ($data as $key => $title) {
             $template = new Template();
             $template->setCode($key);
+            $content = $generator->unique()->text(200);
+            $template->setText($content);
+            $template->setHtml($content);
             $template->setTitle($title);
+            $objectManager->persist($template);
+        }
+
+        $templates = $this->templateService->all();
+
+        foreach ($templates as $row) {
+            $template = new Template();
+            $template->setCode($row->getType());
+            $template->setText($row->setText());
+            $template->setHtml($row->setHtml());
+            $template->setTitle($row->getName());
             $objectManager->persist($template);
         }
 
@@ -32,13 +40,10 @@ class TemplateFixtures extends FixtureLib
 
     private function data(): array
     {
-        return array_merge(
-            [
-                'checknew_address' => 'Ajout nouvelle adresse',
-                'checknew_phone'   => 'Ajout nouveau numéro de téléphone',
-                'checknew_link'    => 'Ajout nouvelle url',
-            ],
-            $this->userService->getTemplates(),
-        );
+        return [
+            'checknew_address' => 'Ajout nouvelle adresse',
+            'checknew_phone'   => 'Ajout nouveau numéro de téléphone',
+            'checknew_link'    => 'Ajout nouvelle url',
+        ];
     }
 }

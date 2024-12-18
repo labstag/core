@@ -22,11 +22,14 @@ services:
   Labstag\Paragraph\:
     resource: "../src/Paragraph/"
     public: true
-    tags: ['labstag.paragraphs']
+    tags: [ 'labstag.paragraphs' ]
   Labstag\Block\:
     resource: "../src/Block/"
     public: true
-    tags: ['labstag.blocks']
-
+    tags: [ 'labstag.blocks' ]
+  Labstag\Template\:
+    resource: "../src/Template/"
+    public: true
+    tags: [ 'labstag.templates' ]
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
