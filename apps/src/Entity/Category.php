@@ -10,7 +10,6 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\CategoryRepository;
 use Override;
 use Stringable;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -120,14 +119,6 @@ class Category implements Stringable
         return $this->children;
     }
 
-    /**
-     * @return Collection<int, Story>
-     */
-    public function getHistories(): Collection
-    {
-        return $this->stories;
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -157,6 +148,14 @@ class Category implements Stringable
     public function getSlug(): ?string
     {
         return $this->slug;
+    }
+
+    /**
+     * @return Collection<int, Story>
+     */
+    public function getStories(): Collection
+    {
+        return $this->stories;
     }
 
     public function getTitle(): ?string

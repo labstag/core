@@ -9,7 +9,6 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Labstag\Repository\MetaRepository;
 use Override;
 use Stringable;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: MetaRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]

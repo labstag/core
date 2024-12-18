@@ -25,6 +25,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
+        unset($pageName);
         yield $this->addFieldID();
         yield $this->addFieldTitle();
         yield TextField::new('code', new TranslatableMessage('code'));

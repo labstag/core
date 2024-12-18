@@ -13,7 +13,6 @@ use Labstag\Repository\EditoRepository;
 use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
 use Stringable;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
