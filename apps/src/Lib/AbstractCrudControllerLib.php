@@ -29,10 +29,10 @@ use Labstag\Field\ParagraphsField;
 use Labstag\Repository\ParagraphRepository;
 use Labstag\Repository\TagRepository;
 use Labstag\Service\BlockService;
+use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
-use Labstag\Service\TemplateService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
@@ -45,7 +45,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 abstract class AbstractCrudControllerLib extends AbstractCrudController
 {
     public function __construct(
-        protected TemplateService $templateService,
+        protected EmailService $emailService,
         protected TagRepository $tagRepository,
         protected FileService $fileService,
         protected SiteService $siteService,

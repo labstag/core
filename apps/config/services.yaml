@@ -27,9 +27,9 @@ services:
     resource: "../src/Block/"
     public: true
     tags: [ 'labstag.blocks' ]
-  Labstag\Template\:
-    resource: "../src/Template/"
+  Labstag\Email\:
+    resource: "../src/Email/"
     public: true
-    tags: [ 'labstag.templates' ]
+    tags: [ 'labstag.emails' ]
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones

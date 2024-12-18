@@ -1,21 +1,21 @@
 <?php
 
-namespace Labstag\Template;
+namespace Labstag\Email;
 
-use Labstag\Lib\TemplateLib;
+use Labstag\Lib\EmailLib;
 use Override;
 
-class UserSubmitTemplate extends TemplateLib
+class UserActivateEmail extends EmailLib
 {
     #[Override]
     public function getName(): string
     {
-        return 'New user';
+        return 'User activate';
     }
 
     #[Override]
     public function getType(): string
     {
-        return 'user_submit';
+        return 'user_activate';
     }
 }

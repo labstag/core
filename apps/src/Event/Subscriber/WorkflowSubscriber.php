@@ -8,16 +8,23 @@ use Labstag\Entity\Memo;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
 use Labstag\Entity\User;
+use Labstag\Service\EmailService;
+use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Override;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Transition;
 
 class WorkflowSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        protected UserService $userService
+        protected UserService $userService,
+        protected EmailService $emailService,
+        protected SiteService $siteService,
+        protected MailerInterface $mailer
     )
     {
     }
@@ -99,6 +106,36 @@ class WorkflowSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->userService->actionWithTransition($transition, $entity);
+        $configuration = $this->siteService->getConfiguration();
+        $email         = new Email();
+        $data          = [
+            'user'          => $entity,
+            'configuration' => $configuration,
+        ];
+        $templates = [
+            'submit'         => 'user_submit',
+            'approval'       => 'user_approval',
+            'passwordlost'   => 'user_passwordlost',
+            'changepassword' => 'user_changepassword',
+            'deactivate'     => 'user_deactivate',
+            'activate'       => 'user_activate',
+        ];
+
+        $name = $transition->getName();
+        if (isset($templates[$name])) {
+            $template = $this->emailService->get($templates[$name], $data);
+            $email->to('submit' === $name ? $configuration->getEmail() : $entity->getEmail());
+        }
+
+        $email->from($configuration->getNoReply());
+        if (is_null($template)) {
+            return;
+        }
+
+        $email->subject($template->getSubject());
+        $email->text($template->getText());
+        $email->html($template->getHtml());
+
+        $this->mailer->send($email);
     }
 }
