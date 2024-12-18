@@ -1,1 +1,5 @@
-HELP {{ type }}
+<ul>
+    {% for key, title in codes %}
+        <li><b>{{ key }}</b> : {{ title }}</li>
+    {% endfor %}
+</ul>

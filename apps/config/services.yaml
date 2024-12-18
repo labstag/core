@@ -31,5 +31,9 @@ services:
     resource: "../src/Email/"
     public: true
     tags: [ 'labstag.emails' ]
+  Labstag\Form\Front\:
+    resource: "../src/Form/Front/"
+    public: true
+    tags: [ 'labstag.forms' ]
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones

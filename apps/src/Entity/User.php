@@ -13,6 +13,7 @@ use Labstag\Repository\UserRepository;
 use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
 use Stringable;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -52,9 +53,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     private ?bool $enable = null;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: 'guid', unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
 
     #[ORM\Column(length: 2, options: ['default' => 'fr'])]
     private ?string $language = null;
@@ -226,7 +228,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return $this->stories;
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

@@ -14,7 +14,6 @@ use Labstag\Service\UserService;
 use Override;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Transition;
 
@@ -107,7 +106,6 @@ class WorkflowSubscriber implements EventSubscriberInterface
         }
 
         $configuration = $this->siteService->getConfiguration();
-        $email         = new Email();
         $data          = [
             'user'          => $entity,
             'configuration' => $configuration,
@@ -122,19 +120,13 @@ class WorkflowSubscriber implements EventSubscriberInterface
         ];
 
         $name = $transition->getName();
-        if (isset($templates[$name])) {
-            $template = $this->emailService->get($templates[$name], $data);
-            $email->to('submit' === $name ? $configuration->getEmail() : $entity->getEmail());
-        }
-
-        $email->from($configuration->getNoReply());
-        if (is_null($template)) {
+        if (!isset($templates[$name])) {
             return;
         }
 
-        $email->subject($template->getSubject());
-        $email->text($template->getText());
-        $email->html($template->getHtml());
+        $email = $this->emailService->get($templates[$name], $data);
+        $email->init();
+        $email->to('submit' === $name ? $configuration->getEmail() : $entity->getEmail());
 
         $this->mailer->send($email);
     }

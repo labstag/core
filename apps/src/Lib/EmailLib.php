@@ -3,10 +3,15 @@
 namespace Labstag\Lib;
 
 use Labstag\Repository\TemplateRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Labstag\Service\SiteService;
+use Labstag\Service\WorkflowService;
+use Override;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 
-abstract class EmailLib extends AbstractController
+abstract class EmailLib extends Email
 {
 
     public $template;
@@ -16,10 +21,28 @@ abstract class EmailLib extends AbstractController
     protected array $templates = [];
 
     public function __construct(
+        protected RouterInterface $router,
+        protected SiteService $siteService,
+        protected WorkflowService $workflowService,
         protected Environment $twigEnvironment,
         protected TemplateRepository $templateRepository
     )
     {
+        parent::__construct();
+    }
+
+    #[Override]
+    public function from(Address|string ...$addresses): static
+    {
+        $configuration = $this->siteService->getConfiguration();
+        $addresses     = $configuration->getNoReply();
+
+        return parent::from($addresses);
+    }
+
+    public function getCodes()
+    {
+        return [];
     }
 
     public function getEntity()
@@ -37,16 +60,7 @@ abstract class EmailLib extends AbstractController
             return null;
         }
 
-        $render = $this->getTemplate('help.html');
-
-        return $render->getContent();
-    }
-
-    public function getHtml()
-    {
-        $entity = $this->getEntity();
-
-        return $entity->getHtml();
+        return $this->getTemplate('help.html');
     }
 
     public function getName(): string
@@ -54,23 +68,26 @@ abstract class EmailLib extends AbstractController
         return '';
     }
 
-    public function getSubject()
-    {
-        $entity = $this->getEntity();
-
-        return $entity->getTitle();
-    }
-
-    public function getText()
-    {
-        $entity = $this->getEntity();
-
-        return $entity->getText();
-    }
-
     public function getType(): string
     {
         return '';
+    }
+
+    #[Override]
+    public function html($body, string $charset = 'utf-8'): static
+    {
+        $entity = $this->getEntity();
+        $body   = $this->replace($entity->getHtml());
+
+        return parent::html($body, $charset);
+    }
+
+    public function init()
+    {
+        $this->from('');
+        $this->html('');
+        $this->text('');
+        $this->subject('');
     }
 
     public function setData(array $data = [])
@@ -84,9 +101,7 @@ abstract class EmailLib extends AbstractController
             return null;
         }
 
-        $render = $this->getTemplate('html');
-
-        return $render->getContent();
+        return $this->getTemplate('html');
     }
 
     public function setText()
@@ -95,9 +110,34 @@ abstract class EmailLib extends AbstractController
             return null;
         }
 
-        $render = $this->getTemplate('txt');
+        return $this->getTemplate('txt');
+    }
 
-        return $render->getContent();
+    #[Override]
+    public function subject(string $subject): static
+    {
+        $entity  = $this->getEntity();
+        $subject = $this->replace($entity->getTitle());
+
+        return parent::subject($subject);
+    }
+
+    #[Override]
+    public function text($body, string $charset = 'utf-8'): static
+    {
+        $entity = $this->getEntity();
+        $body   = $this->replace($entity->getText());
+
+        return parent::text($body, $charset);
+    }
+
+    protected function getReplaces()
+    {
+        return [
+            'user_username' => 'replaceUserUsername',
+            'user_email'    => 'replaceUserEmail',
+            'user_roles'    => 'replaceUserRoles',
+        ];
     }
 
     protected function getTemplateContent(string $folder, string $type)
@@ -134,17 +174,49 @@ abstract class EmailLib extends AbstractController
         return $this->templates[$type];
     }
 
+    protected function replaceUserEmail()
+    {
+        return $this->data['user']->getEmail();
+    }
+
+    protected function replaceUserRoles()
+    {
+        $roles = $this->data['user']->getRoles();
+
+        return implode(', ', $roles);
+    }
+
+    protected function replaceUserUsername()
+    {
+        return $this->data['user']->getUsername();
+    }
+
     private function getTemplate($type)
     {
         $templates = $this->templates($type);
 
-        return $this->render(
+        return $this->twigEnvironment->render(
             $templates['view'],
             [
-                'type' => $this->getType(),
-                'code' => $type,
+                'codes' => $this->getCodes(),
+                'type'  => $this->getType(),
+                'code'  => $type,
             ]
         );
+    }
+
+    private function replace($content)
+    {
+        $data = $this->getReplaces();
+        foreach ($data as $key => $function) {
+            $content = str_replace(
+                '%'.$key.'%',
+                call_user_func([$this, $function]),
+                $content
+            );
+        }
+
+        return $content;
     }
 
     private function templates(string $type): array

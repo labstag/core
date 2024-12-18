@@ -1,38 +1,26 @@
 <?php
 
-namespace Labstag\Form\Admin;
+namespace Labstag\Form\Front;
 
 use Override;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OptionType extends AbstractType
+class ContactType extends AbstractType
 {
     #[Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         unset($options);
         $formBuilder->add(
-            'site_name',
+            'firstname',
             TextType::class
         );
         $formBuilder->add(
-            'title_format',
-            TextType::class,
-            ['help' => 'Exemple : %content_title% | %site_name%']
-        );
-        $formBuilder->add(
-            'user_show',
-            CheckboxType::class,
-            ['required' => false]
-        );
-        $formBuilder->add(
-            'user_link',
-            CheckboxType::class,
-            ['required' => false]
+            'lastname',
+            TextType::class
         );
     }
 

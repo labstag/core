@@ -42,11 +42,11 @@ final class EntityListener
     public function prePersist(PrePersistEventArgs $prePersistEventArgs): void
     {
         $object = $prePersistEventArgs->getObject();
-        $this->initWorkflow($object);
         $this->prePersistAddMeta($object);
         $this->prePersistChapter($object);
         $this->prePersistParagraph($object);
         $this->prePersistPage($object);
+        $this->initWorkflow($object);
     }
 
     private function initworkflow($object)

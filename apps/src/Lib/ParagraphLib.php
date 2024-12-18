@@ -17,6 +17,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
 use Labstag\Service\FileService;
+use Labstag\Service\FormService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SitemapService;
 use Labstag\Service\SiteService;
@@ -41,6 +42,7 @@ abstract class ParagraphLib extends AbstractController
     protected array $templates = [];
 
     public function __construct(
+        protected FormService $formService,
         protected SitemapService $sitemapService,
         protected RequestStack $requestStack,
         protected PaginatorInterface $paginator,
