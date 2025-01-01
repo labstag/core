@@ -1,1 +1,6 @@
-<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}"><div class="wrapper">Paragraph form</div></section>
+<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+    <div class="wrapper">
+        {{ dump(execute) }}
+        {{ form(form) }}
+    </div>
+</section>

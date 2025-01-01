@@ -41,6 +41,9 @@ class Paragraph implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $fond = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $form = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: 'guid', unique: true)]
@@ -109,6 +112,11 @@ class Paragraph implements Stringable
     public function getFond(): ?string
     {
         return $this->fond;
+    }
+
+    public function getForm(): ?string
+    {
+        return $this->form;
     }
 
     public function getId(): ?string
@@ -214,6 +222,13 @@ class Paragraph implements Stringable
     public function setFond(?string $fond): static
     {
         $this->fond = $fond;
+
+        return $this;
+    }
+
+    public function setForm(?string $form): static
+    {
+        $this->form = $form;
 
         return $this;
     }

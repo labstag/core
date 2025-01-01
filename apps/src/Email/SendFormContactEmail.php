@@ -5,18 +5,18 @@ namespace Labstag\Email;
 use Labstag\Lib\EmailLib;
 use Override;
 
-class UserChangePasswordEmail extends EmailLib
+class SendFormContactEmail extends EmailLib
 {
     #[Override]
     public function getName(): string
     {
-        return 'Change password';
+        return 'Send form contact %user_username%';
     }
 
     #[Override]
     public function getType(): string
     {
-        return 'user_changepassword';
+        return 'send_contact';
     }
 
     #[Override]

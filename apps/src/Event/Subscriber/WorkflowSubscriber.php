@@ -126,7 +126,9 @@ class WorkflowSubscriber implements EventSubscriberInterface
 
         $email = $this->emailService->get($templates[$name], $data);
         $email->init();
-        $email->to('submit' === $name ? $configuration->getEmail() : $entity->getEmail());
+        if ('submit' !== $name) {
+            $email->to($entity->getEmail());
+        }
 
         $this->mailer->send($email);
     }

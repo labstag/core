@@ -18,6 +18,12 @@ class SecurityController extends AbstractController
     {
     }
 
+    #[Route(path: '/changepassword/{uid}', name: 'app_changepassword')]
+    public function changePassword($uid): never
+    {
+        dd($uid);
+    }
+
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {

@@ -40,8 +40,8 @@
         "symfony/webpack-encore-bundle": "2.2.*",
         "symfony/workflow": "7.2.*",
         "symfony/yaml": "7.2.*",
-        "twig/extra-bundle": "3.17.*",
-        "twig/intl-extra": "3.17.*",
+        "twig/extra-bundle": "3.18.*",
+        "twig/intl-extra": "3.18.*",
         "vich/uploader-bundle": "2.5.*"
     },
     "config": {

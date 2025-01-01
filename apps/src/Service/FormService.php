@@ -12,4 +12,39 @@ class FormService
     )
     {
     }
+
+    public function all()
+    {
+        $data = [];
+        foreach ($this->forms as $form) {
+            $code        = $form->getCode();
+            $name        = $form->getName();
+            $data[$name] = $code;
+        }
+
+        ksort($data);
+
+        return $data;
+    }
+
+    public function execute(string $code, $form)
+    {
+        return $this->get($code)->execute($form);
+    }
+
+    public function get(string $code)
+    {
+        $form = null;
+        foreach ($this->forms as $row) {
+            if ($row->getCode() != $code) {
+                continue;
+            }
+
+            $form = $row;
+
+            break;
+        }
+
+        return $form;
+    }
 }
