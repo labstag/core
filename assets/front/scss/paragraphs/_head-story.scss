@@ -1,3 +1,4 @@
+@use './../mixins' as mixins;
 .paragraph_head-steory{
-  @include background-head();
+  @include mixins.background-head();
 }

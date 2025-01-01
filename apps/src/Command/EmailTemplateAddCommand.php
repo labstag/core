@@ -2,11 +2,11 @@
 
 namespace Labstag\Command;
 
-use Override;
 use Labstag\Entity\Template;
 use Labstag\Repository\TemplateRepository;
 use Labstag\Service\EmailService;
 use NumberFormatter;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;

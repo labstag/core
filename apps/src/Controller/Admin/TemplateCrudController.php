@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Template;
@@ -23,13 +24,25 @@ class TemplateCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Template'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Templates'));
+
+        return $crud;
+    }
+
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         unset($pageName);
         yield $this->addFieldID();
         yield $this->addFieldTitle();
-        yield TextField::new('code', new TranslatableMessage('code'));
+        $textField = TextField::new('code', new TranslatableMessage('code'));
+        $textField->setDisabled(true);
+
+        yield $textField;
         $wysiwygField  = WysiwygField::new('html', new TranslatableMessage('html'))->onlyOnForms();
         $textareaField = TextareaField::new('text', new TranslatableMessage('text'))->onlyOnForms();
 

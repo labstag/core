@@ -1,5 +1,6 @@
+@use './../mixins' as mixins;
 .star-teaser{
-  @include teaser();
+  @include mixins.teaser();
   a{
     color: white;
   }

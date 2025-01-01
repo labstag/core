@@ -1,3 +1,5 @@
+
+@use './../mixins' as mixins;
 .paragraph_head-chapter{
-  @include background-head();
+  @include mixins.background-head();
 }
