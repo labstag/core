@@ -1,5 +1,6 @@
+@use './../mixins' as mixins;
 .paragraph_video{
   .video{
-    @include video();
+    @include mixins.video();
   }
 }

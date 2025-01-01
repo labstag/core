@@ -2,9 +2,9 @@
 
 namespace Labstag\FrontForm;
 
-use Override;
 use Labstag\Form\Front\ContactType;
 use Labstag\Lib\FrontFormLib;
+use Override;
 use Symfony\Component\Form\Form;
 
 class ContactFrontForm extends FrontFormLib
