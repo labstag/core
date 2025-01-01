@@ -42,7 +42,12 @@ abstract class EmailLib extends Email
 
     public function getCodes()
     {
-        return [];
+        return [
+            'user_username' => 'Username',
+            'link_login'    => 'Link login',
+            'user_email'    => 'email',
+            'user_roles'    => 'Roles',
+        ];
     }
 
     public function getEntity()
@@ -145,6 +150,7 @@ abstract class EmailLib extends Email
     protected function getReplaces()
     {
         return [
+            'link_login'    => 'replaceLinkLogin',
             'user_username' => 'replaceUserUsername',
             'user_email'    => 'replaceUserEmail',
             'user_roles'    => 'replaceUserRoles',
@@ -183,6 +189,16 @@ abstract class EmailLib extends Email
         ];
 
         return $this->templates[$type];
+    }
+
+    protected function replaceLinkLogin()
+    {
+        $configuration = $this->siteService->getConfiguration();
+
+        return $configuration->getUrl().$this->router->generate(
+            'app_login',
+            []
+        );
     }
 
     protected function replaceUserEmail()

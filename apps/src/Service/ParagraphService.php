@@ -87,6 +87,8 @@ class ParagraphService
             }
         }
 
+        ksort($paragraphs);
+
         return $paragraphs;
     }
 

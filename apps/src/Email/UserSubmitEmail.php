@@ -10,12 +10,12 @@ class UserSubmitEmail extends EmailLib
     #[Override]
     public function getCodes()
     {
-        return [
-            'link_approval' => 'Link to Approval User',
-            'user_username' => 'Username',
-            'user_email'    => 'email',
-            'user_roles'    => 'Roles',
-        ];
+        $codes = parent::getCodes();
+
+        return array_merge(
+            $codes,
+            ['link_approval' => 'Link to Approval User']
+        );
     }
 
     #[Override]
@@ -28,6 +28,14 @@ class UserSubmitEmail extends EmailLib
     public function getType(): string
     {
         return 'user_submit';
+    }
+
+    #[Override]
+    public function init()
+    {
+        $configuration = $this->siteService->getConfiguration();
+        parent::init();
+        $this->to($configuration->getEmail());
     }
 
     #[Override]

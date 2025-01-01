@@ -18,4 +18,12 @@ class UserDeactivateEmail extends EmailLib
     {
         return 'user_deactivate';
     }
+
+    #[Override]
+    public function init()
+    {
+        $user = $this->data['user'];
+        parent::init();
+        $this->to($user->getEmail());
+    }
 }

@@ -18,4 +18,34 @@ class UserPasswordLostEmail extends EmailLib
     {
         return 'user_passwordlost';
     }
+
+    #[Override]
+    public function init()
+    {
+        $user = $this->data['user'];
+        parent::init();
+        $this->to($user->getEmail());
+    }
+
+    #[Override]
+    protected function getReplaces()
+    {
+        $data                        = parent::getReplaces();
+        $data['link_changepassword'] = 'replaceLinkChangePassword';
+
+        return $data;
+    }
+
+    protected function replaceLinkChangePassword()
+    {
+        $configuration = $this->siteService->getConfiguration();
+        $entity        = $this->data['user'];
+
+        return $configuration->getUrl().$this->router->generate(
+            'app_changepassword',
+            [
+                'uid' => $entity->getId(),
+            ]
+        );
+    }
 }
