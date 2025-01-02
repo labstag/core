@@ -35,6 +35,7 @@ class StoryCrudController extends AbstractCrudControllerLib
     {
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
+        yield $this->addFieldIDShortcode('story');
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
         yield $this->addFieldTitle();

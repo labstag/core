@@ -32,6 +32,7 @@ class PageCrudController extends AbstractCrudControllerLib
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
+        yield $this->addFieldIDShortcode('page');
         if ($currentEntity instanceof Page && 'home' != $currentEntity->getType()) {
             yield $this->addFieldSlug();
         }
