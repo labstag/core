@@ -2,12 +2,14 @@
 
 namespace Labstag\Lib;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Block;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 
 abstract class BlockLib extends AbstractController
@@ -26,10 +28,12 @@ abstract class BlockLib extends AbstractController
     protected array $templates = [];
 
     public function __construct(
+        protected RouterInterface $router,
         protected AdminUrlGenerator $adminUrlGenerator,
         protected ParagraphService $paragraphService,
         protected SiteService $siteService,
         protected RequestStack $requestStack,
+        protected ManagerRegistry $managerRegistry,
         protected Environment $twigEnvironment
     )
     {
@@ -98,6 +102,11 @@ abstract class BlockLib extends AbstractController
     public function useIn(): array
     {
         return [];
+    }
+
+    protected function getRepository(string $entity)
+    {
+        return $this->managerRegistry->getRepository($entity);
     }
 
     protected function getTemplateContent(string $folder, string $type)

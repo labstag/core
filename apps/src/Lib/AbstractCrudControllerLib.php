@@ -236,6 +236,17 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $idField;
     }
 
+    protected function addFieldIDShortcode(string $type)
+    {
+        $textField = TextField::new('id', new TranslatableMessage('Shortcode'));
+        $textField->formatValue(
+            fn ($identity) => sprintf('[%s:%s]', $type, $identity)
+        );
+        $textField->onlyOnDetail();
+
+        return $textField;
+    }
+
     protected function addFieldImageUpload(string $type, string $pageName, ?string $label = null)
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {

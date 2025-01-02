@@ -40,6 +40,9 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
         yield WysiwygField::new('Copyright', new TranslatableMessage('Copyright'));
         yield BooleanField::new('user_show', new TranslatableMessage('Show user'));
         yield BooleanField::new('user_link', new TranslatableMessage('Link user'));
+        yield FormField::addTab(new TranslatableMessage('Sitemap'));
+        yield BooleanField::new('sitemap_posts', new TranslatableMessage('Show posts'));
+        yield BooleanField::new('sitemap_story', new TranslatableMessage('Show story'));
         yield FormField::addTab(new TranslatableMessage('Medias'));
         yield $this->addFieldImageUpload('logo', $pageName, new TranslatableMessage('Logo'));
         yield $this->addFieldImageUpload('placeholder', $pageName, new TranslatableMessage('placeholder'));

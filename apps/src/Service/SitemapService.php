@@ -23,11 +23,23 @@ class SitemapService
 
     public function getData()
     {
-        $tabs = array_merge(
-            $this->getDataPages(),
-            $this->getDataPosts(),
-            $this->getDataHistories()
-        );
+        $configuration = $this->siteService->getConfiguration();
+
+        $tabs = $this->getDataPages();
+        if ($configuration->isSitemapPosts()) {
+            $tabs = array_merge(
+                $tabs,
+                $this->getDataPosts(),
+            );
+        }
+
+        if ($configuration->isSitemapStory()) {
+            $tabs = array_merge(
+                $tabs,
+                $this->getDataStory(),
+            );
+        }
+
         ksort($tabs);
 
         return $this->setTabsByParent($tabs, '/');
@@ -90,11 +102,6 @@ class SitemapService
         return $this->setTabs($data);
     }
 
-    private function getDataHistories()
-    {
-        return $this->getDataFromRepository(Story::class);
-    }
-
     private function getDataPages()
     {
         return $this->getDataFromRepository(Page::class);
@@ -103,6 +110,11 @@ class SitemapService
     private function getDataPosts()
     {
         return $this->getDataFromRepository(Post::class);
+    }
+
+    private function getDataStory()
+    {
+        return $this->getDataFromRepository(Story::class);
     }
 
     private function setTabs($data)

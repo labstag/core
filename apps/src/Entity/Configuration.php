@@ -52,17 +52,23 @@ class Configuration
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'placeholder')]
     private ?File $placeholderFile = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
+    private ?bool $sitemapPosts = false;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
+    private ?bool $sitemapStory = false;
+
     #[ORM\Column(length: 255)]
     private ?string $titleFormat = null;
 
     #[ORM\Column(length: 255)]
     private ?string $url = null;
 
-    #[ORM\Column]
-    private bool $userLink = false;
+    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
+    private ?bool $userLink = false;
 
-    #[ORM\Column]
-    private bool $userShow = false;
+    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
+    private ?bool $userShow = false;
 
     public function getCopyright(): ?string
     {
@@ -127,6 +133,16 @@ class Configuration
     public function getUrl(): ?string
     {
         return $this->url;
+    }
+
+    public function isSitemapPosts(): ?bool
+    {
+        return $this->sitemapPosts;
+    }
+
+    public function isSitemapStory(): ?bool
+    {
+        return $this->sitemapStory;
     }
 
     public function isUserLink(): ?bool
@@ -213,6 +229,20 @@ class Configuration
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = new DateTimeImmutable();
         }
+    }
+
+    public function setSitemapPosts(?bool $sitemapPosts): static
+    {
+        $this->sitemapPosts = $sitemapPosts;
+
+        return $this;
+    }
+
+    public function setSitemapStory(?bool $sitemapStory): static
+    {
+        $this->sitemapStory = $sitemapStory;
+
+        return $this;
     }
 
     public function setTitleFormat(string $titleFormat): static

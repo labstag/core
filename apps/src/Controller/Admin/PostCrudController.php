@@ -27,6 +27,7 @@ class PostCrudController extends AbstractCrudControllerLib
     {
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
+        yield $this->addFieldIDShortcode('post');
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean();
         yield $this->addFieldTitle();
