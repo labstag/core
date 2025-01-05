@@ -168,6 +168,10 @@ abstract class BlockLib extends AbstractController
 
     protected function setShow(Block $block, $show)
     {
+        if (isset($this->show[$block->getId()])) {
+            return;
+        }
+
         $this->show[$block->getId()] = $show;
     }
 }
