@@ -44,7 +44,7 @@ class StarCrudController extends AbstractCrudControllerLib
         yield $this->addFieldID();
         yield $this->addFieldTitle();
         yield TextField::new('language', new TranslatableMessage('Language'));
-        yield TextField::new('repository', new TranslatableMessage('Repository'));
+        yield TextField::new('repository', new TranslatableMessage('Repository'))->hideOnIndex();
         yield UrlField::new('url', new TranslatableMessage('Url'));
         yield TextEditorField::new('description', new TranslatableMessage('Description'))->hideOnIndex();
         yield TextField::new('license', new TranslatableMessage('License'));

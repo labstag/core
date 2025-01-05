@@ -31,6 +31,12 @@ class Category implements Stringable
     private ?string $id = null;
 
     /**
+     * @var Collection<int, Story>
+     */
+    #[ORM\ManyToMany(targetEntity: Movie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
+    private Collection $movies;
+
+    /**
      * @var Collection<int, Page>
      */
     #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
@@ -66,6 +72,7 @@ class Category implements Stringable
     {
         $this->children = new ArrayCollection();
         $this->stories  = new ArrayCollection();
+        $this->movies   = new ArrayCollection();
         $this->pages    = new ArrayCollection();
         $this->posts    = new ArrayCollection();
     }
@@ -81,6 +88,15 @@ class Category implements Stringable
         if (!$this->children->contains($child)) {
             $this->children->add($child);
             $child->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function addMovie(Movie $movie): static
+    {
+        if (!$this->movies->contains($movie)) {
+            $this->movies->add($movie);
         }
 
         return $this;
@@ -124,6 +140,14 @@ class Category implements Stringable
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    /**
+     * @return Collection<int, Story>
+     */
+    public function getMovies(): Collection
+    {
+        return $this->movies;
     }
 
     /**
@@ -176,6 +200,13 @@ class Category implements Stringable
         if ($this->children->removeElement($child) && $child->getCategory() === $this) {
             $child->setParent(null);
         }
+
+        return $this;
+    }
+
+    public function removeMovie(Movie $movie): static
+    {
+        $this->movies->removeElement($movie);
 
         return $this;
     }

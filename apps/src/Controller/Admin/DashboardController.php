@@ -125,6 +125,13 @@ class DashboardController extends AbstractDashboardController
                 $tags['chapter'],
             ]
         );
+        yield MenuItem::subMenu(new TranslatableMessage('Movie'))->setSubItems(
+            [
+                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', MovieCrudController::getEntityFqcn()),
+                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', MovieCrudController::getEntityFqcn())->setAction(Action::NEW),
+                $categories['movie'],
+            ]
+        );
 
         yield MenuItem::linkToCrud(new TranslatableMessage('Edito'), 'fas fa-info', EditoCrudController::getEntityFqcn());
 
@@ -313,6 +320,10 @@ class DashboardController extends AbstractDashboardController
             'post'  => [
                 'crud'       => PostCategoryCrudController::getEntityFqcn(),
                 'controller' => PostCategoryCrudController::class,
+            ],
+            'movie' => [
+                'crud'       => MovieCategoryCrudController::getEntityFqcn(),
+                'controller' => MovieCategoryCrudController::class,
             ],
         ];
         $categories = [];

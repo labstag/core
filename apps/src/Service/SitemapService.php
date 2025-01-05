@@ -21,19 +21,19 @@ class SitemapService
     {
     }
 
-    public function getData()
+    public function getData($all = 0)
     {
         $configuration = $this->siteService->getConfiguration();
 
         $tabs = $this->getDataPages();
-        if ($configuration->isSitemapPosts()) {
+        if ($configuration->isSitemapPosts() || 1 == $all) {
             $tabs = array_merge(
                 $tabs,
                 $this->getDataPosts(),
             );
         }
 
-        if ($configuration->isSitemapStory()) {
+        if ($configuration->isSitemapStory() || 1 == $all) {
             $tabs = array_merge(
                 $tabs,
                 $this->getDataStory(),
