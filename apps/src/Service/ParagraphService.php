@@ -60,11 +60,11 @@ class ParagraphService
         return $content;
     }
 
-    public function generate(array $paragraphs, array $data)
+    public function generate(array $paragraphs, array $data, bool $disable)
     {
         $tab = [];
         foreach ($paragraphs as $paragraph) {
-            $this->setContents($paragraph, $data);
+            $this->setContents($paragraph, $data, $disable);
 
             $tab[] = [
                 'templates' => $this->templates('content', $paragraph),
@@ -250,7 +250,8 @@ class ParagraphService
 
     public function setContents(
         ?Paragraph $paragraph,
-        array $data
+        array $data,
+        bool $disable
     )
     {
         if (is_null($paragraph)) {
@@ -262,7 +263,7 @@ class ParagraphService
                 continue;
             }
 
-            $row->generate($paragraph, $data);
+            $row->generate($paragraph, $data, $disable);
 
             break;
         }

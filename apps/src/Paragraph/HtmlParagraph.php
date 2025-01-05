@@ -11,8 +11,9 @@ use Override;
 class HtmlParagraph extends ParagraphLib
 {
     #[Override]
-    public function generate(Paragraph $paragraph, array $data)
+    public function generate(Paragraph $paragraph, array $data, bool $disable)
     {
+        unset($disable);
         $this->setData(
             $paragraph,
             [

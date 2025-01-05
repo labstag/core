@@ -23,8 +23,9 @@ class ContentBlock extends BlockLib
     }
 
     #[Override]
-    public function generate(Block $block, array $data)
+    public function generate(Block $block, array $data, bool $disable)
     {
+        unset($disable);
         $paragraphs = $data['paragraphs'];
         if (0 == count($paragraphs)) {
             $this->setShow($block, false);
@@ -34,7 +35,8 @@ class ContentBlock extends BlockLib
 
         $paragraphs = $this->paragraphService->generate(
             $paragraphs,
-            $data
+            $data,
+            $disable
         );
 
         $contents = $this->paragraphService->getContents($paragraphs);

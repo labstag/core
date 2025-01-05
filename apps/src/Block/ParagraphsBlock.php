@@ -22,8 +22,9 @@ class ParagraphsBlock extends BlockLib
     }
 
     #[Override]
-    public function generate(Block $block, array $data)
+    public function generate(Block $block, array $data, bool $disable)
     {
+        unset($disable);
         $paragraphs = $block->getParagraphs()->getValues();
         if (0 == count($paragraphs)) {
             $this->setShow($block, false);
@@ -31,7 +32,7 @@ class ParagraphsBlock extends BlockLib
             return;
         }
 
-        $paragraphs = $this->paragraphService->generate($paragraphs, $data);
+        $paragraphs = $this->paragraphService->generate($paragraphs, $data, $disable);
         $contents   = $this->paragraphService->getContents($paragraphs);
         $this->setHeader($block, $contents->header);
         $this->setFooter($block, $contents->footer);

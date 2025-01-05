@@ -203,11 +203,19 @@ abstract class EmailLib extends Email
 
     protected function replaceUserEmail()
     {
+        if (!isset($this->data['user'])) {
+            return null;
+        }
+
         return $this->data['user']->getEmail();
     }
 
     protected function replaceUserRoles()
     {
+        if (!isset($this->data['user'])) {
+            return null;
+        }
+
         $roles = $this->data['user']->getRoles();
 
         return implode(', ', $roles);
@@ -215,6 +223,10 @@ abstract class EmailLib extends Email
 
     protected function replaceUserUsername()
     {
+        if (!isset($this->data['user'])) {
+            return null;
+        }
+
         return $this->data['user']->getUsername();
     }
 

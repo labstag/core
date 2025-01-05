@@ -22,8 +22,9 @@ class FlashbagBlock extends BlockLib
     }
 
     #[Override]
-    public function generate(Block $block, array $data)
+    public function generate(Block $block, array $data, bool $disable)
     {
+        unset($disable);
         $this->setData(
             $block,
             [

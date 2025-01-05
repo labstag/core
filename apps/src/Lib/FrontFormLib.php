@@ -21,12 +21,12 @@ abstract class FrontFormLib
     {
     }
 
-    public function execute(Form $form)
+    public function execute(Form $form, bool $disable)
     {
         $request = $this->requestStack->getCurrentRequest();
         $form->handleRequest($request);
 
-        return $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
+        return (true != $disable) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
     }
 
     protected function getRepository(string $entity)

@@ -14,8 +14,9 @@ use Override;
 class ChapterListParagraph extends ParagraphLib
 {
     #[Override]
-    public function generate(Paragraph $paragraph, array $data)
+    public function generate(Paragraph $paragraph, array $data, bool $disable)
     {
+        unset($disable);
         if (!isset($data['entity']) || !$data['entity'] instanceof Story) {
             $this->setShow($paragraph, false);
 

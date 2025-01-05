@@ -9,10 +9,10 @@ use Override;
 class SitemapParagraph extends ParagraphLib
 {
     #[Override]
-    public function generate(Paragraph $paragraph, array $data)
+    public function generate(Paragraph $paragraph, array $data, bool $disable)
     {
+        unset($disable);
         $sitemap = $this->sitemapService->getData();
-        dump($sitemap);
         $this->setData(
             $paragraph,
             [

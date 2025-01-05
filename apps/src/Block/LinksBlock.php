@@ -28,8 +28,9 @@ class LinksBlock extends BlockLib
     }
 
     #[Override]
-    public function generate(Block $block, array $data)
+    public function generate(Block $block, array $data, bool $disable)
     {
+        unset($disable);
         $links = $this->correctionLinks($block);
         if (0 == count($links)) {
             $this->setShow($block, false);
