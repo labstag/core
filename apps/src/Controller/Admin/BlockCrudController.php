@@ -32,7 +32,7 @@ class BlockCrudController extends AbstractCrudControllerLib
     public function addFieldParagraphsForBlock($entity, string $pageName, string $form): array
     {
         if ('edit' === $pageName && $entity instanceof Block) {
-            if ('paragraphs' == $entity->getType()) {
+            if (in_array($entity->getType(),['paragraphs', 'content'] )) {
                 return parent::addFieldParagraphs($pageName, $form);
             }
 
