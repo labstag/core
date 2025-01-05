@@ -231,6 +231,10 @@ abstract class ParagraphLib extends AbstractController
 
     protected function setShow(Paragraph $paragraph, $show)
     {
+        if (isset($this->show[$paragraph->getId()])) {
+            return;
+        }
+        
         $this->show[$paragraph->getId()] = $show;
     }
 

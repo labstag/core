@@ -41,6 +41,7 @@ class SitemapService
         }
 
         ksort($tabs);
+        $this->parent = [];
 
         return $this->setTabsByParent($tabs, '/');
     }
