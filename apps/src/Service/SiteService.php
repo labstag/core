@@ -28,10 +28,12 @@ class SiteService
 {
     public function __construct(
         protected ChapterRepository $chapterRepository,
+        protected ParagraphService $paragraphService,
         protected BlockRepository $blockRepository,
         protected BlockService $blockService,
         protected TokenStorageInterface $tokenStorage,
         protected RequestStack $requestStack,
+        protected MetaService $metaService,
         protected StoryRepository $storyRepository,
         protected PageRepository $pageRepository,
         protected PostRepository $postRepository,
@@ -145,6 +147,28 @@ class SiteService
         }
 
         return $page;
+    }
+
+    public function getMetatags($entity)
+    {
+        $meta = $entity->getMeta();
+        if (null !== $meta->getDescription() && '' !== $meta->getDescription() && '0' !== $meta->getDescription()) {
+            return $meta;
+        }
+
+        $html = $this->twigEnvironment->render(
+            'metagenerate.html.twig',
+            $this->getDataByEntity($entity)
+        );
+
+        $html = preg_replace('/\s+/', ' ', $html);
+
+        $text = trim(strip_tags((string) $html));
+        $text = substr($text, 0, 256);
+
+        $meta->setDescription($text);
+
+        return $meta;
     }
 
     public function getPageByType($type)

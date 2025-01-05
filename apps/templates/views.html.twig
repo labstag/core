@@ -5,6 +5,11 @@
         {% block meta %}
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            {% if app.request.attributes.get('_route') != '' %}
+                <meta property="og:url" content="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" />
+                <meta name="twitter:url" content="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" />
+                <link rel="canonical" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" />
+            {% endif %}
             {{ site_metatags(data) }}
         {% endblock %}
         {% block stylesheets %}
