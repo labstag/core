@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="fr-FR">
+    <head>
+    </head>
+    <body>
+        {% for balise, blockposition in blocks %}
+            {% if blockposition|length != 0 and balise == 'main' %}
+                <{{ balise }}>
+                    {% for tab in blockposition %}
+                        {{ block_show(tab) }}
+                    {% endfor %}
+                </{{ balise }}>
+            {% endif %}
+        {% endfor %}
+    </body>
+</html>

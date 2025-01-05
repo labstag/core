@@ -2,12 +2,12 @@
 
 namespace Labstag\Command;
 
-use Override;
 use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
 use NumberFormatter;
+use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -148,11 +148,11 @@ class MovieAddCommand extends Command
             ['enable' => true]
         );
         $counter = 0;
-        foreach ($movies as $movie) {
-            $movie->setEnable(false);
+        foreach ($movies as $row) {
+            $row->setEnable(false);
             ++$counter;
 
-            $this->movieRepository->persist($movie);
+            $this->movieRepository->persist($row);
             $this->movieRepository->flush($counter);
         }
 
@@ -187,7 +187,7 @@ class MovieAddCommand extends Command
         $categories = explode(',', (string) $type);
         foreach ($categories as $value) {
             $value = trim($value);
-            if ($value === '' || $value === '0') {
+            if ('' === $value || '0' === $value) {
                 continue;
             }
 
