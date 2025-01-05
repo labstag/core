@@ -12,8 +12,9 @@ use Override;
 class NewsListParagraph extends ParagraphLib
 {
     #[Override]
-    public function generate(Paragraph $paragraph, array $data)
+    public function generate(Paragraph $paragraph, array $data, bool $disable)
     {
+        unset($disable);
         /** @var PostRepository $repository */
         $repository = $this->getRepository(Post::class);
 

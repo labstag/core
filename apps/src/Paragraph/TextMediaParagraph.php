@@ -14,8 +14,9 @@ use Override;
 class TextMediaParagraph extends ParagraphLib
 {
     #[Override]
-    public function generate(Paragraph $paragraph, array $data)
+    public function generate(Paragraph $paragraph, array $data, bool $disable)
     {
+        unset($disable);
         $url = $paragraph->getUrl();
         if (null === $url || '' === $url || '0' === $url) {
             $this->setShow($paragraph, false);

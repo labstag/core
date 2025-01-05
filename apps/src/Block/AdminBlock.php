@@ -23,8 +23,9 @@ class AdminBlock extends BlockLib
     }
 
     #[Override]
-    public function generate(Block $block, array $data)
+    public function generate(Block $block, array $data, bool $disable)
     {
+        unset($disable);
         $url = $this->setUrl($data['entity']);
         if (is_null($url)) {
             $this->setShow($block, false);

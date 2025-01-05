@@ -65,7 +65,7 @@ class SiteService
         return $return;
     }
 
-    public function getDataByEntity(object $entity)
+    public function getDataByEntity(object $entity, $disable = false)
     {
         $data = [
             'entity'     => $entity,
@@ -83,7 +83,7 @@ class SiteService
             $header,
             $main,
             $footer,
-        ]       = $this->getBlocks($data);
+        ]       = $this->getBlocks($data, $disable);
         $blocks = array_merge(
             $header,
             $main,
@@ -158,7 +158,7 @@ class SiteService
 
         $html = $this->twigEnvironment->render(
             'metagenerate.html.twig',
-            $this->getDataByEntity($entity)
+            $this->getDataByEntity($entity, true)
         );
 
         $html = preg_replace('/\s+/', ' ', $html);
@@ -308,7 +308,7 @@ class SiteService
         return $view;
     }
 
-    private function getBlocks($data)
+    private function getBlocks($data, bool $disable)
     {
         $query  = $this->blockRepository->findAllOrderedByRegion();
         $blocks = $query->getQuery()->getResult();
@@ -327,9 +327,9 @@ class SiteService
         }
 
         return [
-            $this->blockService->generate($header, $data),
-            $this->blockService->generate($main, $data),
-            $this->blockService->generate($footer, $data),
+            $this->blockService->generate($header, $data, $disable),
+            $this->blockService->generate($main, $data, $disable),
+            $this->blockService->generate($footer, $data, $disable),
         ];
     }
 

@@ -27,9 +27,9 @@ class FormService
         return $data;
     }
 
-    public function execute(string $code, $form)
+    public function execute(string $code, $form, bool $disable)
     {
-        return $this->get($code)->execute($form);
+        return $this->get($code)->execute($form, $disable);
     }
 
     public function get(string $code)

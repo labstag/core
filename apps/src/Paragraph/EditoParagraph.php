@@ -12,8 +12,9 @@ use Override;
 class EditoParagraph extends ParagraphLib
 {
     #[Override]
-    public function generate(Paragraph $paragraph, array $data)
+    public function generate(Paragraph $paragraph, array $data, bool $disable)
     {
+        unset($disable);
         /** @var EditoRepository $repository */
         $repository = $this->getRepository(Edito::class);
         $edito      = $repository->findLast();
@@ -23,7 +24,7 @@ class EditoParagraph extends ParagraphLib
             return;
         }
 
-        $paragraphsedito = $this->paragraphService->generate($edito->getParagraphs()->getValues(), $data);
+        $paragraphsedito = $this->paragraphService->generate($edito->getParagraphs()->getValues(), $data, $disable);
         $contents        = $this->paragraphService->getContents($paragraphsedito);
         $this->setHeader($paragraph, $contents->header);
         $this->setFooter($paragraph, $contents->footer);

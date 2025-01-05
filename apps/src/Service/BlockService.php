@@ -39,7 +39,7 @@ class BlockService
         return $content;
     }
 
-    public function generate(array $blocks, array $data)
+    public function generate(array $blocks, array $data, bool $disable)
     {
         $tab = [];
         foreach ($blocks as $block) {
@@ -47,7 +47,7 @@ class BlockService
                 continue;
             }
 
-            $this->setContents($block, $data);
+            $this->setContents($block, $data, $disable);
 
             $tab[] = [
                 'templates' => $this->templates('content', $block),
@@ -187,7 +187,8 @@ class BlockService
 
     public function setContents(
         ?Block $block,
-        array $data
+        array $data,
+        bool $disable
     )
     {
         if (is_null($block)) {
@@ -199,7 +200,7 @@ class BlockService
                 continue;
             }
 
-            $row->generate($block, $data);
+            $row->generate($block, $data, $disable);
 
             break;
         }

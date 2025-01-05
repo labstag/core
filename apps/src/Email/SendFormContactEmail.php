@@ -22,8 +22,8 @@ class SendFormContactEmail extends EmailLib
     #[Override]
     public function init()
     {
-        $user = $this->data['user'];
+        $configuration = $this->siteService->getConfiguration();
         parent::init();
-        $this->to($user->getEmail());
+        $this->to($configuration->getEmail());
     }
 }

@@ -91,9 +91,9 @@ abstract class ParagraphLib extends AbstractController
         );
     }
 
-    public function generate(Paragraph $paragraph, array $data)
+    public function generate(Paragraph $paragraph, array $data, bool $disable)
     {
-        unset($paragraph, $data);
+        unset($paragraph, $data, $disable);
     }
 
     public function getData(Paragraph $paragraph)
@@ -234,7 +234,7 @@ abstract class ParagraphLib extends AbstractController
         if (isset($this->show[$paragraph->getId()])) {
             return;
         }
-        
+
         $this->show[$paragraph->getId()] = $show;
     }
 

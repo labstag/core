@@ -44,9 +44,9 @@ abstract class BlockLib extends AbstractController
         unset($view, $block);
     }
 
-    public function generate(Block $block, array $data)
+    public function generate(Block $block, array $data, bool $disable)
     {
-        unset($block, $data);
+        unset($block, $data, $disable);
     }
 
     public function getData(Block $block)

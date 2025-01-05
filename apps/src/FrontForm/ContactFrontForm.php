@@ -10,15 +10,15 @@ use Symfony\Component\Form\Form;
 class ContactFrontForm extends FrontFormLib
 {
     #[Override]
-    public function execute(Form $form)
+    public function execute(Form $form, bool $disable)
     {
-        $state = parent::execute($form);
+        $state = parent::execute($form, $disable);
         if (!$state) {
             return;
         }
 
         $email = $this->emailService->get(
-            'send_formcontact',
+            'send_contact',
             [
                 'form' => $form->all(),
             ]

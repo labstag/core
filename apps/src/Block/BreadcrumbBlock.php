@@ -23,8 +23,9 @@ class BreadcrumbBlock extends BlockLib
     }
 
     #[Override]
-    public function generate(Block $block, array $data)
+    public function generate(Block $block, array $data, bool $disable)
     {
+        unset($disable);
         if ($data['entity'] instanceof Page && 'home' == $data['entity']->getType()) {
             $this->setShow($block, false);
 
