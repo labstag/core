@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use Labstag\Entity\Edito;
 use Labstag\Form\Paragraphs\EditoType;
@@ -18,6 +19,16 @@ class EditoCrudController extends AbstractCrudControllerLib
         $this->configureActionsTrash($actions);
 
         return $actions;
+    }
+
+    #[Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
+
+        return $crud;
     }
 
     #[Override]

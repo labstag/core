@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use Labstag\Entity\Tag;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
@@ -15,6 +16,16 @@ abstract class TagCrudController extends AbstractCrudControllerLib
         $this->configureActionsTrash($actions);
 
         return $actions;
+    }
+
+    #[Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
+
+        return $crud;
     }
 
     #[Override]

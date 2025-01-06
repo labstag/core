@@ -41,6 +41,10 @@ class ParagraphCrudController extends AbstractCrudControllerLib
             );
         }
 
+        $crud->setDefaultSort(
+            ['type' => 'ASC']
+        );
+
         return $crud;
     }
 

@@ -26,6 +26,9 @@ class TemplateCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
         $crud->setEntityLabelInSingular(new TranslatableMessage('Template'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Templates'));
 
