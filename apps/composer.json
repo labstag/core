@@ -18,7 +18,7 @@
         "essence/essence": "3.5.*",
         "gedmo/doctrine-extensions": "3.17.*",
         "giggsey/libphonenumber-for-php": "8.13.*",
-        "knplabs/knp-menu-bundle": "3.4.*",
+        "knplabs/knp-menu-bundle": "3.5.*",
         "knplabs/knp-paginator-bundle": "6.6.*",
         "league/flysystem-bundle": "3.3.*",
         "liip/imagine-bundle": "2.13.*",
@@ -117,13 +117,13 @@
         "fakerphp/faker": "1.24.*",
         "mmo/faker-images": "0.9.*",
         "phpstan/phpdoc-parser": "1.32.*",
-        "phpstan/phpstan": "2.0.*",
+        "phpstan/phpstan": "2.1.*",
         "phpstan/phpstan-deprecation-rules": "2.0.*",
         "phpstan/phpstan-doctrine": "2.0.*",
         "phpstan/phpstan-mockery": "2.0.*",
         "phpstan/phpstan-phpunit": "2.0.*",
         "phpstan/phpstan-symfony": "2.0.*",
-        "phpunit/phpunit": "11.4.*",
+        "phpunit/phpunit": "11.5.*",
         "povils/phpmnd": "3.5.*",
         "rector/rector": "2.0.*",
         "smknstd/fakerphp-picsum-images": "1.0.*",
@@ -134,6 +134,6 @@
         "symfony/phpunit-bridge": "7.2.*",
         "symfony/stopwatch": "7.2.*",
         "symfony/web-profiler-bundle": "7.2.*",
-        "symplify/phpstan-rules": "14.0.*"
+        "symplify/phpstan-rules": "14.1.*"
     }
 }

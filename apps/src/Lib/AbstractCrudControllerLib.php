@@ -218,7 +218,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $associationField->setTemplatePath('admin/field/categories.html.twig');
         $associationField->setFormTypeOption('by_reference', false);
         $associationField->setQueryBuilder(
-            function (QueryBuilder $queryBuilder) use ($type)
+            function (QueryBuilder $queryBuilder) use ($type): void
             {
                 $queryBuilder->andWhere('entity.type = :type');
                 $queryBuilder->setParameter('type', $type);
@@ -365,7 +365,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $associationField->setTemplatePath('admin/field/tags.html.twig');
         $associationField->setFormTypeOption('by_reference', false);
         $associationField->setQueryBuilder(
-            function (QueryBuilder $queryBuilder) use ($type)
+            function (QueryBuilder $queryBuilder) use ($type): void
             {
                 $queryBuilder->andWhere('entity.type = :type');
                 $queryBuilder->setParameter('type', $type);
