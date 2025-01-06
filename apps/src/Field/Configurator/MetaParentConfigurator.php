@@ -27,7 +27,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Traversable;
 
-final readonly class MetaParentConfigurator implements FieldConfiguratorInterface
+final class MetaParentConfigurator implements FieldConfiguratorInterface
 {
     public function __construct(
         private EntityFactory $entityFactory,

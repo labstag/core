@@ -30,7 +30,7 @@ use Traversable;
 /**
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
-final readonly class ParagraphParentConfigurator implements FieldConfiguratorInterface
+final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 {
     public function __construct(
         private EntityFactory $entityFactory,

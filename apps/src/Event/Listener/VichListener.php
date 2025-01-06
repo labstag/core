@@ -11,7 +11,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Vich\UploaderBundle\Event\Event;
 use Vich\UploaderBundle\Event\Events;
 
-final readonly class VichListener
+final class VichListener
 {
     public function __construct(
         private EntityManagerInterface $entityManager

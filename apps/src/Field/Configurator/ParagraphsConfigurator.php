@@ -13,7 +13,7 @@ use Labstag\Field\ParagraphsField;
 use Labstag\Service\ParagraphService;
 use Override;
 
-final readonly class ParagraphsConfigurator implements FieldConfiguratorInterface
+final class ParagraphsConfigurator implements FieldConfiguratorInterface
 {
     public function __construct(private ParagraphService $paragraphService)
     {
