@@ -83,7 +83,7 @@ class GeocodeInstallCommand extends Command
         }
 
         $table       = $this->geocodeService->tables($csv);
-        $progressBar = new ProgressBar($output, is_countable($table) ? count($table) : 0);
+        $progressBar = new ProgressBar($output, count($table));
         $progressBar->start();
 
         $counter = 0;

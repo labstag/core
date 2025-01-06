@@ -41,7 +41,7 @@ abstract class FixtureLib extends Fixture
 
     protected function addCategoryToEntity($entity)
     {
-        if ((!property_exists($this, 'categories') || null === $this->categories) && 0 != count($this->categories)) {
+        if (0 != count($this->categories)) {
             return;
         }
 
@@ -71,7 +71,7 @@ abstract class FixtureLib extends Fixture
 
     protected function addTagToEntity($entity)
     {
-        if ((!property_exists($this, 'tags') || null === $this->tags) && 0 != count($this->tags)) {
+        if (0 != count($this->tags)) {
             return;
         }
 

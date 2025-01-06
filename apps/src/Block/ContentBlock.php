@@ -49,12 +49,13 @@ class ContentBlock extends BlockLib
             'paragraphs' => $paragraphs,
         ];
 
-        if (!($data['entity'] instanceof Page && 'home' == $data['entity']->getType())) {
-            $aside = $this->getAside($data);
-            if (!is_null($aside)) {
-                $tab['aside'] = $aside;
-            }
-        }
+        // TODO configure aside
+        // if (!($data['entity'] instanceof Page && 'home' == $data['entity']->getType())) {
+        //     $aside = $this->getAside($data);
+        //     if (!is_null($aside)) {
+        //         $tab['aside'] = $aside;
+        //     }
+        // }
 
         $this->setData($block, $tab);
     }
@@ -77,11 +78,5 @@ class ContentBlock extends BlockLib
     public function getType(): string
     {
         return 'content';
-    }
-
-    private function getAside(array $data): void
-    {
-        unset($data);
-        // TODO: Implement getAside() method.
     }
 }

@@ -114,7 +114,7 @@ class MovieAddCommand extends Command
             $dataJson[] = array_combine($headers, $columns);
         }
 
-        $progressBar = new ProgressBar($output, is_countable($dataJson) ? count($dataJson) : 0);
+        $progressBar = new ProgressBar($output, count($dataJson));
         $progressBar->start();
         foreach ($dataJson as $data) {
             $movie = $this->setMovie($data);

@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller;
 
+use Carbon\Carbon;
 use Labstag\Service\SitemapService;
 use Labstag\Service\SiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -73,7 +74,7 @@ class FrontController extends AbstractController
                 return $this->render(
                     'sitemap/sitemap.xml.twig',
                     [
-                        'date'    => \Carbon\Carbon::now()->format('Y-m-d'),
+                        'date'    => Carbon::now()->format('Y-m-d'),
                         'sitemap' => $sitemap,
                     ]
                 );
