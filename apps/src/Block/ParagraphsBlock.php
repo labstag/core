@@ -24,7 +24,6 @@ class ParagraphsBlock extends BlockLib
     #[Override]
     public function generate(Block $block, array $data, bool $disable)
     {
-        unset($disable);
         $paragraphs = $block->getParagraphs()->getValues();
         if (0 == count($paragraphs)) {
             $this->setShow($block, false);

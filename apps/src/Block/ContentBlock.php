@@ -25,7 +25,6 @@ class ContentBlock extends BlockLib
     #[Override]
     public function generate(Block $block, array $data, bool $disable)
     {
-        unset($disable);
         $paragraphs = $data['paragraphs'];
         if (0 == count($paragraphs)) {
             $this->setShow($block, false);
