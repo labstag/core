@@ -148,11 +148,11 @@ class MovieAddCommand extends Command
             ['enable' => true]
         );
         $counter = 0;
-        foreach ($movies as $RectorPrefix202412movie) {
-            $RectorPrefix202412movie->setEnable(false);
+        foreach ($movies as $movie) {
+            $movie->setEnable(false);
             ++$counter;
 
-            $this->movieRepository->persist($RectorPrefix202412movie);
+            $this->movieRepository->persist($movie);
             $this->movieRepository->flush($counter);
         }
 
