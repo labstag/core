@@ -117,15 +117,15 @@
         "fakerphp/faker": "1.24.*",
         "mmo/faker-images": "0.9.*",
         "phpstan/phpdoc-parser": "1.32.*",
-        "phpstan/phpstan": "1.12.*",
-        "phpstan/phpstan-deprecation-rules": "1.2.*",
-        "phpstan/phpstan-doctrine": "1.5.*",
-        "phpstan/phpstan-mockery": "1.1.*",
-        "phpstan/phpstan-phpunit": "1.4.*",
-        "phpstan/phpstan-symfony": "1.4.*",
+        "phpstan/phpstan": "2.0.*",
+        "phpstan/phpstan-deprecation-rules": "2.0.*",
+        "phpstan/phpstan-doctrine": "2.0.*",
+        "phpstan/phpstan-mockery": "2.0.*",
+        "phpstan/phpstan-phpunit": "2.0.*",
+        "phpstan/phpstan-symfony": "2.0.*",
         "phpunit/phpunit": "11.4.*",
         "povils/phpmnd": "3.5.*",
-        "rector/rector": "1.2.*",
+        "rector/rector": "2.0.*",
         "smknstd/fakerphp-picsum-images": "1.0.*",
         "symfony/browser-kit": "7.2.*",
         "symfony/css-selector": "7.2.*",
@@ -134,6 +134,6 @@
         "symfony/phpunit-bridge": "7.2.*",
         "symfony/stopwatch": "7.2.*",
         "symfony/web-profiler-bundle": "7.2.*",
-        "symplify/phpstan-rules": "13.0.*"
+        "symplify/phpstan-rules": "14.0.*"
     }
 }

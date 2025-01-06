@@ -31,12 +31,22 @@ class MovieCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
+
+        return $crud;
+    }
+
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
         yield $this->addFieldID();
-        yield TextField::new('imdb');
         yield $this->addFieldTitle();
+        yield TextField::new('imdb');
         yield IntegerField::new('year');
         yield TextField::new('country');
         yield $this->addFieldCategories('movie');

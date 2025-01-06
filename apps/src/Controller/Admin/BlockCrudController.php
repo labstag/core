@@ -56,6 +56,16 @@ class BlockCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
+
+        return $crud;
+    }
+
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();

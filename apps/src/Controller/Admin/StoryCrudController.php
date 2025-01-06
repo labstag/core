@@ -31,6 +31,16 @@ class StoryCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
+
+        return $crud;
+    }
+
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();

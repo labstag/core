@@ -33,6 +33,16 @@ class UserCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud->setDefaultSort(
+            ['username' => 'ASC']
+        );
+
+        return $crud;
+    }
+
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('username', new TranslatableMessage('Username'));
