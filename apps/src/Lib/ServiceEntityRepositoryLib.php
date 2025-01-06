@@ -39,6 +39,7 @@ abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
     {
         $this->getEntityManager()->remove($entity);
     }
+
     public function save(object $entity): void
     {
         $this->persist($entity);

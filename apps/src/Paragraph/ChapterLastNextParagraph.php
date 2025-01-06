@@ -5,6 +5,7 @@ namespace Labstag\Paragraph;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
+use Labstag\Repository\ChapterRepository;
 use Override;
 
 class ChapterLastNextParagraph extends ParagraphLib
@@ -22,6 +23,7 @@ class ChapterLastNextParagraph extends ParagraphLib
         $chapter = $data['entity'];
         $story   = $chapter->getRefStory();
 
+        /** @var ChapterRepository $repository */
         $repository = $this->getRepository(Chapter::class);
 
         $chapters = $repository->getAllActivateByStory($story);

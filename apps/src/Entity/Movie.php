@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\MovieRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Doctrine\DBAL\Types\Types;
@@ -15,7 +15,7 @@ use Doctrine\DBAL\Types\Types;
 class Movie
 {
     use SoftDeleteableEntity;
-    use TimestampableEntity;
+    use TimestampableTrait;
 
     /**
      * @var Collection<int, Category>

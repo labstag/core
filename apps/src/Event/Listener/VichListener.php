@@ -44,10 +44,6 @@ final class VichListener
                 continue;
             }
 
-            if (is_null($value)) {
-                continue;
-            }
-
             $delete = true;
 
             break;

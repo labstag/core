@@ -31,7 +31,7 @@ $configure->withPreparedSets(
     instanceOf: true,
     earlyReturn: true,
     strictBooleans: false,
-    carbon: true,
+    carbon: false,
     rectorPreset: false,
     phpunitCodeQuality: true,
     doctrineCodeQuality: true,

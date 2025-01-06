@@ -43,7 +43,7 @@ class ParagraphService
     public function content(
         string $view,
         Paragraph $paragraph
-    )
+    ): ?Response
     {
         $content = null;
 
@@ -190,7 +190,7 @@ class ParagraphService
         return $fields;
     }
 
-    public function getFond($info)
+    public function getFond($info): ?string
     {
         $fonds = array_flip($this->getFonds());
 

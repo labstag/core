@@ -20,7 +20,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         return 'paragraph_'.$paragraph->getType();
     }
 
-    public function getFond($code)
+    public function getFond($code): ?string
     {
         return $this->paragraphService->getFond($code);
     }
@@ -35,7 +35,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         return $this->paragraphService->getNameByCode($code);
     }
 
-    public function getShow(array $tab)
+    public function getShow(array $tab): null|string|false
     {
         if (!isset($tab['templates']['view'])) {
             return null;

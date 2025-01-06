@@ -85,6 +85,7 @@ class StarAddCommand extends Command
         $this->starRepository->flush();
 
         $this->starRepository->flush();
+
         $progressBar->finish();
 
         $symfonyStyle->success('All star added');
