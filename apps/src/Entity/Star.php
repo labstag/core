@@ -4,14 +4,14 @@ namespace Labstag\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\StarRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: StarRepository::class)]
 class Star
 {
-    use TimestampableEntity;
+    use TimestampableTrait;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;

@@ -5,7 +5,7 @@ namespace Labstag\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\MetaRepository;
 use Override;
 use Stringable;
@@ -17,7 +17,7 @@ use Doctrine\DBAL\Types\Types;
 class Meta implements Stringable
 {
     use SoftDeleteableEntity;
-    use TimestampableEntity;
+    use TimestampableTrait;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
     private ?Chapter $chapter = null;

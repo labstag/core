@@ -3,13 +3,14 @@
 namespace Labstag\Entity;
 
 use Carbon\CarbonImmutable;
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\UserRepository;
 use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
@@ -28,7 +29,7 @@ use Doctrine\DBAL\Types\Types;
 class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringable
 {
     use SoftDeleteableEntity;
-    use TimestampableEntity;
+    use TimestampableTrait;
     use WorkflowTrait;
 
     /**
@@ -371,7 +372,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         if ($avatarFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = CarbonImmutable::now();
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 

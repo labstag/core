@@ -3,12 +3,13 @@
 namespace Labstag\Entity;
 
 use Carbon\CarbonImmutable;
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\ParagraphRepository;
 use Override;
 use Stringable;
@@ -22,7 +23,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 class Paragraph implements Stringable
 {
     use SoftDeleteableEntity;
-    use TimestampableEntity;
+    use TimestampableTrait;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Block $block = null;
@@ -246,7 +247,7 @@ class Paragraph implements Stringable
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = CarbonImmutable::now();
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 

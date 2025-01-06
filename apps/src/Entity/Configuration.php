@@ -3,9 +3,10 @@
 namespace Labstag\Entity;
 
 use Carbon\CarbonImmutable;
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\ConfigurationRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
@@ -16,7 +17,7 @@ use Doctrine\DBAL\Types\Types;
 #[Vich\Uploadable]
 class Configuration
 {
-    use TimestampableEntity;
+    use TimestampableTrait;
 
     #[ORM\Column(length: 255)]
     private ?string $copyright = null;
@@ -183,7 +184,7 @@ class Configuration
         if ($faviconFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = CarbonImmutable::now();
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 
@@ -199,7 +200,7 @@ class Configuration
         if ($logoFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = CarbonImmutable::now();
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 
@@ -229,7 +230,7 @@ class Configuration
         if ($placeholderFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = CarbonImmutable::now();
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 

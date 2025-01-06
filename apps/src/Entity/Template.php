@@ -5,7 +5,7 @@ namespace Labstag\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\TemplateRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
@@ -13,7 +13,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 class Template
 {
     use SoftDeleteableEntity;
-    use TimestampableEntity;
+    use TimestampableTrait;
 
     #[ORM\Column(length: 255)]
     private ?string $code = null;
