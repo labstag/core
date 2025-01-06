@@ -142,24 +142,24 @@ class MovieAddCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function disableAll()
+    private function disableAll(): void
     {
         $movies = $this->movieRepository->findBy(
             ['enable' => true]
         );
         $counter = 0;
-        foreach ($movies as $movie) {
-            $movie->setEnable(false);
+        foreach ($movies as $RectorPrefix202412movie) {
+            $RectorPrefix202412movie->setEnable(false);
             ++$counter;
 
-            $this->movieRepository->persist($movie);
+            $this->movieRepository->persist($RectorPrefix202412movie);
             $this->movieRepository->flush($counter);
         }
 
         $this->movieRepository->flush();
     }
 
-    private function setMovie($data)
+    private function setMovie(array $data)
     {
         $imdb  = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
         $movie = $this->movieRepository->findOneBy(
@@ -187,7 +187,10 @@ class MovieAddCommand extends Command
         $categories = explode(',', (string) $type);
         foreach ($categories as $value) {
             $value = trim($value);
-            if ('' === $value || '0' === $value) {
+            if ('' === $value) {
+                continue;
+            }
+            if ('0' === $value) {
                 continue;
             }
 

@@ -11,7 +11,7 @@ use Override;
 class StarParagraph extends ParagraphLib
 {
     #[Override]
-    public function generate(Paragraph $paragraph, array $data, bool $disable)
+    public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
         /** @var StoryRepository $repository */

@@ -14,7 +14,7 @@ trait WorkflowTrait
     private ?array $state = ['start'];
 
     #[Gedmo\Timestampable(on: 'change', field: ['state'])]
-    #[ORM\Column(name: 'state_changed', type: 'datetime', nullable: true)]
+    #[ORM\Column(name: 'state_changed', type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE, nullable: true)]
     private DateTime $stateChanged;
 
     public function getState(): array

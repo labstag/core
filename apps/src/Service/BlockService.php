@@ -39,7 +39,10 @@ class BlockService
         return $content;
     }
 
-    public function generate(array $blocks, array $data, bool $disable)
+    /**
+     * @return array{templates: mixed, block: mixed}[]
+     */
+    public function generate(array $blocks, array $data, bool $disable): array
     {
         $tab = [];
         foreach ($blocks as $block) {
@@ -73,7 +76,7 @@ class BlockService
         return $blocks;
     }
 
-    public function getContents($blocks)
+    public function getContents($blocks): \stdClass
     {
         $data         = new stdClass();
         $data->header = [];
@@ -96,12 +99,12 @@ class BlockService
 
         $data->header = array_filter(
             $data->header,
-            fn ($row) => !is_null($row)
+            fn ($row): bool => !is_null($row)
         );
 
         $data->footer = array_filter(
             $data->footer,
-            fn ($row) => !is_null($row)
+            fn ($row): bool => !is_null($row)
         );
 
         return $data;
@@ -189,7 +192,7 @@ class BlockService
         ?Block $block,
         array $data,
         bool $disable
-    )
+    ): void
     {
         if (is_null($block)) {
             return;
@@ -206,7 +209,7 @@ class BlockService
         }
     }
 
-    protected function acces($block)
+    protected function acces($block): bool
     {
         $roles = $block->getRoles();
         if (is_null($roles) || 0 == count($roles)) {

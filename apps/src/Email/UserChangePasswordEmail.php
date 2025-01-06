@@ -20,7 +20,7 @@ class UserChangePasswordEmail extends EmailLib
     }
 
     #[Override]
-    public function init()
+    public function init(): void
     {
         $user = $this->data['user'];
         parent::init();

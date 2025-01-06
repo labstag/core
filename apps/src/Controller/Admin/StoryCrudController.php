@@ -56,7 +56,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         yield $this->addFieldCategories('story');
         $collectionField = CollectionField::new('chapters');
         $collectionField->onlyOnIndex();
-        $collectionField->formatValue(fn ($value) => count($value));
+        $collectionField->formatValue(fn ($value): int => count($value));
         yield $collectionField;
         $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
         $collectionField->setTemplatePath('admin/field/chapters.html.twig');
@@ -102,7 +102,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         return Story::class;
     }
 
-    public function moveChapter(AdminContext $adminContext)
+    public function moveChapter(AdminContext $adminContext): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         $request    = $adminContext->getRequest();
         $repository = $this->getRepository();
@@ -142,7 +142,7 @@ class StoryCrudController extends AbstractCrudControllerLib
     {
         $action = Action::new('moveChapter', new TranslatableMessage('Move a chapter'));
         $action->linkToCrudAction('moveChapter');
-        $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);

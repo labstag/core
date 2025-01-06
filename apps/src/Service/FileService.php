@@ -55,7 +55,10 @@ class FileService
     {
     }
 
-    public function all()
+    /**
+     * @return mixed[]
+     */
+    public function all(): array
     {
         $files = [];
         $data  = $this->getDataStorage();
@@ -70,7 +73,7 @@ class FileService
         return $files;
     }
 
-    public function deleteAll()
+    public function deleteAll(): void
     {
         $data = $this->getDataStorage();
         foreach (array_keys($data) as $type) {
@@ -96,7 +99,7 @@ class FileService
         }
     }
 
-    public function deletedFileByEntities()
+    public function deletedFileByEntities(): int
     {
         $total    = 0;
         $data     = $this->getFiles();
@@ -133,14 +136,17 @@ class FileService
         return $total;
     }
 
-    public function getBasePath($entity, $type)
+    public function getBasePath($entity, string $type): string
     {
         $object = $this->propertyMappingFactory->fromField(new $entity(), $type);
 
         return $object->getUriPrefix();
     }
 
-    public function getFiles()
+    /**
+     * @return list[]
+     */
+    public function getFiles(): array
     {
         $files = [];
         $data  = $this->getDataStorage();
@@ -170,7 +176,10 @@ class FileService
         return $files;
     }
 
-    public function getFileSystem($type)
+    /**
+     * @return string[]
+     */
+    public function getFileSystem($type): array
     {
         $files   = [];
         $adapter = $this->getAdapter($type);
@@ -192,14 +201,14 @@ class FileService
         return $files;
     }
 
-    public function getFullBasePath($entity, $type)
+    public function getFullBasePath($entity, $type): string
     {
         $basePath = $this->getBasePath($entity, $type);
 
         return $this->parameterBag->get('kernel.project_dir').'/public'.$basePath;
     }
 
-    public function getMappingForEntity($entity)
+    public function getMappingForEntity(object|array $entity): array
     {
         return $this->propertyMappingFactory->fromObject($entity);
     }
@@ -209,7 +218,7 @@ class FileService
         return $this->managerRegistry->getRepository($entity);
     }
 
-    private function deleteFilesByType($type, $files)
+    private function deleteFilesByType($type, $files): void
     {
         $adapter = $this->getAdapter($type);
         if (is_null($adapter)) {
@@ -269,7 +278,7 @@ class FileService
         ];
     }
 
-    private function getFolder($type)
+    private function getFolder(string $type)
     {
         $config = Yaml::parse(
             file_get_contents($this->kernel->getProjectDir().'/config/packages/flysystem.yaml')

@@ -42,7 +42,7 @@ abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function persist($entity): void
+    public function persist(object $entity): void
     {
         $this->getEntityManager()->persist($entity);
     }
@@ -51,7 +51,7 @@ abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function remove($entity): void
+    public function remove(object $entity): void
     {
         $this->getEntityManager()->remove($entity);
     }

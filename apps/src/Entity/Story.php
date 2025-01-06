@@ -27,11 +27,11 @@ class Story implements Stringable
     use TimestampableEntity;
     use WorkflowTrait;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, options: ['default' => 1])]
     protected ?bool $enable = null;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: 'string', length: 255, nullable: true, unique: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true, unique: true)]
     protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
@@ -43,13 +43,16 @@ class Story implements Stringable
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
     private Collection $categories;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection<int, \Labstag\Entity\Chapter>
+     */
     #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'refstory', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $chapters;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: 'guid', unique: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
@@ -271,7 +274,7 @@ class Story implements Stringable
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = \Carbon\CarbonImmutable::now();
         }
     }
 

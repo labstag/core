@@ -48,7 +48,7 @@ class StoryRepository extends ServiceEntityRepositoryLib
         return $queryBuilder->getQuery();
     }
 
-    private function getQueryBuilder()
+    private function getQueryBuilder(): \Doctrine\ORM\QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('h');
         $queryBuilder->innerJoin('h.chapters', 'c');

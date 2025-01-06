@@ -28,7 +28,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
 
         return $crud;
     }
-    
+
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -90,7 +90,10 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         return GeoCode::class;
     }
 
-    private function getAllData($type)
+    /**
+     * @return mixed[]
+     */
+    private function getAllData(string $type): array
     {
         $repository = $this->getRepository();
 

@@ -66,7 +66,7 @@ class ProfilCrudController extends UserCrudController
         yield $this->addFieldImageUpload('avatar', $pageName);
         yield CollectionField::new('stories', new TranslatableMessage('Histories'))->onlyOnDetail();
         yield CollectionField::new('editos', new TranslatableMessage('Editos'))->onlyOnDetail()->formatValue(
-            fn ($entity) => count($entity)
+            fn ($entity): int => count($entity)
         );
 
         $tab = [
@@ -78,7 +78,7 @@ class ProfilCrudController extends UserCrudController
         foreach ($tab as $key => $label) {
             $collectionField = CollectionField::new($key, $label);
             $collectionField->onlyOnDetail();
-            $collectionField->formatValue(fn ($value) => count($value));
+            $collectionField->formatValue(fn ($value): int => count($value));
             yield $collectionField;
         }
     }

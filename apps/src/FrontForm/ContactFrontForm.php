@@ -10,7 +10,7 @@ use Symfony\Component\Form\Form;
 class ContactFrontForm extends FrontFormLib
 {
     #[Override]
-    public function execute(Form $form, bool $disable)
+    public function execute(Form $form, bool $disable): void
     {
         $state = parent::execute($form, $disable);
         if (!$state) {
@@ -31,12 +31,12 @@ class ContactFrontForm extends FrontFormLib
         $this->mailer->send($email);
     }
 
-    public function getCode()
+    public function getCode(): string
     {
         return 'contact';
     }
 
-    public function getForm()
+    public function getForm(): string
     {
         return ContactType::class;
     }

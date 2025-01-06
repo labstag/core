@@ -11,7 +11,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 class FormParagraph extends ParagraphLib
 {
     #[Override]
-    public function generate(Paragraph $paragraph, array $data, bool $disable)
+    public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         $formCode = $paragraph->getForm();
         if (is_null($formCode)) {

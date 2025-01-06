@@ -20,7 +20,7 @@ class UserPasswordLostEmail extends EmailLib
     }
 
     #[Override]
-    public function init()
+    public function init(): void
     {
         $user = $this->data['user'];
         parent::init();
@@ -36,7 +36,7 @@ class UserPasswordLostEmail extends EmailLib
         return $data;
     }
 
-    protected function replaceLinkChangePassword()
+    protected function replaceLinkChangePassword(): string
     {
         $configuration = $this->siteService->getConfiguration();
         $entity        = $this->data['user'];

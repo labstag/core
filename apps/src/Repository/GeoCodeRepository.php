@@ -13,7 +13,7 @@ class GeoCodeRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, GeoCode::class);
     }
 
-    public function findAllData($type)
+    public function findAllData(string $type): mixed
     {
         $queryBuilder = $this->createQueryBuilder('g');
 

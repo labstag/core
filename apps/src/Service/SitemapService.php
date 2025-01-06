@@ -46,7 +46,10 @@ class SitemapService
         return $this->setTabsByParent($tabs, '/');
     }
 
-    public function setTabsByParent($urls, $parent)
+    /**
+     * @return mixed[]
+     */
+    public function setTabsByParent($urls, $parent): array
     {
         $tabs = [];
         foreach ($urls as $url => $data) {
@@ -66,14 +69,14 @@ class SitemapService
         return $this->managerRegistry->getRepository($entity);
     }
 
-    protected function verifFirstChar(string $url)
+    protected function verifFirstChar(string $url): bool
     {
         $result = substr($url, 0, 1);
 
         return '-' !== $result;
     }
 
-    private function formatData($entity)
+    private function formatData($entity): array
     {
         $url = $this->siteService->getSlugByEntity($entity);
 
@@ -118,7 +121,10 @@ class SitemapService
         return $this->getDataFromRepository(Story::class);
     }
 
-    private function setTabs($data)
+    /**
+     * @return mixed[]
+     */
+    private function setTabs($data): array
     {
         $tabs = [];
         foreach ($data as $row) {

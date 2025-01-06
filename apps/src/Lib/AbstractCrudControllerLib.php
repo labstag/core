@@ -134,12 +134,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $entity = $adminContext->getEntity()->getInstance();
         $slug   = $this->siteService->getSlugByEntity($entity);
 
-        return $this->redirect(
-            $this->generateUrl(
-                'front',
-                ['slug' => $slug]
-            )
-        );
+        return $this->redirectToRoute('front', ['slug' => $slug]);
     }
 
     public function linkw3CValidator(AdminContext $adminContext)
@@ -240,7 +235,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     {
         $textField = TextField::new('id', new TranslatableMessage('Shortcode'));
         $textField->formatValue(
-            fn ($identity) => sprintf('[%s:%s]', $type, $identity)
+            fn ($identity): string => sprintf('[%s:%s]', $type, $identity)
         );
         $textField->onlyOnDetail();
 
@@ -384,7 +379,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     {
         $collectionField = CollectionField::new($type);
         $collectionField->hideOnForm();
-        $collectionField->formatValue(fn ($value) => count($value));
+        $collectionField->formatValue(fn ($value): int => count($value));
 
         return $collectionField;
     }
@@ -481,7 +476,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $action = Action::new('restore', new TranslatableMessage('Restore'));
         $action->linkToRoute(
             'admin_restore',
-            static fn ($entity) => [
+            static fn ($entity): array => [
                 'uuid'   => $entity->getId(),
                 'entity' => $entity::class,
             ]
@@ -560,7 +555,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             ['target' => '_blank']
         );
         $action->linkToCrudAction('linkPublic');
-        $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         return $action;
     }
@@ -572,7 +567,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             ['target' => '_blank']
         );
         $action->linkToCrudAction('linkw3CValidator');
-        $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         return $action;
     }

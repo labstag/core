@@ -8,7 +8,7 @@ use Override;
 class UserSubmitEmail extends EmailLib
 {
     #[Override]
-    public function getCodes()
+    public function getCodes(): array
     {
         $codes = parent::getCodes();
 
@@ -31,7 +31,7 @@ class UserSubmitEmail extends EmailLib
     }
 
     #[Override]
-    public function init()
+    public function init(): void
     {
         $configuration = $this->siteService->getConfiguration();
         parent::init();
@@ -47,7 +47,7 @@ class UserSubmitEmail extends EmailLib
         return $data;
     }
 
-    protected function replaceLinkApproval()
+    protected function replaceLinkApproval(): string
     {
         $configuration = $this->siteService->getConfiguration();
         $entity        = $this->data['user'];

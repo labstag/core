@@ -13,13 +13,13 @@ final class WysiwygField implements FieldInterface
 {
     use FieldTrait;
 
-    public const OPTION_MAX_LENGTH = TextField::OPTION_MAX_LENGTH;
+    public const string OPTION_MAX_LENGTH = TextField::OPTION_MAX_LENGTH;
 
-    public const OPTION_NUM_OF_ROWS = 'numOfRows';
+    public const string OPTION_NUM_OF_ROWS = 'numOfRows';
 
-    public const OPTION_RENDER_AS_HTML = TextField::OPTION_RENDER_AS_HTML;
+    public const string OPTION_RENDER_AS_HTML = TextField::OPTION_RENDER_AS_HTML;
 
-    public const OPTION_STRIP_TAGS = TextField::OPTION_STRIP_TAGS;
+    public const string OPTION_STRIP_TAGS = TextField::OPTION_STRIP_TAGS;
 
     /**
      * @param null|false|string $label

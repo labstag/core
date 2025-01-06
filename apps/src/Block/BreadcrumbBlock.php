@@ -6,11 +6,12 @@ use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Labstag\Lib\BlockLib;
 use Override;
+use Symfony\Component\HttpFoundation\Response;
 
 class BreadcrumbBlock extends BlockLib
 {
     #[Override]
-    public function content(string $view, Block $block)
+    public function content(string $view, Block $block): ?Response
     {
         if (!$this->isShow($block)) {
             return null;
@@ -23,7 +24,7 @@ class BreadcrumbBlock extends BlockLib
     }
 
     #[Override]
-    public function generate(Block $block, array $data, bool $disable)
+    public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
         if ($data['entity'] instanceof Page && 'home' == $data['entity']->getType()) {

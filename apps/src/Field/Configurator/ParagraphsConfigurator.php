@@ -13,9 +13,9 @@ use Labstag\Field\ParagraphsField;
 use Labstag\Service\ParagraphService;
 use Override;
 
-final class ParagraphsConfigurator implements FieldConfiguratorInterface
+final readonly class ParagraphsConfigurator implements FieldConfiguratorInterface
 {
-    public function __construct(private readonly ParagraphService $paragraphService)
+    public function __construct(private ParagraphService $paragraphService)
     {
     }
 

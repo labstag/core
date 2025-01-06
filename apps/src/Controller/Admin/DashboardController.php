@@ -71,7 +71,7 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[Route('/admin/{_locale}/config', name: 'admin_config')]
-    public function config(ConfigurationRepository $configurationRepository)
+    public function config(ConfigurationRepository $configurationRepository): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $configuration  = null;
         $configurations = $configurationRepository->findAll();
@@ -264,7 +264,7 @@ class DashboardController extends AbstractDashboardController
         return $this->redirect($referer);
     }
 
-    protected function adminEmpty($entity)
+    protected function adminEmpty(string $entity)
     {
         $repository = $this->getRepository($entity);
         $all        = $repository->findDeleted();
@@ -275,7 +275,7 @@ class DashboardController extends AbstractDashboardController
         $repository->flush();
     }
 
-    protected function adminRestore($entity, $uuid): void
+    protected function adminRestore(string $entity, $uuid): void
     {
         $repository = $this->getRepository($entity);
         $data       = $repository->find($uuid);
@@ -306,7 +306,10 @@ class DashboardController extends AbstractDashboardController
         return $repository;
     }
 
-    private function setCategories()
+    /**
+     * @return \EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem[]
+     */
+    private function setCategories(): array
     {
         $tab = [
             'story' => [
@@ -335,7 +338,10 @@ class DashboardController extends AbstractDashboardController
         return $categories;
     }
 
-    private function setTags()
+    /**
+     * @return \EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem[]
+     */
+    private function setTags(): array
     {
         $tab = [
             'story'   => [

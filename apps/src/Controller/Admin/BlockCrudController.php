@@ -152,7 +152,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return Block::class;
     }
 
-    public function positionBlock(AdminContext $adminContext)
+    public function positionBlock(AdminContext $adminContext): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         $request    = $adminContext->getRequest();
         $repository = $this->getRepository();
@@ -193,7 +193,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         );
     }
 
-    private function getChoiceType($pageName, $allTypes)
+    private function getChoiceType(string $pageName, array $allTypes): \EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField|\EasyCorp\Bundle\EasyAdminBundle\Field\TextField
     {
         if ('new' === $pageName) {
             $field = ChoiceField::new('type', new TranslatableMessage('Type'));

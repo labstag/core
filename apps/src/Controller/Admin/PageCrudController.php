@@ -108,7 +108,7 @@ class PageCrudController extends AbstractCrudControllerLib
         return Page::class;
     }
 
-    protected function addFieldIsHome($currentEntity, $pageName)
+    protected function addFieldIsHome($currentEntity, $pageName): ?ChoiceField
     {
         if ('new' == $pageName && !$currentEntity instanceof Page && 'home' == $currentEntity->getType()) {
             return null;

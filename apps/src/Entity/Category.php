@@ -26,12 +26,12 @@ class Category implements Stringable
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: 'guid', unique: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
     /**
-     * @var Collection<int, Story>
+     * @var \Doctrine\Common\Collections\Collection<int, \Labstag\Entity\Movie>
      */
     #[ORM\ManyToMany(targetEntity: Movie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
     private Collection $movies;
@@ -53,7 +53,7 @@ class Category implements Stringable
     private Collection $posts;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'], unique_base: 'type')]
-    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: false)]
     private ?string $slug = null;
 
     /**

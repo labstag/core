@@ -22,7 +22,7 @@ class WorkflowService
     {
     }
 
-    public function change($entity, $transition, $uid)
+    public function change(string $entity, $transition, $uid): void
     {
         $entityRepository = $this->entityManager->getRepository($entity);
 
@@ -47,7 +47,7 @@ class WorkflowService
         $session->getFlashBag()->add('success', new TranslatableMessage('The status has been successfully changed'));
     }
 
-    public function get($entity)
+    public function get($entity): ?WorkflowInterface
     {
         if (!$this->workflowRegistry->has($entity)) {
             return null;
@@ -56,7 +56,7 @@ class WorkflowService
         return $this->workflowRegistry->get($entity);
     }
 
-    public function init($entity)
+    public function init($entity): void
     {
         $workflow = $this->get($entity);
         if (!$workflow instanceof WorkflowInterface) {

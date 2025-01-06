@@ -119,7 +119,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $objectManager->persist($page);
     }
 
-    private function setParagraphsHome(Page $page)
+    private function setParagraphsHome(Page $page): void
     {
         $generator = $this->setFaker();
         $paragraph = $this->paragraphService->addParagraph($page, 'edito');
@@ -142,7 +142,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph->setUrl($generator->youtubeUri());
     }
 
-    private function setParagraphsPost(Page $page)
+    private function setParagraphsPost(Page $page): void
     {
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'news-list');
@@ -150,7 +150,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph->setNbr(20);
     }
 
-    private function setParagraphsSitemap(Page $page)
+    private function setParagraphsSitemap(Page $page): void
     {
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'sitemap');
@@ -158,7 +158,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph->setNbr(20);
     }
 
-    private function setParagraphsStar(Page $page)
+    private function setParagraphsStar(Page $page): void
     {
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'star');
@@ -166,7 +166,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph->setNbr(20);
     }
 
-    private function setParagraphsStory(Page $page)
+    private function setParagraphsStory(Page $page): void
     {
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'story-list');

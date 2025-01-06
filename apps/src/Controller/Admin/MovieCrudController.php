@@ -59,7 +59,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         return Movie::class;
     }
 
-    public function imdb(AdminContext $adminContext)
+    public function imdb(AdminContext $adminContext): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $entity = $adminContext->getEntity()->getInstance();
 
@@ -73,7 +73,7 @@ class MovieCrudController extends AbstractCrudControllerLib
             ['target' => '_blank']
         );
         $action->linkToCrudAction('imdb');
-        $action->displayIf(static fn ($entity) => is_null($entity->getDeletedAt()));
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         return $action;
     }

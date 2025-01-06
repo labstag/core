@@ -92,7 +92,7 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
 
     private function getOptionsNormalizer(): Closure
     {
-        return function (Options $options, $value)
+        return function (Options $options, array $value)
         {
             unset($options);
             $value['block_name'] = 'entry';

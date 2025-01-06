@@ -35,7 +35,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         return $this->paragraphService->getNameByCode($code);
     }
 
-    public function getShow($tab)
+    public function getShow(array $tab)
     {
         if (!isset($tab['templates']['view'])) {
             return null;

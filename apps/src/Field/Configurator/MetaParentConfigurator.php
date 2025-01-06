@@ -26,13 +26,13 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Traversable;
 
-final class MetaParentConfigurator implements FieldConfiguratorInterface
+final readonly class MetaParentConfigurator implements FieldConfiguratorInterface
 {
     public function __construct(
-        protected EntityFactory $entityFactory,
-        protected AdminUrlGenerator $adminUrlGenerator,
-        protected TranslatorInterface $translator,
-        protected MetaService $metaService
+        private EntityFactory $entityFactory,
+        private AdminUrlGenerator $adminUrlGenerator,
+        private TranslatorInterface $translator,
+        private MetaService $metaService
     ) {
     }
 
@@ -104,7 +104,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
 
         $fieldDto->setFormTypeOptionIfNotSet(
             'query_builder',
-            static function (EntityRepository $entityRepository) use ($fieldDto)
+            static function (EntityRepository $entityRepository) use ($fieldDto): \Doctrine\ORM\QueryBuilder
             {
                 $queryBuilder = $entityRepository->createQueryBuilder('entity');
                 if ($queryBuilderCallable = $fieldDto->getCustomOption(MetaParentField::OPTION_QUERY_BUILDER_CALLABLE)) {
@@ -124,7 +124,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         return MetaParentField::class === $fieldDto->getFieldFqcn();
     }
 
-    private function configureFirst(&$entityDto, &$propertyNameParts, &$fieldDto, &$propertyName)
+    private function configureFirst(\EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto &$entityDto, &$propertyNameParts, \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto &$fieldDto, string &$propertyName): void
     {
         if (count($propertyNameParts) <= 1) {
             if ($entityDto->isToOneAssociation($propertyName)) {

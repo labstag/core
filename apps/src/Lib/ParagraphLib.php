@@ -91,7 +91,7 @@ abstract class ParagraphLib extends AbstractController
         );
     }
 
-    public function generate(Paragraph $paragraph, array $data, bool $disable)
+    public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($paragraph, $data, $disable);
     }
@@ -156,7 +156,7 @@ abstract class ParagraphLib extends AbstractController
         return [];
     }
 
-    protected function getPaginator($query, $limit)
+    protected function getPaginator($query, ?int $limit)
     {
         $request = $this->requestStack->getCurrentRequest();
 
