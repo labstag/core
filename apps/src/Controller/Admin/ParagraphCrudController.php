@@ -86,7 +86,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         return Paragraph::class;
     }
 
-    private function isIframeEdit()
+    private function isIframeEdit(): bool
     {
         $query = $this->requestStack->getCurrentRequest()->query->all();
 

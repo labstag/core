@@ -13,7 +13,7 @@ class EditoRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Edito::class);
     }
 
-    public function findLast()
+    public function findLast(): mixed
     {
         $queryBuilder = $this->createQueryBuilder('a');
         $queryBuilder->where('a.enable = :enable');

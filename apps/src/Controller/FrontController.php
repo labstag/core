@@ -34,11 +34,11 @@ class FrontController extends AbstractController
     }
 
     #[Route('sitemap.css', name: 'sitemap.css', priority: 1)]
-    public function sitemapCss()
+    public function sitemapCss(): \Symfony\Component\HttpFoundation\Response
     {
         $response = new Response(
             $this->renderView('sitemap/sitemap.css.twig'),
-            200
+            \Symfony\Component\HttpFoundation\Response::HTTP_OK
         );
         $response->headers->set('Content-Type', 'text/css');
 
@@ -46,11 +46,11 @@ class FrontController extends AbstractController
     }
 
     #[Route('sitemap.js', name: 'sitemap.js', priority: 1)]
-    public function sitemapJs()
+    public function sitemapJs(): \Symfony\Component\HttpFoundation\Response
     {
         $response = new Response(
             $this->renderView('sitemap/sitemap.js.twig'),
-            200
+            \Symfony\Component\HttpFoundation\Response::HTTP_OK
         );
         $response->headers->set('Content-Type', 'text/javascript');
 
@@ -64,7 +64,7 @@ class FrontController extends AbstractController
     {
         return $this->initCache()->get(
             'sitemap.xml',
-            function (ItemInterface $item) use ($sitemapService)
+            function (ItemInterface $item) use ($sitemapService): \Symfony\Component\HttpFoundation\Response
             {
                 $item->expiresAfter(3600);
 
@@ -74,7 +74,7 @@ class FrontController extends AbstractController
                 return $this->render(
                     'sitemap/sitemap.xml.twig',
                     [
-                        'date'    => date('Y-m-d'),
+                        'date'    => \Carbon\Carbon::now()->format('Y-m-d'),
                         'sitemap' => $sitemap,
                     ]
                 );
@@ -83,18 +83,18 @@ class FrontController extends AbstractController
     }
 
     #[Route('sitemap.xsl', name: 'sitemap.xsl', priority: 1)]
-    public function sitemapXsl()
+    public function sitemapXsl(): \Symfony\Component\HttpFoundation\Response
     {
         $response = new Response(
             $this->renderView('sitemap/sitemap.xsl.twig'),
-            200
+            \Symfony\Component\HttpFoundation\Response::HTTP_OK
         );
         $response->headers->set('Content-Type', 'text/xml');
 
         return $response;
     }
 
-    protected function initCache()
+    protected function initCache(): \Symfony\Component\Cache\Adapter\FilesystemAdapter
     {
         return new FilesystemAdapter(
             'cache.app',

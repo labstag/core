@@ -15,13 +15,13 @@ final class ParagraphsField implements FieldInterface
 {
     use FieldTrait;
 
-    public const OPTION_COLLAPSED = 'collapsed';
+    public const string OPTION_COLLAPSED = 'collapsed';
 
-    public const OPTION_COLLAPSIBLE = 'collapsible';
+    public const string OPTION_COLLAPSIBLE = 'collapsible';
 
-    public const OPTION_ICON = 'icon';
+    public const string OPTION_ICON = 'icon';
 
-    public const OPTION_ROW_BREAKPOINT = 'rowBreakPoint';
+    public const string OPTION_ROW_BREAKPOINT = 'rowBreakPoint';
 
     public function collapsible(bool $collapsible = true): self
     {
@@ -81,7 +81,9 @@ final class ParagraphsField implements FieldInterface
     private function hasLabelOrIcon(): bool
     {
         // don't use empty() because the label can contain only white spaces (it's a valid edge-case)
-        return (null !== $this->dto->getLabel() && '' !== $this->dto->getLabel())
-            || null !== $this->dto->getCustomOption(self::OPTION_ICON);
+        if (null !== $this->dto->getLabel() && '' !== $this->dto->getLabel()) {
+            return true;
+        }
+        return null !== $this->dto->getCustomOption(self::OPTION_ICON);
     }
 }

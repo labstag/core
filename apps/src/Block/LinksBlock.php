@@ -10,12 +10,13 @@ use Labstag\Entity\Story;
 use Labstag\Form\LinkType;
 use Labstag\Lib\BlockLib;
 use Override;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class LinksBlock extends BlockLib
 {
     #[Override]
-    public function content(string $view, Block $block)
+    public function content(string $view, Block $block): ?Response
     {
         if (!$this->isShow($block)) {
             return null;
@@ -28,7 +29,7 @@ class LinksBlock extends BlockLib
     }
 
     #[Override]
-    public function generate(Block $block, array $data, bool $disable)
+    public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
         $links = $this->correctionLinks($block);
@@ -74,7 +75,10 @@ class LinksBlock extends BlockLib
         return 'links';
     }
 
-    private function correctionLinks(Block $block)
+    /**
+     * @return mixed[]
+     */
+    private function correctionLinks(Block $block): array
     {
         $links = $block->getLinks();
         $data  = [];
@@ -88,7 +92,7 @@ class LinksBlock extends BlockLib
         return $data;
     }
 
-    private function correctionUrl($url)
+    private function correctionUrl($url): ?string
     {
         // Regex \[page:(.*)]
         $url = preg_replace_callback(
@@ -115,7 +119,7 @@ class LinksBlock extends BlockLib
         );
     }
 
-    private function getEntityUrl($entity, $id)
+    private function getEntityUrl(string $entity, string $id): ?string
     {
         $data = $this->getRepository($entity)->find($id);
         if (is_null($data)) {

@@ -20,14 +20,14 @@ use Symfony\Component\Workflow\Registry;
 
 #[AsDoctrineListener(event: Events::prePersist)]
 #[AsDoctrineListener(event: Events::postPersist)]
-final class EntityListener
+final readonly class EntityListener
 {
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
-        protected Registry $workflowRegistry,
-        protected PageRepository $pageRepository,
-        protected ParagraphService $paragraphService,
-        protected WorkflowService $workflowService
+        private Registry $workflowRegistry,
+        private PageRepository $pageRepository,
+        private ParagraphService $paragraphService,
+        private WorkflowService $workflowService
     )
     {
     }
@@ -49,7 +49,7 @@ final class EntityListener
         $this->initWorkflow($object);
     }
 
-    private function initworkflow($object)
+    private function initworkflow($object): void
     {
         $this->workflowService->init($object);
         if (!is_object($object) || !$this->workflowRegistry->has($object)) {

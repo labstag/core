@@ -22,7 +22,7 @@ class BlockFixtures extends FixtureLib
         $objectManager->flush();
     }
 
-    private function addLinks(Block $block)
+    private function addLinks(Block $block): void
     {
         $generator = $this->setFaker();
 
@@ -36,7 +36,7 @@ class BlockFixtures extends FixtureLib
         }
     }
 
-    private function addParagraphsHead(Block $block)
+    private function addParagraphsHead(Block $block): void
     {
         $this->paragraphService->addParagraph($block, 'head-story');
         $this->paragraphService->addParagraph($block, 'head-post');
@@ -44,7 +44,7 @@ class BlockFixtures extends FixtureLib
         $this->paragraphService->addParagraph($block, 'chapter-list');
     }
 
-    private function addParagraphsTest(Block $block)
+    private function addParagraphsTest(Block $block): void
     {
         $this->paragraphService->addParagraph($block, 'chapter-lastnext');
     }

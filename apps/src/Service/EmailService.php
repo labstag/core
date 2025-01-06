@@ -13,7 +13,7 @@ class EmailService
     {
     }
 
-    public function all()
+    public function all(): iterable
     {
         return $this->emails;
     }

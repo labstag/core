@@ -100,7 +100,7 @@ class StarAddCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function disableAll()
+    private function disableAll(): void
     {
         $stars = $this->starRepository->findBy(
             ['enable' => true]

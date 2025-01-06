@@ -7,10 +7,10 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-final class AdminListener
+final readonly class AdminListener
 {
     public function __construct(
-        protected EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager
     )
     {
     }

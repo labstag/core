@@ -60,7 +60,10 @@ class ParagraphService
         return $content;
     }
 
-    public function generate(array $paragraphs, array $data, bool $disable)
+    /**
+     * @return array{templates: mixed, paragraph: mixed}[]
+     */
+    public function generate(array $paragraphs, array $data, bool $disable): array
     {
         $tab = [];
         foreach ($paragraphs as $paragraph) {
@@ -92,7 +95,7 @@ class ParagraphService
         return $paragraphs;
     }
 
-    public function getContents($paragraphs)
+    public function getContents($paragraphs): \stdClass
     {
         $data         = new stdClass();
         $data->header = [];
@@ -115,12 +118,12 @@ class ParagraphService
 
         $data->header = array_filter(
             $data->header,
-            fn ($row) => !is_null($row)
+            fn ($row): bool => !is_null($row)
         );
 
         $data->footer = array_filter(
             $data->footer,
-            fn ($row) => !is_null($row)
+            fn ($row): bool => !is_null($row)
         );
 
         return $data;
@@ -141,7 +144,10 @@ class ParagraphService
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $name  = $reflectionProperty->getName();
             $value = $propertyAccessor->getValue($paragraph, $name);
-            if (!is_object($value) || $value instanceof DateTime) {
+            if (!is_object($value)) {
+                continue;
+            }
+            if ($value instanceof DateTime) {
                 continue;
             }
 
@@ -252,7 +258,7 @@ class ParagraphService
         ?Paragraph $paragraph,
         array $data,
         bool $disable
-    )
+    ): void
     {
         if (is_null($paragraph)) {
             return;

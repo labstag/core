@@ -13,7 +13,10 @@ class FormService
     {
     }
 
-    public function all()
+    /**
+     * @return mixed[]
+     */
+    public function all(): array
     {
         $data = [];
         foreach ($this->forms as $form) {

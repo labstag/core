@@ -17,47 +17,47 @@ class GeoCode implements Stringable
 {
     use SoftDeleteableEntity;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private int $accuracy;
 
-    #[ORM\Column(type: 'string', length: 20)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 20)]
     private string $communityCode;
 
-    #[ORM\Column(type: 'string', length: 100)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 100)]
     private string $communityName;
 
-    #[ORM\Column(type: 'string', length: 2)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 2)]
     #[Assert\Country]
     private string $countryCode;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: 'guid', unique: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     private string $latitude;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     private string $longitude;
 
-    #[ORM\Column(type: 'string', length: 180)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 180)]
     private string $placeName;
 
-    #[ORM\Column(type: 'string', length: 20)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 20)]
     private string $postalCode;
 
-    #[ORM\Column(type: 'string', length: 20)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 20)]
     private string $provinceCode;
 
-    #[ORM\Column(type: 'string', length: 100)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 100)]
     private string $provinceName;
 
-    #[ORM\Column(type: 'string', length: 20)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 20)]
     private string $stateCode;
 
-    #[ORM\Column(type: 'string', length: 100)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 100)]
     private string $stateName;
 
     #[Override]

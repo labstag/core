@@ -6,11 +6,12 @@ use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Labstag\Lib\BlockLib;
 use Override;
+use Symfony\Component\HttpFoundation\Response;
 
 class ContentBlock extends BlockLib
 {
     #[Override]
-    public function content(string $view, Block $block)
+    public function content(string $view, Block $block): ?Response
     {
         if (!$this->isShow($block)) {
             return null;
@@ -23,7 +24,7 @@ class ContentBlock extends BlockLib
     }
 
     #[Override]
-    public function generate(Block $block, array $data, bool $disable)
+    public function generate(Block $block, array $data, bool $disable): void
     {
         $paragraphs = $data['paragraphs'];
         if (0 == count($paragraphs)) {
@@ -78,7 +79,7 @@ class ContentBlock extends BlockLib
         return 'content';
     }
 
-    private function getAside($data)
+    private function getAside(array $data): void
     {
         unset($data);
         // TODO: Implement getAside() method.

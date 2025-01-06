@@ -12,7 +12,7 @@ use Override;
 class EditoParagraph extends ParagraphLib
 {
     #[Override]
-    public function generate(Paragraph $paragraph, array $data, bool $disable)
+    public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         /** @var EditoRepository $repository */
         $repository = $this->getRepository(Edito::class);

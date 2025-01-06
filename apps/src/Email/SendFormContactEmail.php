@@ -20,7 +20,7 @@ class SendFormContactEmail extends EmailLib
     }
 
     #[Override]
-    public function init()
+    public function init(): void
     {
         $configuration = $this->siteService->getConfiguration();
         parent::init();

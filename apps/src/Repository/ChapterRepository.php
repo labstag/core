@@ -16,7 +16,7 @@ class ChapterRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Chapter::class);
     }
 
-    public function getAllActivateByStory(Story $story)
+    public function getAllActivateByStory(Story $story): mixed
     {
         $data = new ArrayCollection(
             [

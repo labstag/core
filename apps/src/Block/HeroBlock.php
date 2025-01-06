@@ -5,11 +5,12 @@ namespace Labstag\Block;
 use Labstag\Entity\Block;
 use Labstag\Lib\BlockLib;
 use Override;
+use Symfony\Component\HttpFoundation\Response;
 
 class HeroBlock extends BlockLib
 {
     #[Override]
-    public function content(string $view, Block $block)
+    public function content(string $view, Block $block): ?Response
     {
         if (!$this->isShow($block)) {
             return null;
@@ -22,7 +23,7 @@ class HeroBlock extends BlockLib
     }
 
     #[Override]
-    public function generate(Block $block, array $data, bool $disable)
+    public function generate(Block $block, array $data, bool $disable): void
     {
         $paragraphs = $block->getParagraphs()->getValues();
         if (0 == count($paragraphs) || $this->siteService->isHome($data)) {

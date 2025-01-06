@@ -30,7 +30,7 @@ class Configuration
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: 'guid', unique: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
@@ -52,10 +52,10 @@ class Configuration
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'placeholder')]
     private ?File $placeholderFile = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, options: ['default' => 1])]
     private ?bool $sitemapPosts = false;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, options: ['default' => 1])]
     private ?bool $sitemapStory = false;
 
     #[ORM\Column(length: 255)]
@@ -64,10 +64,10 @@ class Configuration
     #[ORM\Column(length: 255)]
     private ?string $url = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, options: ['default' => 1])]
     private ?bool $userLink = false;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, options: ['default' => 1])]
     private ?bool $userShow = false;
 
     public function getCopyright(): ?string
@@ -181,7 +181,7 @@ class Configuration
         if ($faviconFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = \Carbon\CarbonImmutable::now();
         }
     }
 
@@ -197,7 +197,7 @@ class Configuration
         if ($logoFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = \Carbon\CarbonImmutable::now();
         }
     }
 
@@ -227,7 +227,7 @@ class Configuration
         if ($placeholderFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = \Carbon\CarbonImmutable::now();
         }
     }
 

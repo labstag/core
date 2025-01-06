@@ -5,6 +5,7 @@ namespace Labstag\Lib;
 use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Block;
+use Labstag\Interface\BlockInterface;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,7 +13,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 
-abstract class BlockLib extends AbstractController
+abstract class BlockLib extends AbstractController implements BlockInterface
 {
 
     public $template;
@@ -37,16 +38,6 @@ abstract class BlockLib extends AbstractController
         protected Environment $twigEnvironment
     )
     {
-    }
-
-    public function content(string $view, Block $block)
-    {
-        unset($view, $block);
-    }
-
-    public function generate(Block $block, array $data, bool $disable)
-    {
-        unset($block, $data, $disable);
     }
 
     public function getData(Block $block)

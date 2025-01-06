@@ -22,7 +22,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     {
     }
 
-    public function asset($entity, $field)
+    public function asset($entity, $field): string
     {
         $mappings         = $this->fileService->getMappingForEntity($entity);
         $file             = '';
@@ -55,7 +55,10 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         return $content->getContent();
     }
 
-    public function enable($entities)
+    /**
+     * @return mixed[]
+     */
+    public function enable($entities): array
     {
         $data = [];
         foreach ($entities as $entity) {
@@ -67,7 +70,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         return $data;
     }
 
-    public function metatags($value)
+    public function metatags(array $value): string
     {
         $metatags = $this->siteService->getMetatags($value['entity']);
 
@@ -77,14 +80,14 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         );
     }
 
-    public function path($entity)
+    public function path($entity): string
     {
         $slug = $this->siteService->getSlugByEntity($entity);
 
         return $this->router->generate('front', ['slug' => $slug]);
     }
 
-    public function title($data)
+    public function title(array $data)
     {
         $config    = $this->siteService->getConfiguration();
         $siteTitle = $config->getName();

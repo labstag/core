@@ -11,7 +11,7 @@ class DebugExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
-    public function begin($data): string
+    public function begin(array $data): string
     {
         $templates = $data['templates'];
         if (is_null($templates) || 0 == (is_countable($templates) ? count($templates) : 0)) {
@@ -31,7 +31,7 @@ class DebugExtensionRuntime implements RuntimeExtensionInterface
         return $html.("BEGIN OUTPUT from '".$templates['view']."' -->\n");
     }
 
-    public function end($data): string
+    public function end(array $data): string
     {
         $templates = $data['templates'];
         if (is_null($templates) || 0 == (is_countable($templates) ? count($templates) : 0)) {

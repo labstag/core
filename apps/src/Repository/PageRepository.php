@@ -13,7 +13,7 @@ class PageRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Page::class);
     }
 
-    public function getAllActivate()
+    public function getAllActivate(): mixed
     {
         $queryBuilder = $this->createQueryBuilder('a');
         $queryBuilder->where('a.enable = :enable');

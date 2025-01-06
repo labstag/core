@@ -13,7 +13,7 @@ class StarRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Star::class);
     }
 
-    public function findAllData($type)
+    public function findAllData(string $type): mixed
     {
         $queryBuilder = $this->createQueryBuilder('s');
 
@@ -23,7 +23,7 @@ class StarRepository extends ServiceEntityRepositoryLib
         return $query->getQuery()->getResult();
     }
 
-    public function getQueryBuilder()
+    public function getQueryBuilder(): \Doctrine\ORM\QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->where('s.enable = :enable');

@@ -13,7 +13,7 @@ use Override;
 class VideoParagraph extends ParagraphLib
 {
     #[Override]
-    public function generate(Paragraph $paragraph, array $data, bool $disable)
+    public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
         $url = $paragraph->getUrl();
@@ -99,7 +99,7 @@ class VideoParagraph extends ParagraphLib
         return $iframe->getAttribute('src');
     }
 
-    private function parseUrlAndAddAutoplay($url)
+    private function parseUrlAndAddAutoplay($url): string
     {
         $parse = parse_url((string) $url);
         parse_str('' !== $parse['query'] && '0' !== $parse['query'] ? $parse['query'] : '', $args);

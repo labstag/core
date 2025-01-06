@@ -41,7 +41,7 @@ class PostRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
-    public function getQueryBuilder()
+    public function getQueryBuilder(): \Doctrine\ORM\QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('p');
         $queryBuilder->where('p.enable = :enable');

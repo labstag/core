@@ -87,7 +87,7 @@ abstract class EmailLib extends Email
         return parent::html($body, $charset);
     }
 
-    public function init()
+    public function init(): void
     {
         $this->from('');
         $this->html('');
@@ -95,7 +95,7 @@ abstract class EmailLib extends Email
         $this->subject('');
     }
 
-    public function setData(array $data = [])
+    public function setData(array $data = []): void
     {
         $this->data = $data;
     }
@@ -230,7 +230,7 @@ abstract class EmailLib extends Email
         return $this->data['user']->getUsername();
     }
 
-    private function getTemplate($type)
+    private function getTemplate(string $type): string
     {
         $templates = $this->templates($type);
 

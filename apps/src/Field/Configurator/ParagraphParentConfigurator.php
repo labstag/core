@@ -29,13 +29,13 @@ use Traversable;
 /**
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  */
-final class ParagraphParentConfigurator implements FieldConfiguratorInterface
+final readonly class ParagraphParentConfigurator implements FieldConfiguratorInterface
 {
     public function __construct(
-        protected EntityFactory $entityFactory,
-        protected AdminUrlGenerator $adminUrlGenerator,
-        protected TranslatorInterface $translator,
-        protected ParagraphService $paragraphService
+        private EntityFactory $entityFactory,
+        private AdminUrlGenerator $adminUrlGenerator,
+        private TranslatorInterface $translator,
+        private ParagraphService $paragraphService
     ) {
     }
 
@@ -71,7 +71,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
         $fieldDto->setFormTypeOptionIfNotSet(
             'query_builder',
-            static function (EntityRepository $entityRepository) use ($fieldDto)
+            static function (EntityRepository $entityRepository) use ($fieldDto): \Doctrine\ORM\QueryBuilder
             {
                 // TODO: should this use `createIndexQueryBuilder` instead, so we get the default ordering etc.?
                 // it would then be identical to the one used in autocomplete action, but it is a bit complex getting it in here
@@ -94,7 +94,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         return ParagraphParentField::class === $fieldDto->getFieldFqcn();
     }
 
-    private function configureAutocomplete(FieldDto $fieldDto, AdminContext $adminContext, $object)
+    private function configureAutocomplete(FieldDto $fieldDto, AdminContext $adminContext, object $object): void
     {
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER);
         if (null === $targetCrudControllerFqcn) {
@@ -123,7 +123,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->setFormTypeOption('attr.data-ea-autocomplete-endpoint-url', $adminUrlGenerator);
     }
 
-    private function configureFirst(FieldDto $fieldDto, EntityDto $entityDto, $propertyNameParts, $propertyName)
+    private function configureFirst(FieldDto $fieldDto, EntityDto $entityDto, $propertyNameParts, string $propertyName): void
     {
         // prepare starting class for association
         $targetEntityFqcn = $entityDto->getPropertyMetadata($propertyNameParts[0])->get('targetEntity');
@@ -161,7 +161,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         }
     }
 
-    private function configureSecond(FieldDto $fieldDto, EntityDto $entityDto, $propertyName)
+    private function configureSecond(FieldDto $fieldDto, EntityDto $entityDto, $propertyName): void
     {
         if ($entityDto->isToOneAssociation($propertyName)) {
             $this->configureToOneAssociation($fieldDto);
@@ -172,7 +172,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         }
     }
 
-    private function configureTest(FieldDto $fieldDto, EntityDto $entityDto, $propertyName)
+    private function configureTest(FieldDto $fieldDto, EntityDto $entityDto, $propertyName): void
     {
         $propertyNameParts = explode('.', (string) $propertyName);
         if (\count($propertyNameParts) > 1) {
@@ -273,7 +273,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         return $url->generateUrl();
     }
 
-    private function setFormTypeOption(FieldDto $fieldDto)
+    private function setFormTypeOption(FieldDto $fieldDto): FieldDto
     {
         if (ParagraphParentField::WIDGET_AUTOCOMPLETE === $fieldDto->getCustomOption(ParagraphParentField::OPTION_WIDGET)) {
             $fieldDto->setFormTypeOption('attr.data-ea-widget', 'ea-autocomplete');

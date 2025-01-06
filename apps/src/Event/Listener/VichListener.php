@@ -11,17 +11,16 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Vich\UploaderBundle\Event\Event;
 use Vich\UploaderBundle\Event\Events;
 
-final class VichListener
+final readonly class VichListener
 {
     public function __construct(
-        private readonly RequestStack $requestStack,
-        private readonly EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager
     )
     {
     }
 
     #[AsEventListener(event: Events::PRE_REMOVE)]
-    public function preRemove(Event $event)
+    public function preRemove(Event $event): void
     {
         $filterCollection = $this->entityManager->getFilters();
         $object           = $event->getObject();
@@ -33,7 +32,7 @@ final class VichListener
         $event->cancel();
     }
 
-    private function isDeletedFileNotEntity($entity): bool
+    private function isDeletedFileNotEntity(object $entity): bool
     {
         $delete           = false;
         $reflectionClass  = new ReflectionClass($entity);
@@ -41,7 +40,10 @@ final class VichListener
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $name  = $reflectionProperty->getName();
             $value = $propertyAccessor->getValue($entity, $name);
-            if (!$value instanceof UploadedFile || is_null($value)) {
+            if (!$value instanceof UploadedFile) {
+                continue;
+            }
+            if (is_null($value)) {
                 continue;
             }
 

@@ -27,7 +27,7 @@ abstract class FixtureLib extends Fixture
 
     public array $tags = [];
 
-    protected $enable = null;
+    protected $enable;
 
     public function __construct(
         protected EmailService $emailService,
@@ -96,9 +96,9 @@ abstract class FixtureLib extends Fixture
         $data = $data[$class] ?? [];
 
         if (null !== $id) {
-            $data = array_filter(
+            return array_filter(
                 $data,
-                fn ($key) => str_contains((string) $key, $id),
+                fn ($key): bool => str_contains((string) $key, $id),
                 ARRAY_FILTER_USE_KEY
             );
         }
@@ -128,7 +128,7 @@ abstract class FixtureLib extends Fixture
         return $generator;
     }
 
-    protected function setImage($entity, $type)
+    protected function setImage(object|array $entity, string|\Symfony\Component\PropertyAccess\PropertyPathInterface $type)
     {
         try {
             $generator = $this->setFaker();
@@ -154,7 +154,10 @@ abstract class FixtureLib extends Fixture
         }
     }
 
-    private function correctionArray($data)
+    /**
+     * @return int[]|string[]
+     */
+    private function correctionArray(array $data): array
     {
         $newData = [];
         foreach (array_keys($data) as $key) {

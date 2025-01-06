@@ -22,6 +22,7 @@ use Labstag\Repository\StoryRepository;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Twig\Environment;
 
 class SiteService
@@ -65,7 +66,7 @@ class SiteService
         return $return;
     }
 
-    public function getDataByEntity(object $entity, $disable = false)
+    public function getDataByEntity(object $entity, bool $disable = false): array
     {
         $data = [
             'entity'     => $entity,
@@ -123,7 +124,7 @@ class SiteService
         $page  = null;
         $types = array_filter(
             $types,
-            fn ($type) => !is_null($type) && 'home' != $type->getType()
+            fn ($type): bool => !is_null($type) && 'home' != $type->getType()
         );
 
         $page = $this->pageRepository->findOneBy(['slug' => $slug]);
@@ -149,7 +150,7 @@ class SiteService
         return $page;
     }
 
-    public function getMetatags($entity)
+    public function getMetatags(object $entity)
     {
         $meta = $entity->getMeta();
         if (null !== $meta->getDescription() && '' !== $meta->getDescription() && '0' !== $meta->getDescription()) {
@@ -188,7 +189,7 @@ class SiteService
         return ('' == $page) ? $this->getSlugByEntityIfChapter($types, $entity) : $page;
     }
 
-    public function getTypesPages()
+    public function getTypesPages(): array
     {
         return [
             'Home'      => 'home',
@@ -213,12 +214,12 @@ class SiteService
         // TODO : Prévoir de vérifier les droits de l'utilisateur
     }
 
-    public function isHome($data)
+    public function isHome($data): bool
     {
         return isset($data['entity']) && $data['entity'] instanceof Page && 'home' == $data['entity']->getType();
     }
 
-    public function saveConfiguration($post)
+    public function saveConfiguration($post): void
     {
         foreach ($post as $name => $value) {
             $configuration = $this->configurationRepository->findOneBy(['name' => $name]);
@@ -239,7 +240,7 @@ class SiteService
         $this->configurationRepository->flush();
     }
 
-    public function setTitle($entity)
+    public function setTitle($entity): ?string
     {
         if ($entity instanceof Page) {
             return $entity->getTitle();
@@ -260,7 +261,7 @@ class SiteService
         return '';
     }
 
-    protected function getDataCrudController()
+    protected function getDataCrudController(): array
     {
         return [
             Story::class   => StoryCrudController::class,
@@ -270,7 +271,7 @@ class SiteService
         ];
     }
 
-    protected function getMetaByEntity(Meta $meta)
+    protected function getMetaByEntity(Meta $meta): Meta
     {
         return $meta;
     }
@@ -308,7 +309,7 @@ class SiteService
         return $view;
     }
 
-    private function getBlocks($data, bool $disable)
+    private function getBlocks(array $data, bool $disable): array
     {
         $query  = $this->blockRepository->findAllOrderedByRegion();
         $blocks = $query->getQuery()->getResult();
@@ -333,7 +334,7 @@ class SiteService
         ];
     }
 
-    private function getContentByType(string $type, $slug)
+    private function getContentByType(string $type, string $slug)
     {
         if ('post' === $type) {
             return $this->postRepository->findOneBy(['slug' => $slug]);
@@ -344,11 +345,11 @@ class SiteService
             'chapter' => $this->chapterRepository,
         ];
 
-        if (1 == substr_count((string) $slug, '/')) {
+        if (1 == substr_count($slug, '/')) {
             [
                 $slugstory,
                 $slugchapter,
-            ]        = explode('/', (string) $slug);
+            ]        = explode('/', $slug);
             $story   = $repos['story']->findOneBy(['slug' => $slugstory]);
             $chapter = $repos['chapter']->findOneBy(['slug' => $slugchapter]);
             if ($story instanceof Story && $chapter instanceof Chapter && $story->getId() === $chapter->getRefStory()->getId()) {
@@ -359,7 +360,10 @@ class SiteService
         return $repos['story']->findOneBy(['slug' => $slug]);
     }
 
-    private function getPageByTypes()
+    /**
+     * @return mixed[]
+     */
+    private function getPageByTypes(): array
     {
         $types = array_flip($this->getTypesPages());
         unset($types['page']);
@@ -370,7 +374,7 @@ class SiteService
         return $types;
     }
 
-    private function getSlugByEntityIfChapter($types, $entity)
+    private function getSlugByEntityIfChapter(array $types, $entity): string
     {
         if (!$entity instanceof Chapter) {
             return '';
@@ -383,7 +387,7 @@ class SiteService
         return $types['story']->getSlug().'/'.$entity->getRefStory()->getSlug().'/'.$entity->getSlug();
     }
 
-    private function getSlugByEntityIfPage($entity)
+    private function getSlugByEntityIfPage($entity): ?string
     {
         if (!$entity instanceof Page) {
             return '';
@@ -392,7 +396,7 @@ class SiteService
         return $entity->getSlug();
     }
 
-    private function getSlugByEntityIfPost($types, $entity)
+    private function getSlugByEntityIfPost(array $types, $entity): ?string
     {
         if (!$entity instanceof Post) {
             return null;
@@ -405,7 +409,7 @@ class SiteService
         return $types['post']->getSlug().'/'.$entity->getSlug();
     }
 
-    private function getSlugByEntityIfStory($types, $entity)
+    private function getSlugByEntityIfStory(array $types, $entity): string
     {
         if (!$entity instanceof Story) {
             return '';
@@ -418,7 +422,7 @@ class SiteService
         return $types['story']->getSlug().'/'.$entity->getSlug();
     }
 
-    private function getUser()
+    private function getUser(): ?UserInterface
     {
         $token = $this->tokenStorage->getToken();
 

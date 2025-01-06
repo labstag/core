@@ -33,7 +33,13 @@ class MetaService
             $name  = $reflectionProperty->getName();
             $type  = $reflectionProperty->getType();
             $value = $propertyAccessor->getValue($meta, $name);
-            if (is_null($type) || is_null($value) || !is_object($value)) {
+            if (is_null($type)) {
+                continue;
+            }
+            if (is_null($value)) {
+                continue;
+            }
+            if (!is_object($value)) {
                 continue;
             }
 

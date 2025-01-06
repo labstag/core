@@ -3,14 +3,16 @@
 namespace Labstag\Block;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Labstag\Entity\Block;
 use Labstag\Lib\BlockLib;
 use Override;
+use Symfony\Component\HttpFoundation\Response;
 
 class AdminBlock extends BlockLib
 {
     #[Override]
-    public function content(string $view, Block $block)
+    public function content(string $view, Block $block): ?Response
     {
         if (!$this->isShow($block)) {
             return null;
@@ -23,7 +25,7 @@ class AdminBlock extends BlockLib
     }
 
     #[Override]
-    public function generate(Block $block, array $data, bool $disable)
+    public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
         $url = $this->setUrl($data['entity']);
@@ -63,7 +65,7 @@ class AdminBlock extends BlockLib
         return 'admin';
     }
 
-    protected function setUrl($entity)
+    protected function setUrl($entity): ?AdminUrlGeneratorInterface
     {
         $controller = $this->siteService->getCrudController($entity::class);
         if (is_null($controller)) {

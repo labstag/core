@@ -28,7 +28,7 @@ class Page implements Stringable
     use TimestampableEntity;
     use WorkflowTrait;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => 1])]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, options: ['default' => 1])]
     protected ?bool $enable = null;
 
     #[Gedmo\Slug(fields: ['title'])]
@@ -39,7 +39,7 @@ class Page implements Stringable
             'separator'           => '/',
         ]
     )]
-    #[ORM\Column(type: 'string', length: 255, nullable: true, unique: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true, unique: true)]
     protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
@@ -56,7 +56,7 @@ class Page implements Stringable
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: 'guid', unique: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
@@ -295,7 +295,7 @@ class Page implements Stringable
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new DateTimeImmutable();
+            $this->updatedAt = \Carbon\CarbonImmutable::now();
         }
     }
 
