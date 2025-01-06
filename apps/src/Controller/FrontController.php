@@ -34,11 +34,11 @@ class FrontController extends AbstractController
     }
 
     #[Route('sitemap.css', name: 'sitemap.css', priority: 1)]
-    public function sitemapCss(): \Symfony\Component\HttpFoundation\Response
+    public function sitemapCss(): Response
     {
         $response = new Response(
             $this->renderView('sitemap/sitemap.css.twig'),
-            \Symfony\Component\HttpFoundation\Response::HTTP_OK
+            Response::HTTP_OK
         );
         $response->headers->set('Content-Type', 'text/css');
 
@@ -46,11 +46,11 @@ class FrontController extends AbstractController
     }
 
     #[Route('sitemap.js', name: 'sitemap.js', priority: 1)]
-    public function sitemapJs(): \Symfony\Component\HttpFoundation\Response
+    public function sitemapJs(): Response
     {
         $response = new Response(
             $this->renderView('sitemap/sitemap.js.twig'),
-            \Symfony\Component\HttpFoundation\Response::HTTP_OK
+            Response::HTTP_OK
         );
         $response->headers->set('Content-Type', 'text/javascript');
 
@@ -60,16 +60,15 @@ class FrontController extends AbstractController
     #[Route('sitemap.xml', name: 'sitemap.xml', priority: 1, defaults: ['_format' => 'xml'])]
     public function sitemapXml(
         SitemapService $sitemapService
-    )
+    ): mixed
     {
         return $this->initCache()->get(
             'sitemap.xml',
-            function (ItemInterface $item) use ($sitemapService): \Symfony\Component\HttpFoundation\Response
+            function (ItemInterface $item) use ($sitemapService): Response
             {
                 $item->expiresAfter(3600);
 
                 $sitemap = $sitemapService->getData(1);
-                dd($sitemap);
 
                 return $this->render(
                     'sitemap/sitemap.xml.twig',
@@ -83,18 +82,18 @@ class FrontController extends AbstractController
     }
 
     #[Route('sitemap.xsl', name: 'sitemap.xsl', priority: 1)]
-    public function sitemapXsl(): \Symfony\Component\HttpFoundation\Response
+    public function sitemapXsl(): Response
     {
         $response = new Response(
             $this->renderView('sitemap/sitemap.xsl.twig'),
-            \Symfony\Component\HttpFoundation\Response::HTTP_OK
+            Response::HTTP_OK
         );
         $response->headers->set('Content-Type', 'text/xml');
 
         return $response;
     }
 
-    protected function initCache(): \Symfony\Component\Cache\Adapter\FilesystemAdapter
+    protected function initCache(): FilesystemAdapter
     {
         return new FilesystemAdapter(
             'cache.app',

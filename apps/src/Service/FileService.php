@@ -201,7 +201,7 @@ class FileService
         return $files;
     }
 
-    public function getFullBasePath($entity, $type): string
+    public function getFullBasePath($entity, string $type): string
     {
         $basePath = $this->getBasePath($entity, $type);
 
@@ -218,7 +218,7 @@ class FileService
         return $this->managerRegistry->getRepository($entity);
     }
 
-    private function deleteFilesByType($type, $files): void
+    private function deleteFilesByType(int|string $type, $files): void
     {
         $adapter = $this->getAdapter($type);
         if (is_null($adapter)) {

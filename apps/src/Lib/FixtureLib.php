@@ -98,7 +98,7 @@ abstract class FixtureLib extends Fixture
         if (null !== $id) {
             return array_filter(
                 $data,
-                fn ($key): bool => str_contains((string) $key, $id),
+                fn ($key): bool => str_contains($key, $id),
                 ARRAY_FILTER_USE_KEY
             );
         }

@@ -190,6 +190,7 @@ class MovieAddCommand extends Command
             if ('' === $value) {
                 continue;
             }
+
             if ('0' === $value) {
                 continue;
             }

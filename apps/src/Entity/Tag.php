@@ -11,6 +11,7 @@ use Labstag\Repository\TagRepository;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -27,7 +28,7 @@ class Tag implements Stringable
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::GUID, unique: true)]
+    #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
@@ -46,7 +47,7 @@ class Tag implements Stringable
     private Collection $posts;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'], unique_base: 'type')]
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: false)]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     private ?string $slug = null;
 
     /**

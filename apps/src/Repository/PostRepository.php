@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Post;
 use Labstag\Lib\ServiceEntityRepositoryLib;
@@ -13,7 +15,7 @@ class PostRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Post::class);
     }
 
-    public function findLastByNbr(int $nbr)
+    public function findLastByNbr(int $nbr): mixed
     {
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->setMaxResults($nbr);
@@ -23,7 +25,7 @@ class PostRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
-    public function findTotalEnable()
+    public function findTotalEnable(): mixed
     {
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->select('count(p.id)');
@@ -33,7 +35,7 @@ class PostRepository extends ServiceEntityRepositoryLib
         return $query->getSingleScalarResult();
     }
 
-    public function getAllActivate()
+    public function getAllActivate(): mixed
     {
         $queryBuilder = $this->getQueryBuilder();
         $query        = $queryBuilder->getQuery();
@@ -41,7 +43,7 @@ class PostRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
-    public function getQueryBuilder(): \Doctrine\ORM\QueryBuilder
+    public function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('p');
         $queryBuilder->where('p.enable = :enable');
@@ -50,7 +52,7 @@ class PostRepository extends ServiceEntityRepositoryLib
         return $queryBuilder->orderBy('p.createdAt', 'DESC');
     }
 
-    public function getQueryPaginator()
+    public function getQueryPaginator(): Query
     {
         $queryBuilder = $this->getQueryBuilder();
 

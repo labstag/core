@@ -7,6 +7,7 @@ namespace Labstag\Field\Configurator;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\PersistentCollection;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\TextAlign;
@@ -71,7 +72,7 @@ final readonly class ParagraphParentConfigurator implements FieldConfiguratorInt
 
         $fieldDto->setFormTypeOptionIfNotSet(
             'query_builder',
-            static function (EntityRepository $entityRepository) use ($fieldDto): \Doctrine\ORM\QueryBuilder
+            static function (EntityRepository $entityRepository) use ($fieldDto): QueryBuilder
             {
                 // TODO: should this use `createIndexQueryBuilder` instead, so we get the default ordering etc.?
                 // it would then be identical to the one used in autocomplete action, but it is a bit complex getting it in here

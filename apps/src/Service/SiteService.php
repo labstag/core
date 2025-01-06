@@ -179,14 +179,14 @@ class SiteService
         return $types[$type] ?? null;
     }
 
-    public function getSlugByEntity($entity)
+    public function getSlugByEntity($entity): string
     {
         $types = $this->getPageByTypes();
         $page  = $this->getSlugByEntityIfPage($entity);
         $page  = ('' == $page) ? $this->getSlugByEntityIfPost($types, $entity) : $page;
         $page  = ('' == $page) ? $this->getSlugByEntityIfStory($types, $entity) : $page;
 
-        return ('' == $page) ? $this->getSlugByEntityIfChapter($types, $entity) : $page;
+        return ('' === $page) ? $this->getSlugByEntityIfChapter($types, $entity) : $page;
     }
 
     public function getTypesPages(): array

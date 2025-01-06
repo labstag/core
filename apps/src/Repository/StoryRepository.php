@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Story;
 use Labstag\Lib\ServiceEntityRepositoryLib;
@@ -13,7 +15,7 @@ class StoryRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Story::class);
     }
 
-    public function findLastByNbr(int $nbr)
+    public function findLastByNbr(int $nbr): mixed
     {
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->setMaxResults($nbr);
@@ -23,7 +25,7 @@ class StoryRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
-    public function findTotalEnable()
+    public function findTotalEnable(): mixed
     {
         $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->select('count(h.id)');
@@ -33,7 +35,7 @@ class StoryRepository extends ServiceEntityRepositoryLib
         return $query->getSingleScalarResult();
     }
 
-    public function getAllActivate()
+    public function getAllActivate(): mixed
     {
         $queryBuilder = $this->getQueryBuilder();
         $query        = $queryBuilder->getQuery();
@@ -41,14 +43,14 @@ class StoryRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
-    public function getQueryPaginator()
+    public function getQueryPaginator(): Query
     {
         $queryBuilder = $this->getQueryBuilder();
 
         return $queryBuilder->getQuery();
     }
 
-    private function getQueryBuilder(): \Doctrine\ORM\QueryBuilder
+    private function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('h');
         $queryBuilder->innerJoin('h.chapters', 'c');

@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Star;
 use Labstag\Lib\ServiceEntityRepositoryLib;
@@ -23,7 +25,7 @@ class StarRepository extends ServiceEntityRepositoryLib
         return $query->getQuery()->getResult();
     }
 
-    public function getQueryBuilder(): \Doctrine\ORM\QueryBuilder
+    public function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->where('s.enable = :enable');
@@ -32,7 +34,7 @@ class StarRepository extends ServiceEntityRepositoryLib
         return $queryBuilder->orderBy('s.title', 'ASC');
     }
 
-    public function getQueryPaginator()
+    public function getQueryPaginator(): Query
     {
         $queryBuilder = $this->getQueryBuilder();
 

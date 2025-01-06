@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Movie;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieCrudController extends AbstractCrudControllerLib
@@ -59,7 +60,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         return Movie::class;
     }
 
-    public function imdb(AdminContext $adminContext): \Symfony\Component\HttpFoundation\RedirectResponse
+    public function imdb(AdminContext $adminContext): RedirectResponse
     {
         $entity = $adminContext->getEntity()->getInstance();
 

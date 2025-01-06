@@ -7,6 +7,7 @@ use Labstag\Repository\LinkRepository;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: LinkRepository::class)]
 class Link implements Stringable
@@ -23,7 +24,7 @@ class Link implements Stringable
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::GUID, unique: true)]
+    #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 

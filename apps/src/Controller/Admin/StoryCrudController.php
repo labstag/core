@@ -15,6 +15,8 @@ use Labstag\Entity\Story;
 use Labstag\Form\Paragraphs\StoryType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryCrudController extends AbstractCrudControllerLib
@@ -102,7 +104,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         return Story::class;
     }
 
-    public function moveChapter(AdminContext $adminContext): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    public function moveChapter(AdminContext $adminContext): RedirectResponse|Response
     {
         $request    = $adminContext->getRequest();
         $repository = $this->getRepository();

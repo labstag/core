@@ -10,6 +10,7 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\DBAL\Types\Types;
 
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[ORM\Entity(repositoryClass: GeoCodeRepository::class)]
@@ -17,47 +18,47 @@ class GeoCode implements Stringable
 {
     use SoftDeleteableEntity;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
+    #[ORM\Column(type: Types::INTEGER)]
     private int $accuracy;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 20)]
+    #[ORM\Column(type: Types::STRING, length: 20)]
     private string $communityCode;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 100)]
+    #[ORM\Column(type: Types::STRING, length: 100)]
     private string $communityName;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 2)]
+    #[ORM\Column(type: Types::STRING, length: 2)]
     #[Assert\Country]
     private string $countryCode;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::GUID, unique: true)]
+    #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $latitude;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $longitude;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 180)]
+    #[ORM\Column(type: Types::STRING, length: 180)]
     private string $placeName;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 20)]
+    #[ORM\Column(type: Types::STRING, length: 20)]
     private string $postalCode;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 20)]
+    #[ORM\Column(type: Types::STRING, length: 20)]
     private string $provinceCode;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 100)]
+    #[ORM\Column(type: Types::STRING, length: 100)]
     private string $provinceName;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 20)]
+    #[ORM\Column(type: Types::STRING, length: 20)]
     private string $stateCode;
 
-    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 100)]
+    #[ORM\Column(type: Types::STRING, length: 100)]
     private string $stateName;
 
     #[Override]
