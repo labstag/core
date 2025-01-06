@@ -106,17 +106,17 @@ class SitemapService
         return $this->setTabs($data);
     }
 
-    private function getDataPages()
+    private function getDataPages(): array
     {
         return $this->getDataFromRepository(Page::class);
     }
 
-    private function getDataPosts()
+    private function getDataPosts(): array
     {
         return $this->getDataFromRepository(Post::class);
     }
 
-    private function getDataStory()
+    private function getDataStory(): array
     {
         return $this->getDataFromRepository(Story::class);
     }
