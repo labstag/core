@@ -31,7 +31,7 @@ class PageCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
-            ['title' => 'ASC']
+            ['createdAt' => 'DESC']
         );
 
         return $crud;

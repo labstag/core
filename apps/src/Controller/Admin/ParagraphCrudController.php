@@ -42,7 +42,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         }
 
         $crud->setDefaultSort(
-            ['type' => 'ASC']
+            ['createdAt' => 'DESC']
         );
 
         return $crud;
