@@ -117,7 +117,7 @@ class MovieAddCommand extends Command
         $progressBar = new ProgressBar($output, is_countable($dataJson) ? count($dataJson) : 0);
         $progressBar->start();
         foreach ($dataJson as $data) {
-            $movie = $this->setStar($data);
+            $movie = $this->setMovie($data);
             $this->addOrUpdate($movie);
             ++$counter;
 
@@ -159,7 +159,7 @@ class MovieAddCommand extends Command
         $this->movieRepository->flush();
     }
 
-    private function setStar($data)
+    private function setMovie($data)
     {
         $imdb  = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
         $movie = $this->movieRepository->findOneBy(

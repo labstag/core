@@ -96,7 +96,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
             $idUser = $user->getId();
             $associationField->setQueryBuilder(
-                function (QueryBuilder $queryBuilder) use ($idUser)
+                function (QueryBuilder $queryBuilder) use ($idUser): void
                 {
                     $queryBuilder->leftjoin('entity.refuser', 'refuser');
                     $queryBuilder->andWhere('refuser.id = :id');
