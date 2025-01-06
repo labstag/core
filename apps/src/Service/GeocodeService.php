@@ -9,7 +9,7 @@ use ZipArchive;
 
 class GeocodeService
 {
-    final public const int HTTP_OK = 200;
+    public const HTTP_OK = 200;
 
     public function __construct(
         protected HttpClientInterface $httpClient,
