@@ -20,7 +20,7 @@ use Symfony\Component\Workflow\Registry;
 
 #[AsDoctrineListener(event: Events::prePersist)]
 #[AsDoctrineListener(event: Events::postPersist)]
-final readonly class EntityListener
+final class EntityListener
 {
     public function __construct(
         #[Autowire(service: 'workflow.registry')]

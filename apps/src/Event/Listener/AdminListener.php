@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-final readonly class AdminListener
+final class AdminListener
 {
     public function __construct(
         private EntityManagerInterface $entityManager
