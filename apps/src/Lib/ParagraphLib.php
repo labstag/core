@@ -23,6 +23,7 @@ use Labstag\Service\SitemapService;
 use Labstag\Service\SiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
@@ -79,7 +80,7 @@ abstract class ParagraphLib extends AbstractController
         return $integerField;
     }
 
-    public function content(string $view, Paragraph $paragraph)
+    public function content(string $view, Paragraph $paragraph): ?Response
     {
         if (!$this->isShow($paragraph)) {
             return null;
