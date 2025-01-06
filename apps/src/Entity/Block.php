@@ -38,7 +38,7 @@ class Block implements Stringable
     private ?string $pages = null;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<int, \Labstag\Entity\Paragraph>
+     * @var Collection<int, Paragraph>
      */
     #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['position' => 'ASC'])]

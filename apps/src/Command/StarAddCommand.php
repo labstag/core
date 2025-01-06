@@ -69,20 +69,20 @@ class StarAddCommand extends Command
             $dataJson = array_merge($dataJson, $page);
         }
 
-        $progressBar = new ProgressBar($output, is_countable($dataJson) ? count($dataJson) : 0);
+        $progressBar = new ProgressBar($output, count($dataJson));
         $progressBar->start();
         foreach ($dataJson as $data) {
             if (true != $data['private']) {
                 $star = $this->setStar($data);
                 $this->addOrUpdate($star);
+                $this->starRepository->persist($star);
             }
 
             ++$counter;
-
-            $this->starRepository->persist($star);
-            $this->starRepository->flush($counter);
             $progressBar->advance();
         }
+
+        $this->starRepository->flush();
 
         $this->starRepository->flush();
         $progressBar->finish();

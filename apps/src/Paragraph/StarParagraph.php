@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Star;
 use Labstag\Lib\ParagraphLib;
+use Labstag\Repository\StoryRepository;
 use Override;
 
 class StarParagraph extends ParagraphLib

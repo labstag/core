@@ -240,7 +240,9 @@ class DashboardController extends AbstractDashboardController
 
         $generator->setAction(Action::EDIT);
         $generator->setController(ProfilCrudController::class);
-        $generator->setEntityId($this->getUser()->getId());
+        /** @var User $user */
+        $user = $this->getUser();
+        $generator->setEntityId($user->getId());
 
         $url = $generator->generateUrl();
 

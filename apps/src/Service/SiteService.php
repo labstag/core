@@ -219,27 +219,6 @@ class SiteService
         return isset($data['entity']) && $data['entity'] instanceof Page && 'home' == $data['entity']->getType();
     }
 
-    public function saveConfiguration($post): void
-    {
-        foreach ($post as $name => $value) {
-            $configuration = $this->configurationRepository->findOneBy(['name' => $name]);
-            if (!$configuration instanceof Configuration) {
-                $configuration = new Configuration();
-                $configuration->setName($name);
-            }
-
-            $data = [
-                'type'  => gettype($value),
-                'value' => $value,
-            ];
-
-            $configuration->setValue($data);
-            $this->configurationRepository->persist($configuration);
-        }
-
-        $this->configurationRepository->flush();
-    }
-
     public function setTitle($entity): ?string
     {
         if ($entity instanceof Page) {

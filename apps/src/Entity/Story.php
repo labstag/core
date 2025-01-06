@@ -2,6 +2,7 @@
 
 namespace Labstag\Entity;
 
+use Carbon\CarbonImmutable;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -44,7 +45,7 @@ class Story implements Stringable
     private Collection $categories;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<int, \Labstag\Entity\Chapter>
+     * @var Collection<int, Chapter>
      */
     #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'refstory', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['position' => 'ASC'])]
@@ -274,7 +275,7 @@ class Story implements Stringable
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = \Carbon\CarbonImmutable::now();
+            $this->updatedAt = CarbonImmutable::now();
         }
     }
 

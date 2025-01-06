@@ -32,7 +32,7 @@ class Category implements Stringable
     private ?string $id = null;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection<int, \Labstag\Entity\Movie>
+     * @var Collection<int, Movie>
      */
     #[ORM\ManyToMany(targetEntity: Movie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
     private Collection $movies;
@@ -144,7 +144,7 @@ class Category implements Stringable
     }
 
     /**
-     * @return Collection<int, Story>
+     * @return Collection<int, Movie>
      */
     public function getMovies(): Collection
     {
@@ -198,7 +198,7 @@ class Category implements Stringable
     public function removeChild(self $child): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->children->removeElement($child) && $child->getCategory() === $this) {
+        if ($this->children->removeElement($child) && $child->getParent() === $this) {
             $child->setParent(null);
         }
 
