@@ -36,9 +36,11 @@ class MetaService
             if (is_null($type)) {
                 continue;
             }
+
             if (is_null($value)) {
                 continue;
             }
+
             if (!is_object($value)) {
                 continue;
             }

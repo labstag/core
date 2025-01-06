@@ -76,7 +76,7 @@ class BlockService
         return $blocks;
     }
 
-    public function getContents($blocks): \stdClass
+    public function getContents($blocks): stdClass
     {
         $data         = new stdClass();
         $data->header = [];

@@ -95,7 +95,7 @@ class ParagraphService
         return $paragraphs;
     }
 
-    public function getContents($paragraphs): \stdClass
+    public function getContents($paragraphs): stdClass
     {
         $data         = new stdClass();
         $data->header = [];
@@ -147,6 +147,7 @@ class ParagraphService
             if (!is_object($value)) {
                 continue;
             }
+
             if ($value instanceof DateTime) {
                 continue;
             }

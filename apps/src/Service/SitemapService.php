@@ -21,7 +21,7 @@ class SitemapService
     {
     }
 
-    public function getData($all = 0)
+    public function getData($all = 0): array
     {
         $configuration = $this->siteService->getConfiguration();
 
@@ -85,7 +85,7 @@ class SitemapService
         ];
     }
 
-    private function getDataChaptersByStory($story)
+    private function getDataChaptersByStory($story): array
     {
         if (!$story instanceof Story) {
             return [];
@@ -98,7 +98,7 @@ class SitemapService
         return $this->setTabs($data);
     }
 
-    private function getDataFromRepository(string $entityClass)
+    private function getDataFromRepository(string $entityClass): array
     {
         $repository = $this->getRepository($entityClass);
         $data       = $repository->getAllActivate();

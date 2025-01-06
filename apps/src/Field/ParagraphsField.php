@@ -84,6 +84,7 @@ final class ParagraphsField implements FieldInterface
         if (null !== $this->dto->getLabel() && '' !== $this->dto->getLabel()) {
             return true;
         }
+
         return null !== $this->dto->getCustomOption(self::OPTION_ICON);
     }
 }

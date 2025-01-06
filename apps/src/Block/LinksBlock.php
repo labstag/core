@@ -97,14 +97,14 @@ class LinksBlock extends BlockLib
         // Regex \[page:(.*)]
         $url = preg_replace_callback(
             '/\[page:(.*?)]/',
-            fn ($matches) =>
+            fn ($matches): ?string =>
             // Assuming you have a method to get the actual URL from the page identifier
                 $this->getEntityUrl(Page::class, $matches[1]),
             (string) $url
         );
         $url = preg_replace_callback(
             '/\[post:(.*?)]/',
-            fn ($matches) =>
+            fn ($matches): ?string =>
             // Assuming you have a method to get the actual URL from the page identifier
                 $this->getEntityUrl(Post::class, $matches[1]),
             (string) $url
@@ -112,7 +112,7 @@ class LinksBlock extends BlockLib
 
         return preg_replace_callback(
             '/\[story:(.*?)]/',
-            fn ($matches) =>
+            fn ($matches): ?string =>
             // Assuming you have a method to get the actual URL from the page identifier
                 $this->getEntityUrl(Story::class, $matches[1]),
             (string) $url

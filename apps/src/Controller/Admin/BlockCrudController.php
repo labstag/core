@@ -25,6 +25,8 @@ use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class BlockCrudController extends AbstractCrudControllerLib
@@ -152,7 +154,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return Block::class;
     }
 
-    public function positionBlock(AdminContext $adminContext): \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    public function positionBlock(AdminContext $adminContext): RedirectResponse|Response
     {
         $request    = $adminContext->getRequest();
         $repository = $this->getRepository();
@@ -193,7 +195,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         );
     }
 
-    private function getChoiceType(string $pageName, array $allTypes): \EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField|\EasyCorp\Bundle\EasyAdminBundle\Field\TextField
+    private function getChoiceType(string $pageName, array $allTypes): ChoiceField|TextField
     {
         if ('new' === $pageName) {
             $field = ChoiceField::new('type', new TranslatableMessage('Type'));

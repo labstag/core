@@ -43,6 +43,7 @@ final readonly class VichListener
             if (!$value instanceof UploadedFile) {
                 continue;
             }
+
             if (is_null($value)) {
                 continue;
             }

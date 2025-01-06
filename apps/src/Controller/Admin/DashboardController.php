@@ -21,6 +21,7 @@ use Override;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -71,7 +72,7 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[Route('/admin/{_locale}/config', name: 'admin_config')]
-    public function config(ConfigurationRepository $configurationRepository): \Symfony\Component\HttpFoundation\RedirectResponse
+    public function config(ConfigurationRepository $configurationRepository): RedirectResponse
     {
         $configuration  = null;
         $configurations = $configurationRepository->findAll();

@@ -7,6 +7,7 @@ namespace Labstag\Field\Configurator;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\PersistentCollection;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\TextAlign;
@@ -104,7 +105,7 @@ final readonly class MetaParentConfigurator implements FieldConfiguratorInterfac
 
         $fieldDto->setFormTypeOptionIfNotSet(
             'query_builder',
-            static function (EntityRepository $entityRepository) use ($fieldDto): \Doctrine\ORM\QueryBuilder
+            static function (EntityRepository $entityRepository) use ($fieldDto): QueryBuilder
             {
                 $queryBuilder = $entityRepository->createQueryBuilder('entity');
                 if ($queryBuilderCallable = $fieldDto->getCustomOption(MetaParentField::OPTION_QUERY_BUILDER_CALLABLE)) {
