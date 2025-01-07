@@ -87,7 +87,7 @@ class StoryCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): Story
     {
         $story = new $entityFqcn();
         $this->workflowService->init($story);

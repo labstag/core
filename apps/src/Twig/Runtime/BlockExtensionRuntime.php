@@ -25,12 +25,12 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         return 'block_'.$block->getType().'-'.$block->getId();
     }
 
-    public function getName($code)
+    public function getName(string $code): string
     {
         return $this->blockService->getNameByCode($code);
     }
 
-    public function getShow(array $tab)
+    public function getShow(array $tab): null|string|false
     {
         if (!isset($tab['templates']['view'])) {
             return null;

@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
@@ -393,12 +394,12 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $textField;
     }
 
-    protected function addFilterEnable($filters)
+    protected function addFilterEnable(Filters $filters)
     {
         $filters->add(BooleanFilter::new('enable', new TranslatableMessage('Enable')));
     }
 
-    protected function addFilterRefUser($filters)
+    protected function addFilterRefUser(Filters $filters)
     {
         $filters->add(EntityFilter::new('refuser', new TranslatableMessage('Refuser')));
     }
@@ -548,7 +549,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $queryBuilder;
     }
 
-    private function setLinkPublicAction()
+    private function setLinkPublicAction(): Action
     {
         $action = Action::new('linkPublic', new TranslatableMessage('View Page'));
         $action->setHtmlAttributes(
@@ -560,7 +561,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $action;
     }
 
-    private function setW3cValidatorAction()
+    private function setW3cValidatorAction(): Action
     {
         $action = Action::new('linkw3CValidator', new TranslatableMessage('W3C Validator'));
         $action->setHtmlAttributes(

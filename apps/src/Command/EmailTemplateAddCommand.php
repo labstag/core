@@ -33,9 +33,9 @@ class EmailTemplateAddCommand extends Command
         parent::__construct();
     }
 
-    protected function addOrUpdate($entity)
+    protected function addOrUpdate(?Template $template): void
     {
-        if (is_null($entity->getId())) {
+        if (is_null($template->getId())) {
             ++$this->add;
 
             return;

@@ -17,32 +17,32 @@ final class ParagraphParentField implements FieldInterface
 {
     use FieldTrait;
 
-    public const string OPTION_AUTOCOMPLETE = 'autocomplete';
+    public const OPTION_AUTOCOMPLETE = 'autocomplete';
 
-    public const string OPTION_CRUD_CONTROLLER = 'crudControllerFqcn';
-
-    /**
-     * @internal this option is intended for internal use only
-     */
-    public const string OPTION_DOCTRINE_ASSOCIATION_TYPE = 'associationType';
-
-    public const string OPTION_QUERY_BUILDER_CALLABLE = 'queryBuilderCallable';
+    public const OPTION_CRUD_CONTROLLER = 'crudControllerFqcn';
 
     /**
      * @internal this option is intended for internal use only
      */
-    public const string OPTION_RELATED_URL = 'relatedUrl';
+    public const OPTION_DOCTRINE_ASSOCIATION_TYPE = 'associationType';
 
-    public const string OPTION_WIDGET = 'widget';
+    public const OPTION_QUERY_BUILDER_CALLABLE = 'queryBuilderCallable';
 
     /**
      * @internal this option is intended for internal use only
      */
-    public const string PARAM_AUTOCOMPLETE_CONTEXT = 'autocompleteContext';
+    public const OPTION_RELATED_URL = 'relatedUrl';
 
-    public const string WIDGET_AUTOCOMPLETE = 'autocomplete';
+    public const OPTION_WIDGET = 'widget';
 
-    public const string WIDGET_NATIVE = 'native';
+    /**
+     * @internal this option is intended for internal use only
+     */
+    public const PARAM_AUTOCOMPLETE_CONTEXT = 'autocompleteContext';
+
+    public const WIDGET_AUTOCOMPLETE = 'autocomplete';
+
+    public const WIDGET_NATIVE = 'native';
 
     public function autocomplete(): self
     {

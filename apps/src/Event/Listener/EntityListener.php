@@ -49,10 +49,10 @@ final class EntityListener
         $this->initWorkflow($object);
     }
 
-    private function initworkflow($object): void
+    private function initworkflow(object $object): void
     {
         $this->workflowService->init($object);
-        if (!is_object($object) || !$this->workflowRegistry->has($object)) {
+        if (!$this->workflowRegistry->has($object)) {
             return;
         }
 
@@ -64,20 +64,20 @@ final class EntityListener
         $workflow->apply($object, 'submit');
     }
 
-    private function postPersistParagraph($object, ObjectManager $objectManager): void
+    private function postPersistParagraph(object $paragraph, ObjectManager $objectManager): void
     {
-        if (!$object instanceof Paragraph) {
+        if (!$paragraph instanceof Paragraph) {
             return;
         }
 
-        if ('' != $object->getType()) {
+        if ('' != $paragraph->getType()) {
             return;
         }
 
-        $objectManager->remove($object);
+        $objectManager->remove($paragraph);
     }
 
-    private function prePersistAddMeta($entity): void
+    private function prePersistAddMeta(object $entity): void
     {
         $tab = [
             Page::class,
@@ -96,7 +96,7 @@ final class EntityListener
         }
     }
 
-    private function prePersistChapter($entity): void
+    private function prePersistChapter(object $entity): void
     {
         if (!$entity instanceof Chapter) {
             return;
@@ -111,7 +111,7 @@ final class EntityListener
         $entity->setPosition(count($chapters) + 1);
     }
 
-    private function prePersistPage($entity): void
+    private function prePersistPage(object $entity): void
     {
         if (!$entity instanceof Page) {
             return;
@@ -134,7 +134,7 @@ final class EntityListener
         $entity->setSlug('');
     }
 
-    private function prePersistParagraph($entity): void
+    private function prePersistParagraph(object $entity): void
     {
         if (!$entity instanceof Paragraph) {
             return;

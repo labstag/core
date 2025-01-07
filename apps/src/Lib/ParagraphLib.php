@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
@@ -56,7 +57,7 @@ abstract class ParagraphLib extends AbstractController
     {
     }
 
-    public function addFieldImageUpload(string $type, $pageName)
+    public function addFieldImageUpload(string $type, string $pageName): TextField|ImageField
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
             $textField = TextField::new($type.'File');
@@ -104,7 +105,7 @@ abstract class ParagraphLib extends AbstractController
         return $this->data[$paragraphId] ?? [];
     }
 
-    public function getFields(Paragraph $paragraph, $pageName): iterable
+    public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
 
@@ -157,7 +158,7 @@ abstract class ParagraphLib extends AbstractController
         return [];
     }
 
-    protected function getPaginator($query, ?int $limit)
+    protected function getPaginator(mixed $query, ?int $limit): PaginationInterface
     {
         $request = $this->requestStack->getCurrentRequest();
 
@@ -216,21 +217,21 @@ abstract class ParagraphLib extends AbstractController
         $this->data[$paragraph->getId()] = $data;
     }
 
-    protected function setFooter(Paragraph $paragraph, $data)
+    protected function setFooter(Paragraph $paragraph, mixed $data): void
     {
         $paragraphId = $paragraph->getId();
 
         $this->footer[$paragraphId] = $data;
     }
 
-    protected function setHeader(Paragraph $paragraph, $data)
+    protected function setHeader(Paragraph $paragraph, mixed $data): void
     {
         $paragraphId = $paragraph->getId();
 
         $this->header[$paragraphId] = $data;
     }
 
-    protected function setShow(Paragraph $paragraph, $show)
+    protected function setShow(Paragraph $paragraph, bool $show): void
     {
         if (isset($this->show[$paragraph->getId()])) {
             return;

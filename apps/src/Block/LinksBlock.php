@@ -50,7 +50,7 @@ class LinksBlock extends BlockLib
     }
 
     #[Override]
-    public function getFields(Block $block, $pageName): iterable
+    public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
 
@@ -89,29 +89,23 @@ class LinksBlock extends BlockLib
         return $data;
     }
 
-    private function correctionUrl($url): ?string
+    private function correctionUrl(string $url): ?string
     {
         // Regex \[page:(.*)]
         $url = preg_replace_callback(
             '/\[page:(.*?)]/',
-            fn ($matches): ?string =>
-            // Assuming you have a method to get the actual URL from the page identifier
-                $this->getEntityUrl(Page::class, $matches[1]),
-            (string) $url
+            fn ($matches): ?string => $this->getEntityUrl(Page::class, $matches[1]),
+            $url
         );
         $url = preg_replace_callback(
             '/\[post:(.*?)]/',
-            fn ($matches): ?string =>
-            // Assuming you have a method to get the actual URL from the page identifier
-                $this->getEntityUrl(Post::class, $matches[1]),
+            fn ($matches): ?string => $this->getEntityUrl(Post::class, $matches[1]),
             (string) $url
         );
 
         return preg_replace_callback(
             '/\[story:(.*?)]/',
-            fn ($matches): ?string =>
-            // Assuming you have a method to get the actual URL from the page identifier
-                $this->getEntityUrl(Story::class, $matches[1]),
+            fn ($matches): ?string => $this->getEntityUrl(Story::class, $matches[1]),
             (string) $url
         );
     }

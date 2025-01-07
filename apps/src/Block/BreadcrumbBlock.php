@@ -55,7 +55,7 @@ class BreadcrumbBlock extends BlockLib
     }
 
     #[Override]
-    public function getFields(Block $block, $pageName): iterable
+    public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
 
@@ -76,7 +76,7 @@ class BreadcrumbBlock extends BlockLib
         return 'breadcrumb';
     }
 
-    private function setBreadcrumb($urls, $slug)
+    private function setBreadcrumb(array $urls, string $slug): array
     {
         $entity = $this->siteService->getEntityBySlug($slug);
         if (is_object($entity)) {
@@ -86,12 +86,12 @@ class BreadcrumbBlock extends BlockLib
             ];
         }
 
-        if ('' == $slug) {
+        if ('' === $slug) {
             return $urls;
         }
 
-        if (0 != substr_count((string) $slug, '/')) {
-            $slug = substr((string) $slug, 0, strrpos((string) $slug, '/'));
+        if (0 != substr_count($slug, '/')) {
+            $slug = substr($slug, 0, strrpos($slug, '/'));
 
             return $this->setBreadcrumb($urls, $slug);
         }

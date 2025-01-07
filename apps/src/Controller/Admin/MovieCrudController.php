@@ -67,7 +67,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         return $this->redirect('https://www.imdb.com/title/tt'.$entity->getImdb().'/');
     }
 
-    private function setLinkImdbAction()
+    private function setLinkImdbAction(): Action
     {
         $action = Action::new('imdb', new TranslatableMessage('IMDB Page'));
         $action->setHtmlAttributes(

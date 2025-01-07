@@ -118,7 +118,7 @@ class UserCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): User
     {
         $user = new $entityFqcn();
         $this->workflowService->init($user);
@@ -152,7 +152,7 @@ class UserCrudController extends AbstractCrudControllerLib
         );
     }
 
-    private function hashPassword()
+    private function hashPassword(): callable
     {
         return function ($event): void
         {

@@ -63,7 +63,7 @@ class MemoCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): Memo
     {
         $memo = new $entityFqcn();
         $this->workflowService->init($memo);

@@ -63,7 +63,7 @@ class EditoCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): Edito
     {
         $edito = new $entityFqcn();
         $this->workflowService->init($edito);

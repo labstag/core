@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -267,21 +268,21 @@ class DashboardController extends AbstractDashboardController
         return $this->redirect($referer);
     }
 
-    protected function adminEmpty(string $entity)
+    protected function adminEmpty(string $entity): void
     {
-        $repository = $this->getRepository($entity);
-        $all        = $repository->findDeleted();
+        $entityRepository = $this->getRepository($entity);
+        $all              = $entityRepository->findDeleted();
         foreach ($all as $row) {
-            $repository->remove($row);
+            $entityRepository->remove($row);
         }
 
-        $repository->flush();
+        $entityRepository->flush();
     }
 
-    protected function adminRestore(string $entity, $uuid): void
+    protected function adminRestore(string $entity, mixed $uuid): void
     {
-        $repository = $this->getRepository($entity);
-        $data       = $repository->find($uuid);
+        $entityRepository = $this->getRepository($entity);
+        $data             = $entityRepository->find($uuid);
         if (is_null($data)) {
             throw new Exception(new TranslatableMessage('Data not found'));
         }
@@ -298,7 +299,7 @@ class DashboardController extends AbstractDashboardController
         }
     }
 
-    protected function getRepository(string $entity)
+    protected function getRepository(string $entity): EntityRepository
     {
         try {
             $repository = $this->entityManager->getRepository($entity);

@@ -61,7 +61,7 @@ class ContentBlock extends BlockLib
     }
 
     #[Override]
-    public function getFields(Block $block, $pageName): iterable
+    public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
 

@@ -21,19 +21,19 @@ class SitemapService
     {
     }
 
-    public function getData($all = 0): array
+    public function getData(bool $all = false): array
     {
         $configuration = $this->siteService->getConfiguration();
 
         $tabs = $this->getDataPages();
-        if ($configuration->isSitemapPosts() || 1 == $all) {
+        if ($configuration->isSitemapPosts() || true == $all) {
             $tabs = array_merge(
                 $tabs,
                 $this->getDataPosts(),
             );
         }
 
-        if ($configuration->isSitemapStory() || 1 == $all) {
+        if ($configuration->isSitemapStory() || true == $all) {
             $tabs = array_merge(
                 $tabs,
                 $this->getDataStory(),
@@ -46,12 +46,12 @@ class SitemapService
         return $this->setTabsByParent($tabs, '/');
     }
 
-    public function setTabsByParent($urls, $parent): array
+    public function setTabsByParent(array $urls, string $parent): array
     {
         $tabs = [];
         foreach ($urls as $url => $data) {
-            $result = str_replace((string) $parent, '', (string) $url);
-            if (str_starts_with((string) $url, (string) $parent) && !isset($this->parent[$url]) && $this->verifFirstChar($result)) {
+            $result = str_replace($parent, '', (string) $url);
+            if (str_starts_with((string) $url, $parent) && !isset($this->parent[$url]) && $this->verifFirstChar($result)) {
                 $this->parent[$url] = true;
                 $data['parent']     = $this->setTabsByParent($urls, $url);
                 $tabs[$url]         = $data;
@@ -73,7 +73,7 @@ class SitemapService
         return '-' !== $result;
     }
 
-    private function formatData($entity): array
+    private function formatData(object $entity): array
     {
         $url = $this->siteService->getSlugByEntity($entity);
 
@@ -82,7 +82,7 @@ class SitemapService
         ];
     }
 
-    private function getDataChaptersByStory($story): array
+    private function getDataChaptersByStory(object $story): array
     {
         if (!$story instanceof Story) {
             return [];
@@ -98,7 +98,11 @@ class SitemapService
     private function getDataFromRepository(string $entityClass): array
     {
         $repository = $this->getRepository($entityClass);
-        $data       = $repository->getAllActivate();
+        if (!method_exists($repository, 'getAllActivate')) {
+            return [];
+        }
+
+        $data = $repository->getAllActivate();
 
         return $this->setTabs($data);
     }

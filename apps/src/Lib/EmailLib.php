@@ -246,7 +246,7 @@ abstract class EmailLib extends Email
         );
     }
 
-    private function replace($content)
+    private function replace(string $content): string|array
     {
         $codes = $this->getCodes();
         foreach ($codes as $key => $data) {

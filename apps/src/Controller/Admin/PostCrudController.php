@@ -70,7 +70,7 @@ class PostCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): Post
     {
         $post = new $entityFqcn();
         $this->workflowService->init($post);

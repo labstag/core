@@ -63,9 +63,9 @@ class MovieAddCommand extends Command
         return $category;
     }
 
-    protected function addOrUpdate($entity)
+    protected function addOrUpdate(Movie $movie): void
     {
-        if (is_null($entity->getId())) {
+        if (is_null($movie->getId())) {
             ++$this->add;
 
             return;
@@ -159,7 +159,7 @@ class MovieAddCommand extends Command
         $this->movieRepository->flush();
     }
 
-    private function setMovie(array $data)
+    private function setMovie(array $data): Movie
     {
         $imdb  = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
         $movie = $this->movieRepository->findOneBy(

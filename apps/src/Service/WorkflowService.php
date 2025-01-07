@@ -22,7 +22,7 @@ class WorkflowService
     {
     }
 
-    public function change(string $entity, string $transition, $uid): void
+    public function change(string $entity, string $transition, mixed $uid): void
     {
         $entityRepository = $this->entityManager->getRepository($entity);
 

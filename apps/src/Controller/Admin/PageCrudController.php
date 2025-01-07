@@ -85,7 +85,7 @@ class PageCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): Page
     {
         $page = new $entityFqcn();
         $this->workflowService->init($page);
@@ -108,9 +108,9 @@ class PageCrudController extends AbstractCrudControllerLib
         return Page::class;
     }
 
-    protected function addFieldIsHome($currentEntity, $pageName): ?ChoiceField
+    protected function addFieldIsHome(?Page $page, string $pageName): ?ChoiceField
     {
-        if ('new' == $pageName && !$currentEntity instanceof Page && 'home' == $currentEntity->getType()) {
+        if ('new' === $pageName && !$page instanceof Page && 'home' == $page->getType()) {
             return null;
         }
 
