@@ -69,7 +69,7 @@ class FrontController extends AbstractController
             {
                 $item->expiresAfter(3600);
 
-                $sitemap = $sitemapService->getData(1);
+                $sitemap = $sitemapService->getData(true);
 
                 return $this->render(
                     'sitemap/sitemap.xml.twig',

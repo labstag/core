@@ -23,7 +23,7 @@ class BlockService
     public function content(
         string $view,
         Block $block
-    )
+    ): ?Response
     {
         $content = null;
         foreach ($this->blocks as $row) {
@@ -110,7 +110,7 @@ class BlockService
         return $data;
     }
 
-    public function getFields($block, $pageName): array
+    public function getFields(?object $block, string $pageName): array
     {
         if (!$block instanceof Block) {
             return [];
@@ -165,7 +165,7 @@ class BlockService
         return $header;
     }
 
-    public function getNameByCode($code)
+    public function getNameByCode(string $code): string
     {
         $name = '';
         foreach ($this->blocks as $block) {
@@ -209,7 +209,7 @@ class BlockService
         }
     }
 
-    protected function acces($block): bool
+    protected function acces(Block $block): bool
     {
         $roles = $block->getRoles();
         if (is_null($roles) || 0 == count($roles)) {
@@ -230,7 +230,7 @@ class BlockService
         return $this->authorizationChecker->isGranted($attribute, $subject);
     }
 
-    private function templates(string $type, Block $block)
+    private function templates(string $type, Block $block): ?array
     {
         $template = null;
         foreach ($this->blocks as $row) {

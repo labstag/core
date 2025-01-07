@@ -19,7 +19,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/changepassword/{uid}', name: 'app_changepassword')]
-    public function changePassword($uid): never
+    public function changePassword(mixed $uid): never
     {
         dd($uid);
     }
@@ -43,7 +43,7 @@ class SecurityController extends AbstractController
         throw new LogicException();
     }
 
-    protected function getDataLogin($authenticationUtils): array
+    protected function getDataLogin(AuthenticationUtils $authenticationUtils): array
     {
         $error        = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();

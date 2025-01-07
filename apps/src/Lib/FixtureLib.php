@@ -39,7 +39,7 @@ abstract class FixtureLib extends Fixture
     {
     }
 
-    protected function addCategoryToEntity($entity)
+    protected function addCategoryToEntity(object $entity): void
     {
         if (0 != count($this->categories)) {
             return;
@@ -59,7 +59,7 @@ abstract class FixtureLib extends Fixture
         }
     }
 
-    protected function addParagraphText($entity)
+    protected function addParagraphText(object $entity): void
     {
         $generator = $this->setFaker();
         $paragraph = new Paragraph();
@@ -69,7 +69,7 @@ abstract class FixtureLib extends Fixture
         $entity->addParagraph($paragraph);
     }
 
-    protected function addTagToEntity($entity)
+    protected function addTagToEntity(object $entity): void
     {
         if (0 != count($this->tags)) {
             return;

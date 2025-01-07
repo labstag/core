@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use Labstag\Entity\Category;
 use Override;
 
 class MovieCategoryCrudController extends CategoryCrudController
@@ -21,7 +22,7 @@ class MovieCategoryCrudController extends CategoryCrudController
     }
 
     #[Override]
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): Category
     {
         $category = new $entityFqcn();
         $category->setType('movie');

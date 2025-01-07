@@ -31,10 +31,10 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class BlockCrudController extends AbstractCrudControllerLib
 {
-    public function addFieldParagraphsForBlock($entity, string $pageName, string $form): array
+    public function addFieldParagraphsForBlock(?Block $block, string $pageName, string $form): array
     {
-        if ('edit' === $pageName && $entity instanceof Block) {
-            if (in_array($entity->getType(), ['paragraphs', 'content'])) {
+        if ('edit' === $pageName && $block instanceof Block) {
+            if (in_array($block->getType(), ['paragraphs', 'content'])) {
                 return parent::addFieldParagraphs($pageName, $form);
             }
 
@@ -213,7 +213,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $field;
     }
 
-    private function setPosition()
+    private function setPosition(): callable
     {
         return function ($event): void
         {

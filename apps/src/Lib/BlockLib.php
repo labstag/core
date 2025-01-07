@@ -47,7 +47,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         return $this->data[$blockId] ?? null;
     }
 
-    public function getFields(Block $block, $pageName): iterable
+    public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
 
@@ -143,21 +143,21 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         $this->data[$block->getId()] = $data;
     }
 
-    protected function setFooter(Block $block, $data)
+    protected function setFooter(Block $block, mixed $data): void
     {
         $blockId = $block->getId();
 
         $this->footer[$blockId] = $data;
     }
 
-    protected function setHeader(Block $block, $data)
+    protected function setHeader(Block $block, mixed $data): void
     {
         $blockId = $block->getId();
 
         $this->header[$blockId] = $data;
     }
 
-    protected function setShow(Block $block, $show)
+    protected function setShow(Block $block, bool $show): void
     {
         if (isset($this->show[$block->getId()])) {
             return;

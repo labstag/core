@@ -31,9 +31,9 @@ class StarAddCommand extends Command
         parent::__construct();
     }
 
-    protected function addOrUpdate($entity)
+    protected function addOrUpdate(Star $star): void
     {
-        if (is_null($entity->getId())) {
+        if (is_null($star->getId())) {
             ++$this->add;
 
             return;
@@ -118,7 +118,7 @@ class StarAddCommand extends Command
         $this->starRepository->flush();
     }
 
-    private function setStar($data)
+    private function setStar(array $data): Star
     {
         $star = $this->starRepository->findOneBy(
             [

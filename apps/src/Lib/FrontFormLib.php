@@ -21,7 +21,7 @@ abstract class FrontFormLib
     {
     }
 
-    public function execute(Form $form, bool $disable)
+    public function execute(Form $form, bool $disable): bool
     {
         $request = $this->requestStack->getCurrentRequest();
         $form->handleRequest($request);

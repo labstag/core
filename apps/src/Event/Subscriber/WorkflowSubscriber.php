@@ -41,7 +41,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onWorkflowChapterTransition(Transition $transition, $entity): void
+    public function onWorkflowChapterTransition(Transition $transition, object $entity): void
     {
         if (!$entity instanceof Chapter) {
             return;
@@ -50,7 +50,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
         unset($transition);
     }
 
-    public function onWorkflowEditoTransition(Transition $transition, $entity): void
+    public function onWorkflowEditoTransition(Transition $transition, object $entity): void
     {
         if (!$entity instanceof Edito) {
             return;
@@ -59,7 +59,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
         unset($transition);
     }
 
-    public function onWorkflowMemoTransition(Transition $transition, $entity): void
+    public function onWorkflowMemoTransition(Transition $transition, object $entity): void
     {
         if (!$entity instanceof Memo) {
             return;
@@ -68,7 +68,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
         unset($transition);
     }
 
-    public function onWorkflowPostTransition(Transition $transition, $entity): void
+    public function onWorkflowPostTransition(Transition $transition, object $entity): void
     {
         if (!$entity instanceof Post) {
             return;
@@ -77,7 +77,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
         unset($transition);
     }
 
-    public function onWorkflowStoryTransition(Transition $transition, $entity): void
+    public function onWorkflowStoryTransition(Transition $transition, object $entity): void
     {
         if (!$entity instanceof Story) {
             return;
@@ -99,7 +99,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
         $this->onWorkflowUserTransition($transition, $subject);
     }
 
-    public function onWorkflowUserTransition(Transition $transition, $entity): void
+    public function onWorkflowUserTransition(Transition $transition, object $entity): void
     {
         if (!$entity instanceof User) {
             return;

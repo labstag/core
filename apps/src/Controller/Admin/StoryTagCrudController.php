@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use Labstag\Entity\Tag;
 use Override;
 
 class StoryTagCrudController extends TagCrudController
@@ -21,7 +22,7 @@ class StoryTagCrudController extends TagCrudController
     }
 
     #[Override]
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): Tag
     {
         $tag = new $entityFqcn();
         $tag->setType('story');

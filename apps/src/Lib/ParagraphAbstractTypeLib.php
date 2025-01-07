@@ -53,7 +53,7 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
         $optionsResolver->setNormalizer('options', $this->getOptionsNormalizer());
     }
 
-    public function setEntity($entity): void
+    public function setEntity(object $entity): void
     {
         $this->entity = $entity;
     }

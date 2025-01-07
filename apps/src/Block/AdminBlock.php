@@ -46,7 +46,7 @@ class AdminBlock extends BlockLib
     }
 
     #[Override]
-    public function getFields(Block $block, $pageName): iterable
+    public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
 
@@ -65,7 +65,7 @@ class AdminBlock extends BlockLib
         return 'admin';
     }
 
-    protected function setUrl($entity): ?AdminUrlGeneratorInterface
+    protected function setUrl(object $entity): ?AdminUrlGeneratorInterface
     {
         $controller = $this->siteService->getCrudController($entity::class);
         if (is_null($controller)) {

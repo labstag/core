@@ -21,7 +21,7 @@ class ParagraphService
     {
     }
 
-    public function addParagraph($entity, $type): ?Paragraph
+    public function addParagraph(object $entity, string $type): ?Paragraph
     {
         $paragraph = null;
         $all       = $this->getAll($entity::class);
@@ -78,7 +78,7 @@ class ParagraphService
         return $tab;
     }
 
-    public function getAll($entity): array
+    public function getAll(?string $entity): array
     {
         $paragraphs = [];
         foreach ($this->paragraphs as $paragraph) {
@@ -95,7 +95,7 @@ class ParagraphService
         return $paragraphs;
     }
 
-    public function getContents($paragraphs): stdClass
+    public function getContents(array $paragraphs): stdClass
     {
         $data         = new stdClass();
         $data->header = [];
@@ -171,7 +171,7 @@ class ParagraphService
         return $object;
     }
 
-    public function getFields($paragraph, $pageName): iterable
+    public function getFields(object $paragraph, string $pageName): iterable
     {
         if (!$paragraph instanceof Paragraph) {
             return [];

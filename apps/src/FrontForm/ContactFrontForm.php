@@ -10,11 +10,11 @@ use Symfony\Component\Form\Form;
 class ContactFrontForm extends FrontFormLib
 {
     #[Override]
-    public function execute(Form $form, bool $disable): void
+    public function execute(Form $form, bool $disable): bool
     {
         $state = parent::execute($form, $disable);
         if (!$state) {
-            return;
+            return false;
         }
 
         $email = $this->emailService->get(
@@ -24,11 +24,13 @@ class ContactFrontForm extends FrontFormLib
             ]
         );
         if (is_null($email)) {
-            return;
+            return false;
         }
 
         $email->init();
         $this->mailer->send($email);
+
+        return true;
     }
 
     public function getCode(): string

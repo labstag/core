@@ -73,7 +73,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
-    public function createEntity(string $entityFqcn)
+    public function createEntity(string $entityFqcn): Chapter
     {
         $chapter = new $entityFqcn();
         $this->workflowService->init($chapter);
@@ -89,7 +89,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         return Chapter::class;
     }
 
-    private function addFieldRefStory()
+    private function addFieldRefStory(): AssociationField
     {
         $associationField = AssociationField::new('refstory')->autocomplete();
         $user             = $this->getUser();
@@ -108,6 +108,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         }
 
         $associationField->setSortProperty('title');
-        yield $associationField;
+
+        return $associationField;
     }
 }

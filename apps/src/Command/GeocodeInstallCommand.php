@@ -3,6 +3,7 @@
 namespace Labstag\Command;
 
 use Exception;
+use Labstag\Entity\GeoCode;
 use Labstag\Repository\GeoCodeRepository;
 use Labstag\Service\GeocodeService;
 use NumberFormatter;
@@ -34,9 +35,9 @@ class GeocodeInstallCommand extends Command
         parent::__construct();
     }
 
-    protected function addOrUpdate($entity)
+    protected function addOrUpdate(GeoCode $geoCode): void
     {
-        if (is_null($entity->getId())) {
+        if (is_null($geoCode->getId())) {
             ++$this->add;
 
             return;

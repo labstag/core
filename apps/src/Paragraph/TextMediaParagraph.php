@@ -60,7 +60,7 @@ class TextMediaParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getFields(Paragraph $paragraph, $pageName): iterable
+    public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph);
         yield $this->addFieldImageUpload('img', $pageName);
@@ -90,7 +90,7 @@ class TextMediaParagraph extends ParagraphLib
         return $this->useInAll();
     }
 
-    private function getOEmbedUrl($html)
+    private function getOEmbedUrl(string $html): ?string
     {
         $domDocument = new DOMDocument();
         $domDocument->loadHTML($html);
@@ -105,9 +105,9 @@ class TextMediaParagraph extends ParagraphLib
         return $iframe->getAttribute('src');
     }
 
-    private function parseUrlAndAddAutoplay($url): string
+    private function parseUrlAndAddAutoplay(string $url): string
     {
-        $parse = parse_url((string) $url);
+        $parse = parse_url($url);
         parse_str('' !== $parse['query'] && '0' !== $parse['query'] ? $parse['query'] : '', $args);
         $args['autoplay'] = 1;
 

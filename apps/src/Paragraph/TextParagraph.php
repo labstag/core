@@ -23,7 +23,7 @@ class TextParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getFields(Paragraph $paragraph, $pageName): iterable
+    public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
         $wysiwygField = WysiwygField::new('content', 'Texte');

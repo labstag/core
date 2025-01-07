@@ -5,6 +5,7 @@ namespace Labstag\Twig\Runtime;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
@@ -22,7 +23,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     {
     }
 
-    public function asset($entity, $field): string
+    public function asset(object $entity, string $field): string
     {
         $mappings         = $this->fileService->getMappingForEntity($entity);
         $file             = '';
@@ -46,16 +47,16 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         return $file;
     }
 
-    public function content($content)
+    public function content(?Response $response): ?string
     {
-        if (is_null($content)) {
+        if (is_null($response)) {
             return null;
         }
 
-        return $content->getContent();
+        return $response->getContent();
     }
 
-    public function enable($entities): array
+    public function enable(object $entities): array
     {
         $data = [];
         foreach ($entities as $entity) {
@@ -77,7 +78,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         );
     }
 
-    public function path($entity): string
+    public function path(object $entity): string
     {
         $slug = $this->siteService->getSlugByEntity($entity);
 

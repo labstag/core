@@ -30,7 +30,7 @@ class BlockRepository extends ServiceEntityRepositoryLib
         return $queryBuilder;
     }
 
-    public function getMaxPositionByRegion($region)
+    public function getMaxPositionByRegion(string $region): int
     {
         $queryBuilder = $this->createQueryBuilder('b');
         $queryBuilder->select('MAX(b.position) as maxposition');
