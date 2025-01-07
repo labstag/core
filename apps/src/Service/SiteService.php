@@ -8,7 +8,6 @@ use Labstag\Controller\Admin\PageCrudController;
 use Labstag\Controller\Admin\PostCrudController;
 use Labstag\Controller\Admin\StoryCrudController;
 use Labstag\Entity\Chapter;
-use Labstag\Entity\Configuration;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;

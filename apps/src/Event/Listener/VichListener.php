@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Vich\UploaderBundle\Event\Event;
 use Vich\UploaderBundle\Event\Events;

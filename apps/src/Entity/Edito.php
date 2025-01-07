@@ -2,23 +2,22 @@
 
 namespace Labstag\Entity;
 
-use Carbon\CarbonImmutable;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
-use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\EditoRepository;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: EditoRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]

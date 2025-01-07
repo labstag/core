@@ -2,15 +2,15 @@
 
 namespace Labstag\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
-use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\MetaRepository;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
-use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: MetaRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]

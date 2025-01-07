@@ -2,16 +2,15 @@
 
 namespace Labstag\Entity;
 
-use Carbon\CarbonImmutable;
 use DateTime;
 use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\ConfigurationRepository;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: ConfigurationRepository::class)]
 #[Vich\Uploadable]

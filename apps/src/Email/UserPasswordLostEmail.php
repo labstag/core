@@ -8,6 +8,22 @@ use Override;
 class UserPasswordLostEmail extends EmailLib
 {
     #[Override]
+    public function getCodes(): array
+    {
+        $codes = parent::getCodes();
+
+        return array_merge(
+            $codes,
+            [
+                'link_changepassword' => [
+                    'title'    => 'Link to Change password',
+                    'function' => 'replaceLinkChangePassword',
+                ],
+            ]
+        );
+    }
+
+    #[Override]
     public function getName(): string
     {
         return 'Password Losted';
@@ -25,22 +41,6 @@ class UserPasswordLostEmail extends EmailLib
         $user = $this->data['user'];
         parent::init();
         $this->to($user->getEmail());
-    }
-
-    #[Override]
-    public function getCodes(): array
-    {
-        $codes = parent::getCodes();
-
-        return array_merge(
-            $codes,
-            [
-                'link_changepassword' => [
-                    'title' => 'Link to Change password',
-                    'function' => 'replaceLinkChangePassword',
-                ]
-            ]
-        );
     }
 
     protected function replaceLinkChangePassword(): string

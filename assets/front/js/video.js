@@ -2,7 +2,6 @@ export class Video
 {
   constructor()
   {
-    console.log('video');
     this.init();
   }
   init()

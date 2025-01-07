@@ -25,6 +25,16 @@ trait TimestampableTrait
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     protected ?DateTime $updatedAt;
 
+    public function getCreatedAt(): ?DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): ?DateTime
+    {
+        return $this->updatedAt;
+    }
+
     public function setCreatedAt(?DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
@@ -32,20 +42,10 @@ trait TimestampableTrait
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTime
-    {
-        return $this->createdAt;
-    }
-
     public function setUpdatedAt(?DateTime $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 
         return $this;
-    }
-
-    public function getUpdatedAt(): ?DateTime
-    {
-        return $this->updatedAt;
     }
 }

@@ -16,9 +16,9 @@ class UserSubmitEmail extends EmailLib
             $codes,
             [
                 'link_approval' => [
-                    'title' => 'Link to Approval User',
+                    'title'    => 'Link to Approval User',
                     'function' => 'replaceLinkApproval',
-                ]
+                ],
             ]
         );
     }
