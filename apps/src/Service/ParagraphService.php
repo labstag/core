@@ -190,7 +190,7 @@ class ParagraphService
         return $fields;
     }
 
-    public function getFond($info): ?string
+    public function getFond(string $info): ?string
     {
         $fonds = array_flip($this->getFonds());
 
@@ -241,7 +241,7 @@ class ParagraphService
         return $header;
     }
 
-    public function getNameByCode($code)
+    public function getNameByCode(string $code): string
     {
         $name = '';
         foreach ($this->paragraphs as $paragraph) {

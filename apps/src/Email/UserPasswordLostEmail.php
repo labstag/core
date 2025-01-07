@@ -28,12 +28,19 @@ class UserPasswordLostEmail extends EmailLib
     }
 
     #[Override]
-    protected function getReplaces()
+    public function getCodes(): array
     {
-        $data                        = parent::getReplaces();
-        $data['link_changepassword'] = 'replaceLinkChangePassword';
+        $codes = parent::getCodes();
 
-        return $data;
+        return array_merge(
+            $codes,
+            [
+                'link_changepassword' => [
+                    'title' => 'Link to Change password',
+                    'function' => 'replaceLinkChangePassword',
+                ]
+            ]
+        );
     }
 
     protected function replaceLinkChangePassword(): string

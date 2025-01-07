@@ -16,40 +16,35 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 trait TimestampableTrait
 {
-    /**
-     * @var DateTime|null
-     */
+
     #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    protected $createdAt;
+    protected ?DateTime $createdAt;
 
-    /**
-     * @var DateTime|null
-     */
     #[Gedmo\Timestampable(on: 'update')]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    protected $updatedAt;
+    protected ?DateTime $updatedAt;
 
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(?DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getCreatedAt()
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
 
-    public function setUpdatedAt(\DateTime $updatedAt)
+    public function setUpdatedAt(?DateTime $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 
         return $this;
     }
 
-    public function getUpdatedAt()
+    public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
     }

@@ -55,9 +55,6 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         return $content->getContent();
     }
 
-    /**
-     * @return mixed[]
-     */
     public function enable($entities): array
     {
         $data = [];
@@ -87,13 +84,13 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         return $this->router->generate('front', ['slug' => $slug]);
     }
 
-    public function title(array $data)
+    public function title(array $data): string
     {
         $config    = $this->siteService->getConfiguration();
         $siteTitle = $config->getName();
         $format    = $config->getTitleFormat();
         if ($this->siteService->isHome($data)) {
-            return $siteTitle;
+            return (string) $siteTitle;
         }
 
         return str_replace(

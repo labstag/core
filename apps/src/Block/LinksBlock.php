@@ -75,9 +75,6 @@ class LinksBlock extends BlockLib
         return 'links';
     }
 
-    /**
-     * @return mixed[]
-     */
     private function correctionLinks(Block $block): array
     {
         $links = $block->getLinks();

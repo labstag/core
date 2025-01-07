@@ -339,9 +339,6 @@ class SiteService
         return $repos['story']->findOneBy(['slug' => $slug]);
     }
 
-    /**
-     * @return mixed[]
-     */
     private function getPageByTypes(): array
     {
         $types = array_flip($this->getTypesPages());
