@@ -2,7 +2,6 @@
 
 namespace Labstag\Entity;
 
-use Carbon\CarbonImmutable;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -11,8 +10,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
-use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\StoryRepository;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
 use Stringable;

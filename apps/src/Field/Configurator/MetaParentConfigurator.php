@@ -125,7 +125,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         return MetaParentField::class === $fieldDto->getFieldFqcn();
     }
 
-    private function configureFirst(\EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto &$entityDto, &$propertyNameParts, \EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto &$fieldDto, string &$propertyName): void
+    private function configureFirst(EntityDto &$entityDto, &$propertyNameParts, FieldDto &$fieldDto, string &$propertyName): void
     {
         if (count($propertyNameParts) <= 1) {
             if ($entityDto->isToOneAssociation($propertyName)) {

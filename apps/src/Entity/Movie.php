@@ -4,12 +4,12 @@ namespace Labstag\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
-use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\MovieRepository;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
-use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 class Movie

@@ -3,8 +3,6 @@
 namespace Labstag\Lib;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 
 abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
 {

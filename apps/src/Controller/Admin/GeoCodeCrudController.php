@@ -19,17 +19,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 class GeoCodeCrudController extends AbstractCrudControllerLib
 {
     #[Override]
-    public function configureCrud(Crud $crud): Crud
-    {
-        $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort(
-            ['stateName' => 'ASC']
-        );
-
-        return $crud;
-    }
-
-    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
@@ -40,6 +29,17 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         $actions->add(Crud::PAGE_INDEX, Action::DETAIL);
 
         return $actions;
+    }
+
+    #[Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        $crud->setDefaultSort(
+            ['stateName' => 'ASC']
+        );
+
+        return $crud;
     }
 
     #[Override]

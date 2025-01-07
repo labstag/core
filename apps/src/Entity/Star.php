@@ -4,8 +4,8 @@ namespace Labstag\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\StarRepository;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: StarRepository::class)]

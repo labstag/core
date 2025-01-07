@@ -5,8 +5,8 @@ namespace Labstag\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
-use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Repository\TemplateRepository;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: TemplateRepository::class)]

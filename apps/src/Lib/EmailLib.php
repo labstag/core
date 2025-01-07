@@ -44,19 +44,19 @@ abstract class EmailLib extends Email
     {
         return [
             'user_username' => [
-                'title' => 'Username',
+                'title'    => 'Username',
                 'function' => 'replaceUserUsername',
             ],
             'link_login'    => [
-                'title' => 'Link login',
+                'title'    => 'Link login',
                 'function' => 'replaceLinkLogin',
             ],
             'user_email'    => [
-                'title' => 'email',
+                'title'    => 'email',
                 'function' => 'replaceUserEmail',
             ],
             'user_roles'    => [
-                'title' => 'Roles',
+                'title'    => 'Roles',
                 'function' => 'replaceUserRoles',
             ],
         ];
