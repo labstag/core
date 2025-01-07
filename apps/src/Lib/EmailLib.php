@@ -43,10 +43,22 @@ abstract class EmailLib extends Email
     public function getCodes()
     {
         return [
-            'user_username' => 'Username',
-            'link_login'    => 'Link login',
-            'user_email'    => 'email',
-            'user_roles'    => 'Roles',
+            'user_username' => [
+                'title' => 'Username',
+                'function' => 'replaceUserUsername',
+            ],
+            'link_login'    => [
+                'title' => 'Link login',
+                'function' => 'replaceLinkLogin',
+            ],
+            'user_email'    => [
+                'title' => 'email',
+                'function' => 'replaceUserEmail',
+            ],
+            'user_roles'    => [
+                'title' => 'Roles',
+                'function' => 'replaceUserRoles',
+            ],
         ];
     }
 
@@ -147,16 +159,6 @@ abstract class EmailLib extends Email
         return parent::text($body, $charset);
     }
 
-    protected function getReplaces()
-    {
-        return [
-            'link_login'    => 'replaceLinkLogin',
-            'user_username' => 'replaceUserUsername',
-            'user_email'    => 'replaceUserEmail',
-            'user_roles'    => 'replaceUserRoles',
-        ];
-    }
-
     protected function getTemplateContent(string $folder, string $type)
     {
         if (isset($this->template[$type])) {
@@ -246,11 +248,11 @@ abstract class EmailLib extends Email
 
     private function replace($content)
     {
-        $data = $this->getReplaces();
-        foreach ($data as $key => $function) {
+        $codes = $this->getCodes();
+        foreach ($codes as $key => $data) {
             $content = str_replace(
                 '%'.$key.'%',
-                call_user_func([$this, $function]),
+                call_user_func([$this, $data['function']]),
                 $content
             );
         }

@@ -81,9 +81,6 @@ class StarCrudController extends AbstractCrudControllerLib
         return Star::class;
     }
 
-    /**
-     * @return mixed[]
-     */
     private function getAllData(string $type): array
     {
         $repository = $this->getRepository();

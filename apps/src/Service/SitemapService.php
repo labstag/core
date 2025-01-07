@@ -46,9 +46,6 @@ class SitemapService
         return $this->setTabsByParent($tabs, '/');
     }
 
-    /**
-     * @return mixed[]
-     */
     public function setTabsByParent($urls, $parent): array
     {
         $tabs = [];
@@ -121,10 +118,7 @@ class SitemapService
         return $this->getDataFromRepository(Story::class);
     }
 
-    /**
-     * @return mixed[]
-     */
-    private function setTabs($data): array
+    private function setTabs(array $data): array
     {
         $tabs = [];
         foreach ($data as $row) {

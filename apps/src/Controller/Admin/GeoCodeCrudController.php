@@ -90,9 +90,6 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         return GeoCode::class;
     }
 
-    /**
-     * @return mixed[]
-     */
     private function getAllData(string $type): array
     {
         $repository = $this->getRepository();

@@ -14,7 +14,12 @@ class UserSubmitEmail extends EmailLib
 
         return array_merge(
             $codes,
-            ['link_approval' => 'Link to Approval User']
+            [
+                'link_approval' => [
+                    'title' => 'Link to Approval User',
+                    'function' => 'replaceLinkApproval',
+                ]
+            ]
         );
     }
 
@@ -36,15 +41,6 @@ class UserSubmitEmail extends EmailLib
         $configuration = $this->siteService->getConfiguration();
         parent::init();
         $this->to($configuration->getEmail());
-    }
-
-    #[Override]
-    protected function getReplaces()
-    {
-        $data                  = parent::getReplaces();
-        $data['link_approval'] = 'replaceLinkApproval';
-
-        return $data;
     }
 
     protected function replaceLinkApproval(): string
