@@ -15,12 +15,12 @@ class LastStoryParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var StoryRepository $repository */
-        $repository = $this->getRepository(Story::class);
-        $nbr        = $paragraph->getNbr();
-        $stories    = $repository->findLastByNbr($nbr);
-        $total      = $repository->findTotalEnable();
-        $listing    = $this->siteService->getPageByType('story');
+        /** @var StoryRepository $serviceEntityRepositoryLib */
+        $serviceEntityRepositoryLib = $this->getRepository(Story::class);
+        $nbr                        = $paragraph->getNbr();
+        $stories                    = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        $total                      = $serviceEntityRepositoryLib->findTotalEnable();
+        $listing                    = $this->siteService->getPageByType('story');
         $this->setData(
             $paragraph,
             [

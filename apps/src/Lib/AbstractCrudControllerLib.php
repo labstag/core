@@ -37,8 +37,10 @@ use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Vich\UploaderBundle\Form\Type\VichImageType;
@@ -61,7 +63,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     public function addParagraph(
         AdminContext $adminContext
-    )
+    ): RedirectResponse
     {
         $request  = $adminContext->getRequest();
         $entityId = $request->query->get('entityId');
@@ -108,7 +110,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     public function deleteParagraph(
         AdminContext $adminContext
-    )
+    ): RedirectResponse
     {
         $request   = $adminContext->getRequest();
         $entityId  = $request->query->get('entityId');
@@ -130,7 +132,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->redirect($url);
     }
 
-    public function linkPublic(AdminContext $adminContext)
+    public function linkPublic(AdminContext $adminContext): RedirectResponse
     {
         $entity = $adminContext->getEntity()->getInstance();
         $slug   = $this->siteService->getSlugByEntity($entity);
@@ -138,7 +140,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->redirectToRoute('front', ['slug' => $slug]);
     }
 
-    public function linkw3CValidator(AdminContext $adminContext)
+    public function linkw3CValidator(AdminContext $adminContext): RedirectResponse
     {
         $entity = $adminContext->getEntity()->getInstance();
         $slug   = $this->siteService->getSlugByEntity($entity);
@@ -154,12 +156,12 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     public function listParagraph(
         AdminContext $adminContext
-    )
+    ): Response
     {
-        $entityId   = $adminContext->getRequest()->query->get('entityId');
-        $repository = $this->getRepository();
-        $entity     = $repository->find($entityId);
-        $paragraphs = $entity->getParagraphs();
+        $entityId                   = $adminContext->getRequest()->query->get('entityId');
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $entity                     = $serviceEntityRepositoryLib->find($entityId);
+        $paragraphs                 = $entity->getParagraphs();
 
         return $this->render(
             'admin/pararaphs.html.twig',
@@ -169,7 +171,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     public function updateParagraph(
         AdminContext $adminContext
-    )
+    ): RedirectResponse
     {
         $request   = $adminContext->getRequest();
         $generator = $this->container->get(AdminUrlGenerator::class);
@@ -193,12 +195,12 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->redirect($url);
     }
 
-    protected function addCreatedAtField()
+    protected function addCreatedAtField(): DateTimeField
     {
         return DateTimeField::new('createdAt')->hideOnForm();
     }
 
-    protected function addFieldBoolean()
+    protected function addFieldBoolean(): BooleanField
     {
         $request      = $this->container->get('request_stack')->getCurrentRequest();
         $action       = $request->query->get('action', null);
@@ -208,7 +210,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $booleanField;
     }
 
-    protected function addFieldCategories(string $type)
+    protected function addFieldCategories(string $type): AssociationField
     {
         $associationField = AssociationField::new('categories', new TranslatableMessage('Categories'))->autocomplete();
         $associationField->setTemplatePath('admin/field/categories.html.twig');
@@ -224,7 +226,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $associationField;
     }
 
-    protected function addFieldID()
+    protected function addFieldID(): IdField
     {
         $idField = IdField::new('id', new TranslatableMessage('ID'));
         $idField->onlyOnDetail();
@@ -232,7 +234,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $idField;
     }
 
-    protected function addFieldIDShortcode(string $type)
+    protected function addFieldIDShortcode(string $type): TextField
     {
         $textField = TextField::new('id', new TranslatableMessage('Shortcode'));
         $textField->formatValue(
@@ -243,7 +245,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $textField;
     }
 
-    protected function addFieldImageUpload(string $type, string $pageName, ?string $label = null)
+    protected function addFieldImageUpload(string $type, string $pageName, ?string $label = null): TextField|ImageField
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
             $imageField = TextField::new($type.'File', is_null($label) ? new TranslatableMessage('Image') : $label);
@@ -306,7 +308,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $fields;
     }
 
-    protected function addFieldRefUser()
+    protected function addFieldRefUser(): array
     {
         $data  = [];
         $user  = $this->getUser();
@@ -331,7 +333,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $data;
     }
 
-    protected function addFieldSlug()
+    protected function addFieldSlug(): SlugField
     {
         $slugField = SlugField::new('slug', new TranslatableMessage('Slug'));
         $slugField->hideOnIndex();
@@ -346,7 +348,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $slugField;
     }
 
-    protected function addFieldState()
+    protected function addFieldState(): TextField
     {
         $textField = TextField::new('states', new TranslatableMessage('States'));
         $textField->setTemplatePath('admin/field/states.html.twig');
@@ -355,7 +357,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $textField;
     }
 
-    protected function addFieldTags(string $type)
+    protected function addFieldTags(string $type): AssociationField
     {
         $associationField = AssociationField::new('tags', new TranslatableMessage('Tags'))->autocomplete();
         $associationField->setTemplatePath('admin/field/tags.html.twig');
@@ -371,12 +373,12 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $associationField;
     }
 
-    protected function addFieldTitle()
+    protected function addFieldTitle(): TextField
     {
         return TextField::new('title', new TranslatableMessage('Title'));
     }
 
-    protected function addFieldTotalChild(string $type)
+    protected function addFieldTotalChild(string $type): CollectionField
     {
         $collectionField = CollectionField::new($type);
         $collectionField->hideOnForm();
@@ -385,7 +387,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $collectionField;
     }
 
-    protected function addFieldWorkflow()
+    protected function addFieldWorkflow(): TextField
     {
         $textField = TextField::new('workflow', new TranslatableMessage('Workflow'));
         $textField->setTemplatePath('admin/field/workflow.html.twig');
@@ -394,22 +396,22 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $textField;
     }
 
-    protected function addFilterEnable(Filters $filters)
+    protected function addFilterEnable(Filters $filters): void
     {
         $filters->add(BooleanFilter::new('enable', new TranslatableMessage('Enable')));
     }
 
-    protected function addFilterRefUser(Filters $filters)
+    protected function addFilterRefUser(Filters $filters): void
     {
         $filters->add(EntityFilter::new('refuser', new TranslatableMessage('Refuser')));
     }
 
-    protected function addTabPrincipal()
+    protected function addTabPrincipal(): FormField
     {
         return FormField::addTab(new TranslatableMessage('Principal'));
     }
 
-    protected function addUpdatedAtField()
+    protected function addUpdatedAtField(): DateTimeField
     {
         return DateTimeField::new('updatedAt')->hideOnForm();
     }
@@ -485,7 +487,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $actions->add(Crud::PAGE_INDEX, $action);
     }
 
-    protected function getRepository(?string $entity = null)
+    protected function getRepository(?string $entity = null): ServiceEntityRepositoryLib
     {
         $doctrine = $this->container->get('doctrine');
 

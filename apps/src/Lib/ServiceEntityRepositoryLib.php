@@ -12,7 +12,7 @@ abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
         $this->flush();
     }
 
-    public function findDeleted()
+    public function findDeleted(): mixed
     {
         $queryBuilder = $this->createQueryBuilder('entity');
         $queryBuilder->andWhere('entity.deletedAt IS NOT NULL');

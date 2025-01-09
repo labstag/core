@@ -15,11 +15,11 @@ class NewsListParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var PostRepository $repository */
-        $repository = $this->getRepository(Post::class);
+        /** @var PostRepository $serviceEntityRepositoryLib */
+        $serviceEntityRepositoryLib = $this->getRepository(Post::class);
 
         $pagination = $this->getPaginator(
-            $repository->getQueryPaginator(),
+            $serviceEntityRepositoryLib->getQueryPaginator(),
             $paragraph->getNbr()
         );
         $this->setData(

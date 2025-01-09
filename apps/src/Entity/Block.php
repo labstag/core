@@ -50,7 +50,7 @@ class Block implements Stringable
     #[ORM\Column(length: 255)]
     private ?string $region = null;
 
-    #[ORM\Column()]
+    #[ORM\Column(type: Types::BOOLEAN)]
     private bool $requestPath = false;
 
     #[ORM\Column(type: Types::JSON, nullable: true)]

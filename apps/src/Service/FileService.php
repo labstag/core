@@ -2,7 +2,7 @@
 
 namespace Labstag\Service;
 
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Configuration;
@@ -13,6 +13,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
 use Labstag\Entity\User;
+use Labstag\Lib\ServiceEntityRepositoryLib;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -48,7 +49,7 @@ class FileService
         #[Autowire(service: 'flysystem.adapter.post.storage')]
         protected LocalFilesystemAdapter $postAdapter,
         protected KernelInterface $kernel,
-        protected ManagerRegistry $managerRegistry,
+        protected EntityManagerInterface $entityManager,
         protected ParameterBagInterface $parameterBag,
         protected PropertyMappingFactory $propertyMappingFactory
     )
@@ -136,7 +137,7 @@ class FileService
         return $total;
     }
 
-    public function getBasePath($entity, string $type): string
+    public function getBasePath(string $entity, string $type): string
     {
         $object = $this->propertyMappingFactory->fromField(new $entity(), $type);
 
@@ -179,7 +180,7 @@ class FileService
     /**
      * @return string[]
      */
-    public function getFileSystem($type): array
+    public function getFileSystem(string $type): array
     {
         $files   = [];
         $adapter = $this->getAdapter($type);
@@ -201,7 +202,7 @@ class FileService
         return $files;
     }
 
-    public function getFullBasePath($entity, string $type): string
+    public function getFullBasePath(string $entity, string $type): string
     {
         $basePath = $this->getBasePath($entity, $type);
 
@@ -213,12 +214,12 @@ class FileService
         return $this->propertyMappingFactory->fromObject($entity);
     }
 
-    protected function getRepository(string $entity)
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
-        return $this->managerRegistry->getRepository($entity);
+        return $this->entityManager->getRepository($entity);
     }
 
-    private function deleteFilesByType(int|string $type, $files): void
+    private function deleteFilesByType(int|string $type, array $files): void
     {
         $adapter = $this->getAdapter($type);
         if (is_null($adapter)) {
@@ -239,7 +240,7 @@ class FileService
         }
     }
 
-    private function getAdapter($type)
+    private function getAdapter(string $type): ?LocalFilesystemAdapter
     {
         $data = $this->getDataStorage();
 
@@ -278,7 +279,7 @@ class FileService
         ];
     }
 
-    private function getFolder(string $type)
+    private function getFolder(string $type): mixed
     {
         $config = Yaml::parse(
             file_get_contents($this->kernel->getProjectDir().'/config/packages/flysystem.yaml')

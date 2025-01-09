@@ -2,6 +2,7 @@
 
 namespace Labstag\Repository;
 
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Block;
 use Labstag\Lib\ServiceEntityRepositoryLib;
@@ -13,7 +14,7 @@ class BlockRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Block::class);
     }
 
-    public function findAllOrderedByRegion()
+    public function findAllOrderedByRegion(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('b');
         $queryBuilder->orderBy(

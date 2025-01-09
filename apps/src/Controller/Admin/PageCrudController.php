@@ -110,7 +110,7 @@ class PageCrudController extends AbstractCrudControllerLib
 
     protected function addFieldIsHome(?Page $page, string $pageName): ?ChoiceField
     {
-        if ('new' === $pageName && !$page instanceof Page && 'home' == $page->getType()) {
+        if ('new' === $pageName || ($page instanceof Page && 'home' == $page->getType())) {
             return null;
         }
 

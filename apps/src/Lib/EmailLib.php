@@ -2,6 +2,7 @@
 
 namespace Labstag\Lib;
 
+use Labstag\Entity\Template;
 use Labstag\Repository\TemplateRepository;
 use Labstag\Service\SiteService;
 use Labstag\Service\WorkflowService;
@@ -13,8 +14,6 @@ use Twig\Environment;
 
 abstract class EmailLib extends Email
 {
-
-    public $template;
 
     protected array $data = [];
 
@@ -40,7 +39,7 @@ abstract class EmailLib extends Email
         return parent::from($addresses);
     }
 
-    public function getCodes()
+    public function getCodes(): array
     {
         return [
             'user_username' => [
@@ -62,7 +61,7 @@ abstract class EmailLib extends Email
         ];
     }
 
-    public function getEntity()
+    public function getEntity(): ?Template
     {
         return $this->templateRepository->findOneBy(
             [
@@ -71,7 +70,7 @@ abstract class EmailLib extends Email
         );
     }
 
-    public function getHelp()
+    public function getHelp(): ?string
     {
         if ('' === $this->getType()) {
             return null;
@@ -112,7 +111,7 @@ abstract class EmailLib extends Email
         $this->data = $data;
     }
 
-    public function setHtml()
+    public function setHtml(): string
     {
         if ('' === $this->getType()) {
             return null;
@@ -121,7 +120,7 @@ abstract class EmailLib extends Email
         return $this->getTemplate('html');
     }
 
-    public function setText()
+    public function setText(): string
     {
         if ('' === $this->getType()) {
             return null;
@@ -159,9 +158,9 @@ abstract class EmailLib extends Email
         return parent::text($body, $charset);
     }
 
-    protected function getTemplateContent(string $folder, string $type)
+    protected function getTemplateContent(string $folder, string $type): array
     {
-        if (isset($this->template[$type])) {
+        if (isset($this->templates[$type])) {
             return $this->templates[$type];
         }
 
@@ -193,7 +192,7 @@ abstract class EmailLib extends Email
         return $this->templates[$type];
     }
 
-    protected function replaceLinkLogin()
+    protected function replaceLinkLogin(): string
     {
         $configuration = $this->siteService->getConfiguration();
 
@@ -203,7 +202,7 @@ abstract class EmailLib extends Email
         );
     }
 
-    protected function replaceUserEmail()
+    protected function replaceUserEmail(): ?string
     {
         if (!isset($this->data['user'])) {
             return null;
@@ -212,7 +211,7 @@ abstract class EmailLib extends Email
         return $this->data['user']->getEmail();
     }
 
-    protected function replaceUserRoles()
+    protected function replaceUserRoles(): ?string
     {
         if (!isset($this->data['user'])) {
             return null;
@@ -223,7 +222,7 @@ abstract class EmailLib extends Email
         return implode(', ', $roles);
     }
 
-    protected function replaceUserUsername()
+    protected function replaceUserUsername(): ?string
     {
         if (!isset($this->data['user'])) {
             return null;

@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 use Labstag\Entity\Star;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Repository\StarRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -83,9 +84,13 @@ class StarCrudController extends AbstractCrudControllerLib
 
     private function getAllData(string $type): array
     {
-        $repository = $this->getRepository();
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $methods                    = get_class_methods($serviceEntityRepositoryLib);
+        if (!$serviceEntityRepositoryLib instanceof StarRepository || !in_array('findAllData', $methods)) {
+            return [];
+        }
 
-        $all = $repository->findAllData($type);
+        $all = $serviceEntityRepositoryLib->findAllData($type);
 
         $data = [];
         foreach ($all as $row) {

@@ -52,6 +52,9 @@ class Page implements Stringable
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
     private Collection $categories;
 
+    /**
+     * @var Collection<int, Category>
+     */
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'page', cascade: ['persist', 'detach'])]
     private Collection $children;
 
