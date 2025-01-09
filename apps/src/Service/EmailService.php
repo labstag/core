@@ -2,6 +2,7 @@
 
 namespace Labstag\Service;
 
+use Labstag\Lib\EmailLib;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 class EmailService
@@ -18,7 +19,7 @@ class EmailService
         return $this->emails;
     }
 
-    public function get(string $code, array $data = [])
+    public function get(string $code, array $data = []): ?EmailLib
     {
         $template = null;
         foreach ($this->emails as $email) {

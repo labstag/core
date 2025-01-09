@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use Labstag\Entity\GeoCode;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Repository\GeoCodeRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -92,9 +93,13 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
 
     private function getAllData(string $type): array
     {
-        $repository = $this->getRepository();
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $methods                    = get_class_methods($serviceEntityRepositoryLib);
+        if (!$serviceEntityRepositoryLib instanceof GeoCodeRepository || !in_array('findAllData', $methods)) {
+            return [];
+        }
 
-        $all = $repository->findAllData($type);
+        $all = $serviceEntityRepositoryLib->findAllData($type);
 
         $data = [];
         foreach ($all as $row) {

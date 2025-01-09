@@ -3,13 +3,14 @@
 namespace Labstag\Lib;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Interface\FrontFormInterface;
 use Labstag\Service\EmailService;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mailer\MailerInterface;
 
-abstract class FrontFormLib
+abstract class FrontFormLib implements FrontFormInterface
 {
     public function __construct(
         protected MailerInterface $mailer,
@@ -29,7 +30,7 @@ abstract class FrontFormLib
         return (true != $disable) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
     }
 
-    protected function getRepository(string $entity)
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         return $this->entityManager->getRepository($entity);
     }

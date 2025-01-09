@@ -43,7 +43,7 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
     {
         $memo = new Memo();
         $memo->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
-        $memo->setEnable($this->enable == $index);
+        $memo->setEnable($this->enable === $index);
         $memo->setRefuser($this->getReference(array_rand($this->users), User::class));
         $memo->setTitle($generator->unique()->colorName());
         $this->addParagraphText($memo);

@@ -15,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 abstract class ParagraphAbstractTypeLib extends AbstractType
 {
 
-    protected $entity;
+    protected string $entity;
 
     public function __construct(
         protected ParagraphService $paragraphService
@@ -53,7 +53,7 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
         $optionsResolver->setNormalizer('options', $this->getOptionsNormalizer());
     }
 
-    public function setEntity(object $entity): void
+    public function setEntity(string $entity): void
     {
         $this->entity = $entity;
     }

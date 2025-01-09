@@ -2,7 +2,7 @@
 
 namespace Labstag\Lib;
 
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -31,15 +31,13 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 abstract class ParagraphLib extends AbstractController
 {
 
-    public $template;
+    protected array $data = [];
 
-    protected $data = [];
+    protected array $footer = [];
 
-    protected $footer = [];
+    protected array $header = [];
 
-    protected $header = [];
-
-    protected $show = [];
+    protected array $show = [];
 
     protected array $templates = [];
 
@@ -50,7 +48,7 @@ abstract class ParagraphLib extends AbstractController
         protected PaginatorInterface $paginator,
         protected FileService $fileService,
         protected SiteService $siteService,
-        protected ManagerRegistry $managerRegistry,
+        protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
         protected Environment $twigEnvironment
     )
@@ -73,7 +71,7 @@ abstract class ParagraphLib extends AbstractController
         return $imageField;
     }
 
-    public function addFieldIntegerNbr()
+    public function addFieldIntegerNbr(): IntegerField
     {
         $integerField = IntegerField::new('nbr');
         $integerField->setFormTypeOption('attr', ['min' => 1]);
@@ -98,7 +96,7 @@ abstract class ParagraphLib extends AbstractController
         unset($paragraph, $data, $disable);
     }
 
-    public function getData(Paragraph $paragraph)
+    public function getData(Paragraph $paragraph): array
     {
         $paragraphId = $paragraph->getId();
 
@@ -112,14 +110,14 @@ abstract class ParagraphLib extends AbstractController
         return [];
     }
 
-    public function getFooter(Paragraph $paragraph)
+    public function getFooter(Paragraph $paragraph): mixed
     {
         $paragraphId = $paragraph->getId();
 
         return $this->footer[$paragraphId] ?? null;
     }
 
-    public function getHeader(Paragraph $paragraph)
+    public function getHeader(Paragraph $paragraph): mixed
     {
         $paragraphId = $paragraph->getId();
 
@@ -141,7 +139,7 @@ abstract class ParagraphLib extends AbstractController
         return true;
     }
 
-    public function isShow(Paragraph $paragraph)
+    public function isShow(Paragraph $paragraph): bool
     {
         $paragraphId = $paragraph->getId();
 
@@ -169,14 +167,14 @@ abstract class ParagraphLib extends AbstractController
         );
     }
 
-    protected function getRepository(string $entity)
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
-        return $this->managerRegistry->getRepository($entity);
+        return $this->entityManager->getRepository($entity);
     }
 
-    protected function getTemplateContent(string $folder, string $type)
+    protected function getTemplateContent(string $folder, string $type): array
     {
-        if (isset($this->template[$type])) {
+        if (isset($this->templates[$type])) {
             return $this->templates[$type];
         }
 
@@ -208,7 +206,7 @@ abstract class ParagraphLib extends AbstractController
         return $this->templates[$type];
     }
 
-    protected function setData(Paragraph $paragraph, array $data)
+    protected function setData(Paragraph $paragraph, array $data): void
     {
         $this->setShow($paragraph, true);
 

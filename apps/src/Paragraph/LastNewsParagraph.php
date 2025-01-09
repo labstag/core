@@ -15,12 +15,12 @@ class LastNewsParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var PostRepository $repository */
-        $repository = $this->getRepository(Post::class);
-        $nbr        = $paragraph->getNbr();
-        $news       = $repository->findLastByNbr($nbr);
-        $total      = $repository->findTotalEnable();
-        $listing    = $this->siteService->getPageByType('post');
+        /** @var PostRepository $serviceEntityRepositoryLib */
+        $serviceEntityRepositoryLib = $this->getRepository(Post::class);
+        $nbr                        = $paragraph->getNbr();
+        $news                       = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        $total                      = $serviceEntityRepositoryLib->findTotalEnable();
+        $listing                    = $this->siteService->getPageByType('post');
         $this->setData(
             $paragraph,
             [

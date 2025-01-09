@@ -43,7 +43,7 @@ class EditoFixtures extends FixtureLib implements DependentFixtureInterface
     {
         $edito = new Edito();
         $edito->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
-        $edito->setEnable($this->enable == $index);
+        $edito->setEnable($this->enable === $index);
         $edito->setRefuser($this->getReference(array_rand($this->users), User::class));
         $edito->setTitle($generator->unique()->colorName());
         $this->addParagraphText($edito);

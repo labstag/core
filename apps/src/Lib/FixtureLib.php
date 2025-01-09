@@ -19,6 +19,7 @@ use Labstag\Service\WorkflowService;
 use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 abstract class FixtureLib extends Fixture
 {
@@ -27,7 +28,7 @@ abstract class FixtureLib extends Fixture
 
     public array $tags = [];
 
-    protected $enable;
+    protected int $enable;
 
     public function __construct(
         protected EmailService $emailService,
@@ -128,7 +129,7 @@ abstract class FixtureLib extends Fixture
         return $generator;
     }
 
-    protected function setImage(object|array $entity, string|\Symfony\Component\PropertyAccess\PropertyPathInterface $type)
+    protected function setImage(object|array $entity, string|PropertyPathInterface $type): void
     {
         try {
             $generator = $this->setFaker();

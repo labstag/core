@@ -15,11 +15,11 @@ class StoryListParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var StoryRepository $repository */
-        $repository = $this->getRepository(Story::class);
+        /** @var StoryRepository $serviceEntityRepositoryLib */
+        $serviceEntityRepositoryLib = $this->getRepository(Story::class);
 
         $pagination = $this->getPaginator(
-            $repository->getQueryPaginator(),
+            $serviceEntityRepositoryLib->getQueryPaginator(),
             $paragraph->getNbr()
         );
 

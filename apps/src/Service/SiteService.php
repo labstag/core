@@ -13,6 +13,7 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
+use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\BlockRepository;
 use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\ConfigurationRepository;
@@ -51,7 +52,7 @@ class SiteService
         return $configurations[0] ?? null;
     }
 
-    public function getCrudController($entity)
+    public function getCrudController(string $entity): ?AbstractCrudControllerLib
     {
         $cruds  = $this->getDataCrudController();
         $return = null;
@@ -290,11 +291,11 @@ class SiteService
 
     private function getBlocks(array $data, bool $disable): array
     {
-        $query  = $this->blockRepository->findAllOrderedByRegion();
-        $blocks = $query->getQuery()->getResult();
-        $header = [];
-        $main   = [];
-        $footer = [];
+        $queryBuilder = $this->blockRepository->findAllOrderedByRegion();
+        $blocks       = $queryBuilder->getQuery()->getResult();
+        $header       = [];
+        $main         = [];
+        $footer       = [];
 
         foreach ($blocks as $block) {
             if ('header' == $block->getRegion()) {

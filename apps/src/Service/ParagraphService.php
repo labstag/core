@@ -205,7 +205,7 @@ class ParagraphService
 
     public function getFooter(
         Paragraph $paragraph
-    )
+    ): mixed
     {
         $footer = null;
 
@@ -224,7 +224,7 @@ class ParagraphService
 
     public function getHeader(
         Paragraph $paragraph
-    )
+    ): mixed
     {
         $header = null;
 
@@ -276,7 +276,7 @@ class ParagraphService
         }
     }
 
-    private function templates(string $type, Paragraph $paragraph)
+    private function templates(string $type, Paragraph $paragraph): ?array
     {
         $template = null;
         foreach ($this->paragraphs as $row) {

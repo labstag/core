@@ -2,7 +2,7 @@
 
 namespace Labstag\Lib;
 
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Block;
 use Labstag\Interface\BlockInterface;
@@ -16,15 +16,13 @@ use Twig\Environment;
 abstract class BlockLib extends AbstractController implements BlockInterface
 {
 
-    public $template;
+    protected array $data = [];
 
-    protected $data = [];
+    protected array $footer = [];
 
-    protected $footer = [];
+    protected array $header = [];
 
-    protected $header = [];
-
-    protected $show = [];
+    protected array $show = [];
 
     protected array $templates = [];
 
@@ -34,13 +32,13 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         protected ParagraphService $paragraphService,
         protected SiteService $siteService,
         protected RequestStack $requestStack,
-        protected ManagerRegistry $managerRegistry,
+        protected EntityManagerInterface $entityManager,
         protected Environment $twigEnvironment
     )
     {
     }
 
-    public function getData(Block $block)
+    public function getData(Block $block): ?array
     {
         $blockId = $block->getId();
 
@@ -54,14 +52,14 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         return [];
     }
 
-    public function getFooter(Block $block)
+    public function getFooter(Block $block): ?array
     {
         $blockId = $block->getId();
 
         return $this->footer[$blockId] ?? null;
     }
 
-    public function getHeader(Block $block)
+    public function getHeader(Block $block): ?array
     {
         $blockId = $block->getId();
 
@@ -78,7 +76,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         return '';
     }
 
-    public function isShow(Block $block)
+    public function isShow(Block $block): bool
     {
         $blockId = $block->getId();
 
@@ -95,14 +93,14 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         return [];
     }
 
-    protected function getRepository(string $entity)
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
-        return $this->managerRegistry->getRepository($entity);
+        return $this->entityManager->getRepository($entity);
     }
 
-    protected function getTemplateContent(string $folder, string $type)
+    protected function getTemplateContent(string $folder, string $type): array
     {
-        if (isset($this->template[$type])) {
+        if (isset($this->templates[$type])) {
             return $this->templates[$type];
         }
 
@@ -134,7 +132,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         return $this->templates[$type];
     }
 
-    protected function setData(Block $block, array $data)
+    protected function setData(Block $block, array $data): void
     {
         $this->setShow($block, true);
 
@@ -143,14 +141,14 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         $this->data[$block->getId()] = $data;
     }
 
-    protected function setFooter(Block $block, mixed $data): void
+    protected function setFooter(Block $block, array $data): void
     {
         $blockId = $block->getId();
 
         $this->footer[$blockId] = $data;
     }
 
-    protected function setHeader(Block $block, mixed $data): void
+    protected function setHeader(Block $block, array $data): void
     {
         $blockId = $block->getId();
 

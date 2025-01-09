@@ -2,11 +2,12 @@
 
 namespace Labstag\Service;
 
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
+use Labstag\Lib\ServiceEntityRepositoryLib;
 use Labstag\Repository\ChapterRepository;
 
 class SitemapService
@@ -15,7 +16,7 @@ class SitemapService
     protected array $parent = [];
 
     public function __construct(
-        protected ManagerRegistry $managerRegistry,
+        protected EntityManagerInterface $entityManager,
         protected SiteService $siteService
     )
     {
@@ -61,9 +62,9 @@ class SitemapService
         return $tabs;
     }
 
-    protected function getRepository(string $entity)
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
-        return $this->managerRegistry->getRepository($entity);
+        return $this->entityManager->getRepository($entity);
     }
 
     protected function verifFirstChar(string $url): bool
@@ -88,21 +89,21 @@ class SitemapService
             return [];
         }
 
-        /** @var ChapterRepository $repository */
-        $repository = $this->getRepository(Chapter::class);
-        $data       = $repository->getAllActivateByStory($story);
+        /** @var ChapterRepository $serviceEntityRepositoryLib */
+        $serviceEntityRepositoryLib = $this->getRepository(Chapter::class);
+        $data                       = $serviceEntityRepositoryLib->getAllActivateByStory($story);
 
         return $this->setTabs($data);
     }
 
     private function getDataFromRepository(string $entityClass): array
     {
-        $repository = $this->getRepository($entityClass);
-        if (!method_exists($repository, 'getAllActivate')) {
+        $serviceEntityRepositoryLib = $this->getRepository($entityClass);
+        if (!method_exists($serviceEntityRepositoryLib, 'getAllActivate')) {
             return [];
         }
 
-        $data = $repository->getAllActivate();
+        $data = $serviceEntityRepositoryLib->getAllActivate();
 
         return $this->setTabs($data);
     }

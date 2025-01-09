@@ -19,9 +19,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Exception;
 use Labstag\Entity\Block;
 use Labstag\Form\Paragraphs\BlockType;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Repository\BlockRepository;
 use Override;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -128,9 +130,13 @@ class BlockCrudController extends AbstractCrudControllerLib
     ): QueryBuilder
     {
         unset($searchDto, $entityDto, $fieldCollection, $filterCollection);
-        $repo = $this->getRepository();
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $methods                    = get_class_methods($serviceEntityRepositoryLib);
+        if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array('findAllOrderedByRegion', $methods)) {
+            throw new Exception('findAllOrderedByRegion not found');
+        }
 
-        return $repo->findAllOrderedByRegion();
+        return $serviceEntityRepositoryLib->findAllOrderedByRegion();
     }
 
     #[Override]
@@ -156,11 +162,16 @@ class BlockCrudController extends AbstractCrudControllerLib
 
     public function positionBlock(AdminContext $adminContext): RedirectResponse|Response
     {
-        $request    = $adminContext->getRequest();
-        $repository = $this->getRepository();
-        $query      = $repository->findAllOrderedByRegion();
-        $blocks     = $query->getQuery()->getResult();
-        $generator  = $this->container->get(AdminUrlGenerator::class);
+        $request                    = $adminContext->getRequest();
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $methods                    = get_class_methods($serviceEntityRepositoryLib);
+        if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array('findAllOrderedByRegion', $methods)) {
+            throw new Exception('findAllOrderedByRegion not found');
+        }
+
+        $queryBuilder = $serviceEntityRepositoryLib->findAllOrderedByRegion();
+        $blocks       = $queryBuilder->getQuery()->getResult();
+        $generator    = $this->container->get(AdminUrlGenerator::class);
 
         if ($request->isMethod('POST')) {
             $allTypes = $this->blockService->getRegions();
@@ -171,17 +182,17 @@ class BlockCrudController extends AbstractCrudControllerLib
                 }
 
                 foreach ($data as $id => $position) {
-                    $entity = $repository->find($id);
+                    $entity = $serviceEntityRepositoryLib->find($id);
                     if (!$entity instanceof Block) {
                         continue;
                     }
 
                     $entity->setPosition($position);
-                    $repository->persist($entity);
+                    $serviceEntityRepositoryLib->persist($entity);
                 }
             }
 
-            $repository->flush();
+            $serviceEntityRepositoryLib->flush();
             $this->addFlash('success', new TranslatableMessage('Position updated'));
 
             $url = $generator->setController(static::class)->setAction(Action::INDEX)->generateUrl();
@@ -222,16 +233,15 @@ class BlockCrudController extends AbstractCrudControllerLib
                 return;
             }
 
-            $data = $event->getData();
-
-            $repository = $this->getRepository();
-
-            $region = $form->get('region')->getData();
-            if (is_null($region)) {
+            $data                       = $event->getData();
+            $serviceEntityRepositoryLib = $this->getRepository();
+            $region                     = $form->get('region')->getData();
+            if (is_null($region) || !$serviceEntityRepositoryLib instanceof BlockRepository || in_array('getMaxPositionByRegion', $methods)) {
                 return;
             }
 
-            $maxPosition = $repository->getMaxPositionByRegion($region);
+            $methods     = get_class_methods($serviceEntityRepositoryLib);
+            $maxPosition = $serviceEntityRepositoryLib->getMaxPositionByRegion($region);
             if (is_null($maxPosition)) {
                 $maxPosition = 0;
             }

@@ -3,7 +3,6 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -13,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\User;
+use Labstag\Lib\ServiceEntityRepositoryLib;
 use Labstag\Repository\ConfigurationRepository;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
@@ -270,19 +270,19 @@ class DashboardController extends AbstractDashboardController
 
     protected function adminEmpty(string $entity): void
     {
-        $entityRepository = $this->getRepository($entity);
-        $all              = $entityRepository->findDeleted();
+        $serviceEntityRepositoryLib = $this->getRepository($entity);
+        $all                        = $serviceEntityRepositoryLib->findDeleted();
         foreach ($all as $row) {
-            $entityRepository->remove($row);
+            $serviceEntityRepositoryLib->remove($row);
         }
 
-        $entityRepository->flush();
+        $serviceEntityRepositoryLib->flush();
     }
 
     protected function adminRestore(string $entity, mixed $uuid): void
     {
-        $entityRepository = $this->getRepository($entity);
-        $data             = $entityRepository->find($uuid);
+        $serviceEntityRepositoryLib = $this->getRepository($entity);
+        $data                       = $serviceEntityRepositoryLib->find($uuid);
         if (is_null($data)) {
             throw new Exception(new TranslatableMessage('Data not found'));
         }
@@ -299,7 +299,7 @@ class DashboardController extends AbstractDashboardController
         }
     }
 
-    protected function getRepository(string $entity): EntityRepository
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         try {
             $repository = $this->entityManager->getRepository($entity);

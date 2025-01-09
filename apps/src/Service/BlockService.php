@@ -76,7 +76,7 @@ class BlockService
         return $blocks;
     }
 
-    public function getContents($blocks): stdClass
+    public function getContents(array $blocks): stdClass
     {
         $data         = new stdClass();
         $data->header = [];
@@ -131,7 +131,7 @@ class BlockService
 
     public function getFooter(
         Block $block
-    )
+    ): mixed
     {
         $footer = null;
         foreach ($this->blocks as $row) {
@@ -149,7 +149,7 @@ class BlockService
 
     public function getHeader(
         Block $block
-    )
+    ): mixed
     {
         $header = null;
         foreach ($this->blocks as $row) {
