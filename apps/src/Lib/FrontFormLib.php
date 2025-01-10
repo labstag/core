@@ -5,8 +5,8 @@ namespace Labstag\Lib;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Interface\FrontFormInterface;
 use Labstag\Service\EmailService;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mailer\MailerInterface;
 
@@ -22,7 +22,7 @@ abstract class FrontFormLib implements FrontFormInterface
     {
     }
 
-    public function execute(Form $form, bool $disable): bool
+    public function execute(FormInterface $form, bool $disable): bool
     {
         $request = $this->requestStack->getCurrentRequest();
         $form->handleRequest($request);

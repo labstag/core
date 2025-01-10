@@ -53,7 +53,7 @@ class Page implements Stringable
     private Collection $categories;
 
     /**
-     * @var Collection<int, Category>
+     * @var Collection<int, Page>
      */
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'page', cascade: ['persist', 'detach'])]
     private Collection $children;

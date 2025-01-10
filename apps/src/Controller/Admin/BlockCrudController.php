@@ -236,6 +236,7 @@ class BlockCrudController extends AbstractCrudControllerLib
             $data                       = $event->getData();
             $serviceEntityRepositoryLib = $this->getRepository();
             $region                     = $form->get('region')->getData();
+            $methods                    = get_class_methods($serviceEntityRepositoryLib);
             if (is_null($region) || !$serviceEntityRepositoryLib instanceof BlockRepository || in_array('getMaxPositionByRegion', $methods)) {
                 return;
             }

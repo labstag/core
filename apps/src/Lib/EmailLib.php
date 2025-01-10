@@ -3,10 +3,15 @@
 namespace Labstag\Lib;
 
 use Labstag\Entity\Template;
+use Labstag\Replace\LinkLoginReplace;
+use Labstag\Replace\UserEmailReplace;
+use Labstag\Replace\UsernameReplace;
+use Labstag\Replace\UserRolesReplace;
 use Labstag\Repository\TemplateRepository;
 use Labstag\Service\SiteService;
 use Labstag\Service\WorkflowService;
 use Override;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\RouterInterface;
@@ -20,6 +25,8 @@ abstract class EmailLib extends Email
     protected array $templates = [];
 
     public function __construct(
+        #[AutowireIterator('labstag.replaces')]
+        private readonly iterable $replaces,
         protected RouterInterface $router,
         protected SiteService $siteService,
         protected WorkflowService $workflowService,
@@ -37,28 +44,6 @@ abstract class EmailLib extends Email
         $addresses     = $configuration->getNoReply();
 
         return parent::from($addresses);
-    }
-
-    public function getCodes(): array
-    {
-        return [
-            'user_username' => [
-                'title'    => 'Username',
-                'function' => 'replaceUserUsername',
-            ],
-            'link_login'    => [
-                'title'    => 'Link login',
-                'function' => 'replaceLinkLogin',
-            ],
-            'user_email'    => [
-                'title'    => 'email',
-                'function' => 'replaceUserEmail',
-            ],
-            'user_roles'    => [
-                'title'    => 'Roles',
-                'function' => 'replaceUserRoles',
-            ],
-        ];
     }
 
     public function getEntity(): ?Template
@@ -82,6 +67,16 @@ abstract class EmailLib extends Email
     public function getName(): string
     {
         return '';
+    }
+
+    public function getReplaces(): array
+    {
+        return [
+            UsernameReplace::class,
+            LinkLoginReplace::class,
+            UserEmailReplace::class,
+            UserRolesReplace::class,
+        ];
     }
 
     public function getType(): string
@@ -192,53 +187,45 @@ abstract class EmailLib extends Email
         return $this->templates[$type];
     }
 
-    protected function replaceLinkLogin(): string
+    private function getReplace($data): ?object
     {
-        $configuration = $this->siteService->getConfiguration();
+        $replace = null;
+        foreach ($this->replaces as $row) {
+            if (!$row instanceof $data) {
+                continue;
+            }
 
-        return $configuration->getUrl().$this->router->generate(
-            'app_login',
-            []
-        );
-    }
+            $replace = $row;
 
-    protected function replaceUserEmail(): ?string
-    {
-        if (!isset($this->data['user'])) {
-            return null;
+            break;
         }
 
-        return $this->data['user']->getEmail();
+        return $replace;
     }
 
-    protected function replaceUserRoles(): ?string
+    /**
+     * @return mixed[]
+     */
+    private function getReplacesClass(): array
     {
-        if (!isset($this->data['user'])) {
-            return null;
+        $data     = [];
+        $replaces = $this->getReplaces();
+        foreach ($replaces as $replace) {
+            $data[] = $this->getReplace($replace);
         }
 
-        $roles = $this->data['user']->getRoles();
-
-        return implode(', ', $roles);
-    }
-
-    protected function replaceUserUsername(): ?string
-    {
-        if (!isset($this->data['user'])) {
-            return null;
-        }
-
-        return $this->data['user']->getUsername();
+        return $data;
     }
 
     private function getTemplate(string $type): string
     {
         $templates = $this->templates($type);
+        $this->getReplacesClass();
 
         return $this->twigEnvironment->render(
             $templates['view'],
             [
-                'codes' => $this->getCodes(),
+                'codes' => $this->getReplacesClass(),
                 'type'  => $this->getType(),
                 'code'  => $type,
             ]
@@ -247,11 +234,12 @@ abstract class EmailLib extends Email
 
     private function replace(string $content): string|array
     {
-        $codes = $this->getCodes();
-        foreach ($codes as $key => $data) {
+        $codes = $this->getReplaces();
+        foreach ($codes as $code) {
+            $code->setData($this->data);
             $content = str_replace(
-                '%'.$key.'%',
-                call_user_func([$this, $data['function']]),
+                '%'.$code->getCode().'%',
+                $code->exec(),
                 $content
             );
         }

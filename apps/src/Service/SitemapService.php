@@ -3,6 +3,7 @@
 namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
@@ -64,7 +65,12 @@ class SitemapService
 
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
-        return $this->entityManager->getRepository($entity);
+        $entityRepository = $this->entityManager->getRepository($entity);
+        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+            throw new Exception('Repository not found');
+        }
+
+        return $entityRepository;
     }
 
     protected function verifFirstChar(string $url): bool

@@ -23,7 +23,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     {
     }
 
-    public function asset(object $entity, string $field): string
+    public function asset(mixed $entity, string $field): string
     {
         $mappings         = $this->fileService->getMappingForEntity($entity);
         $file             = '';

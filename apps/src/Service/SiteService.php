@@ -13,7 +13,6 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
-use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\BlockRepository;
 use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\ConfigurationRepository;
@@ -52,7 +51,7 @@ class SiteService
         return $configurations[0] ?? null;
     }
 
-    public function getCrudController(string $entity): ?AbstractCrudControllerLib
+    public function getCrudController(string $entity): ?string
     {
         $cruds  = $this->getDataCrudController();
         $return = null;
