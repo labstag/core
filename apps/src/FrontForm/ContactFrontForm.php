@@ -5,12 +5,12 @@ namespace Labstag\FrontForm;
 use Labstag\Form\Front\ContactType;
 use Labstag\Lib\FrontFormLib;
 use Override;
-use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 
 class ContactFrontForm extends FrontFormLib
 {
     #[Override]
-    public function execute(Form $form, bool $disable): bool
+    public function execute(FormInterface $form, bool $disable): bool
     {
         $state = parent::execute($form, $disable);
         if (!$state) {

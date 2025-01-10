@@ -4,7 +4,7 @@ namespace Labstag\Service;
 
 use Labstag\Lib\FrontFormLib;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 
 class FormService
 {
@@ -32,7 +32,7 @@ class FormService
         return $data;
     }
 
-    public function execute(string $code, Form $form, bool $disable): bool
+    public function execute(string $code, FormInterface $form, bool $disable): bool
     {
         return $this->get($code)->execute($form, $disable);
     }

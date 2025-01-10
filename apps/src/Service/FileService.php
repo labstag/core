@@ -137,7 +137,7 @@ class FileService
         return $total;
     }
 
-    public function getBasePath(string $entity, string $type): string
+    public function getBasePath(mixed $entity, string $type): string
     {
         $object = $this->propertyMappingFactory->fromField(new $entity(), $type);
 
@@ -202,7 +202,7 @@ class FileService
         return $files;
     }
 
-    public function getFullBasePath(string $entity, string $type): string
+    public function getFullBasePath(mixed $entity, string $type): string
     {
         $basePath = $this->getBasePath($entity, $type);
 

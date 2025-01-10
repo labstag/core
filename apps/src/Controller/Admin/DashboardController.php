@@ -301,13 +301,12 @@ class DashboardController extends AbstractDashboardController
 
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
-        try {
-            $repository = $this->entityManager->getRepository($entity);
-        } catch (Exception) {
-            throw new Exception(new TranslatableMessage('Entity not found'));
+        $entityRepository = $this->entityManager->getRepository($entity);
+        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+            throw new Exception('Repository not found');
         }
 
-        return $repository;
+        return $entityRepository;
     }
 
     /**

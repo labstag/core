@@ -35,5 +35,9 @@ services:
     resource: "../src/FrontForm/"
     public: true
     tags: [ 'labstag.forms' ]
+  Labstag\Replace\:
+    resource: "../src/Replace/"
+    public: true
+    tags: [ 'labstag.replaces' ]
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
