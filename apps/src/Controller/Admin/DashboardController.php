@@ -5,6 +5,7 @@ namespace Labstag\Controller\Admin;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\SubMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
@@ -108,7 +109,7 @@ class DashboardController extends AbstractDashboardController
         return $dashboard;
     }
 
-    private function configureMenuItemsStory(array $categories, array $tags): MenuItem
+    private function configureMenuItemsStory(array $categories, array $tags): SubMenuItem
     {
         return MenuItem::subMenu(new TranslatableMessage('Story'))->setSubItems(
             [
@@ -128,7 +129,7 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
-    private function configureMenuItemsChapter(array $tags): MenuItem
+    private function configureMenuItemsChapter(array $tags): SubMenuItem
     {
         return MenuItem::subMenu(new TranslatableMessage('Chapter'))->setSubItems(
             [
@@ -147,7 +148,7 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
-    private function configureMenuItemsPage(array $categories, array $tags): MenuItem
+    private function configureMenuItemsPage(array $categories, array $tags): SubMenuItem
     {
         return MenuItem::subMenu(new TranslatableMessage('Page'), 'fas fa-columns')->setSubItems(
             [
@@ -167,7 +168,7 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
-    private function configureMenuItemsPost(array $categories, array $tags): MenuItem
+    private function configureMenuItemsPost(array $categories, array $tags): SubMenuItem
     {
         return MenuItem::subMenu(new TranslatableMessage('Post'), 'fas fa-newspaper')->setSubItems(
             [
@@ -187,7 +188,7 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
-    private function configureMenuItemsTemplate(): MenuItem
+    private function configureMenuItemsTemplate(): SubMenuItem
     {
         return MenuItem::subMenu(new TranslatableMessage('Templates'), 'fas fa-code')->setSubItems(
             [
@@ -205,7 +206,7 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
-    private function configureMenuItemsMovie(array $categories): MenuItem
+    private function configureMenuItemsMovie(array $categories): SubMenuItem
     {
         return MenuItem::subMenu(new TranslatableMessage('Movie'))->setSubItems(
             [
