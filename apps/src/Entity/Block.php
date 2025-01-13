@@ -9,10 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Labstag\Repository\BlockRepository;
 use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
-class Block implements \Stringable
+class Block implements Stringable
 {
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]

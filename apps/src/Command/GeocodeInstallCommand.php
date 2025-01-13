@@ -2,6 +2,7 @@
 
 namespace Labstag\Command;
 
+use Exception;
 use Labstag\Entity\GeoCode;
 use Labstag\Repository\GeoCodeRepository;
 use Labstag\Service\GeocodeService;
@@ -56,7 +57,7 @@ class GeocodeInstallCommand extends Command
 
         $country = $input->getArgument('country');
         if (!is_string($country)) {
-            throw new \Exception('Argument country invalide');
+            throw new Exception('Argument country invalide');
         }
 
         if ($country === '' || $country === '0') {

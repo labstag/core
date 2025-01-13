@@ -5,6 +5,7 @@ namespace Labstag\Service;
 use Labstag\Entity\GeoCode;
 use Labstag\Repository\GeoCodeRepository;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use ZipArchive;
 
 class GeocodeService
 {
@@ -61,7 +62,7 @@ class GeocodeService
         $tempFile = tmpfile();
         $path = stream_get_meta_data($tempFile)['uri'];
         file_put_contents($path, $content);
-        $zipArchive = new \ZipArchive();
+        $zipArchive = new ZipArchive();
         if (!$zipArchive->open($path)) {
             return [];
         }

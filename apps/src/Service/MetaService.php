@@ -4,6 +4,8 @@ namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Meta;
+use ReflectionClass;
+use stdClass;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class MetaService
@@ -20,12 +22,12 @@ class MetaService
             return null;
         }
 
-        $return = new \stdClass();
+        $return = new stdClass();
 
         $return->name = null;
         $return->value = null;
 
-        $reflectionClass = new \ReflectionClass($meta);
+        $reflectionClass = new ReflectionClass($meta);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $name = $reflectionProperty->getName();

@@ -10,11 +10,12 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\TagRepository;
 use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class Tag implements \Stringable
+class Tag implements Stringable
 {
     use SoftDeleteableEntity;
 

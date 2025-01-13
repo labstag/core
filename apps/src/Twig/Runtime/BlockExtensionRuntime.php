@@ -4,6 +4,7 @@ namespace Labstag\Twig\Runtime;
 
 use Labstag\Entity\Block;
 use Labstag\Service\BlockService;
+use Symfony\Component\HttpFoundation\Response;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class BlockExtensionRuntime implements RuntimeExtensionInterface
@@ -38,7 +39,7 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
 
         $content = $this->blockService->content($tab['templates']['view'], $tab['block']);
 
-        if (!$content instanceof \Symfony\Component\HttpFoundation\Response) {
+        if (!$content instanceof Response) {
             return null;
         }
 

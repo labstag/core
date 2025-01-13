@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Exception;
 use Labstag\Entity\User;
 use Labstag\Lib\ServiceEntityRepositoryLib;
 use Labstag\Repository\ConfigurationRepository;
@@ -294,7 +295,7 @@ class DashboardController extends AbstractDashboardController
         match ($routeName) {
             'admin_restore' => $this->adminRestore($entity, $uuid),
             'admin_empty' => $this->adminEmpty($entity),
-            default => throw new \Exception(new TranslatableMessage('Route not found')),
+            default => throw new Exception(new TranslatableMessage('Route not found')),
         };
 
         return $this->redirect($referer);
@@ -361,12 +362,12 @@ class DashboardController extends AbstractDashboardController
         $serviceEntityRepositoryLib = $this->getRepository($entity);
         $data = $serviceEntityRepositoryLib->find($uuid);
         if (is_null($data)) {
-            throw new \Exception(new TranslatableMessage('Data not found'));
+            throw new Exception(new TranslatableMessage('Data not found'));
         }
 
         $methods = get_class_methods($data);
         if (!in_array('isDeleted', $methods)) {
-            throw new \Exception(new TranslatableMessage('Method not found'));
+            throw new Exception(new TranslatableMessage('Method not found'));
         }
 
         if ($data->isDeleted()) {
@@ -380,7 +381,7 @@ class DashboardController extends AbstractDashboardController
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
-            throw new \Exception('Repository not found');
+            throw new Exception('Repository not found');
         }
 
         return $entityRepository;

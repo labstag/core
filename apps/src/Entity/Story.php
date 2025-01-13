@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -12,6 +14,7 @@ use Labstag\Repository\StoryRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -19,7 +22,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: StoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Story implements \Stringable
+class Story implements Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
@@ -287,7 +290,7 @@ class Story implements \Stringable
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = \DateTime::createFromImmutable(new \DateTimeImmutable());
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 

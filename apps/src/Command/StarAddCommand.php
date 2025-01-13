@@ -4,6 +4,7 @@ namespace Labstag\Command;
 
 use Labstag\Entity\Star;
 use Labstag\Repository\StarRepository;
+use NumberFormatter;
 use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -85,7 +86,7 @@ class StarAddCommand extends Command
         $progressBar->finish();
 
         $symfonyStyle->success('All star added');
-        $numberFormatter = new \NumberFormatter('fr_FR', \NumberFormatter::DECIMAL);
+        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
         $symfonyStyle->success(
             sprintf(
                 'Added: %d, Updated: %d',

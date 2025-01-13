@@ -3,6 +3,7 @@
 namespace Labstag\Service;
 
 use Labstag\Entity\Block;
+use stdClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -72,9 +73,9 @@ class BlockService
         return $blocks;
     }
 
-    public function getContents(array $blocks): \stdClass
+    public function getContents(array $blocks): stdClass
     {
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->header = [];
         $data->footer = [];
         foreach ($blocks as $block) {

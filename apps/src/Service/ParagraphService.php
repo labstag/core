@@ -2,9 +2,12 @@
 
 namespace Labstag\Service;
 
+use DateTime;
 use Doctrine\Common\Util\ClassUtils;
 use Labstag\Entity\Paragraph;
 use Labstag\Interface\ParagraphInterface;
+use ReflectionClass;
+use stdClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -89,9 +92,9 @@ class ParagraphService
         return $paragraphs;
     }
 
-    public function getContents(array $paragraphs): \stdClass
+    public function getContents(array $paragraphs): stdClass
     {
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->header = [];
         $data->footer = [];
         foreach ($paragraphs as $paragraph) {
@@ -123,11 +126,11 @@ class ParagraphService
             return null;
         }
 
-        $object = new \stdClass();
+        $object = new stdClass();
         $object->name = null;
         $object->value = null;
 
-        $reflectionClass = new \ReflectionClass($paragraph);
+        $reflectionClass = new ReflectionClass($paragraph);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $name = $reflectionProperty->getName();
@@ -136,7 +139,7 @@ class ParagraphService
                 continue;
             }
 
-            if ($value instanceof \DateTime) {
+            if ($value instanceof DateTime) {
                 continue;
             }
 

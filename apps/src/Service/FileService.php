@@ -3,6 +3,7 @@
 namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Configuration;
 use Labstag\Entity\Edito;
@@ -82,7 +83,7 @@ class FileService
 
             $adapter = $this->getAdapter($type);
             if (!$adapter instanceof LocalFilesystemAdapter) {
-                throw new \Exception('Adapter not found');
+                throw new Exception('Adapter not found');
             }
 
             $filesystem = new Filesystem(
@@ -156,7 +157,7 @@ class FileService
 
             $adapter = $this->getAdapter($type);
             if (!$adapter instanceof LocalFilesystemAdapter) {
-                throw new \Exception('Adapter not found');
+                throw new Exception('Adapter not found');
             }
 
             $filesystem = new Filesystem(
@@ -183,7 +184,7 @@ class FileService
         $files = [];
         $adapter = $this->getAdapter($type);
         if (!$adapter instanceof LocalFilesystemAdapter) {
-            throw new \Exception('Adapter not found');
+            throw new Exception('Adapter not found');
         }
 
         $filesystem = new Filesystem(
@@ -221,7 +222,7 @@ class FileService
     {
         $adapter = $this->getAdapter($type);
         if (!$adapter instanceof LocalFilesystemAdapter) {
-            throw new \Exception('Adapter not found');
+            throw new Exception('Adapter not found');
         }
 
         $filesystem = new Filesystem(
@@ -283,7 +284,7 @@ class FileService
 
         $storages = $config['flysystem']['storages'];
         if (!array_key_exists($type . '.storage', $storages)) {
-            throw new \Exception('Type not found');
+            throw new Exception('Type not found');
         }
 
         $storage = $storages[$type . '.storage'];

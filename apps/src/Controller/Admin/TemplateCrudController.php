@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Template;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Lib\EmailLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -51,7 +52,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
 
         if (!is_null($currentEntity)) {
             $template = $this->emailService->get($currentEntity->getCode());
-            if ($template instanceof \Labstag\Lib\EmailLib) {
+            if ($template instanceof EmailLib) {
                 $wysiwygField->setHelp($template->getHelp());
                 $textareaField->setHelp($template->getHelp());
             }

@@ -21,9 +21,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Field\ParagraphParentField;
 use Labstag\Service\ParagraphService;
 use Override;
+use RuntimeException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Traversable;
 
 final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 {
@@ -49,7 +51,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->getDoctrineMetadata()
             ->set('targetEntity', ClassUtils::getClass($object->value));
         if (!$entityDto->isAssociation($object->name)) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'The "%s" field is not a Doctrine association, so it cannot be used as an association field.',
                 $object->name
             ));
@@ -106,7 +108,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
                 $fieldDto->getProperty()
             );
 
-            throw new \RuntimeException($message);
+            throw new RuntimeException($message);
         }
 
         $fieldDto->setFormType(CrudAutocompleteType::class);
@@ -142,7 +144,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
         foreach ($propertyNameParts as $propertyNamePart) {
             if (!$metadata->hasAssociation($propertyNamePart)) {
-                throw new \RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     'There is no association for the class "%s" with name "%s"',
                     $targetEntityFqcn,
                     $propertyNamePart
@@ -255,10 +257,10 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         }
 
         if (is_countable($collection)) {
-            return \count($collection);
+            return count($collection);
         }
 
-        if ($collection instanceof \Traversable) {
+        if ($collection instanceof Traversable) {
             return iterator_count($collection);
         }
 

@@ -3,6 +3,7 @@
 namespace Labstag\FrontForm;
 
 use Labstag\Form\Front\ContactType;
+use Labstag\Lib\EmailLib;
 use Labstag\Lib\FrontFormLib;
 use Override;
 use Symfony\Component\Form\FormInterface;
@@ -23,7 +24,7 @@ class ContactFrontForm extends FrontFormLib
                 'form' => $form->all(),
             ]
         );
-        if (!$email instanceof \Labstag\Lib\EmailLib) {
+        if (!$email instanceof EmailLib) {
             return false;
         }
 

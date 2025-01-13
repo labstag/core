@@ -2,6 +2,7 @@
 
 namespace Labstag\Lib;
 
+use Closure;
 use Labstag\Entity\Paragraph;
 use Labstag\Service\ParagraphService;
 use Override;
@@ -92,7 +93,7 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
         return $prototypes;
     }
 
-    private function getOptionsNormalizer(): \Closure
+    private function getOptionsNormalizer(): Closure
     {
         return function (Options $options, array $value) {
             unset($options);

@@ -6,6 +6,7 @@ use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
+use NumberFormatter;
 use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -126,7 +127,7 @@ class MovieAddCommand extends Command
         $progressBar->finish();
 
         $symfonyStyle->success('All movie added');
-        $numberFormatter = new \NumberFormatter('fr_FR', \NumberFormatter::DECIMAL);
+        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
         $symfonyStyle->success(
             sprintf(
                 'Added: %d, Updated: %d',

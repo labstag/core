@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use DOMDocument;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Essence\Essence;
 use Essence\Media;
@@ -81,32 +82,5 @@ class VideoParagraph extends ParagraphLib
     public function useIn(): array
     {
         return $this->useInAll();
-    }
-
-    private function getOEmbedUrl(string $html): ?string
-    {
-        $domDocument = new \DOMDocument();
-        $domDocument->loadHTML($html);
-
-        $domNodeList = $domDocument->getElementsByTagName('iframe');
-        if (count($domNodeList) == 0) {
-            return null;
-        }
-
-        $iframe = $domNodeList->item(0);
-
-        return $iframe->getAttribute('src');
-    }
-
-    private function parseUrlAndAddAutoplay(string $url): string
-    {
-        $parse = parse_url($url);
-        parse_str($parse['query'] !== '' && $parse['query'] !== '0' ? $parse['query'] : '', $args);
-        $args['autoplay'] = 1;
-
-        $newArgs = http_build_query($args);
-        $parse['query'] = $newArgs;
-
-        return sprintf('%s://%s%s?%s', $parse['scheme'], $parse['host'], $parse['path'], $parse['query']);
     }
 }
