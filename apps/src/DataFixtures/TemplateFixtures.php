@@ -5,10 +5,11 @@ namespace Labstag\DataFixtures;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\Template;
 use Labstag\Lib\FixtureLib;
+use Override;
 
 class TemplateFixtures extends FixtureLib
 {
-    #[\Override]
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $data = $this->data();

@@ -7,6 +7,7 @@ namespace Labstag\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Override;
 
 final class ParagraphParentField implements FieldInterface
 {
@@ -49,7 +50,7 @@ final class ParagraphParentField implements FieldInterface
     /**
      * @param false|string|null $label
      */
-    #[\Override]
+    #[Override]
     public static function new(string $propertyName, $label = null): self
     {
         $field = (new self());

@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Override;
 
 final class WysiwygField implements FieldInterface
 {
@@ -22,7 +23,7 @@ final class WysiwygField implements FieldInterface
     /**
      * @param false|string|null $label
      */
-    #[\Override]
+    #[Override]
     public static function new(string $propertyName, $label = null): self
     {
         $field = (new self());

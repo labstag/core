@@ -17,10 +17,11 @@ use Labstag\Lib\AbstractCrudControllerLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
+use Override;
 
 class StoryCrudController extends AbstractCrudControllerLib
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions);
@@ -31,7 +32,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -41,7 +42,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
@@ -76,7 +77,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         yield $this->addFieldState();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterRefUser($filters);
@@ -85,7 +86,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): Story
     {
         $story = new $entityFqcn();
@@ -97,7 +98,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $story;
     }
 
-    #[\Override]
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Story::class;

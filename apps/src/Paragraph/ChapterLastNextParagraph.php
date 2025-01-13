@@ -6,10 +6,11 @@ use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\ChapterRepository;
+use Override;
 
 class ChapterLastNextParagraph extends ParagraphLib
 {
-    #[\Override]
+    #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
@@ -39,7 +40,7 @@ class ChapterLastNextParagraph extends ParagraphLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -47,7 +48,7 @@ class ChapterLastNextParagraph extends ParagraphLib
         return [];
     }
 
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Chapitre last next';
@@ -61,7 +62,7 @@ class ChapterLastNextParagraph extends ParagraphLib
         return 'chapter-lastnext';
     }
 
-    #[\Override]
+    #[Override]
     public function useIn(): array
     {
         return $this->useInAll();

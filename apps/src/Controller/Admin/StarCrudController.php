@@ -15,10 +15,11 @@ use Labstag\Entity\Star;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\StarRepository;
 use Symfony\Component\Translation\TranslatableMessage;
+use Override;
 
 class StarCrudController extends AbstractCrudControllerLib
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsBtn($actions);
@@ -26,7 +27,7 @@ class StarCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -37,7 +38,7 @@ class StarCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
@@ -54,7 +55,7 @@ class StarCrudController extends AbstractCrudControllerLib
         yield $this->addFieldBoolean();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $licences = $this->getallData('license');
@@ -75,7 +76,7 @@ class StarCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Star::class;

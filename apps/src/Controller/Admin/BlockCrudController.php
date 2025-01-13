@@ -28,6 +28,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
+use Override;
 
 class BlockCrudController extends AbstractCrudControllerLib
 {
@@ -44,7 +45,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return parent::addFieldParagraphs($pageName, $form);
     }
 
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $action = Action::new('positionBlock', new TranslatableMessage('Change Position'), 'fas fa-arrows-alt');
@@ -57,7 +58,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -67,7 +68,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
@@ -113,7 +114,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         yield $requestPathField;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
@@ -121,7 +122,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
@@ -143,7 +144,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $serviceEntityRepositoryLib->findAllOrderedByRegion();
     }
 
-    #[\Override]
+    #[Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
@@ -155,7 +156,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $formBuilder->addEventListener(FormEvents::SUBMIT, $this->setPosition());
     }
 
-    #[\Override]
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Block::class;

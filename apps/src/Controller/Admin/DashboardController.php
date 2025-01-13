@@ -26,6 +26,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Override;
 
 class DashboardController extends AbstractDashboardController
 {
@@ -93,7 +94,7 @@ class DashboardController extends AbstractDashboardController
         return $this->redirect($url);
     }
 
-    #[\Override]
+    #[Override]
     public function configureDashboard(): Dashboard
     {
         $data = $this->siteService->getConfiguration();
@@ -106,7 +107,7 @@ class DashboardController extends AbstractDashboardController
         return $dashboard;
     }
 
-    #[\Override]
+    #[Override]
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
@@ -252,7 +253,7 @@ class DashboardController extends AbstractDashboardController
         )->setLinkTarget('_blank');
     }
 
-    #[\Override]
+    #[Override]
     public function configureUserMenu(UserInterface $user): UserMenu
     {
         $userMenu = parent::configureUserMenu($user);
@@ -304,7 +305,7 @@ class DashboardController extends AbstractDashboardController
         name: 'admin',
         defaults: ['_locale' => 'fr']
     )]
-    #[\Override]
+    #[Override]
     public function index(): Response
     {
         return $this->render('admin/dashboard.html.twig', []);

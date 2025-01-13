@@ -13,10 +13,11 @@ use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Symfony\Component\Translation\TranslatableMessage;
+use Override;
 
 class ParagraphCrudController extends AbstractCrudControllerLib
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         if ($this->isIframeEdit()) {
@@ -30,7 +31,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         if ($this->isIframeEdit()) {
@@ -47,7 +48,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
@@ -71,7 +72,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         }
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $filters->add(
@@ -85,7 +86,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Paragraph::class;

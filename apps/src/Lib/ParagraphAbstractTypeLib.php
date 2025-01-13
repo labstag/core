@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Override;
 
 abstract class ParagraphAbstractTypeLib extends AbstractType
 {
@@ -21,7 +22,7 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
     {
     }
 
-    #[\Override]
+    #[Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         $prototypes = $this->buildPrototypes($formBuilder, $options);
@@ -29,7 +30,7 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
         $formBuilder->add('type');
     }
 
-    #[\Override]
+    #[Override]
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
         $optionsResolver->setDefaults(

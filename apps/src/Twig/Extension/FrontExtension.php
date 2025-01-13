@@ -6,16 +6,17 @@ use Labstag\Twig\Runtime\FrontExtensionRuntime;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use Override;
 
 class FrontExtension extends AbstractExtension
 {
-    #[\Override]
+    #[Override]
     public function getFilters()
     {
         return [new TwigFilter('enable', [FrontExtensionRuntime::class, 'enable'])];
     }
 
-    #[\Override]
+    #[Override]
     public function getFunctions(): array
     {
         return [

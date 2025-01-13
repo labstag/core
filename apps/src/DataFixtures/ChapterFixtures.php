@@ -9,6 +9,7 @@ use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
 use Labstag\Entity\Tag;
 use Labstag\Lib\FixtureLib;
+use Override;
 
 class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
 {
@@ -21,7 +22,7 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
 
     protected array $stories = [];
 
-    #[\Override]
+    #[Override]
     public function getDependencies(): array
     {
         return [
@@ -30,7 +31,7 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
         ];
     }
 
-    #[\Override]
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->stories = $this->getIdentitiesByClass(Story::class);

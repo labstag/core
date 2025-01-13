@@ -6,16 +6,17 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
+use Override;
 
 class UserFixtures extends FixtureLib implements DependentFixtureInterface
 {
-    #[\Override]
+    #[Override]
     public function getDependencies(): array
     {
         return [ConfigFixtures::class];
     }
 
-    #[\Override]
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $data = $this->data();

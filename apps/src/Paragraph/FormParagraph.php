@@ -6,10 +6,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Symfony\Component\Translation\TranslatableMessage;
+use Override;
 
 class FormParagraph extends ParagraphLib
 {
-    #[\Override]
+    #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         $formCode = $paragraph->getForm();
@@ -40,7 +41,7 @@ class FormParagraph extends ParagraphLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -50,7 +51,7 @@ class FormParagraph extends ParagraphLib
         yield $choiceField;
     }
 
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Formulaire';
@@ -64,7 +65,7 @@ class FormParagraph extends ParagraphLib
         return 'form';
     }
 
-    #[\Override]
+    #[Override]
     public function useIn(): array
     {
         return $this->useInAll();

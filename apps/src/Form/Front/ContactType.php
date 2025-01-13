@@ -8,10 +8,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Override;
 
 class ContactType extends AbstractType
 {
-    #[\Override]
+    #[Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         unset($options);
@@ -42,7 +43,7 @@ class ContactType extends AbstractType
         $formBuilder->add('submit', SubmitType::class);
     }
 
-    #[\Override]
+    #[Override]
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
         $optionsResolver->setDefaults([]);

@@ -9,6 +9,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\GeoCodeRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\Validator\Constraints as Assert;
+use Override;
 
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[ORM\Entity(repositoryClass: GeoCodeRepository::class)]
@@ -59,7 +60,7 @@ class GeoCode implements \Stringable
     #[ORM\Column(type: Types::STRING, length: 100)]
     private string $stateName;
 
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return (string) $this->getPlaceName();

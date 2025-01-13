@@ -7,10 +7,11 @@ use Labstag\Entity\Edito;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\EditoRepository;
+use Override;
 
 class EditoParagraph extends ParagraphLib
 {
-    #[\Override]
+    #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         /** @var EditoRepository $serviceEntityRepositoryLib */
@@ -37,26 +38,26 @@ class EditoParagraph extends ParagraphLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
         yield TextField::new('title');
     }
 
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Edito';
     }
 
-    #[\Override]
+    #[Override]
     public function getType(): string
     {
         return 'edito';
     }
 
-    #[\Override]
+    #[Override]
     public function useIn(): array
     {
         return $this->useInAll();

@@ -7,10 +7,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use Labstag\Field\WysiwygField;
+use Override;
 
 final class WysiwygConfigurator implements FieldConfiguratorInterface
 {
-    #[\Override]
+    #[Override]
     public function configure(FieldDto $fieldDto, EntityDto $entityDto, AdminContext $adminContext): void
     {
         unset($adminContext, $entityDto);
@@ -18,7 +19,7 @@ final class WysiwygConfigurator implements FieldConfiguratorInterface
         $fieldDto->setFormTypeOption('attr.class', $fieldDto->getFormTypeOption('attr.class') . ' wysiwyg');
     }
 
-    #[\Override]
+    #[Override]
     public function supports(FieldDto $fieldDto, EntityDto $entityDto): bool
     {
         unset($entityDto);

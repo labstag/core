@@ -8,10 +8,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use Labstag\Entity\Edito;
 use Labstag\Form\Paragraphs\EditoType;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Override;
 
 class EditoCrudController extends AbstractCrudControllerLib
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setEditDetail($actions);
@@ -20,7 +21,7 @@ class EditoCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -30,7 +31,7 @@ class EditoCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
@@ -49,7 +50,7 @@ class EditoCrudController extends AbstractCrudControllerLib
         yield $this->addFieldState();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterRefUser($filters);
@@ -58,7 +59,7 @@ class EditoCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): Edito
     {
         $edito = new $entityFqcn();
@@ -68,7 +69,7 @@ class EditoCrudController extends AbstractCrudControllerLib
         return $edito;
     }
 
-    #[\Override]
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Edito::class;

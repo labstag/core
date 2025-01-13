@@ -10,11 +10,12 @@ use Labstag\Entity\Story;
 use Labstag\Form\LinkType;
 use Labstag\Lib\BlockLib;
 use Symfony\Component\HttpFoundation\Response;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class LinksBlock extends BlockLib
 {
-    #[\Override]
+    #[Override]
     public function content(string $view, Block $block): ?Response
     {
         if (!$this->isShow($block)) {
@@ -24,7 +25,7 @@ class LinksBlock extends BlockLib
         return $this->render($view, $this->getData($block));
     }
 
-    #[\Override]
+    #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
@@ -45,7 +46,7 @@ class LinksBlock extends BlockLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
@@ -57,7 +58,7 @@ class LinksBlock extends BlockLib
         yield $collectionField;
     }
 
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Links';

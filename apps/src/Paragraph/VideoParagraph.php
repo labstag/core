@@ -7,10 +7,11 @@ use Essence\Essence;
 use Essence\Media;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
+use Override;
 
 class VideoParagraph extends ParagraphLib
 {
-    #[\Override]
+    #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
@@ -56,7 +57,7 @@ class VideoParagraph extends ParagraphLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph);
@@ -64,19 +65,19 @@ class VideoParagraph extends ParagraphLib
         yield UrlField::new('url');
     }
 
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Video';
     }
 
-    #[\Override]
+    #[Override]
     public function getType(): string
     {
         return 'video';
     }
 
-    #[\Override]
+    #[Override]
     public function useIn(): array
     {
         return $this->useInAll();

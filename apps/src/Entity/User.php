@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Override;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -123,7 +124,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         ];
     }
 
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return (string) $this->getUsername();
@@ -194,7 +195,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     /**
      * @see UserInterface
      */
-    #[\Override]
+    #[Override]
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
@@ -261,7 +262,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    #[\Override]
+    #[Override]
     public function getPassword(): string
     {
         return $this->password;
@@ -280,7 +281,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
      *
      * @return list<string>
      */
-    #[\Override]
+    #[Override]
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -295,7 +296,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
      *
      * @see UserInterface
      */
-    #[\Override]
+    #[Override]
     public function getUserIdentifier(): string
     {
         return (string) $this->email;

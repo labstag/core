@@ -7,10 +7,11 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\PostRepository;
+use Override;
 
 class NewsListParagraph extends ParagraphLib
 {
-    #[\Override]
+    #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
@@ -37,7 +38,7 @@ class NewsListParagraph extends ParagraphLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -47,19 +48,19 @@ class NewsListParagraph extends ParagraphLib
         yield $this->addFieldIntegerNbr();
     }
 
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'News list';
     }
 
-    #[\Override]
+    #[Override]
     public function getType(): string
     {
         return 'news-list';
     }
 
-    #[\Override]
+    #[Override]
     public function useIn(): array
     {
         return $this->useInAll();

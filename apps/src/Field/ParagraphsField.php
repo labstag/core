@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use Labstag\Form\Type\ParagraphType;
 use Symfony\Component\Uid\Ulid;
+use Override;
 
 final class ParagraphsField implements FieldInterface
 {
@@ -37,7 +38,7 @@ final class ParagraphsField implements FieldInterface
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public static function new($label = false, ?string $icon = null): self
     {
         $field = new self();

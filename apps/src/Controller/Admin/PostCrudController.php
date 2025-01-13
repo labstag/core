@@ -9,10 +9,11 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
 use Labstag\Form\Paragraphs\PostType;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Override;
 
 class PostCrudController extends AbstractCrudControllerLib
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions);
@@ -22,7 +23,7 @@ class PostCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -32,7 +33,7 @@ class PostCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
@@ -59,7 +60,7 @@ class PostCrudController extends AbstractCrudControllerLib
         yield $this->addFieldState();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterRefUser($filters);
@@ -68,7 +69,7 @@ class PostCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): Post
     {
         $post = new $entityFqcn();
@@ -80,7 +81,7 @@ class PostCrudController extends AbstractCrudControllerLib
         return $post;
     }
 
-    #[\Override]
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Post::class;

@@ -10,6 +10,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\CategoryRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Override;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -76,7 +77,7 @@ class Category implements \Stringable
         $this->posts = new ArrayCollection();
     }
 
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();

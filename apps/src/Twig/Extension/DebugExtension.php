@@ -5,10 +5,11 @@ namespace Labstag\Twig\Extension;
 use Labstag\Twig\Runtime\DebugExtensionRuntime;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
+use Override;
 
 class DebugExtension extends AbstractExtension
 {
-    #[\Override]
+    #[Override]
     public function getFunctions(): array
     {
         return [

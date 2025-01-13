@@ -8,6 +8,7 @@ use Faker\Generator;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
+use Override;
 
 class MemoFixtures extends FixtureLib implements DependentFixtureInterface
 {
@@ -18,13 +19,13 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
 
     protected array $users = [];
 
-    #[\Override]
+    #[Override]
     public function getDependencies(): array
     {
         return [UserFixtures::class];
     }
 
-    #[\Override]
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->users = $this->getIdentitiesByClass(User::class);

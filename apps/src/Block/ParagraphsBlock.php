@@ -4,11 +4,12 @@ namespace Labstag\Block;
 
 use Labstag\Entity\Block;
 use Labstag\Lib\BlockLib;
+use Override;
 use Symfony\Component\HttpFoundation\Response;
 
 class ParagraphsBlock extends BlockLib
 {
-    #[\Override]
+    #[Override]
     public function content(string $view, Block $block): ?Response
     {
         if (!$this->isShow($block)) {
@@ -18,7 +19,7 @@ class ParagraphsBlock extends BlockLib
         return $this->render($view, $this->getData($block));
     }
 
-    #[\Override]
+    #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
         $paragraphs = $block->getParagraphs()->getValues();
@@ -42,7 +43,7 @@ class ParagraphsBlock extends BlockLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
@@ -50,13 +51,13 @@ class ParagraphsBlock extends BlockLib
         return [];
     }
 
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Paragraphs';
     }
 
-    #[\Override]
+    #[Override]
     public function getType(): string
     {
         return 'paragraphs';

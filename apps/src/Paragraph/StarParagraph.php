@@ -7,10 +7,11 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Star;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\StoryRepository;
+use Override;
 
 class StarParagraph extends ParagraphLib
 {
-    #[\Override]
+    #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
@@ -38,7 +39,7 @@ class StarParagraph extends ParagraphLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -47,7 +48,7 @@ class StarParagraph extends ParagraphLib
         yield $this->addFieldIntegerNbr();
     }
 
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Star';
@@ -61,7 +62,7 @@ class StarParagraph extends ParagraphLib
         return 'star';
     }
 
-    #[\Override]
+    #[Override]
     public function useIn(): array
     {
         return $this->useInAll();

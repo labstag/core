@@ -5,10 +5,11 @@ namespace Labstag\Paragraph;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\ParagraphLib;
+use Override;
 
 class TextParagraph extends ParagraphLib
 {
-    #[\Override]
+    #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
@@ -21,7 +22,7 @@ class TextParagraph extends ParagraphLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -30,7 +31,7 @@ class TextParagraph extends ParagraphLib
         yield $wysiwygField;
     }
 
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Texte';
@@ -44,7 +45,7 @@ class TextParagraph extends ParagraphLib
         return 'text';
     }
 
-    #[\Override]
+    #[Override]
     public function useIn(): array
     {
         return $this->useInAll();

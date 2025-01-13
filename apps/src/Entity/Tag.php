@@ -10,6 +10,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\TagRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Override;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -69,7 +70,7 @@ class Tag implements \Stringable
         $this->chapters = new ArrayCollection();
     }
 
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();

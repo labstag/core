@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Labstag\Repository\BlockRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Override;
 
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
 class Block implements \Stringable
@@ -77,7 +78,7 @@ class Block implements \Stringable
         $this->links = new ArrayCollection();
     }
 
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();

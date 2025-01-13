@@ -3,22 +3,23 @@
 namespace Labstag\Email;
 
 use Labstag\Lib\EmailLib;
+use Override;
 
 class UserApprovalEmail extends EmailLib
 {
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'User approval %user_username%';
     }
 
-    #[\Override]
+    #[Override]
     public function getType(): string
     {
         return 'user_approval';
     }
 
-    #[\Override]
+    #[Override]
     public function init(): void
     {
         $user = $this->data['user'];
