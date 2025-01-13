@@ -50,7 +50,7 @@ class VideoParagraph extends ParagraphLib
         $this->setData(
             $paragraph,
             [
-                'image'     => $media->has('thumbnailUrl') ? $media->get('thumbnailUrl'): '',
+                'image'     => $media->has('thumbnailUrl') ? $media->get('thumbnailUrl') : '',
                 'oembed'    => $this->parseUrlAndAddAutoplay($oembed),
                 'paragraph' => $paragraph,
                 'data'      => $data,

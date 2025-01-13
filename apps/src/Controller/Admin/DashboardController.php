@@ -231,7 +231,7 @@ class DashboardController extends AbstractDashboardController
         $categories = $this->setCategories();
         $tags = $this->setTags();
 
-        yield $this->configureMenuItemsStory($categories, $tags);;
+        yield $this->configureMenuItemsStory($categories, $tags);
         yield $this->configureMenuItemsChapter($tags);
         yield $this->configureMenuItemsMovie($categories);
 
