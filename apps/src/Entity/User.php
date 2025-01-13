@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -12,6 +14,7 @@ use Labstag\Repository\UserRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -22,7 +25,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class User implements UserInterface, PasswordAuthenticatedUserInterface, \Stringable
+class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
@@ -374,7 +377,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \String
         if ($avatarFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = \DateTime::createFromImmutable(new \DateTimeImmutable());
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 

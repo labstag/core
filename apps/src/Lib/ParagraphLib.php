@@ -3,6 +3,7 @@
 namespace Labstag\Lib;
 
 use Doctrine\ORM\EntityManagerInterface;
+use DOMDocument;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -245,5 +246,32 @@ abstract class ParagraphLib extends AbstractController
             Page::class,
             Post::class,
         ];
+    }
+
+    protected function getOEmbedUrl(string $html): ?string
+    {
+        $domDocument = new DOMDocument();
+        $domDocument->loadHTML($html);
+
+        $domNodeList = $domDocument->getElementsByTagName('iframe');
+        if (count($domNodeList) == 0) {
+            return null;
+        }
+
+        $iframe = $domNodeList->item(0);
+
+        return $iframe->getAttribute('src');
+    }
+
+    protected function parseUrlAndAddAutoplay(string $url): string
+    {
+        $parse = parse_url($url);
+        parse_str($parse['query'] !== '' && $parse['query'] !== '0' ? $parse['query'] : '', $args);
+        $args['autoplay'] = 1;
+
+        $newArgs = http_build_query($args);
+        $parse['query'] = $newArgs;
+
+        return sprintf('%s://%s%s?%s', $parse['scheme'], $parse['host'], $parse['path'], $parse['query']);
     }
 }

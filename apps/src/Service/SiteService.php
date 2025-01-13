@@ -2,6 +2,7 @@
 
 namespace Labstag\Service;
 
+use Exception;
 use Labstag\Controller\Admin\ChapterCrudController;
 use Labstag\Controller\Admin\PageCrudController;
 use Labstag\Controller\Admin\PostCrudController;
@@ -18,8 +19,10 @@ use Labstag\Repository\ConfigurationRepository;
 use Labstag\Repository\PageRepository;
 use Labstag\Repository\PostRepository;
 use Labstag\Repository\StoryRepository;
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Twig\Environment;
 
@@ -191,7 +194,7 @@ class SiteService
 
     public function getViewByEntity(object $entity): string
     {
-        $reflectionClass = new \ReflectionClass($entity);
+        $reflectionClass = new ReflectionClass($entity);
         $entityName = ucfirst($reflectionClass->getShortName());
 
         return $this->getViewByEntityName($entity, $entityName);
@@ -357,7 +360,7 @@ class SiteService
         }
 
         if (is_null($types['story']) || !$types['story'] instanceof Page) {
-            throw new \Exception('Post page not found');
+            throw new Exception('Post page not found');
         }
 
         return $types['story']->getSlug() . '/' . $entity->getRefStory()->getSlug() . '/' . $entity->getSlug();
@@ -379,7 +382,7 @@ class SiteService
         }
 
         if (is_null($types['post']) || !$types['post'] instanceof Page) {
-            throw new \Exception('Post page not found');
+            throw new Exception('Post page not found');
         }
 
         return $types['post']->getSlug() . '/' . $entity->getSlug();
@@ -392,7 +395,7 @@ class SiteService
         }
 
         if (is_null($types['story']) || !$types['story'] instanceof Page) {
-            throw new \Exception('Post page not found');
+            throw new Exception('Post page not found');
         }
 
         return $types['story']->getSlug() . '/' . $entity->getSlug();
@@ -402,6 +405,6 @@ class SiteService
     {
         $token = $this->tokenStorage->getToken();
 
-        return $token instanceof \Symfony\Component\Security\Core\Authentication\Token\TokenInterface ? $token->getUser() : null;
+        return $token instanceof TokenInterface ? $token->getUser() : null;
     }
 }

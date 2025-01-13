@@ -3,6 +3,7 @@
 namespace Labstag\Event\Listener;
 
 use Doctrine\ORM\EntityManagerInterface;
+use ReflectionClass;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -33,7 +34,7 @@ final class VichListener
     private function isDeletedFileNotEntity(object $entity): bool
     {
         $delete = false;
-        $reflectionClass = new \ReflectionClass($entity);
+        $reflectionClass = new ReflectionClass($entity);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $name = $reflectionProperty->getName();

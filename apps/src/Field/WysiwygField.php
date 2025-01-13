@@ -5,6 +5,7 @@ namespace Labstag\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use InvalidArgumentException;
 use Override;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
@@ -55,7 +56,7 @@ final class WysiwygField implements FieldInterface
     public function setMaxLength(int $length): self
     {
         if ($length < 1) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'The argument of the "%s()" method must be 1 or higher (%d given).',
                     __METHOD__,
@@ -72,7 +73,7 @@ final class WysiwygField implements FieldInterface
     public function setNumOfRows(int $rows): self
     {
         if ($rows < 1) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'The argument of the "%s()" method must be 1 or higher (%d given).',
                     __METHOD__,

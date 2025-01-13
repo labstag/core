@@ -6,6 +6,7 @@ namespace Labstag\Field;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
+use InvalidArgumentException;
 use Labstag\Form\Type\ParagraphType;
 use Override;
 use Symfony\Component\Uid\Ulid;
@@ -30,7 +31,7 @@ final class ParagraphsField implements FieldInterface
                 __METHOD__
             );
 
-            throw new \InvalidArgumentException($message);
+            throw new InvalidArgumentException($message);
         }
 
         $this->setCustomOption(self::OPTION_COLLAPSIBLE, $collapsible);
@@ -66,7 +67,7 @@ final class ParagraphsField implements FieldInterface
                 __METHOD__
             );
 
-            throw new \InvalidArgumentException($message);
+            throw new InvalidArgumentException($message);
         }
 
         $this->setCustomOption(self::OPTION_COLLAPSIBLE, true);

@@ -5,6 +5,7 @@ namespace Labstag\Command;
 use Labstag\Entity\Template;
 use Labstag\Repository\TemplateRepository;
 use Labstag\Service\EmailService;
+use NumberFormatter;
 use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -75,7 +76,7 @@ class EmailTemplateAddCommand extends Command
 
         $this->templateRepository->flush();
 
-        $numberFormatter = new \NumberFormatter('fr_FR', \NumberFormatter::DECIMAL);
+        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
         $symfonyStyle->success(sprintf('Added: %d', $numberFormatter->format($this->add)));
 
         return Command::SUCCESS;

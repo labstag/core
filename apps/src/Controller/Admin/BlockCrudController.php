@@ -19,6 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Exception;
 use Labstag\Entity\Block;
 use Labstag\Form\Paragraphs\BlockType;
 use Labstag\Lib\AbstractCrudControllerLib;
@@ -135,7 +136,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         $methods = get_class_methods($serviceEntityRepositoryLib);
         if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array('findAllOrderedByRegion', $methods)
         ) {
-            throw new \Exception('findAllOrderedByRegion not found');
+            throw new Exception('findAllOrderedByRegion not found');
         }
 
         return $serviceEntityRepositoryLib->findAllOrderedByRegion();
@@ -166,7 +167,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         $methods = get_class_methods($serviceEntityRepositoryLib);
         if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array('findAllOrderedByRegion', $methods)
         ) {
-            throw new \Exception('findAllOrderedByRegion not found');
+            throw new Exception('findAllOrderedByRegion not found');
         }
 
         $queryBuilder = $serviceEntityRepositoryLib->findAllOrderedByRegion();

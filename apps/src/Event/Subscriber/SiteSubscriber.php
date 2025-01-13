@@ -8,6 +8,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class SiteSubscriber implements EventSubscriberInterface
@@ -40,6 +41,6 @@ class SiteSubscriber implements EventSubscriberInterface
     {
         $token = $this->tokenStorage->getToken();
 
-        return $token instanceof \Symfony\Component\Security\Core\Authentication\Token\TokenInterface ? $token->getUser() : null;
+        return $token instanceof TokenInterface ? $token->getUser() : null;
     }
 }

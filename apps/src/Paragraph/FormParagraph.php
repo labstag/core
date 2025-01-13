@@ -4,6 +4,7 @@ namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Labstag\Entity\Paragraph;
+use Labstag\Lib\FrontFormLib;
 use Labstag\Lib\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -21,7 +22,7 @@ class FormParagraph extends ParagraphLib
         }
 
         $formClass = $this->formService->get($formCode);
-        if (!$formClass instanceof \Labstag\Lib\FrontFormLib) {
+        if (!$formClass instanceof FrontFormLib) {
             $this->setShow($paragraph, false);
 
             return;

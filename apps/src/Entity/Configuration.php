@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\ConfigurationRepository;
@@ -193,7 +195,7 @@ class Configuration
         if ($faviconFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = \DateTime::createFromImmutable(new \DateTimeImmutable());
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 
@@ -209,7 +211,7 @@ class Configuration
         if ($logoFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = \DateTime::createFromImmutable(new \DateTimeImmutable());
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 
@@ -239,7 +241,7 @@ class Configuration
         if ($placeholderFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = \DateTime::createFromImmutable(new \DateTimeImmutable());
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 
