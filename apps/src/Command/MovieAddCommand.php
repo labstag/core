@@ -2,11 +2,11 @@
 
 namespace Labstag\Command;
 
-use Override;
 use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
+use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -140,7 +140,9 @@ class MovieAddCommand extends Command
 
     private function disableAll(): void
     {
-        $movies = $this->movieRepository->findBy(['enable' => true]);
+        $movies = $this->movieRepository->findBy(
+            ['enable' => true]
+        );
         $counter = 0;
         foreach ($movies as $RectorPrefix202501movie) {
             $RectorPrefix202501movie->setEnable(false);
@@ -156,7 +158,9 @@ class MovieAddCommand extends Command
     private function setMovie(array $data): Movie
     {
         $imdb = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
-        $movie = $this->movieRepository->findOneBy(['imdb' => $imdb]);
+        $movie = $this->movieRepository->findOneBy(
+            ['imdb' => $imdb]
+        );
 
         if (!$movie instanceof Movie) {
             $movie = new Movie();

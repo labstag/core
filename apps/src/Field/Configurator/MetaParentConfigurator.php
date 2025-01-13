@@ -20,10 +20,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Form\Type\CrudAutocompleteType;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Field\MetaParentField;
 use Labstag\Service\MetaService;
+use Override;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Override;
 
 final class MetaParentConfigurator implements FieldConfiguratorInterface
 {

@@ -14,12 +14,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\User;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Override;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Translation\TranslatableMessage;
-use Override;
 
 class UserCrudController extends AbstractCrudControllerLib
 {

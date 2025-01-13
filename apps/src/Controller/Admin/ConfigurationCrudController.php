@@ -13,8 +13,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Labstag\Entity\Configuration;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Symfony\Component\Translation\TranslatableMessage;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ConfigurationCrudController extends AbstractCrudControllerLib
 {

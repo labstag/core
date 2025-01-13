@@ -56,9 +56,7 @@ class ChapterListParagraph extends ParagraphLib
         return 'Chapter list';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'chapter-list';

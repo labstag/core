@@ -12,8 +12,8 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Form\Paragraphs\PageType;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Symfony\Component\Translation\TranslatableMessage;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class PageCrudController extends AbstractCrudControllerLib
 {

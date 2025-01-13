@@ -5,8 +5,8 @@ namespace Labstag\Block;
 use Labstag\Entity\Block;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\BlockLib;
-use Symfony\Component\HttpFoundation\Response;
 use Override;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class HtmlBlock extends BlockLib
@@ -49,9 +49,7 @@ class HtmlBlock extends BlockLib
         return 'HTML';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'html';

@@ -3,9 +3,9 @@
 namespace Labstag\Twig\Extension;
 
 use Labstag\Twig\Runtime\DebugExtensionRuntime;
+use Override;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use Override;
 
 class DebugExtension extends AbstractExtension
 {

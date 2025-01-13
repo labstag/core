@@ -4,8 +4,8 @@ namespace Labstag\FrontForm;
 
 use Labstag\Form\Front\ContactType;
 use Labstag\Lib\FrontFormLib;
-use Symfony\Component\Form\FormInterface;
 use Override;
+use Symfony\Component\Form\FormInterface;
 
 class ContactFrontForm extends FrontFormLib
 {

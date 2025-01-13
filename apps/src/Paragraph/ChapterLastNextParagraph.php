@@ -54,9 +54,7 @@ class ChapterLastNextParagraph extends ParagraphLib
         return 'Chapitre last next';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'chapter-lastnext';

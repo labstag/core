@@ -39,9 +39,7 @@ class HtmlParagraph extends ParagraphLib
         return 'HTML';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'html';

@@ -3,10 +3,10 @@
 namespace Labstag\Security;
 
 use Labstag\Entity\User;
+use Override;
 use Symfony\Component\Security\Core\Exception\AccountExpiredException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Override;
 
 class UserChecker implements UserCheckerInterface
 {

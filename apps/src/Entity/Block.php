@@ -8,8 +8,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Labstag\Repository\BlockRepository;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Override;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
 class Block implements \Stringable

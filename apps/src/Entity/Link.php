@@ -5,8 +5,8 @@ namespace Labstag\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\LinkRepository;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Override;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: LinkRepository::class)]
 class Link implements \Stringable

@@ -12,8 +12,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Symfony\Component\Translation\TranslatableMessage;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ParagraphCrudController extends AbstractCrudControllerLib
 {
@@ -77,9 +77,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     {
         $filters->add(
             ChoiceFilter::new('type', new TranslatableMessage('Type'))->setChoices(
-                $this->paragraphService->getAll(
-                    null
-                )
+                $this->paragraphService->getAll(null)
             )
         );
 

@@ -37,9 +37,7 @@ class TextParagraph extends ParagraphLib
         return 'Texte';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'text';

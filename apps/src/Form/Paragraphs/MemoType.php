@@ -4,8 +4,8 @@ namespace Labstag\Form\Paragraphs;
 
 use Labstag\Entity\Memo;
 use Labstag\Lib\ParagraphAbstractTypeLib;
-use Symfony\Component\Form\FormBuilderInterface;
 use Override;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class MemoType extends ParagraphAbstractTypeLib
 {

@@ -211,10 +211,10 @@
     <rule ref="Squiz.WhiteSpace.SemicolonSpacing"/>
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/>
 
+    <file>config/</file>
+    <file>features/</file>
+    <file>public/</file>
     <file>src/</file>
-    <file>features/bootstrap/</file>
     <file>tests/</file>
-    <exclude-pattern>tests/bootstrap.php</exclude-pattern>
-    <exclude-pattern>src/Kernel.php</exclude-pattern>
 
 </ruleset>

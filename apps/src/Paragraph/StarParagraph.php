@@ -54,9 +54,7 @@ class StarParagraph extends ParagraphLib
         return 'Star';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'star';

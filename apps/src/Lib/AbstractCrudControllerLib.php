@@ -36,6 +36,7 @@ use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
+use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -43,7 +44,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Vich\UploaderBundle\Form\Type\VichImageType;
-use Override;
 
 abstract class AbstractCrudControllerLib extends AbstractCrudController
 {
