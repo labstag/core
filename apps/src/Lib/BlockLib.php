@@ -67,16 +67,6 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         return $this->header[$blockId] ?? null;
     }
 
-    public function getName(): string
-    {
-        return '';
-    }
-
-    public function getType(): string
-    {
-        return '';
-    }
-
     public function isShow(Block $block): bool
     {
         $blockId = $block->getId();

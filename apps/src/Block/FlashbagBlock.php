@@ -33,14 +33,6 @@ class FlashbagBlock extends BlockLib
     }
 
     #[Override]
-    public function getFields(Block $block, string $pageName): iterable
-    {
-        unset($block, $pageName);
-
-        return [];
-    }
-
-    #[Override]
     public function getName(): string
     {
         return 'Flashbag';
