@@ -8,7 +8,6 @@ use Faker\Generator;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
-use Override;
 
 class MemoFixtures extends FixtureLib implements DependentFixtureInterface
 {
@@ -19,15 +18,13 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
 
     protected array $users = [];
 
-    #[Override]
+    #[\Override]
     public function getDependencies(): array
     {
-        return [
-            UserFixtures::class,
-        ];
+        return [UserFixtures::class];
     }
 
-    #[Override]
+    #[\Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->users = $this->getIdentitiesByClass(User::class);
@@ -35,11 +32,7 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
         $objectManager->flush();
     }
 
-    protected function addMemo(
-        Generator $generator,
-        ObjectManager $objectManager,
-        int $index
-    ): void
+    protected function addMemo(Generator $generator, ObjectManager $objectManager, int $index): void
     {
         $memo = new Memo();
         $memo->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
@@ -48,7 +41,7 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
         $memo->setTitle($generator->unique()->colorName());
         $this->addParagraphText($memo);
         $this->setImage($memo, 'imgFile');
-        $this->addReference('memo_'.md5(uniqid()), $memo);
+        $this->addReference('memo_' . md5(uniqid()), $memo);
         $objectManager->persist($memo);
     }
 }

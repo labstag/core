@@ -9,12 +9,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Template;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class TemplateCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setEditDetail($actions);
@@ -23,7 +22,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -35,7 +34,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
@@ -46,12 +45,12 @@ class TemplateCrudController extends AbstractCrudControllerLib
         $textField->setDisabled(true);
 
         yield $textField;
-        $wysiwygField  = WysiwygField::new('html', new TranslatableMessage('html'))->onlyOnForms();
+        $wysiwygField = WysiwygField::new('html', new TranslatableMessage('html'))->onlyOnForms();
         $textareaField = TextareaField::new('text', new TranslatableMessage('text'))->onlyOnForms();
 
         if (!is_null($currentEntity)) {
             $template = $this->emailService->get($currentEntity->getCode());
-            if (!is_null($template)) {
+            if ($template instanceof \Labstag\Lib\EmailLib) {
                 $wysiwygField->setHelp($template->getHelp());
                 $textareaField->setHelp($template->getHelp());
             }
@@ -61,7 +60,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
         yield $textareaField;
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Template::class;

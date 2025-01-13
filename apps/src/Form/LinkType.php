@@ -3,7 +3,6 @@
 namespace Labstag\Form;
 
 use Labstag\Entity\Link;
-use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -12,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LinkType extends AbstractType
 {
-    #[Override]
+    #[\Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         $formBuilder->add(
@@ -45,7 +44,7 @@ class LinkType extends AbstractType
         unset($options);
     }
 
-    #[Override]
+    #[\Override]
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
         $optionsResolver->setDefaults(

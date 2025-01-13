@@ -10,11 +10,10 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
-use Override;
 
 class PageFixtures extends FixtureLib implements DependentFixtureInterface
 {
-    #[Override]
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -24,12 +23,12 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         ];
     }
 
-    #[Override]
+    #[\Override]
     public function load(ObjectManager $objectManager): void
     {
-        $generator        = $this->setFaker();
-        $data             = $this->data();
-        $this->tags       = $this->getIdentitiesByClass(Tag::class, 'page');
+        $generator = $this->setFaker();
+        $data = $this->data();
+        $this->tags = $this->getIdentitiesByClass(Tag::class, 'page');
         $this->categories = $this->getIdentitiesByClass(Category::class, 'page');
         foreach ($data as $row) {
             $entity = $row['entity'];
@@ -93,7 +92,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
                 'entity' => $sitemap,
                 'parent' => 'home',
             ],
-
         ];
     }
 
@@ -107,7 +105,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
         $date = $generator->unique()->dateTimeBetween('- 8 month', 'now');
         if (isset($data['parent'])) {
-            $parent = $this->getReference('page_'.$data['parent'], Page::class);
+            $parent = $this->getReference('page_' . $data['parent'], Page::class);
             $page->setPage($parent);
             $date = $generator->unique()->dateTimeBetween($page->getCreatedAt(), '+1 week');
         }
@@ -115,7 +113,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $page->setCreatedAt($date);
         $this->setImage($page, 'imgFile');
 
-        $this->setReference('page_'.$page->getType(), $page);
+        $this->setReference('page_' . $page->getType(), $page);
         $objectManager->persist($page);
     }
 

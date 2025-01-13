@@ -2,7 +2,6 @@
 
 namespace Labstag\Form\Front;
 
-use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -12,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContactType extends AbstractType
 {
-    #[Override]
+    #[\Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         unset($options);
@@ -40,13 +39,10 @@ class ContactType extends AbstractType
                 'label'    => 'Content',
             ]
         );
-        $formBuilder->add(
-            'submit',
-            SubmitType::class
-        );
+        $formBuilder->add('submit', SubmitType::class);
     }
 
-    #[Override]
+    #[\Override]
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
         $optionsResolver->setDefaults([]);

@@ -17,7 +17,7 @@ class WorkflowService
         #[Autowire(service: 'workflow.registry')]
         protected Registry $workflowRegistry,
         protected RequestStack $requestStack,
-        protected EntityManagerInterface $entityManager
+        protected EntityManagerInterface $entityManager,
     )
     {
     }
@@ -64,8 +64,8 @@ class WorkflowService
         }
 
         $initialMarking = new Marking();
-        $definition     = $workflow->getDefinition();
-        $initialPlaces  = $definition->getInitialPlaces();
+        $definition = $workflow->getDefinition();
+        $initialPlaces = $definition->getInitialPlaces();
         foreach ($initialPlaces as $initialPlace) {
             $initialMarking->mark($initialPlace);
         }

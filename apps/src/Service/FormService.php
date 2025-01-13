@@ -10,7 +10,7 @@ class FormService
 {
     public function __construct(
         #[AutowireIterator('labstag.forms')]
-        private readonly iterable $forms
+        private readonly iterable $forms,
     )
     {
     }
@@ -22,8 +22,8 @@ class FormService
     {
         $data = [];
         foreach ($this->forms as $form) {
-            $code        = $form->getCode();
-            $name        = $form->getName();
+            $code = $form->getCode();
+            $name = $form->getName();
             $data[$name] = $code;
         }
 

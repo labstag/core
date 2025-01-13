@@ -10,7 +10,6 @@ use Labstag\Replace\UserRolesReplace;
 use Labstag\Repository\TemplateRepository;
 use Labstag\Service\SiteService;
 use Labstag\Service\WorkflowService;
-use Override;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
@@ -31,17 +30,17 @@ abstract class EmailLib extends Email
         protected SiteService $siteService,
         protected WorkflowService $workflowService,
         protected Environment $twigEnvironment,
-        protected TemplateRepository $templateRepository
+        protected TemplateRepository $templateRepository,
     )
     {
         parent::__construct();
     }
 
-    #[Override]
+    #[\Override]
     public function from(Address|string ...$addresses): static
     {
         $configuration = $this->siteService->getConfiguration();
-        $addresses     = $configuration->getNoReply();
+        $addresses = $configuration->getNoReply();
 
         return parent::from($addresses);
     }
@@ -57,7 +56,7 @@ abstract class EmailLib extends Email
 
     public function getHelp(): ?string
     {
-        if ('' === $this->getType()) {
+        if ($this->getType() === '') {
             return null;
         }
 
@@ -84,11 +83,11 @@ abstract class EmailLib extends Email
         return '';
     }
 
-    #[Override]
+    #[\Override]
     public function html($body, string $charset = 'utf-8'): static
     {
         $entity = $this->getEntity();
-        $body   = $this->replace($entity->getHtml());
+        $body = $this->replace($entity->getHtml());
 
         return parent::html($body, $charset);
     }
@@ -108,7 +107,7 @@ abstract class EmailLib extends Email
 
     public function setHtml(): string
     {
-        if ('' === $this->getType()) {
+        if ($this->getType() === '') {
             return null;
         }
 
@@ -117,19 +116,19 @@ abstract class EmailLib extends Email
 
     public function setText(): string
     {
-        if ('' === $this->getType()) {
+        if ($this->getType() === '') {
             return null;
         }
 
         return $this->getTemplate('txt');
     }
 
-    #[Override]
+    #[\Override]
     public function subject(string $subject): static
     {
         $configuration = $this->siteService->getConfiguration();
-        $entity        = $this->getEntity();
-        $subject       = str_replace(
+        $entity = $this->getEntity();
+        $subject = str_replace(
             [
                 '%content_title%',
                 '%site_name%',
@@ -144,11 +143,11 @@ abstract class EmailLib extends Email
         return parent::subject($subject);
     }
 
-    #[Override]
+    #[\Override]
     public function text($body, string $charset = 'utf-8'): static
     {
         $entity = $this->getEntity();
-        $body   = $this->replace($entity->getText());
+        $body = $this->replace($entity->getText());
 
         return parent::text($body, $charset);
     }
@@ -159,13 +158,13 @@ abstract class EmailLib extends Email
             return $this->templates[$type];
         }
 
-        $twig  = '.'.$type.'.twig';
+        $twig = '.' . $type . '.twig';
         $files = [
-            'emails/'.$folder.$twig,
-            'emails/default'.$twig,
+            'emails/' . $folder . $twig,
+            'emails/default' . $twig,
         ];
 
-        $view   = end($files);
+        $view = end($files);
         $loader = $this->twigEnvironment->getLoader();
         foreach ($files as $file) {
             if (!$loader->exists($file)) {
@@ -208,7 +207,7 @@ abstract class EmailLib extends Email
      */
     private function getReplacesClass(): array
     {
-        $data     = [];
+        $data = [];
         $replaces = $this->getReplaces();
         foreach ($replaces as $replace) {
             $data[] = $this->getReplace($replace);
@@ -237,11 +236,7 @@ abstract class EmailLib extends Email
         $codes = $this->getReplacesClass();
         foreach ($codes as $code) {
             $code->setData($this->data);
-            $content = str_replace(
-                '%'.$code->getCode().'%',
-                $code->exec(),
-                $content
-            );
+            $content = str_replace('%' . $code->getCode() . '%', $code->exec(), $content);
         }
 
         return $content;

@@ -8,18 +8,19 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Labstag\Repository\BlockRepository;
-use Override;
-use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
-class Block implements Stringable
+class Block implements \Stringable
 {
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
     private ?bool $enable = null;
 
     #[ORM\Id]
@@ -41,10 +42,14 @@ class Block implements Stringable
      * @var Collection<int, Paragraph>
      */
     #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
     private Collection $paragraphs;
 
-    #[ORM\Column(options: ['default' => 1])]
+    #[ORM\Column(
+        options: ['default' => 1]
+    )]
     private int $position = 1;
 
     #[ORM\Column(length: 255)]
@@ -69,10 +74,10 @@ class Block implements Stringable
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
-        $this->links      = new ArrayCollection();
+        $this->links = new ArrayCollection();
     }
 
-    #[Override]
+    #[\Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();

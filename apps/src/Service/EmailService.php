@@ -9,7 +9,7 @@ class EmailService
 {
     public function __construct(
         #[AutowireIterator('labstag.emails')]
-        private readonly iterable $emails
+        private readonly iterable $emails,
     )
     {
     }

@@ -5,40 +5,36 @@ namespace Labstag\Block;
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Labstag\Lib\BlockLib;
-use Override;
 use Symfony\Component\HttpFoundation\Response;
 
 class BreadcrumbBlock extends BlockLib
 {
-    #[Override]
+    #[\Override]
     public function content(string $view, Block $block): ?Response
     {
         if (!$this->isShow($block)) {
             return null;
         }
 
-        return $this->render(
-            $view,
-            $this->getData($block)
-        );
+        return $this->render($view, $this->getData($block));
     }
 
-    #[Override]
+    #[\Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
-        if ($data['entity'] instanceof Page && 'home' == $data['entity']->getType()) {
+        if ($data['entity'] instanceof Page && $data['entity']->getType() == 'home') {
             $this->setShow($block, false);
 
             return;
         }
 
         $request = $this->requestStack->getCurrentRequest();
-        $slug    = $request->attributes->get('slug');
-        $urls    = $this->setBreadcrumb([], $slug);
-        $urls    = array_reverse($urls);
+        $slug = $request->attributes->get('slug');
+        $urls = $this->setBreadcrumb([], $slug);
+        $urls = array_reverse($urls);
 
-        if (0 == count($urls)) {
+        if (count($urls) == 0) {
             $this->setShow($block, false);
 
             return;
@@ -54,7 +50,7 @@ class BreadcrumbBlock extends BlockLib
         );
     }
 
-    #[Override]
+    #[\Override]
     public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
@@ -62,13 +58,13 @@ class BreadcrumbBlock extends BlockLib
         return [];
     }
 
-    #[Override]
+    #[\Override]
     public function getName(): string
     {
         return 'Breadcrumb';
     }
 
-    #[Override
+    #[\Override
 
     ]
     public function getType(): string
@@ -86,11 +82,11 @@ class BreadcrumbBlock extends BlockLib
             ];
         }
 
-        if ('' === $slug) {
+        if ($slug === '') {
             return $urls;
         }
 
-        if (0 != substr_count($slug, '/')) {
+        if (substr_count($slug, '/') != 0) {
             $slug = substr($slug, 0, strrpos($slug, '/'));
 
             return $this->setBreadcrumb($urls, $slug);

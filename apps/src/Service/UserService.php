@@ -9,7 +9,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserService
 {
     public function __construct(
-        protected UserPasswordHasherInterface $userPasswordHasher
+        protected UserPasswordHasherInterface $userPasswordHasher,
     )
     {
     }
@@ -24,7 +24,7 @@ class UserService
 
     public function getLanguagesForChoices(): array
     {
-        $data      = $this->getLanguages();
+        $data = $this->getLanguages();
         $languages = [];
         foreach ($data as $key) {
             $languages[$key] = Locale::new($key)->getAsDto()->getName();

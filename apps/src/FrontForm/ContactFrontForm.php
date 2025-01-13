@@ -4,12 +4,11 @@ namespace Labstag\FrontForm;
 
 use Labstag\Form\Front\ContactType;
 use Labstag\Lib\FrontFormLib;
-use Override;
 use Symfony\Component\Form\FormInterface;
 
 class ContactFrontForm extends FrontFormLib
 {
-    #[Override]
+    #[\Override]
     public function execute(FormInterface $form, bool $disable): bool
     {
         $state = parent::execute($form, $disable);
@@ -23,7 +22,7 @@ class ContactFrontForm extends FrontFormLib
                 'form' => $form->all(),
             ]
         );
-        if (is_null($email)) {
+        if (!$email instanceof \Labstag\Lib\EmailLib) {
             return false;
         }
 

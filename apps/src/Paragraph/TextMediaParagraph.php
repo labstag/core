@@ -2,23 +2,21 @@
 
 namespace Labstag\Paragraph;
 
-use DOMDocument;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Essence\Essence;
 use Essence\Media;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\ParagraphLib;
-use Override;
 
 class TextMediaParagraph extends ParagraphLib
 {
-    #[Override]
+    #[\Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
         $url = $paragraph->getUrl();
-        if (null === $url || '' === $url || '0' === $url) {
+        if (is_null($url) || $url === '' || $url === '0') {
             $this->setShow($paragraph, false);
 
             return;
@@ -26,7 +24,7 @@ class TextMediaParagraph extends ParagraphLib
 
         $essence = new Essence();
 
-        //Load any url:
+        // Load any url:
         $media = $essence->extract(
             $url,
             [
@@ -40,7 +38,7 @@ class TextMediaParagraph extends ParagraphLib
             return;
         }
 
-        $html   = $media->html;
+        $html = $media->html;
         $oembed = $this->getOEmbedUrl($html);
         if (is_null($oembed)) {
             $this->setShow($paragraph, false);
@@ -59,7 +57,7 @@ class TextMediaParagraph extends ParagraphLib
         );
     }
 
-    #[Override]
+    #[\Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph);
@@ -70,13 +68,13 @@ class TextMediaParagraph extends ParagraphLib
         yield $wysiwygField;
     }
 
-    #[Override]
+    #[\Override]
     public function getName(): string
     {
         return 'Texte media';
     }
 
-    #[Override
+    #[\Override
 
     ]
     public function getType(): string
@@ -84,7 +82,7 @@ class TextMediaParagraph extends ParagraphLib
         return 'text-media';
     }
 
-    #[Override]
+    #[\Override]
     public function useIn(): array
     {
         return $this->useInAll();
@@ -92,11 +90,11 @@ class TextMediaParagraph extends ParagraphLib
 
     private function getOEmbedUrl(string $html): ?string
     {
-        $domDocument = new DOMDocument();
+        $domDocument = new \DOMDocument();
         $domDocument->loadHTML($html);
 
         $domNodeList = $domDocument->getElementsByTagName('iframe');
-        if (0 == count($domNodeList)) {
+        if (count($domNodeList) == 0) {
             return null;
         }
 
@@ -108,18 +106,12 @@ class TextMediaParagraph extends ParagraphLib
     private function parseUrlAndAddAutoplay(string $url): string
     {
         $parse = parse_url($url);
-        parse_str('' !== $parse['query'] && '0' !== $parse['query'] ? $parse['query'] : '', $args);
+        parse_str($parse['query'] !== '' && $parse['query'] !== '0' ? $parse['query'] : '', $args);
         $args['autoplay'] = 1;
 
-        $newArgs        = http_build_query($args);
+        $newArgs = http_build_query($args);
         $parse['query'] = $newArgs;
 
-        return sprintf(
-            '%s://%s%s?%s',
-            $parse['scheme'],
-            $parse['host'],
-            $parse['path'],
-            $parse['query']
-        );
+        return sprintf('%s://%s%s?%s', $parse['scheme'], $parse['host'], $parse['path'], $parse['query']);
     }
 }

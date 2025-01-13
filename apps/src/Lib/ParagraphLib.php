@@ -50,21 +50,21 @@ abstract class ParagraphLib extends AbstractController
         protected SiteService $siteService,
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
-        protected Environment $twigEnvironment
+        protected Environment $twigEnvironment,
     )
     {
     }
 
     public function addFieldImageUpload(string $type, string $pageName): TextField|ImageField
     {
-        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $textField = TextField::new($type.'File');
+        if ($pageName === Crud::PAGE_EDIT || $pageName === Crud::PAGE_NEW) {
+            $textField = TextField::new($type . 'File');
             $textField->setFormType(VichImageType::class);
 
             return $textField;
         }
 
-        $basePath   = $this->fileService->getBasePath(Paragraph::class, $type.'File');
+        $basePath = $this->fileService->getBasePath(Paragraph::class, $type . 'File');
         $imageField = ImageField::new($type);
         $imageField->setBasePath($basePath);
 
@@ -74,7 +74,10 @@ abstract class ParagraphLib extends AbstractController
     public function addFieldIntegerNbr(): IntegerField
     {
         $integerField = IntegerField::new('nbr');
-        $integerField->setFormTypeOption('attr', ['min' => 1]);
+        $integerField->setFormTypeOption(
+            'attr',
+            ['min' => 1]
+        );
 
         return $integerField;
     }
@@ -85,10 +88,7 @@ abstract class ParagraphLib extends AbstractController
             return null;
         }
 
-        return $this->render(
-            $view,
-            $this->getData($paragraph)
-        );
+        return $this->render($view, $this->getData($paragraph));
     }
 
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
@@ -160,11 +160,7 @@ abstract class ParagraphLib extends AbstractController
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        return $this->paginator->paginate(
-            $query,
-            $request->query->getInt('page', 1),
-            $limit
-        );
+        return $this->paginator->paginate($query, $request->query->getInt('page', 1), $limit);
     }
 
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
@@ -179,12 +175,12 @@ abstract class ParagraphLib extends AbstractController
         }
 
         $htmltwig = '.html.twig';
-        $files    = [
-            'paragraphs/'.$folder.'/'.$type.$htmltwig,
-            'paragraphs/'.$folder.'/default'.$htmltwig,
+        $files = [
+            'paragraphs/' . $folder . '/' . $type . $htmltwig,
+            'paragraphs/' . $folder . '/default' . $htmltwig,
         ];
 
-        $view   = end($files);
+        $view = end($files);
         $loader = $this->twigEnvironment->getLoader();
         foreach ($files as $file) {
             if (!$loader->exists($file)) {

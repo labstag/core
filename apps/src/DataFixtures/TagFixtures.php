@@ -6,7 +6,6 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Tag;
 use Labstag\Lib\FixtureLib;
-use Override;
 
 class TagFixtures extends FixtureLib
 {
@@ -15,17 +14,14 @@ class TagFixtures extends FixtureLib
      */
     protected const NUMBER_TAGS = 30;
 
-    #[Override]
+    #[\Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->loadForeach(self::NUMBER_TAGS, 'addTag', $objectManager);
         $objectManager->flush();
     }
 
-    protected function addTag(
-        Generator $generator,
-        ObjectManager $objectManager
-    ): void
+    protected function addTag(Generator $generator, ObjectManager $objectManager): void
     {
         $tab = [
             'chapter',
@@ -34,10 +30,10 @@ class TagFixtures extends FixtureLib
             'post',
         ];
         $code = $tab[array_rand($tab)];
-        $tag  = new Tag();
+        $tag = new Tag();
         $tag->setTitle($generator->unique()->colorName());
         $tag->setType($code);
-        $this->addReference('tag'.$code.'_'.md5(uniqid()), $tag);
+        $this->addReference('tag' . $code . '_' . md5(uniqid()), $tag);
         $objectManager->persist($tag);
     }
 }

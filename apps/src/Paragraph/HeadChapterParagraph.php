@@ -6,11 +6,10 @@ use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
-use Override;
 
 class HeadChapterParagraph extends ParagraphLib
 {
-    #[Override]
+    #[\Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
@@ -30,7 +29,7 @@ class HeadChapterParagraph extends ParagraphLib
         );
     }
 
-    #[Override]
+    #[\Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -38,13 +37,13 @@ class HeadChapterParagraph extends ParagraphLib
         return [];
     }
 
-    #[Override]
+    #[\Override]
     public function getName(): string
     {
         return 'Head chapter';
     }
 
-    #[Override
+    #[\Override
 
     ]
     public function getType(): string
@@ -52,11 +51,9 @@ class HeadChapterParagraph extends ParagraphLib
         return 'head-chapter';
     }
 
-    #[Override]
+    #[\Override]
     public function useIn(): array
     {
-        return [
-            Block::class,
-        ];
+        return [Block::class];
     }
 }

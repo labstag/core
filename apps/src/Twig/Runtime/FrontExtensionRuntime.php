@@ -18,15 +18,15 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         protected SiteService $siteService,
         protected ParameterBagInterface $parameterBag,
         protected FileService $fileService,
-        protected Environment $twigEnvironment
+        protected Environment $twigEnvironment,
     )
     {
     }
 
     public function asset(mixed $entity, string $field): string
     {
-        $mappings         = $this->fileService->getMappingForEntity($entity);
-        $file             = '';
+        $mappings = $this->fileService->getMappingForEntity($entity);
+        $file = '';
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($mappings as $mapping) {
             if ($field != $mapping->getFileNamePropertyName()) {
@@ -34,14 +34,14 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
             }
 
             $basePath = $this->fileService->getBasePath($entity, $mapping->getFilePropertyName());
-            $content  = $propertyAccessor->getValue($entity, $mapping->getFileNamePropertyName());
-            if ('' != $content) {
-                $file = $basePath.'/'.$content;
+            $content = $propertyAccessor->getValue($entity, $mapping->getFileNamePropertyName());
+            if ($content != '') {
+                $file = $basePath . '/' . $content;
             }
         }
 
-        if ('' === $file) {
-            return 'https://picsum.photos/1200/1200?md5='.md5((string) $entity->getId());
+        if ($file === '') {
+            return 'https://picsum.photos/1200/1200?md5=' . md5((string) $entity->getId());
         }
 
         return $file;
@@ -49,7 +49,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 
     public function content(?Response $response): ?string
     {
-        if (is_null($response)) {
+        if (!$response instanceof Response) {
             return null;
         }
 
@@ -82,14 +82,17 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     {
         $slug = $this->siteService->getSlugByEntity($entity);
 
-        return $this->router->generate('front', ['slug' => $slug]);
+        return $this->router->generate(
+            'front',
+            ['slug' => $slug]
+        );
     }
 
     public function title(array $data): string
     {
-        $config    = $this->siteService->getConfiguration();
+        $config = $this->siteService->getConfiguration();
         $siteTitle = $config->getName();
-        $format    = $config->getTitleFormat();
+        $format = $config->getTitleFormat();
         if ($this->siteService->isHome($data)) {
             return (string) $siteTitle;
         }

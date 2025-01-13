@@ -5,8 +5,6 @@ namespace Labstag\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use InvalidArgumentException;
-use Override;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 final class WysiwygField implements FieldInterface
@@ -22,9 +20,9 @@ final class WysiwygField implements FieldInterface
     public const OPTION_STRIP_TAGS = TextField::OPTION_STRIP_TAGS;
 
     /**
-     * @param null|false|string $label
+     * @param false|string|null $label
      */
-    #[Override]
+    #[\Override]
     public static function new(string $propertyName, $label = null): self
     {
         $field = (new self());
@@ -56,7 +54,13 @@ final class WysiwygField implements FieldInterface
     public function setMaxLength(int $length): self
     {
         if ($length < 1) {
-            throw new InvalidArgumentException(sprintf('The argument of the "%s()" method must be 1 or higher (%d given).', __METHOD__, $length));
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The argument of the "%s()" method must be 1 or higher (%d given).',
+                    __METHOD__,
+                    $length
+                )
+            );
         }
 
         $this->setCustomOption(self::OPTION_MAX_LENGTH, $length);
@@ -67,7 +71,13 @@ final class WysiwygField implements FieldInterface
     public function setNumOfRows(int $rows): self
     {
         if ($rows < 1) {
-            throw new InvalidArgumentException(sprintf('The argument of the "%s()" method must be 1 or higher (%d given).', __METHOD__, $rows));
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The argument of the "%s()" method must be 1 or higher (%d given).',
+                    __METHOD__,
+                    $rows
+                )
+            );
         }
 
         $this->setCustomOption(self::OPTION_NUM_OF_ROWS, $rows);

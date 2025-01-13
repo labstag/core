@@ -12,12 +12,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ParagraphCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         if ($this->isIframeEdit()) {
@@ -31,7 +30,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         if ($this->isIframeEdit()) {
@@ -48,7 +47,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
@@ -56,7 +55,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'));
         $choiceField->setChoices($this->paragraphService->getFonds());
         yield $choiceField;
-        $allTypes  = array_flip($this->paragraphService->getAll(null));
+        $allTypes = array_flip($this->paragraphService->getAll(null));
         $textField = TextField::new('type', new TranslatableMessage('Type'))->formatValue(
             static fn ($value) => $allTypes[$value] ?? null
         );
@@ -72,15 +71,21 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         }
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(ChoiceFilter::new('type', new TranslatableMessage('Type'))->setChoices($this->paragraphService->getAll(null)));
+        $filters->add(
+            ChoiceFilter::new('type', new TranslatableMessage('Type'))->setChoices(
+                $this->paragraphService->getAll(
+                    null
+                )
+            )
+        );
 
         return $filters;
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Paragraph::class;
@@ -90,6 +95,6 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     {
         $query = $this->requestStack->getCurrentRequest()->query->all();
 
-        return isset($query['iframe']) && isset($query['crudAction']) && 'edit' === $query['crudAction'];
+        return isset($query['iframe']) && isset($query['crudAction']) && $query['crudAction'] === 'edit';
     }
 }

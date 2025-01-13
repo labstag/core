@@ -8,11 +8,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use Labstag\Entity\Memo;
 use Labstag\Form\Paragraphs\MemoType;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 
 class MemoCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setEditDetail($actions);
@@ -21,7 +20,7 @@ class MemoCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -31,7 +30,7 @@ class MemoCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
@@ -41,10 +40,7 @@ class MemoCrudController extends AbstractCrudControllerLib
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();
         yield $this->addFieldImageUpload('img', $pageName);
-        $fields = array_merge(
-            $this->addFieldParagraphs($pageName, MemoType::class),
-            $this->addFieldRefUser()
-        );
+        $fields = array_merge($this->addFieldParagraphs($pageName, MemoType::class), $this->addFieldRefUser());
         foreach ($fields as $field) {
             yield $field;
         }
@@ -53,7 +49,7 @@ class MemoCrudController extends AbstractCrudControllerLib
         yield $this->addFieldState();
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterRefUser($filters);
@@ -62,7 +58,7 @@ class MemoCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[Override]
+    #[\Override]
     public function createEntity(string $entityFqcn): Memo
     {
         $memo = new $entityFqcn();
@@ -72,7 +68,7 @@ class MemoCrudController extends AbstractCrudControllerLib
         return $memo;
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Memo::class;

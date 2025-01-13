@@ -4,7 +4,6 @@ namespace Labstag\Security;
 
 use Labstag\Entity\User;
 use Labstag\Repository\UserRepository;
-use Override;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,12 +31,12 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function __construct(
         private UserRepository $userRepository,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
     )
     {
     }
 
-    #[Override]
+    #[\Override]
     public function authenticate(Request $request): Passport
     {
         $username = $request->request->get('username', '');
@@ -59,7 +58,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
-    #[Override]
+    #[\Override]
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         unset($token);
@@ -68,7 +67,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         return new RedirectResponse($targetPath ?: $this->urlGenerator->generate('front'));
     }
 
-    #[Override]
+    #[\Override]
     protected function getLoginUrl(Request $request): string
     {
         unset($request);

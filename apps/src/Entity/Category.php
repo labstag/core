@@ -9,13 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\CategoryRepository;
-use Override;
-use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class Category implements Stringable
+class Category implements \Stringable
 {
     use SoftDeleteableEntity;
 
@@ -72,13 +70,13 @@ class Category implements Stringable
     public function __construct()
     {
         $this->children = new ArrayCollection();
-        $this->stories  = new ArrayCollection();
-        $this->movies   = new ArrayCollection();
-        $this->pages    = new ArrayCollection();
-        $this->posts    = new ArrayCollection();
+        $this->stories = new ArrayCollection();
+        $this->movies = new ArrayCollection();
+        $this->pages = new ArrayCollection();
+        $this->posts = new ArrayCollection();
     }
 
-    #[Override]
+    #[\Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();

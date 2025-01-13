@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final class AdminListener
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
     )
     {
     }
@@ -30,27 +30,27 @@ final class AdminListener
 
     private function enableDeleteFile(RequestEvent $requestEvent): bool
     {
-        $request   = $requestEvent->getRequest();
-        $all       = $request->request->all();
+        $request = $requestEvent->getRequest();
+        $all = $request->request->all();
         $serialize = serialize($all);
 
-        return 1 == substr_count($serialize, '{s:6:"delete";s:1:"1";}');
+        return substr_count($serialize, '{s:6:"delete";s:1:"1";}') == 1;
     }
 
     private function isDelete(RequestEvent $requestEvent): bool
     {
-        $request    = $requestEvent->getRequest();
+        $request = $requestEvent->getRequest();
         $crudAction = $request->query->get('crudAction', null);
-        $action     = $request->query->get('action', null);
-        $referer    = $request->headers->get('referer', null);
-        if ('trash' == $action) {
+        $action = $request->query->get('action', null);
+        $referer = $request->headers->get('referer', null);
+        if ($action == 'trash') {
             return true;
         }
 
-        if ('batchDelete' != $crudAction) {
+        if ($crudAction != 'batchDelete') {
             return false;
         }
 
-        return 1 == substr_count((string) $referer, 'action=trash');
+        return substr_count((string) $referer, 'action=trash') == 1;
     }
 }

@@ -4,8 +4,6 @@ namespace Labstag\Command;
 
 use Labstag\Entity\Star;
 use Labstag\Repository\StarRepository;
-use NumberFormatter;
-use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -13,10 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(
-    name: 'labstag:star-add',
-    description: 'Get all star github with npm run star:get',
-)]
+#[AsCommand(name: 'labstag:star-add', description: 'Get all star github with npm run star:get')]
 class StarAddCommand extends Command
 {
 
@@ -25,7 +20,7 @@ class StarAddCommand extends Command
     private int $update = 0;
 
     public function __construct(
-        protected StarRepository $starRepository
+        protected StarRepository $starRepository,
     )
     {
         parent::__construct();
@@ -42,11 +37,11 @@ class StarAddCommand extends Command
         ++$this->update;
     }
 
-    #[Override]
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $file         = getcwd().'/stars.json';
+        $file = getcwd() . '/stars.json';
         if (!is_file($file)) {
             $symfonyStyle->error('File not found');
 
@@ -57,13 +52,13 @@ class StarAddCommand extends Command
 
         $json = file_get_contents($file);
         $data = json_decode($json, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
+        if (json_last_error() !== JSON_ERROR_NONE) {
             $symfonyStyle->error('Json error');
 
             return Command::FAILURE;
         }
 
-        $counter  = 0;
+        $counter = 0;
         $dataJson = [];
         foreach ($data as $page) {
             $dataJson = array_merge($dataJson, $page);
@@ -72,7 +67,7 @@ class StarAddCommand extends Command
         $progressBar = new ProgressBar($output, count($dataJson));
         $progressBar->start();
         foreach ($dataJson as $data) {
-            if (true != $data['private']) {
+            if ($data['private'] != true) {
                 $star = $this->setStar($data);
                 $this->addOrUpdate($star);
                 $this->starRepository->persist($star);
@@ -89,7 +84,7 @@ class StarAddCommand extends Command
         $progressBar->finish();
 
         $symfonyStyle->success('All star added');
-        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
+        $numberFormatter = new \NumberFormatter('fr_FR', \NumberFormatter::DECIMAL);
         $symfonyStyle->success(
             sprintf(
                 'Added: %d, Updated: %d',

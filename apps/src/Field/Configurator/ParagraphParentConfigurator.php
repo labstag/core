@@ -20,51 +20,53 @@ use EasyCorp\Bundle\EasyAdminBundle\Form\Type\CrudAutocompleteType;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Field\ParagraphParentField;
 use Labstag\Service\ParagraphService;
-use Override;
-use RuntimeException;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Traversable;
 
-/**
- * @author Javier Eguiluz <javier.eguiluz@gmail.com>
- */
 final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 {
     public function __construct(
         private EntityFactory $entityFactory,
         private AdminUrlGenerator $adminUrlGenerator,
         private TranslatorInterface $translator,
-        private ParagraphService $paragraphService
+        private ParagraphService $paragraphService,
     ) {
     }
 
-    #[Override]
+    #[\Override]
     public function configure(FieldDto $fieldDto, EntityDto $entityDto, AdminContext $adminContext): void
     {
         $instance = $entityDto->getInstance();
-        $object   = $this->paragraphService->getEntityParent($instance);
+        $object = $this->paragraphService->getEntityParent($instance);
         if (is_null($object) || is_null($object->value) || is_null($object->name)) {
             return;
         }
 
         $fieldDto->setValue($object->value);
         $fieldDto->setProperty($object->name);
-        $fieldDto->getDoctrineMetadata()->set('targetEntity', ClassUtils::getClass($object->value));
+        $fieldDto->getDoctrineMetadata()
+            ->set('targetEntity', ClassUtils::getClass($object->value));
         if (!$entityDto->isAssociation($object->name)) {
-            throw new RuntimeException(sprintf('The "%s" field is not a Doctrine association, so it cannot be used as an association field.', $object->name));
+            throw new \RuntimeException(sprintf(
+                'The "%s" field is not a Doctrine association, so it cannot be used as an association field.',
+                $object->name
+            ));
         }
 
-        $targetEntityFqcn = $fieldDto->getDoctrineMetadata()->get('targetEntity');
+        $targetEntityFqcn = $fieldDto->getDoctrineMetadata()
+            ->get('targetEntity');
         // the target CRUD controller can be NULL; in that case, field value doesn't link to the related entity
-        $targetCrudControllerFqcn = $fieldDto->getCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER) ?? $adminContext->getCrudControllers()->findCrudFqcnByEntityFqcn($targetEntityFqcn);
+        $targetCrudControllerFqcn = $fieldDto->getCustomOption(
+            ParagraphParentField::OPTION_CRUD_CONTROLLER
+        ) ?? $adminContext->getCrudControllers()
+            ->findCrudFqcnByEntityFqcn($targetEntityFqcn);
         $fieldDto->setCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER, $targetCrudControllerFqcn);
         $fieldDto = $this->setFormTypeOption($fieldDto);
 
         // check for embedded associations
         $this->configureTest($fieldDto, $entityDto, $object->name);
-        if (true === $fieldDto->getCustomOption(ParagraphParentField::OPTION_AUTOCOMPLETE)) {
+        if ($fieldDto->getCustomOption(ParagraphParentField::OPTION_AUTOCOMPLETE) === true) {
             $this->configureAutocomplete($fieldDto, $adminContext, $object);
 
             return;
@@ -72,11 +74,10 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
         $fieldDto->setFormTypeOptionIfNotSet(
             'query_builder',
-            static function (EntityRepository $entityRepository) use ($fieldDto): QueryBuilder
-            {
+            static function (EntityRepository $entityRepository) use ($fieldDto): QueryBuilder {
                 // TODO: should this use `createIndexQueryBuilder` instead, so we get the default ordering etc.?
                 // it would then be identical to the one used in autocomplete action, but it is a bit complex getting it in here
-                $queryBuilder         = $entityRepository->createQueryBuilder('entity');
+                $queryBuilder = $entityRepository->createQueryBuilder('entity');
                 $queryBuilderCallable = $fieldDto->getCustomOption(ParagraphParentField::OPTION_QUERY_BUILDER_CALLABLE);
                 if ($queryBuilderCallable) {
                     $queryBuilderCallable($queryBuilder);
@@ -87,45 +88,52 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         );
     }
 
-    #[Override]
+    #[\Override]
     public function supports(FieldDto $fieldDto, EntityDto $entityDto): bool
     {
         unset($entityDto);
 
-        return ParagraphParentField::class === $fieldDto->getFieldFqcn();
+        return $fieldDto->getFieldFqcn() === ParagraphParentField::class;
     }
 
     private function configureAutocomplete(FieldDto $fieldDto, AdminContext $adminContext, object $object): void
     {
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER);
-        if (null === $targetCrudControllerFqcn) {
+        if (is_null($targetCrudControllerFqcn)) {
             $message = sprintf(
                 'The "%s" field cannot be autocompleted because it doesn\'t define the related CRUD controller FQCN with the "setCrudController()" method.',
                 $fieldDto->getProperty()
             );
 
-            throw new RuntimeException($message);
+            throw new \RuntimeException($message);
         }
 
         $fieldDto->setFormType(CrudAutocompleteType::class);
-        $adminUrlGenerator = $this->adminUrlGenerator->unsetAll()->set('page', 1);
+        $adminUrlGenerator = $this->adminUrlGenerator->unsetAll()
+            ->set('page', 1);
         // The autocomplete should always start on the first page
         $adminUrlGenerator->setController($fieldDto->getCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER));
-        $adminUrlGenerator->setAction('autocomplete')->set(
-            ParagraphParentField::PARAM_AUTOCOMPLETE_CONTEXT,
-            [
-                EA::CRUD_CONTROLLER_FQCN => $adminContext->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
-                'propertyName'           => $object->name,
-                'originatingPage'        => $adminContext->getCrud()->getCurrentPage(),
-            ]
-        );
+        $adminUrlGenerator->setAction('autocomplete')
+            ->set(
+                ParagraphParentField::PARAM_AUTOCOMPLETE_CONTEXT,
+                [
+                    EA::CRUD_CONTROLLER_FQCN => $adminContext->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
+                    'propertyName' => $object->name,
+                    'originatingPage' => $adminContext->getCrud()
+                        ->getCurrentPage(),
+                ]
+            );
         $adminUrlGenerator->generateUrl();
 
         $fieldDto->setFormTypeOption('attr.data-ea-autocomplete-endpoint-url', $adminUrlGenerator);
     }
 
-    private function configureFirst(FieldDto $fieldDto, EntityDto $entityDto, $propertyNameParts, string $propertyName): void
-    {
+    private function configureFirst(
+        FieldDto $fieldDto,
+        EntityDto $entityDto,
+        $propertyNameParts,
+        string $propertyName,
+    ): void {
         // prepare starting class for association
         $targetEntityFqcn = $entityDto->getPropertyMetadata($propertyNameParts[0])->get('targetEntity');
         array_shift($propertyNameParts);
@@ -133,7 +141,11 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
         foreach ($propertyNameParts as $propertyNamePart) {
             if (!$metadata->hasAssociation($propertyNamePart)) {
-                throw new RuntimeException(sprintf('There is no association for the class "%s" with name "%s"', $targetEntityFqcn, $propertyNamePart));
+                throw new \RuntimeException(sprintf(
+                    'There is no association for the class "%s" with name "%s"',
+                    $targetEntityFqcn,
+                    $propertyNamePart
+                ));
             }
 
             // overwrite next class from association
@@ -143,13 +155,16 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
             $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
         }
 
-        $propertyAccessor         = new PropertyAccessor();
+        $propertyAccessor = new PropertyAccessor();
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER);
 
         $fieldDto->setFormTypeOptionIfNotSet('class', $targetEntityFqcn);
 
         try {
-            $relatedEntityId  = $propertyAccessor->getValue($entityDto->getInstance(), $propertyName.'.'.$metadata->getIdentifierFieldNames()[0]);
+            $relatedEntityId = $propertyAccessor->getValue(
+                $entityDto->getInstance(),
+                $propertyName . '.' . $metadata->getIdentifierFieldNames()[0]
+            );
             $relatedEntityDto = $this->entityFactory->create($targetEntityFqcn, $relatedEntityId);
 
             $fieldDto->setCustomOption(
@@ -197,7 +212,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         // @var PersistentCollection $collection
         $fieldDto->setFormTypeOptionIfNotSet('class', $fieldDto->getDoctrineMetadata()->get('targetEntity'));
 
-        if (null === $fieldDto->getTextAlign()) {
+        if (is_null($fieldDto->getTextAlign())) {
             $fieldDto->setTextAlign(TextAlign::RIGHT);
         }
 
@@ -208,24 +223,33 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
     {
         $fieldDto->setCustomOption(ParagraphParentField::OPTION_DOCTRINE_ASSOCIATION_TYPE, 'toOne');
 
-        if (false === $fieldDto->getFormTypeOption('required')) {
-            $fieldDto->setFormTypeOptionIfNotSet('attr.placeholder', $this->translator->trans('label.form.empty_value', [], 'EasyAdminBundle'));
+        if ($fieldDto->getFormTypeOption('required') === false) {
+            $fieldDto->setFormTypeOptionIfNotSet(
+                'attr.placeholder',
+                $this->translator->trans('label.form.empty_value', [], 'EasyAdminBundle')
+            );
         }
 
-        $targetEntityFqcn         = $fieldDto->getDoctrineMetadata()->get('targetEntity');
+        $targetEntityFqcn = $fieldDto->getDoctrineMetadata()
+            ->get('targetEntity');
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER);
 
-        $targetEntityDto = null === $fieldDto->getValue() ? $this->entityFactory->create($targetEntityFqcn) : $this->entityFactory->createForEntityInstance($fieldDto->getValue());
+        $targetEntityDto = is_null($fieldDto->getValue()) ? $this->entityFactory->create(
+            $targetEntityFqcn
+        ) : $this->entityFactory->createForEntityInstance($fieldDto->getValue());
         $fieldDto->setFormTypeOptionIfNotSet('class', $targetEntityDto->getFqcn());
 
-        $fieldDto->setCustomOption(ParagraphParentField::OPTION_RELATED_URL, $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto));
+        $fieldDto->setCustomOption(
+            ParagraphParentField::OPTION_RELATED_URL,
+            $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto)
+        );
 
         $fieldDto->setFormattedValue($this->formatAsString($fieldDto->getValue(), $targetEntityDto));
     }
 
     private function countNumElements($collection): int
     {
-        if (null === $collection) {
+        if (is_null($collection)) {
             return 0;
         }
 
@@ -233,7 +257,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
             return \count($collection);
         }
 
-        if ($collection instanceof Traversable) {
+        if ($collection instanceof \Traversable) {
             return iterator_count($collection);
         }
 
@@ -242,7 +266,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
     private function formatAsString($entityInstance, EntityDto $entityDto): ?string
     {
-        if (null === $entityInstance) {
+        if (is_null($entityInstance)) {
             return null;
         }
 
@@ -251,7 +275,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         }
 
         $primaryKeyValue = $entityDto->getPrimaryKeyValue();
-        if (null !== $primaryKeyValue) {
+        if (!is_null($primaryKeyValue)) {
             return sprintf('%s #%s', $entityDto->getName(), $primaryKeyValue);
         }
 
@@ -260,7 +284,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
     private function generateLinkToAssociatedEntity(?string $crudController, EntityDto $entityDto): ?string
     {
-        if (null === $crudController) {
+        if (is_null($crudController)) {
             return null;
         }
 
@@ -276,7 +300,9 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
     private function setFormTypeOption(FieldDto $fieldDto): FieldDto
     {
-        if (ParagraphParentField::WIDGET_AUTOCOMPLETE === $fieldDto->getCustomOption(ParagraphParentField::OPTION_WIDGET)) {
+        if ($fieldDto->getCustomOption(
+            ParagraphParentField::OPTION_WIDGET
+        ) === ParagraphParentField::WIDGET_AUTOCOMPLETE) {
             $fieldDto->setFormTypeOption('attr.data-ea-widget', 'ea-autocomplete');
         }
 

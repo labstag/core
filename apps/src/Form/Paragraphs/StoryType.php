@@ -4,12 +4,11 @@ namespace Labstag\Form\Paragraphs;
 
 use Labstag\Entity\Story;
 use Labstag\Lib\ParagraphAbstractTypeLib;
-use Override;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class StoryType extends ParagraphAbstractTypeLib
 {
-    #[Override]
+    #[\Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         $this->setEntity(Story::class);

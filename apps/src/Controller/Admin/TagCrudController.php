@@ -6,11 +6,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use Labstag\Entity\Tag;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 
 abstract class TagCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
@@ -18,7 +17,7 @@ abstract class TagCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -28,7 +27,7 @@ abstract class TagCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
@@ -40,7 +39,7 @@ abstract class TagCrudController extends AbstractCrudControllerLib
         ];
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Tag::class;

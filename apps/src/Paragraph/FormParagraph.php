@@ -5,12 +5,11 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
-use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class FormParagraph extends ParagraphLib
 {
-    #[Override]
+    #[\Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         $formCode = $paragraph->getForm();
@@ -21,15 +20,13 @@ class FormParagraph extends ParagraphLib
         }
 
         $formClass = $this->formService->get($formCode);
-        if (is_null($formClass)) {
+        if (!$formClass instanceof \Labstag\Lib\FrontFormLib) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
-        $form = $this->createForm(
-            $formClass->getForm()
-        );
+        $form = $this->createForm($formClass->getForm());
 
         $execute = $this->formService->execute($formCode, $form, $disable);
         $this->setData(
@@ -43,7 +40,7 @@ class FormParagraph extends ParagraphLib
         );
     }
 
-    #[Override]
+    #[\Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -53,13 +50,13 @@ class FormParagraph extends ParagraphLib
         yield $choiceField;
     }
 
-    #[Override]
+    #[\Override]
     public function getName(): string
     {
         return 'Formulaire';
     }
 
-    #[Override
+    #[\Override
 
     ]
     public function getType(): string
@@ -67,7 +64,7 @@ class FormParagraph extends ParagraphLib
         return 'form';
     }
 
-    #[Override]
+    #[\Override]
     public function useIn(): array
     {
         return $this->useInAll();

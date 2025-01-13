@@ -10,14 +10,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\User;
-use Override;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ProfilCrudController extends UserCrudController
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
@@ -26,7 +25,7 @@ class ProfilCrudController extends UserCrudController
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setPageTitle(Crud::PAGE_EDIT, 'Mon profil');
@@ -36,7 +35,7 @@ class ProfilCrudController extends UserCrudController
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('username', new TranslatableMessage('Username'));
@@ -57,7 +56,7 @@ class ProfilCrudController extends UserCrudController
                 'mapped'         => false,
             ]
         );
-        $textField->setRequired(Crud::PAGE_NEW === $pageName);
+        $textField->setRequired($pageName === Crud::PAGE_NEW);
         $textField->onlyOnForms();
         yield $textField;
         $choiceField = ChoiceField::new('language', new TranslatableMessage('Language'));
@@ -83,7 +82,7 @@ class ProfilCrudController extends UserCrudController
         }
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return User::class;

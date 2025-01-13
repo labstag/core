@@ -3,7 +3,6 @@
 namespace Labstag\Service;
 
 use Labstag\Entity\Block;
-use stdClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -15,15 +14,12 @@ class BlockService
         #[AutowireIterator('labstag.blocks')]
         private readonly iterable $blocks,
         protected AuthorizationCheckerInterface $authorizationChecker,
-        protected TokenStorageInterface $tokenStorage
+        protected TokenStorageInterface $tokenStorage,
     )
     {
     }
 
-    public function content(
-        string $view,
-        Block $block
-    ): ?Response
+    public function content(string $view, Block $block): ?Response
     {
         $content = null;
         foreach ($this->blocks as $row) {
@@ -66,8 +62,8 @@ class BlockService
         $blocks = [];
         foreach ($this->blocks as $block) {
             $inUse = $block->useIn();
-            $type  = $block->getType();
-            $name  = $block->getName();
+            $type = $block->getType();
+            $name = $block->getName();
             if ((in_array($entity, $inUse) && $block->isEnable()) || is_null($entity)) {
                 $blocks[$name] = $type;
             }
@@ -76,9 +72,9 @@ class BlockService
         return $blocks;
     }
 
-    public function getContents(array $blocks): stdClass
+    public function getContents(array $blocks): \stdClass
     {
-        $data         = new stdClass();
+        $data = new \stdClass();
         $data->header = [];
         $data->footer = [];
         foreach ($blocks as $block) {
@@ -97,15 +93,9 @@ class BlockService
             }
         }
 
-        $data->header = array_filter(
-            $data->header,
-            fn ($row): bool => !is_null($row)
-        );
+        $data->header = array_filter($data->header, fn ($row): bool => !is_null($row));
 
-        $data->footer = array_filter(
-            $data->footer,
-            fn ($row): bool => !is_null($row)
-        );
+        $data->footer = array_filter($data->footer, fn ($row): bool => !is_null($row));
 
         return $data;
     }
@@ -116,7 +106,7 @@ class BlockService
             return [];
         }
 
-        $type   = $block->getType();
+        $type = $block->getType();
         $fields = [];
         foreach ($this->blocks as $row) {
             if ($row->getType() == $type) {
@@ -129,9 +119,7 @@ class BlockService
         return $fields;
     }
 
-    public function getFooter(
-        Block $block
-    ): mixed
+    public function getFooter(Block $block): mixed
     {
         $footer = null;
         foreach ($this->blocks as $row) {
@@ -147,9 +135,7 @@ class BlockService
         return $footer;
     }
 
-    public function getHeader(
-        Block $block
-    ): mixed
+    public function getHeader(Block $block): mixed
     {
         $header = null;
         foreach ($this->blocks as $row) {
@@ -188,13 +174,9 @@ class BlockService
         ];
     }
 
-    public function setContents(
-        ?Block $block,
-        array $data,
-        bool $disable
-    ): void
+    public function setContents(?Block $block, array $data, bool $disable): void
     {
-        if (is_null($block)) {
+        if (!$block instanceof Block) {
             return;
         }
 
@@ -212,7 +194,7 @@ class BlockService
     protected function acces(Block $block): bool
     {
         $roles = $block->getRoles();
-        if (is_null($roles) || 0 == count($roles)) {
+        if (is_null($roles) || count($roles) == 0) {
             return true;
         }
 

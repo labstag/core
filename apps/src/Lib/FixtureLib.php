@@ -4,7 +4,6 @@ namespace Labstag\Lib;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Exception;
 use Faker\Factory;
 use Faker\Generator;
 use Faker\Provider\Youtube;
@@ -35,19 +34,19 @@ abstract class FixtureLib extends Fixture
         protected WorkflowService $workflowService,
         protected UserService $userService,
         protected FileService $fileService,
-        protected ParagraphService $paragraphService
+        protected ParagraphService $paragraphService,
     )
     {
     }
 
     protected function addCategoryToEntity(object $entity): void
     {
-        if (0 != count($this->categories)) {
+        if (count($this->categories) != 0) {
             return;
         }
 
         $max = random_int(0, count($this->categories));
-        if (0 == $max) {
+        if ($max == 0) {
             return;
         }
 
@@ -72,12 +71,12 @@ abstract class FixtureLib extends Fixture
 
     protected function addTagToEntity(object $entity): void
     {
-        if (0 != count($this->tags)) {
+        if (count($this->tags) != 0) {
             return;
         }
 
         $max = random_int(0, count($this->tags));
-        if (0 == $max) {
+        if ($max == 0) {
             return;
         }
 
@@ -96,27 +95,19 @@ abstract class FixtureLib extends Fixture
 
         $data = $data[$class] ?? [];
 
-        if (null !== $id) {
-            return array_filter(
-                $data,
-                fn ($key): bool => str_contains($key, $id),
-                ARRAY_FILTER_USE_KEY
-            );
+        if (!is_null($id)) {
+            return array_filter($data, fn ($key): bool => str_contains($key, $id), ARRAY_FILTER_USE_KEY);
         }
 
         return $data;
     }
 
-    protected function loadForeach(
-        int $number,
-        string $method,
-        ObjectManager $objectManager
-    ): void
+    protected function loadForeach(int $number, string $method, ObjectManager $objectManager): void
     {
-        $generator    = $this->setFaker();
+        $generator = $this->setFaker();
         $this->enable = random_int(1, $number);
         for ($index = 0; $index < $number; ++$index) {
-            call_user_func([$this, $method], $generator, $objectManager, ($index + 1));
+            call_user_func([$this, $method], $generator, $objectManager, $index + 1);
         }
     }
 
@@ -133,10 +124,7 @@ abstract class FixtureLib extends Fixture
     {
         try {
             $generator = $this->setFaker();
-            $filePath  = $generator->image(
-                width: 800,
-                height: 600
-            );
+            $filePath = $generator->image(width: 800, height: 600);
             if (is_bool($filePath)) {
                 return;
             }
@@ -150,7 +138,7 @@ abstract class FixtureLib extends Fixture
 
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $propertyAccessor->setValue($entity, $type, $uploadedFile);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             echo $exception->getMessage();
         }
     }

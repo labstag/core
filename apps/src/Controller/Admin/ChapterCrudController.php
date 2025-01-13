@@ -13,12 +13,11 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\User;
 use Labstag\Form\Paragraphs\ChapterType;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ChapterCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions);
@@ -28,7 +27,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -38,7 +37,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
@@ -51,10 +50,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         yield $this->addFieldRefStory();
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('chapter');
-        $fields = array_merge(
-            $this->addFieldParagraphs($pageName, ChapterType::class),
-            $this->addFieldMetas()
-        );
+        $fields = array_merge($this->addFieldParagraphs($pageName, ChapterType::class), $this->addFieldMetas());
         foreach ($fields as $field) {
             yield $field;
         }
@@ -63,7 +59,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         yield $this->addFieldState();
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
@@ -72,7 +68,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[Override]
+    #[\Override]
     public function createEntity(string $entityFqcn): Chapter
     {
         $chapter = new $entityFqcn();
@@ -83,7 +79,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         return $chapter;
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Chapter::class;
@@ -92,14 +88,13 @@ class ChapterCrudController extends AbstractCrudControllerLib
     private function addFieldRefStory(): AssociationField
     {
         $associationField = AssociationField::new('refstory')->autocomplete();
-        $user             = $this->getUser();
-        $roles            = $user->getRoles();
+        $user = $this->getUser();
+        $roles = $user->getRoles();
         if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
             /** @var User $user */
             $idUser = $user->getId();
             $associationField->setQueryBuilder(
-                function (QueryBuilder $queryBuilder) use ($idUser): void
-                {
+                function (QueryBuilder $queryBuilder) use ($idUser): void {
                     $queryBuilder->leftjoin('entity.refuser', 'refuser');
                     $queryBuilder->andWhere('refuser.id = :id');
                     $queryBuilder->setParameter('id', $idUser);

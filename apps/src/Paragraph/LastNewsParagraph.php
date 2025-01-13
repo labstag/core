@@ -7,20 +7,19 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\PostRepository;
-use Override;
 
 class LastNewsParagraph extends ParagraphLib
 {
-    #[Override]
+    #[\Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
         /** @var PostRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Post::class);
-        $nbr                        = $paragraph->getNbr();
-        $news                       = $serviceEntityRepositoryLib->findLastByNbr($nbr);
-        $total                      = $serviceEntityRepositoryLib->findTotalEnable();
-        $listing                    = $this->siteService->getPageByType('post');
+        $nbr = $paragraph->getNbr();
+        $news = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        $total = $serviceEntityRepositoryLib->findTotalEnable();
+        $listing = $this->siteService->getPageByType('post');
         $this->setData(
             $paragraph,
             [
@@ -33,7 +32,7 @@ class LastNewsParagraph extends ParagraphLib
         );
     }
 
-    #[Override]
+    #[\Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -42,19 +41,19 @@ class LastNewsParagraph extends ParagraphLib
         yield $this->addFieldIntegerNbr();
     }
 
-    #[Override]
+    #[\Override]
     public function getName(): string
     {
         return 'Last news';
     }
 
-    #[Override]
+    #[\Override]
     public function getType(): string
     {
         return 'last-news';
     }
 
-    #[Override]
+    #[\Override]
     public function useIn(): array
     {
         return $this->useInAll();

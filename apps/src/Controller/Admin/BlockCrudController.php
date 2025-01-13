@@ -19,12 +19,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Exception;
 use Labstag\Entity\Block;
 use Labstag\Form\Paragraphs\BlockType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\BlockRepository;
-use Override;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,7 +33,7 @@ class BlockCrudController extends AbstractCrudControllerLib
 {
     public function addFieldParagraphsForBlock(?Block $block, string $pageName, string $form): array
     {
-        if ('edit' === $pageName && $block instanceof Block) {
+        if ($pageName === 'edit' && $block instanceof Block) {
             if (in_array($block->getType(), ['paragraphs', 'content'])) {
                 return parent::addFieldParagraphs($pageName, $form);
             }
@@ -46,7 +44,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return parent::addFieldParagraphs($pageName, $form);
     }
 
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $action = Action::new('positionBlock', new TranslatableMessage('Change Position'), 'fas fa-arrows-alt');
@@ -59,7 +57,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -69,14 +67,16 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield $this->addFieldTitle();
-        yield ChoiceField::new('region', new TranslatableMessage('Region'))->setChoices($this->blockService->getRegions());
+        yield ChoiceField::new('region', new TranslatableMessage('Region'))->setChoices(
+            $this->blockService->getRegions()
+        );
         $numberField = NumberField::new('position', new TranslatableMessage('Position'))->hideOnForm();
         yield $numberField;
         $allTypes = array_flip($this->blockService->getAll(null));
@@ -113,7 +113,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         yield $requestPathField;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
@@ -121,40 +121,41 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[Override]
+    #[\Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
         FieldCollection $fieldCollection,
-        FilterCollection $filterCollection
+        FilterCollection $filterCollection,
     ): QueryBuilder
     {
         unset($searchDto, $entityDto, $fieldCollection, $filterCollection);
         $serviceEntityRepositoryLib = $this->getRepository();
-        $methods                    = get_class_methods($serviceEntityRepositoryLib);
-        if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array('findAllOrderedByRegion', $methods)) {
-            throw new Exception('findAllOrderedByRegion not found');
+        $methods = get_class_methods($serviceEntityRepositoryLib);
+        if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array(
+            'findAllOrderedByRegion',
+            $methods
+        )
+        ) {
+            throw new \Exception('findAllOrderedByRegion not found');
         }
 
         return $serviceEntityRepositoryLib->findAllOrderedByRegion();
     }
 
-    #[Override]
+    #[\Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
-        AdminContext $adminContext
+        AdminContext $adminContext,
     ): FormBuilderInterface
     {
         $formBuilder = parent::createNewFormBuilder($entityDto, $keyValueStore, $adminContext);
 
-        return $formBuilder->addEventListener(
-            FormEvents::SUBMIT,
-            $this->setPosition()
-        );
+        return $formBuilder->addEventListener(FormEvents::SUBMIT, $this->setPosition());
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Block::class;
@@ -162,16 +163,20 @@ class BlockCrudController extends AbstractCrudControllerLib
 
     public function positionBlock(AdminContext $adminContext): RedirectResponse|Response
     {
-        $request                    = $adminContext->getRequest();
+        $request = $adminContext->getRequest();
         $serviceEntityRepositoryLib = $this->getRepository();
-        $methods                    = get_class_methods($serviceEntityRepositoryLib);
-        if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array('findAllOrderedByRegion', $methods)) {
-            throw new Exception('findAllOrderedByRegion not found');
+        $methods = get_class_methods($serviceEntityRepositoryLib);
+        if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array(
+            'findAllOrderedByRegion',
+            $methods
+        )
+        ) {
+            throw new \Exception('findAllOrderedByRegion not found');
         }
 
         $queryBuilder = $serviceEntityRepositoryLib->findAllOrderedByRegion();
-        $blocks       = $queryBuilder->getQuery()->getResult();
-        $generator    = $this->container->get(AdminUrlGenerator::class);
+        $blocks = $queryBuilder->getQuery()->getResult();
+        $generator = $this->container->get(AdminUrlGenerator::class);
 
         if ($request->isMethod('POST')) {
             $allTypes = $this->blockService->getRegions();
@@ -208,7 +213,7 @@ class BlockCrudController extends AbstractCrudControllerLib
 
     private function getChoiceType(string $pageName, array $allTypes): ChoiceField|TextField
     {
-        if ('new' === $pageName) {
+        if ($pageName === 'new') {
             $field = ChoiceField::new('type', new TranslatableMessage('Type'));
             $field->setChoices(array_flip($allTypes));
 
@@ -216,9 +221,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         }
 
         $field = TextField::new('type', new TranslatableMessage('Type'));
-        $field->formatValue(
-            static fn ($value) => $allTypes[$value] ?? null
-        );
+        $field->formatValue(static fn ($value) => $allTypes[$value] ?? null);
         $field->setDisabled(true);
 
         return $field;
@@ -226,22 +229,25 @@ class BlockCrudController extends AbstractCrudControllerLib
 
     private function setPosition(): callable
     {
-        return function ($event): void
-        {
+        return function ($event): void {
             $form = $event->getForm();
             if (!$form->isSubmitted()) {
                 return;
             }
 
-            $data                       = $event->getData();
+            $data = $event->getData();
             $serviceEntityRepositoryLib = $this->getRepository();
-            $region                     = $form->get('region')->getData();
-            $methods                    = get_class_methods($serviceEntityRepositoryLib);
-            if (is_null($region) || !$serviceEntityRepositoryLib instanceof BlockRepository || in_array('getMaxPositionByRegion', $methods)) {
+            $region = $form->get('region')->getData();
+            $methods = get_class_methods($serviceEntityRepositoryLib);
+            if (is_null($region) || !$serviceEntityRepositoryLib instanceof BlockRepository || in_array(
+                'getMaxPositionByRegion',
+                $methods
+            )
+            ) {
                 return;
             }
 
-            $methods     = get_class_methods($serviceEntityRepositoryLib);
+            $methods = get_class_methods($serviceEntityRepositoryLib);
             $maxPosition = $serviceEntityRepositoryLib->getMaxPositionByRegion($region);
             if (is_null($maxPosition)) {
                 $maxPosition = 0;

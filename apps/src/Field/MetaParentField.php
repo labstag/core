@@ -4,10 +4,8 @@
 
 namespace Labstag\Field;
 
-use Closure;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
-use Override;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 final class MetaParentField implements FieldInterface
@@ -48,7 +46,7 @@ final class MetaParentField implements FieldInterface
         return $this;
     }
 
-    #[Override]
+    #[\Override]
     public static function new(string $propertyName, $label = null): self
     {
         $field = (new self());
@@ -58,12 +56,10 @@ final class MetaParentField implements FieldInterface
         $field->setTemplatePath('admin/field/parent-meta.html.twig');
         $field->setFormType(EntityType::class);
         $field->addCssClass('field-association');
-        $field->setFormTypeOptions(
-            [
-                'mapped'   => false,
-                'required' => false,
-            ]
-        );
+        $field->setFormTypeOptions([
+            'mapped' => false,
+            'required' => false,
+        ]);
         $field->setDefaultColumns('col-md-7 col-xxl-6');
         $field->setCustomOption(self::OPTION_AUTOCOMPLETE, false);
         $field->setCustomOption(self::OPTION_CRUD_CONTROLLER, null);
@@ -80,10 +76,7 @@ final class MetaParentField implements FieldInterface
      */
     public function renderAsNativeWidget(bool $asNative = true): self
     {
-        $this->setCustomOption(
-            self::OPTION_WIDGET,
-            $asNative ? self::WIDGET_NATIVE : self::WIDGET_AUTOCOMPLETE
-        );
+        $this->setCustomOption(self::OPTION_WIDGET, $asNative ? self::WIDGET_NATIVE : self::WIDGET_AUTOCOMPLETE);
 
         return $this;
     }
@@ -95,7 +88,7 @@ final class MetaParentField implements FieldInterface
         return $this;
     }
 
-    public function setQueryBuilder(Closure $queryBuilderCallable): self
+    public function setQueryBuilder(\Closure $queryBuilderCallable): self
     {
         $this->setCustomOption(self::OPTION_QUERY_BUILDER_CALLABLE, $queryBuilderCallable);
 

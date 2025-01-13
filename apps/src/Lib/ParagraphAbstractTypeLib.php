@@ -2,10 +2,8 @@
 
 namespace Labstag\Lib;
 
-use Closure;
 use Labstag\Entity\Paragraph;
 use Labstag\Service\ParagraphService;
-use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormTypeInterface;
@@ -18,12 +16,12 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
     protected string $entity;
 
     public function __construct(
-        protected ParagraphService $paragraphService
+        protected ParagraphService $paragraphService,
     )
     {
     }
 
-    #[Override]
+    #[\Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         $prototypes = $this->buildPrototypes($formBuilder, $options);
@@ -31,7 +29,7 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
         $formBuilder->add('type');
     }
 
-    #[Override]
+    #[\Override]
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
         $optionsResolver->setDefaults(
@@ -58,7 +56,12 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
         $this->entity = $entity;
     }
 
-    protected function buildPrototype(FormBuilderInterface $formBuilder, string $name, FormTypeInterface|string $type, array $options): FormBuilderInterface
+    protected function buildPrototype(
+        FormBuilderInterface $formBuilder,
+        string $name,
+        FormTypeInterface|string $type,
+        array $options,
+    ): FormBuilderInterface
     {
         return $formBuilder->create($name, $type, $options);
     }
@@ -66,10 +69,13 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
     protected function buildPrototypes(FormBuilderInterface $formBuilder, array $options): array
     {
         $prototypes = [];
-        $types      = $this->paragraphService->getAll($this->entity);
+        $types = $this->paragraphService->getAll($this->entity);
         foreach ($types as $key => $type) {
             $typeOptions = $options['options'];
-            $typeOptions = array_replace($typeOptions, ['block_prefix' => '_paragraph']);
+            $typeOptions = array_replace(
+                $typeOptions,
+                ['block_prefix' => '_paragraph']
+            );
             $typeOptions = array_replace(
                 $typeOptions,
                 [
@@ -77,12 +83,7 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
                 ]
             );
 
-            $prototype = $this->buildPrototype(
-                $formBuilder,
-                $options['prototype_name'],
-                $type,
-                $typeOptions
-            );
+            $prototype = $this->buildPrototype($formBuilder, $options['prototype_name'], $type, $typeOptions);
 
             $prototypes[$key] = $prototype->getForm();
         }
@@ -90,10 +91,9 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
         return $prototypes;
     }
 
-    private function getOptionsNormalizer(): Closure
+    private function getOptionsNormalizer(): \Closure
     {
-        return function (Options $options, array $value)
-        {
+        return function (Options $options, array $value) {
             unset($options);
             $value['block_name'] = 'entry';
 

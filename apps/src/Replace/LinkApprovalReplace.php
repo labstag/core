@@ -9,9 +9,9 @@ class LinkApprovalReplace extends ReplaceLib
     public function exec(): string
     {
         $configuration = $this->siteService->getConfiguration();
-        $entity        = $this->data['user'];
+        $entity = $this->data['user'];
 
-        return $configuration->getUrl().$this->router->generate(
+        return $configuration->getUrl() . $this->router->generate(
             'admin_workflow',
             [
                 '_locale'    => 'fr',

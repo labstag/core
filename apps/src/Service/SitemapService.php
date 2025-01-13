@@ -3,7 +3,6 @@
 namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
@@ -18,7 +17,7 @@ class SitemapService
 
     public function __construct(
         protected EntityManagerInterface $entityManager,
-        protected SiteService $siteService
+        protected SiteService $siteService,
     )
     {
     }
@@ -28,18 +27,12 @@ class SitemapService
         $configuration = $this->siteService->getConfiguration();
 
         $tabs = $this->getDataPages();
-        if ($configuration->isSitemapPosts() || true == $all) {
-            $tabs = array_merge(
-                $tabs,
-                $this->getDataPosts(),
-            );
+        if ($configuration->isSitemapPosts() || $all == true) {
+            $tabs = array_merge($tabs, $this->getDataPosts());
         }
 
-        if ($configuration->isSitemapStory() || true == $all) {
-            $tabs = array_merge(
-                $tabs,
-                $this->getDataStory(),
-            );
+        if ($configuration->isSitemapStory() || $all == true) {
+            $tabs = array_merge($tabs, $this->getDataStory());
         }
 
         ksort($tabs);
@@ -53,10 +46,13 @@ class SitemapService
         $tabs = [];
         foreach ($urls as $url => $data) {
             $result = str_replace($parent, '', (string) $url);
-            if (str_starts_with((string) $url, $parent) && !isset($this->parent[$url]) && $this->verifFirstChar($result)) {
+            if (str_starts_with((string) $url, $parent) && !isset($this->parent[$url]) && $this->verifFirstChar(
+                $result
+            )
+            ) {
                 $this->parent[$url] = true;
-                $data['parent']     = $this->setTabsByParent($urls, $url);
-                $tabs[$url]         = $data;
+                $data['parent'] = $this->setTabsByParent($urls, $url);
+                $tabs[$url] = $data;
             }
         }
 
@@ -67,7 +63,7 @@ class SitemapService
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
-            throw new Exception('Repository not found');
+            throw new \Exception('Repository not found');
         }
 
         return $entityRepository;
@@ -77,7 +73,7 @@ class SitemapService
     {
         $result = substr($url, 0, 1);
 
-        return '-' !== $result;
+        return $result !== '-';
     }
 
     private function formatData(object $entity): array
@@ -85,7 +81,7 @@ class SitemapService
         $url = $this->siteService->getSlugByEntity($entity);
 
         return [
-            '/'.$url => ['entity' => $entity],
+            '/' . $url => ['entity' => $entity],
         ];
     }
 
@@ -97,7 +93,7 @@ class SitemapService
 
         /** @var ChapterRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Chapter::class);
-        $data                       = $serviceEntityRepositoryLib->getAllActivateByStory($story);
+        $data = $serviceEntityRepositoryLib->getAllActivateByStory($story);
 
         return $this->setTabs($data);
     }
@@ -133,11 +129,7 @@ class SitemapService
     {
         $tabs = [];
         foreach ($data as $row) {
-            $tabs = array_merge(
-                $tabs,
-                $this->formatData($row),
-                $this->getDataChaptersByStory($row)
-            );
+            $tabs = array_merge($tabs, $this->formatData($row), $this->getDataChaptersByStory($row));
         }
 
         return $tabs;

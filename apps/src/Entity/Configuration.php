@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use DateTime;
-use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\ConfigurationRepository;
@@ -54,10 +52,16 @@ class Configuration
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'placeholder')]
     private ?File $placeholderFile = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
     private ?bool $sitemapPosts = false;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
     private ?bool $sitemapStory = false;
 
     #[ORM\Column(length: 255)]
@@ -66,10 +70,16 @@ class Configuration
     #[ORM\Column(length: 255)]
     private ?string $url = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
     private ?bool $userLink = false;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
     private ?bool $userShow = false;
 
     public function getCopyright(): ?string
@@ -183,7 +193,7 @@ class Configuration
         if ($faviconFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+            $this->updatedAt = \DateTime::createFromImmutable(new \DateTimeImmutable());
         }
     }
 
@@ -199,7 +209,7 @@ class Configuration
         if ($logoFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+            $this->updatedAt = \DateTime::createFromImmutable(new \DateTimeImmutable());
         }
     }
 
@@ -229,7 +239,7 @@ class Configuration
         if ($placeholderFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+            $this->updatedAt = \DateTime::createFromImmutable(new \DateTimeImmutable());
         }
     }
 

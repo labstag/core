@@ -14,10 +14,17 @@ use Symfony\Contracts\Cache\ItemInterface;
 #[Route('/')]
 class FrontController extends AbstractController
 {
-    #[Route('{slug}{_</(?!/)>}', name: 'front', requirements: ['slug' => '.*'], defaults: ['slug' => '', '_' => ''], priority: -1)]
-    public function index(
-        SiteService $siteService
-    ): Response
+    #[Route(
+        '{slug}{_</(?!/)>}',
+        name: 'front',
+        requirements: ['slug' => '.*'],
+        defaults: [
+            'slug' => '',
+            '_'    => '',
+        ],
+        priority: -1
+    )]
+    public function index(SiteService $siteService): Response
     {
         $entity = $siteService->getEntity();
         if (!is_object($entity)) {
@@ -28,19 +35,13 @@ class FrontController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        return $this->render(
-            $siteService->getViewByEntity($entity),
-            $siteService->getDataByEntity($entity)
-        );
+        return $this->render($siteService->getViewByEntity($entity), $siteService->getDataByEntity($entity));
     }
 
     #[Route('sitemap.css', name: 'sitemap.css', priority: 1)]
     public function sitemapCss(): Response
     {
-        $response = new Response(
-            $this->renderView('sitemap/sitemap.css.twig'),
-            Response::HTTP_OK
-        );
+        $response = new Response($this->renderView('sitemap/sitemap.css.twig'), Response::HTTP_OK);
         $response->headers->set('Content-Type', 'text/css');
 
         return $response;
@@ -49,24 +50,23 @@ class FrontController extends AbstractController
     #[Route('sitemap.js', name: 'sitemap.js', priority: 1)]
     public function sitemapJs(): Response
     {
-        $response = new Response(
-            $this->renderView('sitemap/sitemap.js.twig'),
-            Response::HTTP_OK
-        );
+        $response = new Response($this->renderView('sitemap/sitemap.js.twig'), Response::HTTP_OK);
         $response->headers->set('Content-Type', 'text/javascript');
 
         return $response;
     }
 
-    #[Route('sitemap.xml', name: 'sitemap.xml', priority: 1, defaults: ['_format' => 'xml'])]
-    public function sitemapXml(
-        SitemapService $sitemapService
-    ): mixed
+    #[Route(
+        'sitemap.xml',
+        name: 'sitemap.xml',
+        priority: 1,
+        defaults: ['_format' => 'xml']
+    )]
+    public function sitemapXml(SitemapService $sitemapService): mixed
     {
         return $this->initCache()->get(
             'sitemap.xml',
-            function (ItemInterface $item) use ($sitemapService): Response
-            {
+            function (ItemInterface $item) use ($sitemapService): Response {
                 $item->expiresAfter(3600);
 
                 $sitemap = $sitemapService->getData(true);
@@ -85,10 +85,7 @@ class FrontController extends AbstractController
     #[Route('sitemap.xsl', name: 'sitemap.xsl', priority: 1)]
     public function sitemapXsl(): Response
     {
-        $response = new Response(
-            $this->renderView('sitemap/sitemap.xsl.twig'),
-            Response::HTTP_OK
-        );
+        $response = new Response($this->renderView('sitemap/sitemap.xsl.twig'), Response::HTTP_OK);
         $response->headers->set('Content-Type', 'text/xml');
 
         return $response;
@@ -96,10 +93,6 @@ class FrontController extends AbstractController
 
     protected function initCache(): FilesystemAdapter
     {
-        return new FilesystemAdapter(
-            'cache.app',
-            0,
-            '../var'
-        );
+        return new FilesystemAdapter('cache.app', 0, '../var');
     }
 }

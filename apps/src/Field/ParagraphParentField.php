@@ -4,15 +4,10 @@
 
 namespace Labstag\Field;
 
-use Closure;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
-use Override;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
-/**
- * @author Javier Eguiluz <javier.eguiluz@gmail.com>
- */
 final class ParagraphParentField implements FieldInterface
 {
     use FieldTrait;
@@ -52,9 +47,9 @@ final class ParagraphParentField implements FieldInterface
     }
 
     /**
-     * @param null|false|string $label
+     * @param false|string|null $label
      */
-    #[Override]
+    #[\Override]
     public static function new(string $propertyName, $label = null): self
     {
         $field = (new self());
@@ -64,12 +59,10 @@ final class ParagraphParentField implements FieldInterface
         $field->setTemplatePath('admin/field/parent-paragraph.html.twig');
         $field->setFormType(EntityType::class);
         $field->addCssClass('field-association');
-        $field->setFormTypeOptions(
-            [
-                'mapped'   => false,
-                'required' => false,
-            ]
-        );
+        $field->setFormTypeOptions([
+            'mapped' => false,
+            'required' => false,
+        ]);
         $field->setDefaultColumns('col-md-7 col-xxl-6');
         $field->setCustomOption(self::OPTION_AUTOCOMPLETE, false);
         $field->setCustomOption(self::OPTION_CRUD_CONTROLLER, null);
@@ -95,7 +88,7 @@ final class ParagraphParentField implements FieldInterface
         return $this;
     }
 
-    public function setQueryBuilder(Closure $queryBuilderCallable): self
+    public function setQueryBuilder(\Closure $queryBuilderCallable): self
     {
         $this->setCustomOption(self::OPTION_QUERY_BUILDER_CALLABLE, $queryBuilderCallable);
 
