@@ -85,8 +85,10 @@
     },
     "scripts": {
         "post-root-package-install": [
-          "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
+        "ecs-check": "ecs check --ansi",
+        "ecs-fix": "ecs check --fix --ansi",
         "rector": "rector process --clear-cache",
         "rector-dry": "rector process --clear-cache --dry-run",
         "phpmnd": "phpmnd src features/bootstrap tests",
@@ -135,6 +137,7 @@
         "symfony/phpunit-bridge": "7.2.*",
         "symfony/stopwatch": "7.2.*",
         "symfony/web-profiler-bundle": "7.2.*",
+        "symplify/easy-coding-standard": "^12.5",
         "symplify/phpstan-rules": "14.1.*"
     }
 }

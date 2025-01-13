@@ -1,0 +1,1300 @@
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+  Line   Block/AdminBlock.php                                                                                                  
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+  27     Method Labstag\Block\AdminBlock::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                             
+  48     Method Labstag\Block\AdminBlock::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                             
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Block/BreadcrumbBlock.php                                                                                                       
+ ------ -------------------------------------------------------------------------------------------------------------------------------- 
+  26     Method Labstag\Block\BreadcrumbBlock::generate() has parameter $data with no value type specified in iterable type array.       
+         🪪  missingType.iterableValue                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
+  57     Method Labstag\Block\BreadcrumbBlock::getFields() return type has no value type specified in iterable type iterable.            
+         🪪  missingType.iterableValue                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
+  79     Method Labstag\Block\BreadcrumbBlock::setBreadcrumb() has parameter $urls with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
+  79     Method Labstag\Block\BreadcrumbBlock::setBreadcrumb() return type has no value type specified in iterable type array.           
+         🪪  missingType.iterableValue                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
+ ------ -------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------ 
+  Line   Block/ContentBlock.php                                                                                                  
+ ------ ------------------------------------------------------------------------------------------------------------------------ 
+  26     Method Labstag\Block\ContentBlock::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                           
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                               
+  63     Method Labstag\Block\ContentBlock::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                           
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                               
+ ------ ------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------- 
+  Line   Block/FlashbagBlock.php                                                                                                  
+ ------ ------------------------------------------------------------------------------------------------------------------------- 
+  25     Method Labstag\Block\FlashbagBlock::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                            
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                
+  38     Method Labstag\Block\FlashbagBlock::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                            
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                
+ ------ ------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------- 
+  Line   Block/HeroBlock.php                                                                                                  
+ ------ --------------------------------------------------------------------------------------------------------------------- 
+  25     Method Labstag\Block\HeroBlock::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                            
+  49     Method Labstag\Block\HeroBlock::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                            
+ ------ --------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------- 
+  Line   Block/HtmlBlock.php                                                                                                  
+ ------ --------------------------------------------------------------------------------------------------------------------- 
+  27     Method Labstag\Block\HtmlBlock::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                            
+  40     Method Labstag\Block\HtmlBlock::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                            
+ ------ --------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+  Line   Block/LinksBlock.php                                                                                                  
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+  31     Method Labstag\Block\LinksBlock::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                             
+  52     Method Labstag\Block\LinksBlock::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                             
+  78     Method Labstag\Block\LinksBlock::correctionLinks() return type has no value type specified in iterable type array.    
+         🪪  missingType.iterableValue                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                             
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  Line   Block/ParagraphsBlock.php                                                                                                  
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  25     Method Labstag\Block\ParagraphsBlock::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                  
+  49     Method Labstag\Block\ParagraphsBlock::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                  
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  Line   Command/MovieAddCommand.php                                                                                                  
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  28     Property Labstag\Command\MovieAddCommand::$categories type has no value type specified in iterable type array.               
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+  162    Method Labstag\Command\MovieAddCommand::setMovie() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  Line   Command/StarAddCommand.php                                                                                                 
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  121    Method Labstag\Command\StarAddCommand::setStar() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                  
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Controller/Admin/BlockCrudController.php                                                                                                                                                      
+ ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  36     Method Labstag\Controller\Admin\BlockCrudController::addFieldParagraphsForBlock() return type has no value type specified in iterable type array.                                             
+         🪪  missingType.iterableValue                                                                                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                                     
+  142    Method Labstag\Controller\Admin\BlockCrudController::createNewFormBuilder() return type with generic interface Symfony\Component\Form\FormBuilderInterface does not specify its types: TData  
+         🪪  missingType.generics                                                                                                                                                                      
+  209    Method Labstag\Controller\Admin\BlockCrudController::getChoiceType() has parameter $allTypes with no value type specified in iterable type array.                                             
+         🪪  missingType.iterableValue                                                                                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                                     
+  246    Call to function is_null() with int will always evaluate to false.                                                                                                                            
+         🪪  function.impossibleType                                                                                                                                                                   
+ ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Controller/Admin/GeoCodeCrudController.php                                                                                           
+ ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+  94     Method Labstag\Controller\Admin\GeoCodeCrudController::getAllData() return type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                            
+ ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Controller/Admin/StarCrudController.php                                                                                           
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  85     Method Labstag\Controller\Admin\StarCrudController::getAllData() return type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Controller/Admin/UserCrudController.php                                                                                                                                                                
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  109    Method Labstag\Controller\Admin\UserCrudController::createEditFormBuilder() return type with generic interface Symfony\Component\Form\FormBuilderInterface does not specify its types: TData           
+         🪪  missingType.generics                                                                                                                                                                               
+  130    Method Labstag\Controller\Admin\UserCrudController::createNewFormBuilder() return type with generic interface Symfony\Component\Form\FormBuilderInterface does not specify its types: TData            
+         🪪  missingType.generics                                                                                                                                                                               
+  148    Method Labstag\Controller\Admin\UserCrudController::addPasswordEventListener() has parameter $formBuilder with generic interface Symfony\Component\Form\FormBuilderInterface but does not specify its  
+         types: TData                                                                                                                                                                                           
+         🪪  missingType.generics                                                                                                                                                                               
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Controller/SecurityController.php                                                                                             
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  46     Method Labstag\Controller\SecurityController::getDataLogin() return type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+  Line   DataFixtures/BlockFixtures.php                                                                                        
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+  52     Method Labstag\DataFixtures\BlockFixtures::data() return type has no value type specified in iterable type iterable.  
+         🪪  missingType.iterableValue                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                             
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  Line   DataFixtures/CategoryFixtures.php                                                                                          
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  55     Method Labstag\DataFixtures\CategoryFixtures::getParent() return type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                  
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+  Line   DataFixtures/ChapterFixtures.php                                                                                   
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+  21     Property Labstag\DataFixtures\ChapterFixtures::$position type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                          
+  23     Property Labstag\DataFixtures\ChapterFixtures::$stories type has no value type specified in iterable type array.   
+         🪪  missingType.iterableValue                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                          
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------- 
+  Line   DataFixtures/EditoFixtures.php                                                                                
+ ------ -------------------------------------------------------------------------------------------------------------- 
+  20     Property Labstag\DataFixtures\EditoFixtures::$users type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                     
+ ------ -------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------- 
+  Line   DataFixtures/MemoFixtures.php                                                                                
+ ------ ------------------------------------------------------------------------------------------------------------- 
+  20     Property Labstag\DataFixtures\MemoFixtures::$users type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                    
+ ------ ------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  Line   DataFixtures/PageFixtures.php                                                                                                 
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  43     Method Labstag\DataFixtures\PageFixtures::data() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+  100    Method Labstag\DataFixtures\PageFixtures::setPage() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ------------------------------------------------------------------------------------------------------------- 
+  Line   DataFixtures/PostFixtures.php                                                                                
+ ------ ------------------------------------------------------------------------------------------------------------- 
+  23     Property Labstag\DataFixtures\PostFixtures::$users type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                    
+ ------ ------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------- 
+  Line   DataFixtures/StoryFixtures.php                                                                                
+ ------ -------------------------------------------------------------------------------------------------------------- 
+  23     Property Labstag\DataFixtures\StoryFixtures::$users type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                     
+ ------ -------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+  Line   DataFixtures/TemplateFixtures.php                                                                                     
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+  41     Method Labstag\DataFixtures\TemplateFixtures::data() return type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                             
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  Line   DataFixtures/UserFixtures.php                                                                                                 
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  34     Method Labstag\DataFixtures\UserFixtures::data() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+  74     Method Labstag\DataFixtures\UserFixtures::setUser() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------ 
+  Line   Email/UserPasswordLostEmail.php                                                                                         
+ ------ ------------------------------------------------------------------------------------------------------------------------ 
+  10     Method Labstag\Email\UserPasswordLostEmail::getCodes() return type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                           
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                               
+ ------ ------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ------------------------------------------------------------------------------------------------------------------ 
+  Line   Email/UserSubmitEmail.php                                                                                         
+ ------ ------------------------------------------------------------------------------------------------------------------ 
+  10     Method Labstag\Email\UserSubmitEmail::getCodes() return type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                         
+ ------ ------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+  Line   Entity/Block.php                                                                                                   
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+  57     Property Labstag\Entity\Block::$roles type has no value type specified in iterable type array.                     
+         🪪  missingType.iterableValue                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                          
+  142    Method Labstag\Entity\Block::getRoles() return type has no value type specified in iterable type array.            
+         🪪  missingType.iterableValue                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                          
+  234    Method Labstag\Entity\Block::setRoles() has parameter $roles with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                          
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+  Line   Entity/User.php                                                                                                       
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+  130    Method Labstag\Entity\User::__unserialize() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                             
+ ------ ---------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Field/Configurator/MetaParentConfigurator.php                                                                                        
+ ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+  57     Unable to resolve the template type T in call to method static method Doctrine\Common\Util\ClassUtils::getClass()                    
+         🪪  argument.templateType                                                                                                            
+         💡 See: https://phpstan.org/blog/solving-phpstan-error-unable-to-resolve-template-type                                               
+  128    Method Labstag\Field\Configurator\MetaParentConfigurator::configureFirst() has parameter $propertyNameParts with no type specified.  
+         🪪  missingType.parameter                                                                                                            
+  245    Method Labstag\Field\Configurator\MetaParentConfigurator::countNumElements() has parameter $collection with no type specified.       
+         🪪  missingType.parameter                                                                                                            
+  265    Method Labstag\Field\Configurator\MetaParentConfigurator::formatAsString() has parameter $entityInstance with no type specified.     
+         🪪  missingType.parameter                                                                                                            
+ ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Field/Configurator/ParagraphParentConfigurator.php                                                                                        
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------ 
+  54     Unable to resolve the template type T in call to method static method Doctrine\Common\Util\ClassUtils::getClass()                         
+         🪪  argument.templateType                                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-error-unable-to-resolve-template-type                                                    
+  127    Method Labstag\Field\Configurator\ParagraphParentConfigurator::configureFirst() has parameter $propertyNameParts with no type specified.  
+         🪪  missingType.parameter                                                                                                                 
+  165    Method Labstag\Field\Configurator\ParagraphParentConfigurator::configureSecond() has parameter $propertyName with no type specified.      
+         🪪  missingType.parameter                                                                                                                 
+  176    Method Labstag\Field\Configurator\ParagraphParentConfigurator::configureTest() has parameter $propertyName with no type specified.        
+         🪪  missingType.parameter                                                                                                                 
+  226    Method Labstag\Field\Configurator\ParagraphParentConfigurator::countNumElements() has parameter $collection with no type specified.       
+         🪪  missingType.parameter                                                                                                                 
+  243    Method Labstag\Field\Configurator\ParagraphParentConfigurator::formatAsString() has parameter $entityInstance with no type specified.     
+         🪪  missingType.parameter                                                                                                                 
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+  Line   Field/Configurator/ParagraphsConfigurator.php                                                                      
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+  40     Unable to resolve the template type T in call to method static method Doctrine\Common\Util\ClassUtils::getClass()  
+         🪪  argument.templateType                                                                                          
+         💡 See: https://phpstan.org/blog/solving-phpstan-error-unable-to-resolve-template-type                             
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------ 
+  Line   Field/MetaParentField.php                                                                 
+ ------ ------------------------------------------------------------------------------------------ 
+  51     Method Labstag\Field\MetaParentField::new() has parameter $label with no type specified.  
+         🪪  missingType.parameter                                                                 
+ ------ ------------------------------------------------------------------------------------------ 
+
+ ------ ------------------------------------------------------------------------------------------ 
+  Line   Field/ParagraphsField.php                                                                 
+ ------ ------------------------------------------------------------------------------------------ 
+  42     Method Labstag\Field\ParagraphsField::new() has parameter $label with no type specified.  
+         🪪  missingType.parameter                                                                 
+ ------ ------------------------------------------------------------------------------------------ 
+
+ ------ -------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Form/Front/ContactType.php                                                                                                            
+ ------ -------------------------------------------------------------------------------------------------------------------------------------- 
+  13     Class Labstag\Form\Front\ContactType extends generic class Symfony\Component\Form\AbstractType but does not specify its types: TData  
+         🪪  missingType.generics                                                                                                              
+ ------ -------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  Line   Form/LinkType.php                                                                                                            
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  13     Class Labstag\Form\LinkType extends generic class Symfony\Component\Form\AbstractType but does not specify its types: TData  
+         🪪  missingType.generics                                                                                                     
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Form/Type/ParagraphType.php                                                                                                            
+ ------ --------------------------------------------------------------------------------------------------------------------------------------- 
+  9      Class Labstag\Form\Type\ParagraphType extends generic class Symfony\Component\Form\AbstractType but does not specify its types: TData  
+         🪪  missingType.generics                                                                                                               
+ ------ --------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   FrontForm/ContactFrontForm.php                                                                                                                                              
+ ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  13     Method Labstag\FrontForm\ContactFrontForm::execute() has parameter $form with generic interface Symfony\Component\Form\FormInterface but does not specify its types: TData  
+         🪪  missingType.generics                                                                                                                                                    
+ ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Interface/BlockInterface.php                                                                                                  
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  12     Method Labstag\Interface\BlockInterface::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Lib/AbstractCrudControllerLib.php                                                                                                   
+ ------ ------------------------------------------------------------------------------------------------------------------------------------ 
+  265    Method Labstag\Lib\AbstractCrudControllerLib::addFieldMetas() return type has no value type specified in iterable type array.       
+         🪪  missingType.iterableValue                                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                           
+  275    Method Labstag\Lib\AbstractCrudControllerLib::addFieldParagraphs() return type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                           
+  311    Method Labstag\Lib\AbstractCrudControllerLib::addFieldRefUser() return type has no value type specified in iterable type array.     
+         🪪  missingType.iterableValue                                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                           
+ ------ ------------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Lib/BlockLib.php                                                                                                                                      
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------ 
+  19     Property Labstag\Lib\BlockLib::$data type has no value type specified in iterable type array.                                                         
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  21     Property Labstag\Lib\BlockLib::$footer type has no value type specified in iterable type array.                                                       
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  23     Property Labstag\Lib\BlockLib::$header type has no value type specified in iterable type array.                                                       
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  25     Property Labstag\Lib\BlockLib::$show type has no value type specified in iterable type array.                                                         
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  27     Property Labstag\Lib\BlockLib::$templates type has no value type specified in iterable type array.                                                    
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  41     Method Labstag\Lib\BlockLib::getData() return type has no value type specified in iterable type array.                                                
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  48     Method Labstag\Lib\BlockLib::getFields() return type has no value type specified in iterable type iterable.                                           
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  55     Method Labstag\Lib\BlockLib::getFooter() return type has no value type specified in iterable type array.                                              
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  62     Method Labstag\Lib\BlockLib::getHeader() return type has no value type specified in iterable type array.                                              
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  86     Method Labstag\Lib\BlockLib::templates() return type has no value type specified in iterable type array.                                              
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  91     Method Labstag\Lib\BlockLib::useIn() return type has no value type specified in iterable type array.                                                  
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  98     Method Labstag\Lib\BlockLib::getRepository() should return Labstag\Lib\ServiceEntityRepositoryLib but returns Doctrine\ORM\EntityRepository<object>.  
+         🪪  return.type                                                                                                                                       
+  101    Method Labstag\Lib\BlockLib::getTemplateContent() return type has no value type specified in iterable type array.                                     
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  135    Method Labstag\Lib\BlockLib::setData() has parameter $data with no value type specified in iterable type array.                                       
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  144    Method Labstag\Lib\BlockLib::setFooter() has parameter $data with no value type specified in iterable type array.                                     
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+  151    Method Labstag\Lib\BlockLib::setHeader() has parameter $data with no value type specified in iterable type array.                                     
+         🪪  missingType.iterableValue                                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                             
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+  Line   Lib/EmailLib.php                                                                                                   
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+  18     Property Labstag\Lib\EmailLib::$data type has no value type specified in iterable type array.                      
+         🪪  missingType.iterableValue                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                          
+  20     Property Labstag\Lib\EmailLib::$templates type has no value type specified in iterable type array.                 
+         🪪  missingType.iterableValue                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                          
+  42     Method Labstag\Lib\EmailLib::getCodes() return type has no value type specified in iterable type array.            
+         🪪  missingType.iterableValue                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                          
+  109    Method Labstag\Lib\EmailLib::setData() has parameter $data with no value type specified in iterable type array.    
+         🪪  missingType.iterableValue                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                          
+  117    Method Labstag\Lib\EmailLib::setHtml() should return string but returns null.                                      
+         🪪  return.type                                                                                                    
+  126    Method Labstag\Lib\EmailLib::setText() should return string but returns null.                                      
+         🪪  return.type                                                                                                    
+  161    Method Labstag\Lib\EmailLib::getTemplateContent() return type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                          
+  248    Method Labstag\Lib\EmailLib::replace() never returns array so it can be removed from the return type.              
+         🪪  return.unusedType                                                                                              
+  248    Method Labstag\Lib\EmailLib::replace() return type has no value type specified in iterable type array.             
+         🪪  missingType.iterableValue                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                          
+  262    Method Labstag\Lib\EmailLib::templates() return type has no value type specified in iterable type array.           
+         🪪  missingType.iterableValue                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                          
+ ------ ------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  Line   Lib/FixtureLib.php                                                                                                         
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+  27     Property Labstag\Lib\FixtureLib::$categories type has no value type specified in iterable type array.                      
+         🪪  missingType.iterableValue                                                                                              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                  
+  29     Property Labstag\Lib\FixtureLib::$tags type has no value type specified in iterable type array.                            
+         🪪  missingType.iterableValue                                                                                              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                  
+  93     Method Labstag\Lib\FixtureLib::getIdentitiesByClass() return type has no value type specified in iterable type array.      
+         🪪  missingType.iterableValue                                                                                              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                  
+  132    Method Labstag\Lib\FixtureLib::setImage() has parameter $entity with no value type specified in iterable type array.       
+         🪪  missingType.iterableValue                                                                                              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                  
+  161    Method Labstag\Lib\FixtureLib::correctionArray() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                              
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                  
+ ------ --------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Lib/FrontFormLib.php                                                                                                                                              
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+  26     Method Labstag\Lib\FrontFormLib::execute() has parameter $form with generic interface Symfony\Component\Form\FormInterface but does not specify its types: TData  
+         🪪  missingType.generics                                                                                                                                          
+  36     Method Labstag\Lib\FrontFormLib::getRepository() should return Labstag\Lib\ServiceEntityRepositoryLib but returns Doctrine\ORM\EntityRepository<object>.          
+         🪪  return.type                                                                                                                                                   
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Lib/ParagraphAbstractTypeLib.php                                                                                                                                                                    
+ ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  15     Class Labstag\Lib\ParagraphAbstractTypeLib extends generic class Symfony\Component\Form\AbstractType but does not specify its types: TData                                                          
+         🪪  missingType.generics                                                                                                                                                                            
+  61     Method Labstag\Lib\ParagraphAbstractTypeLib::buildPrototype() has parameter $formBuilder with generic interface Symfony\Component\Form\FormBuilderInterface but does not specify its types: TData   
+         🪪  missingType.generics                                                                                                                                                                            
+  61     Method Labstag\Lib\ParagraphAbstractTypeLib::buildPrototype() has parameter $options with no value type specified in iterable type array.                                                           
+         🪪  missingType.iterableValue                                                                                                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                                           
+  61     Method Labstag\Lib\ParagraphAbstractTypeLib::buildPrototype() has parameter $type with generic interface Symfony\Component\Form\FormTypeInterface but does not specify its types: TData             
+         🪪  missingType.generics                                                                                                                                                                            
+  61     Method Labstag\Lib\ParagraphAbstractTypeLib::buildPrototype() return type with generic interface Symfony\Component\Form\FormBuilderInterface does not specify its types: TData                      
+         🪪  missingType.generics                                                                                                                                                                            
+  66     Method Labstag\Lib\ParagraphAbstractTypeLib::buildPrototypes() has parameter $formBuilder with generic interface Symfony\Component\Form\FormBuilderInterface but does not specify its types: TData  
+         🪪  missingType.generics                                                                                                                                                                            
+  66     Method Labstag\Lib\ParagraphAbstractTypeLib::buildPrototypes() has parameter $options with no value type specified in iterable type array.                                                          
+         🪪  missingType.iterableValue                                                                                                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                                           
+  66     Method Labstag\Lib\ParagraphAbstractTypeLib::buildPrototypes() return type has no value type specified in iterable type array.                                                                      
+         🪪  missingType.iterableValue                                                                                                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                                           
+ ------ ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Lib/ParagraphLib.php                                                                                                                                                            
+ ------ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  34     Property Labstag\Lib\ParagraphLib::$data type has no value type specified in iterable type array.                                                                               
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  36     Property Labstag\Lib\ParagraphLib::$footer type has no value type specified in iterable type array.                                                                             
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  38     Property Labstag\Lib\ParagraphLib::$header type has no value type specified in iterable type array.                                                                             
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  40     Property Labstag\Lib\ParagraphLib::$show type has no value type specified in iterable type array.                                                                               
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  42     Property Labstag\Lib\ParagraphLib::$templates type has no value type specified in iterable type array.                                                                          
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  94     Method Labstag\Lib\ParagraphLib::generate() has parameter $data with no value type specified in iterable type array.                                                            
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  99     Method Labstag\Lib\ParagraphLib::getData() return type has no value type specified in iterable type array.                                                                      
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  106    Method Labstag\Lib\ParagraphLib::getFields() return type has no value type specified in iterable type iterable.                                                                 
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  149    Method Labstag\Lib\ParagraphLib::templates() return type has no value type specified in iterable type array.                                                                    
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  154    Method Labstag\Lib\ParagraphLib::useIn() return type has no value type specified in iterable type array.                                                                        
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  159    Method Labstag\Lib\ParagraphLib::getPaginator() return type has no value type specified in iterable type Knp\Component\Pager\Pagination\PaginationInterface.                    
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  159    Method Labstag\Lib\ParagraphLib::getPaginator() return type with generic interface Knp\Component\Pager\Pagination\PaginationInterface does not specify its types: TKey, TValue  
+         🪪  missingType.generics                                                                                                                                                        
+  172    Method Labstag\Lib\ParagraphLib::getRepository() should return Labstag\Lib\ServiceEntityRepositoryLib but returns Doctrine\ORM\EntityRepository<object>.                        
+         🪪  return.type                                                                                                                                                                 
+  175    Method Labstag\Lib\ParagraphLib::getTemplateContent() return type has no value type specified in iterable type array.                                                           
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  209    Method Labstag\Lib\ParagraphLib::setData() has parameter $data with no value type specified in iterable type array.                                                             
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+  241    Method Labstag\Lib\ParagraphLib::useInAll() return type has no value type specified in iterable type array.                                                                     
+         🪪  missingType.iterableValue                                                                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                                       
+ ------ -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Lib/ServiceEntityRepositoryLib.php                                                                                                                                                 
+ ------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  7      Class Labstag\Lib\ServiceEntityRepositoryLib extends generic class Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository but does not specify its types: TEntityClass  
+         🪪  missingType.generics                                                                                                                                                           
+ ------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/ChapterLastNextParagraph.php                                                                                                  
+ ------ ---------------------------------------------------------------------------------------------------------------------------------------- 
+  13     Method Labstag\Paragraph\ChapterLastNextParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                           
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                               
+  43     Method Labstag\Paragraph\ChapterLastNextParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                           
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                               
+  65     Method Labstag\Paragraph\ChapterLastNextParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                           
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                               
+ ------ ---------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Paragraph/ChapterListParagraph.php                                                                                                  
+ ------ ------------------------------------------------------------------------------------------------------------------------------------ 
+  16     Method Labstag\Paragraph\ChapterListParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                           
+  45     Method Labstag\Paragraph\ChapterListParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                           
+  67     Method Labstag\Paragraph\ChapterListParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                           
+ ------ ------------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Paragraph/EditoParagraph.php                                                                                                  
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  14     Method Labstag\Paragraph\EditoParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+  41     Method Labstag\Paragraph\EditoParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+  60     Method Labstag\Paragraph\EditoParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/FormParagraph.php                                                                                                  
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  13     Method Labstag\Paragraph\FormParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+  46     Method Labstag\Paragraph\FormParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+  70     Method Labstag\Paragraph\FormParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Paragraph/HeadChapterParagraph.php                                                                                                  
+ ------ ------------------------------------------------------------------------------------------------------------------------------------ 
+  13     Method Labstag\Paragraph\HeadChapterParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                           
+  33     Method Labstag\Paragraph\HeadChapterParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                           
+  55     Method Labstag\Paragraph\HeadChapterParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                           
+ ------ ------------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/HeadPostParagraph.php                                                                                                  
+ ------ --------------------------------------------------------------------------------------------------------------------------------- 
+  13     Method Labstag\Paragraph\HeadPostParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                    
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                        
+  33     Method Labstag\Paragraph\HeadPostParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                    
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                        
+  55     Method Labstag\Paragraph\HeadPostParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                    
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                        
+ ------ --------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/HeadStoryParagraph.php                                                                                                  
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  13     Method Labstag\Paragraph\HeadStoryParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  33     Method Labstag\Paragraph\HeadStoryParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  55     Method Labstag\Paragraph\HeadStoryParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/HtmlParagraph.php                                                                                                  
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  13     Method Labstag\Paragraph\HtmlParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+  26     Method Labstag\Paragraph\HtmlParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+  50     Method Labstag\Paragraph\HtmlParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Paragraph/ImageParagraph.php                                                                                                  
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  11     Method Labstag\Paragraph\ImageParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+  24     Method Labstag\Paragraph\ImageParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+  45     Method Labstag\Paragraph\ImageParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/LastNewsParagraph.php                                                                                                  
+ ------ --------------------------------------------------------------------------------------------------------------------------------- 
+  14     Method Labstag\Paragraph\LastNewsParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                    
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                        
+  36     Method Labstag\Paragraph\LastNewsParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                    
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                        
+  57     Method Labstag\Paragraph\LastNewsParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                    
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                        
+ ------ --------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/LastStoryParagraph.php                                                                                                  
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  14     Method Labstag\Paragraph\LastStoryParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  36     Method Labstag\Paragraph\LastStoryParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  57     Method Labstag\Paragraph\LastStoryParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/MapParagraph.php                                                                                                  
+ ------ ---------------------------------------------------------------------------------------------------------------------------- 
+  11     Method Labstag\Paragraph\MapParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                               
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                   
+  24     Method Labstag\Paragraph\MapParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                               
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                   
+  46     Method Labstag\Paragraph\MapParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                               
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                   
+ ------ ---------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/NewsListParagraph.php                                                                                                  
+ ------ --------------------------------------------------------------------------------------------------------------------------------- 
+  14     Method Labstag\Paragraph\NewsListParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                    
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                        
+  44     Method Labstag\Paragraph\NewsListParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                    
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                        
+  66     Method Labstag\Paragraph\NewsListParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                    
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                        
+ ------ --------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/SitemapParagraph.php                                                                                                  
+ ------ -------------------------------------------------------------------------------------------------------------------------------- 
+  11     Method Labstag\Paragraph\SitemapParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
+  26     Method Labstag\Paragraph\SitemapParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
+  48     Method Labstag\Paragraph\SitemapParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
+ ------ -------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/StarParagraph.php                                                                                                  
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  14     Method Labstag\Paragraph\StarParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+  45     Method Labstag\Paragraph\StarParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+  68     Method Labstag\Paragraph\StarParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/StoryListParagraph.php                                                                                                  
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  14     Method Labstag\Paragraph\StoryListParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  45     Method Labstag\Paragraph\StoryListParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  66     Method Labstag\Paragraph\StoryListParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/TextImgParagraph.php                                                                                                  
+ ------ -------------------------------------------------------------------------------------------------------------------------------- 
+  12     Method Labstag\Paragraph\TextImgParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
+  25     Method Labstag\Paragraph\TextImgParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
+  49     Method Labstag\Paragraph\TextImgParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                   
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                       
+ ------ -------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/TextMediaParagraph.php                                                                                                  
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  16     Method Labstag\Paragraph\TextMediaParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  43     Access to an undefined property Essence\Media::$html.                                                                             
+         🪪  property.notFound                                                                                                             
+         💡 Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property                                              
+  54     Access to an undefined property Essence\Media::$thumbnailUrl.                                                                     
+         🪪  property.notFound                                                                                                             
+         💡 Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property                                              
+  62     Method Labstag\Paragraph\TextMediaParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  87     Method Labstag\Paragraph\TextMediaParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  Line   Paragraph/TextParagraph.php                                                                                                  
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+  12     Method Labstag\Paragraph\TextParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+  25     Method Labstag\Paragraph\TextParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+  48     Method Labstag\Paragraph\TextParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                    
+ ------ ----------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Paragraph/VideoParagraph.php                                                                                                  
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  15     Method Labstag\Paragraph\VideoParagraph::generate() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+  42     Access to an undefined property Essence\Media::$html.                                                                         
+         🪪  property.notFound                                                                                                         
+         💡 Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property                                          
+  53     Access to an undefined property Essence\Media::$thumbnailUrl.                                                                 
+         🪪  property.notFound                                                                                                         
+         💡 Learn more: https://phpstan.org/blog/solving-phpstan-access-to-undefined-property                                          
+  61     Method Labstag\Paragraph\VideoParagraph::getFields() return type has no value type specified in iterable type iterable.       
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+  81     Method Labstag\Paragraph\VideoParagraph::useIn() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Repository/PostRepository.php                                                                                                                              
+ ------ ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  55     Method Labstag\Repository\PostRepository::getQueryPaginator() return type with generic class Doctrine\ORM\Query does not specify its types: TKey, TResult  
+         🪪  missingType.generics                                                                                                                                   
+ ------ ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Repository/StarRepository.php                                                                                                                              
+ ------ ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  37     Method Labstag\Repository\StarRepository::getQueryPaginator() return type with generic class Doctrine\ORM\Query does not specify its types: TKey, TResult  
+         🪪  missingType.generics                                                                                                                                   
+ ------ ----------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Repository/StoryRepository.php                                                                                                                              
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+  46     Method Labstag\Repository\StoryRepository::getQueryPaginator() return type with generic class Doctrine\ORM\Query does not specify its types: TKey, TResult  
+         🪪  missingType.generics                                                                                                                                    
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Repository/UserRepository.php                                                                                                                                              
+ ------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  15     Class Labstag\Repository\UserRepository implements generic interface Symfony\Component\Security\Core\User\PasswordUpgraderInterface but does not specify its types: TUser  
+         🪪  missingType.generics                                                                                                                                                   
+ ------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Service/BlockService.php                                                                                                          
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  14     Method Labstag\Service\BlockService::__construct() has parameter $blocks with no value type specified in iterable type iterable.  
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  45     Method Labstag\Service\BlockService::generate() has parameter $blocks with no value type specified in iterable type array.        
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  45     Method Labstag\Service\BlockService::generate() has parameter $data with no value type specified in iterable type array.          
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  64     Method Labstag\Service\BlockService::getAll() has parameter $entity with no type specified.                                       
+         🪪  missingType.parameter                                                                                                         
+  64     Method Labstag\Service\BlockService::getAll() return type has no value type specified in iterable type array.                     
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  79     Method Labstag\Service\BlockService::getContents() has parameter $blocks with no value type specified in iterable type array.     
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  113    Method Labstag\Service\BlockService::getFields() return type has no value type specified in iterable type array.                  
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  182    Method Labstag\Service\BlockService::getRegions() return type has no value type specified in iterable type array.                 
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  191    Method Labstag\Service\BlockService::setContents() has parameter $data with no value type specified in iterable type array.       
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  233    Method Labstag\Service\BlockService::templates() return type has no value type specified in iterable type array.                  
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Service/EmailService.php                                                                                                          
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+  10     Method Labstag\Service\EmailService::__construct() has parameter $emails with no value type specified in iterable type iterable.  
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  17     Method Labstag\Service\EmailService::all() return type has no value type specified in iterable type iterable.                     
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+  22     Method Labstag\Service\EmailService::get() has parameter $data with no value type specified in iterable type array.               
+         🪪  missingType.iterableValue                                                                                                     
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                         
+ ------ ---------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Service/FileService.php                                                                                                                                      
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  150    Method Labstag\Service\FileService::getFiles() return type has no value type specified in iterable type list.                                                
+         🪪  missingType.iterableValue                                                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                    
+  212    Method Labstag\Service\FileService::getMappingForEntity() has parameter $entity with no value type specified in iterable type array.                         
+         🪪  missingType.iterableValue                                                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                    
+  212    Method Labstag\Service\FileService::getMappingForEntity() return type has no value type specified in iterable type array.                                    
+         🪪  missingType.iterableValue                                                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                    
+  219    Method Labstag\Service\FileService::getRepository() should return Labstag\Lib\ServiceEntityRepositoryLib but returns Doctrine\ORM\EntityRepository<object>.  
+         🪪  return.type                                                                                                                                              
+  222    Method Labstag\Service\FileService::deleteFilesByType() has parameter $files with no value type specified in iterable type array.                            
+         🪪  missingType.iterableValue                                                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                    
+  250    Method Labstag\Service\FileService::getDataStorage() return type has no value type specified in iterable type array.                                         
+         🪪  missingType.iterableValue                                                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                    
+  267    Method Labstag\Service\FileService::getEntity() return type has no value type specified in iterable type array.                                              
+         🪪  missingType.iterableValue                                                                                                                                
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                    
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Service/FormService.php                                                                                                                                              
+ ------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+  12     Method Labstag\Service\FormService::__construct() has parameter $forms with no value type specified in iterable type iterable.                                       
+         🪪  missingType.iterableValue                                                                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                                            
+  36     Method Labstag\Service\FormService::execute() has parameter $form with generic interface Symfony\Component\Form\FormInterface but does not specify its types: TData  
+         🪪  missingType.generics                                                                                                                                             
+ ------ --------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------- 
+  Line   Service/GeocodeService.php                                                                                               
+ ------ ------------------------------------------------------------------------------------------------------------------------- 
+  21     Method Labstag\Service\GeocodeService::add() has parameter $row with no value type specified in iterable type array.     
+         🪪  missingType.iterableValue                                                                                            
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                
+  50     Method Labstag\Service\GeocodeService::csv() return type has no value type specified in iterable type array.             
+         🪪  missingType.iterableValue                                                                                            
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                
+  80     Method Labstag\Service\GeocodeService::tables() has parameter $csv with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                            
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                
+  80     Method Labstag\Service\GeocodeService::tables() return type has no value type specified in iterable type array.          
+         🪪  missingType.iterableValue                                                                                            
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                
+ ------ ------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Service/ParagraphService.php                                                                                                              
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------ 
+  17     Method Labstag\Service\ParagraphService::__construct() has parameter $paragraphs with no value type specified in iterable type iterable.  
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  66     Method Labstag\Service\ParagraphService::generate() has parameter $data with no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  66     Method Labstag\Service\ParagraphService::generate() has parameter $paragraphs with no value type specified in iterable type array.        
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  81     Method Labstag\Service\ParagraphService::getAll() return type has no value type specified in iterable type array.                         
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  98     Method Labstag\Service\ParagraphService::getContents() has parameter $paragraphs with no value type specified in iterable type array.     
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  174    Method Labstag\Service\ParagraphService::getFields() return type has no value type specified in iterable type iterable.                   
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  201    Method Labstag\Service\ParagraphService::getFonds() return type has no value type specified in iterable type array.                       
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  258    Method Labstag\Service\ParagraphService::setContents() has parameter $data with no value type specified in iterable type array.           
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  279    Method Labstag\Service\ParagraphService::templates() return type has no value type specified in iterable type array.                      
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Service/SiteService.php                                                                                                                   
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------ 
+  70     Method Labstag\Service\SiteService::getDataByEntity() return type has no value type specified in iterable type array.                     
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  193    Method Labstag\Service\SiteService::getTypesPages() return type has no value type specified in iterable type array.                       
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  218    Method Labstag\Service\SiteService::isHome() has parameter $data with no value type specified in iterable type array.                     
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  244    Method Labstag\Service\SiteService::getDataCrudController() return type has no value type specified in iterable type array.               
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  259    Method Labstag\Service\SiteService::getRepositories() return type has no value type specified in iterable type array.                     
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  292    Method Labstag\Service\SiteService::getBlocks() has parameter $data with no value type specified in iterable type array.                  
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  292    Method Labstag\Service\SiteService::getBlocks() return type has no value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  343    Method Labstag\Service\SiteService::getPageByTypes() return type has no value type specified in iterable type array.                      
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  354    Method Labstag\Service\SiteService::getSlugByEntityIfChapter() has parameter $types with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  376    Method Labstag\Service\SiteService::getSlugByEntityIfPost() has parameter $types with no value type specified in iterable type array.     
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+  389    Method Labstag\Service\SiteService::getSlugByEntityIfStory() has parameter $types with no value type specified in iterable type array.    
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ----------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Service/SitemapService.php                                                                                                         
+ ------ ----------------------------------------------------------------------------------------------------------------------------------- 
+  17     Property Labstag\Service\SitemapService::$parent type has no value type specified in iterable type array.                          
+         🪪  missingType.iterableValue                                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
+  26     Method Labstag\Service\SitemapService::getData() return type has no value type specified in iterable type array.                   
+         🪪  missingType.iterableValue                                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
+  51     Method Labstag\Service\SitemapService::setTabsByParent() has parameter $urls with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
+  51     Method Labstag\Service\SitemapService::setTabsByParent() return type has no value type specified in iterable type array.           
+         🪪  missingType.iterableValue                                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
+  83     Method Labstag\Service\SitemapService::formatData() return type has no value type specified in iterable type array.                
+         🪪  missingType.iterableValue                                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
+  92     Method Labstag\Service\SitemapService::getDataChaptersByStory() return type has no value type specified in iterable type array.    
+         🪪  missingType.iterableValue                                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
+  105    Method Labstag\Service\SitemapService::getDataFromRepository() return type has no value type specified in iterable type array.     
+         🪪  missingType.iterableValue                                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
+  117    Method Labstag\Service\SitemapService::getDataPages() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
+  122    Method Labstag\Service\SitemapService::getDataPosts() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
+  127    Method Labstag\Service\SitemapService::getDataStory() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
+  132    Method Labstag\Service\SitemapService::setTabs() has parameter $data with no value type specified in iterable type array.          
+         🪪  missingType.iterableValue                                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
+  132    Method Labstag\Service\SitemapService::setTabs() return type has no value type specified in iterable type array.                   
+         🪪  missingType.iterableValue                                                                                                      
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                          
+ ------ ----------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Service/UserService.php                                                                                                       
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+  17     Method Labstag\Service\UserService::getLanguages() return type has no value type specified in iterable type array.            
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+  25     Method Labstag\Service\UserService::getLanguagesForChoices() return type has no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+  36     Method Labstag\Service\UserService::getRoles() return type has no value type specified in iterable type array.                
+         🪪  missingType.iterableValue                                                                                                 
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                     
+ ------ ------------------------------------------------------------------------------------------------------------------------------ 
+
+ ------ ----------------------------------------------------------------------------------------------------------------------- 
+  Line   Traits/Entity/WorkflowTrait.php (in context of class Labstag\Entity\Chapter)                                           
+ ------ ----------------------------------------------------------------------------------------------------------------------- 
+  14     Property Labstag\Entity\Chapter::$state type has no value type specified in iterable type array.                       
+         🪪  missingType.iterableValue                                                                                          
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                              
+  20     Method Labstag\Entity\Chapter::getState() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                          
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                              
+  30     Method Labstag\Entity\Chapter::setState() has parameter $context with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                          
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                              
+  30     Method Labstag\Entity\Chapter::setState() has parameter $state with no value type specified in iterable type array.    
+         🪪  missingType.iterableValue                                                                                          
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                              
+ ------ ----------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------- 
+  Line   Traits/Entity/WorkflowTrait.php (in context of class Labstag\Entity\Edito)                                           
+ ------ --------------------------------------------------------------------------------------------------------------------- 
+  14     Property Labstag\Entity\Edito::$state type has no value type specified in iterable type array.                       
+         🪪  missingType.iterableValue                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                            
+  20     Method Labstag\Entity\Edito::getState() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                            
+  30     Method Labstag\Entity\Edito::setState() has parameter $context with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                            
+  30     Method Labstag\Entity\Edito::setState() has parameter $state with no value type specified in iterable type array.    
+         🪪  missingType.iterableValue                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                            
+ ------ --------------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+  Line   Traits/Entity/WorkflowTrait.php (in context of class Labstag\Entity\Memo)                                           
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+  14     Property Labstag\Entity\Memo::$state type has no value type specified in iterable type array.                       
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+  20     Method Labstag\Entity\Memo::getState() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+  30     Method Labstag\Entity\Memo::setState() has parameter $context with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+  30     Method Labstag\Entity\Memo::setState() has parameter $state with no value type specified in iterable type array.    
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+  Line   Traits/Entity/WorkflowTrait.php (in context of class Labstag\Entity\Page)                                           
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+  14     Property Labstag\Entity\Page::$state type has no value type specified in iterable type array.                       
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+  20     Method Labstag\Entity\Page::getState() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+  30     Method Labstag\Entity\Page::setState() has parameter $context with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+  30     Method Labstag\Entity\Page::setState() has parameter $state with no value type specified in iterable type array.    
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+  Line   Traits/Entity/WorkflowTrait.php (in context of class Labstag\Entity\Post)                                           
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+  14     Property Labstag\Entity\Post::$state type has no value type specified in iterable type array.                       
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+  20     Method Labstag\Entity\Post::getState() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+  30     Method Labstag\Entity\Post::setState() has parameter $context with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+  30     Method Labstag\Entity\Post::setState() has parameter $state with no value type specified in iterable type array.    
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------------------------------------------------------- 
+  Line   Traits/Entity/WorkflowTrait.php (in context of class Labstag\Entity\Story)                                           
+ ------ --------------------------------------------------------------------------------------------------------------------- 
+  14     Property Labstag\Entity\Story::$state type has no value type specified in iterable type array.                       
+         🪪  missingType.iterableValue                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                            
+  20     Method Labstag\Entity\Story::getState() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                            
+  30     Method Labstag\Entity\Story::setState() has parameter $context with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                            
+  30     Method Labstag\Entity\Story::setState() has parameter $state with no value type specified in iterable type array.    
+         🪪  missingType.iterableValue                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                            
+ ------ --------------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+  Line   Traits/Entity/WorkflowTrait.php (in context of class Labstag\Entity\User)                                           
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+  14     Property Labstag\Entity\User::$state type has no value type specified in iterable type array.                       
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+  20     Method Labstag\Entity\User::getState() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+  30     Method Labstag\Entity\User::setState() has parameter $context with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+  30     Method Labstag\Entity\User::setState() has parameter $state with no value type specified in iterable type array.    
+         🪪  missingType.iterableValue                                                                                       
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                           
+ ------ -------------------------------------------------------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Twig/Runtime/BlockExtensionRuntime.php                                                                                                
+ ------ -------------------------------------------------------------------------------------------------------------------------------------- 
+  33     Method Labstag\Twig\Runtime\BlockExtensionRuntime::getShow() has parameter $tab with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                         
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                             
+ ------ -------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Twig/Runtime/DebugExtensionRuntime.php                                                                                               
+ ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+  14     Method Labstag\Twig\Runtime\DebugExtensionRuntime::begin() has parameter $data with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                            
+  34     Method Labstag\Twig\Runtime\DebugExtensionRuntime::end() has parameter $data with no value type specified in iterable type array.    
+         🪪  missingType.iterableValue                                                                                                        
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                            
+ ------ ------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------------------------------------------------------------------------- 
+  Line   Twig/Runtime/FrontExtensionRuntime.php                                                                                                   
+ ------ ----------------------------------------------------------------------------------------------------------------------------------------- 
+  59     Method Labstag\Twig\Runtime\FrontExtensionRuntime::enable() return type has no value type specified in iterable type array.              
+         🪪  missingType.iterableValue                                                                                                            
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                
+  71     Method Labstag\Twig\Runtime\FrontExtensionRuntime::metatags() has parameter $value with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                            
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                
+  88     Method Labstag\Twig\Runtime\FrontExtensionRuntime::title() has parameter $data with no value type specified in iterable type array.      
+         🪪  missingType.iterableValue                                                                                                            
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                
+ ------ ----------------------------------------------------------------------------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------ 
+  Line   Twig/Runtime/ParagraphExtensionRuntime.php                                                                                                
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------ 
+  38     Method Labstag\Twig\Runtime\ParagraphExtensionRuntime::getShow() has parameter $tab with no value type specified in iterable type array.  
+         🪪  missingType.iterableValue                                                                                                             
+         💡 See: https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-iterable-type                                                 
+ ------ ------------------------------------------------------------------------------------------------------------------------------------------ 
+
+ [ERROR] Found 294 errors                                                                                               
+

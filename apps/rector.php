@@ -10,13 +10,15 @@ use Rector\Php82\Rector\Class_\ReadOnlyClassRector;
 use Rector\Php83\Rector\ClassConst\AddTypeToConstRector;
 
 $configure = RectorConfig::configure();
-$configure->withPaths([
-    __DIR__ . '/config',
-    __DIR__ . '/features',
-    __DIR__ . '/public',
-    __DIR__ . '/src',
-    __DIR__ . '/tests',
-]);
+$configure->withPaths(
+    [
+        __DIR__ . '/config',
+        __DIR__ . '/features',
+        __DIR__ . '/public',
+        __DIR__ . '/src',
+        __DIR__ . '/tests',
+    ]
+);
 // uncomment to reach your current PHP version
 // $configure->withPhpSets()
 $configure->withPhpSets(php84: true);
