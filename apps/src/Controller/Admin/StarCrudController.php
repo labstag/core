@@ -14,8 +14,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 use Labstag\Entity\Star;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\StarRepository;
-use Symfony\Component\Translation\TranslatableMessage;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class StarCrudController extends AbstractCrudControllerLib
 {

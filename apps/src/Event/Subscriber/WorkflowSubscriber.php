@@ -11,11 +11,11 @@ use Labstag\Entity\User;
 use Labstag\Service\EmailService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
+use Override;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Transition;
-use Override;
 
 class WorkflowSubscriber implements EventSubscriberInterface
 {

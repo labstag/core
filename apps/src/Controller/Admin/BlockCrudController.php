@@ -23,12 +23,12 @@ use Labstag\Entity\Block;
 use Labstag\Form\Paragraphs\BlockType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\BlockRepository;
+use Override;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
-use Override;
 
 class BlockCrudController extends AbstractCrudControllerLib
 {
@@ -133,10 +133,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         unset($searchDto, $entityDto, $fieldCollection, $filterCollection);
         $serviceEntityRepositoryLib = $this->getRepository();
         $methods = get_class_methods($serviceEntityRepositoryLib);
-        if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array(
-            'findAllOrderedByRegion',
-            $methods
-        )
+        if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array('findAllOrderedByRegion', $methods)
         ) {
             throw new \Exception('findAllOrderedByRegion not found');
         }
@@ -167,10 +164,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         $request = $adminContext->getRequest();
         $serviceEntityRepositoryLib = $this->getRepository();
         $methods = get_class_methods($serviceEntityRepositoryLib);
-        if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array(
-            'findAllOrderedByRegion',
-            $methods
-        )
+        if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array('findAllOrderedByRegion', $methods)
         ) {
             throw new \Exception('findAllOrderedByRegion not found');
         }

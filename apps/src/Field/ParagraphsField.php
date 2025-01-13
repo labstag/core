@@ -7,8 +7,8 @@ namespace Labstag\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use Labstag\Form\Type\ParagraphType;
-use Symfony\Component\Uid\Ulid;
 use Override;
+use Symfony\Component\Uid\Ulid;
 
 final class ParagraphsField implements FieldInterface
 {

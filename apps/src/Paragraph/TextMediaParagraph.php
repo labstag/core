@@ -75,9 +75,7 @@ class TextMediaParagraph extends ParagraphLib
         return 'Texte media';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'text-media';

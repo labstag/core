@@ -38,9 +38,7 @@ class TextImgParagraph extends ParagraphLib
         return 'Texte image';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'text-img';

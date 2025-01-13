@@ -13,8 +13,8 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\User;
 use Labstag\Form\Paragraphs\ChapterType;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Symfony\Component\Translation\TranslatableMessage;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ChapterCrudController extends AbstractCrudControllerLib
 {

@@ -2,9 +2,9 @@
 
 namespace Labstag\Command;
 
-use Override;
 use Labstag\Entity\Star;
 use Labstag\Repository\StarRepository;
+use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;

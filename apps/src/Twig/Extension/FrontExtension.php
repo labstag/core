@@ -3,10 +3,10 @@
 namespace Labstag\Twig\Extension;
 
 use Labstag\Twig\Runtime\FrontExtensionRuntime;
+use Override;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
-use Override;
 
 class FrontExtension extends AbstractExtension
 {

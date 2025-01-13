@@ -10,9 +10,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Movie;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Translation\TranslatableMessage;
-use Override;
 
 class MovieCrudController extends AbstractCrudControllerLib
 {

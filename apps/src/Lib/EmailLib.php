@@ -10,12 +10,12 @@ use Labstag\Replace\UserRolesReplace;
 use Labstag\Repository\TemplateRepository;
 use Labstag\Service\SiteService;
 use Labstag\Service\WorkflowService;
+use Override;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
-use Override;
 
 abstract class EmailLib extends Email
 {

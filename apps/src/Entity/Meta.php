@@ -8,8 +8,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\MetaRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Override;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: MetaRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]

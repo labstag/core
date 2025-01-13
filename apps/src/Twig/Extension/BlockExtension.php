@@ -3,9 +3,9 @@
 namespace Labstag\Twig\Extension;
 
 use Labstag\Twig\Runtime\BlockExtensionRuntime;
+use Override;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use Override;
 
 class BlockExtension extends AbstractExtension
 {

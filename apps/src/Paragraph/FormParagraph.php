@@ -5,8 +5,8 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
-use Symfony\Component\Translation\TranslatableMessage;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class FormParagraph extends ParagraphLib
 {
@@ -57,9 +57,7 @@ class FormParagraph extends ParagraphLib
         return 'Formulaire';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'form';

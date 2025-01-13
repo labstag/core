@@ -14,8 +14,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use Labstag\Entity\GeoCode;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\GeoCodeRepository;
-use Symfony\Component\Translation\TranslatableMessage;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class GeoCodeCrudController extends AbstractCrudControllerLib
 {

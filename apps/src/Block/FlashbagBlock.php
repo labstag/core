@@ -46,9 +46,7 @@ class FlashbagBlock extends BlockLib
         return 'Flashbag';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'flashbag';

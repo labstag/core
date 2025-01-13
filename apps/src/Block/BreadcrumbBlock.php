@@ -65,9 +65,7 @@ class BreadcrumbBlock extends BlockLib
         return 'Breadcrumb';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'breadcrumb';

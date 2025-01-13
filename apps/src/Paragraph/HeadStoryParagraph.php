@@ -44,9 +44,7 @@ class HeadStoryParagraph extends ParagraphLib
         return 'Head story';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'head-story';

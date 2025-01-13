@@ -4,8 +4,8 @@ namespace Labstag\Form\Paragraphs;
 
 use Labstag\Entity\Edito;
 use Labstag\Lib\ParagraphAbstractTypeLib;
-use Symfony\Component\Form\FormBuilderInterface;
 use Override;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class EditoType extends ParagraphAbstractTypeLib
 {

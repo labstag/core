@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use PhpCsFixer\Fixer\Basic\BracesPositionFixer;
+use PhpCsFixer\Fixer\Import\GlobalNamespaceImportFixer;
 use PhpCsFixer\Fixer\Import\NoUnusedImportsFixer;
 use PhpCsFixer\Fixer\Operator\NotOperatorWithSuccessorSpaceFixer;
 use PhpCsFixer\Fixer\LanguageConstruct\IsNullFixer;
@@ -46,6 +47,7 @@ $configure->withSkip(
         NotOperatorWithSuccessorSpaceFixer::class,
         IsNullFixer::class,
         BracesPositionFixer::class,
+        GlobalNamespaceImportFixer::class,
     ]
 );
 $configure->withPhpCsFixerSets(

@@ -14,10 +14,10 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Form\Paragraphs\StoryType;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
-use Override;
 
 class StoryCrudController extends AbstractCrudControllerLib
 {

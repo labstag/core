@@ -35,9 +35,7 @@ class MapParagraph extends ParagraphLib
         return 'Map';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'map';

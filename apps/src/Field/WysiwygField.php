@@ -5,8 +5,8 @@ namespace Labstag\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Override;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 final class WysiwygField implements FieldInterface
 {

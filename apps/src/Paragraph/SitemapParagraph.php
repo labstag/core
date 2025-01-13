@@ -37,9 +37,7 @@ class SitemapParagraph extends ParagraphLib
         return 'Sitemap';
     }
 
-    #[\Override
-
-    ]
+    #[Override]
     public function getType(): string
     {
         return 'sitemap';

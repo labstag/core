@@ -4,6 +4,7 @@ namespace Labstag\Security;
 
 use Labstag\Entity\User;
 use Labstag\Repository\UserRepository;
+use Override;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,6 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
-use Override;
 
 /**
  * @see https://symfony.com/doc/current/security/custom_authenticator.html

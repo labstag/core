@@ -2,9 +2,9 @@
 
 namespace Labstag\Form\Type;
 
+use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Override;
 
 class ParagraphType extends AbstractType
 {

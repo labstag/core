@@ -4,12 +4,12 @@ namespace Labstag\Lib;
 
 use Labstag\Entity\Paragraph;
 use Labstag\Service\ParagraphService;
+use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Override;
 
 abstract class ParagraphAbstractTypeLib extends AbstractType
 {

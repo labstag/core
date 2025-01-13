@@ -6,8 +6,8 @@ namespace Labstag\Field;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Override;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 final class MetaParentField implements FieldInterface
 {
