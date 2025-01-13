@@ -2,7 +2,6 @@
 
 namespace Labstag\Command;
 
-use Exception;
 use Labstag\Entity\GeoCode;
 use Labstag\Repository\GeoCodeRepository;
 use Labstag\Service\GeocodeService;
@@ -16,10 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(
-    name: 'labstag:geocode-install',
-    description: 'Retrieve geocodes',
-)]
+#[AsCommand(name: 'labstag:geocode-install', description: 'Retrieve geocodes')]
 class GeocodeInstallCommand extends Command
 {
 
@@ -29,7 +25,7 @@ class GeocodeInstallCommand extends Command
 
     public function __construct(
         private readonly GeocodeService $geocodeService,
-        private readonly GeoCodeRepository $geoCodeRepository
+        private readonly GeoCodeRepository $geoCodeRepository,
     )
     {
         parent::__construct();
@@ -60,30 +56,23 @@ class GeocodeInstallCommand extends Command
 
         $country = $input->getArgument('country');
         if (!is_string($country)) {
-            throw new Exception('Argument country invalide');
+            throw new \Exception('Argument country invalide');
         }
 
-        if ('' === $country || '0' === $country) {
-            $symfonyStyle->note(
-                sprintf(
-                    'Argument country invalide: %s',
-                    $country
-                )
-            );
+        if ($country === '' || $country === '0') {
+            $symfonyStyle->note(sprintf('Argument country invalide: %s', $country));
 
             return Command::FAILURE;
         }
 
         $csv = $this->geocodeService->csv($country);
-        if ([] == $csv) {
-            $symfonyStyle->warning(
-                ['file not found']
-            );
+        if ($csv == []) {
+            $symfonyStyle->warning(['file not found']);
 
             return Command::FAILURE;
         }
 
-        $table       = $this->geocodeService->tables($csv);
+        $table = $this->geocodeService->tables($csv);
         $progressBar = new ProgressBar($output, count($table));
         $progressBar->start();
 

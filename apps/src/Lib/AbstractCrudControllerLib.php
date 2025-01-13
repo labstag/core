@@ -36,7 +36,6 @@ use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
-use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -56,16 +55,14 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         protected ParagraphService $paragraphService,
         protected WorkflowService $workflowService,
         protected RequestStack $requestStack,
-        protected UserService $userService
+        protected UserService $userService,
     )
     {
     }
 
-    public function addParagraph(
-        AdminContext $adminContext
-    ): RedirectResponse
+    public function addParagraph(AdminContext $adminContext): RedirectResponse
     {
-        $request  = $adminContext->getRequest();
+        $request = $adminContext->getRequest();
         $entityId = $request->query->get('entityId');
 
         $generator = $this->container->get(AdminUrlGenerator::class);
@@ -75,7 +72,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $type = $request->request->get('paragraph', null);
         if (!is_null($type)) {
             $repository = $this->getRepository();
-            $entity     = $repository->find($entityId);
+            $entity = $repository->find($entityId);
 
             $this->paragraphService->addParagraph($entity, $type);
             $repository->save($entity);
@@ -86,7 +83,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->redirect($url);
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->addFormTheme('admin/form.html.twig');
@@ -94,12 +91,12 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
         FieldCollection $fieldCollection,
-        FilterCollection $filterCollection
+        FilterCollection $filterCollection,
     ): QueryBuilder
     {
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
@@ -108,19 +105,17 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->filterListRefUser($queryBuilder, $entityDto);
     }
 
-    public function deleteParagraph(
-        AdminContext $adminContext
-    ): RedirectResponse
+    public function deleteParagraph(AdminContext $adminContext): RedirectResponse
     {
-        $request   = $adminContext->getRequest();
-        $entityId  = $request->query->get('entityId');
+        $request = $adminContext->getRequest();
+        $entityId = $request->query->get('entityId');
         $generator = $this->container->get(AdminUrlGenerator::class);
         $generator->setAction('listParagraph');
 
         $paragraphId = $request->request->get('paragraph', null);
         if (!is_null($paragraphId)) {
             $repository = $this->getRepositoryParagraph();
-            $paragraph  = $repository->find($paragraphId);
+            $paragraph = $repository->find($paragraphId);
             $repository->remove($paragraph);
             $repository->flush();
         }
@@ -135,18 +130,21 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     public function linkPublic(AdminContext $adminContext): RedirectResponse
     {
         $entity = $adminContext->getEntity()->getInstance();
-        $slug   = $this->siteService->getSlugByEntity($entity);
+        $slug = $this->siteService->getSlugByEntity($entity);
 
-        return $this->redirectToRoute('front', ['slug' => $slug]);
+        return $this->redirectToRoute(
+            'front',
+            ['slug' => $slug]
+        );
     }
 
     public function linkw3CValidator(AdminContext $adminContext): RedirectResponse
     {
         $entity = $adminContext->getEntity()->getInstance();
-        $slug   = $this->siteService->getSlugByEntity($entity);
+        $slug = $this->siteService->getSlugByEntity($entity);
 
         return $this->redirect(
-            'https://validator.w3.org/nu/?doc='.$this->generateUrl(
+            'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
                 'front',
                 ['slug' => $slug],
                 UrlGeneratorInterface::ABSOLUTE_URL
@@ -154,14 +152,12 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         );
     }
 
-    public function listParagraph(
-        AdminContext $adminContext
-    ): Response
+    public function listParagraph(AdminContext $adminContext): Response
     {
-        $entityId                   = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $adminContext->getRequest()->query->get('entityId');
         $serviceEntityRepositoryLib = $this->getRepository();
-        $entity                     = $serviceEntityRepositoryLib->find($entityId);
-        $paragraphs                 = $entity->getParagraphs();
+        $entity = $serviceEntityRepositoryLib->find($entityId);
+        $paragraphs = $entity->getParagraphs();
 
         return $this->render(
             'admin/pararaphs.html.twig',
@@ -169,13 +165,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         );
     }
 
-    public function updateParagraph(
-        AdminContext $adminContext
-    ): RedirectResponse
+    public function updateParagraph(AdminContext $adminContext): RedirectResponse
     {
-        $request   = $adminContext->getRequest();
+        $request = $adminContext->getRequest();
         $generator = $this->container->get(AdminUrlGenerator::class);
-        $entityId  = $request->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $generator->setAction('listParagraph');
         $paragraphs = $request->request->get('paragraphs', null);
         if (!is_null($paragraphs)) {
@@ -202,8 +196,8 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFieldBoolean(): BooleanField
     {
-        $request      = $this->container->get('request_stack')->getCurrentRequest();
-        $action       = $request->query->get('action', null);
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+        $action = $request->query->get('action', null);
         $booleanField = BooleanField::new('enable', new TranslatableMessage('Enable'));
         $booleanField->renderAsSwitch(empty($action));
 
@@ -216,8 +210,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $associationField->setTemplatePath('admin/field/categories.html.twig');
         $associationField->setFormTypeOption('by_reference', false);
         $associationField->setQueryBuilder(
-            function (QueryBuilder $queryBuilder) use ($type): void
-            {
+            function (QueryBuilder $queryBuilder) use ($type): void {
                 $queryBuilder->andWhere('entity.type = :type');
                 $queryBuilder->setParameter('type', $type);
             }
@@ -237,9 +230,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     protected function addFieldIDShortcode(string $type): TextField
     {
         $textField = TextField::new('id', new TranslatableMessage('Shortcode'));
-        $textField->formatValue(
-            fn ($identity): string => sprintf('[%s:%s]', $type, $identity)
-        );
+        $textField->formatValue(fn ($identity): string => sprintf('[%s:%s]', $type, $identity));
         $textField->onlyOnDetail();
 
         return $textField;
@@ -247,16 +238,16 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFieldImageUpload(string $type, string $pageName, ?string $label = null): TextField|ImageField
     {
-        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $imageField = TextField::new($type.'File', is_null($label) ? new TranslatableMessage('Image') : $label);
+        if ($pageName === Crud::PAGE_EDIT || $pageName === Crud::PAGE_NEW) {
+            $imageField = TextField::new($type . 'File', $label ?? new TranslatableMessage('Image'));
             $imageField->setFormType(VichImageType::class);
 
             return $imageField;
         }
 
-        $entity     = $this->getEntityFqcn();
-        $basePath   = $this->fileService->getBasePath($entity, $type.'File');
-        $imageField = ImageField::new($type, is_null($label) ? new TranslatableMessage('Image') : $label);
+        $entity = $this->getEntityFqcn();
+        $basePath = $this->fileService->getBasePath($entity, $type . 'File');
+        $imageField = ImageField::new($type, $label ?? new TranslatableMessage('Image'));
         $imageField->setBasePath($basePath);
 
         return $imageField;
@@ -278,11 +269,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         unset($form);
 
         $fields = [];
-        if ('new' === $pageName) {
+        if ($pageName === 'new') {
             return $fields;
         }
 
-        if ('edit' !== $pageName) {
+        if ($pageName !== 'edit') {
             $fields[] = ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'));
 
             return $fields;
@@ -310,19 +301,19 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFieldRefUser(): array
     {
-        $data  = [];
-        $user  = $this->getUser();
+        $data = [];
+        $user = $this->getUser();
         $roles = $user->getRoles();
         if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
             return [];
         }
 
-        $data[]           = FormField::addTab(new TranslatableMessage('refuser'));
+        $data[] = FormField::addTab(new TranslatableMessage('refuser'));
         $associationField = AssociationField::new('refuser', new TranslatableMessage('Refuser'));
         $associationField->autocomplete();
         $associationField->setSortProperty('username');
 
-        $user  = $this->getUser();
+        $user = $this->getUser();
         $roles = $user->getRoles();
         if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
             $associationField->hideOnForm();
@@ -341,9 +332,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             ['required' => false]
         );
         $slugField->setTargetFieldName('title');
-        $slugField->setUnlockConfirmationMessage(
-            'Attention, si vous changez le titre, le slug sera modifié'
-        );
+        $slugField->setUnlockConfirmationMessage('Attention, si vous changez le titre, le slug sera modifié');
 
         return $slugField;
     }
@@ -363,8 +352,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $associationField->setTemplatePath('admin/field/tags.html.twig');
         $associationField->setFormTypeOption('by_reference', false);
         $associationField->setQueryBuilder(
-            function (QueryBuilder $queryBuilder) use ($type): void
-            {
+            function (QueryBuilder $queryBuilder) use ($type): void {
                 $queryBuilder->andWhere('entity.type = :type');
                 $queryBuilder->setParameter('type', $type);
             }
@@ -434,11 +422,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     protected function configureActionsTrashBtn(Request $request, Actions $actions): void
     {
         $action = $request->query->get('action', null);
-        if ('trash' == $action) {
+        if ($action == 'trash') {
             return;
         }
 
-        $action    = Action::new('trash', new TranslatableMessage('Trash'), 'fa fa-trash');
+        $action = Action::new('trash', new TranslatableMessage('Trash'), 'fa fa-trash');
         $generator = $this->container->get(AdminUrlGenerator::class);
         $generator->setAction(Action::INDEX);
         $generator->setController(static::class);
@@ -491,7 +479,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     {
         $doctrine = $this->container->get('doctrine');
 
-        $entity = is_null($entity) ? static::getEntityFqcn() : $entity;
+        $entity ??= static::getEntityFqcn();
 
         return $doctrine->getManagerForClass(static::getEntityFqcn())->getRepository($entity);
     }
@@ -526,8 +514,8 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     private function filterListeTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
     {
         $request = $searchDto->getRequest();
-        $action  = $request->query->get('action', null);
-        if ('trash' == $action) {
+        $action = $request->query->get('action', null);
+        if ($action == 'trash') {
             $queryBuilder->andWhere('entity.deletedAt IS NOT NULL');
         }
 
@@ -536,11 +524,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     private function filterListRefUser(QueryBuilder $queryBuilder, EntityDto $entityDto): QueryBuilder
     {
-        $fqcn    = $entityDto->getFqcn();
-        $entity  = new $fqcn();
+        $fqcn = $entityDto->getFqcn();
+        $entity = new $fqcn();
         $methods = get_class_methods($entity);
         if (in_array('getRefuser', $methods)) {
-            $user  = $this->getUser();
+            $user = $this->getUser();
             $roles = $user->getRoles();
             if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
                 $queryBuilder->andWhere('entity.refuser = :refuser');

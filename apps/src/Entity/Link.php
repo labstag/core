@@ -5,12 +5,10 @@ namespace Labstag\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\LinkRepository;
-use Override;
-use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: LinkRepository::class)]
-class Link implements Stringable
+class Link implements \Stringable
 {
 
     #[ORM\Column]
@@ -34,7 +32,7 @@ class Link implements Stringable
     #[ORM\Column(length: 255)]
     private ?string $url = null;
 
-    #[Override]
+    #[\Override]
     public function __toString(): string
     {
         return (string) $this->title;

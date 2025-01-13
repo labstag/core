@@ -14,12 +14,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 use Labstag\Entity\Star;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\StarRepository;
-use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class StarCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsBtn($actions);
@@ -27,7 +26,7 @@ class StarCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -38,7 +37,7 @@ class StarCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
@@ -55,16 +54,16 @@ class StarCrudController extends AbstractCrudControllerLib
         yield $this->addFieldBoolean();
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $licences = $this->getallData('license');
-        if (0 != count($licences)) {
+        if (count($licences) != 0) {
             $filters->add(ChoiceFilter::new('license', new TranslatableMessage('License'))->setChoices($licences));
         }
 
         $languages = $this->getallData('language');
-        if (0 != count($languages)) {
+        if (count($languages) != 0) {
             $filters->add(ChoiceFilter::new('language', new TranslatableMessage('Language'))->setChoices($languages));
         }
 
@@ -76,7 +75,7 @@ class StarCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Star::class;
@@ -85,7 +84,7 @@ class StarCrudController extends AbstractCrudControllerLib
     private function getAllData(string $type): array
     {
         $serviceEntityRepositoryLib = $this->getRepository();
-        $methods                    = get_class_methods($serviceEntityRepositoryLib);
+        $methods = get_class_methods($serviceEntityRepositoryLib);
         if (!$serviceEntityRepositoryLib instanceof StarRepository || !in_array('findAllData', $methods)) {
             return [];
         }

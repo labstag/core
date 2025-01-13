@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use DateTime;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -13,8 +11,6 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\MemoRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Traits\Entity\WorkflowTrait;
-use Override;
-use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -22,13 +18,16 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: MemoRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Memo implements Stringable
+class Memo implements \Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
     use WorkflowTrait;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
     protected ?bool $enable = null;
 
     #[ORM\Column(length: 255)]
@@ -50,7 +49,9 @@ class Memo implements Stringable
      * @var Collection<int, Paragraph>
      */
     #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'memo', cascade: ['persist', 'remove'])]
-    #[ORM\OrderBy(['position' => 'ASC'])]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
     private Collection $paragraphs;
 
     #[ORM\ManyToOne(inversedBy: 'memos', cascade: ['persist', 'detach'])]
@@ -62,7 +63,7 @@ class Memo implements Stringable
         $this->paragraphs = new ArrayCollection();
     }
 
-    #[Override]
+    #[\Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();
@@ -145,7 +146,7 @@ class Memo implements Stringable
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+            $this->updatedAt = \DateTime::createFromImmutable(new \DateTimeImmutable());
         }
     }
 

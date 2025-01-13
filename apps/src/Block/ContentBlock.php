@@ -5,39 +5,31 @@ namespace Labstag\Block;
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Labstag\Lib\BlockLib;
-use Override;
 use Symfony\Component\HttpFoundation\Response;
 
 class ContentBlock extends BlockLib
 {
-    #[Override]
+    #[\Override]
     public function content(string $view, Block $block): ?Response
     {
         if (!$this->isShow($block)) {
             return null;
         }
 
-        return $this->render(
-            $view,
-            $this->getData($block)
-        );
+        return $this->render($view, $this->getData($block));
     }
 
-    #[Override]
+    #[\Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
         $paragraphs = $data['paragraphs'];
-        if (0 == count($paragraphs)) {
+        if (count($paragraphs) == 0) {
             $this->setShow($block, false);
 
             return;
         }
 
-        $paragraphs = $this->paragraphService->generate(
-            $paragraphs,
-            $data,
-            $disable
-        );
+        $paragraphs = $this->paragraphService->generate($paragraphs, $data, $disable);
 
         $contents = $this->paragraphService->getContents($paragraphs);
         $this->setHeader($block, $contents->header);
@@ -60,7 +52,7 @@ class ContentBlock extends BlockLib
         $this->setData($block, $tab);
     }
 
-    #[Override]
+    #[\Override]
     public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
@@ -68,13 +60,13 @@ class ContentBlock extends BlockLib
         return [];
     }
 
-    #[Override]
+    #[\Override]
     public function getName(): string
     {
         return 'Content';
     }
 
-    #[Override]
+    #[\Override]
     public function getType(): string
     {
         return 'content';

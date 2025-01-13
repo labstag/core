@@ -14,7 +14,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\User;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,7 +22,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class UserCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setEditDetail($actions);
@@ -32,7 +31,7 @@ class UserCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -42,7 +41,7 @@ class UserCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('username', new TranslatableMessage('Username'));
@@ -68,7 +67,7 @@ class UserCrudController extends AbstractCrudControllerLib
                 'mapped'         => false,
             ]
         );
-        $textField->setRequired(Crud::PAGE_NEW === $pageName);
+        $textField->setRequired($pageName === Crud::PAGE_NEW);
         $textField->onlyOnForms();
         yield $textField;
         $languageField = ChoiceField::new('language', new TranslatableMessage('Language'));
@@ -97,7 +96,7 @@ class UserCrudController extends AbstractCrudControllerLib
         yield $this->addFieldState();
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
@@ -105,11 +104,11 @@ class UserCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[Override]
+    #[\Override]
     public function createEditFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
-        AdminContext $adminContext
+        AdminContext $adminContext,
     ): FormBuilderInterface
     {
         $formBuilder = parent::createEditFormBuilder($entityDto, $keyValueStore, $adminContext);
@@ -117,7 +116,7 @@ class UserCrudController extends AbstractCrudControllerLib
         return $this->addPasswordEventListener($formBuilder);
     }
 
-    #[Override]
+    #[\Override]
     public function createEntity(string $entityFqcn): User
     {
         $user = new $entityFqcn();
@@ -126,11 +125,11 @@ class UserCrudController extends AbstractCrudControllerLib
         return $user;
     }
 
-    #[Override]
+    #[\Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
-        AdminContext $adminContext
+        AdminContext $adminContext,
     ): FormBuilderInterface
     {
         $formBuilder = parent::createNewFormBuilder($entityDto, $keyValueStore, $adminContext);
@@ -138,7 +137,7 @@ class UserCrudController extends AbstractCrudControllerLib
         return $this->addPasswordEventListener($formBuilder);
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return User::class;
@@ -146,23 +145,19 @@ class UserCrudController extends AbstractCrudControllerLib
 
     private function addPasswordEventListener(FormBuilderInterface $formBuilder): mixed
     {
-        return $formBuilder->addEventListener(
-            FormEvents::POST_SUBMIT,
-            $this->hashPassword()
-        );
+        return $formBuilder->addEventListener(FormEvents::POST_SUBMIT, $this->hashPassword());
     }
 
     private function hashPassword(): callable
     {
-        return function ($event): void
-        {
+        return function ($event): void {
             $form = $event->getForm();
             if (!$form->isValid()) {
                 return;
             }
 
             $password = $form->get('password')->getData();
-            if (null === $password) {
+            if (is_null($password)) {
                 return;
             }
 

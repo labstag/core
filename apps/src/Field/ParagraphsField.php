@@ -6,9 +6,7 @@ namespace Labstag\Field;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
-use InvalidArgumentException;
 use Labstag\Form\Type\ParagraphType;
-use Override;
 use Symfony\Component\Uid\Ulid;
 
 final class ParagraphsField implements FieldInterface
@@ -31,7 +29,7 @@ final class ParagraphsField implements FieldInterface
                 __METHOD__
             );
 
-            throw new InvalidArgumentException($message);
+            throw new \InvalidArgumentException($message);
         }
 
         $this->setCustomOption(self::OPTION_COLLAPSIBLE, $collapsible);
@@ -39,20 +37,18 @@ final class ParagraphsField implements FieldInterface
         return $this;
     }
 
-    #[Override]
+    #[\Override]
     public static function new($label = false, ?string $icon = null): self
     {
         $field = new self();
         $field->setFieldFqcn(self::class);
-        $field->setProperty('ea_form_panel_'.(new Ulid()));
+        $field->setProperty('ea_form_panel_' . (new Ulid()));
         $field->setLabel($label);
         $field->setFormType(ParagraphType::class);
-        $field->setFormTypeOptions(
-            [
-                'mapped'   => false,
-                'required' => false,
-            ]
-        );
+        $field->setFormTypeOptions([
+            'mapped' => false,
+            'required' => false,
+        ]);
         $field->setTemplatePath('admin/field/paragraphs.html.twig');
         $field->setCustomOption(self::OPTION_ICON, $icon);
         $field->setCustomOption(self::OPTION_COLLAPSIBLE, false);
@@ -69,7 +65,7 @@ final class ParagraphsField implements FieldInterface
                 __METHOD__
             );
 
-            throw new InvalidArgumentException($message);
+            throw new \InvalidArgumentException($message);
         }
 
         $this->setCustomOption(self::OPTION_COLLAPSIBLE, true);
@@ -81,10 +77,10 @@ final class ParagraphsField implements FieldInterface
     private function hasLabelOrIcon(): bool
     {
         // don't use empty() because the label can contain only white spaces (it's a valid edge-case)
-        if (null !== $this->dto->getLabel() && '' !== $this->dto->getLabel()) {
+        if (!is_null($this->dto->getLabel()) && $this->dto->getLabel() !== '') {
             return true;
         }
 
-        return null !== $this->dto->getCustomOption(self::OPTION_ICON);
+        return !is_null($this->dto->getCustomOption(self::OPTION_ICON));
     }
 }

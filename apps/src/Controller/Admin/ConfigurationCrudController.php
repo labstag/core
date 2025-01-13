@@ -13,12 +13,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Labstag\Entity\Configuration;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ConfigurationCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
@@ -28,7 +27,7 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
@@ -49,7 +48,7 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
         yield $this->addFieldImageUpload('favicon', $pageName, new TranslatableMessage('favicon'));
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Configuration::class;

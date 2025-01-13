@@ -26,7 +26,10 @@ class Movie
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $country = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
     private ?bool $enable = null;
 
     #[ORM\Id]

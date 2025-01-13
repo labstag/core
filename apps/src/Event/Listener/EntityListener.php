@@ -27,14 +27,14 @@ final class EntityListener
         private Registry $workflowRegistry,
         private PageRepository $pageRepository,
         private ParagraphService $paragraphService,
-        private WorkflowService $workflowService
+        private WorkflowService $workflowService,
     )
     {
     }
 
     public function postPersist(PostPersistEventArgs $postPersistEventArgs): void
     {
-        $object        = $postPersistEventArgs->getObject();
+        $object = $postPersistEventArgs->getObject();
         $entityManager = $postPersistEventArgs->getObjectManager();
         $this->postPersistParagraph($object, $entityManager);
     }
@@ -70,7 +70,7 @@ final class EntityListener
             return;
         }
 
-        if ('' != $paragraph->getType()) {
+        if ($paragraph->getType() != '') {
             return;
         }
 
@@ -106,7 +106,7 @@ final class EntityListener
             return;
         }
 
-        $story    = $entity->getRefstory();
+        $story = $entity->getRefstory();
         $chapters = $story->getChapters();
         $entity->setPosition(count($chapters) + 1);
     }
@@ -117,11 +117,13 @@ final class EntityListener
             return;
         }
 
-        if ('home' != $entity->getType()) {
+        if ($entity->getType() != 'home') {
             return;
         }
 
-        $oldHome = $this->pageRepository->findOneBy(['type' => 'home']);
+        $oldHome = $this->pageRepository->findOneBy(
+            ['type' => 'home']
+        );
         if ($oldHome instanceof Page && $oldHome->getId() === $entity->getId()) {
             return;
         }

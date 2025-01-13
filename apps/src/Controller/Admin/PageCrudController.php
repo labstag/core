@@ -12,12 +12,11 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Form\Paragraphs\PageType;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PageCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions);
@@ -27,7 +26,7 @@ class PageCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -37,20 +36,20 @@ class PageCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield $this->addFieldIDShortcode('page');
-        if ($currentEntity instanceof Page && 'home' != $currentEntity->getType()) {
+        if ($currentEntity instanceof Page && $currentEntity->getType() != 'home') {
             yield $this->addFieldSlug();
         }
 
         yield $this->addFieldBoolean();
         $fieldChoice = $this->addFieldIsHome($currentEntity, $pageName);
-        if (!is_null($fieldChoice)) {
+        if ($fieldChoice instanceof ChoiceField) {
             yield $fieldChoice;
         }
 
@@ -74,7 +73,7 @@ class PageCrudController extends AbstractCrudControllerLib
         yield $this->addFieldState();
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterRefUser($filters);
@@ -84,14 +83,16 @@ class PageCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[Override]
+    #[\Override]
     public function createEntity(string $entityFqcn): Page
     {
         $page = new $entityFqcn();
         $this->workflowService->init($page);
         $meta = new Meta();
         $page->setMeta($meta);
-        $home = $this->getRepository()->findOneBy(['type' => 'home']);
+        $home = $this->getRepository()->findOneBy(
+            ['type' => 'home']
+        );
         if ($home instanceof Page) {
             $page->setPage($home);
         }
@@ -102,7 +103,7 @@ class PageCrudController extends AbstractCrudControllerLib
         return $page;
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Page::class;
@@ -110,7 +111,7 @@ class PageCrudController extends AbstractCrudControllerLib
 
     protected function addFieldIsHome(?Page $page, string $pageName): ?ChoiceField
     {
-        if ('new' === $pageName || ($page instanceof Page && 'home' == $page->getType())) {
+        if ($pageName === 'new' || ($page instanceof Page && $page->getType() == 'home')) {
             return null;
         }
 

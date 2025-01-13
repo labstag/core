@@ -9,14 +9,11 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(
-    name: 'labstag:delete-oldfiles',
-    description: 'Delete old files',
-)]
+#[AsCommand(name: 'labstag:delete-oldfiles', description: 'Delete old files')]
 class DeleteOldFilesCommand extends Command
 {
     public function __construct(
-        protected FileService $fileService
+        protected FileService $fileService,
     )
     {
         parent::__construct();
@@ -27,8 +24,8 @@ class DeleteOldFilesCommand extends Command
     {
         unset($input);
         $total = $this->fileService->deletedFileByEntities();
-        if (0 != $total) {
-            $output->writeln($total.' file(s) deleted');
+        if ($total != 0) {
+            $output->writeln($total . ' file(s) deleted');
         }
 
         $output->writeln('Script executed successfully.');

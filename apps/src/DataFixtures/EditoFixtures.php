@@ -8,7 +8,6 @@ use Faker\Generator;
 use Labstag\Entity\Edito;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
-use Override;
 
 class EditoFixtures extends FixtureLib implements DependentFixtureInterface
 {
@@ -19,15 +18,13 @@ class EditoFixtures extends FixtureLib implements DependentFixtureInterface
 
     protected array $users = [];
 
-    #[Override]
+    #[\Override]
     public function getDependencies(): array
     {
-        return [
-            UserFixtures::class,
-        ];
+        return [UserFixtures::class];
     }
 
-    #[Override]
+    #[\Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->users = $this->getIdentitiesByClass(User::class);
@@ -35,11 +32,7 @@ class EditoFixtures extends FixtureLib implements DependentFixtureInterface
         $objectManager->flush();
     }
 
-    protected function addEdito(
-        Generator $generator,
-        ObjectManager $objectManager,
-        int $index
-    ): void
+    protected function addEdito(Generator $generator, ObjectManager $objectManager, int $index): void
     {
         $edito = new Edito();
         $edito->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
@@ -48,7 +41,7 @@ class EditoFixtures extends FixtureLib implements DependentFixtureInterface
         $edito->setTitle($generator->unique()->colorName());
         $this->addParagraphText($edito);
         $this->setImage($edito, 'imgFile');
-        $this->addReference('edito_'.md5(uniqid()), $edito);
+        $this->addReference('edito_' . md5(uniqid()), $edito);
         $objectManager->persist($edito);
     }
 }

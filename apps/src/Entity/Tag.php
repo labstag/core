@@ -9,13 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\TagRepository;
-use Override;
-use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class Tag implements Stringable
+class Tag implements \Stringable
 {
     use SoftDeleteableEntity;
 
@@ -65,13 +63,13 @@ class Tag implements Stringable
 
     public function __construct()
     {
-        $this->posts    = new ArrayCollection();
-        $this->pages    = new ArrayCollection();
-        $this->stories  = new ArrayCollection();
+        $this->posts = new ArrayCollection();
+        $this->pages = new ArrayCollection();
+        $this->stories = new ArrayCollection();
         $this->chapters = new ArrayCollection();
     }
 
-    #[Override]
+    #[\Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();

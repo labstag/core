@@ -10,13 +10,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Movie;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
@@ -31,7 +30,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -41,7 +40,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
@@ -54,7 +53,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield $this->addFieldBoolean();
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Movie::class;
@@ -64,7 +63,7 @@ class MovieCrudController extends AbstractCrudControllerLib
     {
         $entity = $adminContext->getEntity()->getInstance();
 
-        return $this->redirect('https://www.imdb.com/title/tt'.$entity->getImdb().'/');
+        return $this->redirect('https://www.imdb.com/title/tt' . $entity->getImdb() . '/');
     }
 
     private function setLinkImdbAction(): Action

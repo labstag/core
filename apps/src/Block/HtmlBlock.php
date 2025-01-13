@@ -5,26 +5,22 @@ namespace Labstag\Block;
 use Labstag\Entity\Block;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\BlockLib;
-use Override;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class HtmlBlock extends BlockLib
 {
-    #[Override]
+    #[\Override]
     public function content(string $view, Block $block): ?Response
     {
         if (!$this->isShow($block)) {
             return null;
         }
 
-        return $this->render(
-            $view,
-            $this->getData($block)
-        );
+        return $this->render($view, $this->getData($block));
     }
 
-    #[Override]
+    #[\Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
@@ -37,7 +33,7 @@ class HtmlBlock extends BlockLib
         );
     }
 
-    #[Override]
+    #[\Override]
     public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
@@ -46,13 +42,13 @@ class HtmlBlock extends BlockLib
         yield $wysiwygField;
     }
 
-    #[Override]
+    #[\Override]
     public function getName(): string
     {
         return 'HTML';
     }
 
-    #[Override
+    #[\Override
 
     ]
     public function getType(): string

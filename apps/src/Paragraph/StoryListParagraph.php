@@ -7,21 +7,17 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Story;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\StoryRepository;
-use Override;
 
 class StoryListParagraph extends ParagraphLib
 {
-    #[Override]
+    #[\Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
         /** @var StoryRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Story::class);
 
-        $pagination = $this->getPaginator(
-            $serviceEntityRepositoryLib->getQueryPaginator(),
-            $paragraph->getNbr()
-        );
+        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
 
         $templates = $this->templates('header');
         $this->setHeader(
@@ -42,7 +38,7 @@ class StoryListParagraph extends ParagraphLib
         );
     }
 
-    #[Override]
+    #[\Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -51,19 +47,19 @@ class StoryListParagraph extends ParagraphLib
         yield $this->addFieldIntegerNbr();
     }
 
-    #[Override]
+    #[\Override]
     public function getName(): string
     {
         return 'Story list';
     }
 
-    #[Override]
+    #[\Override]
     public function getType(): string
     {
         return 'story-list';
     }
 
-    #[Override]
+    #[\Override]
     public function useIn(): array
     {
         return $this->useInAll();

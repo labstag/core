@@ -5,7 +5,6 @@ namespace Labstag\Command;
 use Labstag\Entity\Template;
 use Labstag\Repository\TemplateRepository;
 use Labstag\Service\EmailService;
-use NumberFormatter;
 use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -14,10 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(
-    name: 'labstag:email:template-add',
-    description: '',
-)]
+#[AsCommand(name: 'labstag:email:template-add', description: '')]
 class EmailTemplateAddCommand extends Command
 {
 
@@ -27,7 +23,7 @@ class EmailTemplateAddCommand extends Command
 
     public function __construct(
         protected EmailService $emailService,
-        protected TemplateRepository $templateRepository
+        protected TemplateRepository $templateRepository,
     )
     {
         parent::__construct();
@@ -49,13 +45,15 @@ class EmailTemplateAddCommand extends Command
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
 
-        $templates   = $this->emailService->all();
-        $counter     = 0;
+        $templates = $this->emailService->all();
+        $counter = 0;
         $progressBar = new ProgressBar($output, is_countable($templates) ? count($templates) : 0);
         $progressBar->start();
         foreach ($templates as $row) {
             $template = $this->templateRepository->findOneBy(
-                ['code' => $row->getType()]
+                [
+                    'code' => $row->getType(),
+                ]
             );
             $this->addOrUpdate($template);
             if (!$template instanceof Template) {
@@ -77,13 +75,8 @@ class EmailTemplateAddCommand extends Command
 
         $this->templateRepository->flush();
 
-        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
-        $symfonyStyle->success(
-            sprintf(
-                'Added: %d',
-                $numberFormatter->format($this->add)
-            )
-        );
+        $numberFormatter = new \NumberFormatter('fr_FR', \NumberFormatter::DECIMAL);
+        $symfonyStyle->success(sprintf('Added: %d', $numberFormatter->format($this->add)));
 
         return Command::SUCCESS;
     }

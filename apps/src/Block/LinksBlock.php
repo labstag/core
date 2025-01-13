@@ -9,31 +9,27 @@ use Labstag\Entity\Post;
 use Labstag\Entity\Story;
 use Labstag\Form\LinkType;
 use Labstag\Lib\BlockLib;
-use Override;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class LinksBlock extends BlockLib
 {
-    #[Override]
+    #[\Override]
     public function content(string $view, Block $block): ?Response
     {
         if (!$this->isShow($block)) {
             return null;
         }
 
-        return $this->render(
-            $view,
-            $this->getData($block)
-        );
+        return $this->render($view, $this->getData($block));
     }
 
-    #[Override]
+    #[\Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
         $links = $this->correctionLinks($block);
-        if (0 == count($links)) {
+        if (count($links) == 0) {
             $this->setShow($block, false);
 
             return;
@@ -49,7 +45,7 @@ class LinksBlock extends BlockLib
         );
     }
 
-    #[Override]
+    #[\Override]
     public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
@@ -61,13 +57,13 @@ class LinksBlock extends BlockLib
         yield $collectionField;
     }
 
-    #[Override]
+    #[\Override]
     public function getName(): string
     {
         return 'Links';
     }
 
-    #[Override
+    #[\Override
 
     ]
     public function getType(): string
@@ -78,7 +74,7 @@ class LinksBlock extends BlockLib
     private function correctionLinks(Block $block): array
     {
         $links = $block->getLinks();
-        $data  = [];
+        $data = [];
         foreach ($links as $link) {
             $entity = clone $link;
             $entity->setUrl($this->correctionUrl($entity->getUrl()));
@@ -119,6 +115,9 @@ class LinksBlock extends BlockLib
 
         $slug = $this->siteService->getSlugByEntity($data);
 
-        return $this->router->generate('front', ['slug' => $slug]);
+        return $this->router->generate(
+            'front',
+            ['slug' => $slug]
+        );
     }
 }

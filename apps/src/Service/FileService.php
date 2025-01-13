@@ -3,7 +3,6 @@
 namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Configuration;
 use Labstag\Entity\Edito;
@@ -20,7 +19,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Yaml\Yaml;
-
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 class FileService
@@ -51,7 +49,7 @@ class FileService
         protected KernelInterface $kernel,
         protected EntityManagerInterface $entityManager,
         protected ParameterBagInterface $parameterBag,
-        protected PropertyMappingFactory $propertyMappingFactory
+        protected PropertyMappingFactory $propertyMappingFactory,
     )
     {
     }
@@ -62,7 +60,7 @@ class FileService
     public function all(): array
     {
         $files = [];
-        $data  = $this->getDataStorage();
+        $data = $this->getDataStorage();
         foreach (array_keys($data) as $key) {
             if (in_array($key, ['private', 'public'])) {
                 continue;
@@ -83,8 +81,8 @@ class FileService
             }
 
             $adapter = $this->getAdapter($type);
-            if (is_null($adapter)) {
-                throw new Exception('Adapter not found');
+            if (!$adapter instanceof LocalFilesystemAdapter) {
+                throw new \Exception('Adapter not found');
             }
 
             $filesystem = new Filesystem(
@@ -102,17 +100,17 @@ class FileService
 
     public function deletedFileByEntities(): int
     {
-        $total    = 0;
-        $data     = $this->getFiles();
+        $total = 0;
+        $data = $this->getFiles();
         $entities = $this->getEntity();
         foreach ($data as $type => $files) {
-            $deletes    = [];
+            $deletes = [];
             $repository = $this->getRepository($entities[$type]);
-            $mappings   = $this->propertyMappingFactory->fromObject(new $entities[$type]());
+            $mappings = $this->propertyMappingFactory->fromObject(new $entities[$type]());
             foreach ($files as $file) {
                 $find = 0;
                 foreach ($mappings as $mapping) {
-                    $field  = $mapping->getFileNamePropertyName();
+                    $field = $mapping->getFileNamePropertyName();
                     $entity = $repository->findOneBy(
                         [$field => $file]
                     );
@@ -125,7 +123,7 @@ class FileService
                     break;
                 }
 
-                if (0 == $find) {
+                if ($find == 0) {
                     $deletes[] = $file;
                 }
             }
@@ -150,15 +148,15 @@ class FileService
     public function getFiles(): array
     {
         $files = [];
-        $data  = $this->getDataStorage();
+        $data = $this->getDataStorage();
         foreach (array_keys($data) as $type) {
             if (in_array($type, ['private', 'public'])) {
                 continue;
             }
 
             $adapter = $this->getAdapter($type);
-            if (is_null($adapter)) {
-                throw new Exception('Adapter not found');
+            if (!$adapter instanceof LocalFilesystemAdapter) {
+                throw new \Exception('Adapter not found');
             }
 
             $filesystem = new Filesystem(
@@ -167,7 +165,7 @@ class FileService
                     'public_url' => $this->getFolder($type),
                 ]
             );
-            $files[$type]     = [];
+            $files[$type] = [];
             $directoryListing = $filesystem->listContents('');
             foreach ($directoryListing as $content) {
                 $files[$type][] = $content->path();
@@ -182,10 +180,10 @@ class FileService
      */
     public function getFileSystem(string $type): array
     {
-        $files   = [];
+        $files = [];
         $adapter = $this->getAdapter($type);
-        if (is_null($adapter)) {
-            throw new Exception('Adapter not found');
+        if (!$adapter instanceof LocalFilesystemAdapter) {
+            throw new \Exception('Adapter not found');
         }
 
         $filesystem = new Filesystem(
@@ -206,7 +204,7 @@ class FileService
     {
         $basePath = $this->getBasePath($entity, $type);
 
-        return $this->parameterBag->get('kernel.project_dir').'/public'.$basePath;
+        return $this->parameterBag->get('kernel.project_dir') . '/public' . $basePath;
     }
 
     public function getMappingForEntity(object|array $entity): array
@@ -222,8 +220,8 @@ class FileService
     private function deleteFilesByType(int|string $type, array $files): void
     {
         $adapter = $this->getAdapter($type);
-        if (is_null($adapter)) {
-            throw new Exception('Adapter not found');
+        if (!$adapter instanceof LocalFilesystemAdapter) {
+            throw new \Exception('Adapter not found');
         }
 
         $filesystem = new Filesystem(
@@ -281,21 +279,15 @@ class FileService
 
     private function getFolder(string $type): mixed
     {
-        $config = Yaml::parse(
-            file_get_contents($this->kernel->getProjectDir().'/config/packages/flysystem.yaml')
-        );
+        $config = Yaml::parse(file_get_contents($this->kernel->getProjectDir() . '/config/packages/flysystem.yaml'));
 
         $storages = $config['flysystem']['storages'];
-        if (!array_key_exists($type.'.storage', $storages)) {
-            throw new Exception('Type not found');
+        if (!array_key_exists($type . '.storage', $storages)) {
+            throw new \Exception('Type not found');
         }
 
-        $storage = $storages[$type.'.storage'];
+        $storage = $storages[$type . '.storage'];
 
-        return str_replace(
-            '%kernel.project_dir%/public',
-            '',
-            $storage['options']['directory']
-        );
+        return str_replace('%kernel.project_dir%/public', '', $storage['options']['directory']);
     }
 }

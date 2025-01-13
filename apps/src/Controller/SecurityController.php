@@ -3,7 +3,6 @@
 namespace Labstag\Controller;
 
 use Labstag\Service\SiteService;
-use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -13,7 +12,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
     public function __construct(
-        protected SiteService $siteService
+        protected SiteService $siteService,
     )
     {
     }
@@ -31,23 +30,20 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('admin');
         }
 
-        return $this->render(
-            '@EasyAdmin/page/login.html.twig',
-            $this->getDataLogin($authenticationUtils)
-        );
+        return $this->render('@EasyAdmin/page/login.html.twig', $this->getDataLogin($authenticationUtils));
     }
 
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
-        throw new LogicException();
+        throw new \LogicException();
     }
 
     protected function getDataLogin(AuthenticationUtils $authenticationUtils): array
     {
-        $error        = $authenticationUtils->getLastAuthenticationError();
+        $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
-        $data         = $this->siteService->getConfiguration();
+        $data = $this->siteService->getConfiguration();
 
         return [
             // parameters usually defined in Symfony login forms

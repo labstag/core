@@ -9,7 +9,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 class BlockExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        protected BlockService $blockService
+        protected BlockService $blockService,
     )
     {
         // Inject dependencies if needed
@@ -17,12 +17,12 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
 
     public function getClass(Block $block): string
     {
-        return 'block_'.$block->getType();
+        return 'block_' . $block->getType();
     }
 
     public function getId(Block $block): string
     {
-        return 'block_'.$block->getType().'-'.$block->getId();
+        return 'block_' . $block->getType() . '-' . $block->getId();
     }
 
     public function getName(string $code): string
@@ -30,18 +30,15 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         return $this->blockService->getNameByCode($code);
     }
 
-    public function getShow(array $tab): null|string|false
+    public function getShow(array $tab): string|false|null
     {
         if (!isset($tab['templates']['view'])) {
             return null;
         }
 
-        $content = $this->blockService->content(
-            $tab['templates']['view'],
-            $tab['block']
-        );
+        $content = $this->blockService->content($tab['templates']['view'], $tab['block']);
 
-        if (is_null($content)) {
+        if (!$content instanceof \Symfony\Component\HttpFoundation\Response) {
             return null;
         }
 

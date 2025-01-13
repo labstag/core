@@ -2,13 +2,12 @@
 
 namespace Labstag\Form\Type;
 
-use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ParagraphType extends AbstractType
 {
-    #[Override]
+    #[\Override]
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
         $optionsResolver->setDefaults(
@@ -27,7 +26,7 @@ class ParagraphType extends AbstractType
     /**
      * @return string
      */
-    #[Override]
+    #[\Override]
     public function getBlockPrefix()
     {
         return 'paragraph';

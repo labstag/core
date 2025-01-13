@@ -18,12 +18,7 @@ class ChapterRepository extends ServiceEntityRepositoryLib
 
     public function getAllActivateByStory(Story $story): mixed
     {
-        $data = new ArrayCollection(
-            [
-                new Parameter('enable', true),
-                new Parameter('refstory', $story),
-            ]
-        );
+        $data = new ArrayCollection([new Parameter('enable', true), new Parameter('refstory', $story)]);
 
         $queryBuilder = $this->createQueryBuilder('a');
         $queryBuilder->where('a.enable = :enable');

@@ -11,7 +11,6 @@ use Labstag\Entity\Post;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
-use Override;
 
 class PostFixtures extends FixtureLib implements DependentFixtureInterface
 {
@@ -22,7 +21,7 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
 
     protected array $users = [];
 
-    #[Override]
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -32,20 +31,17 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
         ];
     }
 
-    #[Override]
+    #[\Override]
     public function load(ObjectManager $objectManager): void
     {
-        $this->users      = $this->getIdentitiesByClass(User::class);
-        $this->tags       = $this->getIdentitiesByClass(Tag::class, 'post');
+        $this->users = $this->getIdentitiesByClass(User::class);
+        $this->tags = $this->getIdentitiesByClass(Tag::class, 'post');
         $this->categories = $this->getIdentitiesByClass(Category::class, 'post');
         $this->loadForeach(self::NUMBER_POST, 'addPost', $objectManager);
         $objectManager->flush();
     }
 
-    protected function addPost(
-        Generator $generator,
-        ObjectManager $objectManager
-    ): void
+    protected function addPost(Generator $generator, ObjectManager $objectManager): void
     {
         $meta = new Meta();
         $post = new Post();
@@ -59,7 +55,7 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addParagraphText($post);
         $this->addTagToEntity($post);
         $this->addCategoryToEntity($post);
-        $this->addReference('post_'.md5(uniqid()), $post);
+        $this->addReference('post_' . md5(uniqid()), $post);
         $objectManager->persist($post);
     }
 }

@@ -17,7 +17,7 @@ abstract class FrontFormLib implements FrontFormInterface
         protected FormFactoryInterface $formFactory,
         protected EmailService $emailService,
         protected RequestStack $requestStack,
-        protected EntityManagerInterface $entityManager
+        protected EntityManagerInterface $entityManager,
     )
     {
     }
@@ -27,7 +27,7 @@ abstract class FrontFormLib implements FrontFormInterface
         $request = $this->requestStack->getCurrentRequest();
         $form->handleRequest($request);
 
-        return (true != $disable) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
+        return ($disable != true) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
     }
 
     protected function getRepository(string $entity): ServiceEntityRepositoryLib

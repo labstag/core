@@ -14,12 +14,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use Labstag\Entity\GeoCode;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\GeoCodeRepository;
-use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class GeoCodeCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
@@ -32,7 +31,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -43,7 +42,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
@@ -61,7 +60,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         yield NumberField::new('accuracy', new TranslatableMessage('Accuracy'));
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $filterFields = [
@@ -72,7 +71,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         ];
         foreach ($filterFields as $filterField => $label) {
             $data = $this->getAllData($filterField);
-            if (0 == count($data)) {
+            if (count($data) == 0) {
                 continue;
             }
 
@@ -85,7 +84,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[Override]
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return GeoCode::class;
@@ -94,7 +93,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
     private function getAllData(string $type): array
     {
         $serviceEntityRepositoryLib = $this->getRepository();
-        $methods                    = get_class_methods($serviceEntityRepositoryLib);
+        $methods = get_class_methods($serviceEntityRepositoryLib);
         if (!$serviceEntityRepositoryLib instanceof GeoCodeRepository || !in_array('findAllData', $methods)) {
             return [];
         }

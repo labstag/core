@@ -38,7 +38,7 @@ class StoryRepository extends ServiceEntityRepositoryLib
     public function getAllActivate(): mixed
     {
         $queryBuilder = $this->getQueryBuilder();
-        $query        = $queryBuilder->getQuery();
+        $query = $queryBuilder->getQuery();
 
         return $query->getResult();
     }

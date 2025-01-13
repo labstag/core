@@ -33,7 +33,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         protected SiteService $siteService,
         protected RequestStack $requestStack,
         protected EntityManagerInterface $entityManager,
-        protected Environment $twigEnvironment
+        protected Environment $twigEnvironment,
     )
     {
     }
@@ -105,12 +105,12 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         }
 
         $htmltwig = '.html.twig';
-        $files    = [
-            'blocks/'.$folder.'/'.$type.$htmltwig,
-            'blocks/'.$folder.'/default'.$htmltwig,
+        $files = [
+            'blocks/' . $folder . '/' . $type . $htmltwig,
+            'blocks/' . $folder . '/default' . $htmltwig,
         ];
 
-        $view   = end($files);
+        $view = end($files);
         $loader = $this->twigEnvironment->getLoader();
         foreach ($files as $file) {
             if (!$loader->exists($file)) {

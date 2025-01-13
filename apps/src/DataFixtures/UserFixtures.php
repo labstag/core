@@ -6,19 +6,16 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
-use Override;
 
 class UserFixtures extends FixtureLib implements DependentFixtureInterface
 {
-    #[Override]
+    #[\Override]
     public function getDependencies(): array
     {
-        return [
-            ConfigFixtures::class,
-        ];
+        return [ConfigFixtures::class];
     }
 
-    #[Override]
+    #[\Override]
     public function load(ObjectManager $objectManager): void
     {
         $data = $this->data();
@@ -36,11 +33,7 @@ class UserFixtures extends FixtureLib implements DependentFixtureInterface
         $roles = $this->userService->getRoles();
 
         $user = new User();
-        $user->setRoles(
-            [
-                $roles['Admin'],
-            ]
-        );
+        $user->setRoles([$roles['Admin']]);
         $user->setLanguage('fr');
         $user->setUsername('admin');
         $user->setEmail('admin@test.local');
@@ -48,11 +41,7 @@ class UserFixtures extends FixtureLib implements DependentFixtureInterface
         $admin = $user;
 
         $user = new User();
-        $user->setRoles(
-            [
-                $roles['Super Admin'],
-            ]
-        );
+        $user->setRoles([$roles['Super Admin']]);
         $user->setLanguage('fr');
         $user->setUsername('superadmin');
         $user->setEmail('superadmin@test.local');
@@ -79,7 +68,7 @@ class UserFixtures extends FixtureLib implements DependentFixtureInterface
         $user->setPassword($hash);
         $this->setImage($user, 'avatarFile');
 
-        $this->addReference('user_'.$user->getUsername(), $user);
+        $this->addReference('user_' . $user->getUsername(), $user);
 
         $objectManager->persist($user);
     }

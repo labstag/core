@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use PhpCsFixer\Fixer\Basic\BracesPositionFixer;
 use PhpCsFixer\Fixer\Import\NoUnusedImportsFixer;
+use PhpCsFixer\Fixer\Operator\NotOperatorWithSuccessorSpaceFixer;
+use PhpCsFixer\Fixer\LanguageConstruct\IsNullFixer;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
 
 $configure = ECSConfig::configure();
@@ -25,6 +28,7 @@ $configure->withPaths(
 
 $configure->withPreparedSets(
     psr12: true,
+    common: false,
     symplify: true,
     laravel: false,
     arrays: true,
@@ -36,5 +40,15 @@ $configure->withPreparedSets(
     phpunit: true,
     strict: false,
     cleanCode: true
+);
+$configure->withSkip(
+    [
+        NotOperatorWithSuccessorSpaceFixer::class,
+        IsNullFixer::class,
+        BracesPositionFixer::class,
+    ]
+);
+$configure->withPhpCsFixerSets(
+    symfony: true
 );
 return $configure;

@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use DateTime;
-use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -13,8 +11,6 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\UserRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
 use Labstag\Traits\Entity\WorkflowTrait;
-use Override;
-use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -25,7 +21,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringable
+class User implements UserInterface, PasswordAuthenticatedUserInterface, \Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
@@ -51,7 +47,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
     private ?bool $enable = null;
 
     #[ORM\Id]
@@ -60,7 +59,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[ORM\Column(length: 2, options: ['default' => 'fr'])]
+    #[ORM\Column(
+        length: 2,
+        options: ['default' => 'fr']
+    )]
     private ?string $language = null;
 
     /**
@@ -105,10 +107,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function __construct()
     {
         $this->stories = new ArrayCollection();
-        $this->editos  = new ArrayCollection();
-        $this->memos   = new ArrayCollection();
-        $this->pages   = new ArrayCollection();
-        $this->posts   = new ArrayCollection();
+        $this->editos = new ArrayCollection();
+        $this->memos = new ArrayCollection();
+        $this->pages = new ArrayCollection();
+        $this->posts = new ArrayCollection();
     }
 
     public function __serialize(): array
@@ -121,7 +123,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         ];
     }
 
-    #[Override]
+    #[\Override]
     public function __toString(): string
     {
         return (string) $this->getUsername();
@@ -129,7 +131,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
 
     public function __unserialize(array $data): void
     {
-        if (self::DATAUNSERIALIZE === count($data)) {
+        if (count($data) === self::DATAUNSERIALIZE) {
             [
                 $this->id,
                 $this->username,
@@ -192,7 +194,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @see UserInterface
      */
-    #[Override]
+    #[\Override]
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
@@ -259,7 +261,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    #[Override]
+    #[\Override]
     public function getPassword(): string
     {
         return $this->password;
@@ -278,7 +280,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
      *
      * @return list<string>
      */
-    #[Override]
+    #[\Override]
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -293,7 +295,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
      *
      * @see UserInterface
      */
-    #[Override]
+    #[\Override]
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
@@ -371,7 +373,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         if ($avatarFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+            $this->updatedAt = \DateTime::createFromImmutable(new \DateTimeImmutable());
         }
     }
 

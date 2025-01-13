@@ -2,12 +2,9 @@
 
 namespace Labstag\Service;
 
-use DateTime;
 use Doctrine\Common\Util\ClassUtils;
 use Labstag\Entity\Paragraph;
 use Labstag\Interface\ParagraphInterface;
-use ReflectionClass;
-use stdClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -16,7 +13,7 @@ class ParagraphService
 {
     public function __construct(
         #[AutowireIterator('labstag.paragraphs')]
-        private readonly iterable $paragraphs
+        private readonly iterable $paragraphs,
     )
     {
     }
@@ -24,7 +21,7 @@ class ParagraphService
     public function addParagraph(object $entity, string $type): ?Paragraph
     {
         $paragraph = null;
-        $all       = $this->getAll($entity::class);
+        $all = $this->getAll($entity::class);
         foreach ($all as $row) {
             if ($row != $type) {
                 continue;
@@ -40,10 +37,7 @@ class ParagraphService
         return $paragraph;
     }
 
-    public function content(
-        string $view,
-        Paragraph $paragraph
-    ): ?Response
+    public function content(string $view, Paragraph $paragraph): ?Response
     {
         $content = null;
 
@@ -83,8 +77,8 @@ class ParagraphService
         $paragraphs = [];
         foreach ($this->paragraphs as $paragraph) {
             $inUse = $paragraph->useIn();
-            $type  = $paragraph->getType();
-            $name  = $paragraph->getName();
+            $type = $paragraph->getType();
+            $name = $paragraph->getName();
             if ((in_array($entity, $inUse) && $paragraph->isEnable()) || is_null($entity)) {
                 $paragraphs[$name] = $type;
             }
@@ -95,9 +89,9 @@ class ParagraphService
         return $paragraphs;
     }
 
-    public function getContents(array $paragraphs): stdClass
+    public function getContents(array $paragraphs): \stdClass
     {
-        $data         = new stdClass();
+        $data = new \stdClass();
         $data->header = [];
         $data->footer = [];
         foreach ($paragraphs as $paragraph) {
@@ -116,39 +110,33 @@ class ParagraphService
             }
         }
 
-        $data->header = array_filter(
-            $data->header,
-            fn ($row): bool => !is_null($row)
-        );
+        $data->header = array_filter($data->header, fn ($row): bool => !is_null($row));
 
-        $data->footer = array_filter(
-            $data->footer,
-            fn ($row): bool => !is_null($row)
-        );
+        $data->footer = array_filter($data->footer, fn ($row): bool => !is_null($row));
 
         return $data;
     }
 
     public function getEntityParent(?Paragraph $paragraph): ?object
     {
-        if (is_null($paragraph)) {
+        if (!$paragraph instanceof Paragraph) {
             return null;
         }
 
-        $object        = new stdClass();
-        $object->name  = null;
+        $object = new \stdClass();
+        $object->name = null;
         $object->value = null;
 
-        $reflectionClass  = new ReflectionClass($paragraph);
+        $reflectionClass = new \ReflectionClass($paragraph);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            $name  = $reflectionProperty->getName();
+            $name = $reflectionProperty->getName();
             $value = $propertyAccessor->getValue($paragraph, $name);
             if (!is_object($value)) {
                 continue;
             }
 
-            if ($value instanceof DateTime) {
+            if ($value instanceof \DateTime) {
                 continue;
             }
 
@@ -162,7 +150,7 @@ class ParagraphService
                 continue;
             }
 
-            $object->name  = $name;
+            $object->name = $name;
             $object->value = $value;
 
             break;
@@ -177,7 +165,7 @@ class ParagraphService
             return [];
         }
 
-        $type   = $paragraph->getType();
+        $type = $paragraph->getType();
         $fields = [];
         foreach ($this->paragraphs as $row) {
             if ($row->getType() == $type) {
@@ -203,9 +191,7 @@ class ParagraphService
         return [];
     }
 
-    public function getFooter(
-        Paragraph $paragraph
-    ): mixed
+    public function getFooter(Paragraph $paragraph): mixed
     {
         $footer = null;
 
@@ -222,9 +208,7 @@ class ParagraphService
         return $footer;
     }
 
-    public function getHeader(
-        Paragraph $paragraph
-    ): mixed
+    public function getHeader(Paragraph $paragraph): mixed
     {
         $header = null;
 
@@ -255,13 +239,9 @@ class ParagraphService
         return $name;
     }
 
-    public function setContents(
-        ?Paragraph $paragraph,
-        array $data,
-        bool $disable
-    ): void
+    public function setContents(?Paragraph $paragraph, array $data, bool $disable): void
     {
-        if (is_null($paragraph)) {
+        if (!$paragraph instanceof Paragraph) {
             return;
         }
 

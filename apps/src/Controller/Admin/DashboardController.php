@@ -10,7 +10,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Exception;
 use Labstag\Entity\User;
 use Labstag\Lib\ServiceEntityRepositoryLib;
 use Labstag\Repository\ConfigurationRepository;
@@ -18,7 +17,6 @@ use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
-use Override;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -36,7 +34,7 @@ class DashboardController extends AbstractDashboardController
         protected UserService $userService,
         protected FileService $fileService,
         protected WorkflowService $workflowService,
-        protected SiteService $siteService
+        protected SiteService $siteService,
     )
     {
     }
@@ -44,21 +42,24 @@ class DashboardController extends AbstractDashboardController
     #[Route('/admin/{_locale}/blank', name: 'admin_blank')]
     public function blank(): Response
     {
-        return $this->render(
-            'admin/blank.html.twig',
-            []
-        );
+        return $this->render('admin/blank.html.twig', []);
     }
 
     #[Route('/admin/{_locale}/purge', name: 'admin_cacheclear')]
     public function cacheclear(KernelInterface $kernel): Response
     {
         $total = $this->fileService->deletedFileByEntities();
-        if (0 != $total) {
-            $this->addFlash('success', new TranslatableMessage('%total% file(s) deleted', ['%total%' => $total]));
+        if ($total != 0) {
+            $this->addFlash(
+                'success',
+                new TranslatableMessage(
+                    '%total% file(s) deleted',
+                    ['%total%' => $total]
+                )
+            );
         }
 
-        //execution de la commande en console
+        // execution de la commande en console
         $application = new Application($kernel);
         $application->setAutoExit(false);
 
@@ -75,10 +76,10 @@ class DashboardController extends AbstractDashboardController
     #[Route('/admin/{_locale}/config', name: 'admin_config')]
     public function config(ConfigurationRepository $configurationRepository): RedirectResponse
     {
-        $configuration  = null;
+        $configuration = null;
         $configurations = $configurationRepository->findAll();
-        $generator      = $this->container->get(AdminUrlGenerator::class);
-        $configuration  = (0 != count($configurations)) ? $configurations[0] : null;
+        $generator = $this->container->get(AdminUrlGenerator::class);
+        $configuration = (count($configurations) != 0) ? $configurations[0] : null;
         if (is_null($configuration)) {
             return $this->redirectToRoute('admin');
         }
@@ -92,10 +93,10 @@ class DashboardController extends AbstractDashboardController
         return $this->redirect($url);
     }
 
-    #[Override]
+    #[\Override]
     public function configureDashboard(): Dashboard
     {
-        $data      = $this->siteService->getConfiguration();
+        $data = $this->siteService->getConfiguration();
         $dashboard = Dashboard::new();
         $dashboard->setTitle($data->getName());
         $dashboard->setTranslationDomain('admin');
@@ -105,44 +106,84 @@ class DashboardController extends AbstractDashboardController
         return $dashboard;
     }
 
-    #[Override]
+    #[\Override]
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
         $categories = $this->setCategories();
-        $tags       = $this->setTags();
+        $tags = $this->setTags();
 
         yield MenuItem::subMenu(new TranslatableMessage('Story'))->setSubItems(
             [
-                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', StoryCrudController::getEntityFqcn()),
-                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', StoryCrudController::getEntityFqcn())->setAction(Action::NEW),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('List'),
+                    'fa fa-list',
+                    StoryCrudController::getEntityFqcn()
+                ),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('New'),
+                    'fas fa-plus',
+                    StoryCrudController::getEntityFqcn()
+                )->setAction(Action::NEW),
                 $categories['story'],
                 $tags['story'],
             ]
         );
         yield MenuItem::subMenu(new TranslatableMessage('Chapter'))->setSubItems(
             [
-                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', ChapterCrudController::getEntityFqcn()),
-                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', ChapterCrudController::getEntityFqcn())->setAction(Action::NEW),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('List'),
+                    'fa fa-list',
+                    ChapterCrudController::getEntityFqcn()
+                ),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('New'),
+                    'fas fa-plus',
+                    ChapterCrudController::getEntityFqcn()
+                )->setAction(Action::NEW),
                 $tags['chapter'],
             ]
         );
         yield MenuItem::subMenu(new TranslatableMessage('Movie'))->setSubItems(
             [
-                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', MovieCrudController::getEntityFqcn()),
-                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', MovieCrudController::getEntityFqcn())->setAction(Action::NEW),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('List'),
+                    'fa fa-list',
+                    MovieCrudController::getEntityFqcn()
+                ),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('New'),
+                    'fas fa-plus',
+                    MovieCrudController::getEntityFqcn()
+                )->setAction(Action::NEW),
                 $categories['movie'],
             ]
         );
 
-        yield MenuItem::linkToCrud(new TranslatableMessage('Edito'), 'fas fa-info', EditoCrudController::getEntityFqcn());
+        yield MenuItem::linkToCrud(
+            new TranslatableMessage('Edito'),
+            'fas fa-info',
+            EditoCrudController::getEntityFqcn()
+        );
 
-        yield MenuItem::linkToCrud(new TranslatableMessage('Memo'), 'fas fa-memory', MemoCrudController::getEntityFqcn());
+        yield MenuItem::linkToCrud(
+            new TranslatableMessage('Memo'),
+            'fas fa-memory',
+            MemoCrudController::getEntityFqcn()
+        );
 
         yield MenuItem::subMenu(new TranslatableMessage('Page'), 'fas fa-columns')->setSubItems(
             [
-                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', PageCrudController::getEntityFqcn()),
-                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', PageCrudController::getEntityFqcn())->setAction(Action::NEW),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('List'),
+                    'fa fa-list',
+                    PageCrudController::getEntityFqcn()
+                ),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('New'),
+                    'fas fa-plus',
+                    PageCrudController::getEntityFqcn()
+                )->setAction(Action::NEW),
                 $categories['page'],
                 $tags['page'],
             ]
@@ -150,32 +191,68 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::subMenu(new TranslatableMessage('Post'), 'fas fa-newspaper')->setSubItems(
             [
-                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', PostCrudController::getEntityFqcn()),
-                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', PostCrudController::getEntityFqcn())->setAction(Action::NEW),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('List'),
+                    'fa fa-list',
+                    PostCrudController::getEntityFqcn()
+                ),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('New'),
+                    'fas fa-plus',
+                    PostCrudController::getEntityFqcn()
+                )->setAction(Action::NEW),
                 $categories['post'],
                 $tags['post'],
             ]
         );
 
-        yield MenuItem::linkToCrud(new TranslatableMessage('Meta'), 'fa fa-file-alt', MetaCrudController::getEntityFqcn());
-        yield MenuItem::linkToCrud(new TranslatableMessage('Paragraph'), 'fa fa-paragraph', ParagraphCrudController::getEntityFqcn());
-        yield MenuItem::linkToCrud(new TranslatableMessage('Block'), 'fa fa-cubes', BlockCrudController::getEntityFqcn());
-        yield MenuItem::linkToCrud(new TranslatableMessage('Géocode'), 'fas fa-map-signs', GeoCodeCrudController::getEntityFqcn());
+        yield MenuItem::linkToCrud(
+            new TranslatableMessage('Meta'),
+            'fa fa-file-alt',
+            MetaCrudController::getEntityFqcn()
+        );
+        yield MenuItem::linkToCrud(
+            new TranslatableMessage('Paragraph'),
+            'fa fa-paragraph',
+            ParagraphCrudController::getEntityFqcn()
+        );
+        yield MenuItem::linkToCrud(
+            new TranslatableMessage('Block'),
+            'fa fa-cubes',
+            BlockCrudController::getEntityFqcn()
+        );
+        yield MenuItem::linkToCrud(
+            new TranslatableMessage('Géocode'),
+            'fas fa-map-signs',
+            GeoCodeCrudController::getEntityFqcn()
+        );
         yield MenuItem::linkToCrud(new TranslatableMessage('Star'), 'fas fa-star', StarCrudController::getEntityFqcn());
         yield MenuItem::linkToCrud(new TranslatableMessage('User'), 'fa fa-user', UserCrudController::getEntityFqcn());
         yield MenuItem::linkToRoute(new TranslatableMessage('Options'), 'fas fa-cog', 'admin_config');
 
         yield MenuItem::subMenu(new TranslatableMessage('Templates'), 'fas fa-code')->setSubItems(
             [
-                MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', TemplateCrudController::getEntityFqcn()),
-                MenuItem::linkToCrud(new TranslatableMessage('New'), 'fas fa-plus', TemplateCrudController::getEntityFqcn())->setAction(Action::NEW),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('List'),
+                    'fa fa-list',
+                    TemplateCrudController::getEntityFqcn()
+                ),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('New'),
+                    'fas fa-plus',
+                    TemplateCrudController::getEntityFqcn()
+                )->setAction(Action::NEW),
             ]
         );
         yield MenuItem::linkToRoute(new TranslatableMessage('Clear Cache'), 'fas fa-trash', 'admin_cacheclear');
-        yield MenuItem::linkToRoute(new TranslatableMessage('View Site'), 'fas fa-laptop-house', 'front')->setLinkTarget('_blank');
+        yield MenuItem::linkToRoute(
+            new TranslatableMessage('View Site'),
+            'fas fa-laptop-house',
+            'front'
+        )->setLinkTarget('_blank');
     }
 
-    #[Override]
+    #[\Override]
     public function configureUserMenu(UserInterface $user): UserMenu
     {
         $userMenu = parent::configureUserMenu($user);
@@ -184,14 +261,12 @@ class DashboardController extends AbstractDashboardController
         }
 
         $userMenu->addMenuItems(
-            [
-                MenuItem::linkToRoute(new TranslatableMessage('My profile'), 'fa fa-user', 'admin_profil'),
-            ]
+            [MenuItem::linkToRoute(new TranslatableMessage('My profile'), 'fa fa-user', 'admin_profil')]
         );
         $avatar = $user->getAvatar();
-        if ('' != $avatar) {
+        if ($avatar != '') {
             $basePath = $this->fileService->getBasePath($user, 'avatarFile');
-            $userMenu->setAvatarUrl($basePath.'/'.$avatar);
+            $userMenu->setAvatarUrl($basePath . '/' . $avatar);
 
             return $userMenu;
         }
@@ -208,30 +283,31 @@ class DashboardController extends AbstractDashboardController
         $this->entityManager->getFilters()->disable('softdeleteable');
         $request = $adminContext->getRequest();
         $referer = $request->headers->get('referer');
-        if (null === $referer || '' === $referer || '0' === $referer) {
+        if (is_null($referer) || $referer === '' || $referer === '0') {
             return $this->redirectToRoute('admin');
         }
 
         $routeName = $request->query->get('routeName');
-        $entity    = $request->attributes->get('entity', null);
-        $uuid      = $request->attributes->get('uuid', null);
+        $entity = $request->attributes->get('entity', null);
+        $uuid = $request->attributes->get('uuid', null);
         match ($routeName) {
             'admin_restore' => $this->adminRestore($entity, $uuid),
-            'admin_empty'   => $this->adminEmpty($entity),
-            default         => throw new Exception(new TranslatableMessage('Route not found')),
+            'admin_empty' => $this->adminEmpty($entity),
+            default => throw new \Exception(new TranslatableMessage('Route not found')),
         };
 
         return $this->redirect($referer);
     }
 
-    #[Route('/admin/{_locale}', name: 'admin', defaults: ['_locale' => 'fr'])]
-    #[Override]
+    #[Route(
+        '/admin/{_locale}',
+        name: 'admin',
+        defaults: ['_locale' => 'fr']
+    )]
+    #[\Override]
     public function index(): Response
     {
-        return $this->render(
-            'admin/dashboard.html.twig',
-            []
-        );
+        return $this->render('admin/dashboard.html.twig', []);
     }
 
     #[Route('/admin/{_locale}/profil', name: 'admin_profil')]
@@ -255,13 +331,13 @@ class DashboardController extends AbstractDashboardController
     {
         $request = $adminContext->getRequest();
         $referer = $request->headers->get('referer');
-        if (null === $referer || '' === $referer || '0' === $referer) {
+        if (is_null($referer) || $referer === '' || $referer === '0') {
             return $this->redirectToRoute('admin');
         }
 
-        $entity     = $request->query->get('entity', null);
+        $entity = $request->query->get('entity', null);
         $transition = $request->query->get('transition', null);
-        $uid        = $request->query->get('uid', null);
+        $uid = $request->query->get('uid', null);
 
         $this->workflowService->change($entity, $transition, $uid);
 
@@ -271,7 +347,7 @@ class DashboardController extends AbstractDashboardController
     protected function adminEmpty(string $entity): void
     {
         $serviceEntityRepositoryLib = $this->getRepository($entity);
-        $all                        = $serviceEntityRepositoryLib->findDeleted();
+        $all = $serviceEntityRepositoryLib->findDeleted();
         foreach ($all as $row) {
             $serviceEntityRepositoryLib->remove($row);
         }
@@ -282,14 +358,14 @@ class DashboardController extends AbstractDashboardController
     protected function adminRestore(string $entity, mixed $uuid): void
     {
         $serviceEntityRepositoryLib = $this->getRepository($entity);
-        $data                       = $serviceEntityRepositoryLib->find($uuid);
+        $data = $serviceEntityRepositoryLib->find($uuid);
         if (is_null($data)) {
-            throw new Exception(new TranslatableMessage('Data not found'));
+            throw new \Exception(new TranslatableMessage('Data not found'));
         }
 
         $methods = get_class_methods($data);
         if (!in_array('isDeleted', $methods)) {
-            throw new Exception(new TranslatableMessage('Method not found'));
+            throw new \Exception(new TranslatableMessage('Method not found'));
         }
 
         if ($data->isDeleted()) {
@@ -303,7 +379,7 @@ class DashboardController extends AbstractDashboardController
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
-            throw new Exception('Repository not found');
+            throw new \Exception('Repository not found');
         }
 
         return $entityRepository;
@@ -334,7 +410,11 @@ class DashboardController extends AbstractDashboardController
         ];
         $categories = [];
         foreach ($tab as $key => $data) {
-            $categories[$key] = MenuItem::linkToCrud(new TranslatableMessage('Category'), 'fas fa-hashtag', $data['crud']);
+            $categories[$key] = MenuItem::linkToCrud(
+                new TranslatableMessage('Category'),
+                'fas fa-hashtag',
+                $data['crud']
+            );
             $categories[$key]->setController($data['controller']);
         }
 

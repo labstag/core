@@ -6,8 +6,6 @@ use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
-use NumberFormatter;
-use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -16,10 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(
-    name: 'labstag:movies-add',
-    description: 'Add movies with movies.csv',
-)]
+#[AsCommand(name: 'labstag:movies-add', description: 'Add movies with movies.csv')]
 class MovieAddCommand extends Command
 {
 
@@ -31,7 +26,7 @@ class MovieAddCommand extends Command
 
     public function __construct(
         protected MovieRepository $movieRepository,
-        protected CategoryRepository $categoryRepository
+        protected CategoryRepository $categoryRepository,
     )
     {
         parent::__construct();
@@ -74,11 +69,11 @@ class MovieAddCommand extends Command
         ++$this->update;
     }
 
-    #[Override]
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $file         = getcwd().'/movies.csv';
+        $file = getcwd() . '/movies.csv';
         if (!is_file($file)) {
             $symfonyStyle->error('File not found');
 
@@ -91,14 +86,14 @@ class MovieAddCommand extends Command
         $csv->setSheetIndex(0);
 
         $spreadsheet = $csv->load($file);
-        $worksheet   = $spreadsheet->getActiveSheet();
-        $dataJson    = [];
-        $headers     = [];
-        $counter     = 0;
+        $worksheet = $spreadsheet->getActiveSheet();
+        $dataJson = [];
+        $headers = [];
+        $counter = 0;
         foreach ($worksheet->getRowIterator() as $i => $row) {
             $cellIterator = $row->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(false);
-            if (1 == $i) {
+            if ($i == 1) {
                 foreach ($cellIterator as $cell) {
                     $headers[] = trim((string) $cell->getValue());
                 }
@@ -130,7 +125,7 @@ class MovieAddCommand extends Command
         $progressBar->finish();
 
         $symfonyStyle->success('All movie added');
-        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
+        $numberFormatter = new \NumberFormatter('fr_FR', \NumberFormatter::DECIMAL);
         $symfonyStyle->success(
             sprintf(
                 'Added: %d, Updated: %d',
@@ -144,15 +139,13 @@ class MovieAddCommand extends Command
 
     private function disableAll(): void
     {
-        $movies = $this->movieRepository->findBy(
-            ['enable' => true]
-        );
+        $movies = $this->movieRepository->findBy(['enable' => true]);
         $counter = 0;
-        foreach ($movies as $movie) {
-            $movie->setEnable(false);
+        foreach ($movies as $RectorPrefix202501movie) {
+            $RectorPrefix202501movie->setEnable(false);
             ++$counter;
 
-            $this->movieRepository->persist($movie);
+            $this->movieRepository->persist($RectorPrefix202501movie);
             $this->movieRepository->flush($counter);
         }
 
@@ -161,23 +154,21 @@ class MovieAddCommand extends Command
 
     private function setMovie(array $data): Movie
     {
-        $imdb  = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
-        $movie = $this->movieRepository->findOneBy(
-            ['imdb' => $imdb]
-        );
+        $imdb = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
+        $movie = $this->movieRepository->findOneBy(['imdb' => $imdb]);
 
         if (!$movie instanceof Movie) {
             $movie = new Movie();
             $movie->setImdb($imdb);
         }
 
-        $year    = (int) $data['Année'];
-        $type    = $data['Genre(s)'];
+        $year = (int) $data['Année'];
+        $type = $data['Genre(s)'];
         $country = $data['Pays'];
         $movie->setEnable(true);
         $movie->setTitle($data['Titre']);
-        $movie->setYear((0 != $year) ? $year : null);
-        $movie->setCountry(('' != $country) ? $country : null);
+        $movie->setYear(($year != 0) ? $year : null);
+        $movie->setCountry(($country != '') ? $country : null);
 
         $oldCategories = $movie->getCategories();
         foreach ($oldCategories as $oldCategory) {
@@ -187,11 +178,11 @@ class MovieAddCommand extends Command
         $categories = explode(',', (string) $type);
         foreach ($categories as $value) {
             $value = trim($value);
-            if ('' === $value) {
+            if ($value === '') {
                 continue;
             }
 
-            if ('0' === $value) {
+            if ($value === '0') {
                 continue;
             }
 
