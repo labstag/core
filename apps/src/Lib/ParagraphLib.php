@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Exception;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Labstag\Entity\Block;
@@ -166,7 +167,12 @@ abstract class ParagraphLib extends AbstractController
 
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
-        return $this->entityManager->getRepository($entity);
+        $entityRepository = $this->entityManager->getRepository($entity);
+        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+            throw new Exception('Repository not found');
+        }
+
+        return $entityRepository;
     }
 
     protected function getTemplateContent(string $folder, string $type): array

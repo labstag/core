@@ -109,7 +109,7 @@ abstract class EmailLib extends Email
     public function setHtml(): string
     {
         if ($this->getType() === '') {
-            return null;
+            return '';
         }
 
         return $this->getTemplate('html');
@@ -118,7 +118,7 @@ abstract class EmailLib extends Email
     public function setText(): string
     {
         if ($this->getType() === '') {
-            return null;
+            return '';
         }
 
         return $this->getTemplate('txt');
@@ -232,7 +232,7 @@ abstract class EmailLib extends Email
         );
     }
 
-    private function replace(string $content): string|array
+    private function replace(string $content): string
     {
         $codes = $this->getReplacesClass();
         foreach ($codes as $code) {

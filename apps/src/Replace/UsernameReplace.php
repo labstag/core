@@ -9,7 +9,7 @@ class UsernameReplace extends ReplaceLib
     public function exec(): string
     {
         if (!isset($this->data['user'])) {
-            return null;
+            return '';
         }
 
         return $this->data['user']->getUsername();

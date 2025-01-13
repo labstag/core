@@ -4,6 +4,7 @@ namespace Labstag\Lib;
 
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Exception;
 use Labstag\Entity\Block;
 use Labstag\Interface\BlockInterface;
 use Labstag\Service\ParagraphService;
@@ -95,7 +96,12 @@ abstract class BlockLib extends AbstractController implements BlockInterface
 
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
-        return $this->entityManager->getRepository($entity);
+        $entityRepository = $this->entityManager->getRepository($entity);
+        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+            throw new Exception('Repository not found');
+        }
+
+        return $entityRepository;
     }
 
     protected function getTemplateContent(string $folder, string $type): array
