@@ -62,7 +62,7 @@
     "lint:phpcs:warning": "docker exec -i $($npm_package_config_phpfpm) php -d memory_limit=-1 bin/phpcs --report=full --extensions=php --error-severity=0 --standard=phpcs.xml",
     "lint:phpdoc": "docker exec -i $($npm_package_config_phpfpm) php -d memory_limit=-1 phpDocumentor.phar -d src -t public/docs",
     "lint:phploc": "docker exec -i $($npm_package_config_phpfpm) php -d memory_limit=-1 phploc.phar src",
-    "lint:phpmd": "docker exec -i $($npm_package_config_phpfpm) php -d memory_limit=-1 -d error_reporting=24575 phpmd.phar src,features/bootstrap ansi phpmd.xml",
+    "lint:phpmd": "docker exec -i $($npm_package_config_phpfpm) php -d memory_limit=-1 -d error_reporting=24575 phpmd.phar config,features,public,src,tests ansi phpmd.xml",
     "lint:phpmnd": "docker exec -i $($npm_package_config_phpfpm) symfony composer run phpmnd",
     "lint:phpstan:0": "docker exec -i $($npm_package_config_phpfpm) $npm_package_config_phpstan -l 0",
     "lint:phpstan:1": "docker exec -i $($npm_package_config_phpfpm) $npm_package_config_phpstan -l 1",
