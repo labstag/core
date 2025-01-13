@@ -41,7 +41,7 @@ class StarAddCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $file = getcwd() . '/stars.json';
+        $file = getcwd() . '/private/stars.json';
         if (!is_file($file)) {
             $symfonyStyle->error('File not found');
 
