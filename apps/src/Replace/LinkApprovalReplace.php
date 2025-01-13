@@ -8,6 +8,10 @@ class LinkApprovalReplace extends ReplaceLib
 {
     public function exec(): string
     {
+        if (!isset($this->data['user'])) {
+            return '';
+        }
+
         $configuration = $this->siteService->getConfiguration();
         $entity = $this->data['user'];
 

@@ -215,7 +215,12 @@ class FileService
 
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
-        return $this->entityManager->getRepository($entity);
+        $entityRepository = $this->entityManager->getRepository($entity);
+        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+            throw new Exception('Repository not found');
+        }
+
+        return $entityRepository;
     }
 
     private function deleteFilesByType(int|string $type, array $files): void

@@ -3,6 +3,7 @@
 namespace Labstag\Lib;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Labstag\Interface\FrontFormInterface;
 use Labstag\Service\EmailService;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -32,6 +33,11 @@ abstract class FrontFormLib implements FrontFormInterface
 
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
-        return $this->entityManager->getRepository($entity);
+        $entityRepository = $this->entityManager->getRepository($entity);
+        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+            throw new Exception('Repository not found');
+        }
+
+        return $entityRepository;
     }
 }

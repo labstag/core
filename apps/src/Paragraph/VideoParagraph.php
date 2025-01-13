@@ -39,7 +39,7 @@ class VideoParagraph extends ParagraphLib
             return;
         }
 
-        $html = $media->html;
+        $html   = $media->has('html') ? $media->get('html') : '';
         $oembed = $this->getOEmbedUrl($html);
         if (is_null($oembed)) {
             $this->setShow($paragraph, false);
@@ -50,7 +50,7 @@ class VideoParagraph extends ParagraphLib
         $this->setData(
             $paragraph,
             [
-                'image'     => $media->thumbnailUrl,
+                'image'     => $media->has('thumbnailUrl') ? $media->get('thumbnailUrl'): '',
                 'oembed'    => $this->parseUrlAndAddAutoplay($oembed),
                 'paragraph' => $paragraph,
                 'data'      => $data,
