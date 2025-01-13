@@ -21,6 +21,10 @@ class AdminBlock extends BlockLib
         return $this->render($view, $this->getData($block));
     }
 
+    /**
+     * 
+     * @param array<mixed> $data
+     */
     #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
@@ -40,14 +44,6 @@ class AdminBlock extends BlockLib
                 'data'  => $data,
             ]
         );
-    }
-
-    #[Override]
-    public function getFields(Block $block, string $pageName): iterable
-    {
-        unset($block, $pageName);
-
-        return [];
     }
 
     #[Override]

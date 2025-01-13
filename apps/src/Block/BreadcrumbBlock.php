@@ -52,14 +52,6 @@ class BreadcrumbBlock extends BlockLib
     }
 
     #[Override]
-    public function getFields(Block $block, string $pageName): iterable
-    {
-        unset($block, $pageName);
-
-        return [];
-    }
-
-    #[Override]
     public function getName(): string
     {
         return 'Breadcrumb';
@@ -71,6 +63,9 @@ class BreadcrumbBlock extends BlockLib
         return 'breadcrumb';
     }
 
+    /**
+     * @param array<mixed> $urls
+     */
     private function setBreadcrumb(array $urls, string $slug): array
     {
         $entity = $this->siteService->getEntityBySlug($slug);

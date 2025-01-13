@@ -5,6 +5,7 @@ namespace Labstag\Controller\Admin;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\SubMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
@@ -109,6 +110,10 @@ class DashboardController extends AbstractDashboardController
         return $dashboard;
     }
 
+    /**
+     * @param CrudMenuItem[] $categories
+     * @param CrudMenuItem[] $tags
+     */
     private function configureMenuItemsStory(array $categories, array $tags): SubMenuItem
     {
         return MenuItem::subMenu(new TranslatableMessage('Story'))->setSubItems(
@@ -129,6 +134,9 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
+    /**
+     * @param CrudMenuItem[] $tags
+     */
     private function configureMenuItemsChapter(array $tags): SubMenuItem
     {
         return MenuItem::subMenu(new TranslatableMessage('Chapter'))->setSubItems(
@@ -148,6 +156,10 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
+    /**
+     * @param CrudMenuItem[] $categories
+     * @param CrudMenuItem[] $tags
+     */
     private function configureMenuItemsPage(array $categories, array $tags): SubMenuItem
     {
         return MenuItem::subMenu(new TranslatableMessage('Page'), 'fas fa-columns')->setSubItems(
@@ -168,6 +180,10 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
+    /**
+     * @param CrudMenuItem[] $categories
+     * @param CrudMenuItem[] $tags
+     */
     private function configureMenuItemsPost(array $categories, array $tags): SubMenuItem
     {
         return MenuItem::subMenu(new TranslatableMessage('Post'), 'fas fa-newspaper')->setSubItems(
@@ -206,6 +222,9 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
+    /**
+     * @param CrudMenuItem[] $categories
+     */
     private function configureMenuItemsMovie(array $categories): SubMenuItem
     {
         return MenuItem::subMenu(new TranslatableMessage('Movie'))->setSubItems(
@@ -419,7 +438,7 @@ class DashboardController extends AbstractDashboardController
     }
 
     /**
-     * @return \EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem[]
+     * @return CrudMenuItem[]
      */
     private function setCategories(): array
     {
@@ -455,7 +474,7 @@ class DashboardController extends AbstractDashboardController
     }
 
     /**
-     * @return \EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem[]
+     * @return CrudMenuItem[]
      */
     private function setTags(): array
     {
