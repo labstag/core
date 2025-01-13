@@ -234,7 +234,7 @@ abstract class EmailLib extends Email
 
     private function replace(string $content): string|array
     {
-        $codes = $this->getReplaces();
+        $codes = $this->getReplacesClass();
         foreach ($codes as $code) {
             $code->setData($this->data);
             $content = str_replace(
