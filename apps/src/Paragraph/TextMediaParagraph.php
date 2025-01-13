@@ -8,10 +8,11 @@ use Essence\Media;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\ParagraphLib;
+use Override;
 
 class TextMediaParagraph extends ParagraphLib
 {
-    #[\Override]
+    #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
@@ -57,7 +58,7 @@ class TextMediaParagraph extends ParagraphLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph);
@@ -68,7 +69,7 @@ class TextMediaParagraph extends ParagraphLib
         yield $wysiwygField;
     }
 
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Texte media';
@@ -82,7 +83,7 @@ class TextMediaParagraph extends ParagraphLib
         return 'text-media';
     }
 
-    #[\Override]
+    #[Override]
     public function useIn(): array
     {
         return $this->useInAll();

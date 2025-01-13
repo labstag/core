@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Override;
 
 class SiteSubscriber implements EventSubscriberInterface
 {
@@ -17,7 +18,7 @@ class SiteSubscriber implements EventSubscriberInterface
     {
     }
 
-    #[\Override]
+    #[Override]
     public static function getSubscribedEvents(): array
     {
         return [KernelEvents::REQUEST => 'onKernelRequest'];

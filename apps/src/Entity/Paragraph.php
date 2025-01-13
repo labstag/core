@@ -11,6 +11,7 @@ use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Override;
 
 #[ORM\Entity(repositoryClass: ParagraphRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -83,7 +84,7 @@ class Paragraph implements \Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
 
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return (string) $this->getType();

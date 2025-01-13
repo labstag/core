@@ -15,6 +15,7 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
+use Override;
 
 abstract class EmailLib extends Email
 {
@@ -36,7 +37,7 @@ abstract class EmailLib extends Email
         parent::__construct();
     }
 
-    #[\Override]
+    #[Override]
     public function from(Address|string ...$addresses): static
     {
         $configuration = $this->siteService->getConfiguration();
@@ -83,7 +84,7 @@ abstract class EmailLib extends Email
         return '';
     }
 
-    #[\Override]
+    #[Override]
     public function html($body, string $charset = 'utf-8'): static
     {
         $entity = $this->getEntity();
@@ -123,7 +124,7 @@ abstract class EmailLib extends Email
         return $this->getTemplate('txt');
     }
 
-    #[\Override]
+    #[Override]
     public function subject(string $subject): static
     {
         $configuration = $this->siteService->getConfiguration();
@@ -143,7 +144,7 @@ abstract class EmailLib extends Email
         return parent::subject($subject);
     }
 
-    #[\Override]
+    #[Override]
     public function text($body, string $charset = 'utf-8'): static
     {
         $entity = $this->getEntity();

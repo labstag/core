@@ -9,6 +9,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\MetaRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Override;
 
 #[ORM\Entity(repositoryClass: MetaRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -44,7 +45,7 @@ class Meta implements \Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return (string) $this->getId();

@@ -7,10 +7,11 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Story;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\StoryRepository;
+use Override;
 
 class LastStoryParagraph extends ParagraphLib
 {
-    #[\Override]
+    #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
@@ -32,7 +33,7 @@ class LastStoryParagraph extends ParagraphLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -41,19 +42,19 @@ class LastStoryParagraph extends ParagraphLib
         yield $this->addFieldIntegerNbr();
     }
 
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Last story';
     }
 
-    #[\Override]
+    #[Override]
     public function getType(): string
     {
         return 'last-story';
     }
 
-    #[\Override]
+    #[Override]
     public function useIn(): array
     {
         return $this->useInAll();

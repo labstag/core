@@ -5,10 +5,11 @@ namespace Labstag\Form\Paragraphs;
 use Labstag\Entity\Post;
 use Labstag\Lib\ParagraphAbstractTypeLib;
 use Symfony\Component\Form\FormBuilderInterface;
+use Override;
 
 class PostType extends ParagraphAbstractTypeLib
 {
-    #[\Override]
+    #[Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         $this->setEntity(Post::class);

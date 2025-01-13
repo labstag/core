@@ -2,6 +2,7 @@
 
 namespace Labstag\Command;
 
+use Override;
 use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
 use Labstag\Repository\CategoryRepository;
@@ -69,11 +70,11 @@ class MovieAddCommand extends Command
         ++$this->update;
     }
 
-    #[\Override]
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $file = getcwd() . '/movies.csv';
+        $file = getcwd() . '/private/movies.csv';
         if (!is_file($file)) {
             $symfonyStyle->error('File not found');
 

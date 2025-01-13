@@ -8,10 +8,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use Labstag\Entity\Category;
+use Override;
 
 class PageCategoryCrudController extends CategoryCrudController
 {
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $data = parent::configureFields($pageName);
@@ -20,7 +21,7 @@ class PageCategoryCrudController extends CategoryCrudController
         return $data;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): Category
     {
         $category = new $entityFqcn();
@@ -29,7 +30,7 @@ class PageCategoryCrudController extends CategoryCrudController
         return $category;
     }
 
-    #[\Override]
+    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,

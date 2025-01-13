@@ -4,16 +4,17 @@ namespace Labstag\Email;
 
 use Labstag\Lib\EmailLib;
 use Labstag\Replace\LinkChangePasswordReplace;
+use Override;
 
 class UserPasswordLostEmail extends EmailLib
 {
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Password Losted';
     }
 
-    #[\Override]
+    #[Override]
     public function getReplaces(): array
     {
         $codes = parent::getReplaces();
@@ -21,13 +22,13 @@ class UserPasswordLostEmail extends EmailLib
         return array_merge($codes, [LinkChangePasswordReplace::class]);
     }
 
-    #[\Override]
+    #[Override]
     public function getType(): string
     {
         return 'user_passwordlost';
     }
 
-    #[\Override]
+    #[Override]
     public function init(): void
     {
         $user = $this->data['user'];

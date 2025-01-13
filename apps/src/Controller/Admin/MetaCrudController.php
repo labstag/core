@@ -10,10 +10,11 @@ use Labstag\Entity\Meta;
 use Labstag\Field\MetaParentField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Symfony\Component\Translation\TranslatableMessage;
+use Override;
 
 class MetaCrudController extends AbstractCrudControllerLib
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
@@ -22,7 +23,7 @@ class MetaCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
@@ -35,7 +36,7 @@ class MetaCrudController extends AbstractCrudControllerLib
         yield MetaParentField::new('parent', 'Parent');
     }
 
-    #[\Override]
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Meta::class;

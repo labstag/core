@@ -6,10 +6,11 @@ use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\Block;
 use Labstag\Entity\Link;
 use Labstag\Lib\FixtureLib;
+use Override;
 
 class BlockFixtures extends FixtureLib
 {
-    #[\Override]
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $data = $this->data();

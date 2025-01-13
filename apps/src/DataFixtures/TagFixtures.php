@@ -6,6 +6,7 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Tag;
 use Labstag\Lib\FixtureLib;
+use Override;
 
 class TagFixtures extends FixtureLib
 {
@@ -14,7 +15,7 @@ class TagFixtures extends FixtureLib
      */
     protected const NUMBER_TAGS = 30;
 
-    #[\Override]
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->loadForeach(self::NUMBER_TAGS, 'addTag', $objectManager);

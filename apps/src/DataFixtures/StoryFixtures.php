@@ -11,6 +11,7 @@ use Labstag\Entity\Story;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Lib\FixtureLib;
+use Override;
 
 class StoryFixtures extends FixtureLib implements DependentFixtureInterface
 {
@@ -21,7 +22,7 @@ class StoryFixtures extends FixtureLib implements DependentFixtureInterface
 
     protected array $users = [];
 
-    #[\Override]
+    #[Override]
     public function getDependencies(): array
     {
         return [
@@ -31,7 +32,7 @@ class StoryFixtures extends FixtureLib implements DependentFixtureInterface
         ];
     }
 
-    #[\Override]
+    #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $this->users = $this->getIdentitiesByClass(User::class);

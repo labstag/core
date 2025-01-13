@@ -14,6 +14,7 @@ use Labstag\Traits\Entity\WorkflowTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Override;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -88,7 +89,7 @@ class Post implements \Stringable
         $this->paragraphs = new ArrayCollection();
     }
 
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();

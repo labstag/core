@@ -13,10 +13,11 @@ use Labstag\Entity\Page;
 use Labstag\Form\Paragraphs\PageType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Symfony\Component\Translation\TranslatableMessage;
+use Override;
 
 class PageCrudController extends AbstractCrudControllerLib
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions);
@@ -26,7 +27,7 @@ class PageCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -36,7 +37,7 @@ class PageCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
@@ -73,7 +74,7 @@ class PageCrudController extends AbstractCrudControllerLib
         yield $this->addFieldState();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterRefUser($filters);
@@ -83,7 +84,7 @@ class PageCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): Page
     {
         $page = new $entityFqcn();
@@ -103,7 +104,7 @@ class PageCrudController extends AbstractCrudControllerLib
         return $page;
     }
 
-    #[\Override]
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Page::class;

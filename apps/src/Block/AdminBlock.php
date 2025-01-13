@@ -6,11 +6,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Labstag\Entity\Block;
 use Labstag\Lib\BlockLib;
+use Override;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminBlock extends BlockLib
 {
-    #[\Override]
+    #[Override]
     public function content(string $view, Block $block): ?Response
     {
         if (!$this->isShow($block)) {
@@ -20,7 +21,7 @@ class AdminBlock extends BlockLib
         return $this->render($view, $this->getData($block));
     }
 
-    #[\Override]
+    #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
@@ -41,7 +42,7 @@ class AdminBlock extends BlockLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
@@ -49,13 +50,13 @@ class AdminBlock extends BlockLib
         return [];
     }
 
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Admin';
     }
 
-    #[\Override]
+    #[Override]
     public function getType(): string
     {
         return 'admin';

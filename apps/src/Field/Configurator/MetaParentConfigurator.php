@@ -23,6 +23,7 @@ use Labstag\Service\MetaService;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Override;
 
 final class MetaParentConfigurator implements FieldConfiguratorInterface
 {
@@ -37,7 +38,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
     /**
      * @SuppressWarnings(PHPMD)
      */
-    #[\Override]
+    #[Override]
     public function configure(FieldDto $fieldDto, EntityDto $entityDto, AdminContext $adminContext): void
     {
         $instance = $entityDto->getInstance();
@@ -123,7 +124,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         );
     }
 
-    #[\Override]
+    #[Override]
     public function supports(FieldDto $fieldDto, EntityDto $entityDto): bool
     {
         unset($entityDto);

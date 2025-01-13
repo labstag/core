@@ -5,10 +5,11 @@ namespace Labstag\Twig\Extension;
 use Labstag\Twig\Runtime\ParagraphExtensionRuntime;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
+use Override;
 
 class ParagraphExtension extends AbstractExtension
 {
-    #[\Override]
+    #[Override]
     public function getFunctions(): array
     {
         return [

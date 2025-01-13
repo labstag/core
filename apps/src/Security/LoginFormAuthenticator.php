@@ -19,6 +19,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Override;
 
 /**
  * @see https://symfony.com/doc/current/security/custom_authenticator.html
@@ -36,7 +37,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     {
     }
 
-    #[\Override]
+    #[Override]
     public function authenticate(Request $request): Passport
     {
         $username = $request->request->get('username', '');
@@ -58,7 +59,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
-    #[\Override]
+    #[Override]
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         unset($token);
@@ -67,7 +68,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         return new RedirectResponse($targetPath ?: $this->urlGenerator->generate('front'));
     }
 
-    #[\Override]
+    #[Override]
     protected function getLoginUrl(Request $request): string
     {
         unset($request);

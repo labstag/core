@@ -3,22 +3,23 @@
 namespace Labstag\Email;
 
 use Labstag\Lib\EmailLib;
+use Override;
 
 class UserActivateEmail extends EmailLib
 {
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'User activate %user_username%';
     }
 
-    #[\Override]
+    #[Override]
     public function getType(): string
     {
         return 'user_activate';
     }
 
-    #[\Override]
+    #[Override]
     public function init(): void
     {
         $user = $this->data['user'];

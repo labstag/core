@@ -2,6 +2,7 @@
 
 namespace Labstag\Command;
 
+use Override;
 use Labstag\Entity\Star;
 use Labstag\Repository\StarRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -37,7 +38,7 @@ class StarAddCommand extends Command
         ++$this->update;
     }
 
-    #[\Override]
+    #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);

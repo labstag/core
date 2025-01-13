@@ -3,22 +3,23 @@
 namespace Labstag\Email;
 
 use Labstag\Lib\EmailLib;
+use Override;
 
 class SendContactEmail extends EmailLib
 {
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return 'Send form contact';
     }
 
-    #[\Override]
+    #[Override]
     public function getType(): string
     {
         return 'send_contact';
     }
 
-    #[\Override]
+    #[Override]
     public function init(): void
     {
         $configuration = $this->siteService->getConfiguration();

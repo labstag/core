@@ -10,10 +10,11 @@ use Labstag\Entity\Template;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Symfony\Component\Translation\TranslatableMessage;
+use Override;
 
 class TemplateCrudController extends AbstractCrudControllerLib
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setEditDetail($actions);
@@ -22,7 +23,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->setDefaultSort(
@@ -34,7 +35,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
@@ -60,7 +61,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
         yield $textareaField;
     }
 
-    #[\Override]
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Template::class;

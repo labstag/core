@@ -23,6 +23,7 @@ use Labstag\Service\ParagraphService;
 use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Override;
 
 final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 {
@@ -34,7 +35,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
     ) {
     }
 
-    #[\Override]
+    #[Override]
     public function configure(FieldDto $fieldDto, EntityDto $entityDto, AdminContext $adminContext): void
     {
         $instance = $entityDto->getInstance();
@@ -88,7 +89,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         );
     }
 
-    #[\Override]
+    #[Override]
     public function supports(FieldDto $fieldDto, EntityDto $entityDto): bool
     {
         unset($entityDto);

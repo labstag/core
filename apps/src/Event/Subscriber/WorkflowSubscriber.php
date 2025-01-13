@@ -15,6 +15,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Component\Workflow\Transition;
+use Override;
 
 class WorkflowSubscriber implements EventSubscriberInterface
 {
@@ -27,7 +28,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
     {
     }
 
-    #[\Override]
+    #[Override]
     public static function getSubscribedEvents(): array
     {
         return [
