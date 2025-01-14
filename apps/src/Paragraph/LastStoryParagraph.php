@@ -42,7 +42,7 @@ class LastStoryParagraph extends ParagraphLib
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): iterable
+    public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
 
@@ -61,7 +61,7 @@ class LastStoryParagraph extends ParagraphLib
     {
         return 'last-story';
     }
-    
+
     /**
      * @return mixed[]
      */

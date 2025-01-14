@@ -47,7 +47,7 @@ class NewsListParagraph extends ParagraphLib
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): iterable
+    public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
 
@@ -67,7 +67,7 @@ class NewsListParagraph extends ParagraphLib
     {
         return 'news-list';
     }
-    
+
     /**
      * @return mixed[]
      */

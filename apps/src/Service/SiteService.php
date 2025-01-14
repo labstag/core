@@ -66,7 +66,7 @@ class SiteService
 
         return $return;
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -114,10 +114,10 @@ class SiteService
         return $this->getEntityBySlug($slug);
     }
 
-    public function getEntityBySlug(string $slug): ?object
+    public function getEntityBySlug(?string $slug): ?object
     {
         $types = $this->getPageByTypes();
-        if ($slug === '') {
+        if ($slug === '' || is_null($slug)) {
             return $types['home'];
         }
 
@@ -188,7 +188,7 @@ class SiteService
 
         return ($page === '') ? $this->getSlugByEntityIfChapter($types, $entity) : $page;
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -245,7 +245,7 @@ class SiteService
 
         return '';
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -263,7 +263,7 @@ class SiteService
     {
         return $meta;
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -299,9 +299,10 @@ class SiteService
 
         return $view;
     }
-    
+
     /**
      * @param mixed[] $data
+     *
      * @return mixed[]
      */
     private function getBlocks(array $data, bool $disable): array
@@ -362,7 +363,7 @@ class SiteService
             ['slug' => $slug]
         );
     }
-    
+
     /**
      * @return mixed[]
      */

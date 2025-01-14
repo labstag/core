@@ -13,7 +13,7 @@ class UserPasswordLostEmail extends EmailLib
     {
         return 'Password Losted';
     }
-    
+
     /**
      * @return mixed[]
      */

@@ -32,7 +32,7 @@ class HtmlParagraph extends ParagraphLib
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): iterable
+    public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
 
@@ -52,7 +52,7 @@ class HtmlParagraph extends ParagraphLib
     {
         return 'html';
     }
-    
+
     /**
      * @return mixed[]
      */

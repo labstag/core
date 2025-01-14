@@ -51,7 +51,7 @@ class FormParagraph extends ParagraphLib
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): iterable
+    public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
         $choiceField = ChoiceField::new('form', new TranslatableMessage('Formulaire'));
@@ -71,7 +71,7 @@ class FormParagraph extends ParagraphLib
     {
         return 'form';
     }
-    
+
     /**
      * @return mixed[]
      */

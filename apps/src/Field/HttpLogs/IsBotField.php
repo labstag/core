@@ -18,7 +18,7 @@ final class IsBotField implements FieldInterface
     public const OPTION_TOGGLE_URL = 'toggleUrl';
 
     /**
-     * @param null|false|string $label
+     * @param false|string|null $label
      */
     public static function new(string $propertyName, $label = null): self
     {

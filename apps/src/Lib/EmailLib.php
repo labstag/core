@@ -77,7 +77,7 @@ abstract class EmailLib extends Email
     {
         return '';
     }
-    
+
     /**
      * @return string[]
      */
@@ -167,7 +167,7 @@ abstract class EmailLib extends Email
 
         return parent::text($body, $charset);
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -260,7 +260,7 @@ abstract class EmailLib extends Email
 
         return $content;
     }
-    
+
     /**
      * @return mixed[]
      */

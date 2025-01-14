@@ -2,8 +2,6 @@
 
 namespace Labstag\Paragraph;
 
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
@@ -46,7 +44,7 @@ class HeadPostParagraph extends ParagraphLib
     {
         return 'head-post';
     }
-    
+
     /**
      * @return mixed[]
      */

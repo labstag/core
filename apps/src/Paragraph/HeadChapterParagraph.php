@@ -2,8 +2,6 @@
 
 namespace Labstag\Paragraph;
 
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
@@ -46,7 +44,7 @@ class HeadChapterParagraph extends ParagraphLib
     {
         return 'head-chapter';
     }
-    
+
     /**
      * @return mixed[]
      */

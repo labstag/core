@@ -49,7 +49,7 @@ class GeocodeService
 
         return $entity;
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -79,9 +79,10 @@ class GeocodeService
 
         return $csv;
     }
-    
+
     /**
      * @param mixed[] $csv
+     *
      * @return mixed[]
      */
     public function tables(array $csv): array

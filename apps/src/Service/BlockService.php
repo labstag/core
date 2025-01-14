@@ -39,6 +39,7 @@ class BlockService
     /**
      * @param mixed[] $blocks
      * @param mixed[] $data
+     *
      * @return array{templates: mixed, block: mixed}[]
      */
     public function generate(array $blocks, array $data, bool $disable): array
@@ -59,7 +60,7 @@ class BlockService
 
         return $tab;
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -108,7 +109,7 @@ class BlockService
 
         return $data;
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -176,7 +177,7 @@ class BlockService
 
         return $name;
     }
-    
+
     /**
      * @return mixed[]
      */

@@ -33,7 +33,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class BlockCrudController extends AbstractCrudControllerLib
 {
-
     /**
      * @return mixed[]
      */

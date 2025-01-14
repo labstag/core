@@ -13,7 +13,7 @@ class UserService
     )
     {
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -24,7 +24,7 @@ class UserService
             'en',
         ];
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -38,7 +38,7 @@ class UserService
 
         return array_flip($languages);
     }
-    
+
     /**
      * @return mixed[]
      */

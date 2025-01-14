@@ -22,7 +22,6 @@ class AdminBlock extends BlockLib
     }
 
     /**
-     * 
      * @param mixed[] $data
      */
     #[Override]

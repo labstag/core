@@ -2,8 +2,6 @@
 
 namespace Labstag\Paragraph;
 
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Override;
@@ -37,7 +35,7 @@ class MapParagraph extends ParagraphLib
     {
         return 'map';
     }
-    
+
     /**
      * @return mixed[]
      */

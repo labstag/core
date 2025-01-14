@@ -4,8 +4,8 @@ namespace Labstag\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Labstag\Repository\RedirectionRepository;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Labstag\Repository\RedirectionRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
@@ -27,7 +27,7 @@ class Redirection
     #[ORM\Column(type: Types::TEXT)]
     private ?string $action_type = null;
 
-    #[ORM\Column(type: Types::ARRAY)]
+    #[ORM\Column(type: Types::JSON)]
     private array $data = [];
 
     #[ORM\Column(type: Types::TEXT)]
@@ -40,13 +40,16 @@ class Redirection
     private ?string $source = null;
 
     #[ORM\Column]
-    private ?int $last_count = null;
+    private ?int $last_count = 0;
 
     #[ORM\Column]
     private ?bool $regex = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
+
+    #[ORM\Column]
+    private ?int $position = null;
 
     public function getId(): ?string
     {
@@ -157,6 +160,25 @@ class Redirection
     public function setTitle(?string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(int $position): static
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    public function incrementLastCount(): self
+    {
+        ++$this->last_count;
 
         return $this;
     }

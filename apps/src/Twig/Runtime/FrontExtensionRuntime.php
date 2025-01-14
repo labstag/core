@@ -55,7 +55,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 
         return $response->getContent();
     }
-    
+
     /**
      * @return mixed[]
      */

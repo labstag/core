@@ -9,7 +9,6 @@ use Twig\TwigFunction;
 
 class BlockExtension extends AbstractExtension
 {
-    
     /**
      * @return mixed[]
      */

@@ -253,7 +253,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
         return $imageField;
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -266,7 +266,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             TextField::new('meta.description', new TranslatableMessage('Description'))->hideOnIndex(),
         ];
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -305,7 +305,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
         return $fields;
     }
-    
+
     /**
      * @return mixed[]
      */

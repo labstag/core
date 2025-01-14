@@ -70,9 +70,10 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
     {
         return $formBuilder->create($name, $type, $options);
     }
-    
+
     /**
      * @param mixed[] $options
+     *
      * @return mixed[]
      */
     protected function buildPrototypes(FormBuilderInterface $formBuilder, array $options): array
