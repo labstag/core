@@ -16,6 +16,7 @@ use Labstag\Entity\HttpErrorLogs;
 use Labstag\Field\HttpLogs\IsBotField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class HttpErrorLogsCrudController extends AbstractCrudControllerLib
 {
@@ -38,9 +39,9 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
-        $filters->add('ip');
-        $filters->add('http_code');
-        $filters->add('request_method');
+        $filters->add('InternetProtocol');
+        $filters->add('httpCode');
+        $filters->add('requestMethod');
 
         return $filters;
     }
@@ -50,12 +51,12 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     {
         $maxLength = $pageName === Crud::PAGE_DETAIL ? 1024 : 32;
         yield $this->addFieldID();
-        yield DateField::new('created');
-        yield TextField::new('url')->setMaxLength($maxLength);
-        yield TextField::new('domain');
-        yield TextField::new('agent')->setMaxLength($maxLength);
-        yield TextField::new('ip');
-        yield IsBotField::new('bot');
+        yield DateField::new('created', new TranslatableMessage('created'));
+        yield TextField::new('url', new TranslatableMessage('url'))->setMaxLength($maxLength);
+        yield TextField::new('domain', new TranslatableMessage('domain'));
+        yield TextField::new('agent', new TranslatableMessage('agent'))->setMaxLength($maxLength);
+        yield TextField::new('InternetProtocol', new TranslatableMessage('InternetProtocol'));
+        yield IsBotField::new('bot', new TranslatableMessage('bot'));
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         if (!is_null($currentEntity)) {
             $deviceDetector = new DeviceDetector($currentEntity->getAgent());
@@ -64,7 +65,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
                 'deviceDetector' => $deviceDetector,
                 'currentEntity'  => $currentEntity,
             ];
-            $info = ArrayField::new('info', 'Information');
+            $info = ArrayField::new('info', new TranslatableMessage('Information'));
             $info->hideOnIndex();
             $info->setValue($data);
             $info->setTemplatePath('admin/field/httperrorlogs/info.html.twig');
@@ -72,13 +73,13 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
             yield $info;
         }
 
-        yield TextField::new('referer')->setMaxLength($maxLength);
-        yield IntegerField::new('http_code');
-        yield TextField::new('request_method');
-        yield AssociationField::new('refUser', 'Utilisateur');
+        yield TextField::new('referer', new TranslatableMessage('referer'))->setMaxLength($maxLength);
+        yield IntegerField::new('httpCode', new TranslatableMessage('httpCode'));
+        yield TextField::new('requestMethod', new TranslatableMessage('requestMethod'));
+        yield AssociationField::new('refUser', new TranslatableMessage('Utilisateur'));
         if (!is_null($currentEntity)) {
             $data = $currentEntity->getRequestData();
-            $datafield = ArrayField::new('data', 'Request DATA');
+            $datafield = ArrayField::new('data', new TranslatableMessage('Request DATA'));
             $datafield->hideOnIndex();
             $datafield->setTemplatePath('admin/field/httperrorlogs/request_data.html.twig');
             $datafield->setValue($data);

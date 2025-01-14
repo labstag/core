@@ -53,7 +53,7 @@ class BlockFixtures extends FixtureLib
     /**
      * @return Generator<Block>
      */
-    private function data(): mixed
+    private function data(): Generator
     {
         $block = new Block();
         $block->setRegion('header');

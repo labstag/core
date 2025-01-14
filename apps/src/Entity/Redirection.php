@@ -22,10 +22,10 @@ class Redirection
     private ?string $id = null;
 
     #[ORM\Column]
-    private ?int $action_code = null;
+    private ?int $actionCode = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $action_type = null;
+    private ?string $actionType = null;
 
     #[ORM\Column(type: Types::JSON)]
     private array $data = [];
@@ -40,7 +40,7 @@ class Redirection
     private ?string $source = null;
 
     #[ORM\Column]
-    private ?int $last_count = 0;
+    private ?int $lastCount = 0;
 
     #[ORM\Column]
     private ?bool $regex = null;
@@ -58,24 +58,24 @@ class Redirection
 
     public function getActionCode(): ?int
     {
-        return $this->action_code;
+        return $this->actionCode;
     }
 
-    public function setActionCode(int $action_code): static
+    public function setActionCode(int $actionCode): static
     {
-        $this->action_code = $action_code;
+        $this->actionCode = $actionCode;
 
         return $this;
     }
 
     public function getActionType(): ?string
     {
-        return $this->action_type;
+        return $this->actionType;
     }
 
-    public function setActionType(string $action_type): static
+    public function setActionType(string $actionType): static
     {
-        $this->action_type = $action_type;
+        $this->actionType = $actionType;
 
         return $this;
     }
@@ -130,12 +130,12 @@ class Redirection
 
     public function getLastCount(): ?int
     {
-        return $this->last_count;
+        return $this->lastCount;
     }
 
-    public function setLastCount(int $last_count): static
+    public function setLastCount(int $lastCount): static
     {
-        $this->last_count = $last_count;
+        $this->lastCount = $lastCount;
 
         return $this;
     }
@@ -178,7 +178,7 @@ class Redirection
 
     public function incrementLastCount(): self
     {
-        ++$this->last_count;
+        ++$this->lastCount;
 
         return $this;
     }
