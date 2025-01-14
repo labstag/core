@@ -74,6 +74,7 @@
     "lint:phpstan:7": "docker exec -i $($npm_package_config_phpfpm) $npm_package_config_phpstan -l 7",
     "lint:phpstan:8": "docker exec -i $($npm_package_config_phpfpm) $npm_package_config_phpstan -l 8",
     "lint:phpstan:9": "docker exec -i $($npm_package_config_phpfpm) $npm_package_config_phpstan -l 9",
+    "lint:phpstan:10": "docker exec -i $($npm_package_config_phpfpm) $npm_package_config_phpstan -l 10",
     "lint:stylelint": "stylelint assets/*.scss",
     "lint:stylelint:fix": "stylelint assets/*.scss --fix",
     "lint:twig": "docker exec -i $($npm_package_config_phpfpm) symfony console lint:twig templates",

@@ -23,7 +23,7 @@ class AdminBlock extends BlockLib
 
     /**
      * 
-     * @param array<mixed> $data
+     * @param mixed[] $data
      */
     #[Override]
     public function generate(Block $block, array $data, bool $disable): void

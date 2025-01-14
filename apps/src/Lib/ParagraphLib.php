@@ -5,10 +5,12 @@ namespace Labstag\Lib;
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Exception;
+use Generator;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Labstag\Entity\Block;
@@ -32,15 +34,29 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 abstract class ParagraphLib extends AbstractController
 {
-
+    /**
+     * @var mixed[]
+     */
     protected array $data = [];
 
+    /**
+     * @var mixed[]
+     */
     protected array $footer = [];
 
+    /**
+     * @var Response[]
+     */
     protected array $header = [];
 
+    /**
+     * @var mixed[]
+     */
     protected array $show = [];
 
+    /**
+     * @var mixed[]
+     */
     protected array $templates = [];
 
     public function __construct(
@@ -93,11 +109,17 @@ abstract class ParagraphLib extends AbstractController
         return $this->render($view, $this->getData($paragraph));
     }
 
+    /**
+     * @param mixed[] $data
+     */
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($paragraph, $data, $disable);
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function getData(Paragraph $paragraph): array
     {
         $paragraphId = $paragraph->getId();
@@ -105,6 +127,9 @@ abstract class ParagraphLib extends AbstractController
         return $this->data[$paragraphId] ?? [];
     }
 
+    /**
+     * @return Generator<FieldInterface>
+     */
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
         unset($paragraph, $pageName);
@@ -147,12 +172,18 @@ abstract class ParagraphLib extends AbstractController
 
         return $this->show[$paragraphId] ?? true;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function templates(string $type): array
     {
         return $this->getTemplateContent($type, $this->getType());
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function useIn(): array
     {
         return [];
@@ -174,7 +205,10 @@ abstract class ParagraphLib extends AbstractController
 
         return $entityRepository;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     protected function getTemplateContent(string $folder, string $type): array
     {
         if (isset($this->templates[$type])) {
@@ -209,6 +243,9 @@ abstract class ParagraphLib extends AbstractController
         return $this->templates[$type];
     }
 
+    /**
+     * @param mixed[] $data
+     */
     protected function setData(Paragraph $paragraph, array $data): void
     {
         $this->setShow($paragraph, true);
@@ -218,6 +255,9 @@ abstract class ParagraphLib extends AbstractController
         $this->data[$paragraph->getId()] = $data;
     }
 
+    /**
+     * @param mixed[] $data
+     */
     protected function setFooter(Paragraph $paragraph, mixed $data): void
     {
         $paragraphId = $paragraph->getId();
@@ -225,7 +265,10 @@ abstract class ParagraphLib extends AbstractController
         $this->footer[$paragraphId] = $data;
     }
 
-    protected function setHeader(Paragraph $paragraph, mixed $data): void
+    /**
+     * @param Response $data
+     */
+    protected function setHeader(Paragraph $paragraph, Response $data): void
     {
         $paragraphId = $paragraph->getId();
 
@@ -240,7 +283,10 @@ abstract class ParagraphLib extends AbstractController
 
         $this->show[$paragraph->getId()] = $show;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     protected function useInAll(): array
     {
         return [

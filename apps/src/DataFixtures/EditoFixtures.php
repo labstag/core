@@ -17,8 +17,13 @@ class EditoFixtures extends FixtureLib implements DependentFixtureInterface
      */
     protected const NUMBER_EDITO = 10;
 
+    /**
+     * @var User[]
+     */
     protected array $users = [];
-
+    /**
+     * @return string[]
+     */
     #[Override]
     public function getDependencies(): array
     {

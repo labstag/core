@@ -2,6 +2,8 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
+use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
@@ -10,6 +12,9 @@ use Override;
 
 class HeadChapterParagraph extends ParagraphLib
 {
+    /**
+     * @param mixed[] $data
+     */
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
@@ -31,14 +36,6 @@ class HeadChapterParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): iterable
-    {
-        unset($paragraph, $pageName);
-
-        return [];
-    }
-
-    #[Override]
     public function getName(): string
     {
         return 'Head chapter';
@@ -49,7 +46,10 @@ class HeadChapterParagraph extends ParagraphLib
     {
         return 'head-chapter';
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     #[Override]
     public function useIn(): array
     {

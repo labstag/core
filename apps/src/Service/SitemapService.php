@@ -13,7 +13,9 @@ use Labstag\Repository\ChapterRepository;
 
 class SitemapService
 {
-
+    /**
+     * @var string[]
+     */
     protected array $parent = [];
 
     public function __construct(
@@ -22,7 +24,10 @@ class SitemapService
     )
     {
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function getData(bool $all = false): array
     {
         $configuration = $this->siteService->getConfiguration();
@@ -41,7 +46,11 @@ class SitemapService
 
         return $this->setTabsByParent($tabs, '/');
     }
-
+    
+    /**
+     * @param mixed[] $urls
+     * @return mixed[]
+     */
     public function setTabsByParent(array $urls, string $parent): array
     {
         $tabs = [];
@@ -76,7 +85,10 @@ class SitemapService
 
         return $result !== '-';
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     private function formatData(object $entity): array
     {
         $url = $this->siteService->getSlugByEntity($entity);
@@ -85,7 +97,10 @@ class SitemapService
             '/' . $url => ['entity' => $entity],
         ];
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     private function getDataChaptersByStory(object $story): array
     {
         if (!$story instanceof Story) {
@@ -98,7 +113,10 @@ class SitemapService
 
         return $this->setTabs($data);
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     private function getDataFromRepository(string $entityClass): array
     {
         $serviceEntityRepositoryLib = $this->getRepository($entityClass);
@@ -110,22 +128,35 @@ class SitemapService
 
         return $this->setTabs($data);
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     private function getDataPages(): array
     {
         return $this->getDataFromRepository(Page::class);
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     private function getDataPosts(): array
     {
         return $this->getDataFromRepository(Post::class);
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     private function getDataStory(): array
     {
         return $this->getDataFromRepository(Story::class);
     }
-
+    
+    /**
+     * @param mixed[] $data
+     * @return mixed[]
+     */
     private function setTabs(array $data): array
     {
         $tabs = [];

@@ -48,7 +48,7 @@ final class MetaParentField implements FieldInterface
     }
 
     #[Override]
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, ?string $label = null): self
     {
         $field = (new self());
         $field->setProperty($propertyName);
@@ -72,9 +72,6 @@ final class MetaParentField implements FieldInterface
         return $field;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD)
-     */
     public function renderAsNativeWidget(bool $asNative = true): self
     {
         $this->setCustomOption(self::OPTION_WIDGET, $asNative ? self::WIDGET_NATIVE : self::WIDGET_AUTOCOMPLETE);

@@ -31,6 +31,9 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         return $this->blockService->getNameByCode($code);
     }
 
+    /**
+     * @param mixed[] $tab
+     */
     public function getShow(array $tab): string|false|null
     {
         if (!isset($tab['templates']['view'])) {

@@ -11,6 +11,9 @@ class DebugExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
+    /**
+     * @param mixed[] $data
+     */
     public function begin(array $data): string
     {
         $templates = $data['templates'];
@@ -31,6 +34,9 @@ class DebugExtensionRuntime implements RuntimeExtensionInterface
         return $html . ("BEGIN OUTPUT from '" . $templates['view'] . "' -->\n");
     }
 
+    /**
+     * @param mixed[] $data
+     */
     public function end(array $data): string
     {
         $templates = $data['templates'];

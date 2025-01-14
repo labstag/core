@@ -10,6 +10,10 @@ use Override;
 
 class UserFixtures extends FixtureLib implements DependentFixtureInterface
 {
+    
+    /**
+     * @return string[]
+     */
     #[Override]
     public function getDependencies(): array
     {
@@ -29,6 +33,9 @@ class UserFixtures extends FixtureLib implements DependentFixtureInterface
         $objectManager->flush();
     }
 
+    /**
+     * @return mixed[]
+     */
     private function data(): array
     {
         $roles = $this->userService->getRoles();
@@ -61,6 +68,9 @@ class UserFixtures extends FixtureLib implements DependentFixtureInterface
         ];
     }
 
+    /**
+     * @param array{entity: User, password: string} $data
+     */
     private function setUser(ObjectManager $objectManager, User $user, array $data): void
     {
         $this->workflowService->init($user);

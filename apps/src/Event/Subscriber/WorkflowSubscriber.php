@@ -27,7 +27,10 @@ class WorkflowSubscriber implements EventSubscriberInterface
     )
     {
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     #[Override]
     public static function getSubscribedEvents(): array
     {

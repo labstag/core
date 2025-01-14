@@ -1,3 +1,4 @@
+import WebFont from 'webfontloader';
 import {
 	ClassicEditor,
 	Alignment,
@@ -77,6 +78,15 @@ import {
 
 import translations from 'ckeditor5/translations/fr.js';
 
+
+WebFont.load({
+  google: {
+    families: [
+      'Oswald&family=PT+Serif:ital,wght@0,400;0,700;1,400',
+      'Lato:ital,wght@0,400;0,700;1,400;1,700'
+    ]
+  }
+});
 /**
  * Create a free account with a trial: https://portal.ckeditor.com/checkout?plan=free
  */

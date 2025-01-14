@@ -9,6 +9,9 @@ use Symfony\Component\Routing\RouterInterface;
 abstract class ReplaceLib implements ReplaceInterface
 {
 
+    /**
+     * @var mixed[]
+     */
     protected array $data;
 
     public function __construct(
@@ -18,6 +21,9 @@ abstract class ReplaceLib implements ReplaceInterface
     {
     }
 
+    /**
+     * @param mixed[] $data
+     */
     public function setData(array $data): void
     {
         $this->data = $data;

@@ -9,14 +9,19 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 trait WorkflowTrait
 {
-
+    /**
+     * @var string[]
+     */
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $state = ['start'];
 
     #[Gedmo\Timestampable(on: 'change', field: ['state'])]
     #[ORM\Column(name: 'state_changed', type: Types::DATETIME_MUTABLE, nullable: true)]
     private DateTime $stateChanged;
-
+    
+    /**
+     * @return mixed[]
+     */
     public function getState(): array
     {
         return $this->state;
@@ -27,6 +32,10 @@ trait WorkflowTrait
         return $this->stateChanged;
     }
 
+    /**
+     * @param mixed[] $state
+     * @param mixed[] $context
+     */
     public function setState(array $state, array $context = []): void
     {
         unset($context);

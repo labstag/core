@@ -14,5 +14,8 @@ interface BlockInterface
 
     public function content(string $view, Block $block): ?Response;
 
+    /**
+     * @param mixed[] $data
+     */
     public function generate(Block $block, array $data, bool $disable): void;
 }

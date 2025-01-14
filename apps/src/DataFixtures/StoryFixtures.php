@@ -20,8 +20,14 @@ class StoryFixtures extends FixtureLib implements DependentFixtureInterface
      */
     protected const NUMBER_HISTORY = 50;
 
+    /**
+     * @var User[]
+     */
     protected array $users = [];
-
+    
+    /**
+     * @return string[]
+     */
     #[Override]
     public function getDependencies(): array
     {

@@ -35,6 +35,9 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         return $this->paragraphService->getNameByCode($code);
     }
 
+    /**
+     * @param mixed[] $tab
+     */
     public function getShow(array $tab): ?string
     {
         if (!isset($tab['templates']['view']) || !isset($tab['paragraph'])) {

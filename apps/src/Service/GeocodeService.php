@@ -18,6 +18,9 @@ class GeocodeService
     {
     }
 
+    /**
+     * @param mixed[] $row
+     */
     public function add(array $row): GeoCode
     {
         $entity = $this->geoCodeRepository->findOneBy(
@@ -46,7 +49,10 @@ class GeocodeService
 
         return $entity;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function csv(string $country): array
     {
         $country = strtoupper($country);
@@ -73,7 +79,11 @@ class GeocodeService
 
         return $csv;
     }
-
+    
+    /**
+     * @param mixed[] $csv
+     * @return mixed[]
+     */
     public function tables(array $csv): array
     {
         return array_map(fn ($line) => str_getcsv((string) $line, "\t"), $csv);

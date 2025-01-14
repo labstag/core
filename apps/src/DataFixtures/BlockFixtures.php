@@ -3,6 +3,7 @@
 namespace Labstag\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
+use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Link;
 use Labstag\Lib\FixtureLib;
@@ -49,6 +50,9 @@ class BlockFixtures extends FixtureLib
         $this->paragraphService->addParagraph($block, 'chapter-lastnext');
     }
 
+    /**
+     * @return Generator<Block>
+     */
     private function data(): iterable
     {
         $block = new Block();

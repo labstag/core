@@ -20,6 +20,9 @@ class ContentBlock extends BlockLib
         return $this->render($view, $this->getData($block));
     }
 
+    /**
+     * @param mixed[] $data
+     */
     #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {

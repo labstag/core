@@ -2,6 +2,8 @@
 
 namespace Labstag\Block;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
+use Generator;
 use Labstag\Entity\Block;
 use Labstag\Lib\BlockLib;
 use Override;
@@ -19,6 +21,9 @@ class ParagraphsBlock extends BlockLib
         return $this->render($view, $this->getData($block));
     }
 
+    /**
+     * @param mixed[] $data
+     */
     #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
@@ -41,14 +46,6 @@ class ParagraphsBlock extends BlockLib
                 'paragraphs' => $paragraphs,
             ]
         );
-    }
-
-    #[Override]
-    public function getFields(Block $block, string $pageName): iterable
-    {
-        unset($block, $pageName);
-
-        return [];
     }
 
     #[Override]

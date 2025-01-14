@@ -47,11 +47,8 @@ final class ParagraphParentField implements FieldInterface
         return $this;
     }
 
-    /**
-     * @param false|string|null $label
-     */
     #[Override]
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, ?string $label = null): self
     {
         $field = (new self());
         $field->setProperty($propertyName);

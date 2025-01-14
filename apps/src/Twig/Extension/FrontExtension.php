@@ -15,7 +15,10 @@ class FrontExtension extends AbstractExtension
     {
         return [new TwigFilter('enable', [FrontExtensionRuntime::class, 'enable'])];
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     #[Override]
     public function getFunctions(): array
     {

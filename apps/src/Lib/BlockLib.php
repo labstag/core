@@ -3,8 +3,10 @@
 namespace Labstag\Lib;
 
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
+use Generator;
 use Labstag\Entity\Block;
 use Labstag\Interface\BlockInterface;
 use Labstag\Service\ParagraphService;
@@ -17,14 +19,29 @@ use Twig\Environment;
 abstract class BlockLib extends AbstractController implements BlockInterface
 {
 
+    /**
+     * @var mixed[]
+     */
     protected array $data = [];
 
+    /**
+     * @var mixed[]
+     */
     protected array $footer = [];
 
+    /**
+     * @var mixed[]
+     */
     protected array $header = [];
 
+    /**
+     * @var mixed[]
+     */
     protected array $show = [];
 
+    /**
+     * @var mixed[]
+     */
     protected array $templates = [];
 
     public function __construct(
@@ -46,6 +63,9 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         return $this->data[$blockId] ?? null;
     }
 
+    /**
+     * @return Generator<FieldInterface>
+     */
     public function getFields(Block $block, string $pageName): iterable
     {
         unset($block, $pageName);
@@ -73,12 +93,18 @@ abstract class BlockLib extends AbstractController implements BlockInterface
 
         return $this->show[$blockId] ?? true;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function templates(string $type): array
     {
         return $this->getTemplateContent($type, $this->getType());
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function useIn(): array
     {
         return [];
@@ -93,7 +119,10 @@ abstract class BlockLib extends AbstractController implements BlockInterface
 
         return $entityRepository;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     protected function getTemplateContent(string $folder, string $type): array
     {
         if (isset($this->templates[$type])) {
@@ -128,6 +157,9 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         return $this->templates[$type];
     }
 
+    /**
+     * @param mixed[] $data
+     */
     protected function setData(Block $block, array $data): void
     {
         $this->setShow($block, true);
@@ -137,6 +169,9 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         $this->data[$block->getId()] = $data;
     }
 
+    /**
+     * @param mixed[] $data
+     */
     protected function setFooter(Block $block, array $data): void
     {
         $blockId = $block->getId();
@@ -144,6 +179,9 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         $this->footer[$blockId] = $data;
     }
 
+    /**
+     * @param mixed[] $data
+     */
     protected function setHeader(Block $block, array $data): void
     {
         $blockId = $block->getId();

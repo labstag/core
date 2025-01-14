@@ -14,6 +14,9 @@ use Override;
 
 class PageFixtures extends FixtureLib implements DependentFixtureInterface
 {
+    /**
+     * @return string[]
+     */
     #[Override]
     public function getDependencies(): array
     {
@@ -40,6 +43,9 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $objectManager->flush();
     }
 
+    /**
+     * @return mixed[]
+     */
     private function data(): array
     {
         $home = new Page();
@@ -96,6 +102,10 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         ];
     }
 
+    /**
+     * @param array{entity: Page, parent: string} $data
+     * @return void
+     */
     private function setPage(ObjectManager $objectManager, Generator $generator, Page $page, array $data): void
     {
         $page->setEnable(true);

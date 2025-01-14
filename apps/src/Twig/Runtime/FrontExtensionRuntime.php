@@ -55,7 +55,10 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 
         return $response->getContent();
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function enable(object $entities): array
     {
         $data = [];
@@ -68,6 +71,9 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         return $data;
     }
 
+    /**
+     * @param mixed[] $value
+     */
     public function metatags(array $value): string
     {
         $metatags = $this->siteService->getMetatags($value['entity']);
@@ -88,6 +94,9 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         );
     }
 
+    /**
+     * @param mixed[] $data
+     */
     public function title(array $data): string
     {
         $config = $this->siteService->getConfiguration();

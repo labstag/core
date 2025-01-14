@@ -116,7 +116,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         $this->pages = new ArrayCollection();
         $this->posts = new ArrayCollection();
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function __serialize(): array
     {
         return [

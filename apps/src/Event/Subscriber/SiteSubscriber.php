@@ -18,7 +18,10 @@ class SiteSubscriber implements EventSubscriberInterface
     )
     {
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     #[Override]
     public static function getSubscribedEvents(): array
     {
