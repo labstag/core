@@ -18,10 +18,19 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
      */
     protected const NUMBER_CHAPTER = 50;
 
+    /**
+     * @var mixed[]
+     */
     protected array $position = [];
 
+    /**
+     * @var Story[]
+     */
     protected array $stories = [];
 
+    /**
+     * @return string[]
+     */
     #[Override]
     public function getDependencies(): array
     {

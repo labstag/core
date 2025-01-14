@@ -2,6 +2,8 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
+use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\ParagraphLib;
@@ -9,6 +11,9 @@ use Override;
 
 class TextImgParagraph extends ParagraphLib
 {
+    /**
+     * @param mixed[] $data
+     */
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
@@ -22,6 +27,9 @@ class TextImgParagraph extends ParagraphLib
         );
     }
 
+    /**
+     * @return Generator<FieldInterface>
+     */
     #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
@@ -43,7 +51,10 @@ class TextImgParagraph extends ParagraphLib
     {
         return 'text-img';
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     #[Override]
     public function useIn(): array
     {

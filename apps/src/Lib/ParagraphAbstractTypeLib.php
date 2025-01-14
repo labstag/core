@@ -58,6 +58,9 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
         $this->entity = $entity;
     }
 
+    /**
+     * @param mixed[] $options
+     */
     protected function buildPrototype(
         FormBuilderInterface $formBuilder,
         string $name,
@@ -67,7 +70,11 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
     {
         return $formBuilder->create($name, $type, $options);
     }
-
+    
+    /**
+     * @param mixed[] $options
+     * @return mixed[]
+     */
     protected function buildPrototypes(FormBuilderInterface $formBuilder, array $options): array
     {
         $prototypes = [];

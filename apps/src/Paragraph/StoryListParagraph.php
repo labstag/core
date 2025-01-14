@@ -2,7 +2,9 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Story;
 use Labstag\Lib\ParagraphLib;
@@ -11,6 +13,9 @@ use Override;
 
 class StoryListParagraph extends ParagraphLib
 {
+    /**
+     * @param mixed[] $data
+     */
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
@@ -39,6 +44,9 @@ class StoryListParagraph extends ParagraphLib
         );
     }
 
+    /**
+     * @return Generator<FieldInterface>
+     */
     #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
@@ -59,7 +67,10 @@ class StoryListParagraph extends ParagraphLib
     {
         return 'story-list';
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     #[Override]
     public function useIn(): array
     {

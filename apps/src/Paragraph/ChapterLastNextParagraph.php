@@ -2,6 +2,8 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
+use Generator;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
@@ -10,6 +12,9 @@ use Override;
 
 class ChapterLastNextParagraph extends ParagraphLib
 {
+    /**
+     * @param mixed[] $data
+     */
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
@@ -41,14 +46,6 @@ class ChapterLastNextParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): iterable
-    {
-        unset($paragraph, $pageName);
-
-        return [];
-    }
-
-    #[Override]
     public function getName(): string
     {
         return 'Chapitre last next';
@@ -59,7 +56,10 @@ class ChapterLastNextParagraph extends ParagraphLib
     {
         return 'chapter-lastnext';
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     #[Override]
     public function useIn(): array
     {

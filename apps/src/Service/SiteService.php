@@ -66,7 +66,10 @@ class SiteService
 
         return $return;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function getDataByEntity(object $entity, bool $disable = false): array
     {
         $data = [
@@ -149,6 +152,10 @@ class SiteService
     public function getMetatags(object $entity): Meta
     {
         $meta = $entity->getMeta();
+        if ($meta instanceof Meta) {
+            $meta = new Meta();
+        }
+
         if (!is_null($meta->getDescription()) && $meta->getDescription() !== '' && $meta->getDescription() !== '0') {
             return $meta;
         }
@@ -181,7 +188,10 @@ class SiteService
 
         return ($page === '') ? $this->getSlugByEntityIfChapter($types, $entity) : $page;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function getTypesPages(): array
     {
         return [
@@ -207,6 +217,9 @@ class SiteService
         // TODO : Prévoir de vérifier les droits de l'utilisateur
     }
 
+    /**
+     * @param mixed[] $data
+     */
     public function isHome(array $data): bool
     {
         return isset($data['entity']) && $data['entity'] instanceof Page && $data['entity']->getType() == 'home';
@@ -232,7 +245,10 @@ class SiteService
 
         return '';
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     protected function getDataCrudController(): array
     {
         return [
@@ -247,7 +263,10 @@ class SiteService
     {
         return $meta;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     protected function getRepositories(): array
     {
         return [
@@ -280,7 +299,11 @@ class SiteService
 
         return $view;
     }
-
+    
+    /**
+     * @param mixed[] $data
+     * @return mixed[]
+     */
     private function getBlocks(array $data, bool $disable): array
     {
         $queryBuilder = $this->blockRepository->findAllOrderedByRegion();
@@ -339,7 +362,10 @@ class SiteService
             ['slug' => $slug]
         );
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     private function getPageByTypes(): array
     {
         $types = array_flip($this->getTypesPages());
@@ -353,6 +379,9 @@ class SiteService
         return $types;
     }
 
+    /**
+     * @param mixed[] $types
+     */
     private function getSlugByEntityIfChapter(array $types, object $entity): string
     {
         if (!$entity instanceof Chapter) {
@@ -375,6 +404,9 @@ class SiteService
         return $entity->getSlug();
     }
 
+    /**
+     * @param mixed[] $types
+     */
     private function getSlugByEntityIfPost(array $types, object $entity): ?string
     {
         if (!$entity instanceof Post) {
@@ -388,6 +420,9 @@ class SiteService
         return $types['post']->getSlug() . '/' . $entity->getSlug();
     }
 
+    /**
+     * @param mixed[] $types
+     */
     private function getSlugByEntityIfStory(array $types, object $entity): string
     {
         if (!$entity instanceof Story) {

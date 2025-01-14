@@ -40,6 +40,9 @@ class SecurityController extends AbstractController
         throw new LogicException();
     }
 
+    /**
+     * @return mixed[]
+     */
     protected function getDataLogin(AuthenticationUtils $authenticationUtils): array
     {
         $error = $authenticationUtils->getLastAuthenticationError();

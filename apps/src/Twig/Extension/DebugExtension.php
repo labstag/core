@@ -9,6 +9,10 @@ use Twig\TwigFunction;
 
 class DebugExtension extends AbstractExtension
 {
+    
+    /**
+     * @return mixed[]
+     */
     #[Override]
     public function getFunctions(): array
     {

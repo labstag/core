@@ -20,8 +20,14 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
      */
     protected const NUMBER_POST = 50;
 
+    /**
+     * @var User[]
+     */
     protected array $users = [];
-
+    
+    /**
+     * @return string[]
+     */
     #[Override]
     public function getDependencies(): array
     {

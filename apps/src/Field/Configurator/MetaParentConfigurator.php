@@ -37,9 +37,6 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
     ) {
     }
 
-    /**
-     * @SuppressWarnings(PHPMD)
-     */
     #[Override]
     public function configure(FieldDto $fieldDto, EntityDto $entityDto, AdminContext $adminContext): void
     {
@@ -269,9 +266,6 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         return 0;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD)
-     */
     private function formatAsString($entityInstance, EntityDto $entityDto): ?string
     {
         if (is_null($entityInstance)) {

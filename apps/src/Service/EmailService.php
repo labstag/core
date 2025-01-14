@@ -19,6 +19,9 @@ class EmailService
         return $this->emails;
     }
 
+    /**
+     * @param mixed[] $data
+     */
     public function get(string $code, array $data = []): ?EmailLib
     {
         $template = null;

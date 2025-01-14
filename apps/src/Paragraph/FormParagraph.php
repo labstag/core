@@ -2,7 +2,9 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\FrontFormLib;
 use Labstag\Lib\ParagraphLib;
@@ -11,6 +13,9 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class FormParagraph extends ParagraphLib
 {
+    /**
+     * @param mixed[] $data
+     */
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
@@ -42,6 +47,9 @@ class FormParagraph extends ParagraphLib
         );
     }
 
+    /**
+     * @return Generator<FieldInterface>
+     */
     #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
@@ -63,7 +71,10 @@ class FormParagraph extends ParagraphLib
     {
         return 'form';
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     #[Override]
     public function useIn(): array
     {

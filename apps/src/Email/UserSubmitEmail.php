@@ -13,7 +13,10 @@ class UserSubmitEmail extends EmailLib
     {
         return 'New user %user_email%';
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     #[Override]
     public function getReplaces(): array
     {

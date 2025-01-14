@@ -2,6 +2,8 @@
 
 namespace Labstag\Block;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
+use Generator;
 use Labstag\Entity\Block;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\BlockLib;
@@ -21,6 +23,9 @@ class HtmlBlock extends BlockLib
         return $this->render($view, $this->getData($block));
     }
 
+    /**
+     * @param mixed[] $data
+     */
     #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
@@ -34,6 +39,9 @@ class HtmlBlock extends BlockLib
         );
     }
 
+    /**
+     * @return Generator<FieldInterface>
+     */
     #[Override]
     public function getFields(Block $block, string $pageName): iterable
     {

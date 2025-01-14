@@ -13,7 +13,10 @@ class UserService
     )
     {
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function getLanguages(): array
     {
         return [
@@ -21,7 +24,10 @@ class UserService
             'en',
         ];
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function getLanguagesForChoices(): array
     {
         $data = $this->getLanguages();
@@ -32,7 +38,10 @@ class UserService
 
         return array_flip($languages);
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function getRoles(): array
     {
         return [

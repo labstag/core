@@ -34,7 +34,12 @@ class FormService
 
     public function execute(string $code, FormInterface $form, bool $disable): bool
     {
-        return $this->get($code)->execute($form, $disable);
+        $frontform = $this->get($code);
+        if (!$frontform instanceof FrontFormLib) {
+            return false;
+        }
+
+        return $frontform->execute($form, $disable);
     }
 
     public function get(string $code): ?FrontFormLib

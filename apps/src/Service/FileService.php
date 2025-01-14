@@ -144,7 +144,7 @@ class FileService
     }
 
     /**
-     * @return list[]
+     * @return mixed[]
      */
     public function getFiles(): array
     {
@@ -207,7 +207,11 @@ class FileService
 
         return $this->parameterBag->get('kernel.project_dir') . '/public' . $basePath;
     }
-
+    
+    /**
+     * @param object|mixed[] $entity
+     * @return mixed[]
+     */
     public function getMappingForEntity(object|array $entity): array
     {
         return $this->propertyMappingFactory->fromObject($entity);
@@ -223,6 +227,9 @@ class FileService
         return $entityRepository;
     }
 
+    /**
+     * @param mixed[] $files
+     */
     private function deleteFilesByType(int|string $type, array $files): void
     {
         $adapter = $this->getAdapter($type);
@@ -250,7 +257,10 @@ class FileService
 
         return $data[$type] ?? null;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     private function getDataStorage(): array
     {
         return [
@@ -267,7 +277,10 @@ class FileService
             'post'          => $this->postAdapter,
         ];
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     private function getEntity(): array
     {
         return [

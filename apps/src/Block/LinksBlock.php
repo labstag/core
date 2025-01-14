@@ -2,7 +2,9 @@
 
 namespace Labstag\Block;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
@@ -25,6 +27,9 @@ class LinksBlock extends BlockLib
         return $this->render($view, $this->getData($block));
     }
 
+    /**
+     * @param mixed[] $data
+     */
     #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
@@ -46,6 +51,9 @@ class LinksBlock extends BlockLib
         );
     }
 
+    /**
+     * @return Generator<FieldInterface>
+     */
     #[Override]
     public function getFields(Block $block, string $pageName): iterable
     {
@@ -70,6 +78,9 @@ class LinksBlock extends BlockLib
         return 'links';
     }
 
+    /**
+     * @return mixed[]
+     */
     private function correctionLinks(Block $block): array
     {
         $links = $block->getLinks();

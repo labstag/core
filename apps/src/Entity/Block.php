@@ -60,6 +60,9 @@ class Block implements Stringable
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $requestPath = false;
 
+    /**
+     * @var string[]
+     */
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $roles = null;
 

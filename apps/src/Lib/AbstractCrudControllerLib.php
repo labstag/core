@@ -253,7 +253,10 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
         return $imageField;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     protected function addFieldMetas(): array
     {
         return [
@@ -263,7 +266,10 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             TextField::new('meta.description', new TranslatableMessage('Description'))->hideOnIndex(),
         ];
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     protected function addFieldParagraphs(string $pageName, string $form): array
     {
         // Disable $form because allow_add and allow_delete are not working for using multiple prototypes
@@ -299,7 +305,10 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
         return $fields;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     protected function addFieldRefUser(): array
     {
         $data = [];

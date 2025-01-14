@@ -49,6 +49,9 @@ class CategoryFixtures extends FixtureLib
         $objectManager->persist($category);
     }
 
+    /**
+     * @return mixed[]
+     */
     protected function getParent(string $code): array
     {
         $tab = [];

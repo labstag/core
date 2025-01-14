@@ -20,11 +20,20 @@ use Twig\Environment;
 abstract class EmailLib extends Email
 {
 
+    /**
+     * @var mixed[]
+     */
     protected array $data = [];
 
+    /**
+     * @var mixed[]
+     */
     protected array $templates = [];
 
     public function __construct(
+        /**
+         * @var object[]
+         */
         #[AutowireIterator('labstag.replaces')]
         private readonly iterable $replaces,
         protected RouterInterface $router,
@@ -68,7 +77,10 @@ abstract class EmailLib extends Email
     {
         return '';
     }
-
+    
+    /**
+     * @return string[]
+     */
     public function getReplaces(): array
     {
         return [
@@ -101,6 +113,9 @@ abstract class EmailLib extends Email
         $this->subject('');
     }
 
+    /**
+     * @param mixed[] $data
+     */
     public function setData(array $data = []): void
     {
         $this->data = $data;
@@ -152,7 +167,10 @@ abstract class EmailLib extends Email
 
         return parent::text($body, $charset);
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     protected function getTemplateContent(string $folder, string $type): array
     {
         if (isset($this->templates[$type])) {
@@ -187,7 +205,7 @@ abstract class EmailLib extends Email
         return $this->templates[$type];
     }
 
-    private function getReplace($data): ?object
+    private function getReplace(mixed $data): ?object
     {
         $replace = null;
         foreach ($this->replaces as $row) {
@@ -242,7 +260,10 @@ abstract class EmailLib extends Email
 
         return $content;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     private function templates(string $type): array
     {
         return $this->getTemplateContent($this->getType(), $type);

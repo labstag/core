@@ -23,8 +23,14 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
 abstract class FixtureLib extends Fixture
 {
 
+    /**
+     * @var Category[]
+     */
     public array $categories = [];
 
+    /**
+     * @var Tag[]
+     */
     public array $tags = [];
 
     protected int $enable;
@@ -88,7 +94,10 @@ abstract class FixtureLib extends Fixture
             $entity->addTag($tag);
         }
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     protected function getIdentitiesByClass(string $class, ?string $id = null): array
     {
         $data = $this->referenceRepository->getIdentitiesByClass();
@@ -120,6 +129,9 @@ abstract class FixtureLib extends Fixture
         return $generator;
     }
 
+    /**
+     * @param object|mixed[] $entity
+     */
     protected function setImage(object|array $entity, string|PropertyPathInterface $type): void
     {
         try {
@@ -144,7 +156,8 @@ abstract class FixtureLib extends Fixture
     }
 
     /**
-     * @return int[]|string[]
+     * @param mixed[] $data
+     * @return mixed[]
      */
     private function correctionArray(array $data): array
     {

@@ -37,6 +37,8 @@ class BlockService
     }
 
     /**
+     * @param mixed[] $blocks
+     * @param mixed[] $data
      * @return array{templates: mixed, block: mixed}[]
      */
     public function generate(array $blocks, array $data, bool $disable): array
@@ -57,8 +59,11 @@ class BlockService
 
         return $tab;
     }
-
-    public function getAll($entity): array
+    
+    /**
+     * @return mixed[]
+     */
+    public function getAll(mixed $entity): array
     {
         $blocks = [];
         foreach ($this->blocks as $block) {
@@ -73,6 +78,9 @@ class BlockService
         return $blocks;
     }
 
+    /**
+     * @param mixed[] $blocks
+     */
     public function getContents(array $blocks): stdClass
     {
         $data = new stdClass();
@@ -100,7 +108,10 @@ class BlockService
 
         return $data;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function getFields(?object $block, string $pageName): array
     {
         if (!$block instanceof Block) {
@@ -165,7 +176,10 @@ class BlockService
 
         return $name;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function getRegions(): array
     {
         return [
@@ -175,6 +189,9 @@ class BlockService
         ];
     }
 
+    /**
+     * @param mixed[] $data
+     */
     public function setContents(?Block $block, array $data, bool $disable): void
     {
         if (!$block instanceof Block) {
@@ -213,6 +230,9 @@ class BlockService
         return $this->authorizationChecker->isGranted($attribute, $subject);
     }
 
+    /**
+     * @return mixed[]|null
+     */
     private function templates(string $type, Block $block): ?array
     {
         $template = null;

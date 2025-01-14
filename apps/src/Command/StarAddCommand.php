@@ -115,6 +115,9 @@ class StarAddCommand extends Command
         $this->starRepository->flush();
     }
 
+    /**
+     * @param mixed[] $data
+     */
     private function setStar(array $data): Star
     {
         $star = $this->starRepository->findOneBy(

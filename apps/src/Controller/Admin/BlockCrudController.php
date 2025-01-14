@@ -33,6 +33,10 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class BlockCrudController extends AbstractCrudControllerLib
 {
+
+    /**
+     * @return mixed[]
+     */
     public function addFieldParagraphsForBlock(?Block $block, string $pageName, string $form): array
     {
         if ($pageName === 'edit' && $block instanceof Block) {
@@ -207,6 +211,9 @@ class BlockCrudController extends AbstractCrudControllerLib
         );
     }
 
+    /**
+     * @param mixed[] $allTypes
+     */
     private function getChoiceType(string $pageName, array $allTypes): ChoiceField|TextField
     {
         if ($pageName === 'new') {

@@ -58,6 +58,8 @@ class ParagraphService
     }
 
     /**
+     * @param mixed[] $paragraphs
+     * @param mixed[] $data
      * @return array{templates: mixed, paragraph: mixed}[]
      */
     public function generate(array $paragraphs, array $data, bool $disable): array
@@ -74,7 +76,10 @@ class ParagraphService
 
         return $tab;
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     public function getAll(?string $entity): array
     {
         $paragraphs = [];
@@ -92,6 +97,9 @@ class ParagraphService
         return $paragraphs;
     }
 
+    /**
+     * @param mixed[] $paragraphs
+     */
     public function getContents(array $paragraphs): stdClass
     {
         $data = new stdClass();
@@ -162,6 +170,9 @@ class ParagraphService
         return $object;
     }
 
+    /**
+     * @return Generator<mixed>
+     */
     public function getFields(object $paragraph, string $pageName): iterable
     {
         if (!$paragraph instanceof Paragraph) {
@@ -189,6 +200,10 @@ class ParagraphService
     }
 
     // TODO : add fonds
+    
+    /**
+     * @return mixed[]
+     */
     public function getFonds(): array
     {
         return [];
@@ -242,6 +257,9 @@ class ParagraphService
         return $name;
     }
 
+    /**
+     * @param mixed[] $data
+     */
     public function setContents(?Paragraph $paragraph, array $data, bool $disable): void
     {
         if (!$paragraph instanceof Paragraph) {
@@ -259,6 +277,9 @@ class ParagraphService
         }
     }
 
+    /**
+     * @return mixed[]|null
+     */
     private function templates(string $type, Paragraph $paragraph): ?array
     {
         $template = null;

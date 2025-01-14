@@ -38,6 +38,9 @@ class TemplateFixtures extends FixtureLib
         $objectManager->flush();
     }
 
+    /**
+     * @return mixed[]
+     */
     private function data(): array
     {
         return [

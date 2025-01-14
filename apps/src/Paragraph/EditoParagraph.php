@@ -2,7 +2,9 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Generator;
 use Labstag\Entity\Edito;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
@@ -11,6 +13,9 @@ use Override;
 
 class EditoParagraph extends ParagraphLib
 {
+    /**
+     * @param mixed[] $data
+     */
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
@@ -38,6 +43,9 @@ class EditoParagraph extends ParagraphLib
         );
     }
 
+    /**
+     * @return Generator<FieldInterface>
+     */
     #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): iterable
     {
@@ -56,7 +64,10 @@ class EditoParagraph extends ParagraphLib
     {
         return 'edito';
     }
-
+    
+    /**
+     * @return mixed[]
+     */
     #[Override]
     public function useIn(): array
     {

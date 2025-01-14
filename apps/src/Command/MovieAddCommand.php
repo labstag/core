@@ -22,6 +22,9 @@ class MovieAddCommand extends Command
 
     private int $add = 0;
 
+    /**
+     * @var Category[]
+     */
     private array $categories = [];
 
     private int $update = 0;
@@ -156,6 +159,9 @@ class MovieAddCommand extends Command
         $this->movieRepository->flush();
     }
 
+    /**
+     * @param mixed[] $data
+     */
     private function setMovie(array $data): Movie
     {
         $imdb = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
