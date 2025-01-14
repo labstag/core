@@ -188,14 +188,14 @@ class SecurityService
         }
 
         $referer = $request->headers->get('referer');
-        $method = $server->get('REQUEST_METHOD');
+        $method = $server->get('requestMethod');
         $data = $this->httpErrorLogsRepository->findBy(
             [
                 'domain'         => $domain,
                 'url'            => $url,
                 'referer'        => $referer,
-                'http_code'      => $httpCode,
-                'request_method' => $method,
+                'httpCode'      => $httpCode,
+                'requestMethod' => $method,
             ]
         );
 
@@ -211,7 +211,7 @@ class SecurityService
         $httpErrorLogs->setUrl($url);
         $httpErrorLogs->setAgent((string) $server->get('HTTP_USER_AGENT'));
         $httpErrorLogs->setHttpCode($httpCode);
-        $httpErrorLogs->setIp($server->get('REMOTE_ADDR'));
+        $httpErrorLogs->setInternetProtocol($server->get('REMOTE_ADDR'));
         if (!is_null($referer)) {
             $httpErrorLogs->setReferer($referer);
         }

@@ -28,10 +28,10 @@ class HttpErrorLogs
     private ?string $domain = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $http_code = null;
+    private ?string $httpCode = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $ip = null;
+    private ?string $internetProtocol = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $referer = null;
@@ -40,10 +40,10 @@ class HttpErrorLogs
     private ?User $refUser = null;
 
     #[ORM\Column(type: Types::JSON)]
-    private array $request_data = [];
+    private array $requestData = [];
 
     #[ORM\Column(length: 255)]
-    private ?string $request_method = null;
+    private ?string $requestMethod = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $url = null;
@@ -79,24 +79,24 @@ class HttpErrorLogs
 
     public function getHttpCode(): ?string
     {
-        return $this->http_code;
+        return $this->httpCode;
     }
 
-    public function setHttpCode(string $http_code): static
+    public function setHttpCode(string $httpCode): static
     {
-        $this->http_code = $http_code;
+        $this->httpCode = $httpCode;
 
         return $this;
     }
 
-    public function getIp(): ?string
+    public function getInternetProtocol(): ?string
     {
-        return $this->ip;
+        return $this->internetProtocol;
     }
 
-    public function setIp(string $ip): static
+    public function setInternetProtocol(string $internetProtocol): static
     {
-        $this->ip = $ip;
+        $this->internetProtocol = $internetProtocol;
 
         return $this;
     }
@@ -127,24 +127,24 @@ class HttpErrorLogs
 
     public function getRequestData(): array
     {
-        return $this->request_data;
+        return $this->requestData;
     }
 
-    public function setRequestData(array $request_data): static
+    public function setRequestData(array $requestData): static
     {
-        $this->request_data = $request_data;
+        $this->requestData = $requestData;
 
         return $this;
     }
 
     public function getRequestMethod(): ?string
     {
-        return $this->request_method;
+        return $this->requestMethod;
     }
 
-    public function setRequestMethod(string $request_method): static
+    public function setRequestMethod(string $requestMethod): static
     {
-        $this->request_method = $request_method;
+        $this->requestMethod = $requestMethod;
 
         return $this;
     }

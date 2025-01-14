@@ -153,7 +153,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         $actions->add(Crud::PAGE_INDEX, $action);
     }
 
-    public function import(Request $request, RedirectionRepository $redirectionRepository)
+    public function import(Request $request, RedirectionRepository $redirectionRepository): RedirectResponse|Response
     {
         $form = $this->createForm(
             RedirectionImportType::class,
@@ -166,7 +166,6 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 
         if ($form->isSubmitted() && $form->isValid()) {
             $file = $form->get('file')->getData();
-            $mimeType = $file->getMimeType();
             $data = $this->importCsv($file, $redirectionRepository);
 
             foreach ($data as $row) {
@@ -186,7 +185,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         );
     }
 
-    protected function redirectToIndex(): \Symfony\Component\HttpFoundation\RedirectResponse
+    protected function redirectToIndex(): RedirectResponse
     {
         $generator = $this->container->get(AdminUrlGenerator::class);
         $generator->setController(self::class);
@@ -195,15 +194,8 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $this->redirect($generator->generateUrl());
     }
 
-    private function importCsv($file, RedirectionRepository $redirectionRepository): array
+    private function setFind($head): int
     {
-        $data = [];
-        $csv = new Csv();
-
-        $spreadsheet = $csv->load($file->getPathname());
-        $sheetData = $spreadsheet->getActiveSheet()->toArray();
-
-        $head = $sheetData[0];
         $find = 0;
         foreach ($head as $key => $value) {
             if (($key == 0 && $value == 'Source') || ($key == 1 && $value == 'Destination')) {
@@ -211,6 +203,17 @@ class RedirectionCrudController extends AbstractCrudControllerLib
             }
         }
 
+        return $find;
+    }
+
+    private function importCsv($file, RedirectionRepository $redirectionRepository): array
+    {
+        $data        = [];
+        $csv         = new Csv();
+        $spreadsheet = $csv->load($file->getPathname());
+        $sheetData   = $spreadsheet->getActiveSheet()->toArray();
+        $head        = $sheetData[0];
+        $find        = $this->setFind($head);
         if ($find != self::FIELDCSV) {
             $this->addFlash('danger', 'Le fichier n\'est pas correctement formaté');
 
