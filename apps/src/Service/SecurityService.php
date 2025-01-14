@@ -191,9 +191,9 @@ class SecurityService
         $method = $server->get('requestMethod');
         $data = $this->httpErrorLogsRepository->findBy(
             [
-                'domain'         => $domain,
-                'url'            => $url,
-                'referer'        => $referer,
+                'domain'        => $domain,
+                'url'           => $url,
+                'referer'       => $referer,
                 'httpCode'      => $httpCode,
                 'requestMethod' => $method,
             ]

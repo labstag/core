@@ -48,8 +48,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
 
         $fieldDto->setValue($object->value);
         $fieldDto->setProperty($object->name);
-        $fieldDto->getDoctrineMetadata()
-            ->set('targetEntity', ClassUtils::getClass($object->value));
+        $fieldDto->getDoctrineMetadata()->set('targetEntity', ClassUtils::getClass($object->value));
         if (!$entityDto->isAssociation($object->name)) {
             throw new RuntimeException(sprintf(
                 'The "%s" field is not a Doctrine association, so it cannot be used as an association field.',
@@ -57,13 +56,9 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
             ));
         }
 
-        $targetEntityFqcn = $fieldDto->getDoctrineMetadata()
-            ->get('targetEntity');
+        $targetEntityFqcn = $fieldDto->getDoctrineMetadata()->get('targetEntity');
         // the target CRUD controller can be NULL; in that case, field value doesn't link to the related entity
-        $targetCrudControllerFqcn = $fieldDto->getCustomOption(
-            MetaParentField::OPTION_CRUD_CONTROLLER
-        ) ?? $adminContext->getCrudControllers()
-            ->findCrudFqcnByEntityFqcn($targetEntityFqcn);
+        $targetCrudControllerFqcn = $fieldDto->getCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER) ?? $adminContext->getCrudControllers()->findCrudFqcnByEntityFqcn($targetEntityFqcn);
         $fieldDto->setCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER, $targetCrudControllerFqcn);
 
         if ($fieldDto->getCustomOption(MetaParentField::OPTION_WIDGET) === MetaParentField::WIDGET_AUTOCOMPLETE) {
@@ -74,53 +69,61 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         $propertyNameParts = explode('.', (string) $object->name);
         $this->configureFirst($entityDto, $propertyNameParts, $fieldDto, $object->name);
         if ($fieldDto->getCustomOption(MetaParentField::OPTION_AUTOCOMPLETE) === true) {
-            $targetCrudControllerFqcn = $fieldDto->getCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER);
-            if (is_null($targetCrudControllerFqcn)) {
-                $message = sprintf(
-                    'The "%s" field cannot be autocompleted because it doesn\'t define the related CRUD controller FQCN with the "setCrudController()" method.',
-                    $fieldDto->getProperty()
-                );
-
-                throw new RuntimeException($message);
-            }
-
-            $fieldDto->setFormType(CrudAutocompleteType::class);
-            $autocompleteEndpointUrl = $this->adminUrlGenerator->unsetAll()
-                ->set('page', 1);
-            // The autocomplete should always start on the first page
-            $autocompleteEndpointUrl->setController(
-                $fieldDto->getCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER)
-            );
-            $autocompleteEndpointUrl->setAction('autocomplete')
-                ->set(
-                    MetaParentField::PARAM_AUTOCOMPLETE_CONTEXT,
-                    [
-                        EA::CRUD_CONTROLLER_FQCN => $adminContext->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
-                        'propertyName' => $object->name,
-                        'originatingPage' => $adminContext->getCrud()
-                            ->getCurrentPage(),
-                    ]
-                );
-            $autocompleteEndpointUrl->generateUrl();
-
-            $fieldDto->setFormTypeOption('attr.data-ea-autocomplete-endpoint-url', $autocompleteEndpointUrl);
-
+            $this->configureAutocomplete($fieldDto, $adminContext, $object);
             return;
         }
 
+        $this->configureLast($fieldDto);
+    }
+
+    private function configureLast(FieldDto $fieldDto): void
+    {
         $fieldDto->setFormTypeOptionIfNotSet(
             'query_builder',
             static function (EntityRepository $entityRepository) use ($fieldDto): QueryBuilder {
                 $queryBuilder = $entityRepository->createQueryBuilder('entity');
-                if ($queryBuilderCallable = $fieldDto->getCustomOption(
-                    MetaParentField::OPTION_QUERY_BUILDER_CALLABLE
-                )) {
+                $queryBuilderCallable = $fieldDto->getCustomOption(MetaParentField::OPTION_QUERY_BUILDER_CALLABLE);
+                if (is_object($queryBuilderCallable)) {
                     $queryBuilderCallable($queryBuilder);
                 }
 
                 return $queryBuilder;
             }
         );
+    }
+
+
+    #[Override]
+    private function configureAutocomplete(FieldDto $fieldDto, AdminContext $adminContext, object $object): void
+    {
+        $targetCrudControllerFqcn = $fieldDto->getCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER);
+        if (is_null($targetCrudControllerFqcn)) {
+            $message = sprintf(
+                'The "%s" field cannot be autocompleted because it doesn\'t define the related CRUD controller FQCN with the "setCrudController()" method.',
+                $fieldDto->getProperty()
+            );
+
+            throw new RuntimeException($message);
+        }
+
+        $fieldDto->setFormType(CrudAutocompleteType::class);
+        $adminUrlGenerator = $this->adminUrlGenerator->unsetAll()->set('page', 1);
+        // The autocomplete should always start on the first page
+        $adminUrlGenerator->setController(
+            $fieldDto->getCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER)
+        );
+        $adminUrlGenerator->setAction('autocomplete')
+            ->set(
+                MetaParentField::PARAM_AUTOCOMPLETE_CONTEXT,
+                [
+                    EA::CRUD_CONTROLLER_FQCN => $adminContext->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
+                    'propertyName' => $object->name,
+                    'originatingPage' => $adminContext->getCrud()->getCurrentPage(),
+                ]
+            );
+        $adminUrlGenerator->generateUrl();
+
+        $fieldDto->setFormTypeOption('attr.data-ea-autocomplete-endpoint-url', $adminUrlGenerator);
     }
 
     #[Override]
@@ -276,11 +279,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
             return (string) $entityInstance;
         }
 
-        if (null !== $primaryKeyValue = $entityDto->getPrimaryKeyValue()) {
-            return sprintf('%s #%s', $entityDto->getName(), $primaryKeyValue);
-        }
-
-        return $entityDto->getName();
+        return is_null($primaryKeyValue = $entityDto->getPrimaryKeyValue()) ? $entityDto->getName() : sprintf('%s #%s', $entityDto->getName(), $primaryKeyValue);
     }
 
     private function generateLinkToAssociatedEntity(?string $crudController, EntityDto $entityDto): ?string
