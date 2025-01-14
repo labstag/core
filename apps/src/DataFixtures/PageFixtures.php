@@ -104,7 +104,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
     /**
      * @param array{entity: Page, parent: string} $data
-     * @return void
      */
     private function setPage(ObjectManager $objectManager, Generator $generator, Page $page, array $data): void
     {
