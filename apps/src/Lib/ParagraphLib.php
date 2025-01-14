@@ -265,14 +265,11 @@ abstract class ParagraphLib extends AbstractController
         $this->footer[$paragraphId] = $data;
     }
 
-    /**
-     * @param Response $data
-     */
-    protected function setHeader(Paragraph $paragraph, Response $data): void
+    protected function setHeader(Paragraph $paragraph, Response $response): void
     {
         $paragraphId = $paragraph->getId();
 
-        $this->header[$paragraphId] = $data;
+        $this->header[$paragraphId] = $response;
     }
 
     protected function setShow(Paragraph $paragraph, bool $show): void

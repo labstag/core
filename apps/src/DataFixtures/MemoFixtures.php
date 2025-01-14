@@ -21,6 +21,7 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
      * @var User[]
      */
     protected array $users = [];
+
     /**
      * @return string[]
      */
