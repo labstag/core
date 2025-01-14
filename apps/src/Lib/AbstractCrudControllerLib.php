@@ -195,11 +195,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return DateTimeField::new('createdAt')->hideOnForm();
     }
 
-    protected function addFieldBoolean(): BooleanField
+    protected function addFieldBoolean(string $propertyName, string $label): BooleanField
     {
         $request = $this->container->get('request_stack')->getCurrentRequest();
         $action = $request->query->get('action', null);
-        $booleanField = BooleanField::new('enable', new TranslatableMessage('Enable'));
+        $booleanField = BooleanField::new($propertyName, $label);
         $booleanField->renderAsSwitch(empty($action));
 
         return $booleanField;

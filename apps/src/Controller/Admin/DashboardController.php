@@ -293,6 +293,8 @@ class DashboardController extends AbstractDashboardController
         );
         yield MenuItem::linkToCrud(new TranslatableMessage('Star'), 'fas fa-star', StarCrudController::getEntityFqcn());
         yield MenuItem::linkToCrud(new TranslatableMessage('User'), 'fa fa-user', UserCrudController::getEntityFqcn());
+        yield MenuItem::linkToCrud(new TranslatableMessage('Redirection'), 'fas fa-directions', RedirectionCrudController::getEntityFqcn());
+        yield MenuItem::linkToCrud(new TranslatableMessage('Http error Logs'), 'fas fa-clipboard-list', HttpErrorLogsCrudController::getEntityFqcn());
         yield MenuItem::linkToRoute(new TranslatableMessage('Options'), 'fas fa-cog', 'admin_config');
 
         yield $this->configureMenuItemsTemplate();

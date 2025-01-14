@@ -49,7 +49,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         yield $this->addFieldID();
         yield $this->addFieldIDShortcode('story');
         yield $this->addFieldSlug();
-        yield $this->addFieldBoolean();
+        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
         yield $this->addFieldTitle();
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();

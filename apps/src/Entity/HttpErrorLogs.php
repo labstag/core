@@ -28,7 +28,7 @@ class HttpErrorLogs
     private ?string $domain = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $http_cde = null;
+    private ?string $http_code = null;
 
     #[ORM\Column(length: 255)]
     private ?string $ip = null;
@@ -74,14 +74,14 @@ class HttpErrorLogs
         return $this;
     }
 
-    public function getHttpCde(): ?string
+    public function getHttpCode(): ?string
     {
-        return $this->http_cde;
+        return $this->http_code;
     }
 
-    public function setHttpCde(string $http_cde): static
+    public function setHttpCode(string $http_code): static
     {
-        $this->http_cde = $http_cde;
+        $this->http_code = $http_code;
 
         return $this;
     }

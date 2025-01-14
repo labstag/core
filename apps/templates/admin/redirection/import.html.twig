@@ -1,0 +1,19 @@
+{% block content_title 'Importer des redirections' %}
+{% block page_title 'Importer des redirections' %}
+{% block page_actions %}
+  <button
+    class="action-saveAndReturn btn btn-primary action-save"
+    type="submit"
+    name="ea[newForm][btn]"
+    value="saveAndReturn"
+    data-action-name="saveAndReturn"
+    form="redirection_import"
+    >
+      <span class="btn-label">Importer le fichier</span>
+  </button>
+{% endblock %}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+{% block main %}
+  {{ form_start(form) }}
+  {{ form_end(form) }}
+{% endblock %}
