@@ -1578,16 +1578,16 @@
         },
         {
             "name": "easycorp/easyadmin-bundle",
-            "version": "v4.21.0",
+            "version": "v4.21.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EasyCorp/EasyAdminBundle.git",
-                "reference": "c0da0bf125be98d3482b6c440e363532d871f7a1"
+                "reference": "7f9a74f6329d347737cdf75c3e89f8c3a088904e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/c0da0bf125be98d3482b6c440e363532d871f7a1",
-                "reference": "c0da0bf125be98d3482b6c440e363532d871f7a1",
+                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/7f9a74f6329d347737cdf75c3e89f8c3a088904e",
+                "reference": "7f9a74f6329d347737cdf75c3e89f8c3a088904e",
                 "shasum": ""
             },
             "require": {
@@ -1667,7 +1667,7 @@
             ],
             "support": {
                 "issues": "https://github.com/EasyCorp/EasyAdminBundle/issues",
-                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.21.0"
+                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.21.1"
             },
             "funding": [
                 {
@@ -1675,7 +1675,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-12T11:03:13+00:00"
+            "time": "2025-01-13T18:32:44+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -9509,16 +9509,16 @@
         },
         {
             "name": "vich/uploader-bundle",
-            "version": "v2.5.0",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dustin10/VichUploaderBundle.git",
-                "reference": "4f1c098b3ec46b1aaf137bec6ecb49dbbaff4e0d"
+                "reference": "79fd69ad8f32d4a33ac8783d7720e16e78bb8098"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dustin10/VichUploaderBundle/zipball/4f1c098b3ec46b1aaf137bec6ecb49dbbaff4e0d",
-                "reference": "4f1c098b3ec46b1aaf137bec6ecb49dbbaff4e0d",
+                "url": "https://api.github.com/repos/dustin10/VichUploaderBundle/zipball/79fd69ad8f32d4a33ac8783d7720e16e78bb8098",
+                "reference": "79fd69ad8f32d4a33ac8783d7720e16e78bb8098",
                 "shasum": ""
             },
             "require": {
@@ -9611,9 +9611,9 @@
             ],
             "support": {
                 "issues": "https://github.com/dustin10/VichUploaderBundle/issues",
-                "source": "https://github.com/dustin10/VichUploaderBundle/tree/v2.5.0"
+                "source": "https://github.com/dustin10/VichUploaderBundle/tree/v2.5.1"
             },
-            "time": "2024-12-09T07:56:52+00:00"
+            "time": "2024-12-31T08:59:03+00:00"
         }
     ],
     "packages-dev": [

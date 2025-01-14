@@ -108,6 +108,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     #[ORM\Column(length: 255, unique: true)]
     private ?string $username = null;
 
+    /**
+     * @var Collection<int, HttpErrorLogs>
+     */
+    #[ORM\OneToMany(targetEntity: HttpErrorLogs::class, mappedBy: 'refUser')]
+    private Collection $httpErrorLogs;
+
     public function __construct()
     {
         $this->stories = new ArrayCollection();
@@ -115,6 +121,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         $this->memos = new ArrayCollection();
         $this->pages = new ArrayCollection();
         $this->posts = new ArrayCollection();
+        $this->httpErrorLogs = new ArrayCollection();
     }
     
     /**
@@ -425,6 +432,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function setUsername(string $username): static
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, HttpErrorLogs>
+     */
+    public function getHttpErrorLogs(): Collection
+    {
+        return $this->httpErrorLogs;
+    }
+
+    public function addHttpErrorLog(HttpErrorLogs $requestData): static
+    {
+        if (!$this->httpErrorLogs->contains($requestData)) {
+            $this->httpErrorLogs->add($requestData);
+            $requestData->setRefUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHttpErrorLog(HttpErrorLogs $requestData): static
+    {
+        if ($this->httpErrorLogs->removeElement($requestData)) {
+            // set the owning side to null (unless already changed)
+            if ($requestData->getRefUser() === $this) {
+                $requestData->setRefUser(null);
+            }
+        }
 
         return $this;
     }
