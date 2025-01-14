@@ -9,6 +9,7 @@ use Labstag\Entity\Edito;
 use Labstag\Form\Paragraphs\EditoType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class EditoCrudController extends AbstractCrudControllerLib
 {
@@ -36,7 +37,7 @@ class EditoCrudController extends AbstractCrudControllerLib
     {
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
-        yield $this->addFieldBoolean();
+        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
         yield $this->addFieldTitle();
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();

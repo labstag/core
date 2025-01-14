@@ -51,7 +51,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield IntegerField::new('year');
         yield TextField::new('country');
         yield $this->addFieldCategories('movie');
-        yield $this->addFieldBoolean();
+        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
     }
 
     #[Override]

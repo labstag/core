@@ -47,7 +47,7 @@ class UserCrudController extends AbstractCrudControllerLib
     {
         yield TextField::new('username', new TranslatableMessage('Username'));
         yield EmailField::new('email', new TranslatableMessage('Email'));
-        yield $this->addFieldBoolean();
+        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
         $choiceField = ChoiceField::new('roles', new TranslatableMessage('Roles'));
         $choiceField->allowMultipleChoices();
         $choiceField->setChoices($this->userService->getRoles());

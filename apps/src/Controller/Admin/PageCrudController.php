@@ -48,7 +48,7 @@ class PageCrudController extends AbstractCrudControllerLib
             yield $this->addFieldSlug();
         }
 
-        yield $this->addFieldBoolean();
+        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
         $fieldChoice = $this->addFieldIsHome($currentEntity, $pageName);
         if ($fieldChoice instanceof ChoiceField) {
             yield $fieldChoice;

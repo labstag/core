@@ -52,7 +52,7 @@ class StarCrudController extends AbstractCrudControllerLib
         yield IntegerField::new('stargazers', new TranslatableMessage('Stargazers'));
         yield IntegerField::new('watchers', new TranslatableMessage('Watchers'));
         yield IntegerField::new('forks', new TranslatableMessage('Forks'));
-        yield $this->addFieldBoolean();
+        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
     }
 
     #[Override]
