@@ -2,8 +2,6 @@
 
 namespace Labstag\Block;
 
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use Generator;
 use Labstag\Entity\Block;
 use Labstag\Lib\BlockLib;
 use Override;

@@ -10,7 +10,6 @@ use Override;
 
 class ConfigFixtures extends FixtureLib implements DependentFixtureInterface
 {
-
     /**
      * @return string[]
      */

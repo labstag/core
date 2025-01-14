@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 interface BlockInterface
 {
-
     public function getName(): string;
 
     public function getType(): string;

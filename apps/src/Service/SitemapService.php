@@ -13,6 +13,7 @@ use Labstag\Repository\ChapterRepository;
 
 class SitemapService
 {
+
     /**
      * @var string[]
      */
@@ -24,7 +25,7 @@ class SitemapService
     )
     {
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -46,9 +47,10 @@ class SitemapService
 
         return $this->setTabsByParent($tabs, '/');
     }
-    
+
     /**
      * @param mixed[] $urls
+     *
      * @return mixed[]
      */
     public function setTabsByParent(array $urls, string $parent): array
@@ -85,7 +87,7 @@ class SitemapService
 
         return $result !== '-';
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -97,7 +99,7 @@ class SitemapService
             '/' . $url => ['entity' => $entity],
         ];
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -113,7 +115,7 @@ class SitemapService
 
         return $this->setTabs($data);
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -128,7 +130,7 @@ class SitemapService
 
         return $this->setTabs($data);
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -136,7 +138,7 @@ class SitemapService
     {
         return $this->getDataFromRepository(Page::class);
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -144,7 +146,7 @@ class SitemapService
     {
         return $this->getDataFromRepository(Post::class);
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -152,9 +154,10 @@ class SitemapService
     {
         return $this->getDataFromRepository(Story::class);
     }
-    
+
     /**
      * @param mixed[] $data
+     *
      * @return mixed[]
      */
     private function setTabs(array $data): array

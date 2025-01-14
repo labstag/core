@@ -7,15 +7,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use Labstag\Entity\HttpErrorLogs;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Entity\HttpErrorLogs;
 use Labstag\Field\HttpLogs\IsBotField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
@@ -31,12 +28,13 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
 
         return $actions;
     }
-    
+
     public static function getEntityFqcn(): string
     {
         return HttpErrorLogs::class;
     }
 
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
@@ -47,9 +45,10 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $maxLength = Crud::PAGE_DETAIL === $pageName ? 1024 : 32;
+        $maxLength = $pageName === Crud::PAGE_DETAIL ? 1024 : 32;
         yield $this->addFieldID();
         yield DateField::new('created');
         yield TextField::new('url')->setMaxLength($maxLength);
@@ -78,7 +77,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         yield TextField::new('request_method');
         yield AssociationField::new('refUser', 'Utilisateur');
         if (!is_null($currentEntity)) {
-            $data      = $currentEntity->getRequestData();
+            $data = $currentEntity->getRequestData();
             $datafield = ArrayField::new('data', 'Request DATA');
             $datafield->hideOnIndex();
             $datafield->setTemplatePath('admin/field/httperrorlogs/request_data.html.twig');

@@ -2,8 +2,6 @@
 
 namespace Labstag\Paragraph;
 
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use Generator;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
@@ -56,7 +54,7 @@ class ChapterLastNextParagraph extends ParagraphLib
     {
         return 'chapter-lastnext';
     }
-    
+
     /**
      * @return mixed[]
      */

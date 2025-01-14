@@ -43,7 +43,7 @@ class HtmlBlock extends BlockLib
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Block $block, string $pageName): iterable
+    public function getFields(Block $block, string $pageName): mixed
     {
         unset($block, $pageName);
         $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Content'));

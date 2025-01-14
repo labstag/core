@@ -27,7 +27,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
     )
     {
     }
-    
+
     /**
      * @return mixed[]
      */

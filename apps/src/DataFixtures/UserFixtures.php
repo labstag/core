@@ -10,7 +10,6 @@ use Override;
 
 class UserFixtures extends FixtureLib implements DependentFixtureInterface
 {
-    
     /**
      * @return string[]
      */

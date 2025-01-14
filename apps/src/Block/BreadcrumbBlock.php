@@ -21,7 +21,6 @@ class BreadcrumbBlock extends BlockLib
     }
 
     /**
-     * 
      * @param mixed[] $data
      */
     #[Override]
@@ -69,6 +68,7 @@ class BreadcrumbBlock extends BlockLib
 
     /**
      * @param mixed[] $urls
+     *
      * @return mixed[]
      */
     private function setBreadcrumb(array $urls, string $slug): array

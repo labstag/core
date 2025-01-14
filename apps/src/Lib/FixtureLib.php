@@ -94,7 +94,7 @@ abstract class FixtureLib extends Fixture
             $entity->addTag($tag);
         }
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -157,6 +157,7 @@ abstract class FixtureLib extends Fixture
 
     /**
      * @param mixed[] $data
+     *
      * @return mixed[]
      */
     private function correctionArray(array $data): array

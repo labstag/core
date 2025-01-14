@@ -4,8 +4,8 @@ namespace Labstag\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Labstag\Repository\HttpErrorLogsRepository;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Labstag\Repository\HttpErrorLogsRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
@@ -33,17 +33,20 @@ class HttpErrorLogs
     #[ORM\Column(length: 255)]
     private ?string $ip = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $referer = null;
 
     #[ORM\ManyToOne(inversedBy: 'httpErrorLogs')]
     private ?User $refUser = null;
 
-    #[ORM\Column(type: Types::ARRAY)]
+    #[ORM\Column(type: Types::JSON)]
     private array $request_data = [];
 
     #[ORM\Column(length: 255)]
     private ?string $request_method = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $url = null;
 
     public function getId(): ?string
     {
@@ -103,7 +106,7 @@ class HttpErrorLogs
         return $this->referer;
     }
 
-    public function setReferer(string $referer): static
+    public function setReferer(?string $referer): static
     {
         $this->referer = $referer;
 
@@ -142,6 +145,18 @@ class HttpErrorLogs
     public function setRequestMethod(string $request_method): static
     {
         $this->request_method = $request_method;
+
+        return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(string $url): static
+    {
+        $this->url = $url;
 
         return $this;
     }

@@ -30,7 +30,7 @@ class ImageParagraph extends ParagraphLib
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): iterable
+    public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph);
         yield $this->addFieldImageUpload('img', $pageName);
@@ -47,7 +47,7 @@ class ImageParagraph extends ParagraphLib
     {
         return 'img';
     }
-    
+
     /**
      * @return mixed[]
      */

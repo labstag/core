@@ -123,7 +123,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         $this->posts = new ArrayCollection();
         $this->httpErrorLogs = new ArrayCollection();
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -444,23 +444,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return $this->httpErrorLogs;
     }
 
-    public function addHttpErrorLog(HttpErrorLogs $requestData): static
+    public function addHttpErrorLog(HttpErrorLogs $httpErrorLogs): static
     {
-        if (!$this->httpErrorLogs->contains($requestData)) {
-            $this->httpErrorLogs->add($requestData);
-            $requestData->setRefUser($this);
+        if (!$this->httpErrorLogs->contains($httpErrorLogs)) {
+            $this->httpErrorLogs->add($httpErrorLogs);
+            $httpErrorLogs->setRefUser($this);
         }
 
         return $this;
     }
 
-    public function removeHttpErrorLog(HttpErrorLogs $requestData): static
+    public function removeHttpErrorLog(HttpErrorLogs $httpErrorLogs): static
     {
-        if ($this->httpErrorLogs->removeElement($requestData)) {
-            // set the owning side to null (unless already changed)
-            if ($requestData->getRefUser() === $this) {
-                $requestData->setRefUser(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->httpErrorLogs->removeElement($httpErrorLogs) && $httpErrorLogs->getRefUser() === $this) {
+            $httpErrorLogs->setRefUser(null);
         }
 
         return $this;

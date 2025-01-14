@@ -34,6 +34,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 abstract class ParagraphLib extends AbstractController
 {
+
     /**
      * @var mixed[]
      */
@@ -116,7 +117,7 @@ abstract class ParagraphLib extends AbstractController
     {
         unset($paragraph, $data, $disable);
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -130,7 +131,7 @@ abstract class ParagraphLib extends AbstractController
     /**
      * @return Generator<FieldInterface>
      */
-    public function getFields(Paragraph $paragraph, string $pageName): iterable
+    public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
 
@@ -172,7 +173,7 @@ abstract class ParagraphLib extends AbstractController
 
         return $this->show[$paragraphId] ?? true;
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -180,7 +181,7 @@ abstract class ParagraphLib extends AbstractController
     {
         return $this->getTemplateContent($type, $this->getType());
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -205,7 +206,7 @@ abstract class ParagraphLib extends AbstractController
 
         return $entityRepository;
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -265,7 +266,7 @@ abstract class ParagraphLib extends AbstractController
         $this->footer[$paragraphId] = $data;
     }
 
-    protected function setHeader(Paragraph $paragraph, Response $response): void
+    protected function setHeader(Paragraph $paragraph, mixed $response): void
     {
         $paragraphId = $paragraph->getId();
 
@@ -280,7 +281,7 @@ abstract class ParagraphLib extends AbstractController
 
         $this->show[$paragraph->getId()] = $show;
     }
-    
+
     /**
      * @return mixed[]
      */

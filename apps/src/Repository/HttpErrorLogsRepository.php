@@ -6,13 +6,10 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\HttpErrorLogs;
 use Labstag\Lib\ServiceEntityRepositoryLib;
 
-/**
- * @extends ServiceEntityRepository<HttpErrorLogs>
- */
 class HttpErrorLogsRepository extends ServiceEntityRepositoryLib
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, HttpErrorLogs::class);
+        parent::__construct($managerRegistry, HttpErrorLogs::class);
     }
 }

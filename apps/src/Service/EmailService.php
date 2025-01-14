@@ -14,7 +14,7 @@ class EmailService
     {
     }
 
-    public function all(): iterable
+    public function all(): mixed
     {
         return $this->emails;
     }

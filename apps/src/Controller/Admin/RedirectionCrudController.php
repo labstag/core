@@ -8,11 +8,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use Labstag\Entity\Redirection;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
+use Labstag\Entity\Redirection;
+use Labstag\Form\Admin\RedirectionImportType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\RedirectionRepository;
 use Override;
@@ -43,18 +44,18 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 
     private function configureActionsExport(Actions $actions): void
     {
-        $export = Action::new('export', 'Exporter', 'fas fa-file-export');
-        $export->addCssClass('btn btn-primary');
-        $export->linkToCrudAction('export');
-        $export->createAsGlobalAction();
+        $action = Action::new('export', 'Exporter', 'fas fa-file-export');
+        $action->addCssClass('btn btn-primary');
+        $action->linkToCrudAction('export');
+        $action->createAsGlobalAction();
 
-        $actions->add(Crud::PAGE_INDEX, $export);
+        $actions->add(Crud::PAGE_INDEX, $action);
     }
 
-    public function export(RedirectionRepository $redirectionRepository)
+    public function export(RedirectionRepository $redirectionRepository): void
     {
-        $all    = $redirectionRepository->findAll();
-        $row    = [];
+        $all = $redirectionRepository->findAll();
+        $row = [];
         $header = [
             'Source',
             'Destination',
@@ -72,11 +73,11 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         $response->send();
     }
 
-    protected function sendToExport($header, $rows): Response
+    protected function sendToExport(array $header, array $rows): Response
     {
-        $tempZip    = tmpfile();
-        $now        = new DateTime('now');
-        $metaZip    = stream_get_meta_data($tempZip);
+        $tempZip = tmpfile();
+        $now = new DateTime('now');
+        $metaZip = stream_get_meta_data($tempZip);
         $zipArchive = new ZipArchive();
         $zipArchive->open($metaZip['uri']);
 
@@ -87,10 +88,10 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 
         try {
             foreach (['Xlsx', 'Xls', 'Ods'] as $writerType) {
-                $path   = $this->getFilename($now->format('Ymd').'-export.', mb_strtolower($writerType));
+                $path = $this->getFilename($now->format('Ymd') . '-export.', mb_strtolower($writerType));
                 $writer = IOFactory::createWriter($spreadsheet, $writerType);
                 $writer->save($path);
-                $zipArchive->addFile($path, basename($path));
+                $zipArchive->addFile($path, basename((string) $path));
             }
         } catch (Exception $exception) {
             throw new Exception($exception->getMessage(), $exception->getCode(), $exception);
@@ -100,26 +101,26 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 
         return new Response(
             file_get_contents($metaZip['uri']),
-            200,
+            \Symfony\Component\HttpFoundation\Response::HTTP_OK,
             [
                 'Content-Type'        => 'application/x-zip',
-                'Content-Disposition' => 'attachment; filename="'.$now->format('Ymd').'-export.zip"',
+                'Content-Disposition' => 'attachment; filename="' . $now->format('Ymd') . '-export.zip"',
                 'Cache:Control'       => 'no-cache, must-revalidate',
                 'Expires'             => 'Mon, 26 Jul 1997 05:00:00 GMT',
-                'Last-Modified'       => gmdate('D, d M Y H:i:s').' GMT',
+                'Last-Modified'       => gmdate('D, d M Y H:i:s') . ' GMT',
                 'Pragma'              => 'no-cache',
             ]
         );
     }
 
-    private function getFilename($filename, $extension = 'xlsx')
+    private function getFilename(string $filename, string $extension = 'xlsx')
     {
         $originalExtension = pathinfo($filename, PATHINFO_EXTENSION);
 
-        return $this->getTemporaryFolder().'/'.str_replace('.'.$originalExtension, '.'.$extension, basename($filename));
+        return $this->getTemporaryFolder() . '/' . str_replace('.' . $originalExtension, '.' . $extension, basename($filename));
     }
 
-    private function getTemporaryFolder()
+    private function getTemporaryFolder(): string
     {
         $tempFolder = sys_get_temp_dir();
         if (!is_dir($tempFolder) && (!mkdir($tempFolder) && !is_dir($tempFolder))) {
@@ -141,15 +142,15 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 
     private function configureActionsTestSource(Actions $actions): void
     {
-        $test = Action::new('testSource', 'Test de la source');
-        $test->setHtmlAttributes(
+        $action = Action::new('testSource', 'Test de la source');
+        $action->setHtmlAttributes(
             ['target' => '_blank']
         );
-        $test->linkToCrudAction('testSource');
+        $action->linkToCrudAction('testSource');
 
-        $actions->add(Crud::PAGE_DETAIL, $test);
-        $actions->add(Crud::PAGE_EDIT, $test);
-        $actions->add(Crud::PAGE_INDEX, $test);
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
     }
 
     public function import(Request $request, RedirectionRepository $redirectionRepository)
@@ -164,9 +165,9 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $file     = $form->get('file')->getData();
+            $file = $form->get('file')->getData();
             $mimeType = $file->getMimeType();
-            $data     = $this->importCsv($file, $redirectionRepository);
+            $data = $this->importCsv($file, $redirectionRepository);
 
             foreach ($data as $row) {
                 $redirectionRepository->persist($row);
@@ -185,10 +186,10 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         );
     }
 
-    protected function redirectToIndex()
+    protected function redirectToIndex(): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $generator = $this->container->get(AdminUrlGenerator::class);
-        $generator->setController(RedirectionCrudController::class);
+        $generator->setController(self::class);
         $generator->setAction(Action::INDEX);
 
         return $this->redirect($generator->generateUrl());
@@ -197,20 +198,20 @@ class RedirectionCrudController extends AbstractCrudControllerLib
     private function importCsv($file, RedirectionRepository $redirectionRepository): array
     {
         $data = [];
-        $csv  = new Csv();
+        $csv = new Csv();
 
         $spreadsheet = $csv->load($file->getPathname());
-        $sheetData   = $spreadsheet->getActiveSheet()->toArray();
+        $sheetData = $spreadsheet->getActiveSheet()->toArray();
 
         $head = $sheetData[0];
         $find = 0;
         foreach ($head as $key => $value) {
-            if ((0 == $key && 'Source' == $value) || (1 == $key && 'Destination' == $value)) {
+            if (($key == 0 && $value == 'Source') || ($key == 1 && $value == 'Destination')) {
                 ++$find;
             }
         }
 
-        if (self::FIELDCSV != $find) {
+        if ($find != self::FIELDCSV) {
             $this->addFlash('danger', 'Le fichier n\'est pas correctement formaté');
 
             return $data;
@@ -220,14 +221,14 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 
         $sheetData = array_slice($sheetData, 1);
         foreach ($sheetData as $row) {
-            $source      = parse_url($row[$head['Source']]);
+            $source = parse_url((string) $row[$head['Source']]);
             $destination = $row[$head['Destination']];
-            $source      = $source['path'];
-            $source .= isset($source['query']) ? '?'.$source['query'] : '';
+            $source = $source['path'];
+            $source .= isset($source['query']) ? '?' . $source['query'] : '';
             $redirection = $redirectionRepository->findOneBy(
                 ['source' => $source]
             );
-            if (!$redirection) {
+            if ($redirection === null) {
                 $redirection = new Redirection();
                 $redirection->setActionCode(301);
                 $redirection->setSource($source);
@@ -242,13 +243,14 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $data;
     }
 
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
 
         return $filters;
     }
-    
+
     public static function getEntityFqcn(): string
     {
         return Redirection::class;
@@ -261,8 +263,10 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $this->redirect($redirection->getSource());
     }
 
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
+        unset($pageName);
         yield $this->addFieldID();
         yield TextField::new('source', new TranslatableMessage('Source'));
         yield TextField::new('destination', new TranslatableMessage('Destination'));
@@ -275,9 +279,12 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         yield $this->addUpdatedAtField();
     }
 
+    #[Override]
     public function createEntity(string $entityFqcn): Redirection
     {
         $redirection = new $entityFqcn();
+        $redirection->setActionType('url');
+        $redirection->setPosition(0);
         $redirection->setActionCode(301);
 
         return $redirection;

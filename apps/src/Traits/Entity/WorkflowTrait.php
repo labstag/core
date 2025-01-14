@@ -9,6 +9,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 trait WorkflowTrait
 {
+
     /**
      * @var string[]
      */
@@ -18,7 +19,7 @@ trait WorkflowTrait
     #[Gedmo\Timestampable(on: 'change', field: ['state'])]
     #[ORM\Column(name: 'state_changed', type: Types::DATETIME_MUTABLE, nullable: true)]
     private DateTime $stateChanged;
-    
+
     /**
      * @return mixed[]
      */

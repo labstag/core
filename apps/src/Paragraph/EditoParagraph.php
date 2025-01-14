@@ -47,7 +47,7 @@ class EditoParagraph extends ParagraphLib
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): iterable
+    public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
         yield TextField::new('title');
@@ -64,7 +64,7 @@ class EditoParagraph extends ParagraphLib
     {
         return 'edito';
     }
-    
+
     /**
      * @return mixed[]
      */

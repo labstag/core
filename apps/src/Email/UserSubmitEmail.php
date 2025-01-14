@@ -13,7 +13,7 @@ class UserSubmitEmail extends EmailLib
     {
         return 'New user %user_email%';
     }
-    
+
     /**
      * @return mixed[]
      */

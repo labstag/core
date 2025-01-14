@@ -60,6 +60,7 @@ class ParagraphService
     /**
      * @param mixed[] $paragraphs
      * @param mixed[] $data
+     *
      * @return array{templates: mixed, paragraph: mixed}[]
      */
     public function generate(array $paragraphs, array $data, bool $disable): array
@@ -76,7 +77,7 @@ class ParagraphService
 
         return $tab;
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -173,7 +174,7 @@ class ParagraphService
     /**
      * @return Generator<mixed>
      */
-    public function getFields(object $paragraph, string $pageName): iterable
+    public function getFields(mixed $paragraph, string $pageName): iterable
     {
         if (!$paragraph instanceof Paragraph) {
             return [];
@@ -200,7 +201,7 @@ class ParagraphService
     }
 
     // TODO : add fonds
-    
+
     /**
      * @return mixed[]
      */

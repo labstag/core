@@ -207,9 +207,10 @@ class FileService
 
         return $this->parameterBag->get('kernel.project_dir') . '/public' . $basePath;
     }
-    
+
     /**
      * @param object|mixed[] $entity
+     *
      * @return mixed[]
      */
     public function getMappingForEntity(object|array $entity): array
@@ -257,7 +258,7 @@ class FileService
 
         return $data[$type] ?? null;
     }
-    
+
     /**
      * @return mixed[]
      */
@@ -277,7 +278,7 @@ class FileService
             'post'          => $this->postAdapter,
         ];
     }
-    
+
     /**
      * @return mixed[]
      */

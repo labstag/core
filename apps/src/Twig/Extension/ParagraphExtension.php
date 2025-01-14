@@ -9,7 +9,6 @@ use Twig\TwigFunction;
 
 class ParagraphExtension extends AbstractExtension
 {
-    
     /**
      * @return mixed[]
      */

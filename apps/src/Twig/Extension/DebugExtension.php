@@ -9,7 +9,6 @@ use Twig\TwigFunction;
 
 class DebugExtension extends AbstractExtension
 {
-    
     /**
      * @return mixed[]
      */

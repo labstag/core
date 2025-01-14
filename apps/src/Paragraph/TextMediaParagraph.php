@@ -2,7 +2,6 @@
 
 namespace Labstag\Paragraph;
 
-use DOMDocument;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Essence\Essence;
@@ -45,7 +44,7 @@ class TextMediaParagraph extends ParagraphLib
             return;
         }
 
-        $html   = $media->has('html') ? $media->get('html') : '';
+        $html = $media->has('html') ? $media->get('html') : '';
         $oembed = $this->getOEmbedUrl($html);
         if (is_null($oembed)) {
             $this->setShow($paragraph, false);
@@ -68,7 +67,7 @@ class TextMediaParagraph extends ParagraphLib
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): iterable
+    public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph);
         yield $this->addFieldImageUpload('img', $pageName);
@@ -89,7 +88,7 @@ class TextMediaParagraph extends ParagraphLib
     {
         return 'text-media';
     }
-    
+
     /**
      * @return mixed[]
      */
