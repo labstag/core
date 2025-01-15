@@ -302,12 +302,15 @@ class DashboardController extends AbstractDashboardController
         $user = $this->getUser();
         $generator = $this->container->get(AdminUrlGenerator::class);
         $generator->setEntityId($user->getId());
+
         $userMenu->addMenuItems(
-            [MenuItem::linkToUrl(
-                new TranslatableMessage('My profile'),
-                'fa fa-user',
-                $this->generateUrl('admin_profil_edit', ['entityId' => $user->getId()])
-            )]
+            [
+                MenuItem::linkToUrl(
+                    new TranslatableMessage('My profile'),
+                    'fa fa-user',
+                    $this->generateUrl('admin_profil_edit', ['entityId' => $user->getId()])
+                ),
+            ]
         );
         $avatar = $user->getAvatar();
         if ($avatar != '') {
