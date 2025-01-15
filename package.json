@@ -130,7 +130,7 @@
     "dotenv-webpack": "8.1.*",
     "eslint": "9.17.*",
     "file-loader": "6.2.*",
-    "globals": "15.13.*",
+    "globals": "15.14.*",
     "korojscommands": "1.2.*",
     "postcss-discard-comments": "7.0.*",
     "postcss-loader": "8.1.*",
