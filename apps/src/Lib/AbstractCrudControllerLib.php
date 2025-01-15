@@ -32,6 +32,7 @@ use Labstag\Repository\TagRepository;
 use Labstag\Service\BlockService;
 use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
+use Labstag\Service\FormService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
@@ -49,6 +50,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 {
     public function __construct(
         protected EmailService $emailService,
+        protected FormService $formService,
         protected TagRepository $tagRepository,
         protected FileService $fileService,
         protected SiteService $siteService,
