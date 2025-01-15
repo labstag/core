@@ -37,6 +37,7 @@ class ContactFrontForm extends FrontFormLib
         return true;
     }
 
+    #[Override]
     public function getFields(array $data): iterable
     {
         yield TextField::new('firstname', new TranslatableMessage('first name'))->setValue($data['firstname']);

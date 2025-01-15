@@ -33,7 +33,11 @@ class MetaService
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $name = $reflectionProperty->getName();
             $value = $propertyAccessor->getValue($meta, $name);
-            if (!is_object($value) || $value instanceof DateTime) {
+            if (!is_object($value)) {
+                continue;
+            }
+
+            if ($value instanceof DateTime) {
                 continue;
             }
 

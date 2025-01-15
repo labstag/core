@@ -31,6 +31,7 @@ class ProfilCrudController extends UserCrudController
         return $actions;
     }
 
+    #[Override]
     public function index(AdminContext $adminContext): Response
     {
         throw new NotFoundHttpException();
