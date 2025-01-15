@@ -92,8 +92,6 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         );
     }
 
-
-    #[Override]
     private function configureAutocomplete(FieldDto $fieldDto, AdminContext $adminContext, object $object): void
     {
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER);
