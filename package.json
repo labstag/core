@@ -138,7 +138,7 @@
     "sass": "1.83.*",
     "sass-loader": "16.0.*",
     "stylelint": "16.12.*",
-    "stylelint-config-standard": "36.0.*",
+    "stylelint-config-standard": "37.0.*",
     "webfontloader": "1.6.*",
     "webpack": "5.97.*",
     "webpack-cli": "5.1.*",
