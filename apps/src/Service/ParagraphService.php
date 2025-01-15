@@ -144,11 +144,7 @@ class ParagraphService
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $name = $reflectionProperty->getName();
             $value = $propertyAccessor->getValue($paragraph, $name);
-            if (!is_object($value)) {
-                continue;
-            }
-
-            if ($value instanceof DateTime) {
+            if (!is_object($value) || $value instanceof DateTime) {
                 continue;
             }
 

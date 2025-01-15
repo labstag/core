@@ -46,6 +46,8 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
             return;
         }
 
+        dump($instance);
+
         $fieldDto->setValue($object->value);
         $fieldDto->setProperty($object->name);
         $fieldDto->getDoctrineMetadata()->set('targetEntity', ClassUtils::getClass($object->value));

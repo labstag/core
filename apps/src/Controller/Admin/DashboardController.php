@@ -43,13 +43,21 @@ class DashboardController extends AbstractDashboardController
     {
     }
 
-    #[Route('/admin/{_locale}/blank', name: 'admin_blank')]
+    #[Route(
+        '/admin/{_locale}/blank',
+        name: 'admin_blank',
+        defaults: ['_locale' => 'fr']
+    )]
     public function blank(): Response
     {
         return $this->render('admin/blank.html.twig', []);
     }
 
-    #[Route('/admin/{_locale}/purge', name: 'admin_cacheclear')]
+    #[Route(
+        '/admin/{_locale}/purge',
+        name: 'admin_cacheclear',
+        defaults: ['_locale' => 'fr']
+    )]
     public function cacheclear(KernelInterface $kernel): Response
     {
         $total = $this->fileService->deletedFileByEntities();
@@ -77,7 +85,11 @@ class DashboardController extends AbstractDashboardController
         return $this->redirectToRoute('admin');
     }
 
-    #[Route('/admin/{_locale}/config', name: 'admin_config')]
+    #[Route(
+        '/admin/{_locale}/config',
+        name: 'admin_config',
+        defaults: ['_locale' => 'fr']
+    )]
     public function config(ConfigurationRepository $configurationRepository): RedirectResponse
     {
         $configuration = null;
@@ -317,10 +329,10 @@ class DashboardController extends AbstractDashboardController
 
         yield $this->configureMenuItemsTemplate();
         yield MenuItem::linkToRoute(new TranslatableMessage('Clear Cache'), 'fas fa-trash', 'admin_cacheclear');
-        yield MenuItem::linkToRoute(
+        yield MenuItem::linkToUrl(
             new TranslatableMessage('View Site'),
             'fas fa-laptop-house',
-            'front'
+            '/'
         )->setLinkTarget('_blank');
     }
 
@@ -332,8 +344,13 @@ class DashboardController extends AbstractDashboardController
             return $userMenu;
         }
 
+        $user = $this->getUser();
         $userMenu->addMenuItems(
-            [MenuItem::linkToRoute(new TranslatableMessage('My profile'), 'fa fa-user', 'admin_profil')]
+            [MenuItem::linkToUrl(
+                new TranslatableMessage('My profile'),
+                'fa fa-user',
+                $this->generateUrl('admin_profil_edit', ['entityId' => $user->getId()])
+            )]
         );
         $avatar = $user->getAvatar();
         if ($avatar != '') {
@@ -348,8 +365,16 @@ class DashboardController extends AbstractDashboardController
         return $userMenu;
     }
 
-    #[Route('/admin/{_locale}/restore', name: 'admin_restore')]
-    #[Route('/admin/{_locale}/empty', name: 'admin_empty')]
+    #[Route(
+        '/admin/{_locale}/restore',
+        name: 'admin_restore',
+        defaults: ['_locale' => 'fr']
+    )]
+    #[Route(
+        '/admin/{_locale}/empty',
+        name: 'admin_empty',
+        defaults: ['_locale' => 'fr']
+    )]
     public function emptyOrRestore(AdminContext $adminContext): Response
     {
         $this->entityManager->getFilters()->disable('softdeleteable');
@@ -382,23 +407,11 @@ class DashboardController extends AbstractDashboardController
         return $this->render('admin/dashboard.html.twig', []);
     }
 
-    #[Route('/admin/{_locale}/profil', name: 'admin_profil')]
-    public function profil(): Response
-    {
-        $generator = $this->container->get(AdminUrlGenerator::class);
-
-        $generator->setAction(Action::EDIT);
-        $generator->setController(ProfilCrudController::class);
-        /** @var User $user */
-        $user = $this->getUser();
-        $generator->setEntityId($user->getId());
-
-        $url = $generator->generateUrl();
-
-        return $this->redirect($url);
-    }
-
-    #[Route('/admin/{_locale}/workflow', name: 'admin_workflow')]
+    #[Route(
+        '/admin/{_locale}/workflow',
+        name: 'admin_workflow',
+        defaults: ['_locale' => 'fr']
+    )]
     public function workflow(AdminContext $adminContext): Response
     {
         $request = $adminContext->getRequest();

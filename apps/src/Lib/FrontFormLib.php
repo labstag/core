@@ -42,6 +42,7 @@ abstract class FrontFormLib implements FrontFormInterface
 
     public function getFields(array $data): iterable
     {
+        unset($data);
         return [];
     }
 

@@ -2,6 +2,7 @@
 
 namespace Labstag\Service;
 
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Meta;
 use ReflectionClass;
@@ -31,17 +32,8 @@ class MetaService
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $name = $reflectionProperty->getName();
-            $type = $reflectionProperty->getType();
             $value = $propertyAccessor->getValue($meta, $name);
-            if (is_null($type)) {
-                continue;
-            }
-
-            if (is_null($value)) {
-                continue;
-            }
-
-            if (!is_object($value)) {
+            if (!is_object($value) || $value instanceof DateTime) {
                 continue;
             }
 

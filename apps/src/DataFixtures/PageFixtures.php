@@ -123,6 +123,8 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
         $page->setCreatedAt($date);
         $this->setImage($page, 'imgFile');
+        $this->addTagToEntity($page);
+        $this->addCategoryToEntity($page);
 
         $this->setReference('page_' . $page->getType(), $page);
         $objectManager->persist($page);
