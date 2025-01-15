@@ -42,7 +42,7 @@ class HttpErrorLogs
     #[ORM\Column(type: Types::JSON)]
     private array $requestData = [];
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $requestMethod = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -142,7 +142,7 @@ class HttpErrorLogs
         return $this->requestMethod;
     }
 
-    public function setRequestMethod(string $requestMethod): static
+    public function setRequestMethod(?string $requestMethod): static
     {
         $this->requestMethod = $requestMethod;
 
