@@ -15,7 +15,8 @@ use Labstag\Entity\User;
 use Override;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ProfilCrudController extends UserCrudController
@@ -34,7 +35,8 @@ class ProfilCrudController extends UserCrudController
     #[Override]
     public function index(AdminContext $adminContext): Response
     {
-        throw new NotFoundHttpException();
+        unset($adminContext);
+        throw new AccessDeniedHttpException();
     }
 
     #[Override]
