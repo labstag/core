@@ -5,6 +5,8 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
@@ -13,6 +15,7 @@ use Labstag\Entity\User;
 use Override;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ProfilCrudController extends UserCrudController
@@ -22,8 +25,21 @@ class ProfilCrudController extends UserCrudController
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
         $actions->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN);
+        $actions->remove(Crud::PAGE_INDEX, Action::DELETE);
+        $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
 
         return $actions;
+    }
+
+    public function index(AdminContext $adminContext): Response
+    {
+        throw new NotFoundHttpException();
+    }
+
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters;
     }
 
     #[Override]
@@ -89,15 +105,4 @@ class ProfilCrudController extends UserCrudController
     {
         return User::class;
     }
-
-    /*
-    public function configureFields(string $pageName): iterable
-    {
-        return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
-        ];
-    }
-    */
 }
