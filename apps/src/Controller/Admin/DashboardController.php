@@ -35,78 +35,13 @@ class DashboardController extends AbstractDashboardController
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
+        protected ConfigurationRepository $configurationRepository,
         protected UserService $userService,
         protected FileService $fileService,
         protected WorkflowService $workflowService,
         protected SiteService $siteService,
     )
     {
-    }
-
-    #[Route(
-        '/admin/{_locale}/blank',
-        name: 'admin_blank',
-        defaults: ['_locale' => 'fr']
-    )]
-    public function blank(): Response
-    {
-        return $this->render('admin/blank.html.twig', []);
-    }
-
-    #[Route(
-        '/admin/{_locale}/purge',
-        name: 'admin_cacheclear',
-        defaults: ['_locale' => 'fr']
-    )]
-    public function cacheclear(KernelInterface $kernel): Response
-    {
-        $total = $this->fileService->deletedFileByEntities();
-        if ($total != 0) {
-            $this->addFlash(
-                'success',
-                new TranslatableMessage(
-                    '%total% file(s) deleted',
-                    ['%total%' => $total]
-                )
-            );
-        }
-
-        // execution de la commande en console
-        $application = new Application($kernel);
-        $application->setAutoExit(false);
-
-        $arrayInput = new ArrayInput(['cache:clear']);
-
-        $bufferedOutput = new BufferedOutput();
-        $application->run($arrayInput, $bufferedOutput);
-
-        $this->addFlash('success', new TranslatableMessage('Cache cleared'));
-
-        return $this->redirectToRoute('admin');
-    }
-
-    #[Route(
-        '/admin/{_locale}/config',
-        name: 'admin_config',
-        defaults: ['_locale' => 'fr']
-    )]
-    public function config(ConfigurationRepository $configurationRepository): RedirectResponse
-    {
-        $configuration = null;
-        $configurations = $configurationRepository->findAll();
-        $generator = $this->container->get(AdminUrlGenerator::class);
-        $configuration = (count($configurations) != 0) ? $configurations[0] : null;
-        if (is_null($configuration)) {
-            return $this->redirectToRoute('admin');
-        }
-
-        $generator->setAction(Action::EDIT);
-        $generator->setController(ConfigurationCrudController::class);
-        $generator->setEntityId($configuration->getId());
-
-        $url = $generator->generateUrl();
-
-        return $this->redirect($url);
     }
 
     #[Override]
@@ -325,14 +260,34 @@ class DashboardController extends AbstractDashboardController
             'fas fa-clipboard-list',
             SubmissionCrudController::getEntityFqcn()
         );
-        yield MenuItem::linkToRoute(new TranslatableMessage('Options'), 'fas fa-cog', 'admin_config');
+
+        $configuration = null;
+        $configurations = $this->configurationRepository->findAll();
+        $generator = $this->container->get(AdminUrlGenerator::class);
+        $configuration = (count($configurations) != 0) ? $configurations[0] : null;
+        if (is_null($configuration)) {
+            return $this->redirectToRoute('admin');
+        }
+
+        $generator->setAction(Action::EDIT);
+        $generator->setController(ConfigurationCrudController::class);
+        $generator->setEntityId($configuration->getId());
+        yield MenuItem::linkToUrl(
+            new TranslatableMessage('Options'),
+            'fas fa-cog',
+            $generator->generateUrl()
+        );
 
         yield $this->configureMenuItemsTemplate();
-        yield MenuItem::linkToRoute(new TranslatableMessage('Clear Cache'), 'fas fa-trash', 'admin_cacheclear');
+        yield MenuItem::linkToUrl(
+            new TranslatableMessage('Clear Cache'),
+            'fas fa-trash',
+            $this->generateUrl('admin_cacheclear')
+        );
         yield MenuItem::linkToUrl(
             new TranslatableMessage('View Site'),
             'fas fa-laptop-house',
-            '/'
+            $this->generateUrl('front')
         )->setLinkTarget('_blank');
     }
 
@@ -345,6 +300,8 @@ class DashboardController extends AbstractDashboardController
         }
 
         $user = $this->getUser();
+        $generator = $this->container->get(AdminUrlGenerator::class);
+        $generator->setEntityId($user->getId());
         $userMenu->addMenuItems(
             [MenuItem::linkToUrl(
                 new TranslatableMessage('My profile'),
@@ -366,37 +323,6 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[Route(
-        '/admin/{_locale}/restore',
-        name: 'admin_restore',
-        defaults: ['_locale' => 'fr']
-    )]
-    #[Route(
-        '/admin/{_locale}/empty',
-        name: 'admin_empty',
-        defaults: ['_locale' => 'fr']
-    )]
-    public function emptyOrRestore(AdminContext $adminContext): Response
-    {
-        $this->entityManager->getFilters()->disable('softdeleteable');
-        $request = $adminContext->getRequest();
-        $referer = $request->headers->get('referer');
-        if (is_null($referer) || $referer === '' || $referer === '0') {
-            return $this->redirectToRoute('admin');
-        }
-
-        $routeName = $request->query->get('routeName');
-        $entity = $request->attributes->get('entity', null);
-        $uuid = $request->attributes->get('uuid', null);
-        match ($routeName) {
-            'admin_restore' => $this->adminRestore($entity, $uuid),
-            'admin_empty' => $this->adminEmpty($entity),
-            default => throw new Exception(new TranslatableMessage('Route not found')),
-        };
-
-        return $this->redirect($referer);
-    }
-
-    #[Route(
         '/admin/{_locale}',
         name: 'admin',
         defaults: ['_locale' => 'fr']
@@ -405,28 +331,6 @@ class DashboardController extends AbstractDashboardController
     public function index(): Response
     {
         return $this->render('admin/dashboard.html.twig', []);
-    }
-
-    #[Route(
-        '/admin/{_locale}/workflow',
-        name: 'admin_workflow',
-        defaults: ['_locale' => 'fr']
-    )]
-    public function workflow(AdminContext $adminContext): Response
-    {
-        $request = $adminContext->getRequest();
-        $referer = $request->headers->get('referer');
-        if (is_null($referer) || $referer === '' || $referer === '0') {
-            return $this->redirectToRoute('admin');
-        }
-
-        $entity = $request->query->get('entity', null);
-        $transition = $request->query->get('transition', null);
-        $uid = $request->query->get('uid', null);
-
-        $this->workflowService->change($entity, $transition, $uid);
-
-        return $this->redirect($referer);
     }
 
     protected function adminEmpty(string $entity): void
