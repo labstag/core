@@ -71,6 +71,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $contact = new Page();
         $contact->setTitle('Contact');
         $contact->setType('page');
+        $this->setParagraphsContact($contact);
 
         $sitemap = new Page();
         $sitemap->setTitle('Plan du site');
@@ -168,6 +169,14 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph = $this->paragraphService->addParagraph($page, 'sitemap');
         $paragraph->setTitle('Sitemap');
         $paragraph->setNbr(20);
+    }
+
+    private function setParagraphsContact(Page $page): void
+    {
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'form');
+        $paragraph->setTitle('Formulaire de contact');
+        $paragraph->setForm('contact');
     }
 
     private function setParagraphsStar(Page $page): void

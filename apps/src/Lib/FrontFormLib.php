@@ -33,19 +33,30 @@ abstract class FrontFormLib implements FrontFormInterface
 
         $state = ($disable != true) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
 
-        if ($state) {
+        if ($state && $save) {
             $this->saveForm($form);
         }
 
         return $state;
     }
 
+    public function getFields(array $data): iterable
+    {
+        return [];
+    }
+
     protected function saveForm(FormInterface $form): void
     {
-        $data       = $form->all();
+        $raw  = $form->all();
+        $data = [];
+        foreach ($raw as $key => $row) {
+            $data[$key] = $row->getData();
+        }
+
         $submission = new Submission();
-        $submission->getType($this->getCode());
+        $submission->setType($this->getCode());
         $submission->setData($data);
+
         $this->submissionRepository->save($submission);
     }
 

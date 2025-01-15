@@ -40,7 +40,7 @@ class Paragraph implements Stringable
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private ?bool $enable = null;
+    private bool $enable = true;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $fond = null;
@@ -91,7 +91,7 @@ class Paragraph implements Stringable
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private ?bool $save = null;
+    private bool $save = true;
 
     #[Override]
     public function __toString(): string

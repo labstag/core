@@ -2,11 +2,14 @@
 
 namespace Labstag\FrontForm;
 
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Form\Front\ContactType;
 use Labstag\Lib\EmailLib;
 use Labstag\Lib\FrontFormLib;
 use Override;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ContactFrontForm extends FrontFormLib
 {
@@ -32,6 +35,13 @@ class ContactFrontForm extends FrontFormLib
         $this->mailer->send($email);
 
         return true;
+    }
+
+    public function getFields(array $data): iterable
+    {
+        yield TextField::new('firstname', new TranslatableMessage('first name'))->setValue($data['firstname']);
+        yield TextField::new('lastname', new TranslatableMessage('last name'))->setValue($data['lastname']);
+        yield TextareaField::new('content', new TranslatableMessage('content'))->setValue($data['content']);
     }
 
     public function getCode(): string

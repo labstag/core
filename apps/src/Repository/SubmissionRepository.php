@@ -8,8 +8,8 @@ use Labstag\Lib\ServiceEntityRepositoryLib;
 
 class SubmissionRepository extends ServiceEntityRepositoryLib
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Submission::class);
+        parent::__construct($managerRegistry, Submission::class);
     }
 }
