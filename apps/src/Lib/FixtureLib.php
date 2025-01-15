@@ -47,7 +47,7 @@ abstract class FixtureLib extends Fixture
 
     protected function addCategoryToEntity(object $entity): void
     {
-        if (count($this->categories) != 0) {
+        if (count($this->categories) == 0) {
             return;
         }
 
@@ -77,7 +77,7 @@ abstract class FixtureLib extends Fixture
 
     protected function addTagToEntity(object $entity): void
     {
-        if (count($this->tags) != 0) {
+        if (count($this->tags) == 0) {
             return;
         }
 
