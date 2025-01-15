@@ -87,6 +87,12 @@ class Paragraph implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
 
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    private ?bool $save = null;
+
     #[Override]
     public function __toString(): string
     {
@@ -312,6 +318,18 @@ class Paragraph implements Stringable
     public function setUrl(?string $url): static
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    public function isSave(): ?bool
+    {
+        return $this->save;
+    }
+
+    public function setSave(bool $save): static
+    {
+        $this->save = $save;
 
         return $this;
     }

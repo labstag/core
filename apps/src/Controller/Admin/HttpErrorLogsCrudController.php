@@ -39,7 +39,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
-        $filters->add('InternetProtocol');
+        $filters->add('internetProtocol');
         $filters->add('httpCode');
         $filters->add('requestMethod');
 
@@ -55,7 +55,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         yield TextField::new('url', new TranslatableMessage('url'))->setMaxLength($maxLength);
         yield TextField::new('domain', new TranslatableMessage('domain'));
         yield TextField::new('agent', new TranslatableMessage('agent'))->setMaxLength($maxLength);
-        yield TextField::new('InternetProtocol', new TranslatableMessage('InternetProtocol'));
+        yield TextField::new('internetProtocol', new TranslatableMessage('InternetProtocol'));
         yield IsBotField::new('bot', new TranslatableMessage('bot'));
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         if (!is_null($currentEntity)) {

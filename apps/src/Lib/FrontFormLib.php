@@ -4,7 +4,9 @@ namespace Labstag\Lib;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Labstag\Entity\Submission;
 use Labstag\Interface\FrontFormInterface;
+use Labstag\Repository\SubmissionRepository;
 use Labstag\Service\EmailService;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -16,6 +18,7 @@ abstract class FrontFormLib implements FrontFormInterface
     public function __construct(
         protected MailerInterface $mailer,
         protected FormFactoryInterface $formFactory,
+        protected SubmissionRepository $submissionRepository,
         protected EmailService $emailService,
         protected RequestStack $requestStack,
         protected EntityManagerInterface $entityManager,
@@ -23,12 +26,27 @@ abstract class FrontFormLib implements FrontFormInterface
     {
     }
 
-    public function execute(FormInterface $form, bool $disable): bool
+    public function execute(bool $save, FormInterface $form, bool $disable): bool
     {
         $request = $this->requestStack->getCurrentRequest();
         $form->handleRequest($request);
 
-        return ($disable != true) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
+        $state = ($disable != true) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
+
+        if ($state) {
+            $this->saveForm($form);
+        }
+
+        return $state;
+    }
+
+    protected function saveForm(FormInterface $form): void
+    {
+        $data       = $form->all();
+        $submission = new Submission();
+        $submission->getType($this->getCode());
+        $submission->setData($data);
+        $this->submissionRepository->save($submission);
     }
 
     protected function getRepository(string $entity): ServiceEntityRepositoryLib

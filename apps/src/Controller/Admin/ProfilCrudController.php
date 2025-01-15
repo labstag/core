@@ -29,6 +29,7 @@ class ProfilCrudController extends UserCrudController
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
+        $crud = parent::configureCrud($crud);
         $crud->setPageTitle(Crud::PAGE_EDIT, 'Mon profil');
         $crud->setEntityPermission('ROLE_SUPER_ADMIN');
         $crud->setFormThemes(['admin/form.html.twig']);

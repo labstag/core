@@ -20,7 +20,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         return 'paragraph_' . $paragraph->getType();
     }
 
-    public function getFond(string $code): ?string
+    public function getFond(?string $code): ?string
     {
         return $this->paragraphService->getFond($code);
     }

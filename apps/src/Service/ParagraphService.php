@@ -193,8 +193,12 @@ class ParagraphService
         return $fields;
     }
 
-    public function getFond(string $info): ?string
+    public function getFond(?string $info): ?string
     {
+        if (is_null($info)) {
+            return null;
+        }
+
         $fonds = array_flip($this->getFonds());
 
         return $fonds[$info] ?? null;

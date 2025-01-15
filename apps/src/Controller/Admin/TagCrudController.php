@@ -21,6 +21,7 @@ abstract class TagCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
+        $crud = parent::configureCrud($crud);
         $crud->setDefaultSort(
             ['title' => 'ASC']
         );

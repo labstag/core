@@ -3,6 +3,7 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Generator;
 use Labstag\Entity\Paragraph;
@@ -20,6 +21,7 @@ class FormParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         $formCode = $paragraph->getForm();
+        $save     = $paragraph->isSave();
         if (is_null($formCode)) {
             $this->setShow($paragraph, false);
 
@@ -35,7 +37,7 @@ class FormParagraph extends ParagraphLib
 
         $form = $this->createForm($formClass->getForm());
 
-        $execute = $this->formService->execute($formCode, $form, $disable);
+        $execute = $this->formService->execute($save, $formCode, $form, $disable);
         $this->setData(
             $paragraph,
             [
@@ -54,10 +56,11 @@ class FormParagraph extends ParagraphLib
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-        $choiceField = ChoiceField::new('form', new TranslatableMessage('Formulaire'));
+        $choiceField = ChoiceField::new('form', new TranslatableMessage('Form'));
         $choiceField->hideOnIndex();
         $choiceField->setChoices($this->formService->all());
         yield $choiceField;
+        yield BooleanField::new('save', new TranslatableMessage('Save'));
     }
 
     #[Override]
