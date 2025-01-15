@@ -292,7 +292,6 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         $url->setController($crudController);
         $url->setAction(Action::DETAIL);
         $url->setEntityId($entityDto->getPrimaryKeyValue());
-        $url->includeReferrer();
 
         return $url->generateUrl();
     }
