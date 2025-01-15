@@ -34,6 +34,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
+        $crud = parent::configureCrud($crud);
         if ($this->isIframeEdit()) {
             $crud->renderSidebarMinimized();
             $crud->overrideTemplates(

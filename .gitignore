@@ -3,6 +3,8 @@
 /apps/bin/
 !/apps/bin/console
 /apps/public/assets
+!/apps/private
+/apps/private/*
 *.phar
 *.cache
 docker-compose-*.yml

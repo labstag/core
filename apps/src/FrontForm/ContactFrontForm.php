@@ -11,9 +11,9 @@ use Symfony\Component\Form\FormInterface;
 class ContactFrontForm extends FrontFormLib
 {
     #[Override]
-    public function execute(FormInterface $form, bool $disable): bool
+    public function execute(bool $save, FormInterface $form, bool $disable): bool
     {
-        $state = parent::execute($form, $disable);
+        $state = parent::execute($save, $form, $disable);
         if (!$state) {
             return false;
         }

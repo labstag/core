@@ -308,6 +308,11 @@ class DashboardController extends AbstractDashboardController
             'fas fa-clipboard-list',
             HttpErrorLogsCrudController::getEntityFqcn()
         );
+        yield MenuItem::linkToCrud(
+            new TranslatableMessage('Submission'),
+            'fas fa-clipboard-list',
+            SubmissionCrudController::getEntityFqcn()
+        );
         yield MenuItem::linkToRoute(new TranslatableMessage('Options'), 'fas fa-cog', 'admin_config');
 
         yield $this->configureMenuItemsTemplate();

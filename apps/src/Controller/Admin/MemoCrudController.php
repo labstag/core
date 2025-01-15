@@ -25,6 +25,7 @@ class MemoCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
+        $crud = parent::configureCrud($crud);
         $crud->setDefaultSort(
             ['createdAt' => 'DESC']
         );
