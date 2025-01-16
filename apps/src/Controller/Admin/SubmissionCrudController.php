@@ -5,9 +5,8 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
-use Labstag\Entity\Submission;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Entity\Submission;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Lib\FrontFormLib;
 use Override;
@@ -25,11 +24,6 @@ class SubmissionCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    public static function getEntityFqcn(): string
-    {
-        return Submission::class;
-    }
-
     #[Override]
     public function configureFields(string $pageName): iterable
     {
@@ -44,6 +38,11 @@ class SubmissionCrudController extends AbstractCrudControllerLib
                 yield $field;
             }
         }
+    }
+
+    public static function getEntityFqcn(): string
+    {
+        return Submission::class;
     }
 
     private function addFieldsSubmission(Submission $submission): iterable

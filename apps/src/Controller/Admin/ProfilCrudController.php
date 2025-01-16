@@ -33,19 +33,6 @@ class ProfilCrudController extends UserCrudController
     }
 
     #[Override]
-    public function index(AdminContext $adminContext): Response
-    {
-        unset($adminContext);
-        throw new AccessDeniedHttpException();
-    }
-
-    #[Override]
-    public function configureFilters(Filters $filters): Filters
-    {
-        return $filters;
-    }
-
-    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -104,8 +91,22 @@ class ProfilCrudController extends UserCrudController
     }
 
     #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters;
+    }
+
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return User::class;
+    }
+
+    #[Override]
+    public function index(AdminContext $adminContext): Response
+    {
+        unset($adminContext);
+
+        throw new AccessDeniedHttpException();
     }
 }

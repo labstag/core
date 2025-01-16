@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\HttpErrorLogs;
@@ -30,11 +29,6 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    public static function getEntityFqcn(): string
-    {
-        return HttpErrorLogs::class;
-    }
-
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
@@ -44,17 +38,6 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         );
 
         return $crud;
-    }
-
-    #[Override]
-    public function configureFilters(Filters $filters): Filters
-    {
-        $this->addFilterEnable($filters);
-        $filters->add('internetProtocol');
-        $filters->add('httpCode');
-        $filters->add('requestMethod');
-
-        return $filters;
     }
 
     #[Override]
@@ -98,5 +81,21 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
 
             yield $datafield;
         }
+    }
+
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->addFilterEnable($filters);
+        $filters->add('internetProtocol');
+        $filters->add('httpCode');
+        $filters->add('requestMethod');
+
+        return $filters;
+    }
+
+    public static function getEntityFqcn(): string
+    {
+        return HttpErrorLogs::class;
     }
 }

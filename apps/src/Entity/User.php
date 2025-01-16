@@ -57,6 +57,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     )]
     private ?bool $enable = null;
 
+    /**
+     * @var Collection<int, HttpErrorLogs>
+     */
+    #[ORM\OneToMany(targetEntity: HttpErrorLogs::class, mappedBy: 'refUser')]
+    private Collection $httpErrorLogs;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
@@ -108,12 +114,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     #[ORM\Column(length: 255, unique: true)]
     private ?string $username = null;
 
-    /**
-     * @var Collection<int, HttpErrorLogs>
-     */
-    #[ORM\OneToMany(targetEntity: HttpErrorLogs::class, mappedBy: 'refUser')]
-    private Collection $httpErrorLogs;
-
     public function __construct()
     {
         $this->stories = new ArrayCollection();
@@ -160,6 +160,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         if (!$this->editos->contains($edito)) {
             $this->editos->add($edito);
             $edito->setRefuser($this);
+        }
+
+        return $this;
+    }
+
+    public function addHttpErrorLog(HttpErrorLogs $httpErrorLogs): static
+    {
+        if (!$this->httpErrorLogs->contains($httpErrorLogs)) {
+            $this->httpErrorLogs->add($httpErrorLogs);
+            $httpErrorLogs->setRefUser($this);
         }
 
         return $this;
@@ -246,6 +256,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return $this->stories;
     }
 
+    /**
+     * @return Collection<int, HttpErrorLogs>
+     */
+    public function getHttpErrorLogs(): Collection
+    {
+        return $this->httpErrorLogs;
+    }
+
     public function getId(): ?string
     {
         return $this->id;
@@ -330,6 +348,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         // set the owning side to null (unless already changed)
         if ($this->editos->removeElement($edito) && $edito->getRefuser() === $this) {
             $edito->setRefuser(null);
+        }
+
+        return $this;
+    }
+
+    public function removeHttpErrorLog(HttpErrorLogs $httpErrorLogs): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->httpErrorLogs->removeElement($httpErrorLogs) && $httpErrorLogs->getRefUser() === $this) {
+            $httpErrorLogs->setRefUser(null);
         }
 
         return $this;
@@ -432,34 +460,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function setUsername(string $username): static
     {
         $this->username = $username;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, HttpErrorLogs>
-     */
-    public function getHttpErrorLogs(): Collection
-    {
-        return $this->httpErrorLogs;
-    }
-
-    public function addHttpErrorLog(HttpErrorLogs $httpErrorLogs): static
-    {
-        if (!$this->httpErrorLogs->contains($httpErrorLogs)) {
-            $this->httpErrorLogs->add($httpErrorLogs);
-            $httpErrorLogs->setRefUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeHttpErrorLog(HttpErrorLogs $httpErrorLogs): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->httpErrorLogs->removeElement($httpErrorLogs) && $httpErrorLogs->getRefUser() === $this) {
-            $httpErrorLogs->setRefUser(null);
-        }
 
         return $this;
     }

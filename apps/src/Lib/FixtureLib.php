@@ -4,6 +4,7 @@ namespace Labstag\Lib;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
 use Faker\Factory;
 use Faker\Generator;
 use Faker\Provider\Youtube;
@@ -130,7 +131,7 @@ abstract class FixtureLib extends Fixture
     }
 
     /**
-     * @param object|mixed[] $entity
+     * @param mixed[]|object $entity
      */
     protected function setImage(object|array $entity, string|PropertyPathInterface $type): void
     {
@@ -150,7 +151,7 @@ abstract class FixtureLib extends Fixture
 
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $propertyAccessor->setValue($entity, $type, $uploadedFile);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             echo $exception->getMessage();
         }
     }

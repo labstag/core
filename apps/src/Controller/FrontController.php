@@ -66,7 +66,8 @@ class FrontController extends AbstractController
     {
         return $this->initCache()->get(
             'sitemap.xml',
-            function (ItemInterface $item) use ($sitemapService): Response {
+            function (ItemInterface $item) use ($sitemapService): Response
+            {
                 $item->expiresAfter(3600);
 
                 $sitemap = $sitemapService->getData(true);

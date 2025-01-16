@@ -232,7 +232,8 @@ class BlockCrudController extends AbstractCrudControllerLib
 
     private function setPosition(): callable
     {
-        return function ($event): void {
+        return function ($event): void
+        {
             $form = $event->getForm();
             if (!$form->isSubmitted()) {
                 return;

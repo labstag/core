@@ -75,6 +75,12 @@ class Paragraph implements Stringable
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Post $post = null;
 
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    private bool $save = true;
+
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Story $story = null;
 
@@ -86,12 +92,6 @@ class Paragraph implements Stringable
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
-
-    #[ORM\Column(
-        type: Types::BOOLEAN,
-        options: ['default' => 1]
-    )]
-    private bool $save = true;
 
     #[Override]
     public function __toString(): string
@@ -194,6 +194,11 @@ class Paragraph implements Stringable
         return $this->enable;
     }
 
+    public function isSave(): ?bool
+    {
+        return $this->save;
+    }
+
     public function setBlock(?Block $block): static
     {
         $this->block = $block;
@@ -294,6 +299,13 @@ class Paragraph implements Stringable
         return $this;
     }
 
+    public function setSave(bool $save): static
+    {
+        $this->save = $save;
+
+        return $this;
+    }
+
     public function setStory(?Story $story): static
     {
         $this->story = $story;
@@ -318,18 +330,6 @@ class Paragraph implements Stringable
     public function setUrl(?string $url): static
     {
         $this->url = $url;
-
-        return $this;
-    }
-
-    public function isSave(): ?bool
-    {
-        return $this->save;
-    }
-
-    public function setSave(bool $save): static
-    {
-        $this->save = $save;
 
         return $this;
     }

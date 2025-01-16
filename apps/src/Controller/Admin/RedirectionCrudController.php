@@ -42,14 +42,39 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    private function configureActionsExport(Actions $actions): void
+    #[Override]
+    public function configureFields(string $pageName): iterable
     {
-        $action = Action::new('export', 'Exporter', 'fas fa-file-export');
-        $action->addCssClass('btn btn-primary');
-        $action->linkToCrudAction('export');
-        $action->createAsGlobalAction();
+        unset($pageName);
+        yield $this->addFieldID();
+        yield TextField::new('source', new TranslatableMessage('Source'));
+        yield TextField::new('destination', new TranslatableMessage('Destination'));
+        yield IntegerField::new('action_code', new TranslatableMessage("Code d'action"));
+        yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->renderAsSwitch(false)->hideOnForm();
+        yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->hideOnIndex();
+        yield $this->addFieldBoolean('enable', new TranslatableMessage('Activé'));
+        yield IntegerField::new('last_count', new TranslatableMessage('Dernier compteur'))->hideonForm();
+        yield $this->addCreatedAtField();
+        yield $this->addUpdatedAtField();
+    }
 
-        $actions->add(Crud::PAGE_INDEX, $action);
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->addFilterEnable($filters);
+
+        return $filters;
+    }
+
+    #[Override]
+    public function createEntity(string $entityFqcn): Redirection
+    {
+        $redirection = new $entityFqcn();
+        $redirection->setActionType('url');
+        $redirection->setPosition(0);
+        $redirection->setActionCode(301);
+
+        return $redirection;
     }
 
     public function export(RedirectionRepository $redirectionRepository): void
@@ -73,84 +98,9 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         $response->send();
     }
 
-    protected function sendToExport(array $header, array $rows): Response
+    public static function getEntityFqcn(): string
     {
-        $tempZip = tmpfile();
-        $now = new DateTime('now');
-        $metaZip = stream_get_meta_data($tempZip);
-        $zipArchive = new ZipArchive();
-        $zipArchive->open($metaZip['uri']);
-
-        $spreadsheet = new Spreadsheet();
-        $spreadsheet->setActiveSheetIndex(0);
-        $spreadsheet->getActiveSheet()->fromArray($header, null, 'A1');
-        $spreadsheet->getActiveSheet()->fromArray($rows, null, 'A2');
-
-        try {
-            foreach (['Xlsx', 'Xls', 'Ods'] as $writerType) {
-                $path = $this->getFilename($now->format('Ymd') . '-export.', mb_strtolower($writerType));
-                $writer = IOFactory::createWriter($spreadsheet, $writerType);
-                $writer->save($path);
-                $zipArchive->addFile($path, basename((string) $path));
-            }
-        } catch (Exception $exception) {
-            throw new Exception($exception->getMessage(), $exception->getCode(), $exception);
-        }
-
-        $zipArchive->close();
-
-        return new Response(
-            file_get_contents($metaZip['uri']),
-            \Symfony\Component\HttpFoundation\Response::HTTP_OK,
-            [
-                'Content-Type'        => 'application/x-zip',
-                'Content-Disposition' => 'attachment; filename="' . $now->format('Ymd') . '-export.zip"',
-                'Cache:Control'       => 'no-cache, must-revalidate',
-                'Expires'             => 'Mon, 26 Jul 1997 05:00:00 GMT',
-                'Last-Modified'       => gmdate('D, d M Y H:i:s') . ' GMT',
-                'Pragma'              => 'no-cache',
-            ]
-        );
-    }
-
-    private function getFilename(string $filename, string $extension = 'xlsx')
-    {
-        $originalExtension = pathinfo($filename, PATHINFO_EXTENSION);
-
-        return $this->getTemporaryFolder() . '/' . str_replace('.' . $originalExtension, '.' . $extension, basename($filename));
-    }
-
-    private function getTemporaryFolder(): string
-    {
-        $tempFolder = sys_get_temp_dir();
-        if (!is_dir($tempFolder) && (!mkdir($tempFolder) && !is_dir($tempFolder))) {
-            throw new RuntimeException(sprintf('Directory "%s" was not created', $tempFolder));
-        }
-
-        return $tempFolder;
-    }
-
-    private function configureActionsImport(Actions $actions): void
-    {
-        $action = Action::new('import', 'Importer', 'fas fa-file-import');
-        $action->addCssClass('btn btn-primary');
-        $action->linkToCrudAction('import');
-        $action->createAsGlobalAction();
-
-        $actions->add(Crud::PAGE_INDEX, $action);
-    }
-
-    private function configureActionsTestSource(Actions $actions): void
-    {
-        $action = Action::new('testSource', 'Test de la source');
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
-        $action->linkToCrudAction('testSource');
-
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+        return Redirection::class;
     }
 
     public function import(Request $request, RedirectionRepository $redirectionRepository): RedirectResponse|Response
@@ -185,6 +135,13 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         );
     }
 
+    public function testSource(AdminContext $adminContext): RedirectResponse
+    {
+        $redirection = $adminContext->getEntity()->getInstance();
+
+        return $this->redirect($redirection->getSource());
+    }
+
     protected function redirectToIndex(): RedirectResponse
     {
         $generator = $this->container->get(AdminUrlGenerator::class);
@@ -194,26 +151,104 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $this->redirect($generator->generateUrl());
     }
 
-    private function setFind($head): int
+    protected function sendToExport(array $header, array $rows): Response
     {
-        $find = 0;
-        foreach ($head as $key => $value) {
-            if (($key == 0 && $value == 'Source') || ($key == 1 && $value == 'Destination')) {
-                ++$find;
+        $tempZip = tmpfile();
+        $now = new DateTime('now');
+        $metaZip = stream_get_meta_data($tempZip);
+        $zipArchive = new ZipArchive();
+        $zipArchive->open($metaZip['uri']);
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->setActiveSheetIndex(0);
+        $spreadsheet->getActiveSheet()->fromArray($header, null, 'A1');
+        $spreadsheet->getActiveSheet()->fromArray($rows, null, 'A2');
+
+        try {
+            foreach (['Xlsx', 'Xls', 'Ods'] as $writerType) {
+                $path = $this->getFilename($now->format('Ymd') . '-export.', mb_strtolower($writerType));
+                $writer = IOFactory::createWriter($spreadsheet, $writerType);
+                $writer->save($path);
+                $zipArchive->addFile($path, basename((string) $path));
             }
+        } catch (Exception $exception) {
+            throw new Exception($exception->getMessage(), $exception->getCode(), $exception);
         }
 
-        return $find;
+        $zipArchive->close();
+
+        return new Response(
+            file_get_contents($metaZip['uri']),
+            Response::HTTP_OK,
+            [
+                'Content-Type'        => 'application/x-zip',
+                'Content-Disposition' => 'attachment; filename="' . $now->format('Ymd') . '-export.zip"',
+                'Cache:Control'       => 'no-cache, must-revalidate',
+                'Expires'             => 'Mon, 26 Jul 1997 05:00:00 GMT',
+                'Last-Modified'       => gmdate('D, d M Y H:i:s') . ' GMT',
+                'Pragma'              => 'no-cache',
+            ]
+        );
+    }
+
+    private function configureActionsExport(Actions $actions): void
+    {
+        $action = Action::new('export', 'Exporter', 'fas fa-file-export');
+        $action->addCssClass('btn btn-primary');
+        $action->linkToCrudAction('export');
+        $action->createAsGlobalAction();
+
+        $actions->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function configureActionsImport(Actions $actions): void
+    {
+        $action = Action::new('import', 'Importer', 'fas fa-file-import');
+        $action->addCssClass('btn btn-primary');
+        $action->linkToCrudAction('import');
+        $action->createAsGlobalAction();
+
+        $actions->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function configureActionsTestSource(Actions $actions): void
+    {
+        $action = Action::new('testSource', 'Test de la source');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToCrudAction('testSource');
+
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function getFilename(string $filename, string $extension = 'xlsx')
+    {
+        $originalExtension = pathinfo($filename, PATHINFO_EXTENSION);
+
+        return $this->getTemporaryFolder() . '/' . str_replace('.' . $originalExtension, '.' . $extension, basename($filename));
+    }
+
+    private function getTemporaryFolder(): string
+    {
+        $tempFolder = sys_get_temp_dir();
+        if (!is_dir($tempFolder) && (!mkdir($tempFolder) && !is_dir($tempFolder))) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $tempFolder));
+        }
+
+        return $tempFolder;
     }
 
     private function importCsv($file, RedirectionRepository $redirectionRepository): array
     {
-        $data        = [];
-        $csv         = new Csv();
+        $data = [];
+        $csv = new Csv();
         $spreadsheet = $csv->load($file->getPathname());
-        $sheetData   = $spreadsheet->getActiveSheet()->toArray();
-        $head        = $sheetData[0];
-        $find        = $this->setFind($head);
+        $sheetData = $spreadsheet->getActiveSheet()->toArray();
+        $head = $sheetData[0];
+        $find = $this->setFind($head);
         if ($find != self::FIELDCSV) {
             $this->addFlash('danger', 'Le fichier n\'est pas correctement formaté');
 
@@ -246,50 +281,15 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $data;
     }
 
-    #[Override]
-    public function configureFilters(Filters $filters): Filters
+    private function setFind($head): int
     {
-        $this->addFilterEnable($filters);
+        $find = 0;
+        foreach ($head as $key => $value) {
+            if (($key == 0 && $value == 'Source') || ($key == 1 && $value == 'Destination')) {
+                ++$find;
+            }
+        }
 
-        return $filters;
-    }
-
-    public static function getEntityFqcn(): string
-    {
-        return Redirection::class;
-    }
-
-    public function testSource(AdminContext $adminContext): RedirectResponse
-    {
-        $redirection = $adminContext->getEntity()->getInstance();
-
-        return $this->redirect($redirection->getSource());
-    }
-
-    #[Override]
-    public function configureFields(string $pageName): iterable
-    {
-        unset($pageName);
-        yield $this->addFieldID();
-        yield TextField::new('source', new TranslatableMessage('Source'));
-        yield TextField::new('destination', new TranslatableMessage('Destination'));
-        yield IntegerField::new('action_code', new TranslatableMessage("Code d'action"));
-        yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->renderAsSwitch(false)->hideOnForm();
-        yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->hideOnIndex();
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Activé'));
-        yield IntegerField::new('last_count', new TranslatableMessage('Dernier compteur'))->hideonForm();
-        yield $this->addCreatedAtField();
-        yield $this->addUpdatedAtField();
-    }
-
-    #[Override]
-    public function createEntity(string $entityFqcn): Redirection
-    {
-        $redirection = new $entityFqcn();
-        $redirection->setActionType('url');
-        $redirection->setPosition(0);
-        $redirection->setActionCode(301);
-
-        return $redirection;
+        return $find;
     }
 }

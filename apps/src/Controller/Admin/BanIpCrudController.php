@@ -12,11 +12,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class BanIpCrudController extends AbstractCrudControllerLib
 {
-    public static function getEntityFqcn(): string
-    {
-        return BanIp::class;
-    }
-
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -36,5 +31,10 @@ class BanIpCrudController extends AbstractCrudControllerLib
         yield $wysiwygField;
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();
+    }
+
+    public static function getEntityFqcn(): string
+    {
+        return BanIp::class;
     }
 }

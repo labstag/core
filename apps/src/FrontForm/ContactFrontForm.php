@@ -37,17 +37,17 @@ class ContactFrontForm extends FrontFormLib
         return true;
     }
 
+    public function getCode(): string
+    {
+        return 'contact';
+    }
+
     #[Override]
     public function getFields(array $data): iterable
     {
         yield TextField::new('firstname', new TranslatableMessage('first name'))->setValue($data['firstname']);
         yield TextField::new('lastname', new TranslatableMessage('last name'))->setValue($data['lastname']);
         yield TextareaField::new('content', new TranslatableMessage('content'))->setValue($data['content']);
-    }
-
-    public function getCode(): string
-    {
-        return 'contact';
     }
 
     public function getForm(): string

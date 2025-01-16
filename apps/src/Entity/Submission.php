@@ -13,6 +13,9 @@ class Submission
 {
     use TimestampableTrait;
 
+    #[ORM\Column(type: Types::JSON)]
+    private array $data = [];
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
@@ -22,8 +25,10 @@ class Submission
     #[ORM\Column(length: 255)]
     private string $type;
 
-    #[ORM\Column(type: Types::JSON)]
-    private array $data = [];
+    public function getData(): array
+    {
+        return $this->data;
+    }
 
     public function getId(): ?string
     {
@@ -35,21 +40,16 @@ class Submission
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setData(array $data): static
     {
-        $this->type = $type;
+        $this->data = $data;
 
         return $this;
     }
 
-    public function getData(): array
+    public function setType(string $type): static
     {
-        return $this->data;
-    }
-
-    public function setData(array $data): static
-    {
-        $this->data = $data;
+        $this->type = $type;
 
         return $this;
     }
