@@ -125,8 +125,8 @@ abstract class BlockLib extends AbstractController implements BlockInterface
      */
     protected function getTemplateContent(string $folder, string $type): array
     {
-        if (isset($this->templates[$type])) {
-            return $this->templates[$type];
+        if (isset($this->templates[$folder][$type])) {
+            return $this->templates[$folder][$type];
         }
 
         $htmltwig = '.html.twig';
@@ -147,14 +147,14 @@ abstract class BlockLib extends AbstractController implements BlockInterface
             break;
         }
 
-        $this->templates[$type] = [
+        $this->templates[$folder][$type] = [
             'hook'  => 'block',
             'type'  => $type,
             'files' => $files,
             'view'  => $view,
         ];
 
-        return $this->templates[$type];
+        return $this->templates[$folder][$type];
     }
 
     /**

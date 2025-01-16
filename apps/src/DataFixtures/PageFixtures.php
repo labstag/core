@@ -116,7 +116,8 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
         $date = $generator->unique()->dateTimeBetween('- 8 month', 'now');
         if (isset($data['parent'])) {
-            $parent = $this->getReference('page_' . $data['parent'], Page::class);
+            $parent = $this->getParent($data['parent']);
+
             $page->setPage($parent);
             $date = $generator->unique()->dateTimeBetween($page->getCreatedAt(), '+1 week');
         }
@@ -126,8 +127,25 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addTagToEntity($page);
         $this->addCategoryToEntity($page);
 
-        $this->setReference('page_' . $page->getType(), $page);
+        $this->addReference('page_' .md5(uniqid()), $page);
         $objectManager->persist($page);
+    }
+
+    public function getParent($idParent)
+    {
+        $parent = null;
+        $pages = $this->getIdentitiesByClass(Page::class);
+        foreach ($pages as $id) {
+            $page = $this->getReference($id, Page::class);
+            if ($page->getType() != $idParent) {
+                continue;
+            }
+            
+            $parent = $page;
+            break;
+        }
+
+        return $parent;
     }
 
     private function setParagraphsHome(Page $page): void
