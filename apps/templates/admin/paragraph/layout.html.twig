@@ -110,22 +110,6 @@
                     </a>
 
                     <ul class="dropdown-menu dropdown-menu-end">
-                        {% if ea.dashboardLocales %}
-                            <li class="dropdown-header dropdown-locales-label">
-                                {{ 'settings.locale'|trans(domain = 'EasyAdminBundle') }}
-                            </li>
-
-                            {% for localeDto in ea.dashboardLocales %}
-                                <li>
-                                    <a href="{{ ea_url().set('_locale', localeDto.locale) }}" class="dropdown-item{% if app.request.locale == localeDto.locale %} active{% endif %}">
-                                        {% if localeDto.icon %}
-                                            <i class="{{ localeDto.icon }}"></i>
-                                        {% endif %}
-                                        {{ localeDto.name }}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        {% endif %}
 
                         {% if ea.dashboardHasDarkModeEnabled %}
                             {% if ea.dashboardLocales %}
