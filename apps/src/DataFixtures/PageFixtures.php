@@ -140,7 +140,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             if ($page->getType() != $idParent) {
                 continue;
             }
-            
+
             $parent = $page;
             break;
         }

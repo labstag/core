@@ -66,7 +66,6 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
             $block->addLink($link);
         }
 
-
         $contact = $this->getPageByTitle('Plan du site');
         if (!is_null($contact)) {
             $link = new Link();
