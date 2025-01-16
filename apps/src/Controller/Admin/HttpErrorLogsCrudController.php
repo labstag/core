@@ -36,6 +36,17 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        $crud->setDefaultSort(
+            ['createdAt' => 'DESC']
+        );
+
+        return $crud;
+    }
+
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
@@ -51,9 +62,8 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     {
         $maxLength = $pageName === Crud::PAGE_DETAIL ? 1024 : 32;
         yield $this->addFieldID();
-        yield DateField::new('created', new TranslatableMessage('created'));
         yield TextField::new('url', new TranslatableMessage('url'))->setMaxLength($maxLength);
-        yield TextField::new('domain', new TranslatableMessage('domain'));
+        yield TextField::new('domain', new TranslatableMessage('domain'))->hideOnIndex();
         yield TextField::new('agent', new TranslatableMessage('agent'))->setMaxLength($maxLength);
         yield TextField::new('internetProtocol', new TranslatableMessage('InternetProtocol'));
         yield IsBotField::new('bot', new TranslatableMessage('bot'));
@@ -77,6 +87,8 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         yield IntegerField::new('httpCode', new TranslatableMessage('httpCode'));
         yield TextField::new('requestMethod', new TranslatableMessage('requestMethod'));
         yield AssociationField::new('refUser', new TranslatableMessage('Utilisateur'));
+        yield $this->addCreatedAtField();
+        yield $this->addUpdatedAtField();
         if (!is_null($currentEntity)) {
             $data = $currentEntity->getRequestData();
             $datafield = ArrayField::new('data', new TranslatableMessage('Request DATA'));

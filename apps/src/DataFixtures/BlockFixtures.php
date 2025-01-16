@@ -2,18 +2,37 @@
 
 namespace Labstag\DataFixtures;
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Link;
+use Labstag\Entity\Page;
 use Labstag\Lib\FixtureLib;
 use Override;
 
-class BlockFixtures extends FixtureLib
+class BlockFixtures extends FixtureLib implements DependentFixtureInterface
 {
+
+    /**
+     * @var Page[]
+     */
+    protected array $pages = [];
+
+    /**
+     * @return string[]
+     */
+    #[Override]
+    public function getDependencies(): array
+    {
+        return [PageFixtures::class];
+    }
+
+
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
+        $this->pages = $this->getIdentitiesByClass(Page::class);
         $data = $this->data();
         foreach ($data as $row) {
             $row->setEnable(true);
@@ -35,6 +54,42 @@ class BlockFixtures extends FixtureLib
             $link->setBlank($generator->boolean);
             $block->addLink($link);
         }
+    }
+
+    private function addLinksFooter(Block $block): void
+    {
+        $contact = $this->getPageByTitle('Contact');
+        if (!is_null($contact)) {
+            $link = new Link();
+            $link->setTitle($contact->getTitle());
+            $link->setUrl('[page:'.$contact->getId().']');
+            $block->addLink($link);
+        }
+
+
+        $contact = $this->getPageByTitle('Plan du site');
+        if (!is_null($contact)) {
+            $link = new Link();
+            $link->setTitle($contact->getTitle());
+            $link->setUrl('[page:'.$contact->getId().']');
+            $block->addLink($link);
+        }
+    }
+
+    private function getPageByTitle($pageTitle): ?Page
+    {
+        $page = null;
+        foreach (array_keys($this->pages) as $pageId) {
+            $data = $this->getReference($pageId, Page::class);
+            if ($pageTitle != $data->getTitle()) {
+                continue;
+            }
+
+            $page = $data;
+            break;
+        }
+
+        return $page;
     }
 
     private function addParagraphsHead(Block $block): void
@@ -127,7 +182,7 @@ class BlockFixtures extends FixtureLib
         $block->setRegion('footer');
         $block->setTitle('Footer Link');
         $block->setType('links');
-        $this->addLinks($block);
+        $this->addLinksFooter($block);
         yield $block;
     }
 }

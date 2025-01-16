@@ -212,8 +212,8 @@ abstract class ParagraphLib extends AbstractController
      */
     protected function getTemplateContent(string $folder, string $type): array
     {
-        if (isset($this->templates[$type])) {
-            return $this->templates[$type];
+        if (isset($this->templates[$folder][$type])) {
+            return $this->templates[$folder][$type];
         }
 
         $htmltwig = '.html.twig';
@@ -234,14 +234,14 @@ abstract class ParagraphLib extends AbstractController
             break;
         }
 
-        $this->templates[$type] = [
+        $this->templates[$folder][$type] = [
             'hook'  => 'paragraph',
             'type'  => $type,
             'files' => $files,
             'view'  => $view,
         ];
 
-        return $this->templates[$type];
+        return $this->templates[$folder][$type];
     }
 
     /**

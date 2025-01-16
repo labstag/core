@@ -299,7 +299,6 @@ class DashboardController extends AbstractDashboardController
             return $userMenu;
         }
 
-        $user = $this->getUser();
         $generator = $this->container->get(AdminUrlGenerator::class);
         $generator->setEntityId($user->getId());
 
