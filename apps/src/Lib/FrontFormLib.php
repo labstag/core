@@ -43,22 +43,8 @@ abstract class FrontFormLib implements FrontFormInterface
     public function getFields(array $data): iterable
     {
         unset($data);
+
         return [];
-    }
-
-    protected function saveForm(FormInterface $form): void
-    {
-        $raw  = $form->all();
-        $data = [];
-        foreach ($raw as $key => $row) {
-            $data[$key] = $row->getData();
-        }
-
-        $submission = new Submission();
-        $submission->setType($this->getCode());
-        $submission->setData($data);
-
-        $this->submissionRepository->save($submission);
     }
 
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
@@ -69,5 +55,20 @@ abstract class FrontFormLib implements FrontFormInterface
         }
 
         return $entityRepository;
+    }
+
+    protected function saveForm(FormInterface $form): void
+    {
+        $raw = $form->all();
+        $data = [];
+        foreach ($raw as $key => $row) {
+            $data[$key] = $row->getData();
+        }
+
+        $submission = new Submission();
+        $submission->setType($this->getCode());
+        $submission->setData($data);
+
+        $this->submissionRepository->save($submission);
     }
 }

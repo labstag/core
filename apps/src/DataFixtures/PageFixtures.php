@@ -27,6 +27,24 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         ];
     }
 
+    public function getParent($idParent): ?object
+    {
+        $parent = null;
+        $pages = $this->getIdentitiesByClass(Page::class);
+        foreach ($pages as $id) {
+            $page = $this->getReference($id, Page::class);
+            if ($page->getType() != $idParent) {
+                continue;
+            }
+
+            $parent = $page;
+
+            break;
+        }
+
+        return $parent;
+    }
+
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
@@ -127,25 +145,16 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addTagToEntity($page);
         $this->addCategoryToEntity($page);
 
-        $this->addReference('page_' .md5(uniqid()), $page);
+        $this->addReference('page_' . md5(uniqid()), $page);
         $objectManager->persist($page);
     }
 
-    public function getParent($idParent)
+    private function setParagraphsContact(Page $page): void
     {
-        $parent = null;
-        $pages = $this->getIdentitiesByClass(Page::class);
-        foreach ($pages as $id) {
-            $page = $this->getReference($id, Page::class);
-            if ($page->getType() != $idParent) {
-                continue;
-            }
-
-            $parent = $page;
-            break;
-        }
-
-        return $parent;
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'form');
+        $paragraph->setTitle('Formulaire de contact');
+        $paragraph->setForm('contact');
     }
 
     private function setParagraphsHome(Page $page): void
@@ -189,14 +198,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph = $this->paragraphService->addParagraph($page, 'sitemap');
         $paragraph->setTitle('Sitemap');
         $paragraph->setNbr(20);
-    }
-
-    private function setParagraphsContact(Page $page): void
-    {
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'form');
-        $paragraph->setTitle('Formulaire de contact');
-        $paragraph->setForm('contact');
     }
 
     private function setParagraphsStar(Page $page): void

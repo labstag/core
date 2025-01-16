@@ -213,7 +213,8 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $associationField->setTemplatePath('admin/field/categories.html.twig');
         $associationField->setFormTypeOption('by_reference', false);
         $associationField->setQueryBuilder(
-            function (QueryBuilder $queryBuilder) use ($type): void {
+            function (QueryBuilder $queryBuilder) use ($type): void
+            {
                 $queryBuilder->andWhere('entity.type = :type');
                 $queryBuilder->setParameter('type', $type);
             }
@@ -364,7 +365,8 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $associationField->setTemplatePath('admin/field/tags.html.twig');
         $associationField->setFormTypeOption('by_reference', false);
         $associationField->setQueryBuilder(
-            function (QueryBuilder $queryBuilder) use ($type): void {
+            function (QueryBuilder $queryBuilder) use ($type): void
+            {
                 $queryBuilder->andWhere('entity.type = :type');
                 $queryBuilder->setParameter('type', $type);
             }
@@ -396,6 +398,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $textField;
     }
 
+    protected function addFilterCategories(Filters $filters): void
+    {
+        $filters->add(EntityFilter::new('categories', new TranslatableMessage('Categories')));
+    }
+
     protected function addFilterEnable(Filters $filters): void
     {
         $filters->add(BooleanFilter::new('enable', new TranslatableMessage('Enable')));
@@ -404,6 +411,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     protected function addFilterRefUser(Filters $filters): void
     {
         $filters->add(EntityFilter::new('refuser', new TranslatableMessage('Refuser')));
+    }
+
+    protected function addFilterTags(Filters $filters): void
+    {
+        $filters->add(EntityFilter::new('tags', new TranslatableMessage('Tags')));
     }
 
     protected function addTabPrincipal(): FormField

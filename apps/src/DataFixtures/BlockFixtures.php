@@ -28,7 +28,6 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         return [PageFixtures::class];
     }
 
-
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
@@ -62,7 +61,7 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         if (!is_null($contact)) {
             $link = new Link();
             $link->setTitle($contact->getTitle());
-            $link->setUrl('[page:'.$contact->getId().']');
+            $link->setUrl('[page:' . $contact->getId() . ']');
             $block->addLink($link);
         }
 
@@ -70,25 +69,9 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         if (!is_null($contact)) {
             $link = new Link();
             $link->setTitle($contact->getTitle());
-            $link->setUrl('[page:'.$contact->getId().']');
+            $link->setUrl('[page:' . $contact->getId() . ']');
             $block->addLink($link);
         }
-    }
-
-    private function getPageByTitle($pageTitle): ?Page
-    {
-        $page = null;
-        foreach (array_keys($this->pages) as $pageId) {
-            $data = $this->getReference($pageId, Page::class);
-            if ($pageTitle != $data->getTitle()) {
-                continue;
-            }
-
-            $page = $data;
-            break;
-        }
-
-        return $page;
     }
 
     private function addParagraphsHead(Block $block): void
@@ -183,5 +166,22 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         $block->setType('links');
         $this->addLinksFooter($block);
         yield $block;
+    }
+
+    private function getPageByTitle(string $pageTitle): ?Page
+    {
+        $page = null;
+        foreach (array_keys($this->pages) as $pageId) {
+            $data = $this->getReference($pageId, Page::class);
+            if ($pageTitle != $data->getTitle()) {
+                continue;
+            }
+
+            $page = $data;
+
+            break;
+        }
+
+        return $page;
     }
 }

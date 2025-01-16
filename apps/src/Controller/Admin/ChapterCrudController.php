@@ -66,6 +66,8 @@ class ChapterCrudController extends AbstractCrudControllerLib
     {
         $this->addFilterEnable($filters);
         $filters->add(EntityFilter::new('refstory', new TranslatableMessage('Story')));
+        $this->addFilterTags($filters);
+        $this->addFilterCategories($filters);
 
         return $filters;
     }
@@ -96,7 +98,8 @@ class ChapterCrudController extends AbstractCrudControllerLib
             /** @var User $user */
             $idUser = $user->getId();
             $associationField->setQueryBuilder(
-                function (QueryBuilder $queryBuilder) use ($idUser): void {
+                function (QueryBuilder $queryBuilder) use ($idUser): void
+                {
                     $queryBuilder->leftjoin('entity.refuser', 'refuser');
                     $queryBuilder->andWhere('refuser.id = :id');
                     $queryBuilder->setParameter('id', $idUser);

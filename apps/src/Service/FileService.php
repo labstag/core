@@ -209,7 +209,7 @@ class FileService
     }
 
     /**
-     * @param object|mixed[] $entity
+     * @param mixed[]|object $entity
      *
      * @return mixed[]
      */

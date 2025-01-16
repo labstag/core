@@ -15,14 +15,14 @@ class BanIp
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
+    #[ORM\Column]
+    private ?bool $enable = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
-
-    #[ORM\Column]
-    private ?bool $enable = null;
 
     #[ORM\Column(length: 255)]
     private ?string $internetProtocol = null;
@@ -33,6 +33,16 @@ class BanIp
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    public function getInternetProtocol(): ?string
+    {
+        return $this->internetProtocol;
+    }
+
+    public function getReason(): ?string
+    {
+        return $this->reason;
     }
 
     public function isEnable(): ?bool
@@ -47,21 +57,11 @@ class BanIp
         return $this;
     }
 
-    public function getInternetProtocol(): ?string
-    {
-        return $this->internetProtocol;
-    }
-
     public function setInternetProtocol(string $internetProtocol): static
     {
         $this->internetProtocol = $internetProtocol;
 
         return $this;
-    }
-
-    public function getReason(): ?string
-    {
-        return $this->reason;
     }
 
     public function setReason(?string $reason): static

@@ -46,6 +46,22 @@ class SecurityService
     {
     }
 
+    public function addBan(string $internetProtocol): void
+    {
+        $banIp = $this->banIpRepository->findOneBy(
+            ['internetProtocol' => $internetProtocol]
+        );
+        if ($banIp instanceof BanIp) {
+            return;
+        }
+
+        $banIp = new BanIp();
+        $banIp->setInternetProtocol($internetProtocol);
+        $banIp->setEnable(true);
+
+        $this->banIpRepository->save($banIp);
+    }
+
     public function get(): ?RedirectResponse
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -87,81 +103,6 @@ class SecurityService
                 'enable'           => true,
             ]
         );
-    }
-
-    private function testRedirectRegex(string $pathinfo, array $redirections): ?RedirectResponse
-    {
-        $redirect = null;
-        foreach ($redirections as $redirection) {
-            if (preg_match($redirection->getSource(), $pathinfo)) {
-                $redirect = $this->setRedirectResponse($redirection);
-
-                break;
-            }
-        }
-
-        return $redirect;
-    }
-
-    private function setRedirectResponse(Redirection $redirection): RedirectResponse
-    {
-        $redirection->incrementLastCount();
-        $this->redirectionRepository->save($redirection);
-
-        return new RedirectResponse($redirection->getDestination(), $redirection->getActionCode());
-    }
-
-    private function testRedirect(string $pathinfo, array $redirections): ?RedirectResponse
-    {
-        $redirect = null;
-        foreach ($redirections as $redirection) {
-            if ($redirection->getSource() == $pathinfo) {
-                $redirect = $this->setRedirectResponse($redirection);
-
-                break;
-            }
-        }
-
-        return $redirect;
-    }
-
-    private function getRedirections(bool $regex): array
-    {
-        return $this->redirectionRepository->findBy(
-            [
-                'enable' => true,
-                'regex'  => $regex,
-            ],
-            ['position' => 'ASC']
-        );
-    }
-
-    private function isDisableUrl($url): bool
-    {
-        $find = false;
-        foreach ($this->disable as $type) {
-            if (str_contains((string) $url, (string) $type)) {
-                $find = true;
-
-                break;
-            }
-        }
-
-        return $find;
-    }
-
-    private function isForbiddenUrl($url): bool
-    {
-        $find = false;
-        foreach ($this->forbidden as $type) {
-            if (str_contains((string) $url, (string) $type)) {
-                $find = true;
-
-                break;
-            }
-        }
-
-        return $find;
     }
 
     public function set($httpCode = 404): void
@@ -227,19 +168,78 @@ class SecurityService
         $this->httpErrorLogsRepository->save($httpErrorLogs);
     }
 
-    public function addBan(string $internetProtocol): void
+    private function getRedirections(bool $regex): array
     {
-        $banIp = $this->banIpRepository->findOneBy(
-            ['internetProtocol' => $internetProtocol]
+        return $this->redirectionRepository->findBy(
+            [
+                'enable' => true,
+                'regex'  => $regex,
+            ],
+            ['position' => 'ASC']
         );
-        if ($banIp instanceof BanIp) {
-            return;
+    }
+
+    private function isDisableUrl($url): bool
+    {
+        $find = false;
+        foreach ($this->disable as $type) {
+            if (str_contains((string) $url, (string) $type)) {
+                $find = true;
+
+                break;
+            }
         }
 
-        $banIp = new BanIp();
-        $banIp->setInternetProtocol($internetProtocol);
-        $banIp->setEnable(true);
+        return $find;
+    }
 
-        $this->banIpRepository->save($banIp);
+    private function isForbiddenUrl($url): bool
+    {
+        $find = false;
+        foreach ($this->forbidden as $type) {
+            if (str_contains((string) $url, (string) $type)) {
+                $find = true;
+
+                break;
+            }
+        }
+
+        return $find;
+    }
+
+    private function setRedirectResponse(Redirection $redirection): RedirectResponse
+    {
+        $redirection->incrementLastCount();
+        $this->redirectionRepository->save($redirection);
+
+        return new RedirectResponse($redirection->getDestination(), $redirection->getActionCode());
+    }
+
+    private function testRedirect(string $pathinfo, array $redirections): ?RedirectResponse
+    {
+        $redirect = null;
+        foreach ($redirections as $redirection) {
+            if ($redirection->getSource() == $pathinfo) {
+                $redirect = $this->setRedirectResponse($redirection);
+
+                break;
+            }
+        }
+
+        return $redirect;
+    }
+
+    private function testRedirectRegex(string $pathinfo, array $redirections): ?RedirectResponse
+    {
+        $redirect = null;
+        foreach ($redirections as $redirection) {
+            if (preg_match($redirection->getSource(), $pathinfo)) {
+                $redirect = $this->setRedirectResponse($redirection);
+
+                break;
+            }
+        }
+
+        return $redirect;
     }
 }

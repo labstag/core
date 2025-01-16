@@ -152,7 +152,8 @@ class UserCrudController extends AbstractCrudControllerLib
 
     private function hashPassword(): callable
     {
-        return function ($event): void {
+        return function ($event): void
+        {
             $form = $event->getForm();
             if (!$form->isValid()) {
                 return;

@@ -15,12 +15,6 @@ class HttpErrorLogs
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: Types::GUID, unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
-
     #[ORM\Column(length: 255)]
     private ?string $agent = null;
 
@@ -29,6 +23,12 @@ class HttpErrorLogs
 
     #[ORM\Column(length: 255)]
     private ?string $httpCode = null;
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::GUID, unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $internetProtocol = null;
@@ -48,14 +48,54 @@ class HttpErrorLogs
     #[ORM\Column(type: Types::TEXT)]
     private ?string $url = null;
 
+    public function getAgent(): ?string
+    {
+        return $this->agent;
+    }
+
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+
+    public function getHttpCode(): ?string
+    {
+        return $this->httpCode;
+    }
+
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function getAgent(): ?string
+    public function getInternetProtocol(): ?string
     {
-        return $this->agent;
+        return $this->internetProtocol;
+    }
+
+    public function getReferer(): ?string
+    {
+        return $this->referer;
+    }
+
+    public function getRefUser(): ?User
+    {
+        return $this->refUser;
+    }
+
+    public function getRequestData(): array
+    {
+        return $this->requestData;
+    }
+
+    public function getRequestMethod(): ?string
+    {
+        return $this->requestMethod;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
     }
 
     public function setAgent(string $agent): static
@@ -65,21 +105,11 @@ class HttpErrorLogs
         return $this;
     }
 
-    public function getDomain(): ?string
-    {
-        return $this->domain;
-    }
-
     public function setDomain(string $domain): static
     {
         $this->domain = $domain;
 
         return $this;
-    }
-
-    public function getHttpCode(): ?string
-    {
-        return $this->httpCode;
     }
 
     public function setHttpCode(string $httpCode): static
@@ -89,21 +119,11 @@ class HttpErrorLogs
         return $this;
     }
 
-    public function getInternetProtocol(): ?string
-    {
-        return $this->internetProtocol;
-    }
-
     public function setInternetProtocol(string $internetProtocol): static
     {
         $this->internetProtocol = $internetProtocol;
 
         return $this;
-    }
-
-    public function getReferer(): ?string
-    {
-        return $this->referer;
     }
 
     public function setReferer(?string $referer): static
@@ -113,21 +133,11 @@ class HttpErrorLogs
         return $this;
     }
 
-    public function getRefUser(): ?User
-    {
-        return $this->refUser;
-    }
-
     public function setRefUser(?User $refUser): static
     {
         $this->refUser = $refUser;
 
         return $this;
-    }
-
-    public function getRequestData(): array
-    {
-        return $this->requestData;
     }
 
     public function setRequestData(array $requestData): static
@@ -137,21 +147,11 @@ class HttpErrorLogs
         return $this;
     }
 
-    public function getRequestMethod(): ?string
-    {
-        return $this->requestMethod;
-    }
-
     public function setRequestMethod(?string $requestMethod): static
     {
         $this->requestMethod = $requestMethod;
 
         return $this;
-    }
-
-    public function getUrl(): ?string
-    {
-        return $this->url;
     }
 
     public function setUrl(string $url): static

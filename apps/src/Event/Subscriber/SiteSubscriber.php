@@ -61,7 +61,9 @@ class SiteSubscriber implements EventSubscriberInterface
 
         $banIp = $this->securityService->getBanIp();
         if ($banIp instanceof BanIp) {
-            $requestEvent->setResponse(new Response('Your IP is banned<br />' . $banIp->getReason(), \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN));
+            $requestEvent->setResponse(
+                new Response('Your IP is banned<br />' . $banIp->getReason(), Response::HTTP_FORBIDDEN)
+            );
 
             return;
         }

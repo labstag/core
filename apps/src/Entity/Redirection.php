@@ -15,12 +15,6 @@ class Redirection
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: Types::GUID, unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
-
     #[ORM\Column]
     private ?int $actionCode = null;
 
@@ -36,36 +30,30 @@ class Redirection
     #[ORM\Column]
     private ?bool $enable = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $source = null;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::GUID, unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
 
     #[ORM\Column]
     private ?int $lastCount = 0;
 
     #[ORM\Column]
+    private ?int $position = null;
+
+    #[ORM\Column]
     private ?bool $regex = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $source = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
-    #[ORM\Column]
-    private ?int $position = null;
-
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
-
     public function getActionCode(): ?int
     {
         return $this->actionCode;
-    }
-
-    public function setActionCode(int $actionCode): static
-    {
-        $this->actionCode = $actionCode;
-
-        return $this;
     }
 
     public function getActionType(): ?string
@@ -73,23 +61,9 @@ class Redirection
         return $this->actionType;
     }
 
-    public function setActionType(string $actionType): static
-    {
-        $this->actionType = $actionType;
-
-        return $this;
-    }
-
     public function getData(): array
     {
         return $this->data;
-    }
-
-    public function setData(array $data): static
-    {
-        $this->data = $data;
-
-        return $this;
     }
 
     public function getDestination(): ?string
@@ -97,9 +71,34 @@ class Redirection
         return $this->destination;
     }
 
-    public function setDestination(string $destination): static
+    public function getId(): ?string
     {
-        $this->destination = $destination;
+        return $this->id;
+    }
+
+    public function getLastCount(): ?int
+    {
+        return $this->lastCount;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function getSource(): ?string
+    {
+        return $this->source;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function incrementLastCount(): self
+    {
+        ++$this->lastCount;
 
         return $this;
     }
@@ -109,28 +108,44 @@ class Redirection
         return $this->enable;
     }
 
+    public function isRegex(): ?bool
+    {
+        return $this->regex;
+    }
+
+    public function setActionCode(int $actionCode): static
+    {
+        $this->actionCode = $actionCode;
+
+        return $this;
+    }
+
+    public function setActionType(string $actionType): static
+    {
+        $this->actionType = $actionType;
+
+        return $this;
+    }
+
+    public function setData(array $data): static
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    public function setDestination(string $destination): static
+    {
+        $this->destination = $destination;
+
+        return $this;
+    }
+
     public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
 
         return $this;
-    }
-
-    public function getSource(): ?string
-    {
-        return $this->source;
-    }
-
-    public function setSource(string $source): static
-    {
-        $this->source = $source;
-
-        return $this;
-    }
-
-    public function getLastCount(): ?int
-    {
-        return $this->lastCount;
     }
 
     public function setLastCount(int $lastCount): static
@@ -140,9 +155,11 @@ class Redirection
         return $this;
     }
 
-    public function isRegex(): ?bool
+    public function setPosition(int $position): static
     {
-        return $this->regex;
+        $this->position = $position;
+
+        return $this;
     }
 
     public function setRegex(bool $regex): static
@@ -152,33 +169,16 @@ class Redirection
         return $this;
     }
 
-    public function getTitle(): ?string
+    public function setSource(string $source): static
     {
-        return $this->title;
+        $this->source = $source;
+
+        return $this;
     }
 
     public function setTitle(?string $title): static
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function getPosition(): ?int
-    {
-        return $this->position;
-    }
-
-    public function setPosition(int $position): static
-    {
-        $this->position = $position;
-
-        return $this;
-    }
-
-    public function incrementLastCount(): self
-    {
-        ++$this->lastCount;
 
         return $this;
     }

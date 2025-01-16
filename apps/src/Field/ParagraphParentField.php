@@ -4,6 +4,7 @@
 
 namespace Labstag\Field;
 
+use Closure;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use Override;
@@ -86,7 +87,7 @@ final class ParagraphParentField implements FieldInterface
         return $this;
     }
 
-    public function setQueryBuilder(\Closure $queryBuilderCallable): self
+    public function setQueryBuilder(Closure $queryBuilderCallable): self
     {
         $this->setCustomOption(self::OPTION_QUERY_BUILDER_CALLABLE, $queryBuilderCallable);
 
