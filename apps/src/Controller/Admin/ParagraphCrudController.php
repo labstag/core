@@ -95,6 +95,6 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     {
         $query = $this->requestStack->getCurrentRequest()->query->all();
 
-        return isset($query['iframe']) && isset($query['crudAction']) && $query['crudAction'] === 'edit';
+        return isset($query['iframe']);
     }
 }
