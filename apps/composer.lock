@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ece28a68426cf4bd8a29ee026c8bf75",
+    "content-hash": "2ee44dcc819ab91a19b54938707485a0",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -534,16 +534,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "3.9.3",
+            "version": "3.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "61446f07fcb522414d6cfd8b1c3e5f9e18c579ba"
+                "reference": "ec16c82f20be1a7224e65ac67144a29199f87959"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/61446f07fcb522414d6cfd8b1c3e5f9e18c579ba",
-                "reference": "61446f07fcb522414d6cfd8b1c3e5f9e18c579ba",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/ec16c82f20be1a7224e65ac67144a29199f87959",
+                "reference": "ec16c82f20be1a7224e65ac67144a29199f87959",
                 "shasum": ""
             },
             "require": {
@@ -559,15 +559,13 @@
                 "doctrine/coding-standard": "12.0.0",
                 "fig/log-test": "^1",
                 "jetbrains/phpstorm-stubs": "2023.1",
-                "phpstan/phpstan": "1.12.6",
-                "phpstan/phpstan-strict-rules": "^1.6",
-                "phpunit/phpunit": "9.6.20",
-                "psalm/plugin-phpunit": "0.18.4",
+                "phpstan/phpstan": "2.1.1",
+                "phpstan/phpstan-strict-rules": "^2",
+                "phpunit/phpunit": "9.6.22",
                 "slevomat/coding-standard": "8.13.1",
                 "squizlabs/php_codesniffer": "3.10.2",
                 "symfony/cache": "^5.4|^6.0|^7.0",
-                "symfony/console": "^4.4|^5.4|^6.0|^7.0",
-                "vimeo/psalm": "4.30.0"
+                "symfony/console": "^4.4|^5.4|^6.0|^7.0"
             },
             "suggest": {
                 "symfony/console": "For helpful console commands such as SQL execution and import of files."
@@ -627,7 +625,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/dbal/issues",
-                "source": "https://github.com/doctrine/dbal/tree/3.9.3"
+                "source": "https://github.com/doctrine/dbal/tree/3.9.4"
             },
             "funding": [
                 {
@@ -643,7 +641,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-10T17:56:43+00:00"
+            "time": "2025-01-16T08:28:55+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -1578,16 +1576,16 @@
         },
         {
             "name": "easycorp/easyadmin-bundle",
-            "version": "v4.22.0",
+            "version": "v4.22.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EasyCorp/EasyAdminBundle.git",
-                "reference": "d4d442b6e000cdf107dea5296272207af735701c"
+                "reference": "d1bfc45e34359cbf3c1f9bf2fb5eb032b1c40d30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/d4d442b6e000cdf107dea5296272207af735701c",
-                "reference": "d4d442b6e000cdf107dea5296272207af735701c",
+                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/d1bfc45e34359cbf3c1f9bf2fb5eb032b1c40d30",
+                "reference": "d1bfc45e34359cbf3c1f9bf2fb5eb032b1c40d30",
                 "shasum": ""
             },
             "require": {
@@ -1667,7 +1665,7 @@
             ],
             "support": {
                 "issues": "https://github.com/EasyCorp/EasyAdminBundle/issues",
-                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.22.0"
+                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.22.1"
             },
             "funding": [
                 {
@@ -1675,7 +1673,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-14T20:33:57+00:00"
+            "time": "2025-01-15T18:38:01+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -2073,16 +2071,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.13.52",
+            "version": "8.13.53",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "cc9a82b237d79a85be47c0b06e3943f75ab35c32"
+                "reference": "b3362a3c04f87b02c6e712774d20f9e577c3918c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/cc9a82b237d79a85be47c0b06e3943f75ab35c32",
-                "reference": "cc9a82b237d79a85be47c0b06e3943f75ab35c32",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/b3362a3c04f87b02c6e712774d20f9e577c3918c",
+                "reference": "b3362a3c04f87b02c6e712774d20f9e577c3918c",
                 "shasum": ""
             },
             "require": {
@@ -2146,7 +2144,7 @@
                 "issues": "https://github.com/giggsey/libphonenumber-for-php/issues",
                 "source": "https://github.com/giggsey/libphonenumber-for-php"
             },
-            "time": "2024-12-13T09:08:43+00:00"
+            "time": "2025-01-15T17:09:39+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -14540,16 +14538,16 @@
         },
         {
             "name": "symplify/phpstan-rules",
-            "version": "14.1.5",
+            "version": "14.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/phpstan-rules.git",
-                "reference": "4479c197a6974811a95e4a2f4a36efbb80d03554"
+                "reference": "619dbf6994efce19d8671d060c8cbb575d31dfb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/phpstan-rules/zipball/4479c197a6974811a95e4a2f4a36efbb80d03554",
-                "reference": "4479c197a6974811a95e4a2f4a36efbb80d03554",
+                "url": "https://api.github.com/repos/symplify/phpstan-rules/zipball/619dbf6994efce19d8671d060c8cbb575d31dfb8",
+                "reference": "619dbf6994efce19d8671d060c8cbb575d31dfb8",
                 "shasum": ""
             },
             "require": {
@@ -14567,6 +14565,9 @@
                 }
             },
             "autoload": {
+                "files": [
+                    "src/functions/fast-functions.php"
+                ],
                 "psr-4": {
                     "Symplify\\PHPStanRules\\": "src"
                 }
@@ -14578,7 +14579,7 @@
             "description": "Set of Symplify rules for PHPStan",
             "support": {
                 "issues": "https://github.com/symplify/phpstan-rules/issues",
-                "source": "https://github.com/symplify/phpstan-rules/tree/14.1.5"
+                "source": "https://github.com/symplify/phpstan-rules/tree/14.2.5"
             },
             "funding": [
                 {
@@ -14590,7 +14591,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-06T13:17:05+00:00"
+            "time": "2025-01-13T09:27:41+00:00"
         },
         {
             "name": "theseer/tokenizer",
