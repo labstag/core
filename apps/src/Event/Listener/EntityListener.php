@@ -7,15 +7,22 @@ use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
+use Faker\Factory;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
+use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Repository\PageRepository;
+use Labstag\Service\ImdbService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\WorkflowService;
+use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Workflow\Registry;
 
 #[AsDoctrineListener(event: Events::prePersist)]
@@ -25,6 +32,8 @@ final class EntityListener
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
+        private KernelInterface $kernel,
+        private ImdbService $imdbService,
         private PageRepository $pageRepository,
         private ParagraphService $paragraphService,
         private WorkflowService $workflowService,
@@ -46,6 +55,7 @@ final class EntityListener
         $this->prePersistChapter($object);
         $this->prePersistParagraph($object);
         $this->prePersistPage($object);
+        $this->prePersistMovie($object);
         $this->initWorkflow($object);
     }
 
@@ -109,6 +119,19 @@ final class EntityListener
         $story = $entity->getRefstory();
         $chapters = $story->getChapters();
         $entity->setPosition(count($chapters) + 1);
+    }
+
+    private function prePersistMovie(object $entity): void
+    {
+        if (!$entity instanceof Movie) {
+            return;
+        }
+
+        if (!is_null($entity->getImg()) || $entity->getImg() != '') {
+            return;
+        }
+
+        $this->imdbService->update($entity);
     }
 
     private function prePersistPage(object $entity): void
