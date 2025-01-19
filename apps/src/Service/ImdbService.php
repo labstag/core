@@ -9,6 +9,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ImdbService
 {
+    private const STATUSOK = 200;
+
     public function __construct(
         protected HttpClientInterface $httpClient,
         protected string $apiKey
@@ -22,7 +24,7 @@ class ImdbService
         $url = 'http://www.omdbapi.com/?i=tt'.$imdbId.'&apikey='.$this->apiKey;
 
         $response = $this->httpClient->request('GET', $url);
-        if ($response->getStatusCode() === 200) {
+        if ($response->getStatusCode() === self::STATUSOK) {
             return $response->toArray();
         }
 
