@@ -8,6 +8,7 @@ use Labstag\Entity\Chapter;
 use Labstag\Entity\Configuration;
 use Labstag\Entity\Edito;
 use Labstag\Entity\Memo;
+use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
@@ -29,6 +30,8 @@ class FileService
         protected LocalFilesystemAdapter $privateAdapter,
         #[Autowire(service: 'flysystem.adapter.public.storage')]
         protected LocalFilesystemAdapter $publicAdapter,
+        #[Autowire(service: 'flysystem.adapter.movie.storage')]
+        protected LocalFilesystemAdapter $movieAdapter,
         #[Autowire(service: 'flysystem.adapter.configuration.storage')]
         protected LocalFilesystemAdapter $configurationAdapter,
         #[Autowire(service: 'flysystem.adapter.avatar.storage')]
@@ -267,6 +270,7 @@ class FileService
         return [
             'private'       => $this->privateAdapter,
             'public'        => $this->publicAdapter,
+            'movie'         => $this->movieAdapter,
             'configuration' => $this->configurationAdapter,
             'avatar'        => $this->avatarAdapter,
             'chapter'       => $this->chapterAdapter,
@@ -287,6 +291,7 @@ class FileService
         return [
             'avatar'        => User::class,
             'chapter'       => Chapter::class,
+            'movie'         => Movie::class,
             'configuration' => Configuration::class,
             'edito'         => Edito::class,
             'story'         => Story::class,

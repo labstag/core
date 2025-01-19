@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -10,8 +12,11 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\MovieRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
+#[Vich\Uploadable]
 class Movie
 {
     use SoftDeleteableEntity;
@@ -47,6 +52,12 @@ class Movie
     #[ORM\Column(nullable: true)]
     private ?int $year = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $img = null;
+
+    #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'img')]
+    private ?File $imgFile = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -60,6 +71,32 @@ class Movie
         }
 
         return $this;
+    }
+
+    public function getImg(): ?string
+    {
+        return $this->img;
+    }
+
+    public function getImgFile(): ?File
+    {
+        return $this->imgFile;
+    }
+
+    public function setImg(?string $img): void
+    {
+        $this->img = $img;
+    }
+
+    public function setImgFile(?File $imgFile = null): void
+    {
+        $this->imgFile = $imgFile;
+
+        if ($imgFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     /**

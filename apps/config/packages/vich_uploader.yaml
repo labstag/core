@@ -31,6 +31,17 @@ vich_uploader:
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
+    movie:
+      uri_prefix: /uploads/movie
+      upload_destination: movie.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: imdb
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
     edito:
       uri_prefix: /uploads/edito
       upload_destination: edito.storage

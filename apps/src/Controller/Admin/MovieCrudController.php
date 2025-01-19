@@ -5,6 +5,7 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -43,15 +44,24 @@ class MovieCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->addFilterEnable($filters);
+        $this->addFilterCategories($filters);
+
+        return $filters;
+    }
+
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
         yield $this->addFieldID();
         yield $this->addFieldTitle();
         yield TextField::new('imdb');
         yield IntegerField::new('year');
         yield TextField::new('country');
         yield $this->addFieldCategories('movie');
+        yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
     }
 
