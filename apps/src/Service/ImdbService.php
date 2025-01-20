@@ -21,13 +21,12 @@ class ImdbService
 
     public function getDetails(string $imdbId): array
     {
+        $response = $this->httpClient->request('GET', $url);
         if ($this->apiKey == '') {
             return $response->toArray();
         }
 
         $url = 'http://www.omdbapi.com/?i=tt'.$imdbId.'&apikey='.$this->apiKey;
-
-        $response = $this->httpClient->request('GET', $url);
         if ($response->getStatusCode() === self::STATUSOK) {
             return $response->toArray();
         }
