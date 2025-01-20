@@ -4,6 +4,7 @@ namespace Labstag\Command;
 
 use Labstag\Entity\Star;
 use Labstag\Repository\StarRepository;
+use Labstag\Service\FileService;
 use NumberFormatter;
 use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -22,6 +23,7 @@ class StarAddCommand extends Command
     private int $update = 0;
 
     public function __construct(
+        protected FileService $fileService,
         protected StarRepository $starRepository,
     )
     {
@@ -43,7 +45,7 @@ class StarAddCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $file = getcwd() . '/private/stars.json';
+        $file = $this->fileService->getFileInAdapter('private', 'stars.csv');
         if (!is_file($file)) {
             $symfonyStyle->error('File not found');
 

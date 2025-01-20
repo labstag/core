@@ -6,6 +6,7 @@ use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
+use Labstag\Service\FileService;
 use NumberFormatter;
 use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -31,6 +32,7 @@ class MovieAddCommand extends Command
 
     public function __construct(
         protected MovieRepository $movieRepository,
+        protected FileService $fileService,
         protected CategoryRepository $categoryRepository,
     )
     {
@@ -78,7 +80,7 @@ class MovieAddCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $file = getcwd() . '/private/movies.csv';
+        $file = $this->fileService->getFileInAdapter('private', 'movies.csv');
         if (!is_file($file)) {
             $symfonyStyle->error('File not found');
 
@@ -148,11 +150,11 @@ class MovieAddCommand extends Command
             ['enable' => true]
         );
         $counter = 0;
-        foreach ($movies as $movie) {
-            $movie->setEnable(false);
+        foreach ($movies as $RectorPrefix202501movie) {
+            $RectorPrefix202501movie->setEnable(false);
             ++$counter;
 
-            $this->movieRepository->persist($movie);
+            $this->movieRepository->persist($RectorPrefix202501movie);
             $this->movieRepository->flush($counter);
         }
 

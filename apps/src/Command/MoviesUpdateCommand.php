@@ -2,7 +2,6 @@
 
 namespace Labstag\Command;
 
-use Exception;
 use Labstag\Entity\Movie;
 use Labstag\Repository\MovieRepository;
 use Labstag\Service\ImdbService;
@@ -13,18 +12,13 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-#[AsCommand(
-    name: 'labstag:movies-update',
-    description: 'Add a short description for your command',
-)]
+#[AsCommand(name: 'labstag:movies-update', description: 'Add a short description for your command',)]
 class MoviesUpdateCommand extends Command
 {
-
     public function __construct(
         protected MovieRepository $movieRepository,
-        protected ImdbService $imdbService
+        protected ImdbService $imdbService,
     )
     {
         parent::__construct();
@@ -39,10 +33,13 @@ class MoviesUpdateCommand extends Command
         $symfonyStyle = new SymfonyStyle($input, $output);
 
         // Movie without img
-        $movies = $this->movieRepository->findBy(['img' => null]);
+        $movies = $this->movieRepository->findBy(
+            ['img' => null]
+        );
 
         $progressBar = new ProgressBar($output, count($movies));
         $progressBar->start();
+
         $update = 0;
         $counter = 0;
         foreach ($movies as $movie) {
@@ -59,12 +56,7 @@ class MoviesUpdateCommand extends Command
         $progressBar->finish();
 
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
-        $symfonyStyle->success(
-            sprintf(
-                'Updated: %d',
-                $numberFormatter->format($update)
-            )
-        );
+        $symfonyStyle->success(sprintf('Updated: %d', $numberFormatter->format($update)));
 
         return Command::SUCCESS;
     }

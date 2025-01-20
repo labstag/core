@@ -15,30 +15,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SecurityService
 {
-
-    protected array $disable = [
-        '/build',
-        '/media',
-    ];
-
-    protected array $forbidden = [
-        '.git',
-        '.well-known',
-        'wordpress',
-        'mysql',
-        'phpmyadmin',
-        'wp-includes',
-        'shopdb',
-        'wp-',
-        'atomlib.php',
-        'enhancecp',
-        'nmaplowercheck',
-        'vendor',
-    ];
-
     public function __construct(
         protected Security $security,
         protected RequestStack $requestStack,
+        protected FileService $fileService,
         protected BanIpRepository $banIpRepository,
         protected RedirectionRepository $redirectionRepository,
         protected HttpErrorLogsRepository $httpErrorLogsRepository,
@@ -181,9 +161,11 @@ class SecurityService
 
     private function isDisableUrl($url): bool
     {
+        $file = $this->fileService->getFileInAdapter('private', 'disable.txt');
+        $disable = explode("\n", file_get_contents($file));
         $find = false;
-        foreach ($this->disable as $type) {
-            if (str_contains((string) $url, (string) $type)) {
+        foreach ($disable as $type) {
+            if (str_contains((string) $url, $type)) {
                 $find = true;
 
                 break;
@@ -195,9 +177,11 @@ class SecurityService
 
     private function isForbiddenUrl($url): bool
     {
+        $file = $this->fileService->getFileInAdapter('private', 'forbidden.txt');
+        $forbidden = explode("\n", file_get_contents($file));
         $find = false;
-        foreach ($this->forbidden as $type) {
-            if (str_contains((string) $url, (string) $type)) {
+        foreach ($forbidden as $type) {
+            if (str_contains((string) $url, $type)) {
                 $find = true;
 
                 break;
