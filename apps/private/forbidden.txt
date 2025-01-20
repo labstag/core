@@ -1,0 +1,12 @@
+.git
+.well-known
+wordpress
+mysql
+phpmyadmin
+wp-includes
+shopdb
+wp-
+atomlib.php
+enhancecp
+nmaplowercheck
+vendor
