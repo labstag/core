@@ -21,6 +21,10 @@ class ImdbService
 
     public function getDetails(string $imdbId): array
     {
+        if ($this->apiKey == '') {
+            return $response->toArray();
+        }
+
         $url = 'http://www.omdbapi.com/?i=tt'.$imdbId.'&apikey='.$this->apiKey;
 
         $response = $this->httpClient->request('GET', $url);
