@@ -7,8 +7,6 @@ use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\ObjectManager;
-use Exception;
-use Faker\Factory;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
@@ -19,9 +17,7 @@ use Labstag\Repository\PageRepository;
 use Labstag\Service\ImdbService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\WorkflowService;
-use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Workflow\Registry;
 

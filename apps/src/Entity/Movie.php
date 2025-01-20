@@ -46,17 +46,17 @@ class Movie
     #[ORM\Column(length: 255)]
     private ?string $imdb = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $year = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'img')]
     private ?File $imgFile = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $title = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $year = null;
 
     public function __construct()
     {
@@ -71,32 +71,6 @@ class Movie
         }
 
         return $this;
-    }
-
-    public function getImg(): ?string
-    {
-        return $this->img;
-    }
-
-    public function getImgFile(): ?File
-    {
-        return $this->imgFile;
-    }
-
-    public function setImg(?string $img): void
-    {
-        $this->img = $img;
-    }
-
-    public function setImgFile(?File $imgFile = null): void
-    {
-        $this->imgFile = $imgFile;
-
-        if ($imgFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     /**
@@ -120,6 +94,16 @@ class Movie
     public function getImdb(): ?string
     {
         return $this->imdb;
+    }
+
+    public function getImg(): ?string
+    {
+        return $this->img;
+    }
+
+    public function getImgFile(): ?File
+    {
+        return $this->imgFile;
     }
 
     public function getTitle(): ?string
@@ -165,6 +149,22 @@ class Movie
         $this->imdb = $imdb;
 
         return $this;
+    }
+
+    public function setImg(?string $img): void
+    {
+        $this->img = $img;
+    }
+
+    public function setImgFile(?File $imgFile = null): void
+    {
+        $this->imgFile = $imgFile;
+
+        if ($imgFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setTitle(?string $title): static

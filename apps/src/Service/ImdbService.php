@@ -13,19 +13,18 @@ class ImdbService
 
     public function __construct(
         protected HttpClientInterface $httpClient,
-        protected string $apiKey
+        protected string $apiKey,
     )
     {
-
     }
 
     public function getDetails(string $imdbId): array
     {
-        if ($this->apiKey == '') {
+        if ($this->apiKey === '') {
             return [];
         }
 
-        $url = 'http://www.omdbapi.com/?i=tt'.$imdbId.'&apikey='.$this->apiKey;
+        $url = 'http://www.omdbapi.com/?i=tt' . $imdbId . '&apikey=' . $this->apiKey;
         $response = $this->httpClient->request('GET', $url);
         if ($response->getStatusCode() === self::STATUSOK) {
             return [];
@@ -42,6 +41,7 @@ class ImdbService
         }
 
         $poster = $details['Poster'];
+
         try {
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 
@@ -50,7 +50,7 @@ class ImdbService
 
             $uploadedFile = new UploadedFile(
                 path: $tempPath,
-                originalName: basename($poster),
+                originalName: basename((string) $poster),
                 mimeType: mime_content_type($tempPath),
                 test: true
             );
@@ -58,7 +58,7 @@ class ImdbService
             $movie->setImgFile($uploadedFile);
 
             return true;
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }

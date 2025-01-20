@@ -5,6 +5,8 @@
 /apps/public/assets
 !/apps/private
 /apps/private/*
+!/apps/private/disable.txt
+!/apps/private/forbidden.txt
 *.phar
 *.cache
 docker-compose-*.yml

@@ -44,15 +44,6 @@ class MovieCrudController extends AbstractCrudControllerLib
     }
 
     #[Override]
-    public function configureFilters(Filters $filters): Filters
-    {
-        $this->addFilterEnable($filters);
-        $this->addFilterCategories($filters);
-
-        return $filters;
-    }
-
-    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addFieldID();
@@ -63,6 +54,15 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield $this->addFieldCategories('movie');
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
+    }
+
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->addFilterEnable($filters);
+        $this->addFilterCategories($filters);
+
+        return $filters;
     }
 
     #[Override]

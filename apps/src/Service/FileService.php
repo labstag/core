@@ -58,24 +58,6 @@ class FileService
     {
     }
 
-    /**
-     * @return mixed[]
-     */
-    public function all(): array
-    {
-        $files = [];
-        $data = $this->getDataStorage();
-        foreach (array_keys($data) as $key) {
-            if (in_array($key, ['private', 'public'])) {
-                continue;
-            }
-
-            $files = array_merge($files, $this->getFileSystem($key));
-        }
-
-        return $files;
-    }
-
     public function deleteAll(): void
     {
         $data = $this->getDataStorage();
@@ -146,6 +128,27 @@ class FileService
         return $object->getUriPrefix();
     }
 
+    public function getFileInAdapter(string $type, string $fileName): ?string
+    {
+        $files = $this->getFilesByAdapter($type);
+        $data = null;
+        foreach ($files as $file) {
+            if ($file['content']->path() != $fileName) {
+                continue;
+            }
+
+            $data = $file['folder'] . '/' . $file['path'];
+
+            break;
+        }
+
+        if (is_null($data)) {
+            return $data;
+        }
+
+        return str_replace('%kernel.project_dir%', $this->parameterBag->get('kernel.project_dir'), $data);
+    }
+
     /**
      * @return mixed[]
      */
@@ -158,33 +161,14 @@ class FileService
                 continue;
             }
 
-            $adapter = $this->getAdapter($type);
-            if (!$adapter instanceof LocalFilesystemAdapter) {
-                throw new Exception('Adapter not found');
-            }
-
-            $filesystem = new Filesystem(
-                $adapter,
-                [
-                    'public_url' => $this->getFolder($type),
-                ]
-            );
-            $files[$type] = [];
-            $directoryListing = $filesystem->listContents('');
-            foreach ($directoryListing as $content) {
-                $files[$type][] = $content->path();
-            }
+            $files[$type] = $this->getFilesByAdapter($type);
         }
 
         return $files;
     }
 
-    /**
-     * @return string[]
-     */
-    public function getFileSystem(string $type): array
+    public function getFilesByAdapter(string $type): array
     {
-        $files = [];
         $adapter = $this->getAdapter($type);
         if (!$adapter instanceof LocalFilesystemAdapter) {
             throw new Exception('Adapter not found');
@@ -196,9 +180,15 @@ class FileService
                 'public_url' => $this->getFolder($type),
             ]
         );
+        $files = [];
         $directoryListing = $filesystem->listContents('');
         foreach ($directoryListing as $content) {
-            $files[] = $filesystem->publicUrl($content->path());
+            $files[] = [
+                'filesystem' => $filesystem,
+                'content'    => $content,
+                'folder'     => $this->getFolder($type),
+                'path'       => $content->path(),
+            ];
         }
 
         return $files;
