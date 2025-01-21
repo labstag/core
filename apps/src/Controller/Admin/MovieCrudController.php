@@ -60,7 +60,7 @@ class MovieCrudController extends AbstractCrudControllerLib
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
-        $this->addFilterCategories($filters);
+        $this->addFilterCategories($filters, 'movie');
 
         return $filters;
     }

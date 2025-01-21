@@ -81,8 +81,8 @@ class PageCrudController extends AbstractCrudControllerLib
         $this->addFilterRefUser($filters);
         $this->addFilterEnable($filters);
         $filters->add(EntityFilter::new('page', new TranslatableMessage('Page')));
-        $this->addFilterTags($filters);
-        $this->addFilterCategories($filters);
+        $this->addFilterTags($filters, 'page');
+        $this->addFilterCategories($filters, 'page');
 
         return $filters;
     }
