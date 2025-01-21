@@ -93,7 +93,8 @@ class FileService
             $deletes = [];
             $repository = $this->getRepository($entities[$type]);
             $mappings = $this->propertyMappingFactory->fromObject(new $entities[$type]());
-            foreach ($files as $file) {
+            foreach ($files as $row) {
+                $file = $row['path'];
                 $find = 0;
                 foreach ($mappings as $mapping) {
                     $field = $mapping->getFileNamePropertyName();

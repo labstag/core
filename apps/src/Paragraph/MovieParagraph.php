@@ -6,12 +6,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Star;
+use Labstag\Entity\Movie;
 use Labstag\Lib\ParagraphLib;
-use Labstag\Repository\StarRepository;
+use Labstag\Repository\MovieRepository;
 use Override;
 
-class StarParagraph extends ParagraphLib
+class MovieParagraph extends ParagraphLib
 {
     /**
      * @param mixed[] $data
@@ -20,8 +20,8 @@ class StarParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var StarRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Star::class);
+        /** @var MovieRepository $serviceEntityRepositoryLib */
+        $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
 
         $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
 
@@ -59,13 +59,13 @@ class StarParagraph extends ParagraphLib
     #[Override]
     public function getName(): string
     {
-        return 'Star';
+        return 'Movie';
     }
 
     #[Override]
     public function getType(): string
     {
-        return 'star';
+        return 'movie';
     }
 
     /**
