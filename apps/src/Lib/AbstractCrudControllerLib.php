@@ -27,6 +27,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphsField;
+use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\ParagraphRepository;
 use Labstag\Repository\TagRepository;
 use Labstag\Service\BlockService;
@@ -51,7 +52,6 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     public function __construct(
         protected EmailService $emailService,
         protected FormService $formService,
-        protected TagRepository $tagRepository,
         protected FileService $fileService,
         protected SiteService $siteService,
         protected BlockService $blockService,
@@ -398,9 +398,14 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $textField;
     }
 
-    protected function addFilterCategories(Filters $filters): void
+    protected function addFilterCategories(Filters $filters, string $type): void
     {
-        $filters->add(EntityFilter::new('categories', new TranslatableMessage('Categories')));
+        $filter = EntityFilter::new('categories', new TranslatableMessage('Categories'));
+        $filter->setFormTypeOption(
+            'value_type_options.query_builder',
+            static fn(CategoryRepository $repository) => $repository->createQueryBuilder('c')->andWhere('c.type = :type')->setParameter('type', $type)
+        );
+        $filters->add($filter);
     }
 
     protected function addFilterEnable(Filters $filters): void
@@ -413,9 +418,14 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $filters->add(EntityFilter::new('refuser', new TranslatableMessage('Refuser')));
     }
 
-    protected function addFilterTags(Filters $filters): void
+    protected function addFilterTags(Filters $filters, string $type): void
     {
-        $filters->add(EntityFilter::new('tags', new TranslatableMessage('Tags')));
+        $filter = EntityFilter::new('tags', new TranslatableMessage('Tags'));
+        $filter->setFormTypeOption(
+            'value_type_options.query_builder',
+            static fn(TagRepository $repository) => $repository->createQueryBuilder('t')->andWhere('t.type = :type')->setParameter('type', $type)
+        );
+        $filters->add($filter);
     }
 
     protected function addTabPrincipal(): FormField

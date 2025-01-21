@@ -83,8 +83,8 @@ class StoryCrudController extends AbstractCrudControllerLib
     {
         $this->addFilterRefUser($filters);
         $this->addFilterEnable($filters);
-        $this->addFilterTags($filters);
-        $this->addFilterCategories($filters);
+        $this->addFilterTags($filters, 'story');
+        $this->addFilterCategories($filters, 'story');
 
         return $filters;
     }

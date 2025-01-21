@@ -66,8 +66,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
     {
         $this->addFilterEnable($filters);
         $filters->add(EntityFilter::new('refstory', new TranslatableMessage('Story')));
-        $this->addFilterTags($filters);
-        $this->addFilterCategories($filters);
+        $this->addFilterTags($filters, 'chapter');
 
         return $filters;
     }
