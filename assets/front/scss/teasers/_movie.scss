@@ -1,0 +1,4 @@
+@use './../mixins' as mixins;
+.movie-teaser{
+  @include mixins.teaser();
+}
