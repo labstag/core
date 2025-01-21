@@ -1,0 +1,13 @@
+<a href="https://www.imdb.com/title/tt{{ movie.imdb }}" target="_blank">
+    <img src="{{ site_asset(movie, 'img') }}" alt="{{ movie.title|e('html_attr') }}">
+    {% if movie.categories|length > 0 %}
+        <div class="categories">
+            {% for categorie in movie.categories %}
+                <span class="categorie-{{ categorie.slug }}">{{ categorie.title }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="title">
+        {{ movie.title }} ({{ movie.year }}) - {{ movie.country }}
+    </div>
+</a>
