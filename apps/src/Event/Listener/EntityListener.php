@@ -14,7 +14,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Repository\PageRepository;
-use Labstag\Service\ImdbService;
+use Labstag\Service\MovieService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -29,7 +29,7 @@ final class EntityListener
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
         private KernelInterface $kernel,
-        private ImdbService $imdbService,
+        private MovieService $movieService,
         private PageRepository $pageRepository,
         private ParagraphService $paragraphService,
         private WorkflowService $workflowService,
@@ -127,7 +127,7 @@ final class EntityListener
             return;
         }
 
-        $this->imdbService->update($entity);
+        $this->movieService->update($entity);
     }
 
     private function prePersistPage(object $entity): void

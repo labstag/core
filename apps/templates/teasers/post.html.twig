@@ -1,5 +1,5 @@
 <a href="{{ site_path(post) }}">
-    <img src="{{ site_asset(post, 'img') }}" alt="{{ post.title|e('html_attr') }}">
+    <div class="background" style="--image-url: url('{{ site_asset(post, 'img') }}')"></div>
     {% if post.tags|length > 0 %}
         <div class="tags">
             {% for tag in post.tags %}

@@ -39,8 +39,9 @@ services:
     resource: "../src/Replace/"
     public: true
     tags: [ 'labstag.replaces' ]
-  Labstag\Service\ImdbService:
+  Labstag\Service\MovieService:
     arguments:
-      $apiKey: '%env(OMDB_API_KEY)%'
+      $omdbapiKey: '%env(OMDB_API_KEY)%'
+      $tmdbapiKey: '%env(TMDB_API_KEY)%'
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones

@@ -90,6 +90,20 @@
       color: #fff;
     }
   }
+  .categories{
+    span{
+      display: inline-block;
+      padding: .25em .4em;
+      font-size: 75%;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      background-color: #007bff;
+      color: #fff;
+    }
+  }
   .title {
     font-family: 'Roboto', sans-serif;
     font-size: 1.5rem;
@@ -98,6 +112,13 @@
   }
   .resume{
     padding-top: 1rem;
+  }
+  .background{
+    height: 60vh;
+    background-image: var(--image-url);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
   }
   img {
     padding-bottom: 5px;
