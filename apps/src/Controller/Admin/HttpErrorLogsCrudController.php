@@ -69,9 +69,14 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         yield TextField::new('referer', new TranslatableMessage('referer'))->setMaxLength($maxLength);
         yield IntegerField::new('httpCode', new TranslatableMessage('httpCode'));
         yield TextField::new('requestMethod', new TranslatableMessage('requestMethod'));
-        yield AssociationField::new('refuser', new TranslatableMessage('Utilisateur'));
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();
+        $fields = array_merge(
+            $this->addFieldRefUser(),
+        );
+        foreach ($fields as $field) {
+            yield $field;
+        }
         if (!is_null($currentEntity)) {
             $data = $currentEntity->getRequestData();
             $datafield = ArrayField::new('data', new TranslatableMessage('Request DATA'));
