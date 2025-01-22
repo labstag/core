@@ -31,9 +31,7 @@ class MovieService
             return null;
         }
 
-        $response = json_decode($response->getContent(), true);
-
-        return $response;
+        return json_decode($response->getContent(), true);
     }
 
     private function getDetailsTmdb(string $imdbId): ?array
@@ -53,9 +51,7 @@ class MovieService
             return null;
         }
 
-        $response = json_decode($response->getContent(), true);
-
-        return $response;
+        return json_decode($response->getContent(), true);
     }
 
     public function getDetails(string $imdbId): array
@@ -94,7 +90,7 @@ class MovieService
     {
         $details = $this->getDetails($movie->getImdb());
         $poster  = $this->getImg($details);
-        if ($poster == '' || $poster == 'N/A') {
+        if ($poster === '' || $poster === 'N/A') {
             return false;
         }
 
@@ -106,7 +102,7 @@ class MovieService
 
             $uploadedFile = new UploadedFile(
                 path: $tempPath,
-                originalName: basename((string) $poster),
+                originalName: basename($poster),
                 mimeType: mime_content_type($tempPath),
                 test: true
             );
@@ -114,7 +110,7 @@ class MovieService
             $movie->setImgFile($uploadedFile);
 
             return true;
-        } catch (Exception $exception) {
+        } catch (Exception) {
             return false;
         }
     }

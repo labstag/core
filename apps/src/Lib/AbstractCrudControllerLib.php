@@ -400,12 +400,12 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFilterCategories(Filters $filters, string $type): void
     {
-        $filter = EntityFilter::new('categories', new TranslatableMessage('Categories'));
-        $filter->setFormTypeOption(
+        $entityFilter = EntityFilter::new('categories', new TranslatableMessage('Categories'));
+        $entityFilter->setFormTypeOption(
             'value_type_options.query_builder',
-            static fn(CategoryRepository $repository) => $repository->createQueryBuilder('c')->andWhere('c.type = :type')->setParameter('type', $type)
+            static fn(CategoryRepository $categoryRepository): \Doctrine\ORM\QueryBuilder => $categoryRepository->createQueryBuilder('c')->andWhere('c.type = :type')->setParameter('type', $type)
         );
-        $filters->add($filter);
+        $filters->add($entityFilter);
     }
 
     protected function addFilterEnable(Filters $filters): void
@@ -420,12 +420,12 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFilterTags(Filters $filters, string $type): void
     {
-        $filter = EntityFilter::new('tags', new TranslatableMessage('Tags'));
-        $filter->setFormTypeOption(
+        $entityFilter = EntityFilter::new('tags', new TranslatableMessage('Tags'));
+        $entityFilter->setFormTypeOption(
             'value_type_options.query_builder',
-            static fn(TagRepository $repository) => $repository->createQueryBuilder('t')->andWhere('t.type = :type')->setParameter('type', $type)
+            static fn(TagRepository $tagRepository): \Doctrine\ORM\QueryBuilder => $tagRepository->createQueryBuilder('t')->andWhere('t.type = :type')->setParameter('type', $type)
         );
-        $filters->add($filter);
+        $filters->add($entityFilter);
     }
 
     protected function addTabPrincipal(): FormField
