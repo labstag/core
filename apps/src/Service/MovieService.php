@@ -40,7 +40,7 @@ class MovieService
             return null;
         }
 
-        $url = 'https://api.themoviedb.org/3/find/tt' . $imdbId . '?external_source=imdb_id&language=fr_FR';
+        $url = 'https://api.themoviedb.org/3/find/tt' . $imdbId . '?external_source=imdb_id&language=fr';
         $response = $this->httpClient->request('GET', $url, [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->tmdbapiKey,
