@@ -37,7 +37,7 @@ class HttpErrorLogs
     private ?string $referer = null;
 
     #[ORM\ManyToOne(inversedBy: 'httpErrorLogs')]
-    private ?User $refUser = null;
+    private ?User $refuser = null;
 
     #[ORM\Column(type: Types::JSON)]
     private array $requestData = [];
@@ -78,9 +78,9 @@ class HttpErrorLogs
         return $this->referer;
     }
 
-    public function getRefUser(): ?User
+    public function getRefuser(): ?User
     {
-        return $this->refUser;
+        return $this->refuser;
     }
 
     public function getRequestData(): array
@@ -133,9 +133,9 @@ class HttpErrorLogs
         return $this;
     }
 
-    public function setRefUser(?User $refUser): static
+    public function setRefuser(?User $refuser): static
     {
-        $this->refUser = $refUser;
+        $this->refuser = $refuser;
 
         return $this;
     }
