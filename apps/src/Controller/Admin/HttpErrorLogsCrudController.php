@@ -69,7 +69,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         yield TextField::new('referer', new TranslatableMessage('referer'))->setMaxLength($maxLength);
         yield IntegerField::new('httpCode', new TranslatableMessage('httpCode'));
         yield TextField::new('requestMethod', new TranslatableMessage('requestMethod'));
-        yield AssociationField::new('refUser', new TranslatableMessage('Utilisateur'));
+        yield AssociationField::new('refuser', new TranslatableMessage('Utilisateur'));
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();
         if (!is_null($currentEntity)) {
@@ -86,6 +86,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
+        $this->addFilterRefUser($filters);
         $this->addFilterEnable($filters);
         $filters->add('internetProtocol');
         $filters->add('httpCode');
