@@ -4,7 +4,7 @@ namespace Labstag\Command;
 
 use Labstag\Entity\Movie;
 use Labstag\Repository\MovieRepository;
-use Labstag\Service\ImdbService;
+use Labstag\Service\MovieService;
 use NumberFormatter;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -18,7 +18,7 @@ class MoviesUpdateCommand extends Command
 {
     public function __construct(
         protected MovieRepository $movieRepository,
-        protected ImdbService $imdbService,
+        protected MovieService $movieService,
     )
     {
         parent::__construct();
@@ -43,7 +43,7 @@ class MoviesUpdateCommand extends Command
         $update = 0;
         $counter = 0;
         foreach ($movies as $movie) {
-            $status = $this->imdbService->update($movie);
+            $status = $this->movieService->update($movie);
             $counter = $status ? ++$update : $update;
             ++$counter;
 
