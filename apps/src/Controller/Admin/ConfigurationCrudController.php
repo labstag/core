@@ -46,7 +46,6 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
         yield FormField::addTab(new TranslatableMessage('Medias'));
         yield $this->addFieldImageUpload('logo', $pageName, new TranslatableMessage('Logo'));
         yield $this->addFieldImageUpload('placeholder', $pageName, new TranslatableMessage('placeholder'));
-        yield $this->addFieldImageUpload('favicon', $pageName, new TranslatableMessage('favicon'));
     }
 
     #[Override]
