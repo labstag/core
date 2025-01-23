@@ -60,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @var Collection<int, HttpErrorLogs>
      */
-    #[ORM\OneToMany(targetEntity: HttpErrorLogs::class, mappedBy: 'refUser')]
+    #[ORM\OneToMany(targetEntity: HttpErrorLogs::class, mappedBy: 'refuser')]
     private Collection $httpErrorLogs;
 
     #[ORM\Id]
