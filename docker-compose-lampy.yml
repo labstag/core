@@ -18,7 +18,6 @@ services:
         - "traefik.http.services.labstag.loadbalancer.server.port=80"
   phpfpm:
     environment:
-      APP_ENV: dev
       APP_SECRET: "CHANGEME"
       MAILER_DSN: "smtp://mailhog:1025"
       MESSENGER_TRANSPORT_DSN: "doctrine://default"

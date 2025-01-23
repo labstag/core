@@ -2,6 +2,7 @@ const path = require('path');
 var Encore = require('@symfony/webpack-encore');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
 if (!Encore.isRuntimeEnvironmentConfigured()) {
@@ -93,6 +94,20 @@ Encore
 
   .addPlugin(new Dotenv())
   .addPlugin(new CleanWebpackPlugin())
+  .addPlugin(new FaviconsWebpackPlugin({
+    logo: './assets/logo.png', // Chemin de ton image source
+    cache: true,                     // Active le cache
+    outputPath: 'favicons',          // Répertoire dans `public/`
+    inject: false,                   // Désactive l'injection automatique
+    favicons: {
+        appName: 'Labstag',
+        appDescription: 'Site sous symfony',
+        developerName: 'Koromerzhin',
+        developerURL: 'https://www.letoullec.fr', // Ton site web si applicable
+        background: '#F80', // Couleur de fond
+        theme_color: '#F80', // Couleur du thème pour mobile
+    },
+  }))
   .enableBuildNotifications(true, function (options) {
     options.title = 'Labstag';
   })

@@ -10,6 +10,7 @@
                 <meta name="twitter:url" content="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" />
                 <link rel="canonical" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" />
             {% endif %}
+            <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/favicons/favicon.png') }}">
             {{ site_metatags(data) }}
         {% endblock %}
         {% block stylesheets %}

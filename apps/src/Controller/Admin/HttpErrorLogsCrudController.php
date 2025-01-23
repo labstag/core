@@ -77,6 +77,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         foreach ($fields as $field) {
             yield $field;
         }
+
         if (!is_null($currentEntity)) {
             $data = $currentEntity->getRequestData();
             $datafield = ArrayField::new('data', new TranslatableMessage('Request DATA'));

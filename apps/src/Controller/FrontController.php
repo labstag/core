@@ -15,12 +15,16 @@ use Symfony\Contracts\Cache\ItemInterface;
 class FrontController extends AbstractController
 {
     #[Route(
-        '{slug}{_</(?!/)>}',
+        '{slug}/{page}',
         name: 'front',
-        requirements: ['slug' => '.*'],
+        requirements: [
+            'slug' => '.+?',
+        // Le slug peut être vide
+            'page' => '\d+',
+        ],
         defaults: [
             'slug' => '',
-            '_'    => '',
+            'page' => 1,
         ],
         priority: -1
     )]

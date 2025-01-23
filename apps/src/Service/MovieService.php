@@ -41,12 +41,16 @@ class MovieService
         }
 
         $url = 'https://api.themoviedb.org/3/find/tt' . $imdbId . '?external_source=imdb_id&language=fr';
-        $response = $this->httpClient->request('GET', $url, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                'accept'       => 'application/json',
-            ],
-        ]);
+        $response = $this->httpClient->request(
+            'GET',
+            $url,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                    'accept'        => 'application/json',
+                ],
+            ]
+        );
         if ($response->getStatusCode() !== self::STATUSOK) {
             return null;
         }
@@ -79,7 +83,7 @@ class MovieService
 
         if (isset($data['movie_results'][0]['poster_path'])) {
             $img = $data['movie_results'][0]['poster_path'];
-            
+
             return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' . $img;
         }
 

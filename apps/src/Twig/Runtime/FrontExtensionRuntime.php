@@ -5,6 +5,7 @@ namespace Labstag\Twig\Runtime;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\RouterInterface;
@@ -14,6 +15,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 class FrontExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
+        protected RequestStack $requestStack,
         protected RouterInterface $router,
         protected SiteService $siteService,
         protected ParameterBagInterface $parameterBag,
@@ -99,11 +101,18 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
      */
     public function title(array $data): string
     {
+        $request = $this->requestStack->getCurrentRequest();
         $config = $this->siteService->getConfiguration();
         $siteTitle = $config->getName();
         $format = $config->getTitleFormat();
         if ($this->siteService->isHome($data)) {
             return (string) $siteTitle;
+        }
+
+        $contentTitle = $this->siteService->setTitle($data['entity']);
+        $page         = $request->attributes->getInt('page', 1);
+        if ($page != 1) {
+            $contentTitle .= ' - Page ' . $page;
         }
 
         return str_replace(
@@ -112,7 +121,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
                 '%site_name%',
             ],
             [
-                $this->siteService->setTitle($data['entity']),
+                $contentTitle,
                 $siteTitle,
             ],
             $format

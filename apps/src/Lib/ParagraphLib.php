@@ -209,7 +209,7 @@ abstract class ParagraphLib extends AbstractController
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        return $this->paginator->paginate($query, $request->query->getInt('page', 1), $limit);
+        return $this->paginator->paginate($query, $request->attributes->getInt('page', 1), $limit);
     }
 
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
