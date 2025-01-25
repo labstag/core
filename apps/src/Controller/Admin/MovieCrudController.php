@@ -68,7 +68,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         $filters->add('year');
         $filters->add('country');
         $filters->add('color');
-        
+
         $this->addFilterCategories($filters, 'movie');
 
         return $filters;

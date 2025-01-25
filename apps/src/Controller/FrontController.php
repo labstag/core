@@ -19,7 +19,7 @@ class FrontController extends AbstractController
         name: 'front',
         requirements: [
             'slug' => '.+?',
-        // Le slug peut être vide
+            // Le slug peut être vide
             'page' => '\d+',
         ],
         defaults: [

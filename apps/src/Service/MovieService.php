@@ -19,6 +19,51 @@ class MovieService
     {
     }
 
+    public function getDetails(string $imdbId): array
+    {
+        $details = [];
+        $omdb = $this->getDetailsOmDBAPI($imdbId);
+        if ($omdb !== null && isset($omdb['Poster'])) {
+            return $omdb;
+        }
+
+        $tmdb = $this->getDetailsTmdb($imdbId);
+        if ($tmdb !== null && isset($tmdb['movie_results'][0]['poster_path'])) {
+            return $tmdb;
+        }
+
+        return $details;
+    }
+
+    public function update(Movie $movie): bool
+    {
+        $details = $this->getDetails($movie->getImdb());
+        $poster = $this->getImg($details);
+        if ($poster === '' || $poster === 'N/A') {
+            return false;
+        }
+
+        try {
+            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+
+            // Télécharger l'image et l'écrire dans le fichier temporaire
+            file_put_contents($tempPath, file_get_contents($poster));
+
+            $uploadedFile = new UploadedFile(
+                path: $tempPath,
+                originalName: basename($poster),
+                mimeType: mime_content_type($tempPath),
+                test: true
+            );
+
+            $movie->setImgFile($uploadedFile);
+
+            return true;
+        } catch (Exception) {
+            return false;
+        }
+    }
+
     private function getDetailsOmDBAPI(string $imdbId): ?array
     {
         if ($this->omdbapiKey === '') {
@@ -58,23 +103,6 @@ class MovieService
         return json_decode($response->getContent(), true);
     }
 
-    public function getDetails(string $imdbId): array
-    {
-        $details = [];
-        $omdb = $this->getDetailsOmDBAPI($imdbId);
-        if (null !== $omdb && isset($omdb['Poster'])) {
-            return $omdb;
-        }
-
-        $tmdb = $this->getDetailsTmdb($imdbId);
-        if (null !== $tmdb && isset($tmdb['movie_results'][0]['poster_path'])) {
-            return $tmdb;
-        }
-
-        return $details;
-    }
-
-
     private function getImg(array $data): string
     {
         if (isset($data['Poster'])) {
@@ -88,34 +116,5 @@ class MovieService
         }
 
         return '';
-    }
-
-    public function update(Movie $movie): bool
-    {
-        $details = $this->getDetails($movie->getImdb());
-        $poster  = $this->getImg($details);
-        if ($poster === '' || $poster === 'N/A') {
-            return false;
-        }
-
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
-
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($poster),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $movie->setImgFile($uploadedFile);
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
     }
 }

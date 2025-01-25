@@ -172,15 +172,21 @@ class MovieAddCommand extends Command
         );
 
         $pattern = '/(\d+\.\d+)\s+\(([\d.]+)([KMB]?) votes\)/';
-        preg_match($pattern, $data['Evaluation IMDb'], $matches);
-        $evaluation = (float) isset($matches['1']) ? $matches['1'] : null;
-        $votes = (float) isset($matches['2']) ? $matches['1'] : null;
-        $suffix = isset($matches['3']) ? $matches['3'] : null;
+        preg_match($pattern, (string) $data['Evaluation IMDb'], $matches);
+        $evaluation = (float) isset($matches['1']) !== 0.0 ? $matches['1'] : null;
+        $votes = (float) isset($matches['2']) !== 0.0 ? $matches['1'] : null;
+        $suffix = $matches['3'] ?? null;
 
         switch ($suffix) {
-            case 'K': $votes = $votes * 1000; break;
-            case 'M': $votes = $votes * 1000000; break;
-            case 'B': $votes = $votes * 1000000000; break;
+            case 'K':
+                $votes *= 1000;
+                break;
+            case 'M':
+                $votes *= 1000000;
+                break;
+            case 'B':
+                $votes *= 1000000000;
+                break;
         }
 
         if (!$movie instanceof Movie) {
@@ -193,9 +199,9 @@ class MovieAddCommand extends Command
         $type = $data['Genre(s)'];
         $country = $data['Pays'];
         $color = ($data['Couleur'] == '<<Inconnu>>') ? null : $data['Couleur'];
-        $trailer = !empty($data['Bande-annonce']) ? $data['Bande-annonce'] : null;
-        $duration = !empty($data['Durée']) ? $data['Durée'] : null;
-        $title = trim($data['Titre']);
+        $trailer = empty($data['Bande-annonce']) ? null : $data['Bande-annonce'];
+        $duration = empty($data['Durée']) ? null : $data['Durée'];
+        $title = trim((string) $data['Titre']);
         $movie->setEvaluation($evaluation);
         $movie->setVotes($votes);
         $movie->setDuration($duration);

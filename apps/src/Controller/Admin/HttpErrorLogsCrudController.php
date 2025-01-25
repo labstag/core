@@ -8,7 +8,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\HttpErrorLogs;
@@ -71,9 +70,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         yield TextField::new('requestMethod', new TranslatableMessage('requestMethod'));
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();
-        $fields = array_merge(
-            $this->addFieldRefUser(),
-        );
+        $fields = array_merge($this->addFieldRefUser());
         foreach ($fields as $field) {
             yield $field;
         }
