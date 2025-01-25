@@ -171,16 +171,37 @@ class MovieAddCommand extends Command
             ['imdb' => $imdb]
         );
 
+        $pattern = '/(\d+\.\d+)\s+\(([\d.]+)([KMB]?) votes\)/';
+        preg_match($pattern, $data['Evaluation IMDb'], $matches);
+        $evaluation = (float) isset($matches['1']) ? $matches['1'] : null;
+        $votes = (float) isset($matches['2']) ? $matches['1'] : null;
+        $suffix = isset($matches['3']) ? $matches['3'] : null;
+
+        switch ($suffix) {
+            case 'K': $votes = $votes * 1000; break;
+            case 'M': $votes = $votes * 1000000; break;
+            case 'B': $votes = $votes * 1000000000; break;
+        }
+
         if (!$movie instanceof Movie) {
             $movie = new Movie();
+            $movie->setEnable(true);
             $movie->setImdb($imdb);
         }
 
         $year = (int) $data['Année'];
         $type = $data['Genre(s)'];
         $country = $data['Pays'];
-        $movie->setEnable(true);
-        $movie->setTitle($data['Titre']);
+        $color = ($data['Couleur'] == '<<Inconnu>>') ? null : $data['Couleur'];
+        $trailer = !empty($data['Bande-annonce']) ? $data['Bande-annonce'] : null;
+        $duration = !empty($data['Durée']) ? $data['Durée'] : null;
+        $title = trim($data['Titre']);
+        $movie->setEvaluation($evaluation);
+        $movie->setVotes($votes);
+        $movie->setDuration($duration);
+        $movie->setTrailer($trailer);
+        $movie->setColor($color);
+        $movie->setTitle($title);
         $movie->setYear(($year != 0) ? $year : null);
         $movie->setCountry(($country != '') ? $country : null);
 

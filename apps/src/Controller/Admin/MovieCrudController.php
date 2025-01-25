@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Movie;
 use Labstag\Lib\AbstractCrudControllerLib;
@@ -51,6 +52,10 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield TextField::new('imdb');
         yield IntegerField::new('year');
         yield TextField::new('country');
+        yield TextField::new('color');
+        yield IntegerField::new('duration');
+        yield NumberField::new('evaluation');
+        yield IntegerField::new('votes');
         yield $this->addFieldCategories('movie');
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
@@ -60,6 +65,10 @@ class MovieCrudController extends AbstractCrudControllerLib
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
+        $filters->add('year');
+        $filters->add('country');
+        $filters->add('color');
+        
         $this->addFilterCategories($filters, 'movie');
 
         return $filters;
