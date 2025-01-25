@@ -58,6 +58,21 @@ class Movie
     #[ORM\Column(nullable: true)]
     private ?int $year = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $trailer = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $evaluation = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $votes = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $color = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $duration = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -177,6 +192,66 @@ class Movie
     public function setYear(?int $year): static
     {
         $this->year = $year;
+
+        return $this;
+    }
+
+    public function getTrailer(): ?string
+    {
+        return $this->trailer;
+    }
+
+    public function setTrailer(?string $trailer): static
+    {
+        $this->trailer = $trailer;
+
+        return $this;
+    }
+
+    public function getEvaluation(): ?float
+    {
+        return $this->evaluation;
+    }
+
+    public function setEvaluation(?float $evaluation): static
+    {
+        $this->evaluation = $evaluation;
+
+        return $this;
+    }
+
+    public function getVotes(): ?int
+    {
+        return $this->votes;
+    }
+
+    public function setVotes(?int $votes): static
+    {
+        $this->votes = $votes;
+
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): static
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?int $duration): static
+    {
+        $this->duration = $duration;
 
         return $this;
     }
