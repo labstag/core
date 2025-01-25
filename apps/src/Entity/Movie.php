@@ -29,13 +29,22 @@ class Movie
     private Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
+    private ?string $color = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $country = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $duration = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
     private ?bool $enable = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $evaluation = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -55,23 +64,14 @@ class Movie
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $year = null;
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $trailer = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $evaluation = null;
-
-    #[ORM\Column(nullable: true)]
     private ?int $votes = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $color = null;
-
     #[ORM\Column(nullable: true)]
-    private ?int $duration = null;
+    private ?int $year = null;
 
     public function __construct()
     {
@@ -96,9 +96,24 @@ class Movie
         return $this->categories;
     }
 
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
     public function getCountry(): ?string
     {
         return $this->country;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function getEvaluation(): ?float
+    {
+        return $this->evaluation;
     }
 
     public function getId(): ?string
@@ -126,6 +141,16 @@ class Movie
         return $this->title;
     }
 
+    public function getTrailer(): ?string
+    {
+        return $this->trailer;
+    }
+
+    public function getVotes(): ?int
+    {
+        return $this->votes;
+    }
+
     public function getYear(): ?int
     {
         return $this->year;
@@ -145,6 +170,13 @@ class Movie
         return $this;
     }
 
+    public function setColor(?string $color): static
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
     public function setCountry(?string $country): static
     {
         $this->country = $country;
@@ -152,9 +184,23 @@ class Movie
         return $this;
     }
 
+    public function setDuration(?int $duration): static
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
     public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
+
+        return $this;
+    }
+
+    public function setEvaluation(?float $evaluation): static
+    {
+        $this->evaluation = $evaluation;
 
         return $this;
     }
@@ -189,40 +235,11 @@ class Movie
         return $this;
     }
 
-    public function setYear(?int $year): static
-    {
-        $this->year = $year;
-
-        return $this;
-    }
-
-    public function getTrailer(): ?string
-    {
-        return $this->trailer;
-    }
-
     public function setTrailer(?string $trailer): static
     {
         $this->trailer = $trailer;
 
         return $this;
-    }
-
-    public function getEvaluation(): ?float
-    {
-        return $this->evaluation;
-    }
-
-    public function setEvaluation(?float $evaluation): static
-    {
-        $this->evaluation = $evaluation;
-
-        return $this;
-    }
-
-    public function getVotes(): ?int
-    {
-        return $this->votes;
     }
 
     public function setVotes(?int $votes): static
@@ -232,26 +249,9 @@ class Movie
         return $this;
     }
 
-    public function getColor(): ?string
+    public function setYear(?int $year): static
     {
-        return $this->color;
-    }
-
-    public function setColor(?string $color): static
-    {
-        $this->color = $color;
-
-        return $this;
-    }
-
-    public function getDuration(): ?int
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(?int $duration): static
-    {
-        $this->duration = $duration;
+        $this->year = $year;
 
         return $this;
     }

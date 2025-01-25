@@ -133,9 +133,9 @@ class HttpErrorLogs
         return $this;
     }
 
-    public function setRefuser(?User $refuser): static
+    public function setRefuser(?User $user): static
     {
-        $this->refuser = $refuser;
+        $this->refuser = $user;
 
         return $this;
     }

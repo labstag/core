@@ -403,7 +403,9 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $entityFilter = EntityFilter::new('categories', new TranslatableMessage('Categories'));
         $entityFilter->setFormTypeOption(
             'value_type_options.query_builder',
-            static fn(CategoryRepository $categoryRepository): \Doctrine\ORM\QueryBuilder => $categoryRepository->createQueryBuilder('c')->andWhere('c.type = :type')->setParameter('type', $type)
+            static fn (CategoryRepository $categoryRepository): QueryBuilder => $categoryRepository->createQueryBuilder(
+                'c'
+            )->andWhere('c.type = :type')->setParameter('type', $type)
         );
         $filters->add($entityFilter);
     }
@@ -423,7 +425,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $entityFilter = EntityFilter::new('tags', new TranslatableMessage('Tags'));
         $entityFilter->setFormTypeOption(
             'value_type_options.query_builder',
-            static fn(TagRepository $tagRepository): \Doctrine\ORM\QueryBuilder => $tagRepository->createQueryBuilder('t')->andWhere('t.type = :type')->setParameter('type', $type)
+            static fn (TagRepository $tagRepository): QueryBuilder => $tagRepository->createQueryBuilder('t')->andWhere('t.type = :type')->setParameter('type', $type)
         );
         $filters->add($entityFilter);
     }
