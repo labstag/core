@@ -1,0 +1,27 @@
+<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+    <div class="wrapper">
+        <div class="title">
+            <h2>{{ paragraph.title }}</h2>
+        </div>
+        <div class="slider">
+            <div class="swiper">
+                <div class="swiper-wrapper">
+                    {% for movie in movies %}
+                        <div class="swiper-slide movie-teaser">
+                            <div class="background" style="--image-url: url('{{ site_asset(movie, 'img') }}')" title="{{ movie.title|e('html_attr') }}"></div>
+                        </div>
+                    {% endfor %}
+                </div>
+            
+                <!-- Boutons navigation -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
+        <div class="link">
+            <a href="{{ path('front', {'slug': listing.slug}) }}" class="btn">
+                {{ 'See all movie'|trans }}
+            </a>
+        </div>
+    </div>
+</section>

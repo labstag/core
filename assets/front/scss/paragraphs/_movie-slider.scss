@@ -1,0 +1,28 @@
+.paragraph_movie-slider{
+  .slider{
+    max-width: 1000px;
+    width: 100%;
+    margin: auto;
+    padding: auto;
+    padding-bottom: 20px;
+  }
+  .swiper-slide{
+    height: auto;
+  }
+  .swiper-wrapper {
+    width: 80%;
+    margin: auto;
+    box-sizing: border-box;
+  }
+  .movie-teaser {
+    padding: 0;
+  }
+  .link {
+    display: block;
+    text-align: center;
+    padding-top: 20px;
+    a{
+      margin: auto;
+    }
+  }
+}
