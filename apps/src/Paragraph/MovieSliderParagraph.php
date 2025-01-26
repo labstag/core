@@ -7,9 +7,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Generator;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Story;
+use Labstag\Entity\Movie;
 use Labstag\Lib\ParagraphLib;
-use Labstag\Repository\StoryRepository;
+use Labstag\Repository\MovieRepository;
 use Override;
 
 class MovieSliderParagraph extends ParagraphLib
@@ -21,18 +21,18 @@ class MovieSliderParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var StoryRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Story::class);
+        /** @var MovieRepository $serviceEntityRepositoryLib */
+        $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
         $nbr = $paragraph->getNbr();
-        $stories = $serviceEntityRepositoryLib->findLastByNbr($nbr);
-        $total = $serviceEntityRepositoryLib->findTotalEnable();
-        $listing = $this->siteService->getPageByType('story');
+        $title = $paragraph->getTitle();
+        $movies = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        $listing = $this->siteService->getPageByType('movie');
         $this->setData(
             $paragraph,
             [
                 'listing'   => $listing,
-                'total'     => $total,
-                'stories'   => $stories,
+                'title'     => $title,
+                'movies'    => $movies,
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]
@@ -48,7 +48,6 @@ class MovieSliderParagraph extends ParagraphLib
         unset($paragraph, $pageName);
 
         yield TextField::new('title');
-        yield UrlField::new('url');
         yield $this->addFieldIntegerNbr();
     }
 

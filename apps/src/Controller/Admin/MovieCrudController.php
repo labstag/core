@@ -56,6 +56,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield IntegerField::new('duration');
         yield NumberField::new('evaluation');
         yield IntegerField::new('votes');
+        yield TextField::new('trailer')->hideOnIndex();
         yield $this->addFieldCategories('movie');
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));

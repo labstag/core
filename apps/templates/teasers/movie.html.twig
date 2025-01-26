@@ -8,6 +8,35 @@
         </div>
     {% endif %}
     <div class="title">
-        {{ movie.title }} ({{ movie.year }}) - {{ movie.country }}
+        Titre : {{ movie.title }}
     </div>
+    <div class="year">
+        Année : {{ movie.year }}
+    </div>
+    <div class="country">
+        Pays : {{ movie.country }}
+    </div>
+    <div class="color">
+        Couleur : {{ movie.color }}
+    </div>
+    <div class="duration">
+        Durée : 
+        {% if movie.duration < 60 %}
+            {{ movie.duration ~ " min" }}
+        {% else %}
+            {% set hours = (movie.duration // 60) %}
+            {% set minutes = (movie.duration % 60) %}
+            {{ hours ~ 'h ' ~ minutes ~ " min" }}
+        {% endif %}
+    </div>
+    {% if movie.evaluation != null %}
+    <div class="evaluation">
+        Evaluation : {{ movie.evaluation }}
+    </div>
+    {% endif %}
+    {% if movie.votes != null %}
+    <div class="votes">
+        Votes : {{ movie.votes }}
+    </div>
+    {% endif %}
 </a>

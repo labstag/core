@@ -197,6 +197,7 @@ class SiteService
         return [
             'Home'      => 'home',
             'Posts'     => 'post',
+            'Movie'     => 'movie',
             'Histoires' => 'story',
             'Page'      => 'page',
         ];
