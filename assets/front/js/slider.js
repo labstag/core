@@ -11,26 +11,23 @@ export class Slider {
       '.swiper',
       {
         modules: [Navigation],
-        slidesPerView: 3,
-        spaceBetween: 20,
-        loop: true,
-        centeredSlides: false,
+        spaceBetween: 17,
+        centeredSlides: true,
+        effect: 'fade',
+        lazy: true,
+        slidesPerView: 1,
+        fadeEffect: {
+          crossFade: true
+        },
         navigation: {
           nextEl: '.swiper-button-next', // Bouton Next
           prevEl: '.swiper-button-prev', // Bouton Prev
         },
         breakpoints: {
-          320: {
-            slidesPerView: 1, // 1 slide visible sur petit écran
-            spaceBetween: 0,
-          },
-          768: {
-            slidesPerView: 2, // 2 slides visibles sur tablette
-            spaceBetween: 15,
-          },
-          1024: {
-            slidesPerView: 3, // 3 slides visibles sur desktop
-            spaceBetween: 20,
+          1200: {
+            slidesPerView: 3,
+            centeredSlides: false,
+            centerInsufficientSlides: true,
           },
         },
       }

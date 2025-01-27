@@ -34,8 +34,6 @@ class HeadParagraph extends ParagraphLib
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph);
-        yield $this->addFieldImageUpload('img', $pageName);
-        yield TextField::new('title');
     }
 
     #[Override]

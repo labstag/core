@@ -176,18 +176,7 @@ class MovieAddCommand extends Command
         $evaluation = (float) isset($matches['1']) !== 0.0 ? $matches['1'] : null;
         $votes = (float) isset($matches['2']) !== 0.0 ? $matches['1'] : null;
         $suffix = $matches['3'] ?? null;
-
-        switch ($suffix) {
-            case 'K':
-                $votes *= 1000;
-                break;
-            case 'M':
-                $votes *= 1000000;
-                break;
-            case 'B':
-                $votes *= 1000000000;
-                break;
-        }
+        $votes = $this->setVotes($suffix, $votes);
 
         if (!$movie instanceof Movie) {
             $movie = new Movie();
@@ -217,6 +206,30 @@ class MovieAddCommand extends Command
         }
 
         $categories = explode(',', (string) $type);
+        $this->setCategories($movie, $categories);
+
+        return $movie;
+    }
+
+    private function setVotes($suffix, $votes)
+    {
+        switch ($suffix) {
+            case 'K':
+                $votes *= 1000;
+                break;
+            case 'M':
+                $votes *= 1000000;
+                break;
+            case 'B':
+                $votes *= 1000000000;
+                break;
+        }
+
+        return $votes;
+    }
+
+    private function setCategories($movie, $categories)
+    {
         foreach ($categories as $value) {
             $value = trim($value);
             if ($value === '') {
@@ -231,6 +244,5 @@ class MovieAddCommand extends Command
             $movie->addCategory($category);
         }
 
-        return $movie;
     }
 }
