@@ -79,7 +79,7 @@ class SecurityService
 
         return $this->banIpRepository->findOneBy(
             [
-                'internetProtocol' => $request->server->get('REMOTE_ADDR'),
+                'internetProtocol' => $this->getClientIp($request->server),
                 'enable'           => true,
             ]
         );
@@ -102,7 +102,7 @@ class SecurityService
 
         if ($this->isForbiddenUrl($url)) {
             if (!is_null($this->security->getUser())) {
-                $this->addBan($server->get('REMOTE_ADDR'));
+                $this->addBan($this->getClientIp($server));
             }
 
             return;
@@ -132,7 +132,7 @@ class SecurityService
         $httpErrorLogs->setUrl($url);
         $httpErrorLogs->setAgent((string) $server->get('HTTP_USER_AGENT'));
         $httpErrorLogs->setHttpCode($httpCode);
-        $httpErrorLogs->setInternetProtocol($server->get('REMOTE_ADDR'));
+        $httpErrorLogs->setInternetProtocol($this->getClientIp($server));
         if (!is_null($referer)) {
             $httpErrorLogs->setReferer($referer);
         }
@@ -146,6 +146,32 @@ class SecurityService
         $httpErrorLogs->setRequestMethod($method);
 
         $this->httpErrorLogsRepository->save($httpErrorLogs);
+    }
+
+    private function getClientIp($server)
+    {
+        $headers = [
+            'HTTP_CLIENT_IP',
+            'HTTP_X_FORWARDED_FOR',
+            'HTTP_X_FORWARDED',
+            'HTTP_FORWARDED_FOR',
+            'HTTP_FORWARDED',
+            'REMOTE_ADDR',
+        ];
+    
+        foreach ($headers as $header) {
+            if (!empty($server->get($header))) {
+                $ipList = explode(',', $server->get($header)); // Si plusieurs IPs sont présentes (cas d'un proxy chainé)
+                $ip = trim(end($ipList)); // On prend la dernière IP de la liste (client réel)
+    
+                // Valider que c'est une IP valide (IPv4 ou IPv6)
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                    return $ip;
+                }
+            }
+        }
+    
+        return '0.0.0.0';
     }
 
     private function getRedirections(bool $regex): array
