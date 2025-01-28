@@ -100,6 +100,12 @@ class SecurityService
             return;
         }
 
+        $agent = (string) $server->get('HTTP_USER_AGENT');
+        if (empty($agent)) {
+            $this->addBan($this->getClientIp($server));
+            return;
+        }
+
         if ($this->isForbiddenUrl($url)) {
             if (!is_null($this->security->getUser())) {
                 $this->addBan($this->getClientIp($server));
@@ -130,7 +136,7 @@ class SecurityService
         $httpErrorLogs->setRefUser($user);
         $httpErrorLogs->setDomain($domain);
         $httpErrorLogs->setUrl($url);
-        $httpErrorLogs->setAgent((string) $server->get('HTTP_USER_AGENT'));
+        $httpErrorLogs->setAgent($agent);
         $httpErrorLogs->setHttpCode($httpCode);
         $httpErrorLogs->setInternetProtocol($this->getClientIp($server));
         if (!is_null($referer)) {
@@ -162,11 +168,11 @@ class SecurityService
         foreach ($headers as $header) {
             if (!empty($server->get($header))) {
                 $ipList = explode(',', $server->get($header)); // Si plusieurs IPs sont présentes (cas d'un proxy chainé)
-                $ip = trim(end($ipList)); // On prend la dernière IP de la liste (client réel)
+                $internetProtocol = trim(end($ipList)); // On prend la dernière IP de la liste (client réel)
     
                 // Valider que c'est une IP valide (IPv4 ou IPv6)
-                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-                    return $ip;
+                if (filter_var($internetProtocol, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                    return $internetProtocol;
                 }
             }
         }

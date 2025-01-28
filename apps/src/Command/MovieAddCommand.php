@@ -161,6 +161,16 @@ class MovieAddCommand extends Command
         $this->movieRepository->flush();
     }
 
+    private function setSuffix($matches)
+    {
+        return $matches['3'] ?? null;
+    }
+
+    private function setEvaluation($matches)
+    {
+        return (float) isset($matches['1']) !== 0.0 ? $matches['1'] : null;
+    }
+
     /**
      * @param mixed[] $data
      */
@@ -173,10 +183,9 @@ class MovieAddCommand extends Command
 
         $pattern = '/(\d+\.\d+)\s+\(([\d.]+)([KMB]?) votes\)/';
         preg_match($pattern, (string) $data['Evaluation IMDb'], $matches);
-        $evaluation = (float) isset($matches['1']) !== 0.0 ? $matches['1'] : null;
-        $votes = (float) isset($matches['2']) !== 0.0 ? $matches['1'] : null;
-        $suffix = $matches['3'] ?? null;
-        $votes = $this->setVotes($suffix, $votes);
+        $evaluation = $this->setEvaluation($matches);
+        $suffix = $this->setSuffix($matches);
+        $votes = $this->setVotes($suffix, $matches);
 
         if (!$movie instanceof Movie) {
             $movie = new Movie();
@@ -200,19 +209,15 @@ class MovieAddCommand extends Command
         $movie->setYear(($year != 0) ? $year : null);
         $movie->setCountry(($country != '') ? $country : null);
 
-        $oldCategories = $movie->getCategories();
-        foreach ($oldCategories as $oldCategory) {
-            $movie->removeCategory($oldCategory);
-        }
-
         $categories = explode(',', (string) $type);
         $this->setCategories($movie, $categories);
 
         return $movie;
     }
 
-    private function setVotes($suffix, $votes)
+    private function setVotes($suffix, $matches)
     {
+        $votes = (float) isset($matches['2']) !== 0.0 ? $matches['1'] : null;
         switch ($suffix) {
             case 'K':
                 $votes *= 1000;
@@ -230,6 +235,11 @@ class MovieAddCommand extends Command
 
     private function setCategories($movie, $categories)
     {
+        $oldCategories = $movie->getCategories();
+        foreach ($oldCategories as $oldCategory) {
+            $movie->removeCategory($oldCategory);
+        }
+
         foreach ($categories as $value) {
             $value = trim($value);
             if ($value === '') {

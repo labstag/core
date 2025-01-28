@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -14,6 +15,7 @@ use Labstag\Entity\HttpErrorLogs;
 use Labstag\Field\HttpLogs\IsBotField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class HttpErrorLogsCrudController extends AbstractCrudControllerLib
@@ -22,6 +24,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
+        $this->addToBan($actions);
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
         $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
 
@@ -38,6 +41,38 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
 
         return $crud;
     }
+
+    private function addToBan(Actions $actions): void
+    {
+        $action = $this->setLinkBanAction();
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function setLinkBanAction(): Action
+    {
+        $action = Action::new('banIp', new TranslatableMessage('Ban Ip'));
+        $action->linkToCrudAction('banIp');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        return $action;
+    }
+
+    public function banIp(AdminContext $adminContext): RedirectResponse
+    {
+        $entity = $adminContext->getEntity()->getInstance();
+        $internetProtocol = $entity->getInternetProtocol();
+
+        $this->securityService->addBan($internetProtocol);
+
+        $this->addFlash('success', new TranslatableMessage('Ip %ip% banned', ['%ip%' => $internetProtocol]));
+
+        return $this->redirectToRoute(
+            'admin_http_error_logs_index'
+        );
+    }
+
 
     #[Override]
     public function configureFields(string $pageName): iterable
