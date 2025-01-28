@@ -164,19 +164,21 @@ class SecurityService
             'HTTP_FORWARDED',
             'REMOTE_ADDR',
         ];
-    
+
         foreach ($headers as $header) {
             if (!empty($server->get($header))) {
-                $ipList = explode(',', $server->get($header)); // Si plusieurs IPs sont présentes (cas d'un proxy chainé)
-                $internetProtocol = trim(end($ipList)); // On prend la dernière IP de la liste (client réel)
-    
+                $ipList = explode(',', $server->get($header));
+                // Si plusieurs IPs sont présentes (cas d'un proxy chainé)
+                $internetProtocol = trim(end($ipList));
+                // On prend la dernière IP de la liste (client réel)
+
                 // Valider que c'est une IP valide (IPv4 ou IPv6)
                 if (filter_var($internetProtocol, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
                     return $internetProtocol;
                 }
             }
         }
-    
+
         return '0.0.0.0';
     }
 
