@@ -2,10 +2,6 @@ export class Video
 {
   constructor()
   {
-    this.init();
-  }
-  init()
-  {
     document.querySelectorAll('.js-btnvideo').forEach(
       (btn) => {
         btn.addEventListener('click', (event) => {

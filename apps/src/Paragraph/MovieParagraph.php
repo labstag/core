@@ -34,6 +34,17 @@ class MovieParagraph extends ParagraphLib
             )
         );
 
+        $templates = $this->templates('footer');
+        $this->setFooter(
+            $paragraph,
+            $this->render(
+                $templates['view'],
+                [
+                    'pagination' => $pagination
+                ]
+            )
+        );
+
         $this->setData(
             $paragraph,
             [

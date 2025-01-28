@@ -115,7 +115,7 @@ class SecurityService
         }
 
         $referer = $request->headers->get('referer');
-        $method = $server->get('requestMethod');
+        $method = $server->get('request_method');
         $data = $this->httpErrorLogsRepository->findBy(
             [
                 'domain'        => $domain,
