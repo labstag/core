@@ -39,9 +39,7 @@ class MovieParagraph extends ParagraphLib
             $paragraph,
             $this->render(
                 $templates['view'],
-                [
-                    'pagination' => $pagination
-                ]
+                ['pagination' => $pagination]
             )
         );
 
