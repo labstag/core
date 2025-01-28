@@ -27,15 +27,6 @@ class HeadParagraph extends ParagraphLib
         );
     }
 
-    /**
-     * @return Generator<FieldInterface>
-     */
-    #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): mixed
-    {
-        unset($paragraph);
-    }
-
     #[Override]
     public function getName(): string
     {
