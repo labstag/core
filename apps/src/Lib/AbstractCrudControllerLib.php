@@ -277,7 +277,6 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
      */
     protected function addFieldParagraphs(string $pageName): array
     {
-
         $fields = [];
         if ($pageName === 'new') {
             return $fields;
