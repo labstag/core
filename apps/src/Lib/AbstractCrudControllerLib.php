@@ -275,10 +275,8 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     /**
      * @return mixed[]
      */
-    protected function addFieldParagraphs(string $pageName, string $form): array
+    protected function addFieldParagraphs(string $pageName): array
     {
-        // Disable $form because allow_add and allow_delete are not working for using multiple prototypes
-        unset($form);
 
         $fields = [];
         if ($pageName === 'new') {
@@ -293,20 +291,6 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
         $fields[] = FormField::addTab(new TranslatableMessage('Paragraphs'))->hideWhenCreating();
         $fields[] = ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'))->hideWhenCreating();
-
-        // $collectionField = CollectionField::new('paragraphs', new TranslatableMessage('Paragraphs'));
-        // $collectionField->setEntryType($form);
-        // $collectionField->setDefaultColumns('col-md-12 col-xxl-12');
-        // $collectionField->setFormTypeOption(
-        //     'entry_options', [
-        //         'allow_add' => true,
-        //         'allow_delete' => true
-        //     ]
-        // );
-        // $collectionField->allowAdd();
-        // $collectionField->allowDelete();
-
-        // $fields[] = $collectionField;
 
         return $fields;
     }

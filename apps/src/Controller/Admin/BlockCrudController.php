@@ -36,17 +36,17 @@ class BlockCrudController extends AbstractCrudControllerLib
     /**
      * @return mixed[]
      */
-    public function addFieldParagraphsForBlock(?Block $block, string $pageName, string $form): array
+    public function addFieldParagraphsForBlock(?Block $block, string $pageName): array
     {
         if ($pageName === 'edit' && $block instanceof Block) {
             if (in_array($block->getType(), ['paragraphs', 'content'])) {
-                return parent::addFieldParagraphs($pageName, $form);
+                return parent::addFieldParagraphs($pageName);
             }
 
             return [];
         }
 
-        return parent::addFieldParagraphs($pageName, $form);
+        return parent::addFieldParagraphs($pageName);
     }
 
     #[Override]
@@ -89,7 +89,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         yield $this->getChoiceType($pageName, $allTypes);
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
         $fields = array_merge(
-            $this->addFieldParagraphsForBlock($currentEntity, $pageName, BlockType::class),
+            $this->addFieldParagraphsForBlock($currentEntity, $pageName),
             $this->blockService->getFields($currentEntity, $pageName)
         );
         foreach ($fields as $field) {
