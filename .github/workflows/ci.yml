@@ -98,6 +98,8 @@ jobs:
         run: cd lampy && npm run exec
       - name: 'Image pull'
         run: npm run docker:getpull-image
+      - name: "Launch first composer install"
+        run: npm run composer:install:first
       - name: 'Build containers'
         run: npm run docker:deploy
       - name: 'Waiting'
