@@ -158,7 +158,7 @@
     "simplebar": "6.3.*",
     "sortablejs": "1.15.*",
     "svg4everybody": "2.1.*",
-    "swiper": "11.1.*",
+    "swiper": "11.2.0",
     "tarteaucitronjs": "1.19.*",
     "tom-select": "2.4.*"
   }
