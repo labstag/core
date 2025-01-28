@@ -1,0 +1,51 @@
+{% for movie in pagination %}
+    <div id="movie-modal-{{ movie.id }}" class="modal hidden modal_video">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            {% set trailer = movie_oembed(movie.trailer) %}
+            <div class="modal-details">
+                {% if trailer != '' %}
+                <div class="modal-trailer">
+                    <div class="video" style="--image-url: url('{{ site_asset(movie, 'img') }}')" data-src="{{ trailer }}">
+                        <button class="js-btnvideo">{{ 'Watch the video'|trans }}</button>
+                    </div>
+                </div>
+                {% endif %}
+                {% if movie.categories|length > 0 %}
+                    <div class="modal-categories">
+                        {% for categorie in movie.categories %}
+                            <span class="categorie-{{ categorie.slug }}">{{ categorie.title }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="modal-title">{{ movie.title }}</div>
+                <div class="modal-year">Année : {{ movie.year }}</div>
+                <div class="modal-country">Pays : {{ movie.country }}</div>
+                <div class="modal-color">Couleur : {{ movie.color }}</div>
+                <div class="modal-duration">
+                    Durée : 
+                    {% if movie.duration < 60 %}
+                        {{ movie.duration ~ " min" }}
+                    {% else %}
+                        {% set hours = (movie.duration // 60) %}
+                        {% set minutes = (movie.duration % 60) %}
+                        {{ hours ~ 'h ' ~ minutes ~ " min" }}
+                    {% endif %}
+                </div>
+                {% if movie.evaluation != null %}
+                <div class="modal-evaluation">
+                    Evaluation : {{ movie.evaluation }}
+                </div>
+                {% endif %}
+                {% if movie.votes != null %}
+                <div class="modal-votes">
+                    Votes : {{ movie.votes }}
+                </div>
+                {% endif %}
+                <div class="modal-imdb">
+                    <a href="https://www.imdb.com/title/tt{{ movie.imdb }}" target="_blank">IMDB</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}

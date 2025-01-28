@@ -1,0 +1,6 @@
+@use './../mixins' as mixins;
+.modal_video {
+  .video{
+    @include mixins.video();
+  }
+}

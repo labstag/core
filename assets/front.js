@@ -2,6 +2,7 @@ import WebFont from 'webfontloader';
 import svg4everybody from 'svg4everybody';
 import { Video } from './front/js/video';
 import { Slider } from './front/js/slider';
+import { Movie } from './front/js/movie';
 
 WebFont.load({
   google: {
@@ -19,4 +20,5 @@ document.addEventListener('DOMContentLoaded', function () {
     '.movie-btn-next',
     '.movie-btn-prev'
   );
+  new Movie();
 });
