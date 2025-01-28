@@ -25,10 +25,11 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     {
         $this->configureActionsTrash($actions);
         $this->addToBan($actions);
-        try {
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+        $action = $request->query->get('action', null);
+        if ($action != 'trash') {
             $actions->remove(Crud::PAGE_INDEX, Action::NEW);
             $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
-        } catch (\Exception $e) {
         }
 
         return $actions;
