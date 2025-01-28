@@ -14,7 +14,7 @@ services:
       - redis
     volumes:
       - ${PWD}/apps:/var/www/:rw
-      - ${PWD}/conf/docker-php-ram-limit.init:/usr/local/etc/php/conf.d/docker-php-ram-limit.ini
+      - ${PWD}/conf/docker-php-ram-limit.ini:/usr/local/etc/php/conf.d/docker-php-ram-limit.ini
     networks:
       - net
     deploy:
