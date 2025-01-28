@@ -13,7 +13,7 @@
         "doctrine/annotations": "2.0.*",
         "doctrine/dbal": "3.9.*",
         "doctrine/doctrine-bundle": "2.13.*",
-        "doctrine/doctrine-migrations-bundle": "3.3.*",
+        "doctrine/doctrine-migrations-bundle": "3.4.*",
         "easycorp/easyadmin-bundle": "4.23.*",
         "essence/essence": "3.5.*",
         "gedmo/doctrine-extensions": "3.17.*",
@@ -40,11 +40,13 @@
         "symfony/rate-limiter": "7.2.*",
         "symfony/runtime": "7.2.*",
         "symfony/twig-bridge": "7.2.*",
+        "symfony/twig-bundle": "7.2.*",
         "symfony/webpack-encore-bundle": "2.2.*",
         "symfony/workflow": "7.2.*",
         "symfony/yaml": "7.2.*",
         "twig/extra-bundle": "3.18.*",
         "twig/intl-extra": "3.18.*",
+        "twig/twig": "3.18.*",
         "vich/uploader-bundle": "2.5.*"
     },
     "config": {
