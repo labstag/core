@@ -35,6 +35,7 @@ use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
 use Labstag\Service\FormService;
 use Labstag\Service\ParagraphService;
+use Labstag\Service\SecurityService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
@@ -54,6 +55,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         protected FormService $formService,
         protected FileService $fileService,
         protected SiteService $siteService,
+        protected SecurityService $securityService,
         protected BlockService $blockService,
         protected ParagraphService $paragraphService,
         protected WorkflowService $workflowService,
