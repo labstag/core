@@ -63,7 +63,7 @@ class PageCrudController extends AbstractCrudControllerLib
         yield $this->addFieldTags('page');
         yield $this->addFieldCategories('page');
         $fields = array_merge(
-            $this->addFieldParagraphs($pageName, PageType::class),
+            $this->addFieldParagraphs($pageName),
             $this->addFieldMetas(),
             $this->addFieldRefUser()
         );

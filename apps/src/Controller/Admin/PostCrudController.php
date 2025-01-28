@@ -50,7 +50,7 @@ class PostCrudController extends AbstractCrudControllerLib
         yield $this->addFieldTags('post');
         yield $this->addFieldCategories('post');
         $fields = array_merge(
-            $this->addFieldParagraphs($pageName, PostType::class),
+            $this->addFieldParagraphs($pageName),
             $this->addFieldMetas(),
             $this->addFieldRefUser()
         );

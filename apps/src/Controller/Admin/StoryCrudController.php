@@ -66,7 +66,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         $collectionField->onlyOnDetail();
         yield $collectionField;
         $fields = array_merge(
-            $this->addFieldParagraphs($pageName, StoryType::class),
+            $this->addFieldParagraphs($pageName),
             $this->addFieldMetas(),
             $this->addFieldRefUser()
         );

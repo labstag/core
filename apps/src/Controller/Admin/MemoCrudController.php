@@ -43,7 +43,7 @@ class MemoCrudController extends AbstractCrudControllerLib
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();
         yield $this->addFieldImageUpload('img', $pageName);
-        $fields = array_merge($this->addFieldParagraphs($pageName, MemoType::class), $this->addFieldRefUser());
+        $fields = array_merge($this->addFieldParagraphs($pageName), $this->addFieldRefUser());
         foreach ($fields as $field) {
             yield $field;
         }
