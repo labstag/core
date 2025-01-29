@@ -80,9 +80,10 @@ class MovieAddCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $file = $this->fileService->getFileInAdapter('private', 'movies.csv');
+        $filename = 'movies.csv';
+        $file = $this->fileService->getFileInAdapter('private', $filename);
         if (!is_file($file)) {
-            $symfonyStyle->error('File not found');
+            $symfonyStyle->error('File not found '.$filename);
 
             return Command::FAILURE;
         }

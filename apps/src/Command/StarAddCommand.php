@@ -45,9 +45,10 @@ class StarAddCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $file = $this->fileService->getFileInAdapter('private', 'stars.csv');
+        $filename = 'stars.json';
+        $file = $this->fileService->getFileInAdapter('private', $filename);
         if (!is_file($file)) {
-            $symfonyStyle->error('File not found');
+            $symfonyStyle->error('File not found '.$filename);
 
             return Command::FAILURE;
         }
