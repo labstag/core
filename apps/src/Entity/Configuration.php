@@ -24,12 +24,6 @@ class Configuration
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $favicon = null;
-
-    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'favicon')]
-    private ?File $faviconFile = null;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
@@ -84,6 +78,12 @@ class Configuration
     )]
     private ?bool $userShow = false;
 
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    private ?bool $disableEmptyAgent = null;
+
     public function getCopyright(): ?string
     {
         return $this->copyright;
@@ -92,16 +92,6 @@ class Configuration
     public function getEmail(): ?string
     {
         return $this->email;
-    }
-
-    public function getFavicon(): ?string
-    {
-        return $this->favicon;
-    }
-
-    public function getFaviconFile(): ?File
-    {
-        return $this->faviconFile;
     }
 
     public function getId(): ?string
@@ -181,22 +171,6 @@ class Configuration
         $this->email = $email;
 
         return $this;
-    }
-
-    public function setFavicon(?string $favicon): void
-    {
-        $this->favicon = $favicon;
-    }
-
-    public function setFaviconFile(?File $faviconFile = null): void
-    {
-        $this->faviconFile = $faviconFile;
-
-        if ($faviconFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
     }
 
     public function setLogo(?string $logo): void
@@ -283,6 +257,18 @@ class Configuration
     public function setUserShow(bool $userShow): static
     {
         $this->userShow = $userShow;
+
+        return $this;
+    }
+
+    public function isDisableEmptyAgent(): ?bool
+    {
+        return $this->disableEmptyAgent;
+    }
+
+    public function setDisableEmptyAgent(?bool $disableEmptyAgent): static
+    {
+        $this->disableEmptyAgent = $disableEmptyAgent;
 
         return $this;
     }

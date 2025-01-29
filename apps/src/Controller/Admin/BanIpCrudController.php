@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\BanIp;
 use Labstag\Field\WysiwygField;
@@ -18,6 +19,17 @@ class BanIpCrudController extends AbstractCrudControllerLib
         $this->configureActionsTrash($actions);
 
         return $actions;
+    }
+
+    #[Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        $crud->setDefaultSort(
+            ['createdAt' => 'DESC']
+        );
+
+        return $crud;
     }
 
     #[Override]

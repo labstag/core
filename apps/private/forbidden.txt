@@ -10,3 +10,5 @@ atomlib.php
 enhancecp
 nmaplowercheck
 vendor
+.env
+.php
