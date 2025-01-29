@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "assets": "docker exec -i $($npm_package_config_phpfpm) symfony console assets:install public --symlink --relative",
-    "bash:phpfpm": "docker exec -ti $($npm_package_config_phpfpm) bash",
+    "bash": "docker exec -ti $($npm_package_config_phpfpm) bash",
     "bdd:mariadb": "korojscommands bddset-mariadb",
     "cache:clear": "docker exec -i $($npm_package_config_phpfpm) symfony console cache:clear",
     "cmd:install:all": "npm-run-all -c exec doctrine:migrate assets encore:dev lint:all",

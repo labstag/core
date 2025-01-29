@@ -32,17 +32,19 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
-        yield TextField::new('title_format', new TranslatableMessage('Title format'));
+        yield TextField::new('titleFormat', new TranslatableMessage('Title format'));
         yield TextField::new('name', new TranslatableMessage('Site name'));
         yield EmailField::new('email', new TranslatableMessage('Email'));
         yield UrlField::new('url', new TranslatableMessage('Url'));
         yield EmailField::new('noreply', new TranslatableMessage('Email no-reply'));
         yield WysiwygField::new('Copyright', new TranslatableMessage('Copyright'));
-        yield BooleanField::new('user_show', new TranslatableMessage('Show user'));
-        yield BooleanField::new('user_link', new TranslatableMessage('Link user'));
+        yield BooleanField::new('userShow', new TranslatableMessage('Show user'));
+        yield BooleanField::new('userLink', new TranslatableMessage('Link user'));
+        yield FormField::addTab(new TranslatableMessage('Security'));
+        yield BooleanField::new('disableEmptyAgent', new TranslatableMessage('Disable empty agent'));
         yield FormField::addTab(new TranslatableMessage('Sitemap'));
-        yield BooleanField::new('sitemap_posts', new TranslatableMessage('Show posts'));
-        yield BooleanField::new('sitemap_story', new TranslatableMessage('Show story'));
+        yield BooleanField::new('sitemapPosts', new TranslatableMessage('Show posts'));
+        yield BooleanField::new('sitemapStory', new TranslatableMessage('Show story'));
         yield FormField::addTab(new TranslatableMessage('Medias'));
         yield $this->addFieldImageUpload('logo', $pageName, new TranslatableMessage('Logo'));
         yield $this->addFieldImageUpload('placeholder', $pageName, new TranslatableMessage('placeholder'));

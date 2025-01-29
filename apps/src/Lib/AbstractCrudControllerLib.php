@@ -502,7 +502,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
         $entity ??= static::getEntityFqcn();
 
-        return $doctrine->getManagerForClass(static::getEntityFqcn())->getRepository($entity);
+        return $doctrine->getManagerForClass($entity)->getRepository($entity);
     }
 
     protected function getRepositoryParagraph(): ParagraphRepository

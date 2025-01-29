@@ -215,7 +215,7 @@ class SecurityService
         $forbidden = explode("\n", file_get_contents($file));
         $find = false;
         foreach ($forbidden as $type) {
-            if (str_contains((string) $url, $type)) {
+            if (str_contains((string) $url, $type) || str_contains(strtolower((string) $url), strtolower($type))) {
                 $find = true;
 
                 break;

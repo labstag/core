@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\HttpErrorLogs;
 use Labstag\Field\HttpLogs\IsBotField;
+use Labstag\Field\HttpLogs\SameField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -68,13 +69,25 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         $entity = $adminContext->getEntity()->getInstance();
         $internetProtocol = $entity->getInternetProtocol();
 
+        $redirectToRoute = $this->redirectToRoute(
+            'admin_http_error_logs_index'
+        );
+
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+        if ($request->server->get('REMOTE_ADDR') === $internetProtocol) {
+            $this->addFlash(
+                'danger',
+                new TranslatableMessage("You can't ban your own IP")
+            );
+
+            return $redirectToRoute;
+        }
+
         $this->securityService->addBan($internetProtocol);
 
         $this->addFlash('success', new TranslatableMessage('Ip %ip% banned', ['%ip%' => $internetProtocol]));
 
-        return $this->redirectToRoute(
-            'admin_http_error_logs_index'
-        );
+        return $redirectToRoute;
     }
 
 
@@ -107,6 +120,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         yield TextField::new('referer', new TranslatableMessage('referer'))->setMaxLength($maxLength);
         yield IntegerField::new('httpCode', new TranslatableMessage('httpCode'));
         yield TextField::new('requestMethod', new TranslatableMessage('requestMethod'));
+        yield SameField::new('nbr');
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();
         $fields = array_merge($this->addFieldRefUser());
