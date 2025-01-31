@@ -41,7 +41,7 @@ class DashboardController extends AbstractDashboardController
     #[Override]
     public function configureDashboard(): Dashboard
     {
-        $data = $this->siteService->getConfiguration();
+        $data      = $this->siteService->getConfiguration();
         $dashboard = Dashboard::new();
         $dashboard->setTitle($data->getName());
         $dashboard->setTranslationDomain('admin');
@@ -56,7 +56,7 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
         $categories = $this->setCategories();
-        $tags = $this->setTags();
+        $tags       = $this->setTags();
 
         yield $this->configureMenuItemsStory($categories, $tags);
         yield $this->configureMenuItemsChapter($tags);
@@ -121,10 +121,10 @@ class DashboardController extends AbstractDashboardController
             SubmissionCrudController::getEntityFqcn()
         );
 
-        $configuration = null;
+        $configuration  = null;
         $configurations = $this->configurationRepository->findAll();
-        $generator = $this->container->get(AdminUrlGenerator::class);
-        $configuration = (count($configurations) != 0) ? $configurations[0] : null;
+        $generator      = $this->container->get(AdminUrlGenerator::class);
+        $configuration  = (0 != count($configurations)) ? $configurations[0] : null;
         if (is_null($configuration)) {
             return $this->redirectToRoute('admin');
         }
@@ -173,9 +173,9 @@ class DashboardController extends AbstractDashboardController
             ]
         );
         $avatar = $user->getAvatar();
-        if ($avatar != '') {
+        if ('' != $avatar) {
             $basePath = $this->fileService->getBasePath($user, 'avatarFile');
-            $userMenu->setAvatarUrl($basePath . '/' . $avatar);
+            $userMenu->setAvatarUrl($basePath.'/'.$avatar);
 
             return $userMenu;
         }
@@ -199,7 +199,7 @@ class DashboardController extends AbstractDashboardController
     protected function adminEmpty(string $entity): void
     {
         $serviceEntityRepositoryLib = $this->getRepository($entity);
-        $all = $serviceEntityRepositoryLib->findDeleted();
+        $all                        = $serviceEntityRepositoryLib->findDeleted();
         foreach ($all as $row) {
             $serviceEntityRepositoryLib->remove($row);
         }
@@ -210,7 +210,7 @@ class DashboardController extends AbstractDashboardController
     protected function adminRestore(string $entity, mixed $uuid): void
     {
         $serviceEntityRepositoryLib = $this->getRepository($entity);
-        $data = $serviceEntityRepositoryLib->find($uuid);
+        $data                       = $serviceEntityRepositoryLib->find($uuid);
         if (is_null($data)) {
             throw new Exception(new TranslatableMessage('Data not found'));
         }

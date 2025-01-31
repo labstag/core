@@ -12,11 +12,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
-use Labstag\Form\Paragraphs\StoryType;
+use Labstag\Field\FileField;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Service\StoryService;
 use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryCrudController extends AbstractCrudControllerLib
@@ -28,6 +30,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
         $this->setActionMoveChapter($actions);
+        $this->configureActionsUpdatePdf($actions);
 
         return $actions;
     }
@@ -57,6 +60,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('story');
         yield $this->addFieldCategories('story');
+        yield FileField::new('pdf');
         $collectionField = CollectionField::new('chapters');
         $collectionField->onlyOnIndex();
         $collectionField->formatValue(fn ($value): int => count($value));
@@ -109,14 +113,14 @@ class StoryCrudController extends AbstractCrudControllerLib
 
     public function moveChapter(AdminContext $adminContext): RedirectResponse|Response
     {
-        $request = $adminContext->getRequest();
+        $request    = $adminContext->getRequest();
         $repository = $this->getRepository();
-        $entityId = $request->query->get('entityId');
-        $story = $repository->find($entityId);
-        $generator = $this->container->get(AdminUrlGenerator::class);
+        $entityId   = $request->query->get('entityId');
+        $story      = $repository->find($entityId);
+        $generator  = $this->container->get(AdminUrlGenerator::class);
         if ($request->isMethod('POST')) {
             $repository = $this->getRepository(Chapter::class);
-            $chapters = $request->get('chapter');
+            $chapters   = $request->get('chapter');
             foreach ($chapters as $id => $position) {
                 $chapter = $repository->find($id);
                 if (!$chapter instanceof Chapter) {
@@ -141,6 +145,45 @@ class StoryCrudController extends AbstractCrudControllerLib
                 'chapters' => $story->getChapters(),
             ]
         );
+    }
+
+    #[Route('/admin/story/updatepdf', name: 'admin_story_updatepdf')]
+    public function updatepdf(StoryService $storyService): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $stories                    = $serviceEntityRepositoryLib->findAll();
+
+        $counter = 0;
+        $update  = 0;
+        foreach ($stories as $story) {
+            $status = $storyService->setPdf($story);
+            $update = $status ? ++$update : $update;
+            ++$counter;
+
+            $serviceEntityRepositoryLib->persist($story);
+            $serviceEntityRepositoryLib->flush($counter);
+        }
+
+        $serviceEntityRepositoryLib->flush();
+
+        $this->addFlash('success', new TranslatableMessage('Update %update% storie(s)', ['%update%' => $update]));
+
+        return $this->redirectToRoute('admin_story_index');
+    }
+
+    private function configureActionsUpdatePdf(Actions $actions): void
+    {
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+        $action  = $request->query->get('action', null);
+        if ('trash' == $action) {
+            return;
+        }
+
+        $action = Action::new('updatepdf', new TranslatableMessage('Update PDF'), 'fas fa-wrench');
+        $action->linkToRoute('admin_story_updatepdf');
+        $action->createAsGlobalAction();
+
+        $actions->add(Crud::PAGE_INDEX, $action);
     }
 
     private function setActionMoveChapter(Actions $actions): void

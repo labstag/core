@@ -35,7 +35,7 @@ class LinksBlock extends BlockLib
     {
         unset($disable);
         $links = $this->correctionLinks($block);
-        if (count($links) == 0) {
+        if (0 == count($links)) {
             $this->setShow($block, false);
 
             return;
@@ -84,7 +84,7 @@ class LinksBlock extends BlockLib
     private function correctionLinks(Block $block): array
     {
         $links = $block->getLinks();
-        $data = [];
+        $data  = [];
         foreach ($links as $link) {
             $entity = clone $link;
             $entity->setUrl($this->correctionUrl($entity->getUrl()));

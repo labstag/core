@@ -78,7 +78,7 @@ class UserFixtures extends FixtureLib implements DependentFixtureInterface
         $user->setPassword($hash);
         $this->setImage($user, 'avatarFile');
 
-        $this->addReference('user_' . $user->getUsername(), $user);
+        $this->addReference('user_'.$user->getUsername(), $user);
 
         $objectManager->persist($user);
     }

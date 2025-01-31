@@ -21,52 +21,9 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class HttpErrorLogsCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
-    public function configureActions(Actions $actions): Actions
-    {
-        $this->configureActionsTrash($actions);
-        $this->addToBan($actions);
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $action = $request->query->get('action', null);
-        if ($action != 'trash') {
-            $actions->remove(Crud::PAGE_INDEX, Action::NEW);
-            $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
-        }
-
-        return $actions;
-    }
-
-    #[Override]
-    public function configureCrud(Crud $crud): Crud
-    {
-        $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort(
-            ['createdAt' => 'DESC']
-        );
-
-        return $crud;
-    }
-
-    private function addToBan(Actions $actions): void
-    {
-        $action = $this->setLinkBanAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
-    }
-
-    private function setLinkBanAction(): Action
-    {
-        $action = Action::new('banIp', new TranslatableMessage('Ban Ip'));
-        $action->linkToCrudAction('banIp');
-        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
-
-        return $action;
-    }
-
     public function banIp(AdminContext $adminContext): RedirectResponse
     {
-        $entity = $adminContext->getEntity()->getInstance();
+        $entity           = $adminContext->getEntity()->getInstance();
         $internetProtocol = $entity->getInternetProtocol();
 
         $redirectToRoute = $this->redirectToRoute(
@@ -90,11 +47,36 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         return $redirectToRoute;
     }
 
+    #[Override]
+    public function configureActions(Actions $actions): Actions
+    {
+        $this->configureActionsTrash($actions);
+        $this->addToBan($actions);
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+        $action  = $request->query->get('action', null);
+        if ('trash' != $action) {
+            $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+            $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
+        }
+
+        return $actions;
+    }
+
+    #[Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        $crud->setDefaultSort(
+            ['createdAt' => 'DESC']
+        );
+
+        return $crud;
+    }
 
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $maxLength = $pageName === Crud::PAGE_DETAIL ? 1024 : 32;
+        $maxLength = Crud::PAGE_DETAIL === $pageName ? 1024 : 32;
         yield $this->addFieldID();
         yield TextField::new('url', new TranslatableMessage('url'))->setMaxLength($maxLength);
         yield TextField::new('domain', new TranslatableMessage('domain'))->hideOnIndex();
@@ -129,7 +111,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         }
 
         if (!is_null($currentEntity)) {
-            $data = $currentEntity->getRequestData();
+            $data      = $currentEntity->getRequestData();
             $datafield = ArrayField::new('data', new TranslatableMessage('Request DATA'));
             $datafield->hideOnIndex();
             $datafield->setTemplatePath('admin/field/httperrorlogs/request_data.html.twig');
@@ -154,5 +136,22 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     public static function getEntityFqcn(): string
     {
         return HttpErrorLogs::class;
+    }
+
+    private function addToBan(Actions $actions): void
+    {
+        $action = $this->setLinkBanAction();
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function setLinkBanAction(): Action
+    {
+        $action = Action::new('banIp', new TranslatableMessage('Ban Ip'));
+        $action->linkToCrudAction('banIp');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        return $action;
     }
 }

@@ -22,7 +22,7 @@ final class WysiwygField implements FieldInterface
     public const OPTION_STRIP_TAGS = TextField::OPTION_STRIP_TAGS;
 
     /**
-     * @param false|string|null $label
+     * @param null|false|string $label
      */
     #[Override]
     public static function new(string $propertyName, $label = null): self
@@ -56,13 +56,7 @@ final class WysiwygField implements FieldInterface
     public function setMaxLength(int $length): self
     {
         if ($length < 1) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'The argument of the "%s()" method must be 1 or higher (%d given).',
-                    __METHOD__,
-                    $length
-                )
-            );
+            throw new InvalidArgumentException(sprintf('The argument of the "%s()" method must be 1 or higher (%d given).', __METHOD__, $length));
         }
 
         $this->setCustomOption(self::OPTION_MAX_LENGTH, $length);
@@ -73,13 +67,7 @@ final class WysiwygField implements FieldInterface
     public function setNumOfRows(int $rows): self
     {
         if ($rows < 1) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'The argument of the "%s()" method must be 1 or higher (%d given).',
-                    __METHOD__,
-                    $rows
-                )
-            );
+            throw new InvalidArgumentException(sprintf('The argument of the "%s()" method must be 1 or higher (%d given).', __METHOD__, $rows));
         }
 
         $this->setCustomOption(self::OPTION_NUM_OF_ROWS, $rows);

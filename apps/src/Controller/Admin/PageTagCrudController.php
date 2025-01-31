@@ -15,7 +15,7 @@ class PageTagCrudController extends TagCrudController
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $data = parent::configureFields($pageName);
+        $data   = parent::configureFields($pageName);
         $data[] = $this->addFieldTotalChild('pages');
 
         return $data;

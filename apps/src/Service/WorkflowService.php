@@ -64,8 +64,8 @@ class WorkflowService
         }
 
         $initialMarking = new Marking();
-        $definition = $workflow->getDefinition();
-        $initialPlaces = $definition->getInitialPlaces();
+        $definition     = $workflow->getDefinition();
+        $initialPlaces  = $definition->getInitialPlaces();
         foreach ($initialPlaces as $initialPlace) {
             $initialMarking->mark($initialPlace);
         }

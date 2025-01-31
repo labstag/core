@@ -44,11 +44,11 @@ final class ParagraphsField implements FieldInterface
     {
         $field = new self();
         $field->setFieldFqcn(self::class);
-        $field->setProperty('ea_form_panel_' . (new Ulid()));
+        $field->setProperty('ea_form_panel_'.(new Ulid()));
         $field->setLabel($label);
         $field->setFormType(ParagraphType::class);
         $field->setFormTypeOptions([
-            'mapped' => false,
+            'mapped'   => false,
             'required' => false,
         ]);
         $field->setTemplatePath('admin/field/paragraphs.html.twig');
@@ -79,7 +79,7 @@ final class ParagraphsField implements FieldInterface
     private function hasLabelOrIcon(): bool
     {
         // don't use empty() because the label can contain only white spaces (it's a valid edge-case)
-        if (!is_null($this->dto->getLabel()) && $this->dto->getLabel() !== '') {
+        if (!is_null($this->dto->getLabel()) && '' !== $this->dto->getLabel()) {
             return true;
         }
 

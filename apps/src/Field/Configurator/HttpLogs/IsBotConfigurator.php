@@ -31,6 +31,6 @@ final class IsBotConfigurator implements FieldConfiguratorInterface
     {
         unset($entityDto);
 
-        return $fieldDto->getFieldFqcn() === IsBotField::class;
+        return IsBotField::class === $fieldDto->getFieldFqcn();
     }
 }

@@ -15,15 +15,6 @@ class MovieRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Movie::class);
     }
 
-    public function getQueryBuilder(): QueryBuilder
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->where('s.enable = :enable');
-        $queryBuilder->setParameter('enable', true);
-
-        return $queryBuilder->orderBy('s.title', 'ASC');
-    }
-
     public function findLastByNbr(int $nbr): mixed
     {
         $queryBuilder = $this->createQueryBuilder('s');
@@ -36,6 +27,15 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $query = $queryBuilder->getQuery();
 
         return $query->getResult();
+    }
+
+    public function getQueryBuilder(): QueryBuilder
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->where('s.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+
+        return $queryBuilder->orderBy('s.title', 'ASC');
     }
 
     public function getQueryPaginator(): Query

@@ -69,8 +69,8 @@ class BlockService
         $blocks = [];
         foreach ($this->blocks as $block) {
             $inUse = $block->useIn();
-            $type = $block->getType();
-            $name = $block->getName();
+            $type  = $block->getType();
+            $name  = $block->getName();
             if ((in_array($entity, $inUse) && $block->isEnable()) || is_null($entity)) {
                 $blocks[$name] = $type;
             }
@@ -84,7 +84,7 @@ class BlockService
      */
     public function getContents(array $blocks): stdClass
     {
-        $data = new stdClass();
+        $data         = new stdClass();
         $data->header = [];
         $data->footer = [];
         foreach ($blocks as $block) {
@@ -119,7 +119,7 @@ class BlockService
             return [];
         }
 
-        $type = $block->getType();
+        $type   = $block->getType();
         $fields = [];
         foreach ($this->blocks as $row) {
             if ($row->getType() == $type) {
@@ -213,7 +213,7 @@ class BlockService
     protected function acces(Block $block): bool
     {
         $roles = $block->getRoles();
-        if (is_null($roles) || count($roles) == 0) {
+        if (is_null($roles) || 0 == count($roles)) {
             return true;
         }
 
@@ -232,7 +232,7 @@ class BlockService
     }
 
     /**
-     * @return mixed[]|null
+     * @return null|mixed[]
      */
     private function templates(string $type, Block $block): ?array
     {

@@ -40,11 +40,11 @@ class MoviesUpdateCommand extends Command
         $progressBar = new ProgressBar($output, count($movies));
         $progressBar->start();
 
-        $update = 0;
+        $update  = 0;
         $counter = 0;
         foreach ($movies as $movie) {
             $status = $this->movieService->update($movie);
-            $counter = $status ? ++$update : $update;
+            $update = $status ? ++$update : $update;
             ++$counter;
 
             $this->movieRepository->persist($movie);

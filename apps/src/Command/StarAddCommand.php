@@ -45,8 +45,8 @@ class StarAddCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $filename = 'stars.json';
-        $file = $this->fileService->getFileInAdapter('private', $filename);
+        $filename     = 'stars.json';
+        $file         = $this->fileService->getFileInAdapter('private', $filename);
         if (!is_file($file)) {
             $symfonyStyle->error('File not found '.$filename);
 
@@ -57,13 +57,13 @@ class StarAddCommand extends Command
 
         $json = file_get_contents($file);
         $data = json_decode($json, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
+        if (JSON_ERROR_NONE !== json_last_error()) {
             $symfonyStyle->error('Json error');
 
             return Command::FAILURE;
         }
 
-        $counter = 0;
+        $counter  = 0;
         $dataJson = [];
         foreach ($data as $page) {
             $dataJson = array_merge($dataJson, $page);
@@ -72,7 +72,7 @@ class StarAddCommand extends Command
         $progressBar = new ProgressBar($output, count($dataJson));
         $progressBar->start();
         foreach ($dataJson as $data) {
-            if ($data['private'] != true) {
+            if (true != $data['private']) {
                 $star = $this->setStar($data);
                 $this->addOrUpdate($star);
                 $this->starRepository->persist($star);

@@ -49,7 +49,7 @@ class BackController extends AbstractController
     public function cacheclear(KernelInterface $kernel): Response
     {
         $total = $this->fileService->deletedFileByEntities();
-        if ($total != 0) {
+        if (0 != $total) {
             $this->addFlash(
                 'success',
                 new TranslatableMessage(
@@ -87,17 +87,17 @@ class BackController extends AbstractController
     {
         $this->entityManager->getFilters()->disable('softdeleteable');
         $referer = $request->headers->get('referer');
-        if (is_null($referer) || $referer === '' || $referer === '0') {
+        if (is_null($referer) || '' === $referer || '0' === $referer) {
             return $this->redirectToRoute('admin');
         }
 
         $routeName = $request->query->get('routeName');
-        $entity = $request->attributes->get('entity', null);
-        $uuid = $request->attributes->get('uuid', null);
+        $entity    = $request->attributes->get('entity', null);
+        $uuid      = $request->attributes->get('uuid', null);
         match ($routeName) {
             'admin_restore' => $this->adminRestore($entity, $uuid),
-            'admin_empty' => $this->adminEmpty($entity),
-            default => throw new Exception(new TranslatableMessage('Route not found')),
+            'admin_empty'   => $this->adminEmpty($entity),
+            default         => throw new Exception(new TranslatableMessage('Route not found')),
         };
 
         return $this->redirect($referer);
@@ -111,13 +111,13 @@ class BackController extends AbstractController
     public function workflow(Request $request): Response
     {
         $referer = $request->headers->get('referer');
-        if (is_null($referer) || $referer === '' || $referer === '0') {
+        if (is_null($referer) || '' === $referer || '0' === $referer) {
             return $this->redirectToRoute('admin');
         }
 
-        $entity = $request->query->get('entity', null);
+        $entity     = $request->query->get('entity', null);
         $transition = $request->query->get('transition', null);
-        $uid = $request->query->get('uid', null);
+        $uid        = $request->query->get('uid', null);
 
         $this->workflowService->change($entity, $transition, $uid);
 
@@ -127,7 +127,7 @@ class BackController extends AbstractController
     protected function adminEmpty(string $entity): void
     {
         $serviceEntityRepositoryLib = $this->getRepository($entity);
-        $all = $serviceEntityRepositoryLib->findDeleted();
+        $all                        = $serviceEntityRepositoryLib->findDeleted();
         foreach ($all as $row) {
             $serviceEntityRepositoryLib->remove($row);
         }
@@ -138,7 +138,7 @@ class BackController extends AbstractController
     protected function adminRestore(string $entity, mixed $uuid): void
     {
         $serviceEntityRepositoryLib = $this->getRepository($entity);
-        $data = $serviceEntityRepositoryLib->find($uuid);
+        $data                       = $serviceEntityRepositoryLib->find($uuid);
         if (is_null($data)) {
             throw new Exception(new TranslatableMessage('Data not found'));
         }

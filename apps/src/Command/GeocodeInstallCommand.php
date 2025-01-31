@@ -60,20 +60,20 @@ class GeocodeInstallCommand extends Command
             throw new Exception('Argument country invalide');
         }
 
-        if ($country === '' || $country === '0') {
+        if ('' === $country || '0' === $country) {
             $symfonyStyle->note(sprintf('Argument country invalide: %s', $country));
 
             return Command::FAILURE;
         }
 
         $csv = $this->geocodeService->csv($country);
-        if ($csv == []) {
+        if ([] == $csv) {
             $symfonyStyle->warning(['file not found']);
 
             return Command::FAILURE;
         }
 
-        $table = $this->geocodeService->tables($csv);
+        $table       = $this->geocodeService->tables($csv);
         $progressBar = new ProgressBar($output, count($table));
         $progressBar->start();
 

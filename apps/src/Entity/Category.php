@@ -72,10 +72,10 @@ class Category implements Stringable
     public function __construct()
     {
         $this->children = new ArrayCollection();
-        $this->stories = new ArrayCollection();
-        $this->movies = new ArrayCollection();
-        $this->pages = new ArrayCollection();
-        $this->posts = new ArrayCollection();
+        $this->stories  = new ArrayCollection();
+        $this->movies   = new ArrayCollection();
+        $this->pages    = new ArrayCollection();
+        $this->posts    = new ArrayCollection();
     }
 
     #[Override]

@@ -21,7 +21,7 @@ class EditoParagraph extends ParagraphLib
     {
         /** @var EditoRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Edito::class);
-        $edito = $serviceEntityRepositoryLib->findLast();
+        $edito                      = $serviceEntityRepositoryLib->findLast();
         if (!$edito instanceof Edito) {
             $this->setShow($paragraph, false);
 
@@ -29,7 +29,7 @@ class EditoParagraph extends ParagraphLib
         }
 
         $paragraphsedito = $this->paragraphService->generate($edito->getParagraphs()->getValues(), $data, $disable);
-        $contents = $this->paragraphService->getContents($paragraphsedito);
+        $contents        = $this->paragraphService->getContents($paragraphsedito);
         $this->setHeader($paragraph, $contents->header);
         $this->setFooter($paragraph, $contents->footer);
 

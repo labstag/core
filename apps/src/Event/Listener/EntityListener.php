@@ -3,7 +3,6 @@
 namespace Labstag\Event\Listener;
 
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Events;
@@ -15,10 +14,12 @@ use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
+use Labstag\Entity\Story;
 use Labstag\Repository\HttpErrorLogsRepository;
 use Labstag\Repository\PageRepository;
 use Labstag\Service\MovieService;
 use Labstag\Service\ParagraphService;
+use Labstag\Service\StoryService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -31,6 +32,7 @@ final class EntityListener
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
+        private StoryService $storyService,
         private KernelInterface $kernel,
         private MovieService $movieService,
         private PageRepository $pageRepository,
@@ -43,7 +45,7 @@ final class EntityListener
 
     public function postPersist(PostPersistEventArgs $postPersistEventArgs): void
     {
-        $object = $postPersistEventArgs->getObject();
+        $object        = $postPersistEventArgs->getObject();
         $entityManager = $postPersistEventArgs->getObjectManager();
         $this->postPersistParagraph($object, $entityManager);
         $this->postPersistBanIp($object, $entityManager);
@@ -51,7 +53,7 @@ final class EntityListener
 
     public function prePersist(PrePersistEventArgs $prePersistEventArgs): void
     {
-        $object = $prePersistEventArgs->getObject();
+        $object        = $prePersistEventArgs->getObject();
         $entityManager = $prePersistEventArgs->getObjectManager();
         $this->prePersistBanIp($object, $entityManager);
         $this->prePersistAddMeta($object, $entityManager);
@@ -59,43 +61,18 @@ final class EntityListener
         $this->prePersistParagraph($object, $entityManager);
         $this->prePersistPage($object, $entityManager);
         $this->prePersistMovie($object, $entityManager);
-        $this->initWorkflow($object, $entityManager);
+        $this->prePersistStory($object, $entityManager);
+        $this->initWorkflow($object);
     }
 
-    private function postPersistBanIp($object, ObjectManager $objectManager)
+    public function prePersistStory($object, ObjectManager $objectManager): void
     {
-        if (!$object instanceof BanIp) {
+        unset($objectManager);
+        if (!$object instanceof Story) {
             return;
         }
 
-        $httpsLogs = $this->httpErrorLogsRepository->findBy(
-            [
-                'internetProtocol' => $object->getInternetProtocol(),
-            ]
-        );
-        foreach ($httpsLogs as $httpLog) {
-            $objectManager->remove($httpLog);
-        }
-
-        $objectManager->flush();
-    }
-
-    private function prePersistBanIp($object, ObjectManager $objectManager)
-    {
-        if (!$object instanceof BanIp) {
-            return;
-        }
-
-        $httpsLogs = $this->httpErrorLogsRepository->findBy(
-            [
-                'internetProtocol' => $object->getInternetProtocol(),
-            ]
-        );
-        foreach ($httpsLogs as $httpLog) {
-            $objectManager->remove($httpLog);
-        }
-
-        $objectManager->flush();
+        $this->storyService->setPdf($object);
     }
 
     private function initworkflow(object $object): void
@@ -113,13 +90,31 @@ final class EntityListener
         $workflow->apply($object, 'submit');
     }
 
+    private function postPersistBanIp($object, ObjectManager $objectManager): void
+    {
+        if (!$object instanceof BanIp) {
+            return;
+        }
+
+        $httpsLogs = $this->httpErrorLogsRepository->findBy(
+            [
+                'internetProtocol' => $object->getInternetProtocol(),
+            ]
+        );
+        foreach ($httpsLogs as $httpLog) {
+            $objectManager->remove($httpLog);
+        }
+
+        $objectManager->flush();
+    }
+
     private function postPersistParagraph(object $paragraph, ObjectManager $objectManager): void
     {
         if (!$paragraph instanceof Paragraph) {
             return;
         }
 
-        if ($paragraph->getType() != '') {
+        if ('' != $paragraph->getType()) {
             return;
         }
 
@@ -146,6 +141,24 @@ final class EntityListener
         }
     }
 
+    private function prePersistBanIp($object, ObjectManager $objectManager): void
+    {
+        if (!$object instanceof BanIp) {
+            return;
+        }
+
+        $httpsLogs = $this->httpErrorLogsRepository->findBy(
+            [
+                'internetProtocol' => $object->getInternetProtocol(),
+            ]
+        );
+        foreach ($httpsLogs as $httpLog) {
+            $objectManager->remove($httpLog);
+        }
+
+        $objectManager->flush();
+    }
+
     private function prePersistChapter(object $entity, ObjectManager $objectManager): void
     {
         unset($objectManager);
@@ -157,9 +170,11 @@ final class EntityListener
             return;
         }
 
-        $story = $entity->getRefstory();
+        $story    = $entity->getRefstory();
         $chapters = $story->getChapters();
         $entity->setPosition(count($chapters) + 1);
+
+        $this->storyService->setPdf($entity->getRefstory());
     }
 
     private function prePersistMovie(object $entity, ObjectManager $objectManager): void
@@ -169,7 +184,7 @@ final class EntityListener
             return;
         }
 
-        if (!is_null($entity->getImg()) || $entity->getImg() != '') {
+        if (!is_null($entity->getImg()) || '' != $entity->getImg()) {
             return;
         }
 
@@ -183,7 +198,7 @@ final class EntityListener
             return;
         }
 
-        if ($entity->getType() != 'home') {
+        if ('home' != $entity->getType()) {
             return;
         }
 

@@ -48,12 +48,12 @@ abstract class FixtureLib extends Fixture
 
     protected function addCategoryToEntity(object $entity): void
     {
-        if (count($this->categories) == 0) {
+        if (0 == count($this->categories)) {
             return;
         }
 
         $max = random_int(0, count($this->categories));
-        if ($max == 0) {
+        if (0 == $max) {
             return;
         }
 
@@ -78,12 +78,12 @@ abstract class FixtureLib extends Fixture
 
     protected function addTagToEntity(object $entity): void
     {
-        if (count($this->tags) == 0) {
+        if (0 == count($this->tags)) {
             return;
         }
 
         $max = random_int(0, count($this->tags));
-        if ($max == 0) {
+        if (0 == $max) {
             return;
         }
 
@@ -114,7 +114,7 @@ abstract class FixtureLib extends Fixture
 
     protected function loadForeach(int $number, string $method, ObjectManager $objectManager): void
     {
-        $generator = $this->setFaker();
+        $generator    = $this->setFaker();
         $this->enable = random_int(1, $number);
         for ($index = 0; $index < $number; ++$index) {
             call_user_func([$this, $method], $generator, $objectManager, $index + 1);
@@ -137,7 +137,7 @@ abstract class FixtureLib extends Fixture
     {
         try {
             $generator = $this->setFaker();
-            $filePath = $generator->image(width: 800, height: 600);
+            $filePath  = $generator->image(width: 800, height: 600);
             if (is_bool($filePath)) {
                 return;
             }

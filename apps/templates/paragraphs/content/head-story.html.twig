@@ -23,5 +23,11 @@
 		<div class="date">
             {{ 'Creation date : %date%'|trans({ '%date%': story.createdat|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
 		</div>
+		<div class="pdf">
+			<a href="{{ site_asset(story, 'pdf') }}" target="_blank">
+                <i class="fa-solid fa-file-pdf"></i>
+                {{ story.pdf }}
+            </a>
+		</div>
 	</div>
 </section>

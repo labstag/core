@@ -31,10 +31,10 @@ class TagFixtures extends FixtureLib
             'post',
         ];
         $code = $tab[array_rand($tab)];
-        $tag = new Tag();
+        $tag  = new Tag();
         $tag->setTitle($generator->unique()->colorName());
         $tag->setType($code);
-        $this->addReference('tag' . $code . '_' . md5(uniqid()), $tag);
+        $this->addReference('tag'.$code.'_'.md5(uniqid()), $tag);
         $objectManager->persist($tag);
     }
 }

@@ -89,6 +89,12 @@ class Story implements Stringable
     )]
     private Collection $paragraphs;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $pdf = null;
+
+    #[Vich\UploadableField(mapping: 'story', fileNameProperty: 'pdf')]
+    private ?File $pdfFile = null;
+
     #[ORM\ManyToOne(inversedBy: 'stories', cascade: ['persist', 'detach'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?User $refuser = null;
@@ -104,8 +110,8 @@ class Story implements Stringable
 
     public function __construct()
     {
-        $this->chapters = new ArrayCollection();
-        $this->tags = new ArrayCollection();
+        $this->chapters   = new ArrayCollection();
+        $this->tags       = new ArrayCollection();
         $this->categories = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
     }
@@ -198,6 +204,16 @@ class Story implements Stringable
     public function getParagraphs(): Collection
     {
         return $this->paragraphs;
+    }
+
+    public function getPdf(): ?string
+    {
+        return $this->pdf;
+    }
+
+    public function getPdfFile(): ?File
+    {
+        return $this->pdfFile;
     }
 
     public function getRefuser(): ?User
@@ -299,6 +315,22 @@ class Story implements Stringable
         $this->meta = $meta;
 
         return $this;
+    }
+
+    public function setPdf(?string $pdf): void
+    {
+        $this->pdf = $pdf;
+    }
+
+    public function setPdfFile(?File $pdfFile = null): void
+    {
+        $this->pdfFile = $pdfFile;
+
+        if ($pdfFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setRefuser(?User $user): static

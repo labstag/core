@@ -86,7 +86,7 @@ class Chapter implements Stringable
 
     public function __construct()
     {
-        $this->tags = new ArrayCollection();
+        $this->tags       = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
     }
 

@@ -22,7 +22,7 @@ class TextMediaParagraph extends ParagraphLib
     {
         unset($disable);
         $url = $paragraph->getUrl();
-        if (is_null($url) || $url === '' || $url === '0') {
+        if (is_null($url) || '' === $url || '0' === $url) {
             $this->setShow($paragraph, false);
 
             return;
@@ -44,7 +44,7 @@ class TextMediaParagraph extends ParagraphLib
             return;
         }
 
-        $html = $media->has('html') ? $media->get('html') : '';
+        $html   = $media->has('html') ? $media->get('html') : '';
         $oembed = $this->getOEmbedUrl($html);
         if (is_null($oembed)) {
             $this->setShow($paragraph, false);

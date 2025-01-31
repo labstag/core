@@ -55,26 +55,26 @@ class GeocodeService
      */
     public function csv(string $country): array
     {
-        $country = strtoupper($country);
-        $file = 'http://download.geonames.org/export/zip/' . $country . '.zip';
-        $response = $this->httpClient->request('GET', $file);
+        $country    = strtoupper($country);
+        $file       = 'http://download.geonames.org/export/zip/'.$country.'.zip';
+        $response   = $this->httpClient->request('GET', $file);
         $statusCode = $response->getStatusCode();
-        if ($statusCode != self::HTTP_OK) {
+        if (self::HTTP_OK != $statusCode) {
             return [];
         }
 
         $content = $response->getContent();
         /** @var resource $tempFile */
         $tempFile = tmpfile();
-        $path = stream_get_meta_data($tempFile)['uri'];
+        $path     = stream_get_meta_data($tempFile)['uri'];
         file_put_contents($path, $content);
         $zipArchive = new ZipArchive();
         if (!$zipArchive->open($path)) {
             return [];
         }
 
-        $content = (string) $zipArchive->getFromName($country . '.txt');
-        $csv = str_getcsv($content, "\n");
+        $content = (string) $zipArchive->getFromName($country.'.txt');
+        $csv     = str_getcsv($content, "\n");
         $zipArchive->close();
 
         return $csv;

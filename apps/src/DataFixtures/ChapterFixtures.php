@@ -44,7 +44,7 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
     public function load(ObjectManager $objectManager): void
     {
         $this->stories = $this->getIdentitiesByClass(Story::class);
-        $this->tags = $this->getIdentitiesByClass(Tag::class, 'chapter');
+        $this->tags    = $this->getIdentitiesByClass(Tag::class, 'chapter');
         $this->loadForeach(self::NUMBER_CHAPTER, 'addChapter', $objectManager);
         $objectManager->flush();
     }
@@ -60,7 +60,7 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
         $chapter->setEnable((bool) random_int(0, 1));
         $chapter->setPosition(count($this->position[$storyId]) + 1);
 
-        $story = $this->getReference($storyId, Story::class);
+        $story     = $this->getReference($storyId, Story::class);
         $dateStory = $story->getCreatedAt();
         $chapter->setResume($generator->unique()->text(200));
         $chapter->setCreatedAt($generator->unique()->dateTimeBetween($dateStory, '+ 1 month'));
@@ -69,7 +69,7 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addParagraphText($chapter);
         $this->setImage($chapter, 'imgFile');
         $this->addTagToEntity($chapter);
-        $this->addReference('chapter_' . md5(uniqid()), $chapter);
+        $this->addReference('chapter_'.md5(uniqid()), $chapter);
         $this->position[$storyId][] = $chapter;
         $objectManager->persist($chapter);
     }

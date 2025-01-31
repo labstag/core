@@ -24,7 +24,7 @@ class ParagraphService
     public function addParagraph(object $entity, string $type): ?Paragraph
     {
         $paragraph = null;
-        $all = $this->getAll($entity::class);
+        $all       = $this->getAll($entity::class);
         foreach ($all as $row) {
             if ($row != $type) {
                 continue;
@@ -86,8 +86,8 @@ class ParagraphService
         $paragraphs = [];
         foreach ($this->paragraphs as $paragraph) {
             $inUse = $paragraph->useIn();
-            $type = $paragraph->getType();
-            $name = $paragraph->getName();
+            $type  = $paragraph->getType();
+            $name  = $paragraph->getName();
             if ((in_array($entity, $inUse) && $paragraph->isEnable()) || is_null($entity)) {
                 $paragraphs[$name] = $type;
             }
@@ -103,7 +103,7 @@ class ParagraphService
      */
     public function getContents(array $paragraphs): stdClass
     {
-        $data = new stdClass();
+        $data         = new stdClass();
         $data->header = [];
         $data->footer = [];
         foreach ($paragraphs as $paragraph) {
@@ -135,14 +135,14 @@ class ParagraphService
             return null;
         }
 
-        $object = new stdClass();
-        $object->name = null;
+        $object        = new stdClass();
+        $object->name  = null;
         $object->value = null;
 
-        $reflectionClass = new ReflectionClass($paragraph);
+        $reflectionClass  = new ReflectionClass($paragraph);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            $name = $reflectionProperty->getName();
+            $name  = $reflectionProperty->getName();
             $value = $propertyAccessor->getValue($paragraph, $name);
             if (!is_object($value)) {
                 continue;
@@ -162,7 +162,7 @@ class ParagraphService
                 continue;
             }
 
-            $object->name = $name;
+            $object->name  = $name;
             $object->value = $value;
 
             break;
@@ -180,7 +180,7 @@ class ParagraphService
             return [];
         }
 
-        $type = $paragraph->getType();
+        $type   = $paragraph->getType();
         $fields = [];
         foreach ($this->paragraphs as $row) {
             if ($row->getType() == $type) {
@@ -283,7 +283,7 @@ class ParagraphService
     }
 
     /**
-     * @return mixed[]|null
+     * @return null|mixed[]
      */
     private function templates(string $type, Paragraph $paragraph): ?array
     {

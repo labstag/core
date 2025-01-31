@@ -11,7 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\User;
-use Labstag\Form\Paragraphs\ChapterType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -91,8 +90,8 @@ class ChapterCrudController extends AbstractCrudControllerLib
     private function addFieldRefStory(): AssociationField
     {
         $associationField = AssociationField::new('refstory')->autocomplete();
-        $user = $this->getUser();
-        $roles = $user->getRoles();
+        $user             = $this->getUser();
+        $roles            = $user->getRoles();
         if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
             /** @var User $user */
             $idUser = $user->getId();

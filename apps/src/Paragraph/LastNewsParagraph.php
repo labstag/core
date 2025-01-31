@@ -22,10 +22,10 @@ class LastNewsParagraph extends ParagraphLib
         unset($disable);
         /** @var PostRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Post::class);
-        $nbr = $paragraph->getNbr();
-        $news = $serviceEntityRepositoryLib->findLastByNbr($nbr);
-        $total = $serviceEntityRepositoryLib->findTotalEnable();
-        $listing = $this->siteService->getPageByType('post');
+        $nbr                        = $paragraph->getNbr();
+        $news                       = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        $total                      = $serviceEntityRepositoryLib->findTotalEnable();
+        $listing                    = $this->siteService->getPageByType('post');
         $this->setData(
             $paragraph,
             [

@@ -26,14 +26,14 @@ class HeroBlock extends BlockLib
     public function generate(Block $block, array $data, bool $disable): void
     {
         $paragraphs = $block->getParagraphs()->getValues();
-        if (count($paragraphs) == 0 || $this->siteService->isHome($data)) {
+        if (0 == count($paragraphs) || $this->siteService->isHome($data)) {
             $this->setShow($block, false);
 
             return;
         }
 
         $paragraphs = $this->paragraphService->generate($paragraphs, $data, $disable);
-        $contents = $this->paragraphService->getContents($paragraphs);
+        $contents   = $this->paragraphService->getContents($paragraphs);
         $this->setHeader($block, $contents->header);
         $this->setFooter($block, $contents->footer);
 

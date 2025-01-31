@@ -65,9 +65,9 @@ class Tag implements Stringable
 
     public function __construct()
     {
-        $this->posts = new ArrayCollection();
-        $this->pages = new ArrayCollection();
-        $this->stories = new ArrayCollection();
+        $this->posts    = new ArrayCollection();
+        $this->pages    = new ArrayCollection();
+        $this->stories  = new ArrayCollection();
         $this->chapters = new ArrayCollection();
     }
 

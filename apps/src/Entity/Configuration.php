@@ -21,6 +21,12 @@ class Configuration
     #[ORM\Column(length: 255)]
     private ?string $copyright = null;
 
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    private ?bool $disableEmptyAgent = null;
+
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
@@ -78,12 +84,6 @@ class Configuration
     )]
     private ?bool $userShow = false;
 
-    #[ORM\Column(
-        type: Types::BOOLEAN,
-        options: ['default' => 1]
-    )]
-    private ?bool $disableEmptyAgent = null;
-
     public function getCopyright(): ?string
     {
         return $this->copyright;
@@ -139,6 +139,11 @@ class Configuration
         return $this->url;
     }
 
+    public function isDisableEmptyAgent(): ?bool
+    {
+        return $this->disableEmptyAgent;
+    }
+
     public function isSitemapPosts(): ?bool
     {
         return $this->sitemapPosts;
@@ -162,6 +167,13 @@ class Configuration
     public function setCopyright(string $copyright): static
     {
         $this->copyright = $copyright;
+
+        return $this;
+    }
+
+    public function setDisableEmptyAgent(?bool $disableEmptyAgent): static
+    {
+        $this->disableEmptyAgent = $disableEmptyAgent;
 
         return $this;
     }
@@ -257,18 +269,6 @@ class Configuration
     public function setUserShow(bool $userShow): static
     {
         $this->userShow = $userShow;
-
-        return $this;
-    }
-
-    public function isDisableEmptyAgent(): ?bool
-    {
-        return $this->disableEmptyAgent;
-    }
-
-    public function setDisableEmptyAgent(?bool $disableEmptyAgent): static
-    {
-        $this->disableEmptyAgent = $disableEmptyAgent;
 
         return $this;
     }

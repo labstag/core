@@ -22,10 +22,10 @@ class LastStoryParagraph extends ParagraphLib
         unset($disable);
         /** @var StoryRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Story::class);
-        $nbr = $paragraph->getNbr();
-        $stories = $serviceEntityRepositoryLib->findLastByNbr($nbr);
-        $total = $serviceEntityRepositoryLib->findTotalEnable();
-        $listing = $this->siteService->getPageByType('story');
+        $nbr                        = $paragraph->getNbr();
+        $stories                    = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        $total                      = $serviceEntityRepositoryLib->findTotalEnable();
+        $listing                    = $this->siteService->getPageByType('story');
         $this->setData(
             $paragraph,
             [

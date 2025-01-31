@@ -10,7 +10,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
-use Labstag\Form\Paragraphs\PageType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -45,7 +44,7 @@ class PageCrudController extends AbstractCrudControllerLib
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield $this->addFieldIDShortcode('page');
-        if ($currentEntity instanceof Page && $currentEntity->getType() != 'home') {
+        if ($currentEntity instanceof Page && 'home' != $currentEntity->getType()) {
             yield $this->addFieldSlug();
         }
 
@@ -115,7 +114,7 @@ class PageCrudController extends AbstractCrudControllerLib
 
     protected function addFieldIsHome(?Page $page, string $pageName): ?ChoiceField
     {
-        if ($pageName === 'new' || ($page instanceof Page && $page->getType() == 'home')) {
+        if ('new' === $pageName || ($page instanceof Page && 'home' == $page->getType())) {
             return null;
         }
 

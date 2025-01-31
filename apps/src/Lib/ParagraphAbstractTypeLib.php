@@ -79,7 +79,7 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
     protected function buildPrototypes(FormBuilderInterface $formBuilder, array $options): array
     {
         $prototypes = [];
-        $types = $this->paragraphService->getAll($this->entity);
+        $types      = $this->paragraphService->getAll($this->entity);
         foreach ($types as $key => $type) {
             $typeOptions = $options['options'];
             $typeOptions = array_replace(

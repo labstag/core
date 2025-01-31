@@ -21,7 +21,7 @@ class FormParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         $formCode = $paragraph->getForm();
-        $save = $paragraph->isSave();
+        $save     = $paragraph->isSave();
         if (is_null($formCode)) {
             $this->setShow($paragraph, false);
 
