@@ -22,8 +22,8 @@ final class VichListener
     public function preRemove(Event $event): void
     {
         $filterCollection = $this->entityManager->getFilters();
-        $object = $event->getObject();
-        $enable = $this->isDeletedFileNotEntity($object);
+        $object           = $event->getObject();
+        $enable           = $this->isDeletedFileNotEntity($object);
         if ($filterCollection->isEnabled('deletedfile') || $enable) {
             return;
         }
@@ -33,11 +33,11 @@ final class VichListener
 
     private function isDeletedFileNotEntity(object $entity): bool
     {
-        $delete = false;
-        $reflectionClass = new ReflectionClass($entity);
+        $delete           = false;
+        $reflectionClass  = new ReflectionClass($entity);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            $name = $reflectionProperty->getName();
+            $name  = $reflectionProperty->getName();
             $value = $propertyAccessor->getValue($entity, $name);
             if (!$value instanceof UploadedFile) {
                 continue;

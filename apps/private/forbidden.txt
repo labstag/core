@@ -12,3 +12,4 @@ nmaplowercheck
 vendor
 .env
 .php
+.aws

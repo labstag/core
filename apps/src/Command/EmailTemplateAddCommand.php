@@ -46,8 +46,8 @@ class EmailTemplateAddCommand extends Command
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
 
-        $templates = $this->emailService->all();
-        $counter = 0;
+        $templates   = $this->emailService->all();
+        $counter     = 0;
         $progressBar = new ProgressBar($output, is_countable($templates) ? count($templates) : 0);
         $progressBar->start();
         foreach ($templates as $row) {

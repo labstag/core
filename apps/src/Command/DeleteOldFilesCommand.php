@@ -24,8 +24,8 @@ class DeleteOldFilesCommand extends Command
     {
         unset($input);
         $total = $this->fileService->deletedFileByEntities();
-        if ($total != 0) {
-            $output->writeln($total . ' file(s) deleted');
+        if (0 != $total) {
+            $output->writeln($total.' file(s) deleted');
         }
 
         $output->writeln('Script executed successfully.');

@@ -48,7 +48,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
         $textField->setDisabled(true);
 
         yield $textField;
-        $wysiwygField = WysiwygField::new('html', new TranslatableMessage('html'))->onlyOnForms();
+        $wysiwygField  = WysiwygField::new('html', new TranslatableMessage('html'))->onlyOnForms();
         $textareaField = TextareaField::new('text', new TranslatableMessage('text'))->onlyOnForms();
 
         if (!is_null($currentEntity)) {

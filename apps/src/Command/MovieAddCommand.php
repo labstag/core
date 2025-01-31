@@ -80,8 +80,8 @@ class MovieAddCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $filename = 'movies.csv';
-        $file = $this->fileService->getFileInAdapter('private', $filename);
+        $filename     = 'movies.csv';
+        $file         = $this->fileService->getFileInAdapter('private', $filename);
         if (!is_file($file)) {
             $symfonyStyle->error('File not found '.$filename);
 
@@ -94,14 +94,14 @@ class MovieAddCommand extends Command
         $csv->setSheetIndex(0);
 
         $spreadsheet = $csv->load($file);
-        $worksheet = $spreadsheet->getActiveSheet();
-        $dataJson = [];
-        $headers = [];
-        $counter = 0;
+        $worksheet   = $spreadsheet->getActiveSheet();
+        $dataJson    = [];
+        $headers     = [];
+        $counter     = 0;
         foreach ($worksheet->getRowIterator() as $i => $row) {
             $cellIterator = $row->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(false);
-            if ($i == 1) {
+            if (1 == $i) {
                 foreach ($cellIterator as $cell) {
                     $headers[] = trim((string) $cell->getValue());
                 }
@@ -162,79 +162,7 @@ class MovieAddCommand extends Command
         $this->movieRepository->flush();
     }
 
-    private function setSuffix($matches)
-    {
-        return $matches['3'] ?? null;
-    }
-
-    private function setEvaluation($matches)
-    {
-        return (float) isset($matches['1']) !== 0.0 ? $matches['1'] : null;
-    }
-
-    /**
-     * @param mixed[] $data
-     */
-    private function setMovie(array $data): Movie
-    {
-        $imdb = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
-        $movie = $this->movieRepository->findOneBy(
-            ['imdb' => $imdb]
-        );
-
-        $pattern = '/(\d+\.\d+)\s+\(([\d.]+)([KMB]?) votes\)/';
-        preg_match($pattern, (string) $data['Evaluation IMDb'], $matches);
-        $evaluation = $this->setEvaluation($matches);
-        $suffix = $this->setSuffix($matches);
-        $votes = $this->setVotes($suffix, $matches);
-
-        if (!$movie instanceof Movie) {
-            $movie = new Movie();
-            $movie->setEnable(true);
-            $movie->setImdb($imdb);
-        }
-
-        $year = (int) $data['Année'];
-        $type = $data['Genre(s)'];
-        $country = $data['Pays'];
-        $color = ($data['Couleur'] == '<<Inconnu>>') ? null : $data['Couleur'];
-        $trailer = empty($data['Bande-annonce']) ? null : $data['Bande-annonce'];
-        $duration = empty($data['Durée']) ? null : $data['Durée'];
-        $title = trim((string) $data['Titre']);
-        $movie->setEvaluation($evaluation);
-        $movie->setVotes($votes);
-        $movie->setDuration($duration);
-        $movie->setTrailer($trailer);
-        $movie->setColor($color);
-        $movie->setTitle($title);
-        $movie->setYear(($year != 0) ? $year : null);
-        $movie->setCountry(($country != '') ? $country : null);
-
-        $categories = explode(',', (string) $type);
-        $this->setCategories($movie, $categories);
-
-        return $movie;
-    }
-
-    private function setVotes($suffix, $matches)
-    {
-        $votes = (float) isset($matches['2']) !== 0.0 ? $matches['1'] : null;
-        switch ($suffix) {
-            case 'K':
-                $votes *= 1000;
-                break;
-            case 'M':
-                $votes *= 1000000;
-                break;
-            case 'B':
-                $votes *= 1000000000;
-                break;
-        }
-
-        return $votes;
-    }
-
-    private function setCategories($movie, $categories)
+    private function setCategories(Movie $movie, $categories): void
     {
         $oldCategories = $movie->getCategories();
         foreach ($oldCategories as $oldCategory) {
@@ -242,18 +170,84 @@ class MovieAddCommand extends Command
         }
 
         foreach ($categories as $value) {
-            $value = trim($value);
-            if ($value === '') {
+            $value = trim((string) $value);
+            if ('' === $value) {
                 continue;
             }
 
-            if ($value === '0') {
+            if ('0' === $value) {
                 continue;
             }
 
             $category = $this->getCategory($value);
             $movie->addCategory($category);
         }
+    }
 
+    private function setEvaluation(array $matches)
+    {
+        return 0.0 !== (float) isset($matches['1']) ? $matches['1'] : null;
+    }
+
+    /**
+     * @param mixed[] $data
+     */
+    private function setMovie(array $data): Movie
+    {
+        $imdb  = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
+        $movie = $this->movieRepository->findOneBy(
+            ['imdb' => $imdb]
+        );
+
+        $pattern = '/(\d+\.\d+)\s+\(([\d.]+)([KMB]?) votes\)/';
+        preg_match($pattern, (string) $data['Evaluation IMDb'], $matches);
+        $evaluation = $this->setEvaluation($matches);
+        $suffix     = $this->setSuffix($matches);
+        $votes      = $this->setVotes($suffix, $matches);
+
+        if (!$movie instanceof Movie) {
+            $movie = new Movie();
+            $movie->setEnable(true);
+            $movie->setImdb($imdb);
+        }
+
+        $year     = (int) $data['Année'];
+        $type     = $data['Genre(s)'];
+        $country  = $data['Pays'];
+        $color    = ('<<Inconnu>>' == $data['Couleur']) ? null : $data['Couleur'];
+        $trailer  = empty($data['Bande-annonce']) ? null : $data['Bande-annonce'];
+        $duration = empty($data['Durée']) ? null : $data['Durée'];
+        $title    = trim((string) $data['Titre']);
+        $movie->setEvaluation($evaluation);
+        $movie->setVotes($votes);
+        $movie->setDuration($duration);
+        $movie->setTrailer($trailer);
+        $movie->setColor($color);
+        $movie->setTitle($title);
+        $movie->setYear((0 != $year) ? $year : null);
+        $movie->setCountry(('' != $country) ? $country : null);
+
+        $categories = explode(',', (string) $type);
+        $this->setCategories($movie, $categories);
+
+        return $movie;
+    }
+
+    private function setSuffix(array $matches)
+    {
+        return $matches['3'] ?? null;
+    }
+
+    private function setVotes($suffix, array $matches)
+    {
+        $votes = 0.0 !== (float) isset($matches['2']) ? $matches['1'] : null;
+        match ($suffix) {
+            'K'     => $votes *= 1000,
+            'M'     => $votes *= 1000000,
+            'B'     => $votes *= 1000000000,
+            default => $votes,
+        };
+
+        return $votes;
     }
 }

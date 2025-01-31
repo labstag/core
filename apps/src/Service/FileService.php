@@ -86,18 +86,18 @@ class FileService
 
     public function deletedFileByEntities(): int
     {
-        $total = 0;
-        $data = $this->getFiles();
+        $total    = 0;
+        $data     = $this->getFiles();
         $entities = $this->getEntity();
         foreach ($data as $type => $files) {
-            $deletes = [];
+            $deletes    = [];
             $repository = $this->getRepository($entities[$type]);
-            $mappings = $this->propertyMappingFactory->fromObject(new $entities[$type]());
+            $mappings   = $this->propertyMappingFactory->fromObject(new $entities[$type]());
             foreach ($files as $row) {
                 $file = $row['path'];
                 $find = 0;
                 foreach ($mappings as $mapping) {
-                    $field = $mapping->getFileNamePropertyName();
+                    $field  = $mapping->getFileNamePropertyName();
                     $entity = $repository->findOneBy(
                         [$field => $file]
                     );
@@ -110,7 +110,7 @@ class FileService
                     break;
                 }
 
-                if ($find == 0) {
+                if (0 == $find) {
                     $deletes[] = $file;
                 }
             }
@@ -132,13 +132,13 @@ class FileService
     public function getFileInAdapter(string $type, string $fileName): ?string
     {
         $files = $this->getFilesByAdapter($type);
-        $data = null;
+        $data  = null;
         foreach ($files as $file) {
             if ($file['content']->path() != $fileName) {
                 continue;
             }
 
-            $data = $file['folder'] . '/' . $file['path'];
+            $data = $file['folder'].'/'.$file['path'];
 
             break;
         }
@@ -156,7 +156,7 @@ class FileService
     public function getFiles(): array
     {
         $files = [];
-        $data = $this->getDataStorage();
+        $data  = $this->getDataStorage();
         foreach (array_keys($data) as $type) {
             if (in_array($type, ['private', 'public'])) {
                 continue;
@@ -181,7 +181,7 @@ class FileService
                 'public_url' => $this->getFolder($type),
             ]
         );
-        $files = [];
+        $files            = [];
         $directoryListing = $filesystem->listContents('');
         foreach ($directoryListing as $content) {
             $files[] = [
@@ -199,7 +199,7 @@ class FileService
     {
         $basePath = $this->getBasePath($entity, $type);
 
-        return $this->parameterBag->get('kernel.project_dir') . '/public' . $basePath;
+        return $this->parameterBag->get('kernel.project_dir').'/public'.$basePath;
     }
 
     /**
@@ -295,14 +295,14 @@ class FileService
 
     private function getFolder(string $type): mixed
     {
-        $config = Yaml::parse(file_get_contents($this->kernel->getProjectDir() . '/config/packages/flysystem.yaml'));
+        $config = Yaml::parse(file_get_contents($this->kernel->getProjectDir().'/config/packages/flysystem.yaml'));
 
         $storages = $config['flysystem']['storages'];
-        if (!array_key_exists($type . '.storage', $storages)) {
+        if (!array_key_exists($type.'.storage', $storages)) {
             throw new Exception('Type not found');
         }
 
-        $storage = $storages[$type . '.storage'];
+        $storage = $storages[$type.'.storage'];
 
         return str_replace('%kernel.project_dir%/public', '', $storage['options']['directory']);
     }

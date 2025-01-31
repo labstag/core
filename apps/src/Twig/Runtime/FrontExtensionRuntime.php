@@ -27,8 +27,8 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 
     public function asset(mixed $entity, string $field): string
     {
-        $mappings = $this->fileService->getMappingForEntity($entity);
-        $file = '';
+        $mappings         = $this->fileService->getMappingForEntity($entity);
+        $file             = '';
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($mappings as $mapping) {
             if ($field != $mapping->getFileNamePropertyName()) {
@@ -36,14 +36,14 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
             }
 
             $basePath = $this->fileService->getBasePath($entity, $mapping->getFilePropertyName());
-            $content = $propertyAccessor->getValue($entity, $mapping->getFileNamePropertyName());
-            if ($content != '') {
-                $file = $basePath . '/' . $content;
+            $content  = $propertyAccessor->getValue($entity, $mapping->getFileNamePropertyName());
+            if ('' != $content) {
+                $file = $basePath.'/'.$content;
             }
         }
 
-        if ($file === '') {
-            return 'https://picsum.photos/1200/1200?md5=' . md5((string) $entity->getId());
+        if ('' === $file) {
+            return 'https://picsum.photos/1200/1200?md5='.md5((string) $entity->getId());
         }
 
         return $file;
@@ -101,18 +101,18 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
      */
     public function title(array $data): string
     {
-        $request = $this->requestStack->getCurrentRequest();
-        $config = $this->siteService->getConfiguration();
+        $request   = $this->requestStack->getCurrentRequest();
+        $config    = $this->siteService->getConfiguration();
         $siteTitle = $config->getName();
-        $format = $config->getTitleFormat();
+        $format    = $config->getTitleFormat();
         if ($this->siteService->isHome($data)) {
             return (string) $siteTitle;
         }
 
         $contentTitle = $this->siteService->setTitle($data['entity']);
-        $page = $request->attributes->getInt('page', 1);
-        if ($page != 1) {
-            $contentTitle .= ' - Page ' . $page;
+        $page         = $request->attributes->getInt('page', 1);
+        if (1 != $page) {
+            $contentTitle .= ' - Page '.$page;
         }
 
         return str_replace(['%content_title%', '%site_name%'], [$contentTitle, $siteTitle], $format);

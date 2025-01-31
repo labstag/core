@@ -39,14 +39,14 @@ final class ParagraphsConfigurator implements FieldConfiguratorInterface
         }
 
         $classInstance = ClassUtils::getClass($instance);
-        $controller = $crudControllerRegistry->findCrudFqcnByEntityFqcn($classInstance);
+        $controller    = $crudControllerRegistry->findCrudFqcnByEntityFqcn($classInstance);
         $fieldDto->setCustomOption('controller', $controller);
         $paragraphs = $this->paragraphService->getAll($classInstance);
         $fieldDto->setCustomOption('paragraphs', $paragraphs);
 
         $breakpointName = $fieldDto->getCustomOption(ParagraphsField::OPTION_ROW_BREAKPOINT);
 
-        $cssClasses = ($breakpointName === '') ? 'flex-fill' : sprintf(
+        $cssClasses = ('' === $breakpointName) ? 'flex-fill' : sprintf(
             'd-none d-%s-flex flex-%s-fill',
             $breakpointName,
             $breakpointName
@@ -54,7 +54,7 @@ final class ParagraphsConfigurator implements FieldConfiguratorInterface
 
         $fieldDto->setFormTypeOption(
             'row_attr.class',
-            $fieldDto->getFormTypeOption('row_attr.class') . ' ' . $cssClasses
+            $fieldDto->getFormTypeOption('row_attr.class').' '.$cssClasses
         );
     }
 
@@ -63,6 +63,6 @@ final class ParagraphsConfigurator implements FieldConfiguratorInterface
     {
         unset($entityDto);
 
-        return $fieldDto->getFieldFqcn() === ParagraphsField::class;
+        return ParagraphsField::class === $fieldDto->getFieldFqcn();
     }
 }

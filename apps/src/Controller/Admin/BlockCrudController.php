@@ -21,7 +21,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\Block;
-use Labstag\Form\Paragraphs\BlockType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\BlockRepository;
 use Override;
@@ -38,7 +37,7 @@ class BlockCrudController extends AbstractCrudControllerLib
      */
     public function addFieldParagraphsForBlock(?Block $block, string $pageName): array
     {
-        if ($pageName === 'edit' && $block instanceof Block) {
+        if ('edit' === $pageName && $block instanceof Block) {
             if (in_array($block->getType(), ['paragraphs', 'content'])) {
                 return parent::addFieldParagraphs($pageName);
             }
@@ -137,7 +136,7 @@ class BlockCrudController extends AbstractCrudControllerLib
     {
         unset($searchDto, $entityDto, $fieldCollection, $filterCollection);
         $serviceEntityRepositoryLib = $this->getRepository();
-        $methods = get_class_methods($serviceEntityRepositoryLib);
+        $methods                    = get_class_methods($serviceEntityRepositoryLib);
         if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array('findAllOrderedByRegion', $methods)
         ) {
             throw new Exception('findAllOrderedByRegion not found');
@@ -166,17 +165,17 @@ class BlockCrudController extends AbstractCrudControllerLib
 
     public function positionBlock(AdminContext $adminContext): RedirectResponse|Response
     {
-        $request = $adminContext->getRequest();
+        $request                    = $adminContext->getRequest();
         $serviceEntityRepositoryLib = $this->getRepository();
-        $methods = get_class_methods($serviceEntityRepositoryLib);
+        $methods                    = get_class_methods($serviceEntityRepositoryLib);
         if (!$serviceEntityRepositoryLib instanceof BlockRepository || !in_array('findAllOrderedByRegion', $methods)
         ) {
             throw new Exception('findAllOrderedByRegion not found');
         }
 
         $queryBuilder = $serviceEntityRepositoryLib->findAllOrderedByRegion();
-        $blocks = $queryBuilder->getQuery()->getResult();
-        $generator = $this->container->get(AdminUrlGenerator::class);
+        $blocks       = $queryBuilder->getQuery()->getResult();
+        $generator    = $this->container->get(AdminUrlGenerator::class);
 
         if ($request->isMethod('POST')) {
             $allTypes = $this->blockService->getRegions();
@@ -216,7 +215,7 @@ class BlockCrudController extends AbstractCrudControllerLib
      */
     private function getChoiceType(string $pageName, array $allTypes): ChoiceField|TextField
     {
-        if ($pageName === 'new') {
+        if ('new' === $pageName) {
             $field = ChoiceField::new('type', new TranslatableMessage('Type'));
             $field->setChoices(array_flip($allTypes));
 
@@ -239,10 +238,10 @@ class BlockCrudController extends AbstractCrudControllerLib
                 return;
             }
 
-            $data = $event->getData();
+            $data                       = $event->getData();
             $serviceEntityRepositoryLib = $this->getRepository();
-            $region = $form->get('region')->getData();
-            $methods = get_class_methods($serviceEntityRepositoryLib);
+            $region                     = $form->get('region')->getData();
+            $methods                    = get_class_methods($serviceEntityRepositoryLib);
             if (is_null($region) || !$serviceEntityRepositoryLib instanceof BlockRepository || in_array(
                 'getMaxPositionByRegion',
                 $methods
@@ -251,7 +250,7 @@ class BlockCrudController extends AbstractCrudControllerLib
                 return;
             }
 
-            $methods = get_class_methods($serviceEntityRepositoryLib);
+            $methods     = get_class_methods($serviceEntityRepositoryLib);
             $maxPosition = $serviceEntityRepositoryLib->getMaxPositionByRegion($region);
             if (is_null($maxPosition)) {
                 $maxPosition = 0;

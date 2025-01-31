@@ -39,7 +39,7 @@ class BlockRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('region', $region);
 
         $query = $queryBuilder->getQuery();
-        $data = $query->getOneOrNullResult();
+        $data  = $query->getOneOrNullResult();
 
         return is_array($data) ? $data['maxposition'] : null;
     }

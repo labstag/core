@@ -6,7 +6,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use Labstag\Entity\Memo;
-use Labstag\Form\Paragraphs\MemoType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;

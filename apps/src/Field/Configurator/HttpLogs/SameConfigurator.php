@@ -2,41 +2,39 @@
 
 namespace Labstag\Field\Configurator\HttpLogs;
 
-use Labstag\Field\HttpLogs\SameField;
-use Labstag\Repository\HttpErrorLogsRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
+use Labstag\Field\HttpLogs\SameField;
+use Labstag\Repository\HttpErrorLogsRepository;
 
 final class SameConfigurator implements FieldConfiguratorInterface
 {
-    private HttpErrorLogsRepository $httpErrorLogsRepository;
-
-    public function __construct(
-        HttpErrorLogsRepository $httpErrorLogsRepository
-    )
+    public function __construct(private HttpErrorLogsRepository $httpErrorLogsRepository)
     {
-        $this->httpErrorLogsRepository = $httpErrorLogsRepository;
     }
 
-    public function supports(FieldDto $field, EntityDto $entityDto): bool
+    public function configure(FieldDto $fieldDto, EntityDto $entityDto, AdminContext $adminContext): void
     {
-        return SameField::class === $field->getFieldFqcn();
-    }
-
-    public function configure(FieldDto $field, EntityDto $entityDto, AdminContext $context): void
-    {
+        unset($adminContext);
         $instance = $entityDto->getInstance();
         if (is_null($instance)) {
-            $field->setValue(false);
+            $fieldDto->setValue(false);
 
             return;
         }
 
         $internetProtocol = $instance->getInternetProtocol();
-        $logs = $this->httpErrorLogsRepository->findBy(['internetProtocol' => $internetProtocol]);
+        $logs             = $this->httpErrorLogsRepository->findBy(['internetProtocol' => $internetProtocol]);
 
-        $field->setValue(count($logs));
+        $fieldDto->setValue(count($logs));
+    }
+
+    public function supports(FieldDto $fieldDto, EntityDto $entityDto): bool
+    {
+        unset($entityDto);
+
+        return SameField::class === $fieldDto->getFieldFqcn();
     }
 }

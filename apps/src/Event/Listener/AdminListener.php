@@ -30,27 +30,27 @@ final class AdminListener
 
     private function enableDeleteFile(RequestEvent $requestEvent): bool
     {
-        $request = $requestEvent->getRequest();
-        $all = $request->request->all();
+        $request   = $requestEvent->getRequest();
+        $all       = $request->request->all();
         $serialize = serialize($all);
 
-        return substr_count($serialize, '{s:6:"delete";s:1:"1";}') == 1;
+        return 1 == substr_count($serialize, '{s:6:"delete";s:1:"1";}');
     }
 
     private function isDelete(RequestEvent $requestEvent): bool
     {
-        $request = $requestEvent->getRequest();
+        $request    = $requestEvent->getRequest();
         $crudAction = $request->query->get('crudAction', null);
-        $action = $request->query->get('action', null);
-        $referer = $request->headers->get('referer', null);
-        if ($action == 'trash') {
+        $action     = $request->query->get('action', null);
+        $referer    = $request->headers->get('referer', null);
+        if ('trash' == $action) {
             return true;
         }
 
-        if ($crudAction != 'batchDelete') {
+        if ('batchDelete' != $crudAction) {
             return false;
         }
 
-        return substr_count((string) $referer, 'action=trash') == 1;
+        return 1 == substr_count((string) $referer, 'action=trash');
     }
 }

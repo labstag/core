@@ -59,7 +59,7 @@ final class MetaParentField implements FieldInterface
         $field->setFormType(EntityType::class);
         $field->addCssClass('field-association');
         $field->setFormTypeOptions([
-            'mapped' => false,
+            'mapped'   => false,
             'required' => false,
         ]);
         $field->setDefaultColumns('col-md-7 col-xxl-6');

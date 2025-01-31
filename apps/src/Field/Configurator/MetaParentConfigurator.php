@@ -41,7 +41,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
     public function configure(FieldDto $fieldDto, EntityDto $entityDto, AdminContext $adminContext): void
     {
         $instance = $entityDto->getInstance();
-        $object = $this->metaService->getEntityParent($instance);
+        $object   = $this->metaService->getEntityParent($instance);
         if (is_null($object->value) || is_null($object->name) || is_null($object)) {
             return;
         }
@@ -51,10 +51,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->getDoctrineMetadata()
             ->set('targetEntity', ClassUtils::getClass($object->value));
         if (!$entityDto->isAssociation($object->name)) {
-            throw new RuntimeException(sprintf(
-                'The "%s" field is not a Doctrine association, so it cannot be used as an association field.',
-                $object->name
-            ));
+            throw new RuntimeException(sprintf('The "%s" field is not a Doctrine association, so it cannot be used as an association field.', $object->name));
         }
 
         $targetEntityFqcn = $fieldDto->getDoctrineMetadata()
@@ -66,14 +63,14 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
             ->findCrudFqcnByEntityFqcn($targetEntityFqcn);
         $fieldDto->setCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER, $targetCrudControllerFqcn);
 
-        if ($fieldDto->getCustomOption(MetaParentField::OPTION_WIDGET) === MetaParentField::WIDGET_AUTOCOMPLETE) {
+        if (MetaParentField::WIDGET_AUTOCOMPLETE === $fieldDto->getCustomOption(MetaParentField::OPTION_WIDGET)) {
             $fieldDto->setFormTypeOption('attr.data-ea-widget', 'ea-autocomplete');
         }
 
         // check for embedded associations
         $propertyNameParts = explode('.', (string) $object->name);
         $this->configureFirst($entityDto, $propertyNameParts, $fieldDto, $object->name);
-        if ($fieldDto->getCustomOption(MetaParentField::OPTION_AUTOCOMPLETE) === true) {
+        if (true === $fieldDto->getCustomOption(MetaParentField::OPTION_AUTOCOMPLETE)) {
             $this->configureAutocomplete($fieldDto, $adminContext, $object);
 
             return;
@@ -87,7 +84,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
     {
         unset($entityDto);
 
-        return $fieldDto->getFieldFqcn() === MetaParentField::class;
+        return MetaParentField::class === $fieldDto->getFieldFqcn();
     }
 
     private function configureAutocomplete(FieldDto $fieldDto, AdminContext $adminContext, object $object): void
@@ -112,8 +109,8 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
                 MetaParentField::PARAM_AUTOCOMPLETE_CONTEXT,
                 [
                     EA::CRUD_CONTROLLER_FQCN => $adminContext->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
-                    'propertyName' => $object->name,
-                    'originatingPage' => $adminContext->getCrud()
+                    'propertyName'           => $object->name,
+                    'originatingPage'        => $adminContext->getCrud()
                         ->getCurrentPage(),
                 ]
             );
@@ -148,11 +145,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
 
         foreach ($propertyNameParts as $propertyNamePart) {
             if (!$metadata->hasAssociation($propertyNamePart)) {
-                throw new RuntimeException(sprintf(
-                    'There is no association for the class "%s" with name "%s"',
-                    $targetEntityFqcn,
-                    $propertyNamePart
-                ));
+                throw new RuntimeException(sprintf('There is no association for the class "%s" with name "%s"', $targetEntityFqcn, $propertyNamePart));
             }
 
             // overwrite next class from association
@@ -162,7 +155,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
             $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
         }
 
-        $propertyAccessor = new PropertyAccessor();
+        $propertyAccessor         = new PropertyAccessor();
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER);
 
         $fieldDto->setFormTypeOptionIfNotSet('class', $targetEntityFqcn);
@@ -170,7 +163,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         try {
             $relatedEntityId = $propertyAccessor->getValue(
                 $entityDto->getInstance(),
-                $propertyName . '.' . $metadata->getIdentifierFieldNames()[0]
+                $propertyName.'.'.$metadata->getIdentifierFieldNames()[0]
             );
             $relatedEntityDto = $this->entityFactory->create($targetEntityFqcn, $relatedEntityId);
 
@@ -182,11 +175,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
                 $this->formatAsString($relatedEntityDto->getInstance(), $relatedEntityDto)
             );
         } catch (UnexpectedTypeException) {
-            throw new RuntimeException(sprintf(
-                'The property "%s" is not accessible in the entity "%s"',
-                $propertyName,
-                $entityDto->getFqcn()
-            ));
+            throw new RuntimeException(sprintf('The property "%s" is not accessible in the entity "%s"', $propertyName, $entityDto->getFqcn()));
         }
     }
 
@@ -196,7 +185,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
             'query_builder',
             static function (EntityRepository $entityRepository) use ($fieldDto): QueryBuilder
             {
-                $queryBuilder = $entityRepository->createQueryBuilder('entity');
+                $queryBuilder         = $entityRepository->createQueryBuilder('entity');
                 $queryBuilderCallable = $fieldDto->getCustomOption(MetaParentField::OPTION_QUERY_BUILDER_CALLABLE);
                 if (is_object($queryBuilderCallable)) {
                     $queryBuilderCallable($queryBuilder);
@@ -230,7 +219,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
     {
         $fieldDto->setCustomOption(MetaParentField::OPTION_DOCTRINE_ASSOCIATION_TYPE, 'toOne');
 
-        if ($fieldDto->getFormTypeOption('required') === false) {
+        if (false === $fieldDto->getFormTypeOption('required')) {
             $fieldDto->setFormTypeOptionIfNotSet(
                 'attr.placeholder',
                 $this->translator->trans('label.form.empty_value', [], 'EasyAdminBundle')
@@ -241,7 +230,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
             ->get('targetEntity');
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER);
 
-        $fieldToValue = $fieldDto->getValue();
+        $fieldToValue  = $fieldDto->getValue();
         $entityFactory = $this->entityFactory;
 
         $targetEntityDto = is_null($fieldToValue) ? $entityFactory->create(

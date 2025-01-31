@@ -108,8 +108,8 @@ class Page implements Stringable
 
     public function __construct()
     {
-        $this->children = new ArrayCollection();
-        $this->tags = new ArrayCollection();
+        $this->children   = new ArrayCollection();
+        $this->tags       = new ArrayCollection();
         $this->categories = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
     }

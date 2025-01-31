@@ -57,7 +57,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'));
         $choiceField->setChoices($this->paragraphService->getFonds());
         yield $choiceField;
-        $allTypes = array_flip($this->paragraphService->getAll(null));
+        $allTypes  = array_flip($this->paragraphService->getAll(null));
         $textField = TextField::new('type', new TranslatableMessage('Type'))->formatValue(
             static fn ($value) => $allTypes[$value] ?? null
         );

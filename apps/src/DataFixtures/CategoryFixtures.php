@@ -29,21 +29,21 @@ class CategoryFixtures extends FixtureLib
             'page',
             'post',
         ];
-        $code = $tab[array_rand($tab)];
+        $code     = $tab[array_rand($tab)];
         $category = new Category();
         $category->setTitle($generator->unique()->colorName());
         $category->setType($code);
 
         $parent = random_int(0, 1);
-        if ($parent == 1) {
-            $categories = $this->getParent('category' . $code);
-            if (count($categories) != 0) {
+        if (1 == $parent) {
+            $categories = $this->getParent('category'.$code);
+            if (0 != count($categories)) {
                 $parentCategory = $this->getReference(array_rand($categories), Category::class);
                 $category->setParent($parentCategory);
             }
         }
 
-        $id = 'category' . $code . '_' . md5(uniqid());
+        $id = 'category'.$code.'_'.md5(uniqid());
         $this->addReference($id, $category);
         $this->categories[$id] = $category;
         $objectManager->persist($category);
@@ -56,7 +56,7 @@ class CategoryFixtures extends FixtureLib
     {
         $tab = [];
         foreach ($this->categories as $key => $value) {
-            if (substr_count($key, $code) != 0) {
+            if (0 != substr_count($key, $code)) {
                 $tab[$key] = $value;
             }
         }

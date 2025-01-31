@@ -72,7 +72,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         ];
         foreach ($filterFields as $filterField => $label) {
             $data = $this->getAllData($filterField);
-            if (count($data) == 0) {
+            if (0 == count($data)) {
                 continue;
             }
 
@@ -97,7 +97,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
     private function getAllData(string $type): array
     {
         $serviceEntityRepositoryLib = $this->getRepository();
-        $methods = get_class_methods($serviceEntityRepositoryLib);
+        $methods                    = get_class_methods($serviceEntityRepositoryLib);
         if (!$serviceEntityRepositoryLib instanceof GeoCodeRepository || !in_array('findAllData', $methods)) {
             return [];
         }

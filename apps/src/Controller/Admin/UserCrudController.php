@@ -69,7 +69,7 @@ class UserCrudController extends AbstractCrudControllerLib
                 'mapped'         => false,
             ]
         );
-        $textField->setRequired($pageName === Crud::PAGE_NEW);
+        $textField->setRequired(Crud::PAGE_NEW === $pageName);
         $textField->onlyOnForms();
         yield $textField;
         $languageField = ChoiceField::new('language', new TranslatableMessage('Language'));

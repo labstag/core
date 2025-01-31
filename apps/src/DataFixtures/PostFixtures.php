@@ -41,8 +41,8 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
-        $this->users = $this->getIdentitiesByClass(User::class);
-        $this->tags = $this->getIdentitiesByClass(Tag::class, 'post');
+        $this->users      = $this->getIdentitiesByClass(User::class);
+        $this->tags       = $this->getIdentitiesByClass(Tag::class, 'post');
         $this->categories = $this->getIdentitiesByClass(Category::class, 'post');
         $this->loadForeach(self::NUMBER_POST, 'addPost', $objectManager);
         $objectManager->flush();
@@ -62,7 +62,7 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addParagraphText($post);
         $this->addTagToEntity($post);
         $this->addCategoryToEntity($post);
-        $this->addReference('post_' . md5(uniqid()), $post);
+        $this->addReference('post_'.md5(uniqid()), $post);
         $objectManager->persist($post);
     }
 }

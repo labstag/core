@@ -6,8 +6,8 @@
             <div class="modal-details">
                 {% if trailer != '' %}
                 <div class="modal-trailer">
-                    <div class="video" style="--image-url: url('{{ site_asset(movie, 'img') }}')" data-src="{{ trailer }}">
-                        <button class="js-btnvideo">{{ 'Watch the video'|trans }}</button>
+                    <div class="video" style="--image-url: url('{{ site_asset(movie, 'img') }}')" data-src="{{ trailer }}" data-html="">
+                        <button class="js-btnvideo">{{ 'Watch the trailer'|trans }}</button>
                     </div>
                 </div>
                 {% endif %}

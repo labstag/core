@@ -27,18 +27,18 @@ class BreadcrumbBlock extends BlockLib
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
-        if ($data['entity'] instanceof Page && $data['entity']->getType() == 'home') {
+        if ($data['entity'] instanceof Page && 'home' == $data['entity']->getType()) {
             $this->setShow($block, false);
 
             return;
         }
 
         $request = $this->requestStack->getCurrentRequest();
-        $slug = $request->attributes->get('slug');
-        $urls = $this->setBreadcrumb([], $slug);
-        $urls = array_reverse($urls);
+        $slug    = $request->attributes->get('slug');
+        $urls    = $this->setBreadcrumb([], $slug);
+        $urls    = array_reverse($urls);
 
-        if (count($urls) == 0) {
+        if (0 == count($urls)) {
             $this->setShow($block, false);
 
             return;
@@ -81,11 +81,11 @@ class BreadcrumbBlock extends BlockLib
             ];
         }
 
-        if ($slug === '') {
+        if ('' === $slug) {
             return $urls;
         }
 
-        if (substr_count($slug, '/') != 0) {
+        if (0 != substr_count($slug, '/')) {
             $slug = substr($slug, 0, strrpos($slug, '/'));
 
             return $this->setBreadcrumb($urls, $slug);

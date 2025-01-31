@@ -79,8 +79,8 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 
     public function export(RedirectionRepository $redirectionRepository): void
     {
-        $all = $redirectionRepository->findAll();
-        $row = [];
+        $all    = $redirectionRepository->findAll();
+        $row    = [];
         $header = [
             'Source',
             'Destination',
@@ -153,9 +153,9 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 
     protected function sendToExport(array $header, array $rows): Response
     {
-        $tempZip = tmpfile();
-        $now = new DateTime('now');
-        $metaZip = stream_get_meta_data($tempZip);
+        $tempZip    = tmpfile();
+        $now        = new DateTime('now');
+        $metaZip    = stream_get_meta_data($tempZip);
         $zipArchive = new ZipArchive();
         $zipArchive->open($metaZip['uri']);
 
@@ -166,7 +166,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 
         try {
             foreach (['Xlsx', 'Xls', 'Ods'] as $writerType) {
-                $path = $this->getFilename($now->format('Ymd') . '-export.', mb_strtolower($writerType));
+                $path   = $this->getFilename($now->format('Ymd').'-export.', mb_strtolower($writerType));
                 $writer = IOFactory::createWriter($spreadsheet, $writerType);
                 $writer->save($path);
                 $zipArchive->addFile($path, basename((string) $path));
@@ -182,10 +182,10 @@ class RedirectionCrudController extends AbstractCrudControllerLib
             Response::HTTP_OK,
             [
                 'Content-Type'        => 'application/x-zip',
-                'Content-Disposition' => 'attachment; filename="' . $now->format('Ymd') . '-export.zip"',
+                'Content-Disposition' => 'attachment; filename="'.$now->format('Ymd').'-export.zip"',
                 'Cache:Control'       => 'no-cache, must-revalidate',
                 'Expires'             => 'Mon, 26 Jul 1997 05:00:00 GMT',
-                'Last-Modified'       => gmdate('D, d M Y H:i:s') . ' GMT',
+                'Last-Modified'       => gmdate('D, d M Y H:i:s').' GMT',
                 'Pragma'              => 'no-cache',
             ]
         );
@@ -228,7 +228,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
     {
         $originalExtension = pathinfo($filename, PATHINFO_EXTENSION);
 
-        return $this->getTemporaryFolder() . '/' . str_replace('.' . $originalExtension, '.' . $extension, basename($filename));
+        return $this->getTemporaryFolder().'/'.str_replace('.'.$originalExtension, '.'.$extension, basename($filename));
     }
 
     private function getTemporaryFolder(): string
@@ -243,13 +243,13 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 
     private function importCsv($file, RedirectionRepository $redirectionRepository): array
     {
-        $data = [];
-        $csv = new Csv();
+        $data        = [];
+        $csv         = new Csv();
         $spreadsheet = $csv->load($file->getPathname());
-        $sheetData = $spreadsheet->getActiveSheet()->toArray();
-        $head = $sheetData[0];
-        $find = $this->setFind($head);
-        if ($find != self::FIELDCSV) {
+        $sheetData   = $spreadsheet->getActiveSheet()->toArray();
+        $head        = $sheetData[0];
+        $find        = $this->setFind($head);
+        if (self::FIELDCSV != $find) {
             $this->addFlash('danger', 'Le fichier n\'est pas correctement formaté');
 
             return $data;
@@ -259,14 +259,14 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 
         $sheetData = array_slice($sheetData, 1);
         foreach ($sheetData as $row) {
-            $source = parse_url((string) $row[$head['Source']]);
+            $source      = parse_url((string) $row[$head['Source']]);
             $destination = $row[$head['Destination']];
-            $source = $source['path'];
-            $source .= isset($source['query']) ? '?' . $source['query'] : '';
+            $source      = $source['path'];
+            $source .= isset($source['query']) ? '?'.$source['query'] : '';
             $redirection = $redirectionRepository->findOneBy(
                 ['source' => $source]
             );
-            if ($redirection === null) {
+            if (null === $redirection) {
                 $redirection = new Redirection();
                 $redirection->setActionCode(301);
                 $redirection->setSource($source);
@@ -285,7 +285,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
     {
         $find = 0;
         foreach ($head as $key => $value) {
-            if (($key == 0 && $value == 'Source') || ($key == 1 && $value == 'Destination')) {
+            if ((0 == $key && 'Source' == $value) || (1 == $key && 'Destination' == $value)) {
                 ++$find;
             }
         }

@@ -32,7 +32,7 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
     public function load(ObjectManager $objectManager): void
     {
         $this->pages = $this->getIdentitiesByClass(Page::class);
-        $data = $this->data();
+        $data        = $this->data();
         foreach ($data as $row) {
             $row->setEnable(true);
             $objectManager->persist($row);
@@ -61,7 +61,7 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         if (!is_null($contact)) {
             $link = new Link();
             $link->setTitle($contact->getTitle());
-            $link->setUrl('[page:' . $contact->getId() . ']');
+            $link->setUrl('[page:'.$contact->getId().']');
             $block->addLink($link);
         }
 
@@ -69,7 +69,7 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         if (!is_null($contact)) {
             $link = new Link();
             $link->setTitle($contact->getTitle());
-            $link->setUrl('[page:' . $contact->getId() . ']');
+            $link->setUrl('[page:'.$contact->getId().']');
             $block->addLink($link);
         }
     }

@@ -32,7 +32,7 @@ class SubmissionCrudController extends AbstractCrudControllerLib
         yield TextField::new('type', new TranslatableMessage('type'));
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();
-        if ($pageName === Action::DETAIL) {
+        if (Action::DETAIL === $pageName) {
             $fields = $this->addFieldsSubmission($currentEntity);
             foreach ($fields as $field) {
                 yield $field;

@@ -41,8 +41,8 @@ class StoryFixtures extends FixtureLib implements DependentFixtureInterface
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
-        $this->users = $this->getIdentitiesByClass(User::class);
-        $this->tags = $this->getIdentitiesByClass(Tag::class, 'story');
+        $this->users      = $this->getIdentitiesByClass(User::class);
+        $this->tags       = $this->getIdentitiesByClass(Tag::class, 'story');
         $this->categories = $this->getIdentitiesByClass(Category::class, 'story');
         $this->loadForeach(self::NUMBER_HISTORY, 'addStory', $objectManager);
         $objectManager->flush();
@@ -50,7 +50,7 @@ class StoryFixtures extends FixtureLib implements DependentFixtureInterface
 
     protected function addStory(Generator $generator, ObjectManager $objectManager): void
     {
-        $meta = new Meta();
+        $meta  = new Meta();
         $story = new Story();
         $story->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
         $story->setMeta($meta);
@@ -62,7 +62,7 @@ class StoryFixtures extends FixtureLib implements DependentFixtureInterface
         $this->setImage($story, 'imgFile');
         $this->addTagToEntity($story);
         $this->addCategoryToEntity($story);
-        $this->addReference('story_' . md5(uniqid()), $story);
+        $this->addReference('story_'.md5(uniqid()), $story);
         $objectManager->persist($story);
     }
 }

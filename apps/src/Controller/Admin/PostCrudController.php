@@ -7,7 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
-use Labstag\Form\Paragraphs\PostType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;

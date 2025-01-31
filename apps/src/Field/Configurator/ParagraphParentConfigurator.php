@@ -41,7 +41,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
     public function configure(FieldDto $fieldDto, EntityDto $entityDto, AdminContext $adminContext): void
     {
         $instance = $entityDto->getInstance();
-        $object = $this->paragraphService->getEntityParent($instance);
+        $object   = $this->paragraphService->getEntityParent($instance);
         if (is_null($object) || is_null($object->value) || is_null($object->name)) {
             return;
         }
@@ -51,10 +51,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->getDoctrineMetadata()
             ->set('targetEntity', ClassUtils::getClass($object->value));
         if (!$entityDto->isAssociation($object->name)) {
-            throw new RuntimeException(sprintf(
-                'The "%s" field is not a Doctrine association, so it cannot be used as an association field.',
-                $object->name
-            ));
+            throw new RuntimeException(sprintf('The "%s" field is not a Doctrine association, so it cannot be used as an association field.', $object->name));
         }
 
         $targetEntityFqcn = $fieldDto->getDoctrineMetadata()
@@ -69,7 +66,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
         // check for embedded associations
         $this->configureTest($fieldDto, $entityDto, $object->name);
-        if ($fieldDto->getCustomOption(ParagraphParentField::OPTION_AUTOCOMPLETE) === true) {
+        if (true === $fieldDto->getCustomOption(ParagraphParentField::OPTION_AUTOCOMPLETE)) {
             $this->configureAutocomplete($fieldDto, $adminContext, $object);
 
             return;
@@ -81,7 +78,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
             {
                 // TODO: should this use `createIndexQueryBuilder` instead, so we get the default ordering etc.?
                 // it would then be identical to the one used in autocomplete action, but it is a bit complex getting it in here
-                $queryBuilder = $entityRepository->createQueryBuilder('entity');
+                $queryBuilder         = $entityRepository->createQueryBuilder('entity');
                 $queryBuilderCallable = $fieldDto->getCustomOption(ParagraphParentField::OPTION_QUERY_BUILDER_CALLABLE);
                 if ($queryBuilderCallable) {
                     $queryBuilderCallable($queryBuilder);
@@ -97,7 +94,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
     {
         unset($entityDto);
 
-        return $fieldDto->getFieldFqcn() === ParagraphParentField::class;
+        return ParagraphParentField::class === $fieldDto->getFieldFqcn();
     }
 
     private function configureAutocomplete(FieldDto $fieldDto, AdminContext $adminContext, object $object): void
@@ -122,8 +119,8 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
                 ParagraphParentField::PARAM_AUTOCOMPLETE_CONTEXT,
                 [
                     EA::CRUD_CONTROLLER_FQCN => $adminContext->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
-                    'propertyName' => $object->name,
-                    'originatingPage' => $adminContext->getCrud()
+                    'propertyName'           => $object->name,
+                    'originatingPage'        => $adminContext->getCrud()
                         ->getCurrentPage(),
                 ]
             );
@@ -145,11 +142,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
         foreach ($propertyNameParts as $propertyNamePart) {
             if (!$metadata->hasAssociation($propertyNamePart)) {
-                throw new RuntimeException(sprintf(
-                    'There is no association for the class "%s" with name "%s"',
-                    $targetEntityFqcn,
-                    $propertyNamePart
-                ));
+                throw new RuntimeException(sprintf('There is no association for the class "%s" with name "%s"', $targetEntityFqcn, $propertyNamePart));
             }
 
             // overwrite next class from association
@@ -159,7 +152,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
             $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
         }
 
-        $propertyAccessor = new PropertyAccessor();
+        $propertyAccessor         = new PropertyAccessor();
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER);
 
         $fieldDto->setFormTypeOptionIfNotSet('class', $targetEntityFqcn);
@@ -167,7 +160,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         try {
             $relatedEntityId = $propertyAccessor->getValue(
                 $entityDto->getInstance(),
-                $propertyName . '.' . $metadata->getIdentifierFieldNames()[0]
+                $propertyName.'.'.$metadata->getIdentifierFieldNames()[0]
             );
             $relatedEntityDto = $this->entityFactory->create($targetEntityFqcn, $relatedEntityId);
 
@@ -227,7 +220,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
     {
         $fieldDto->setCustomOption(ParagraphParentField::OPTION_DOCTRINE_ASSOCIATION_TYPE, 'toOne');
 
-        if ($fieldDto->getFormTypeOption('required') === false) {
+        if (false === $fieldDto->getFormTypeOption('required')) {
             $fieldDto->setFormTypeOptionIfNotSet(
                 'attr.placeholder',
                 $this->translator->trans('label.form.empty_value', [], 'EasyAdminBundle')
@@ -303,9 +296,9 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
     private function setFormTypeOption(FieldDto $fieldDto): FieldDto
     {
-        if ($fieldDto->getCustomOption(
+        if (ParagraphParentField::WIDGET_AUTOCOMPLETE === $fieldDto->getCustomOption(
             ParagraphParentField::OPTION_WIDGET
-        ) === ParagraphParentField::WIDGET_AUTOCOMPLETE) {
+        )) {
             $fieldDto->setFormTypeOption('attr.data-ea-widget', 'ea-autocomplete');
         }
 

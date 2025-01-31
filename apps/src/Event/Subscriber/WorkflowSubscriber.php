@@ -93,7 +93,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
     {
         /** @var Transition $transition */
         $transition = $event->getTransition();
-        $subject = $event->getSubject();
+        $subject    = $event->getSubject();
         $this->onWorkflowChapterTransition($transition, $subject);
         $this->onWorkflowEditoTransition($transition, $subject);
         $this->onWorkflowMemoTransition($transition, $subject);
@@ -109,7 +109,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
         }
 
         $configuration = $this->siteService->getConfiguration();
-        $data = [
+        $data          = [
             'user'          => $entity,
             'configuration' => $configuration,
         ];
@@ -129,7 +129,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
 
         $email = $this->emailService->get($templates[$name], $data);
         $email->init();
-        if ($name !== 'submit') {
+        if ('submit' !== $name) {
             $email->to($entity->getEmail());
         }
 

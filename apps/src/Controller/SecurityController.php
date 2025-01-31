@@ -45,9 +45,9 @@ class SecurityController extends AbstractController
      */
     protected function getDataLogin(AuthenticationUtils $authenticationUtils): array
     {
-        $error = $authenticationUtils->getLastAuthenticationError();
+        $error        = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
-        $data = $this->siteService->getConfiguration();
+        $data         = $this->siteService->getConfiguration();
 
         return [
             // parameters usually defined in Symfony login forms

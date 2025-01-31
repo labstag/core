@@ -22,8 +22,8 @@ class FormService
     {
         $data = [];
         foreach ($this->forms as $form) {
-            $code = $form->getCode();
-            $name = $form->getName();
+            $code        = $form->getCode();
+            $name        = $form->getName();
             $data[$name] = $code;
         }
 

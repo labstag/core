@@ -19,8 +19,8 @@ class StarRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->createQueryBuilder('s');
 
-        $query = $queryBuilder->select('s.' . $type . ', count(s.id) as count');
-        $query->groupBy('s.' . $type);
+        $query = $queryBuilder->select('s.'.$type.', count(s.id) as count');
+        $query->groupBy('s.'.$type);
 
         return $query->getQuery()->getResult();
     }

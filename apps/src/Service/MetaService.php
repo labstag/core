@@ -25,13 +25,13 @@ class MetaService
 
         $return = new stdClass();
 
-        $return->name = null;
+        $return->name  = null;
         $return->value = null;
 
-        $reflectionClass = new ReflectionClass($meta);
+        $reflectionClass  = new ReflectionClass($meta);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            $name = $reflectionProperty->getName();
+            $name  = $reflectionProperty->getName();
             $value = $propertyAccessor->getValue($meta, $name);
             if (!is_object($value)) {
                 continue;
@@ -41,7 +41,7 @@ class MetaService
                 continue;
             }
 
-            $return->name = $name;
+            $return->name  = $name;
             $return->value = $value;
         }
 

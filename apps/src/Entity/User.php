@@ -116,11 +116,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
 
     public function __construct()
     {
-        $this->stories = new ArrayCollection();
-        $this->editos = new ArrayCollection();
-        $this->memos = new ArrayCollection();
-        $this->pages = new ArrayCollection();
-        $this->posts = new ArrayCollection();
+        $this->stories       = new ArrayCollection();
+        $this->editos        = new ArrayCollection();
+        $this->memos         = new ArrayCollection();
+        $this->pages         = new ArrayCollection();
+        $this->posts         = new ArrayCollection();
         $this->httpErrorLogs = new ArrayCollection();
     }
 
@@ -145,7 +145,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
 
     public function __unserialize(array $data): void
     {
-        if (count($data) === self::DATAUNSERIALIZE) {
+        if (self::DATAUNSERIALIZE === count($data)) {
             [
                 $this->id,
                 $this->username,

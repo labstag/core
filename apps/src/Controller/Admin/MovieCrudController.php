@@ -12,8 +12,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Movie;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Service\MovieService;
 use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieCrudController extends AbstractCrudControllerLib
@@ -29,6 +31,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         $actions->add(Crud::PAGE_INDEX, $action);
         $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
+        $this->configureActionsUpdateImage($actions);
 
         return $actions;
     }
@@ -85,7 +88,49 @@ class MovieCrudController extends AbstractCrudControllerLib
     {
         $entity = $adminContext->getEntity()->getInstance();
 
-        return $this->redirect('https://www.imdb.com/title/tt' . $entity->getImdb() . '/');
+        return $this->redirect('https://www.imdb.com/title/tt'.$entity->getImdb().'/');
+    }
+
+    #[Route('/admin/movie/updateimage', name: 'admin_movie_updateimage')]
+    public function updateimage(MovieService $movieService): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+
+        $movies = $this->getRepository()->findBy(
+            ['img' => null]
+        );
+
+        $counter = 0;
+        $update  = 0;
+        foreach ($movies as $movie) {
+            $status = $movieService->update($movie);
+            $update = $status ? ++$update : $update;
+            ++$counter;
+
+            $serviceEntityRepositoryLib->persist($movie);
+            $serviceEntityRepositoryLib->flush($counter);
+        }
+
+        $serviceEntityRepositoryLib->flush();
+
+        $this->addFlash('success', new TranslatableMessage('Update %update% movie(s)', ['%update%' => $update]));
+
+        return $this->redirectToRoute('admin_movie_index');
+    }
+
+    private function configureActionsUpdateImage(Actions $actions): void
+    {
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+        $action  = $request->query->get('action', null);
+        if ('trash' == $action) {
+            return;
+        }
+
+        $action = Action::new('updateimage', new TranslatableMessage('Update Images'), 'fas fa-wrench');
+        $action->linkToRoute('admin_movie_updateimage');
+        $action->createAsGlobalAction();
+
+        $actions->add(Crud::PAGE_INDEX, $action);
     }
 
     private function setLinkImdbAction(): Action

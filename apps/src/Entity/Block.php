@@ -79,7 +79,7 @@ class Block implements Stringable
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
-        $this->links = new ArrayCollection();
+        $this->links      = new ArrayCollection();
     }
 
     #[Override]

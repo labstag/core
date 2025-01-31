@@ -30,7 +30,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
     public function getParent($idParent): ?object
     {
         $parent = null;
-        $pages = $this->getIdentitiesByClass(Page::class);
+        $pages  = $this->getIdentitiesByClass(Page::class);
         foreach ($pages as $id) {
             $page = $this->getReference($id, Page::class);
             if ($page->getType() != $idParent) {
@@ -48,9 +48,9 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
-        $generator = $this->setFaker();
-        $data = $this->data();
-        $this->tags = $this->getIdentitiesByClass(Tag::class, 'page');
+        $generator        = $this->setFaker();
+        $data             = $this->data();
+        $this->tags       = $this->getIdentitiesByClass(Tag::class, 'page');
         $this->categories = $this->getIdentitiesByClass(Category::class, 'page');
         foreach ($data as $row) {
             $entity = $row['entity'];
@@ -145,7 +145,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addTagToEntity($page);
         $this->addCategoryToEntity($page);
 
-        $this->addReference('page_' . md5(uniqid()), $page);
+        $this->addReference('page_'.md5(uniqid()), $page);
         $objectManager->persist($page);
     }
 

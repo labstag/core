@@ -4,10 +4,9 @@ namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Generator;
-use Labstag\Entity\Paragraph;
 use Labstag\Entity\Movie;
+use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
@@ -23,10 +22,10 @@ class MovieSliderParagraph extends ParagraphLib
         unset($disable);
         /** @var MovieRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
-        $nbr = $paragraph->getNbr();
-        $title = $paragraph->getTitle();
-        $movies = $serviceEntityRepositoryLib->findLastByNbr($nbr);
-        $listing = $this->siteService->getPageByType('movie');
+        $nbr                        = $paragraph->getNbr();
+        $title                      = $paragraph->getTitle();
+        $movies                     = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        $listing                    = $this->siteService->getPageByType('movie');
         $this->setData(
             $paragraph,
             [

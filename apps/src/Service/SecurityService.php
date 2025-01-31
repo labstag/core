@@ -50,20 +50,20 @@ class SecurityService
         }
 
         $pathinfo = $request->getPathInfo();
-        $slug = '/' . $request->attributes->get('slug');
+        $slug     = '/'.$request->attributes->get('slug');
         if ($slug !== $pathinfo) {
             $pathinfo = $slug;
         }
 
         $redirections = $this->getRedirections(false);
-        if (count($redirections) == 0) {
+        if (0 == count($redirections)) {
             return null;
         }
 
         $redirect = $this->testRedirect($pathinfo, $redirections);
         if (is_null($redirect)) {
             $redirections = $this->getRedirections(true);
-            $redirect = $this->testRedirectRegex($pathinfo, $redirections);
+            $redirect     = $this->testRedirectRegex($pathinfo, $redirections);
         }
 
         return $redirect;
@@ -72,7 +72,7 @@ class SecurityService
     public function getBanIp(): ?object
     {
         $request = $this->requestStack->getCurrentRequest();
-        $user = $this->security->getUser();
+        $user    = $this->security->getUser();
         if (!is_null($user)) {
             return null;
         }
@@ -92,31 +92,22 @@ class SecurityService
             return;
         }
 
-        $server = $request->server;
+        $server        = $request->server;
         $httpErrorLogs = new HttpErrorLogs();
-        $domain = $server->get('REQUEST_SCHEME') . '://' . $server->get('SERVER_NAME');
-        $url = $server->get('REQUEST_URI');
+        $domain        = $server->get('REQUEST_SCHEME').'://'.$server->get('SERVER_NAME');
+        $url           = $server->get('REQUEST_URI');
         if ($this->isDisableUrl($url)) {
             return;
         }
 
         $agent = (string) $server->get('HTTP_USER_AGENT');
-        if (empty($agent)) {
-            $this->addBan($this->getClientIp($server));
-            return;
-        }
-
-        if ($this->isForbiddenUrl($url)) {
-            if (!is_null($this->security->getUser())) {
-                $this->addBan($this->getClientIp($server));
-            }
-
+        if ($this->setBan($agent, $server, $url)) {
             return;
         }
 
         $referer = $request->headers->get('referer');
-        $method = $server->get('REQUEST_METHOD');
-        $data = $this->httpErrorLogsRepository->findBy(
+        $method  = $server->get('REQUEST_METHOD');
+        $data    = $this->httpErrorLogsRepository->findBy(
             [
                 'domain'        => $domain,
                 'url'           => $url,
@@ -126,7 +117,7 @@ class SecurityService
             ]
         );
 
-        if (count($data) != 0) {
+        if (0 != count($data)) {
             return;
         }
 
@@ -154,7 +145,7 @@ class SecurityService
         $this->httpErrorLogsRepository->save($httpErrorLogs);
     }
 
-    private function getClientIp($server)
+    private function getClientIp($server): string
     {
         $headers = [
             'HTTP_CLIENT_IP',
@@ -167,7 +158,7 @@ class SecurityService
 
         foreach ($headers as $header) {
             if (!empty($server->get($header))) {
-                $ipList = explode(',', $server->get($header));
+                $ipList = explode(',', (string) $server->get($header));
                 // Si plusieurs IPs sont présentes (cas d'un proxy chainé)
                 $internetProtocol = trim(end($ipList));
                 // On prend la dernière IP de la liste (client réel)
@@ -195,9 +186,9 @@ class SecurityService
 
     private function isDisableUrl($url): bool
     {
-        $file = $this->fileService->getFileInAdapter('private', 'disable.txt');
+        $file    = $this->fileService->getFileInAdapter('private', 'disable.txt');
         $disable = explode("\n", file_get_contents($file));
-        $find = false;
+        $find    = false;
         foreach ($disable as $type) {
             if (str_contains((string) $url, $type)) {
                 $find = true;
@@ -211,9 +202,9 @@ class SecurityService
 
     private function isForbiddenUrl($url): bool
     {
-        $file = $this->fileService->getFileInAdapter('private', 'forbidden.txt');
+        $file      = $this->fileService->getFileInAdapter('private', 'forbidden.txt');
         $forbidden = explode("\n", file_get_contents($file));
-        $find = false;
+        $find      = false;
         foreach ($forbidden as $type) {
             if (str_contains((string) $url, $type) || str_contains(strtolower((string) $url), strtolower($type))) {
                 $find = true;
@@ -223,6 +214,24 @@ class SecurityService
         }
 
         return $find;
+    }
+
+    private function setBan(string $agent, \Symfony\Component\HttpFoundation\ServerBag $serverBag, $url): ?bool
+    {
+        if ('' === $agent || '0' === $agent) {
+            $this->addBan($this->getClientIp($serverBag));
+
+            return true;
+        }
+
+        if ($this->isForbiddenUrl($url)) {
+            if (!is_null($this->security->getUser())) {
+                $this->addBan($this->getClientIp($serverBag));
+            }
+
+            return true;
+        }
+        return null;
     }
 
     private function setRedirectResponse(Redirection $redirection): RedirectResponse

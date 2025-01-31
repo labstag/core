@@ -12,7 +12,7 @@ class TemplateFixtures extends FixtureLib
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
-        $data = $this->data();
+        $data      = $this->data();
         $generator = $this->setFaker();
         foreach ($data as $key => $title) {
             $template = new Template();

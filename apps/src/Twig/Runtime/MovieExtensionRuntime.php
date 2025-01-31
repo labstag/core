@@ -11,7 +11,7 @@ class MovieExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
-    public function oembed(?string $url)
+    public function oembed(?string $url): string
     {
         if (is_null($url)) {
             return '';

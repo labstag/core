@@ -76,14 +76,14 @@ abstract class ParagraphLib extends AbstractController
 
     public function addFieldImageUpload(string $type, string $pageName): TextField|ImageField
     {
-        if ($pageName === Crud::PAGE_EDIT || $pageName === Crud::PAGE_NEW) {
-            $textField = TextField::new($type . 'File');
+        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
+            $textField = TextField::new($type.'File');
             $textField->setFormType(VichImageType::class);
 
             return $textField;
         }
 
-        $basePath = $this->fileService->getBasePath(Paragraph::class, $type . 'File');
+        $basePath   = $this->fileService->getBasePath(Paragraph::class, $type.'File');
         $imageField = ImageField::new($type);
         $imageField->setBasePath($basePath);
 
@@ -196,7 +196,7 @@ abstract class ParagraphLib extends AbstractController
         $domDocument->loadHTML($html);
 
         $domNodeList = $domDocument->getElementsByTagName('iframe');
-        if (count($domNodeList) == 0) {
+        if (0 == count($domNodeList)) {
             return null;
         }
 
@@ -232,12 +232,12 @@ abstract class ParagraphLib extends AbstractController
         }
 
         $htmltwig = '.html.twig';
-        $files = [
-            'paragraphs/' . $folder . '/' . $type . $htmltwig,
-            'paragraphs/' . $folder . '/default' . $htmltwig,
+        $files    = [
+            'paragraphs/'.$folder.'/'.$type.$htmltwig,
+            'paragraphs/'.$folder.'/default'.$htmltwig,
         ];
 
-        $view = end($files);
+        $view   = end($files);
         $loader = $this->twigEnvironment->getLoader();
         foreach ($files as $file) {
             if (!$loader->exists($file)) {
@@ -262,10 +262,10 @@ abstract class ParagraphLib extends AbstractController
     protected function parseUrlAndAddAutoplay(string $url): string
     {
         $parse = parse_url($url);
-        parse_str($parse['query'] !== '' && $parse['query'] !== '0' ? $parse['query'] : '', $args);
+        parse_str('' !== $parse['query'] && '0' !== $parse['query'] ? $parse['query'] : '', $args);
         $args['autoplay'] = 1;
 
-        $newArgs = http_build_query($args);
+        $newArgs        = http_build_query($args);
         $parse['query'] = $newArgs;
 
         return sprintf('%s://%s%s?%s', $parse['scheme'], $parse['host'], $parse['path'], $parse['query']);

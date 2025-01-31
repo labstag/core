@@ -27,7 +27,7 @@ class ContentBlock extends BlockLib
     public function generate(Block $block, array $data, bool $disable): void
     {
         $paragraphs = $data['paragraphs'];
-        if (count($paragraphs) == 0) {
+        if (0 == count($paragraphs)) {
             $this->setShow($block, false);
 
             return;

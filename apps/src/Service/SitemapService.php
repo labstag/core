@@ -34,11 +34,11 @@ class SitemapService
         $configuration = $this->siteService->getConfiguration();
 
         $tabs = $this->getDataPages();
-        if ($configuration->isSitemapPosts() || $all == true) {
+        if ($configuration->isSitemapPosts() || true == $all) {
             $tabs = array_merge($tabs, $this->getDataPosts());
         }
 
-        if ($configuration->isSitemapStory() || $all == true) {
+        if ($configuration->isSitemapStory() || true == $all) {
             $tabs = array_merge($tabs, $this->getDataStory());
         }
 
@@ -63,8 +63,8 @@ class SitemapService
             )
             ) {
                 $this->parent[$url] = true;
-                $data['parent'] = $this->setTabsByParent($urls, $url);
-                $tabs[$url] = $data;
+                $data['parent']     = $this->setTabsByParent($urls, $url);
+                $tabs[$url]         = $data;
             }
         }
 
@@ -85,7 +85,7 @@ class SitemapService
     {
         $result = substr($url, 0, 1);
 
-        return $result !== '-';
+        return '-' !== $result;
     }
 
     /**
@@ -96,7 +96,7 @@ class SitemapService
         $url = $this->siteService->getSlugByEntity($entity);
 
         return [
-            '/' . $url => ['entity' => $entity],
+            '/'.$url => ['entity' => $entity],
         ];
     }
 
@@ -111,7 +111,7 @@ class SitemapService
 
         /** @var ChapterRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Chapter::class);
-        $data = $serviceEntityRepositoryLib->getAllActivateByStory($story);
+        $data                       = $serviceEntityRepositoryLib->getAllActivateByStory($story);
 
         return $this->setTabs($data);
     }

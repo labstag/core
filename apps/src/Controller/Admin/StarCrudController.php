@@ -62,12 +62,12 @@ class StarCrudController extends AbstractCrudControllerLib
     public function configureFilters(Filters $filters): Filters
     {
         $licences = $this->getallData('license');
-        if (count($licences) != 0) {
+        if (0 != count($licences)) {
             $filters->add(ChoiceFilter::new('license', new TranslatableMessage('License'))->setChoices($licences));
         }
 
         $languages = $this->getallData('language');
-        if (count($languages) != 0) {
+        if (0 != count($languages)) {
             $filters->add(ChoiceFilter::new('language', new TranslatableMessage('Language'))->setChoices($languages));
         }
 
@@ -91,7 +91,7 @@ class StarCrudController extends AbstractCrudControllerLib
     private function getAllData(string $type): array
     {
         $serviceEntityRepositoryLib = $this->getRepository();
-        $methods = get_class_methods($serviceEntityRepositoryLib);
+        $methods                    = get_class_methods($serviceEntityRepositoryLib);
         if (!$serviceEntityRepositoryLib instanceof StarRepository || !in_array('findAllData', $methods)) {
             return [];
         }

@@ -15,7 +15,7 @@ class MovieCategoryCrudController extends CategoryCrudController
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $data = parent::configureFields($pageName);
+        $data   = parent::configureFields($pageName);
         $data[] = $this->addFieldTotalChild('movies');
 
         return $data;
