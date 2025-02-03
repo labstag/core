@@ -52,20 +52,16 @@ class ProfilCrudController extends UserCrudController
         $textField->setFormType(RepeatedType::class);
         $textField->setFormTypeOptions(
             [
-                'type'          => PasswordType::class,
-                'first_options' => [
+                'type'           => PasswordType::class,
+                'first_options'  => [
                     'label' => new TranslatableMessage('Password'),
-                    'attr'  => [
-                        'autocomplete' => 'new-password',
-                    ],
+                    'attr'  => ['autocomplete' => 'new-password'],
                 ],
                 'second_options' => [
                     'label' => new TranslatableMessage('Repeat Password'),
-                    'attr'  => [
-                        'autocomplete' => 'new-password',
-                    ],
+                    'attr'  => ['autocomplete' => 'new-password'],
                 ],
-                'mapped' => false,
+                'mapped'         => false,
             ]
         );
         $textField->setRequired(Crud::PAGE_NEW === $pageName);

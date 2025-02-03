@@ -23,9 +23,7 @@ class Configuration
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     private ?bool $disableEmptyAgent = null;
 
@@ -58,17 +56,13 @@ class Configuration
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     private ?bool $sitemapPosts = false;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     private ?bool $sitemapStory = false;
 
@@ -80,17 +74,13 @@ class Configuration
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     private ?bool $userLink = false;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     private ?bool $userShow = false;
 

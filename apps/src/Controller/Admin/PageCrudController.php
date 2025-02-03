@@ -30,9 +30,9 @@ class PageCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort([
-            'createdAt' => 'DESC',
-        ]);
+        $crud->setDefaultSort(
+            ['createdAt' => 'DESC']
+        );
 
         return $crud;
     }
@@ -40,9 +40,7 @@ class PageCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $currentEntity = $this->getContext()
-            ->getEntity()
-            ->getInstance();
+        $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield $this->addFieldIDShortcode('page');
@@ -95,10 +93,9 @@ class PageCrudController extends AbstractCrudControllerLib
         $this->workflowService->init($page);
         $meta = new Meta();
         $page->setMeta($meta);
-        $home = $this->getRepository()
-            ->findOneBy([
-                'type' => 'home',
-            ]);
+        $home = $this->getRepository()->findOneBy(
+            ['type' => 'home']
+        );
         if ($home instanceof Page) {
             $page->setPage($home);
         }

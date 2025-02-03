@@ -19,7 +19,8 @@ class MoviesUpdateCommand extends Command
     public function __construct(
         protected MovieRepository $movieRepository,
         protected MovieService $movieService,
-    ) {
+    )
+    {
         parent::__construct();
     }
 
@@ -32,9 +33,9 @@ class MoviesUpdateCommand extends Command
         $symfonyStyle = new SymfonyStyle($input, $output);
 
         // Movie without img
-        $movies = $this->movieRepository->findBy([
-            'img' => null,
-        ]);
+        $movies = $this->movieRepository->findBy(
+            ['img' => null]
+        );
 
         $progressBar = new ProgressBar($output, count($movies));
         $progressBar->start();

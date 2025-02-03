@@ -15,7 +15,8 @@ class MovieService
         protected HttpClientInterface $httpClient,
         protected string $omdbapiKey,
         protected string $tmdbapiKey,
-    ) {
+    )
+    {
     }
 
     public function getDetails(string $imdbId): array

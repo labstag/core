@@ -35,11 +35,14 @@ class AdminBlock extends BlockLib
             return;
         }
 
-        $this->setData($block, [
-            'url'   => $url->generateUrl(),
-            'block' => $block,
-            'data'  => $data,
-        ]);
+        $this->setData(
+            $block,
+            [
+                'url'   => $url->generateUrl(),
+                'block' => $block,
+                'data'  => $data,
+            ]
+        );
     }
 
     #[Override]

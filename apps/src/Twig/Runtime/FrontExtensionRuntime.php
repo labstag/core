@@ -20,7 +20,8 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         protected ParameterBagInterface $parameterBag,
         protected FileService $fileService,
         protected Environment $twigEnvironment,
-    ) {
+    )
+    {
     }
 
     public function asset(mixed $entity, string $field): string
@@ -77,9 +78,10 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     {
         $slug = $this->siteService->getSlugByEntity($entity);
 
-        return $this->router->generate('front', [
-            'slug' => $slug,
-        ]);
+        return $this->router->generate(
+            'front',
+            ['slug' => $slug]
+        );
     }
 
     /**

@@ -28,14 +28,20 @@ class FrontExtension extends AbstractExtension
             new TwigFunction('site_asset', [FrontExtensionRuntime::class, 'asset']),
             new TwigFunction(
                 'site_metatags',
-                [FrontExtensionRuntime::class, 'metatags'],
+                [
+                    FrontExtensionRuntime::class,
+                    'metatags',
+                ],
                 [
                     'is_safe' => ['html'],
                 ]
             ),
             new TwigFunction(
                 'site_content',
-                [FrontExtensionRuntime::class, 'content'],
+                [
+                    FrontExtensionRuntime::class,
+                    'content',
+                ],
                 [
                     'is_safe' => ['html'],
                 ]

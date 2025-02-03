@@ -4,11 +4,11 @@
 
 namespace Labstag\Field\Configurator;
 
-use Doctrine\Common\Util\ClassUtils;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
+use Gedmo\Tool\ClassUtils;
 use Labstag\Field\ParagraphsField;
 use Labstag\Service\ParagraphService;
 use Override;

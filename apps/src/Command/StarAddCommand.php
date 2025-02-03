@@ -17,6 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand(name: 'labstag:star-add', description: 'Get all star github with npm run star:get')]
 class StarAddCommand extends Command
 {
+
     private int $add = 0;
 
     private int $update = 0;
@@ -24,7 +25,8 @@ class StarAddCommand extends Command
     public function __construct(
         protected FileService $fileService,
         protected StarRepository $starRepository,
-    ) {
+    )
+    {
         parent::__construct();
     }
 
@@ -99,9 +101,9 @@ class StarAddCommand extends Command
 
     private function disableAll(): void
     {
-        $stars = $this->starRepository->findBy([
-            'enable' => true,
-        ]);
+        $stars = $this->starRepository->findBy(
+            ['enable' => true]
+        );
         $counter = 0;
         foreach ($stars as $star) {
             $star->setEnable(false);
@@ -119,9 +121,11 @@ class StarAddCommand extends Command
      */
     private function setStar(array $data): Star
     {
-        $star = $this->starRepository->findOneBy([
-            'repository' => $data['git_url'],
-        ]);
+        $star = $this->starRepository->findOneBy(
+            [
+                'repository' => $data['git_url'],
+            ]
+        );
 
         if (!$star instanceof Star) {
             $star = new Star();

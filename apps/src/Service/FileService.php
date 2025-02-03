@@ -57,7 +57,8 @@ class FileService
         protected EntityManagerInterface $entityManager,
         protected ParameterBagInterface $parameterBag,
         protected PropertyMappingFactory $propertyMappingFactory,
-    ) {
+    )
+    {
     }
 
     public function asset(mixed $entity, string $field): string
@@ -120,9 +121,9 @@ class FileService
                 $find = 0;
                 foreach ($mappings as $mapping) {
                     $field  = $mapping->getFileNamePropertyName();
-                    $entity = $repository->findOneBy([
-                        $field => $file,
-                    ]);
+                    $entity = $repository->findOneBy(
+                        [$field => $file]
+                    );
                     if (!$entity instanceof $entities[$type]) {
                         continue;
                     }

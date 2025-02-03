@@ -25,8 +25,7 @@ class HeroBlock extends BlockLib
     #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
-        $paragraphs = $block->getParagraphs()
-            ->getValues();
+        $paragraphs = $block->getParagraphs()->getValues();
         if (0 == count($paragraphs) || $this->siteService->isHome($data)) {
             $this->setShow($block, false);
 
@@ -38,10 +37,13 @@ class HeroBlock extends BlockLib
         $this->setHeader($block, $contents->header);
         $this->setFooter($block, $contents->footer);
 
-        $this->setData($block, [
-            'block'      => $block,
-            'paragraphs' => $paragraphs,
-        ]);
+        $this->setData(
+            $block,
+            [
+                'block'      => $block,
+                'paragraphs' => $paragraphs,
+            ]
+        );
     }
 
     #[Override]

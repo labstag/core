@@ -39,9 +39,9 @@ class StoryCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort([
-            'createdAt' => 'DESC',
-        ]);
+        $crud->setDefaultSort(
+            ['createdAt' => 'DESC']
+        );
 
         return $crud;
     }
@@ -139,9 +139,12 @@ class StoryCrudController extends AbstractCrudControllerLib
             return $this->redirect($url);
         }
 
-        return $this->render('admin/story/order.html.twig', [
-            'chapters' => $story->getChapters(),
-        ]);
+        return $this->render(
+            'admin/story/order.html.twig',
+            [
+                'chapters' => $story->getChapters(),
+            ]
+        );
     }
 
     #[Route('/admin/story/updatepdf', name: 'admin_story_updatepdf')]
@@ -163,17 +166,20 @@ class StoryCrudController extends AbstractCrudControllerLib
 
         $serviceEntityRepositoryLib->flush();
 
-        $this->addFlash('success', new TranslatableMessage('Update %update% storie(s)', [
-            '%update%' => $update,
-        ]));
+        $this->addFlash(
+            'success',
+            new TranslatableMessage(
+                'Update %update% storie(s)',
+                ['%update%' => $update]
+            )
+        );
 
         return $this->redirectToRoute('admin_story_index');
     }
 
     private function configureActionsUpdatePdf(Actions $actions): void
     {
-        $request = $this->container->get('request_stack')
-            ->getCurrentRequest();
+        $request = $this->container->get('request_stack')->getCurrentRequest();
         $action = $request->query->get('action', null);
         if ('trash' == $action) {
             return;

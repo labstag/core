@@ -16,11 +16,14 @@ class SitemapParagraph extends ParagraphLib
     {
         unset($disable);
         $sitemap = $this->sitemapService->getData();
-        $this->setData($paragraph, [
-            'sitemap'   => $sitemap,
-            'paragraph' => $paragraph,
-            'data'      => $data,
-        ]);
+        $this->setData(
+            $paragraph,
+            [
+                'sitemap'   => $sitemap,
+                'paragraph' => $paragraph,
+                'data'      => $data,
+            ]
+        );
     }
 
     #[Override]

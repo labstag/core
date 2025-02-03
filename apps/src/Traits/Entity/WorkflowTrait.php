@@ -9,6 +9,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 trait WorkflowTrait
 {
+
     /**
      * @var string[]
      */

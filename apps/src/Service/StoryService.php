@@ -15,7 +15,8 @@ class StoryService
 {
     public function __construct(
         private RequestStack $requestStack,
-    ) {
+    )
+    {
     }
 
     public function setPdf(Story $story): bool
@@ -52,10 +53,15 @@ class StoryService
             );
 
             $story->setPdfFile($uploadedFile);
-            $this->getFlashBag()
-                ->add('success', new TranslatableMessage('Story file generated for %title%', [
-                    '%title%' => $story->getTitle(),
-                ]));
+            $this->getFlashBag()->add(
+                'success',
+                new TranslatableMessage(
+                    'Story file generated for %title%',
+                    [
+                        '%title%' => $story->getTitle(),
+                    ]
+                )
+            );
 
             return true;
         }

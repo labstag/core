@@ -18,9 +18,7 @@ class Star
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     private ?bool $enable = null;
 

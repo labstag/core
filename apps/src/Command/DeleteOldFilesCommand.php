@@ -14,7 +14,8 @@ class DeleteOldFilesCommand extends Command
 {
     public function __construct(
         protected FileService $fileService,
-    ) {
+    )
+    {
         parent::__construct();
     }
 

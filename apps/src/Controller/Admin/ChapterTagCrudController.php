@@ -36,7 +36,8 @@ class ChapterTagCrudController extends TagCrudController
         EntityDto $entityDto,
         FieldCollection $fieldCollection,
         FilterCollection $filterCollection,
-    ): QueryBuilder {
+    ): QueryBuilder
+    {
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
         $queryBuilder->andWhere('entity.type = :type');
         $queryBuilder->setParameter('type', 'chapter');

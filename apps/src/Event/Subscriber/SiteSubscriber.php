@@ -22,7 +22,8 @@ class SiteSubscriber implements EventSubscriberInterface
     public function __construct(
         protected TokenStorageInterface $tokenStorage,
         protected SecurityService $securityService,
-    ) {
+    )
+    {
     }
 
     /**

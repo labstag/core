@@ -18,7 +18,8 @@ class WorkflowService
         protected Registry $workflowRegistry,
         protected RequestStack $requestStack,
         protected EntityManagerInterface $entityManager,
-    ) {
+    )
+    {
     }
 
     public function change(string $entity, string $transition, mixed $uid): void
@@ -43,8 +44,7 @@ class WorkflowService
             return;
         }
 
-        $session->getFlashBag()
-            ->add('success', new TranslatableMessage('The status has been successfully changed'));
+        $session->getFlashBag()->add('success', new TranslatableMessage('The status has been successfully changed'));
     }
 
     public function get(object $entity): ?WorkflowInterface
