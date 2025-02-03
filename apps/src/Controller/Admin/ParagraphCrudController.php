@@ -37,14 +37,14 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         $crud = parent::configureCrud($crud);
         if ($this->isIframeEdit()) {
             $crud->renderSidebarMinimized();
-            $crud->overrideTemplates(
-                ['layout' => 'admin/paragraph/layout.html.twig']
-            );
+            $crud->overrideTemplates([
+                'layout' => 'admin/paragraph/layout.html.twig',
+            ]);
         }
 
-        $crud->setDefaultSort(
-            ['createdAt' => 'DESC']
-        );
+        $crud->setDefaultSort([
+            'createdAt' => 'DESC',
+        ]);
 
         return $crud;
     }
@@ -52,7 +52,9 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $currentEntity = $this->getContext()->getEntity()->getInstance();
+        $currentEntity = $this->getContext()
+            ->getEntity()
+            ->getInstance();
         yield $this->addFieldID();
         $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'));
         $choiceField->setChoices($this->paragraphService->getFonds());
@@ -93,7 +95,8 @@ class ParagraphCrudController extends AbstractCrudControllerLib
 
     private function isIframeEdit(): bool
     {
-        $query = $this->requestStack->getCurrentRequest()->query->all();
+        $query = $this->requestStack->getCurrentRequest()
+            ->query->all();
 
         return isset($query['iframe']);
     }

@@ -21,12 +21,9 @@ class ContactFrontForm extends FrontFormLib
             return false;
         }
 
-        $email = $this->emailService->get(
-            'send_contact',
-            [
-                'form' => $form->all(),
-            ]
-        );
+        $email = $this->emailService->get('send_contact', [
+            'form' => $form->all(),
+        ]);
         if (!$email instanceof EmailLib) {
             return false;
         }

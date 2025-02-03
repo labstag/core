@@ -18,7 +18,7 @@ final class IsBotField implements FieldInterface
     public const OPTION_TOGGLE_URL = 'toggleUrl';
 
     /**
-     * @param null|false|string $label
+     * @param false|string|null $label
      */
     public static function new(string $propertyName, $label = null): self
     {
@@ -26,12 +26,10 @@ final class IsBotField implements FieldInterface
         $isbot->setProperty($propertyName);
         $isbot->setLabel($label);
         $isbot->setTemplatePath('admin/field/boolean.html.twig');
-        $isbot->setFormTypeOptions(
-            [
-                'mapped'   => false,
-                'required' => false,
-            ]
-        );
+        $isbot->setFormTypeOptions([
+            'mapped'   => false,
+            'required' => false,
+        ]);
         $isbot->setFormType(CheckboxType::class);
         $isbot->addCssClass('field-boolean');
         $isbot->setCustomOption(self::OPTION_RENDER_AS_SWITCH, false);

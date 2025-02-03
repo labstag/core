@@ -11,8 +11,9 @@ use Labstag\Repository\HttpErrorLogsRepository;
 
 final class SameConfigurator implements FieldConfiguratorInterface
 {
-    public function __construct(private HttpErrorLogsRepository $httpErrorLogsRepository)
-    {
+    public function __construct(
+        private HttpErrorLogsRepository $httpErrorLogsRepository,
+    ) {
     }
 
     public function configure(FieldDto $fieldDto, EntityDto $entityDto, AdminContext $adminContext): void
@@ -26,7 +27,9 @@ final class SameConfigurator implements FieldConfiguratorInterface
         }
 
         $internetProtocol = $instance->getInternetProtocol();
-        $logs             = $this->httpErrorLogsRepository->findBy(['internetProtocol' => $internetProtocol]);
+        $logs             = $this->httpErrorLogsRepository->findBy([
+            'internetProtocol' => $internetProtocol,
+        ]);
 
         $fieldDto->setValue(count($logs));
     }

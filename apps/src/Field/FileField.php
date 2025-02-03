@@ -21,7 +21,7 @@ final class FileField implements FieldInterface
     public const OPTION_STRIP_TAGS = 'stripTags';
 
     /**
-     * @param null|false|string|TranslatableInterface $label
+     * @param false|string|TranslatableInterface|null $label
      */
     public static function new(string $propertyName, $label = null): self
     {
@@ -52,8 +52,12 @@ final class FileField implements FieldInterface
      */
     public function setMaxLength(int $length): self
     {
-        if ($length < 1) {
-            throw new InvalidArgumentException(sprintf('The argument of the "%s()" method must be 1 or higher (%d given).', __METHOD__, $length));
+        if (1 > $length) {
+            throw new InvalidArgumentException(sprintf(
+                'The argument of the "%s()" method must be 1 or higher (%d given).',
+                __METHOD__,
+                $length
+            ));
         }
 
         $this->setCustomOption(self::OPTION_MAX_LENGTH, $length);

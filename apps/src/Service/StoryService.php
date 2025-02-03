@@ -14,9 +14,8 @@ use Symfony\Component\Translation\TranslatableMessage;
 class StoryService
 {
     public function __construct(
-        private RequestStack $requestStack
-    )
-    {
+        private RequestStack $requestStack,
+    ) {
     }
 
     public function setPdf(Story $story): bool
@@ -53,7 +52,10 @@ class StoryService
             );
 
             $story->setPdfFile($uploadedFile);
-            $this->getFlashBag()->add('success', new TranslatableMessage('Story file generated for %title%', ['%title%' => $story->getTitle()]));
+            $this->getFlashBag()
+                ->add('success', new TranslatableMessage('Story file generated for %title%', [
+                    '%title%' => $story->getTitle(),
+                ]));
 
             return true;
         }
@@ -65,7 +67,11 @@ class StoryService
     {
         $originalExtension = pathinfo((string) $filename, PATHINFO_EXTENSION);
 
-        return $this->getTemporaryFolder().'/'.str_replace('.'.$originalExtension, '.'.$extension, basename((string) $filename));
+        return $this->getTemporaryFolder() . '/' . str_replace(
+            '.' . $originalExtension,
+            '.' . $extension,
+            basename((string) $filename)
+        );
     }
 
     private function getFlashBag()

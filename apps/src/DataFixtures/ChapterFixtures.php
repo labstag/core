@@ -34,10 +34,7 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
     #[Override]
     public function getDependencies(): array
     {
-        return [
-            TagFixtures::class,
-            StoryFixtures::class,
-        ];
+        return [TagFixtures::class, StoryFixtures::class];
     }
 
     #[Override]
@@ -69,7 +66,7 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addParagraphText($chapter);
         $this->setImage($chapter, 'imgFile');
         $this->addTagToEntity($chapter);
-        $this->addReference('chapter_'.md5(uniqid()), $chapter);
+        $this->addReference('chapter_' . md5(uniqid()), $chapter);
         $this->position[$storyId][] = $chapter;
         $objectManager->persist($chapter);
     }

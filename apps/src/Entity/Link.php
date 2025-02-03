@@ -12,7 +12,6 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 #[ORM\Entity(repositoryClass: LinkRepository::class)]
 class Link implements Stringable
 {
-
     #[ORM\Column]
     private bool $blank = false;
 

@@ -11,8 +11,7 @@ class FormService
     public function __construct(
         #[AutowireIterator('labstag.forms')]
         private readonly iterable $forms,
-    )
-    {
+    ) {
     }
 
     /**

@@ -37,14 +37,11 @@ class ChapterListParagraph extends ParagraphLib
             return;
         }
 
-        $this->setData(
-            $paragraph,
-            [
-                'chapters'  => $chapters,
-                'paragraph' => $paragraph,
-                'data'      => $data,
-            ]
-        );
+        $this->setData($paragraph, [
+            'chapters'  => $chapters,
+            'paragraph' => $paragraph,
+            'data'      => $data,
+        ]);
     }
 
     /**

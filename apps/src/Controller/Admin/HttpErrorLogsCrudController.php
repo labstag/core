@@ -23,26 +23,25 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
 {
     public function banIp(AdminContext $adminContext): RedirectResponse
     {
-        $entity           = $adminContext->getEntity()->getInstance();
+        $entity = $adminContext->getEntity()
+            ->getInstance();
         $internetProtocol = $entity->getInternetProtocol();
 
-        $redirectToRoute = $this->redirectToRoute(
-            'admin_http_error_logs_index'
-        );
+        $redirectToRoute = $this->redirectToRoute('admin_http_error_logs_index');
 
-        $request = $this->container->get('request_stack')->getCurrentRequest();
+        $request = $this->container->get('request_stack')
+            ->getCurrentRequest();
         if ($request->server->get('REMOTE_ADDR') === $internetProtocol) {
-            $this->addFlash(
-                'danger',
-                new TranslatableMessage("You can't ban your own IP")
-            );
+            $this->addFlash('danger', new TranslatableMessage("You can't ban your own IP"));
 
             return $redirectToRoute;
         }
 
         $this->securityService->addBan($internetProtocol);
 
-        $this->addFlash('success', new TranslatableMessage('Ip %ip% banned', ['%ip%' => $internetProtocol]));
+        $this->addFlash('success', new TranslatableMessage('Ip %ip% banned', [
+            '%ip%' => $internetProtocol,
+        ]));
 
         return $redirectToRoute;
     }
@@ -52,8 +51,9 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     {
         $this->configureActionsTrash($actions);
         $this->addToBan($actions);
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $action  = $request->query->get('action', null);
+        $request = $this->container->get('request_stack')
+            ->getCurrentRequest();
+        $action = $request->query->get('action', null);
         if ('trash' != $action) {
             $actions->remove(Crud::PAGE_INDEX, Action::NEW);
             $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
@@ -66,9 +66,9 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort(
-            ['createdAt' => 'DESC']
-        );
+        $crud->setDefaultSort([
+            'createdAt' => 'DESC',
+        ]);
 
         return $crud;
     }
@@ -84,7 +84,9 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         yield TextField::new('agent', new TranslatableMessage('agent'))->setMaxLength($maxLength);
         yield TextField::new('internetProtocol', new TranslatableMessage('InternetProtocol'));
         yield IsBotField::new('bot', new TranslatableMessage('bot'));
-        $currentEntity = $this->getContext()->getEntity()->getInstance();
+        $currentEntity = $this->getContext()
+            ->getEntity()
+            ->getInstance();
         if (!is_null($currentEntity)) {
             $deviceDetector = new DeviceDetector($currentEntity->getAgent());
             $deviceDetector->parse();

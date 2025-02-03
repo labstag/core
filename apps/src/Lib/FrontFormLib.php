@@ -22,8 +22,7 @@ abstract class FrontFormLib implements FrontFormInterface
         protected EmailService $emailService,
         protected RequestStack $requestStack,
         protected EntityManagerInterface $entityManager,
-    )
-    {
+    ) {
     }
 
     public function execute(bool $save, FormInterface $form, bool $disable): bool

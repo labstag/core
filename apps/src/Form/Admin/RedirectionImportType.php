@@ -17,7 +17,9 @@ class RedirectionImportType extends AbstractType
             FileType::class,
             [
                 'label' => 'Fichier à importer',
-                'attr'  => ['accept' => '.csv'],
+                'attr'  => [
+                    'accept' => '.csv',
+                ],
             ]
         );
     }

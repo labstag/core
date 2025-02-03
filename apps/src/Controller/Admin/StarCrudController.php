@@ -34,9 +34,9 @@ class StarCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort(
-            ['title' => 'ASC']
-        );
+        $crud->setDefaultSort([
+            'title' => 'ASC',
+        ]);
 
         return $crud;
     }

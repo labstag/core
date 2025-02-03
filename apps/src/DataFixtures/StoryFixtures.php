@@ -31,11 +31,7 @@ class StoryFixtures extends FixtureLib implements DependentFixtureInterface
     #[Override]
     public function getDependencies(): array
     {
-        return [
-            CategoryFixtures::class,
-            TagFixtures::class,
-            UserFixtures::class,
-        ];
+        return [CategoryFixtures::class, TagFixtures::class, UserFixtures::class];
     }
 
     #[Override]
@@ -62,7 +58,7 @@ class StoryFixtures extends FixtureLib implements DependentFixtureInterface
         $this->setImage($story, 'imgFile');
         $this->addTagToEntity($story);
         $this->addCategoryToEntity($story);
-        $this->addReference('story_'.md5(uniqid()), $story);
+        $this->addReference('story_' . md5(uniqid()), $story);
         $objectManager->persist($story);
     }
 }

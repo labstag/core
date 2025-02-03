@@ -12,8 +12,6 @@ class MovieExtension extends AbstractExtension
     #[Override]
     public function getFunctions(): array
     {
-        return [
-            new TwigFunction('movie_oembed', [MovieExtensionRuntime::class, 'oembed']),
-        ];
+        return [new TwigFunction('movie_oembed', [MovieExtensionRuntime::class, 'oembed'])];
     }
 }

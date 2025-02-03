@@ -51,7 +51,10 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->getDoctrineMetadata()
             ->set('targetEntity', ClassUtils::getClass($object->value));
         if (!$entityDto->isAssociation($object->name)) {
-            throw new RuntimeException(sprintf('The "%s" field is not a Doctrine association, so it cannot be used as an association field.', $object->name));
+            throw new RuntimeException(sprintf(
+                'The "%s" field is not a Doctrine association, so it cannot be used as an association field.',
+                $object->name
+            ));
         }
 
         $targetEntityFqcn = $fieldDto->getDoctrineMetadata()
@@ -125,7 +128,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         FieldDto &$fieldDto,
         string &$propertyName,
     ): void {
-        if (count($propertyNameParts) <= 1) {
+        if (1 >= count($propertyNameParts)) {
             if ($entityDto->isToOneAssociation($propertyName)) {
                 $this->configureToOneAssociation($fieldDto);
             }
@@ -145,7 +148,11 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
 
         foreach ($propertyNameParts as $propertyNamePart) {
             if (!$metadata->hasAssociation($propertyNamePart)) {
-                throw new RuntimeException(sprintf('There is no association for the class "%s" with name "%s"', $targetEntityFqcn, $propertyNamePart));
+                throw new RuntimeException(sprintf(
+                    'There is no association for the class "%s" with name "%s"',
+                    $targetEntityFqcn,
+                    $propertyNamePart
+                ));
             }
 
             // overwrite next class from association
@@ -163,7 +170,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         try {
             $relatedEntityId = $propertyAccessor->getValue(
                 $entityDto->getInstance(),
-                $propertyName.'.'.$metadata->getIdentifierFieldNames()[0]
+                $propertyName . '.' . $metadata->getIdentifierFieldNames()[0]
             );
             $relatedEntityDto = $this->entityFactory->create($targetEntityFqcn, $relatedEntityId);
 
@@ -175,7 +182,11 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
                 $this->formatAsString($relatedEntityDto->getInstance(), $relatedEntityDto)
             );
         } catch (UnexpectedTypeException) {
-            throw new RuntimeException(sprintf('The property "%s" is not accessible in the entity "%s"', $propertyName, $entityDto->getFqcn()));
+            throw new RuntimeException(sprintf(
+                'The property "%s" is not accessible in the entity "%s"',
+                $propertyName,
+                $entityDto->getFqcn()
+            ));
         }
     }
 

@@ -31,11 +31,7 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
     #[Override]
     public function getDependencies(): array
     {
-        return [
-            CategoryFixtures::class,
-            TagFixtures::class,
-            UserFixtures::class,
-        ];
+        return [CategoryFixtures::class, TagFixtures::class, UserFixtures::class];
     }
 
     #[Override]
@@ -62,7 +58,7 @@ class PostFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addParagraphText($post);
         $this->addTagToEntity($post);
         $this->addCategoryToEntity($post);
-        $this->addReference('post_'.md5(uniqid()), $post);
+        $this->addReference('post_' . md5(uniqid()), $post);
         $objectManager->persist($post);
     }
 }

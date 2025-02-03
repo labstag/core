@@ -11,19 +11,18 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         protected BlockService $blockService,
-    )
-    {
+    ) {
         // Inject dependencies if needed
     }
 
     public function getClass(Block $block): string
     {
-        return 'block_'.$block->getType();
+        return 'block_' . $block->getType();
     }
 
     public function getId(Block $block): string
     {
-        return 'block_'.$block->getType().'-'.$block->getId();
+        return 'block_' . $block->getType() . '-' . $block->getId();
     }
 
     public function getName(string $code): string

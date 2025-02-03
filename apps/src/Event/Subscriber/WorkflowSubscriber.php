@@ -24,8 +24,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
         protected EmailService $emailService,
         protected SiteService $siteService,
         protected MailerInterface $mailer,
-    )
-    {
+    ) {
     }
 
     /**

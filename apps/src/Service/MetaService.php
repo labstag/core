@@ -13,8 +13,7 @@ class MetaService
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
-    )
-    {
+    ) {
     }
 
     public function getEntityParent(?Meta $meta): ?object

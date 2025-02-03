@@ -17,8 +17,7 @@ class ParagraphService
     public function __construct(
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
-    )
-    {
+    ) {
     }
 
     public function addParagraph(object $entity, string $type): ?Paragraph
@@ -283,7 +282,7 @@ class ParagraphService
     }
 
     /**
-     * @return null|mixed[]
+     * @return mixed[]|null
      */
     private function templates(string $type, Paragraph $paragraph): ?array
     {

@@ -30,13 +30,10 @@ class VideoParagraph extends ParagraphLib
         $essence = new Essence();
 
         // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
+        $media = $essence->extract($url, [
+            'maxwidth'  => 800,
+            'maxheight' => 600,
+        ]);
         if (!$media instanceof Media) {
             $this->setShow($paragraph, false);
 

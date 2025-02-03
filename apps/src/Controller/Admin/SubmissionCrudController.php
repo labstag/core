@@ -27,7 +27,9 @@ class SubmissionCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $currentEntity = $this->getContext()->getEntity()->getInstance();
+        $currentEntity = $this->getContext()
+            ->getEntity()
+            ->getInstance();
         yield $this->addFieldID();
         yield TextField::new('type', new TranslatableMessage('type'));
         yield $this->addCreatedAtField();

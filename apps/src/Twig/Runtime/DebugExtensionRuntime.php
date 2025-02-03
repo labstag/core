@@ -22,16 +22,16 @@ class DebugExtensionRuntime implements RuntimeExtensionInterface
         }
 
         $html = "<!--\nTHEME DEBUG\n";
-        $html .= "THEME HOOK : '".$templates['hook']."'\n";
+        $html .= "THEME HOOK : '" . $templates['hook'] . "'\n";
         if (0 != (is_countable($templates['files']) ? count($templates['files']) : 0)) {
             $html .= "FILE NAME SUGGESTIONS: \n";
             foreach ($templates['files'] as $file) {
                 $checked = ($templates['view'] == $file) ? 'X' : '*';
-                $html .= ' '.$checked.' '.$file."\n";
+                $html .= ' ' . $checked . ' ' . $file . "\n";
             }
         }
 
-        return $html.("BEGIN OUTPUT from '".$templates['view']."' -->\n");
+        return $html . ("BEGIN OUTPUT from '" . $templates['view'] . "' -->\n");
     }
 
     /**
@@ -44,6 +44,6 @@ class DebugExtensionRuntime implements RuntimeExtensionInterface
             return '';
         }
 
-        return "\n<!-- END OUTPUT from '".$templates['view']."' -->\n";
+        return "\n<!-- END OUTPUT from '" . $templates['view'] . "' -->\n";
     }
 }

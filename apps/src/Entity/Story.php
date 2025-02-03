@@ -30,7 +30,9 @@ class Story implements Stringable
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: ['default' => 1]
+        options: [
+            'default' => 1,
+        ]
     )]
     protected ?bool $enable = null;
 
@@ -54,13 +56,12 @@ class Story implements Stringable
         targetEntity: Chapter::class,
         mappedBy: 'refstory',
         orphanRemoval: true,
-        cascade: [
-            'persist',
-            'remove',
-        ]
+        cascade: ['persist', 'remove']
     )]
     #[ORM\OrderBy(
-        ['position' => 'ASC']
+        [
+            'position' => 'ASC',
+        ]
     )]
     private Collection $chapters;
 
@@ -85,7 +86,9 @@ class Story implements Stringable
      */
     #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'story', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
-        ['position' => 'ASC']
+        [
+            'position' => 'ASC',
+        ]
     )]
     private Collection $paragraphs;
 
