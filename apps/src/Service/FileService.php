@@ -61,35 +61,6 @@ class FileService
     {
     }
 
-    public function getInfoImage(string $file)
-    {
-        $size = getimagesize($file);
-        try {
-            $mimetype = mime_content_type($file);
-        } catch (Exception $exception) {
-            $mimetype = 'image/jpeg';
-        }
-
-        $public = str_replace(
-            $this->parameterBag->get('kernel.project_dir').'/public',
-            '',
-            $file
-        );
-        $info = [
-            'src' => $file,
-            'public' => $public,
-            'data' => [
-                'width' => $size[0],
-                'height' => $size[1],
-                'type' => $mimetype,
-            ]
-        ];
-
-        dump($info);
-
-        return $info;
-    }
-
     public function asset(mixed $entity, string $field): string
     {
         $mappings         = $this->getMappingForEntity($entity);
@@ -233,32 +204,8 @@ class FileService
                 'public_url' => $this->getFolder($type),
             ]
         );
-        $files            = $this->getFilesByDirectory($filesystem, '', $type);
 
-        return $files;
-    }
-
-    private function getFilesByDirectory($filesystem, $directory, $type)
-    {
-        $files            = [];
-        $directoryListing = $filesystem->listContents($directory);
-        foreach ($directoryListing as $content) {
-            if ($content->isFile()) {
-                $files[] = [
-                    'filesystem' => $filesystem,
-                    'content'    => $content,
-                    'folder'     => $this->getFolder($type),
-                    'path'       => $content->path(),
-                ];
-                continue;
-            }
-            $files = array_merge(
-                $files,
-                $this->getFilesByDirectory($filesystem, $content->path(), $type)
-            );
-        }
-
-        return $files;
+        return $this->getFilesByDirectory($filesystem, '', $type);
     }
 
     public function getFullBasePath(mixed $entity, string $type): string
@@ -266,6 +213,34 @@ class FileService
         $basePath = $this->getBasePath($entity, $type);
 
         return $this->parameterBag->get('kernel.project_dir').'/public'.$basePath;
+    }
+
+    public function getInfoImage(string $file): array
+    {
+        $size = getimagesize($file);
+
+        try {
+            $mimetype = mime_content_type($file);
+        } catch (Exception) {
+            $mimetype = 'image/jpeg';
+        }
+
+        $public = str_replace(
+            $this->parameterBag->get('kernel.project_dir').'/public',
+            '',
+            $file
+        );
+        $info = [
+            'src'    => $file,
+            'public' => $public,
+            'data'   => [
+                'width'  => $size[0],
+                'height' => $size[1],
+                'type'   => $mimetype,
+            ],
+        ];
+
+        return $info;
     }
 
     /**
@@ -358,6 +333,34 @@ class FileService
             'paragraph'     => Paragraph::class,
             'post'          => Post::class,
         ];
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getFilesByDirectory($filesystem, $directory, $type): array
+    {
+        $files            = [];
+        $directoryListing = $filesystem->listContents($directory);
+        foreach ($directoryListing as $content) {
+            if ($content->isFile()) {
+                $files[] = [
+                    'filesystem' => $filesystem,
+                    'content'    => $content,
+                    'folder'     => $this->getFolder($type),
+                    'path'       => $content->path(),
+                ];
+
+                continue;
+            }
+
+            $files = array_merge(
+                $files,
+                $this->getFilesByDirectory($filesystem, $content->path(), $type)
+            );
+        }
+
+        return $files;
     }
 
     private function getFolder(string $type): mixed

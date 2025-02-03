@@ -58,11 +58,10 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
      */
     public function metatags(array $value): string
     {
-        $entity = $value['entity'];
+        $entity   = $value['entity'];
         $metatags = $this->siteService->getMetatags($entity);
         $image    = $this->siteService->getImageForMetatags($entity);
-        $favicon = $this->siteService->getFavicon();
-        
+        $favicon  = $this->siteService->getFavicon();
 
         return $this->twigEnvironment->render(
             'metatags.html.twig',
@@ -70,7 +69,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
                 'favicon'  => $favicon,
                 'image'    => $image,
                 'entity'   => $entity,
-                'metatags' => $metatags
+                'metatags' => $metatags,
             ]
         );
     }

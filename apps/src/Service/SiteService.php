@@ -48,58 +48,20 @@ class SiteService
     {
     }
 
-    public function getFavicon()
-    {   
-        $favicon = '';
-        $file    = $this->fileService->getFileInAdapter('assets', 'manifest.json');
-        $json = json_decode(file_get_contents($file), true);
-        foreach ($json as $title => $file) {
-            if (!substr_count($title, 'favicon')) {
-                continue;
-            }
-
-            $favicon = $file;
-        }
-        if ($favicon == '') {
-            return null;
-        }
-
-        $favicon = str_replace('/assets/', '', $favicon);
-        $favicon = $this->fileService->getFileInAdapter('assets', $favicon);
-        if (is_null($favicon)) {
-            return null;
-        }
-
-        return $this->fileService->getInfoImage($favicon);
-    }
-
-    public function getImageForMetatags(mixed $entity)
-    {        
-        $file = $this->asset($entity, 'img');
-        if ($file == null) {
-            return null;
-        }
-
-        $file = str_replace('/uploads/', '', $file);
-        $file = $this->fileService->getFileInAdapter('public', $file);
-        $image = $this->fileService->getInfoImage($file);
-
-        return $image;
-    }
-
     public function asset(mixed $entity, string $field): string
     {
         $file = $this->fileService->asset($entity, $field);
 
-        if ('' != $file) {
+        if ('' !== $file) {
             return $file;
         }
 
         if (!$entity instanceof Configuration) {
             $config = $this->getConfiguration();
+
             return $this->asset($config, 'placeholder');
         }
-        
+
         return 'https://picsum.photos/1200/1200?md5='.md5((string) $entity->getId());
     }
 
@@ -205,6 +167,45 @@ class SiteService
         }
 
         return $page;
+    }
+
+    public function getFavicon()
+    {
+        $favicon = '';
+        $file    = $this->fileService->getFileInAdapter('assets', 'manifest.json');
+        $json    = json_decode(file_get_contents($file), true);
+        foreach ($json as $title => $file) {
+            if (substr_count((string) $title, 'favicon') === 0) {
+                continue;
+            }
+
+            $favicon = $file;
+        }
+
+        if ('' == $favicon) {
+            return null;
+        }
+
+        $favicon = str_replace('/assets/', '', $favicon);
+        $favicon = $this->fileService->getFileInAdapter('assets', $favicon);
+        if (is_null($favicon)) {
+            return null;
+        }
+
+        return $this->fileService->getInfoImage($favicon);
+    }
+
+    public function getImageForMetatags(mixed $entity)
+    {
+        $file = $this->asset($entity, 'img');
+        if (null == $file) {
+            return null;
+        }
+
+        $file = str_replace('/uploads/', '', $file);
+        $file = $this->fileService->getFileInAdapter('public', $file);
+
+        return $this->fileService->getInfoImage($file);
     }
 
     public function getMetatags(object $entity): Meta
