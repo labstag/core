@@ -23,7 +23,7 @@ class MovieExtensionRuntime implements RuntimeExtensionInterface
             return '';
         }
 
-        return 'https://www.imdb.com/videoembed/'.$matches['videoId'];
+        return 'https://www.imdb.com/videoembed/' . $matches['videoId'];
         // ...
     }
 }

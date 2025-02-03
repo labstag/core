@@ -16,8 +16,7 @@ class BlockService
         private readonly iterable $blocks,
         protected AuthorizationCheckerInterface $authorizationChecker,
         protected TokenStorageInterface $tokenStorage,
-    )
-    {
+    ) {
     }
 
     public function content(string $view, Block $block): ?Response
@@ -232,7 +231,7 @@ class BlockService
     }
 
     /**
-     * @return null|mixed[]
+     * @return mixed[]|null
      */
     private function templates(string $type, Block $block): ?array
     {

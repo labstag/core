@@ -24,11 +24,7 @@ class CategoryFixtures extends FixtureLib
 
     protected function addCategory(Generator $generator, ObjectManager $objectManager): void
     {
-        $tab = [
-            'story',
-            'page',
-            'post',
-        ];
+        $tab      = ['story', 'page', 'post'];
         $code     = $tab[array_rand($tab)];
         $category = new Category();
         $category->setTitle($generator->unique()->colorName());
@@ -36,14 +32,14 @@ class CategoryFixtures extends FixtureLib
 
         $parent = random_int(0, 1);
         if (1 == $parent) {
-            $categories = $this->getParent('category'.$code);
+            $categories = $this->getParent('category' . $code);
             if (0 != count($categories)) {
                 $parentCategory = $this->getReference(array_rand($categories), Category::class);
                 $category->setParent($parentCategory);
             }
         }
 
-        $id = 'category'.$code.'_'.md5(uniqid());
+        $id = 'category' . $code . '_' . md5(uniqid());
         $this->addReference($id, $category);
         $this->categories[$id] = $category;
         $objectManager->persist($category);

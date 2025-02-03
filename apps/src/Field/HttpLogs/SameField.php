@@ -13,7 +13,7 @@ final class SameField implements FieldInterface
     public const OPTION_NUMBER_FORMAT = 'numberFormat';
 
     /**
-     * @param null|false|string $label
+     * @param false|string|null $label
      */
     public static function new(string $propertyName, $label = null): self
     {
@@ -22,12 +22,10 @@ final class SameField implements FieldInterface
         $sameField->setLabel($label);
         $sameField->setTemplatePath('admin/field/integer.html.twig');
         $sameField->setFormType(IntegerType::class);
-        $sameField->setFormTypeOptions(
-            [
-                'mapped'   => false,
-                'required' => false,
-            ]
-        );
+        $sameField->setFormTypeOptions([
+            'mapped'   => false,
+            'required' => false,
+        ]);
         $sameField->addCssClass('field-integer');
         $sameField->setDefaultColumns('col-md-4 col-xxl-3');
         $sameField->setCustomOption(self::OPTION_NUMBER_FORMAT, null);

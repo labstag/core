@@ -22,15 +22,14 @@ class SecurityService
         protected BanIpRepository $banIpRepository,
         protected RedirectionRepository $redirectionRepository,
         protected HttpErrorLogsRepository $httpErrorLogsRepository,
-    )
-    {
+    ) {
     }
 
     public function addBan(string $internetProtocol): void
     {
-        $banIp = $this->banIpRepository->findOneBy(
-            ['internetProtocol' => $internetProtocol]
-        );
+        $banIp = $this->banIpRepository->findOneBy([
+            'internetProtocol' => $internetProtocol,
+        ]);
         if ($banIp instanceof BanIp) {
             return;
         }
@@ -50,7 +49,7 @@ class SecurityService
         }
 
         $pathinfo = $request->getPathInfo();
-        $slug     = '/'.$request->attributes->get('slug');
+        $slug     = '/' . $request->attributes->get('slug');
         if ($slug !== $pathinfo) {
             $pathinfo = $slug;
         }
@@ -94,7 +93,7 @@ class SecurityService
 
         $server        = $request->server;
         $httpErrorLogs = new HttpErrorLogs();
-        $domain        = $server->get('REQUEST_SCHEME').'://'.$server->get('SERVER_NAME');
+        $domain        = $server->get('REQUEST_SCHEME') . '://' . $server->get('SERVER_NAME');
         $url           = $server->get('REQUEST_URI');
         if ($this->isDisableUrl($url)) {
             return;
@@ -134,12 +133,10 @@ class SecurityService
             $httpErrorLogs->setReferer($referer);
         }
 
-        $httpErrorLogs->setRequestData(
-            [
-                'get'  => $request->query->all(),
-                'post' => $request->request->all(),
-            ]
-        );
+        $httpErrorLogs->setRequestData([
+            'get'  => $request->query->all(),
+            'post' => $request->request->all(),
+        ]);
         $httpErrorLogs->setRequestMethod($method);
 
         $this->httpErrorLogsRepository->save($httpErrorLogs);
@@ -164,7 +161,11 @@ class SecurityService
                 // On prend la dernière IP de la liste (client réel)
 
                 // Valider que c'est une IP valide (IPv4 ou IPv6)
-                if (filter_var($internetProtocol, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                if (filter_var(
+                    $internetProtocol,
+                    FILTER_VALIDATE_IP,
+                    FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+                )) {
                     return $internetProtocol;
                 }
             }
@@ -180,7 +181,9 @@ class SecurityService
                 'enable' => true,
                 'regex'  => $regex,
             ],
-            ['position' => 'ASC']
+            [
+                'position' => 'ASC',
+            ]
         );
     }
 

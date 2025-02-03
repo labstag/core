@@ -33,8 +33,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     public function __construct(
         private UserRepository $userRepository,
         private UrlGeneratorInterface $urlGenerator,
-    )
-    {
+    ) {
     }
 
     #[Override]
@@ -42,7 +41,8 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     {
         $username = $request->request->get('username', '');
 
-        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $username);
+        $request->getSession()
+            ->set(SecurityRequestAttributes::LAST_USERNAME, $username);
 
         $user = $this->userRepository->findUserName($username);
         if (!$user instanceof User) {
@@ -52,10 +52,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         return new Passport(
             new UserBadge($user->getEmail()),
             new PasswordCredentials($request->request->get('password', '')),
-            [
-                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
-                new RememberMeBadge(),
-            ]
+            [new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')), new RememberMeBadge()]
         );
     }
 

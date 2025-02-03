@@ -8,7 +8,6 @@ use Symfony\Component\Routing\RouterInterface;
 
 abstract class ReplaceLib implements ReplaceInterface
 {
-
     /**
      * @var mixed[]
      */
@@ -17,8 +16,7 @@ abstract class ReplaceLib implements ReplaceInterface
     public function __construct(
         protected SiteService $siteService,
         protected RouterInterface $router,
-    )
-    {
+    ) {
     }
 
     /**

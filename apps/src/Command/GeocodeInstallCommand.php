@@ -19,7 +19,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand(name: 'labstag:geocode-install', description: 'Retrieve geocodes')]
 class GeocodeInstallCommand extends Command
 {
-
     private int $add = 0;
 
     private int $update = 0;
@@ -27,8 +26,7 @@ class GeocodeInstallCommand extends Command
     public function __construct(
         private readonly GeocodeService $geocodeService,
         private readonly GeoCodeRepository $geoCodeRepository,
-    )
-    {
+    ) {
         parent::__construct();
     }
 

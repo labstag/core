@@ -3,10 +3,12 @@
 declare(strict_types=1);
 
 use PhpCsFixer\Fixer\Basic\BracesPositionFixer;
+use PhpCsFixer\Fixer\ControlStructure\YodaStyleFixer;
 use PhpCsFixer\Fixer\Import\GlobalNamespaceImportFixer;
 use PhpCsFixer\Fixer\Import\NoUnusedImportsFixer;
 use PhpCsFixer\Fixer\Operator\NotOperatorWithSuccessorSpaceFixer;
 use PhpCsFixer\Fixer\LanguageConstruct\IsNullFixer;
+use PhpCsFixer\Fixer\Operator\BinaryOperatorSpacesFixer;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
 
 $configure = ECSConfig::configure();
@@ -52,5 +54,23 @@ $configure->withSkip(
 );
 $configure->withPhpCsFixerSets(
     symfony: true
+);
+$configure->withConfiguredRule(
+    YodaStyleFixer::class,
+    [
+        'equal' => true,
+        'identical' => true,
+        'less_and_greater' => true,
+    ]
+);
+$configure->withConfiguredRule(
+    BinaryOperatorSpacesFixer::class,
+    [
+        'default' => 'align',
+        'operators' => [
+            '='  => 'align',
+            '=>' => 'align'
+        ]
+    ]
 );
 return $configure;

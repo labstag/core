@@ -44,14 +44,11 @@ class BreadcrumbBlock extends BlockLib
             return;
         }
 
-        $this->setData(
-            $block,
-            [
-                'urls'  => $urls,
-                'block' => $block,
-                'data'  => $data,
-            ]
-        );
+        $this->setData($block, [
+            'urls'  => $urls,
+            'block' => $block,
+            'data'  => $data,
+        ]);
     }
 
     #[Override]

@@ -36,9 +36,9 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort(
-            ['stateName' => 'ASC']
-        );
+        $crud->setDefaultSort([
+            'stateName' => 'ASC',
+        ]);
 
         return $crud;
     }

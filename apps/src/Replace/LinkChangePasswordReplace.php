@@ -15,7 +15,7 @@ class LinkChangePasswordReplace extends ReplaceLib
         $configuration = $this->siteService->getConfiguration();
         $entity        = $this->data['user'];
 
-        return $configuration->getUrl().$this->router->generate(
+        return $configuration->getUrl() . $this->router->generate(
             'app_changepassword',
             [
                 'uid' => $entity->getId(),

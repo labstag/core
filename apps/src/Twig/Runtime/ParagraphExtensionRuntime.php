@@ -10,14 +10,13 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         protected ParagraphService $paragraphService,
-    )
-    {
+    ) {
         // Inject dependencies if needed
     }
 
     public function getClass(Paragraph $paragraph): string
     {
-        return 'paragraph_'.$paragraph->getType();
+        return 'paragraph_' . $paragraph->getType();
     }
 
     public function getFond(?string $code): ?string
@@ -27,7 +26,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
 
     public function getId(Paragraph $paragraph): string
     {
-        return 'paragraph_'.$paragraph->getType().'-'.$paragraph->getId();
+        return 'paragraph_' . $paragraph->getType() . '-' . $paragraph->getId();
     }
 
     public function getName(string $code): string

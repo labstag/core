@@ -18,7 +18,6 @@ use Twig\Environment;
 
 abstract class BlockLib extends AbstractController implements BlockInterface
 {
-
     /**
      * @var mixed[]
      */
@@ -52,8 +51,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         protected RequestStack $requestStack,
         protected EntityManagerInterface $entityManager,
         protected Environment $twigEnvironment,
-    )
-    {
+    ) {
     }
 
     public function getData(Block $block): ?array
@@ -130,10 +128,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         }
 
         $htmltwig = '.html.twig';
-        $files    = [
-            'blocks/'.$folder.'/'.$type.$htmltwig,
-            'blocks/'.$folder.'/default'.$htmltwig,
-        ];
+        $files    = ['blocks/' . $folder . '/' . $type . $htmltwig, 'blocks/' . $folder . '/default' . $htmltwig];
 
         $view   = end($files);
         $loader = $this->twigEnvironment->getLoader();

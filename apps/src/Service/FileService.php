@@ -57,8 +57,7 @@ class FileService
         protected EntityManagerInterface $entityManager,
         protected ParameterBagInterface $parameterBag,
         protected PropertyMappingFactory $propertyMappingFactory,
-    )
-    {
+    ) {
     }
 
     public function asset(mixed $entity, string $field): string
@@ -74,7 +73,7 @@ class FileService
             $basePath = $this->getBasePath($entity, $mapping->getFilePropertyName());
             $content  = $propertyAccessor->getValue($entity, $mapping->getFileNamePropertyName());
             if ('' != $content) {
-                $file = $basePath.'/'.$content;
+                $file = $basePath . '/' . $content;
             }
         }
 
@@ -121,9 +120,9 @@ class FileService
                 $find = 0;
                 foreach ($mappings as $mapping) {
                     $field  = $mapping->getFileNamePropertyName();
-                    $entity = $repository->findOneBy(
-                        [$field => $file]
-                    );
+                    $entity = $repository->findOneBy([
+                        $field => $file,
+                    ]);
                     if (!$entity instanceof $entities[$type]) {
                         continue;
                     }
@@ -161,7 +160,7 @@ class FileService
                 continue;
             }
 
-            $data = $file['folder'].'/'.$file['path'];
+            $data = $file['folder'] . '/' . $file['path'];
 
             break;
         }
@@ -212,7 +211,7 @@ class FileService
     {
         $basePath = $this->getBasePath($entity, $type);
 
-        return $this->parameterBag->get('kernel.project_dir').'/public'.$basePath;
+        return $this->parameterBag->get('kernel.project_dir') . '/public' . $basePath;
     }
 
     public function getInfoImage(string $file): array
@@ -225,12 +224,9 @@ class FileService
             $mimetype = 'image/jpeg';
         }
 
-        $public = str_replace(
-            $this->parameterBag->get('kernel.project_dir').'/public',
-            '',
-            $file
-        );
-        $info = [
+        $public = str_replace($this->parameterBag->get('kernel.project_dir') . '/public', '', $file);
+
+        return [
             'src'    => $file,
             'public' => $public,
             'data'   => [
@@ -239,8 +235,6 @@ class FileService
                 'type'   => $mimetype,
             ],
         ];
-
-        return $info;
     }
 
     /**
@@ -354,10 +348,7 @@ class FileService
                 continue;
             }
 
-            $files = array_merge(
-                $files,
-                $this->getFilesByDirectory($filesystem, $content->path(), $type)
-            );
+            $files = array_merge($files, $this->getFilesByDirectory($filesystem, $content->path(), $type));
         }
 
         return $files;
@@ -365,14 +356,14 @@ class FileService
 
     private function getFolder(string $type): mixed
     {
-        $config = Yaml::parse(file_get_contents($this->kernel->getProjectDir().'/config/packages/flysystem.yaml'));
+        $config = Yaml::parse(file_get_contents($this->kernel->getProjectDir() . '/config/packages/flysystem.yaml'));
 
         $storages = $config['flysystem']['storages'];
-        if (!array_key_exists($type.'.storage', $storages)) {
+        if (!array_key_exists($type . '.storage', $storages)) {
             throw new Exception('Type not found');
         }
 
-        $storage = $storages[$type.'.storage'];
+        $storage = $storages[$type . '.storage'];
 
         return $storage['options']['directory'];
     }

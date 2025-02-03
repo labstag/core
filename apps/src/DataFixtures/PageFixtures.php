@@ -20,11 +20,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
     #[Override]
     public function getDependencies(): array
     {
-        return [
-            CategoryFixtures::class,
-            TagFixtures::class,
-            UserFixtures::class,
-        ];
+        return [CategoryFixtures::class, TagFixtures::class, UserFixtures::class];
     }
 
     public function getParent($idParent): ?object
@@ -97,7 +93,9 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $this->setParagraphsSitemap($sitemap);
 
         return [
-            ['entity' => $home],
+            [
+                'entity' => $home,
+            ],
             [
                 'entity' => $stories,
                 'parent' => 'home',
@@ -132,12 +130,14 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $user = $this->getReference('user_superadmin', User::class);
         $page->setRefuser($user);
 
-        $date = $generator->unique()->dateTimeBetween('- 8 month', 'now');
+        $date = $generator->unique()
+            ->dateTimeBetween('- 8 month', 'now');
         if (isset($data['parent'])) {
             $parent = $this->getParent($data['parent']);
 
             $page->setPage($parent);
-            $date = $generator->unique()->dateTimeBetween($page->getCreatedAt(), '+1 week');
+            $date = $generator->unique()
+                ->dateTimeBetween($page->getCreatedAt(), '+1 week');
         }
 
         $page->setCreatedAt($date);
@@ -145,7 +145,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addTagToEntity($page);
         $this->addCategoryToEntity($page);
 
-        $this->addReference('page_'.md5(uniqid()), $page);
+        $this->addReference('page_' . md5(uniqid()), $page);
         $objectManager->persist($page);
     }
 

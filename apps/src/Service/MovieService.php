@@ -15,8 +15,7 @@ class MovieService
         protected HttpClientInterface $httpClient,
         protected string $omdbapiKey,
         protected string $tmdbapiKey,
-    )
-    {
+    ) {
     }
 
     public function getDetails(string $imdbId): array
@@ -70,7 +69,7 @@ class MovieService
             return null;
         }
 
-        $url      = 'http://www.omdbapi.com/?i=tt'.$imdbId.'&apikey='.$this->omdbapiKey;
+        $url      = 'http://www.omdbapi.com/?i=tt' . $imdbId . '&apikey=' . $this->omdbapiKey;
         $response = $this->httpClient->request('GET', $url);
         if (self::STATUSOK !== $response->getStatusCode()) {
             return null;
@@ -85,13 +84,13 @@ class MovieService
             return null;
         }
 
-        $url      = 'https://api.themoviedb.org/3/find/tt'.$imdbId.'?external_source=imdb_id&language=fr';
+        $url      = 'https://api.themoviedb.org/3/find/tt' . $imdbId . '?external_source=imdb_id&language=fr';
         $response = $this->httpClient->request(
             'GET',
             $url,
             [
                 'headers' => [
-                    'Authorization' => 'Bearer '.$this->tmdbapiKey,
+                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
                     'accept'        => 'application/json',
                 ],
             ]
@@ -112,7 +111,7 @@ class MovieService
         if (isset($data['movie_results'][0]['poster_path'])) {
             $img = $data['movie_results'][0]['poster_path'];
 
-            return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2'.$img;
+            return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' . $img;
         }
 
         return '';

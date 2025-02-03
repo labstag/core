@@ -54,7 +54,7 @@ final class ParagraphsConfigurator implements FieldConfiguratorInterface
 
         $fieldDto->setFormTypeOption(
             'row_attr.class',
-            $fieldDto->getFormTypeOption('row_attr.class').' '.$cssClasses
+            $fieldDto->getFormTypeOption('row_attr.class') . ' ' . $cssClasses
         );
     }
 

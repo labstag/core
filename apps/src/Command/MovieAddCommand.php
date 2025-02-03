@@ -20,7 +20,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand(name: 'labstag:movies-add', description: 'Add movies with movies.csv')]
 class MovieAddCommand extends Command
 {
-
     private int $add = 0;
 
     /**
@@ -34,8 +33,7 @@ class MovieAddCommand extends Command
         protected MovieRepository $movieRepository,
         protected FileService $fileService,
         protected CategoryRepository $categoryRepository,
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -45,12 +43,10 @@ class MovieAddCommand extends Command
             return $this->categories[$value];
         }
 
-        $category = $this->categoryRepository->findOneBy(
-            [
-                'type'  => 'movie',
-                'title' => $value,
-            ]
-        );
+        $category = $this->categoryRepository->findOneBy([
+            'type'  => 'movie',
+            'title' => $value,
+        ]);
         if ($category instanceof Category) {
             return $category;
         }
@@ -83,7 +79,7 @@ class MovieAddCommand extends Command
         $filename     = 'movies.csv';
         $file         = $this->fileService->getFileInAdapter('private', $filename);
         if (!is_file($file)) {
-            $symfonyStyle->error('File not found '.$filename);
+            $symfonyStyle->error('File not found ' . $filename);
 
             return Command::FAILURE;
         }
@@ -147,9 +143,9 @@ class MovieAddCommand extends Command
 
     private function disableAll(): void
     {
-        $movies = $this->movieRepository->findBy(
-            ['enable' => true]
-        );
+        $movies = $this->movieRepository->findBy([
+            'enable' => true,
+        ]);
         $counter = 0;
         foreach ($movies as $movie) {
             $movie->setEnable(false);
@@ -195,9 +191,9 @@ class MovieAddCommand extends Command
     private function setMovie(array $data): Movie
     {
         $imdb  = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
-        $movie = $this->movieRepository->findOneBy(
-            ['imdb' => $imdb]
-        );
+        $movie = $this->movieRepository->findOneBy([
+            'imdb' => $imdb,
+        ]);
 
         $pattern = '/(\d+\.\d+)\s+\(([\d.]+)([KMB]?) votes\)/';
         preg_match($pattern, (string) $data['Evaluation IMDb'], $matches);

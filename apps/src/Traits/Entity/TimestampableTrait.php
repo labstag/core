@@ -16,7 +16,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 trait TimestampableTrait
 {
-
     #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     protected ?DateTime $createdAt = null;

@@ -14,8 +14,7 @@ final class VichListener
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-    )
-    {
+    ) {
     }
 
     #[AsEventListener(event: Events::PRE_REMOVE)]

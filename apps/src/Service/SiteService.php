@@ -44,8 +44,7 @@ class SiteService
         protected Environment $twigEnvironment,
         protected ParameterBagInterface $parameterBag,
         protected ConfigurationRepository $configurationRepository,
-    )
-    {
+    ) {
     }
 
     public function asset(mixed $entity, string $field): string
@@ -62,7 +61,7 @@ class SiteService
             return $this->asset($config, 'placeholder');
         }
 
-        return 'https://picsum.photos/1200/1200?md5='.md5((string) $entity->getId());
+        return 'https://picsum.photos/1200/1200?md5=' . md5((string) $entity->getId());
     }
 
     public function getConfiguration(): ?Configuration
@@ -94,9 +93,10 @@ class SiteService
     {
         $data = [
             'entity'     => $entity,
-            'paragraphs' => $entity->getParagraphs()->getValues(),
-            'img'        => $entity->getImg(),
-            'tags'       => $entity->getTags(),
+            'paragraphs' => $entity->getParagraphs()
+                ->getValues(),
+            'img'  => $entity->getImg(),
+            'tags' => $entity->getTags(),
         ];
 
         $methods = get_class_methods($entity);
@@ -144,9 +144,9 @@ class SiteService
         $page  = null;
         $types = array_filter($types, fn ($type): bool => !is_null($type) && 'home' != $type->getType());
 
-        $page = $this->pageRepository->findOneBy(
-            ['slug' => $slug]
-        );
+        $page = $this->pageRepository->findOneBy([
+            'slug' => $slug,
+        ]);
         if ($page instanceof Page) {
             return $page;
         }
@@ -169,13 +169,13 @@ class SiteService
         return $page;
     }
 
-    public function getFavicon()
+    public function getFavicon(): ?array
     {
         $favicon = '';
         $file    = $this->fileService->getFileInAdapter('assets', 'manifest.json');
         $json    = json_decode(file_get_contents($file), true);
         foreach ($json as $title => $file) {
-            if (substr_count((string) $title, 'favicon') === 0) {
+            if (0 === substr_count((string) $title, 'favicon')) {
                 continue;
             }
 
@@ -195,7 +195,7 @@ class SiteService
         return $this->fileService->getInfoImage($favicon);
     }
 
-    public function getImageForMetatags(mixed $entity)
+    public function getImageForMetatags(mixed $entity): ?array
     {
         $file = $this->asset($entity, 'img');
         if (null == $file) {
@@ -288,7 +288,7 @@ class SiteService
     public function setTitle(object $entity): ?string
     {
         if ($entity instanceof Chapter) {
-            return $this->setTitle($entity->getRefStory()).' - '.$entity->getTitle();
+            return $this->setTitle($entity->getRefStory()) . ' - ' . $entity->getTitle();
         }
 
         if (method_exists($entity, 'getTitle')) {
@@ -320,10 +320,7 @@ class SiteService
     {
         unset($entity);
         $loader = $this->twigEnvironment->getLoader();
-        $files  = [
-            'views/'.$entityName.'.html.twig',
-            'views/default.html.twig',
-        ];
+        $files  = ['views/' . $entityName . '.html.twig', 'views/default.html.twig'];
         $view   = end($files);
         $loader = $this->twigEnvironment->getLoader();
         foreach ($files as $file) {
@@ -347,10 +344,11 @@ class SiteService
     private function getBlocks(array $data, bool $disable): array
     {
         $queryBuilder = $this->blockRepository->findAllOrderedByRegion();
-        $blocks       = $queryBuilder->getQuery()->getResult();
-        $header       = [];
-        $main         = [];
-        $footer       = [];
+        $blocks       = $queryBuilder->getQuery()
+            ->getResult();
+        $header = [];
+        $main   = [];
+        $footer = [];
 
         foreach ($blocks as $block) {
             if ('header' == $block->getRegion()) {
@@ -372,9 +370,9 @@ class SiteService
     private function getContentByType(string $type, string $slug): ?object
     {
         if ('post' === $type) {
-            return $this->postRepository->findOneBy(
-                ['slug' => $slug]
-            );
+            return $this->postRepository->findOneBy([
+                'slug' => $slug,
+            ]);
         }
 
         $repos = [
@@ -387,20 +385,20 @@ class SiteService
                 $slugstory,
                 $slugchapter,
             ]      = explode('/', $slug);
-            $story = $repos['story']->findOneBy(
-                ['slug' => $slugstory]
-            );
-            $chapter = $repos['chapter']->findOneBy(
-                ['slug' => $slugchapter]
-            );
+            $story = $repos['story']->findOneBy([
+                'slug' => $slugstory,
+            ]);
+            $chapter = $repos['chapter']->findOneBy([
+                'slug' => $slugchapter,
+            ]);
             if ($story instanceof Story && $chapter instanceof Chapter && $story->getId() === $chapter->getRefStory()->getId()) {
                 return $chapter;
             }
         }
 
-        return $repos['story']->findOneBy(
-            ['slug' => $slug]
-        );
+        return $repos['story']->findOneBy([
+            'slug' => $slug,
+        ]);
     }
 
     /**
@@ -411,9 +409,9 @@ class SiteService
         $types = array_flip($this->getTypesPages());
         unset($types['page']);
         foreach (array_keys($types) as $type) {
-            $types[$type] = $this->pageRepository->findOneBy(
-                ['type' => $type]
-            );
+            $types[$type] = $this->pageRepository->findOneBy([
+                'type' => $type,
+            ]);
         }
 
         return $types;
@@ -432,7 +430,7 @@ class SiteService
             throw new Exception('Story page not found');
         }
 
-        return $types['story']->getSlug().'/'.$entity->getRefStory()->getSlug().'/'.$entity->getSlug();
+        return $types['story']->getSlug() . '/' . $entity->getRefStory()->getSlug() . '/' . $entity->getSlug();
     }
 
     private function getSlugByEntityIfPage(object $entity): ?string
@@ -457,7 +455,7 @@ class SiteService
             throw new Exception('Post page not found');
         }
 
-        return $types['post']->getSlug().'/'.$entity->getSlug();
+        return $types['post']->getSlug() . '/' . $entity->getSlug();
     }
 
     /**
@@ -473,7 +471,7 @@ class SiteService
             throw new Exception('Story page not found');
         }
 
-        return $types['story']->getSlug().'/'.$entity->getSlug();
+        return $types['story']->getSlug() . '/' . $entity->getSlug();
     }
 
     private function getUser(): ?UserInterface

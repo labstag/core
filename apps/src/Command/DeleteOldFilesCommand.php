@@ -14,8 +14,7 @@ class DeleteOldFilesCommand extends Command
 {
     public function __construct(
         protected FileService $fileService,
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -25,7 +24,7 @@ class DeleteOldFilesCommand extends Command
         unset($input);
         $total = $this->fileService->deletedFileByEntities();
         if (0 != $total) {
-            $output->writeln($total.' file(s) deleted');
+            $output->writeln($total . ' file(s) deleted');
         }
 
         $output->writeln('Script executed successfully.');

@@ -51,7 +51,10 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->getDoctrineMetadata()
             ->set('targetEntity', ClassUtils::getClass($object->value));
         if (!$entityDto->isAssociation($object->name)) {
-            throw new RuntimeException(sprintf('The "%s" field is not a Doctrine association, so it cannot be used as an association field.', $object->name));
+            throw new RuntimeException(sprintf(
+                'The "%s" field is not a Doctrine association, so it cannot be used as an association field.',
+                $object->name
+            ));
         }
 
         $targetEntityFqcn = $fieldDto->getDoctrineMetadata()
@@ -142,7 +145,11 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
         foreach ($propertyNameParts as $propertyNamePart) {
             if (!$metadata->hasAssociation($propertyNamePart)) {
-                throw new RuntimeException(sprintf('There is no association for the class "%s" with name "%s"', $targetEntityFqcn, $propertyNamePart));
+                throw new RuntimeException(sprintf(
+                    'There is no association for the class "%s" with name "%s"',
+                    $targetEntityFqcn,
+                    $propertyNamePart
+                ));
             }
 
             // overwrite next class from association
@@ -160,7 +167,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         try {
             $relatedEntityId = $propertyAccessor->getValue(
                 $entityDto->getInstance(),
-                $propertyName.'.'.$metadata->getIdentifierFieldNames()[0]
+                $propertyName . '.' . $metadata->getIdentifierFieldNames()[0]
             );
             $relatedEntityDto = $this->entityFactory->create($targetEntityFqcn, $relatedEntityId);
 
@@ -188,7 +195,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
     private function configureTest(FieldDto $fieldDto, EntityDto $entityDto, $propertyName): void
     {
         $propertyNameParts = explode('.', (string) $propertyName);
-        if (\count($propertyNameParts) > 1) {
+        if (1 < \count($propertyNameParts)) {
             $this->configureFirst($fieldDto, $entityDto, $propertyNameParts, $propertyName);
 
             return;

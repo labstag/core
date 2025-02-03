@@ -14,8 +14,7 @@ class SecurityController extends AbstractController
 {
     public function __construct(
         protected SiteService $siteService,
-    )
-    {
+    ) {
     }
 
     #[Route(path: '/changepassword/{uid}', name: 'app_changepassword')]

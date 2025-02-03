@@ -17,9 +17,10 @@ class GeoCodeRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->createQueryBuilder('g');
 
-        $query = $queryBuilder->select('g.'.$type.', count(g.id) as count');
-        $query->groupBy('g.'.$type);
+        $query = $queryBuilder->select('g.' . $type . ', count(g.id) as count');
+        $query->groupBy('g.' . $type);
 
-        return $query->getQuery()->getResult();
+        return $query->getQuery()
+            ->getResult();
     }
 }

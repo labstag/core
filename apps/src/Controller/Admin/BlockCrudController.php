@@ -65,9 +65,9 @@ class BlockCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort(
-            ['title' => 'ASC']
-        );
+        $crud->setDefaultSort([
+            'title' => 'ASC',
+        ]);
 
         return $crud;
     }
@@ -75,7 +75,9 @@ class BlockCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $currentEntity = $this->getContext()->getEntity()->getInstance();
+        $currentEntity = $this->getContext()
+            ->getEntity()
+            ->getInstance();
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield $this->addFieldTitle();
@@ -132,8 +134,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         EntityDto $entityDto,
         FieldCollection $fieldCollection,
         FilterCollection $filterCollection,
-    ): QueryBuilder
-    {
+    ): QueryBuilder {
         unset($searchDto, $entityDto, $fieldCollection, $filterCollection);
         $serviceEntityRepositoryLib = $this->getRepository();
         $methods                    = get_class_methods($serviceEntityRepositoryLib);
@@ -150,8 +151,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
         AdminContext $adminContext,
-    ): FormBuilderInterface
-    {
+    ): FormBuilderInterface {
         $formBuilder = parent::createNewFormBuilder($entityDto, $keyValueStore, $adminContext);
 
         return $formBuilder->addEventListener(FormEvents::SUBMIT, $this->setPosition());
@@ -174,8 +174,9 @@ class BlockCrudController extends AbstractCrudControllerLib
         }
 
         $queryBuilder = $serviceEntityRepositoryLib->findAllOrderedByRegion();
-        $blocks       = $queryBuilder->getQuery()->getResult();
-        $generator    = $this->container->get(AdminUrlGenerator::class);
+        $blocks       = $queryBuilder->getQuery()
+            ->getResult();
+        $generator = $this->container->get(AdminUrlGenerator::class);
 
         if ($request->isMethod('POST')) {
             $allTypes = $this->blockService->getRegions();
@@ -204,10 +205,9 @@ class BlockCrudController extends AbstractCrudControllerLib
             return $this->redirect($url);
         }
 
-        return $this->render(
-            'admin/block/order.html.twig',
-            ['blocks' => $blocks]
-        );
+        return $this->render('admin/block/order.html.twig', [
+            'blocks' => $blocks,
+        ]);
     }
 
     /**
@@ -240,8 +240,9 @@ class BlockCrudController extends AbstractCrudControllerLib
 
             $data                       = $event->getData();
             $serviceEntityRepositoryLib = $this->getRepository();
-            $region                     = $form->get('region')->getData();
-            $methods                    = get_class_methods($serviceEntityRepositoryLib);
+            $region                     = $form->get('region')
+                ->getData();
+            $methods = get_class_methods($serviceEntityRepositoryLib);
             if (is_null($region) || !$serviceEntityRepositoryLib instanceof BlockRepository || in_array(
                 'getMaxPositionByRegion',
                 $methods

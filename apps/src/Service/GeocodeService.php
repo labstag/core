@@ -14,8 +14,7 @@ class GeocodeService
     public function __construct(
         protected HttpClientInterface $httpClient,
         protected GeoCodeRepository $geoCodeRepository,
-    )
-    {
+    ) {
     }
 
     /**
@@ -56,7 +55,7 @@ class GeocodeService
     public function csv(string $country): array
     {
         $country    = strtoupper($country);
-        $file       = 'http://download.geonames.org/export/zip/'.$country.'.zip';
+        $file       = 'http://download.geonames.org/export/zip/' . $country . '.zip';
         $response   = $this->httpClient->request('GET', $file);
         $statusCode = $response->getStatusCode();
         if (self::HTTP_OK != $statusCode) {
@@ -73,7 +72,7 @@ class GeocodeService
             return [];
         }
 
-        $content = (string) $zipArchive->getFromName($country.'.txt');
+        $content = (string) $zipArchive->getFromName($country . '.txt');
         $csv     = str_getcsv($content, "\n");
         $zipArchive->close();
 

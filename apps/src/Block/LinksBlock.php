@@ -41,14 +41,11 @@ class LinksBlock extends BlockLib
             return;
         }
 
-        $this->setData(
-            $block,
-            [
-                'links' => $links,
-                'block' => $block,
-                'data'  => $data,
-            ]
-        );
+        $this->setData($block, [
+            'links' => $links,
+            'block' => $block,
+            'data'  => $data,
+        ]);
     }
 
     /**
@@ -118,16 +115,16 @@ class LinksBlock extends BlockLib
 
     private function getEntityUrl(string $entity, string $id): ?string
     {
-        $data = $this->getRepository($entity)->find($id);
+        $data = $this->getRepository($entity)
+            ->find($id);
         if (is_null($data)) {
             return null;
         }
 
         $slug = $this->siteService->getSlugByEntity($data);
 
-        return $this->router->generate(
-            'front',
-            ['slug' => $slug]
-        );
+        return $this->router->generate('front', [
+            'slug' => $slug,
+        ]);
     }
 }

@@ -44,7 +44,7 @@ final class ParagraphsField implements FieldInterface
     {
         $field = new self();
         $field->setFieldFqcn(self::class);
-        $field->setProperty('ea_form_panel_'.(new Ulid()));
+        $field->setProperty('ea_form_panel_' . (new Ulid()));
         $field->setLabel($label);
         $field->setFormType(ParagraphType::class);
         $field->setFormTypeOptions([

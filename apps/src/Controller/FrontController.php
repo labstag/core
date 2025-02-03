@@ -64,27 +64,30 @@ class FrontController extends AbstractController
         'sitemap.xml',
         name: 'sitemap.xml',
         priority: 1,
-        defaults: ['_format' => 'xml']
+        defaults: [
+            '_format' => 'xml',
+        ]
     )]
     public function sitemapXml(SitemapService $sitemapService): mixed
     {
-        return $this->initCache()->get(
-            'sitemap.xml',
-            function (ItemInterface $item) use ($sitemapService): Response
-            {
-                $item->expiresAfter(3600);
+        return $this->initCache()
+            ->get(
+                'sitemap.xml',
+                function (ItemInterface $item) use ($sitemapService): Response
+                {
+                    $item->expiresAfter(3600);
 
-                $sitemap = $sitemapService->getData(true);
+                    $sitemap = $sitemapService->getData(true);
 
-                return $this->render(
-                    'sitemap/sitemap.xml.twig',
-                    [
-                        'date'    => Carbon::now()->format('Y-m-d'),
-                        'sitemap' => $sitemap,
-                    ]
-                );
-            }
-        );
+                    return $this->render(
+                        'sitemap/sitemap.xml.twig',
+                        [
+                            'date'    => Carbon::now()->format('Y-m-d'),
+                            'sitemap' => $sitemap,
+                        ]
+                    );
+                }
+            );
     }
 
     #[Route('sitemap.xsl', name: 'sitemap.xsl', priority: 1)]

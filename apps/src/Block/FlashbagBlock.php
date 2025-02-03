@@ -26,13 +26,10 @@ class FlashbagBlock extends BlockLib
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
-        $this->setData(
-            $block,
-            [
-                'block' => $block,
-                'data'  => $data,
-            ]
-        );
+        $this->setData($block, [
+            'block' => $block,
+            'data'  => $data,
+        ]);
     }
 
     #[Override]

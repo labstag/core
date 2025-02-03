@@ -13,7 +13,6 @@ use Override;
 
 class BlockFixtures extends FixtureLib implements DependentFixtureInterface
 {
-
     /**
      * @var Page[]
      */
@@ -61,7 +60,7 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         if (!is_null($contact)) {
             $link = new Link();
             $link->setTitle($contact->getTitle());
-            $link->setUrl('[page:'.$contact->getId().']');
+            $link->setUrl('[page:' . $contact->getId() . ']');
             $block->addLink($link);
         }
 
@@ -69,7 +68,7 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         if (!is_null($contact)) {
             $link = new Link();
             $link->setTitle($contact->getTitle());
-            $link->setUrl('[page:'.$contact->getId().']');
+            $link->setUrl('[page:' . $contact->getId() . ']');
             $block->addLink($link);
         }
     }

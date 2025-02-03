@@ -26,31 +26,20 @@ class MovieParagraph extends ParagraphLib
         $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
 
         $templates = $this->templates('header');
-        $this->setHeader(
-            $paragraph,
-            $this->render(
-                $templates['view'],
-                ['pagination' => $pagination]
-            )
-        );
+        $this->setHeader($paragraph, $this->render($templates['view'], [
+            'pagination' => $pagination,
+        ]));
 
         $templates = $this->templates('footer');
-        $this->setFooter(
-            $paragraph,
-            $this->render(
-                $templates['view'],
-                ['pagination' => $pagination]
-            )
-        );
+        $this->setFooter($paragraph, $this->render($templates['view'], [
+            'pagination' => $pagination,
+        ]));
 
-        $this->setData(
-            $paragraph,
-            [
-                'pagination' => $pagination,
-                'paragraph'  => $paragraph,
-                'data'       => $data,
-            ]
-        );
+        $this->setData($paragraph, [
+            'pagination' => $pagination,
+            'paragraph'  => $paragraph,
+            'data'       => $data,
+        ]);
     }
 
     /**

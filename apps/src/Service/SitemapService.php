@@ -13,7 +13,6 @@ use Labstag\Repository\ChapterRepository;
 
 class SitemapService
 {
-
     /**
      * @var string[]
      */
@@ -22,8 +21,7 @@ class SitemapService
     public function __construct(
         protected EntityManagerInterface $entityManager,
         protected SiteService $siteService,
-    )
-    {
+    ) {
     }
 
     /**
@@ -96,7 +94,9 @@ class SitemapService
         $url = $this->siteService->getSlugByEntity($entity);
 
         return [
-            '/'.$url => ['entity' => $entity],
+            '/' . $url => [
+                'entity' => $entity,
+            ],
         ];
     }
 

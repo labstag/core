@@ -17,7 +17,8 @@ class TemplateFixtures extends FixtureLib
         foreach ($data as $key => $title) {
             $template = new Template();
             $template->setCode($key);
-            $content = $generator->unique()->text(200);
+            $content = $generator->unique()
+                ->text(200);
             $template->setText($content);
             $template->setHtml($content);
             $template->setTitle($title);

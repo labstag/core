@@ -17,7 +17,8 @@ abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('entity');
         $queryBuilder->andWhere('entity.deletedAt IS NOT NULL');
 
-        return $queryBuilder->getQuery()->getResult();
+        return $queryBuilder->getQuery()
+            ->getResult();
     }
 
     public function flush(int $counter = 0): void
@@ -30,12 +31,14 @@ abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
 
     public function persist(object $entity): void
     {
-        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()
+            ->persist($entity);
     }
 
     public function remove(object $entity): void
     {
-        $this->getEntityManager()->remove($entity);
+        $this->getEntityManager()
+            ->remove($entity);
     }
 
     public function save(object $entity): void

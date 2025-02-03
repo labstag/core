@@ -34,7 +34,6 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 abstract class ParagraphLib extends AbstractController
 {
-
     /**
      * @var mixed[]
      */
@@ -70,20 +69,19 @@ abstract class ParagraphLib extends AbstractController
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
         protected Environment $twigEnvironment,
-    )
-    {
+    ) {
     }
 
     public function addFieldImageUpload(string $type, string $pageName): TextField|ImageField
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $textField = TextField::new($type.'File');
+            $textField = TextField::new($type . 'File');
             $textField->setFormType(VichImageType::class);
 
             return $textField;
         }
 
-        $basePath   = $this->fileService->getBasePath(Paragraph::class, $type.'File');
+        $basePath   = $this->fileService->getBasePath(Paragraph::class, $type . 'File');
         $imageField = ImageField::new($type);
         $imageField->setBasePath($basePath);
 
@@ -93,10 +91,9 @@ abstract class ParagraphLib extends AbstractController
     public function addFieldIntegerNbr(): IntegerField
     {
         $integerField = IntegerField::new('nbr');
-        $integerField->setFormTypeOption(
-            'attr',
-            ['min' => 1]
-        );
+        $integerField->setFormTypeOption('attr', [
+            'min' => 1,
+        ]);
 
         return $integerField;
     }
@@ -232,10 +229,7 @@ abstract class ParagraphLib extends AbstractController
         }
 
         $htmltwig = '.html.twig';
-        $files    = [
-            'paragraphs/'.$folder.'/'.$type.$htmltwig,
-            'paragraphs/'.$folder.'/default'.$htmltwig,
-        ];
+        $files    = ['paragraphs/' . $folder . '/' . $type . $htmltwig, 'paragraphs/' . $folder . '/default' . $htmltwig];
 
         $view   = end($files);
         $loader = $this->twigEnvironment->getLoader();
@@ -314,14 +308,6 @@ abstract class ParagraphLib extends AbstractController
      */
     protected function useInAll(): array
     {
-        return [
-            Block::class,
-            Chapter::class,
-            Edito::class,
-            Story::class,
-            Memo::class,
-            Page::class,
-            Post::class,
-        ];
+        return [Block::class, Chapter::class, Edito::class, Story::class, Memo::class, Page::class, Post::class];
     }
 }

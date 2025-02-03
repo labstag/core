@@ -22,8 +22,7 @@ class SiteSubscriber implements EventSubscriberInterface
     public function __construct(
         protected TokenStorageInterface $tokenStorage,
         protected SecurityService $securityService,
-    )
-    {
+    ) {
     }
 
     /**
@@ -62,7 +61,7 @@ class SiteSubscriber implements EventSubscriberInterface
         $banIp = $this->securityService->getBanIp();
         if ($banIp instanceof BanIp) {
             $requestEvent->setResponse(
-                new Response('Your IP is banned<br />'.$banIp->getReason(), Response::HTTP_FORBIDDEN)
+                new Response('Your IP is banned<br />' . $banIp->getReason(), Response::HTTP_FORBIDDEN)
             );
 
             return;
