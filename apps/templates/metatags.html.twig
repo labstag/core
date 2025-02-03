@@ -4,7 +4,9 @@
 {% if favicon is not null %}
     <link rel="icon" type="{{ favicon.data.type }}" sizes="{{ favicon.data.width ~'x'~ favicon.data.height }}" href="{{ asset(favicon.public) }}">
 {% endif %}
-<meta property="og:image" content="{{ image.public }}" />
-<meta property="og:image:width" content="{{ image.data.width }}" />
-<meta property="og:image:height" content="{{ image.data.height }}" />
-<meta property="og:image:type" content="{{ image.data.type }}" />
+{% if image.public is defined %}
+    <meta property="og:image" content="{{ image.absoluteurl }}" />
+    <meta property="og:image:width" content="{{ image.data.width }}" />
+    <meta property="og:image:height" content="{{ image.data.height }}" />
+    <meta property="og:image:type" content="{{ image.data.type }}" />
+{% endif %}
