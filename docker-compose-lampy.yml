@@ -8,7 +8,7 @@ services:
   phpfpm:
     environment:
       APP_SECRET: "CHANGEME"
-      MAILER_DSN: "smtp://mailhog:1025"
+      MAILER_DSN: "smtp://mailtest:1025"
       MESSENGER_TRANSPORT_DSN: "doctrine://default"
       LOCK_DNS: semaphore
       DATABASE_BDD: labstag_bdd
