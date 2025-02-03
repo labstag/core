@@ -12,11 +12,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    public function __construct(
-        protected SiteService $siteService,
-    )
-    {
-    }
 
     #[Route(path: '/changepassword/{uid}', name: 'app_changepassword')]
     public function changePassword(mixed $uid): never
@@ -25,13 +20,16 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils, SiteService $siteService): Response
     {
         if ($this->getUser() instanceof UserInterface) {
             return $this->redirectToRoute('admin');
         }
 
-        return $this->render('@EasyAdmin/page/login.html.twig', $this->getDataLogin($authenticationUtils));
+        return $this->render(
+            '@EasyAdmin/page/login.html.twig',
+            $this->getDataLogin($authenticationUtils, $siteService)
+        );
     }
 
     #[Route(path: '/logout', name: 'app_logout')]
@@ -43,18 +41,18 @@ class SecurityController extends AbstractController
     /**
      * @return mixed[]
      */
-    protected function getDataLogin(AuthenticationUtils $authenticationUtils): array
+    protected function getDataLogin(AuthenticationUtils $authenticationUtils, SiteService $siteService): array
     {
+        $favicon      = $siteService->getFavicon();
         $error        = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
-        $data         = $this->siteService->getConfiguration();
+        $data         = $siteService->getConfiguration();
 
-        return [
+        $data = [
             // parameters usually defined in Symfony login forms
             'error'                   => $error,
             'last_username'           => $lastUsername,
             'translation_domain'      => 'admin',
-            'favicon_path'            => '/favicon-admin.svg',
             'page_title'              => $data->getName(),
             'csrf_token_intention'    => 'authenticate',
             'target_path'             => $this->generateUrl('admin'),
@@ -70,5 +68,11 @@ class SecurityController extends AbstractController
             'remember_me_checked'     => true,
             'remember_me_label'       => 'Remember me',
         ];
+
+        if (!is_null($favicon)) {
+            $data['favicon_path'] = $favicon['path'];
+        }
+
+        return $data;
     }
 }
