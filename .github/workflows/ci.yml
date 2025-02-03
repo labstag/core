@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          ref: 'v2.0'
+          ref: 'v3.0'
           repository: koromerzhin/lampy
           path: lampy
       - uses: actions/setup-node@v4
