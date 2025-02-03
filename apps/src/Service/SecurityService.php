@@ -231,6 +231,7 @@ class SecurityService
 
             return true;
         }
+
         return null;
     }
 

@@ -5,7 +5,7 @@ export class Slider {
   constructor(element, nextbutton, prevbutton)
   {
     new Swiper(
-      '.swiper',
+      element,
       {
         modules: [Navigation],
         spaceBetween: 17,
@@ -17,8 +17,8 @@ export class Slider {
           crossFade: true
         },
         navigation: {
-          nextEl: '.swiper-button-next', // Bouton Next
-          prevEl: '.swiper-button-prev', // Bouton Prev
+          nextEl: nextbutton, // Bouton Next
+          prevEl: prevbutton, // Bouton Prev
         },
         breakpoints: {
           1200: {

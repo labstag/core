@@ -115,11 +115,11 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
 
             yield $datafield;
         }
+
         $fields = array_merge($this->addFieldRefUser());
         foreach ($fields as $field) {
             yield $field;
         }
-
     }
 
     #[Override]
