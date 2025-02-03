@@ -7,7 +7,6 @@ use Labstag\Service\SiteService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -27,26 +26,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 
     public function asset(mixed $entity, string $field): string
     {
-        $mappings         = $this->fileService->getMappingForEntity($entity);
-        $file             = '';
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        foreach ($mappings as $mapping) {
-            if ($field != $mapping->getFileNamePropertyName()) {
-                continue;
-            }
-
-            $basePath = $this->fileService->getBasePath($entity, $mapping->getFilePropertyName());
-            $content  = $propertyAccessor->getValue($entity, $mapping->getFileNamePropertyName());
-            if ('' != $content) {
-                $file = $basePath.'/'.$content;
-            }
-        }
-
-        if ('' === $file) {
-            return 'https://picsum.photos/1200/1200?md5='.md5((string) $entity->getId());
-        }
-
-        return $file;
+        return $this->siteService->asset($entity, $field);
     }
 
     public function content(?Response $response): ?string
@@ -78,11 +58,20 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
      */
     public function metatags(array $value): string
     {
-        $metatags = $this->siteService->getMetatags($value['entity']);
+        $entity = $value['entity'];
+        $metatags = $this->siteService->getMetatags($entity);
+        $image    = $this->siteService->getImageForMetatags($entity);
+        $favicon = $this->siteService->getFavicon();
+        
 
         return $this->twigEnvironment->render(
             'metatags.html.twig',
-            ['metatags' => $metatags]
+            [
+                'favicon'  => $favicon,
+                'image'    => $image,
+                'entity'   => $entity,
+                'metatags' => $metatags
+            ]
         );
     }
 

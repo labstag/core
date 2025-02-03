@@ -77,6 +77,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         $maxLength = Crud::PAGE_DETAIL === $pageName ? 1024 : 32;
+        yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield TextField::new('url', new TranslatableMessage('url'))->setMaxLength($maxLength);
         yield TextField::new('domain', new TranslatableMessage('domain'))->hideOnIndex();
@@ -105,11 +106,6 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         yield SameField::new('nbr');
         yield $this->addCreatedAtField();
         yield $this->addUpdatedAtField();
-        $fields = array_merge($this->addFieldRefUser());
-        foreach ($fields as $field) {
-            yield $field;
-        }
-
         if (!is_null($currentEntity)) {
             $data      = $currentEntity->getRequestData();
             $datafield = ArrayField::new('data', new TranslatableMessage('Request DATA'));
@@ -119,6 +115,11 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
 
             yield $datafield;
         }
+        $fields = array_merge($this->addFieldRefUser());
+        foreach ($fields as $field) {
+            yield $field;
+        }
+
     }
 
     #[Override]

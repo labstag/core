@@ -20,6 +20,7 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Yaml\Yaml;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
@@ -30,6 +31,8 @@ class FileService
         protected LocalFilesystemAdapter $privateAdapter,
         #[Autowire(service: 'flysystem.adapter.public.storage')]
         protected LocalFilesystemAdapter $publicAdapter,
+        #[Autowire(service: 'flysystem.adapter.assets.storage')]
+        protected LocalFilesystemAdapter $assetsAdapter,
         #[Autowire(service: 'flysystem.adapter.movie.storage')]
         protected LocalFilesystemAdapter $movieAdapter,
         #[Autowire(service: 'flysystem.adapter.configuration.storage')]
@@ -58,11 +61,60 @@ class FileService
     {
     }
 
+    public function getInfoImage(string $file)
+    {
+        $size = getimagesize($file);
+        try {
+            $mimetype = mime_content_type($file);
+        } catch (Exception $exception) {
+            $mimetype = 'image/jpeg';
+        }
+
+        $public = str_replace(
+            $this->parameterBag->get('kernel.project_dir').'/public',
+            '',
+            $file
+        );
+        $info = [
+            'src' => $file,
+            'public' => $public,
+            'data' => [
+                'width' => $size[0],
+                'height' => $size[1],
+                'type' => $mimetype,
+            ]
+        ];
+
+        dump($info);
+
+        return $info;
+    }
+
+    public function asset(mixed $entity, string $field): string
+    {
+        $mappings         = $this->getMappingForEntity($entity);
+        $file             = '';
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        foreach ($mappings as $mapping) {
+            if ($field != $mapping->getFileNamePropertyName()) {
+                continue;
+            }
+
+            $basePath = $this->getBasePath($entity, $mapping->getFilePropertyName());
+            $content  = $propertyAccessor->getValue($entity, $mapping->getFileNamePropertyName());
+            if ('' != $content) {
+                $file = $basePath.'/'.$content;
+            }
+        }
+
+        return $file;
+    }
+
     public function deleteAll(): void
     {
         $data = $this->getDataStorage();
         foreach (array_keys($data) as $type) {
-            if (in_array($type, ['private', 'public'])) {
+            if (in_array($type, ['private', 'public', 'assets'])) {
                 continue;
             }
 
@@ -181,15 +233,29 @@ class FileService
                 'public_url' => $this->getFolder($type),
             ]
         );
+        $files            = $this->getFilesByDirectory($filesystem, '', $type);
+
+        return $files;
+    }
+
+    private function getFilesByDirectory($filesystem, $directory, $type)
+    {
         $files            = [];
-        $directoryListing = $filesystem->listContents('');
+        $directoryListing = $filesystem->listContents($directory);
         foreach ($directoryListing as $content) {
-            $files[] = [
-                'filesystem' => $filesystem,
-                'content'    => $content,
-                'folder'     => $this->getFolder($type),
-                'path'       => $content->path(),
-            ];
+            if ($content->isFile()) {
+                $files[] = [
+                    'filesystem' => $filesystem,
+                    'content'    => $content,
+                    'folder'     => $this->getFolder($type),
+                    'path'       => $content->path(),
+                ];
+                continue;
+            }
+            $files = array_merge(
+                $files,
+                $this->getFilesByDirectory($filesystem, $content->path(), $type)
+            );
         }
 
         return $files;
@@ -259,6 +325,7 @@ class FileService
     private function getDataStorage(): array
     {
         return [
+            'assets'        => $this->assetsAdapter,
             'private'       => $this->privateAdapter,
             'public'        => $this->publicAdapter,
             'movie'         => $this->movieAdapter,
@@ -304,6 +371,6 @@ class FileService
 
         $storage = $storages[$type.'.storage'];
 
-        return str_replace('%kernel.project_dir%/public', '', $storage['options']['directory']);
+        return $storage['options']['directory'];
     }
 }
