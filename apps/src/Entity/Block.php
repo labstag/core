@@ -15,14 +15,13 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
 class Block implements Stringable
 {
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     private ?bool $enable = null;
 
@@ -46,16 +45,12 @@ class Block implements Stringable
      */
     #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
-        [
-            'position' => 'ASC',
-        ]
+        ['position' => 'ASC']
     )]
     private Collection $paragraphs;
 
     #[ORM\Column(
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     private int $position = 1;
 

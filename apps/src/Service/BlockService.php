@@ -16,7 +16,8 @@ class BlockService
         private readonly iterable $blocks,
         protected AuthorizationCheckerInterface $authorizationChecker,
         protected TokenStorageInterface $tokenStorage,
-    ) {
+    )
+    {
     }
 
     public function content(string $view, Block $block): ?Response

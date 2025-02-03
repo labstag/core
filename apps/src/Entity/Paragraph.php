@@ -38,9 +38,7 @@ class Paragraph implements Stringable
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     private bool $enable = true;
 
@@ -79,9 +77,7 @@ class Paragraph implements Stringable
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     private bool $save = true;
 

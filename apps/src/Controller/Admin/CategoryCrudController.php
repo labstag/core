@@ -22,9 +22,9 @@ abstract class CategoryCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort([
-            'title' => 'ASC',
-        ]);
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
 
         return $crud;
     }
@@ -34,7 +34,11 @@ abstract class CategoryCrudController extends AbstractCrudControllerLib
     {
         unset($pageName);
 
-        return [$this->addFieldID(), $this->addFieldSlug(), $this->addFieldTitle()];
+        return [
+            $this->addFieldID(),
+            $this->addFieldSlug(),
+            $this->addFieldTitle(),
+        ];
     }
 
     #[Override]

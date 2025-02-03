@@ -14,7 +14,8 @@ class GeocodeService
     public function __construct(
         protected HttpClientInterface $httpClient,
         protected GeoCodeRepository $geoCodeRepository,
-    ) {
+    )
+    {
     }
 
     /**

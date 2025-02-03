@@ -28,9 +28,9 @@ class TemplateCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort([
-            'title' => 'ASC',
-        ]);
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
         $crud->setEntityLabelInSingular(new TranslatableMessage('Template'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Templates'));
 
@@ -40,9 +40,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $currentEntity = $this->getContext()
-            ->getEntity()
-            ->getInstance();
+        $currentEntity = $this->getContext()->getEntity()->getInstance();
         unset($pageName);
         yield $this->addFieldID();
         yield $this->addFieldTitle();

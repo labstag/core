@@ -3,7 +3,7 @@
 namespace Labstag\Service;
 
 use DateTime;
-use Doctrine\Common\Util\ClassUtils;
+use Gedmo\Tool\ClassUtils;
 use Labstag\Entity\Paragraph;
 use Labstag\Interface\ParagraphInterface;
 use ReflectionClass;
@@ -17,7 +17,8 @@ class ParagraphService
     public function __construct(
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
-    ) {
+    )
+    {
     }
 
     public function addParagraph(object $entity, string $type): ?Paragraph

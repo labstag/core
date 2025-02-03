@@ -10,7 +10,8 @@ class UserService
 {
     public function __construct(
         protected UserPasswordHasherInterface $userPasswordHasher,
-    ) {
+    )
+    {
     }
 
     /**
@@ -18,7 +19,10 @@ class UserService
      */
     public function getLanguages(): array
     {
-        return ['fr', 'en'];
+        return [
+            'fr',
+            'en',
+        ];
     }
 
     /**

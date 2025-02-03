@@ -4,7 +4,6 @@
 
 namespace Labstag\Field\Configurator;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\QueryBuilder;
@@ -18,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\CrudAutocompleteType;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Gedmo\Tool\ClassUtils;
 use Labstag\Field\ParagraphParentField;
 use Labstag\Service\ParagraphService;
 use Override;

@@ -44,7 +44,8 @@ class SiteService
         protected Environment $twigEnvironment,
         protected ParameterBagInterface $parameterBag,
         protected ConfigurationRepository $configurationRepository,
-    ) {
+    )
+    {
     }
 
     public function asset(mixed $entity, string $field): string
@@ -93,10 +94,9 @@ class SiteService
     {
         $data = [
             'entity'     => $entity,
-            'paragraphs' => $entity->getParagraphs()
-                ->getValues(),
-            'img'  => $entity->getImg(),
-            'tags' => $entity->getTags(),
+            'paragraphs' => $entity->getParagraphs()->getValues(),
+            'img'        => $entity->getImg(),
+            'tags'       => $entity->getTags(),
         ];
 
         $methods = get_class_methods($entity);
@@ -144,9 +144,9 @@ class SiteService
         $page  = null;
         $types = array_filter($types, fn ($type): bool => !is_null($type) && 'home' != $type->getType());
 
-        $page = $this->pageRepository->findOneBy([
-            'slug' => $slug,
-        ]);
+        $page = $this->pageRepository->findOneBy(
+            ['slug' => $slug]
+        );
         if ($page instanceof Page) {
             return $page;
         }
@@ -320,7 +320,10 @@ class SiteService
     {
         unset($entity);
         $loader = $this->twigEnvironment->getLoader();
-        $files  = ['views/' . $entityName . '.html.twig', 'views/default.html.twig'];
+        $files  = [
+            'views/' . $entityName . '.html.twig',
+            'views/default.html.twig',
+        ];
         $view   = end($files);
         $loader = $this->twigEnvironment->getLoader();
         foreach ($files as $file) {
@@ -344,8 +347,7 @@ class SiteService
     private function getBlocks(array $data, bool $disable): array
     {
         $queryBuilder = $this->blockRepository->findAllOrderedByRegion();
-        $blocks       = $queryBuilder->getQuery()
-            ->getResult();
+        $blocks       = $queryBuilder->getQuery()->getResult();
         $header = [];
         $main   = [];
         $footer = [];
@@ -370,9 +372,9 @@ class SiteService
     private function getContentByType(string $type, string $slug): ?object
     {
         if ('post' === $type) {
-            return $this->postRepository->findOneBy([
-                'slug' => $slug,
-            ]);
+            return $this->postRepository->findOneBy(
+                ['slug' => $slug]
+            );
         }
 
         $repos = [
@@ -385,20 +387,20 @@ class SiteService
                 $slugstory,
                 $slugchapter,
             ]      = explode('/', $slug);
-            $story = $repos['story']->findOneBy([
-                'slug' => $slugstory,
-            ]);
-            $chapter = $repos['chapter']->findOneBy([
-                'slug' => $slugchapter,
-            ]);
+            $story = $repos['story']->findOneBy(
+                ['slug' => $slugstory]
+            );
+            $chapter = $repos['chapter']->findOneBy(
+                ['slug' => $slugchapter]
+            );
             if ($story instanceof Story && $chapter instanceof Chapter && $story->getId() === $chapter->getRefStory()->getId()) {
                 return $chapter;
             }
         }
 
-        return $repos['story']->findOneBy([
-            'slug' => $slug,
-        ]);
+        return $repos['story']->findOneBy(
+            ['slug' => $slug]
+        );
     }
 
     /**
@@ -409,9 +411,9 @@ class SiteService
         $types = array_flip($this->getTypesPages());
         unset($types['page']);
         foreach (array_keys($types) as $type) {
-            $types[$type] = $this->pageRepository->findOneBy([
-                'type' => $type,
-            ]);
+            $types[$type] = $this->pageRepository->findOneBy(
+                ['type' => $type]
+            );
         }
 
         return $types;

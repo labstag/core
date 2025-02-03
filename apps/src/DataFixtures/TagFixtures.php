@@ -24,7 +24,12 @@ class TagFixtures extends FixtureLib
 
     protected function addTag(Generator $generator, ObjectManager $objectManager): void
     {
-        $tab  = ['chapter', 'story', 'page', 'post'];
+        $tab  = [
+            'chapter',
+            'story',
+            'page',
+            'post',
+        ];
         $code = $tab[array_rand($tab)];
         $tag  = new Tag();
         $tag->setTitle($generator->unique()->colorName());

@@ -31,6 +31,7 @@ class ConfigFixtures extends FixtureLib implements DependentFixtureInterface
         $configuration->setNoreply('no-reply@labstag.traefik.me');
         $configuration->setUserShow(false);
         $configuration->setUserLink(false);
+        $configuration->setDisableEmptyAgent(false);
         $this->setImage($configuration, 'logoFile');
         $this->setImage($configuration, 'placeholderFile');
 

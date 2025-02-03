@@ -23,6 +23,7 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 abstract class FixtureLib extends Fixture
 {
+
     /**
      * @var Category[]
      */
@@ -41,7 +42,8 @@ abstract class FixtureLib extends Fixture
         protected UserService $userService,
         protected FileService $fileService,
         protected ParagraphService $paragraphService,
-    ) {
+    )
+    {
     }
 
     protected function addCategoryToEntity(object $entity): void

@@ -19,6 +19,7 @@ use Twig\Environment;
 
 abstract class EmailLib extends Email
 {
+
     /**
      * @var mixed[]
      */
@@ -40,7 +41,8 @@ abstract class EmailLib extends Email
         protected WorkflowService $workflowService,
         protected Environment $twigEnvironment,
         protected TemplateRepository $templateRepository,
-    ) {
+    )
+    {
         parent::__construct();
     }
 
@@ -55,9 +57,11 @@ abstract class EmailLib extends Email
 
     public function getEntity(): ?Template
     {
-        return $this->templateRepository->findOneBy([
-            'code' => $this->getType(),
-        ]);
+        return $this->templateRepository->findOneBy(
+            [
+                'code' => $this->getType(),
+            ]
+        );
     }
 
     public function getHelp(): ?string
@@ -79,7 +83,12 @@ abstract class EmailLib extends Email
      */
     public function getReplaces(): array
     {
-        return [UsernameReplace::class, LinkLoginReplace::class, UserEmailReplace::class, UserRolesReplace::class];
+        return [
+            UsernameReplace::class,
+            LinkLoginReplace::class,
+            UserEmailReplace::class,
+            UserRolesReplace::class,
+        ];
     }
 
     public function getType(): string
@@ -136,8 +145,14 @@ abstract class EmailLib extends Email
         $configuration = $this->siteService->getConfiguration();
         $entity        = $this->getEntity();
         $subject       = str_replace(
-            ['%content_title%', '%site_name%'],
-            [$this->replace($entity->getTitle()), $configuration->getName()],
+            [
+                '%content_title%',
+                '%site_name%',
+            ],
+            [
+                $this->replace($entity->getTitle()),
+                $configuration->getName(),
+            ],
             $configuration->getTitleFormat()
         );
 
@@ -163,7 +178,10 @@ abstract class EmailLib extends Email
         }
 
         $twig  = '.' . $type . '.twig';
-        $files = ['emails/' . $folder . $twig, 'emails/default' . $twig];
+        $files = [
+            'emails/' . $folder . $twig,
+            'emails/default' . $twig,
+        ];
 
         $view   = end($files);
         $loader = $this->twigEnvironment->getLoader();

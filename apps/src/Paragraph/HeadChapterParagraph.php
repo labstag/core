@@ -23,11 +23,14 @@ class HeadChapterParagraph extends ParagraphLib
             return;
         }
 
-        $this->setData($paragraph, [
-            'chapter'   => $data['entity'],
-            'paragraph' => $paragraph,
-            'data'      => $data,
-        ]);
+        $this->setData(
+            $paragraph,
+            [
+                'chapter'   => $data['entity'],
+                'paragraph' => $paragraph,
+                'data'      => $data,
+            ]
+        );
     }
 
     #[Override]

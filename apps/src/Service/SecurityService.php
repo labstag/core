@@ -22,14 +22,15 @@ class SecurityService
         protected BanIpRepository $banIpRepository,
         protected RedirectionRepository $redirectionRepository,
         protected HttpErrorLogsRepository $httpErrorLogsRepository,
-    ) {
+    )
+    {
     }
 
     public function addBan(string $internetProtocol): void
     {
-        $banIp = $this->banIpRepository->findOneBy([
-            'internetProtocol' => $internetProtocol,
-        ]);
+        $banIp = $this->banIpRepository->findOneBy(
+            ['internetProtocol' => $internetProtocol]
+        );
         if ($banIp instanceof BanIp) {
             return;
         }
@@ -133,10 +134,12 @@ class SecurityService
             $httpErrorLogs->setReferer($referer);
         }
 
-        $httpErrorLogs->setRequestData([
-            'get'  => $request->query->all(),
-            'post' => $request->request->all(),
-        ]);
+        $httpErrorLogs->setRequestData(
+            [
+                'get'  => $request->query->all(),
+                'post' => $request->request->all(),
+            ]
+        );
         $httpErrorLogs->setRequestMethod($method);
 
         $this->httpErrorLogsRepository->save($httpErrorLogs);
@@ -165,7 +168,8 @@ class SecurityService
                     $internetProtocol,
                     FILTER_VALIDATE_IP,
                     FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
-                )) {
+                )
+                ) {
                     return $internetProtocol;
                 }
             }
@@ -181,9 +185,7 @@ class SecurityService
                 'enable' => true,
                 'regex'  => $regex,
             ],
-            [
-                'position' => 'ASC',
-            ]
+            ['position' => 'ASC']
         );
     }
 

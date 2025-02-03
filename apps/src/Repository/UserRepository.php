@@ -39,7 +39,8 @@ class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgra
     public function upgradePassword(
         PasswordAuthenticatedUserInterface $passwordAuthenticatedUser,
         string $newHashedPassword,
-    ): void {
+    ): void
+    {
         if (!$passwordAuthenticatedUser instanceof User) {
             $message = sprintf('Instances of "%s" are not supported.', $passwordAuthenticatedUser::class);
 
@@ -47,9 +48,7 @@ class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgra
         }
 
         $passwordAuthenticatedUser->setPassword($newHashedPassword);
-        $this->getEntityManager()
-            ->persist($passwordAuthenticatedUser);
-        $this->getEntityManager()
-            ->flush();
+        $this->getEntityManager()->persist($passwordAuthenticatedUser);
+        $this->getEntityManager()->flush();
     }
 }

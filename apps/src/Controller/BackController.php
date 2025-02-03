@@ -27,15 +27,14 @@ class BackController extends AbstractController
         protected FileService $fileService,
         protected WorkflowService $workflowService,
         protected SiteService $siteService,
-    ) {
+    )
+    {
     }
 
     #[Route(
         '/admin/{_locale}/blank',
         name: 'admin_blank',
-        defaults: [
-            '_locale' => 'fr',
-        ]
+        defaults: ['_locale' => 'fr']
     )]
     public function blank(): Response
     {
@@ -45,9 +44,7 @@ class BackController extends AbstractController
     #[Route(
         '/admin/{_locale}/purge',
         name: 'admin_cacheclear',
-        defaults: [
-            '_locale' => 'fr',
-        ]
+        defaults: ['_locale' => 'fr']
     )]
     public function cacheclear(KernelInterface $kernel): Response
     {
@@ -57,9 +54,7 @@ class BackController extends AbstractController
                 'success',
                 new TranslatableMessage(
                     '%total% file(s) deleted',
-                    [
-                        '%total%' => $total,
-                    ]
+                    ['%total%' => $total]
                 )
             );
         }
@@ -81,21 +76,16 @@ class BackController extends AbstractController
     #[Route(
         '/admin/{_locale}/restore',
         name: 'admin_restore',
-        defaults: [
-            '_locale' => 'fr',
-        ]
+        defaults: ['_locale' => 'fr']
     )]
     #[Route(
         '/admin/{_locale}/empty',
         name: 'admin_empty',
-        defaults: [
-            '_locale' => 'fr',
-        ]
+        defaults: ['_locale' => 'fr']
     )]
     public function emptyOrRestore(Request $request): Response
     {
-        $this->entityManager->getFilters()
-            ->disable('softdeleteable');
+        $this->entityManager->getFilters()->disable('softdeleteable');
         $referer = $request->headers->get('referer');
         if (is_null($referer) || '' === $referer || '0' === $referer) {
             return $this->redirectToRoute('admin');
@@ -116,9 +106,7 @@ class BackController extends AbstractController
     #[Route(
         '/admin/{_locale}/workflow',
         name: 'admin_workflow',
-        defaults: [
-            '_locale' => 'fr',
-        ]
+        defaults: ['_locale' => 'fr']
     )]
     public function workflow(Request $request): Response
     {

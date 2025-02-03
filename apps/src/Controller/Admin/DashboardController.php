@@ -34,7 +34,8 @@ class DashboardController extends AbstractDashboardController
         protected FileService $fileService,
         protected WorkflowService $workflowService,
         protected SiteService $siteService,
-    ) {
+    )
+    {
     }
 
     #[Override]
@@ -162,9 +163,12 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToUrl(
                     new TranslatableMessage('My profile'),
                     'fa fa-user',
-                    $this->generateUrl('admin_profil_edit', [
-                        'entityId' => $user->getId(),
-                    ])
+                    $this->generateUrl(
+                        'admin_profil_edit',
+                        [
+                            'entityId' => $user->getId(),
+                        ]
+                    )
                 ),
             ]
         );
@@ -184,9 +188,7 @@ class DashboardController extends AbstractDashboardController
     #[Route(
         '/admin/{_locale}',
         name: 'admin',
-        defaults: [
-            '_locale' => 'fr',
-        ]
+        defaults: ['_locale' => 'fr']
     )]
     #[Override]
     public function index(): Response
@@ -379,11 +381,11 @@ class DashboardController extends AbstractDashboardController
                 'crud'       => StoryCategoryCrudController::getEntityFqcn(),
                 'controller' => StoryCategoryCrudController::class,
             ],
-            'page' => [
+            'page'  => [
                 'crud'       => PageCategoryCrudController::getEntityFqcn(),
                 'controller' => PageCategoryCrudController::class,
             ],
-            'post' => [
+            'post'  => [
                 'crud'       => PostCategoryCrudController::getEntityFqcn(),
                 'controller' => PostCategoryCrudController::class,
             ],
@@ -411,7 +413,7 @@ class DashboardController extends AbstractDashboardController
     private function setTags(): array
     {
         $tab = [
-            'story' => [
+            'story'   => [
                 'crud'       => StoryTagCrudController::getEntityFqcn(),
                 'controller' => StoryTagCrudController::class,
             ],
@@ -419,11 +421,11 @@ class DashboardController extends AbstractDashboardController
                 'crud'       => ChapterTagCrudController::getEntityFqcn(),
                 'controller' => ChapterTagCrudController::class,
             ],
-            'page' => [
+            'page'    => [
                 'crud'       => PageTagCrudController::getEntityFqcn(),
                 'controller' => PageTagCrudController::class,
             ],
-            'post' => [
+            'post'    => [
                 'crud'       => PostTagCrudController::getEntityFqcn(),
                 'controller' => PostTagCrudController::class,
             ],

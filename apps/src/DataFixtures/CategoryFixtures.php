@@ -24,7 +24,11 @@ class CategoryFixtures extends FixtureLib
 
     protected function addCategory(Generator $generator, ObjectManager $objectManager): void
     {
-        $tab      = ['story', 'page', 'post'];
+        $tab      = [
+            'story',
+            'page',
+            'post',
+        ];
         $code     = $tab[array_rand($tab)];
         $category = new Category();
         $category->setTitle($generator->unique()->colorName());

@@ -14,11 +14,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class ParagraphAbstractTypeLib extends AbstractType
 {
+
     protected string $entity;
 
     public function __construct(
         protected ParagraphService $paragraphService,
-    ) {
+    )
+    {
     }
 
     #[Override]
@@ -64,7 +66,8 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
         string $name,
         FormTypeInterface|string $type,
         array $options,
-    ): FormBuilderInterface {
+    ): FormBuilderInterface
+    {
         return $formBuilder->create($name, $type, $options);
     }
 
@@ -79,14 +82,16 @@ abstract class ParagraphAbstractTypeLib extends AbstractType
         $types      = $this->paragraphService->getAll($this->entity);
         foreach ($types as $key => $type) {
             $typeOptions = $options['options'];
-            $typeOptions = array_replace($typeOptions, [
-                'block_prefix' => '_paragraph',
-            ]);
-            $typeOptions = array_replace($typeOptions, [
-                'row_attr' => [
-                    'class' => 'paragraph',
-                ],
-            ]);
+            $typeOptions = array_replace(
+                $typeOptions,
+                ['block_prefix' => '_paragraph']
+            );
+            $typeOptions = array_replace(
+                $typeOptions,
+                [
+                    'row_attr' => ['class' => 'paragraph'],
+                ]
+            );
 
             $prototype = $this->buildPrototype($formBuilder, $options['prototype_name'], $type, $typeOptions);
 

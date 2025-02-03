@@ -39,7 +39,8 @@ final class EntityListener
         private HttpErrorLogsRepository $httpErrorLogsRepository,
         private ParagraphService $paragraphService,
         private WorkflowService $workflowService,
-    ) {
+    )
+    {
     }
 
     public function postPersist(PostPersistEventArgs $postPersistEventArgs): void
@@ -123,7 +124,11 @@ final class EntityListener
     private function prePersistAddMeta(object $entity, ObjectManager $objectManager): void
     {
         unset($objectManager);
-        $tab = [Page::class, Chapter::class, Post::class];
+        $tab = [
+            Page::class,
+            Chapter::class,
+            Post::class,
+        ];
 
         if (!in_array($entity::class, $tab)) {
             return;
@@ -197,9 +202,9 @@ final class EntityListener
             return;
         }
 
-        $oldHome = $this->pageRepository->findOneBy([
-            'type' => 'home',
-        ]);
+        $oldHome = $this->pageRepository->findOneBy(
+            ['type' => 'home']
+        );
         if ($oldHome instanceof Page && $oldHome->getId() === $entity->getId()) {
             return;
         }

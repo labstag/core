@@ -11,7 +11,8 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         protected BlockService $blockService,
-    ) {
+    )
+    {
         // Inject dependencies if needed
     }
 

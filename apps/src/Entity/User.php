@@ -53,9 +53,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     private ?bool $enable = null;
 
@@ -73,9 +71,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
 
     #[ORM\Column(
         length: 2,
-        options: [
-            'default' => 'fr',
-        ]
+        options: ['default' => 'fr']
     )]
     private ?string $language = null;
 
@@ -133,7 +129,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
      */
     public function __serialize(): array
     {
-        return [$this->id, $this->username, $this->email, $this->password];
+        return [
+            $this->id,
+            $this->username,
+            $this->email,
+            $this->password,
+        ];
     }
 
     #[Override]

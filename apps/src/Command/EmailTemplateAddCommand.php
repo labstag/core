@@ -17,6 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 #[AsCommand(name: 'labstag:email:template-add', description: '')]
 class EmailTemplateAddCommand extends Command
 {
+
     private int $add = 0;
 
     private int $update = 0;
@@ -24,7 +25,8 @@ class EmailTemplateAddCommand extends Command
     public function __construct(
         protected EmailService $emailService,
         protected TemplateRepository $templateRepository,
-    ) {
+    )
+    {
         parent::__construct();
     }
 
@@ -49,9 +51,11 @@ class EmailTemplateAddCommand extends Command
         $progressBar = new ProgressBar($output, is_countable($templates) ? count($templates) : 0);
         $progressBar->start();
         foreach ($templates as $row) {
-            $template = $this->templateRepository->findOneBy([
-                'code' => $row->getType(),
-            ]);
+            $template = $this->templateRepository->findOneBy(
+                [
+                    'code' => $row->getType(),
+                ]
+            );
             $this->addOrUpdate($template);
             if (!$template instanceof Template) {
                 $template = new Template();

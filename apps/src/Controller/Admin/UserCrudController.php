@@ -36,9 +36,9 @@ class UserCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort([
-            'username' => 'ASC',
-        ]);
+        $crud->setDefaultSort(
+            ['username' => 'ASC']
+        );
 
         return $crud;
     }
@@ -57,20 +57,16 @@ class UserCrudController extends AbstractCrudControllerLib
         $textField->setFormType(RepeatedType::class);
         $textField->setFormTypeOptions(
             [
-                'type'          => PasswordType::class,
-                'first_options' => [
+                'type'           => PasswordType::class,
+                'first_options'  => [
                     'label' => new TranslatableMessage('Password'),
-                    'attr'  => [
-                        'autocomplete' => 'new-password',
-                    ],
+                    'attr'  => ['autocomplete' => 'new-password'],
                 ],
                 'second_options' => [
                     'label' => new TranslatableMessage('Repeat Password'),
-                    'attr'  => [
-                        'autocomplete' => 'new-password',
-                    ],
+                    'attr'  => ['autocomplete' => 'new-password'],
                 ],
-                'mapped' => false,
+                'mapped'         => false,
             ]
         );
         $textField->setRequired(Crud::PAGE_NEW === $pageName);
@@ -115,7 +111,8 @@ class UserCrudController extends AbstractCrudControllerLib
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
         AdminContext $adminContext,
-    ): FormBuilderInterface {
+    ): FormBuilderInterface
+    {
         $formBuilder = parent::createEditFormBuilder($entityDto, $keyValueStore, $adminContext);
 
         return $this->addPasswordEventListener($formBuilder);
@@ -135,7 +132,8 @@ class UserCrudController extends AbstractCrudControllerLib
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
         AdminContext $adminContext,
-    ): FormBuilderInterface {
+    ): FormBuilderInterface
+    {
         $formBuilder = parent::createNewFormBuilder($entityDto, $keyValueStore, $adminContext);
 
         return $this->addPasswordEventListener($formBuilder);
@@ -161,15 +159,13 @@ class UserCrudController extends AbstractCrudControllerLib
                 return;
             }
 
-            $password = $form->get('password')
-                ->getData();
+            $password = $form->get('password')->getData();
             if (is_null($password)) {
                 return;
             }
 
             $hash = $this->userService->hashPassword($event->getData(), $password);
-            $form->getData()
-                ->setPassword($hash);
+            $form->getData()->setPassword($hash);
         };
     }
 }

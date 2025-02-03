@@ -11,7 +11,8 @@ final class AdminListener
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-    ) {
+    )
+    {
     }
 
     #[AsEventListener(event: KernelEvents::REQUEST)]

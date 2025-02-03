@@ -15,12 +15,16 @@ class LinkType extends AbstractType
     #[Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
-        $formBuilder->add('title', TextType::class, [
-            'label' => 'Titre',
-        ]);
-        $formBuilder->add('url', TextType::class, [
-            'label' => 'Url',
-        ]);
+        $formBuilder->add(
+            'title',
+            TextType::class,
+            ['label' => 'Titre']
+        );
+        $formBuilder->add(
+            'url',
+            TextType::class,
+            ['label' => 'Url']
+        );
         $formBuilder->add(
             'blank',
             CheckboxType::class,
@@ -29,10 +33,14 @@ class LinkType extends AbstractType
                 'required' => false,
             ]
         );
-        $formBuilder->add('classes', TextType::class, [
-            'label'    => 'Classes',
-            'required' => false,
-        ]);
+        $formBuilder->add(
+            'classes',
+            TextType::class,
+            [
+                'label'    => 'Classes',
+                'required' => false,
+            ]
+        );
 
         unset($options);
     }
@@ -40,8 +48,10 @@ class LinkType extends AbstractType
     #[Override]
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
-        $optionsResolver->setDefaults([
-            'data_class' => Link::class,
-        ]);
+        $optionsResolver->setDefaults(
+            [
+                'data_class' => Link::class,
+            ]
+        );
     }
 }

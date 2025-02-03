@@ -10,7 +10,8 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         protected ParagraphService $paragraphService,
-    ) {
+    )
+    {
         // Inject dependencies if needed
     }
 
