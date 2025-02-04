@@ -147,7 +147,13 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         }
 
         if ($view == end($files)) {
-            $this->logger->error('Template not found', ['folder' => $folder, 'type' => $type]);
+            $this->logger->error(
+                'Template not found',
+                [
+                    'folder' => $folder,
+                    'type'   => $type,
+                ]
+            );
         }
 
         $this->templates[$folder][$type] = [

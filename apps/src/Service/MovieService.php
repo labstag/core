@@ -37,17 +37,15 @@ class MovieService
 
     public function update(Movie $movie): bool
     {
-        $statusImage = $this->updateImage($movie);
+        $statusImage       = $this->updateImage($movie);
         $statusDescription = $this->updateDescription($movie);
 
-        $status = $statusImage || $statusDescription;
-
-        return $status;
+        return $statusImage || $statusDescription;
     }
 
     public function updateDescription(Movie $movie): bool
     {
-        if (!empty($movie->getDescription())) {
+        if (!in_array($movie->getDescription(), [null, '', '0'], true)) {
             return false;
         }
 

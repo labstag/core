@@ -130,9 +130,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $this->paragraphService->addParagraph($page, 'sibling');
     }
 
-    /**
-     * @param array{entity: Page, parent: string} $data
-     */
     private function setPage(ObjectManager $objectManager, Generator $generator, Page $page): void
     {
         $page->setEnable(true);
@@ -242,7 +239,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
         $paragraph->setTitle('Mes derniers films vus');
         $paragraph->setNbr(12);
-
     }
 
     private function setParagraphsPost(Page $page): void

@@ -2,7 +2,6 @@
 
 namespace Labstag\Paragraph;
 
-use Labstag\Entity\Edito;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;

@@ -33,7 +33,7 @@ class MoviesUpdateCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function updateImage($output, $symfonyStyle)
+    private function updateImage(OutputInterface $output, SymfonyStyle $symfonyStyle): void
     {
         // Movie without img
         $movies = $this->movieRepository->findBy(
@@ -62,7 +62,7 @@ class MoviesUpdateCommand extends Command
         $symfonyStyle->success(sprintf('Images updated: %d', $numberFormatter->format($update)));
     }
 
-    private function updateDescription($output, $symfonyStyle)
+    private function updateDescription(OutputInterface $output, SymfonyStyle $symfonyStyle): void
     {
         // Movie without img
         $movies = $this->movieRepository->findBy(
