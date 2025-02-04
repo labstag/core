@@ -46,7 +46,7 @@ class MovieService
     }
 
     public function updateDescription(Movie $movie): bool
-    {   
+    {
         if (!empty($movie->getDescription())) {
             return false;
         }

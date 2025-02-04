@@ -241,7 +241,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         }
 
         $paragraph->setTitle('Mes derniers films vus');
-        $paragraph->setNbr(3);
+        $paragraph->setNbr(12);
 
     }
 
