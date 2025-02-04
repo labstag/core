@@ -18,7 +18,7 @@ trait WorkflowTrait
 
     #[Gedmo\Timestampable(on: 'change', field: ['state'])]
     #[ORM\Column(name: 'state_changed', type: Types::DATETIME_MUTABLE, nullable: true)]
-    private DateTime $stateChanged;
+    private ?DateTime $stateChanged = null;
 
     /**
      * @return mixed[]
@@ -28,7 +28,7 @@ trait WorkflowTrait
         return $this->state;
     }
 
-    public function getStateChanged(): DateTime
+    public function getStateChanged(): ?DateTime
     {
         return $this->stateChanged;
     }

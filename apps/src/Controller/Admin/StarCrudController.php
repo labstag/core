@@ -91,8 +91,7 @@ class StarCrudController extends AbstractCrudControllerLib
     private function getAllData(string $type): array
     {
         $serviceEntityRepositoryLib = $this->getRepository();
-        $methods                    = get_class_methods($serviceEntityRepositoryLib);
-        if (!$serviceEntityRepositoryLib instanceof StarRepository || !in_array('findAllData', $methods)) {
+        if (!$serviceEntityRepositoryLib instanceof StarRepository || !method_exists($serviceEntityRepositoryLib, 'findAllData')) {
             return [];
         }
 

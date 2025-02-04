@@ -143,8 +143,7 @@ class BackController extends AbstractController
             throw new Exception(new TranslatableMessage('Data not found'));
         }
 
-        $methods = get_class_methods($data);
-        if (!in_array('isDeleted', $methods)) {
+        if (!method_exists($data, 'isDeleted')) {
             throw new Exception(new TranslatableMessage('Method not found'));
         }
 

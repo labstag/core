@@ -53,7 +53,7 @@ class BlockService
             $this->setContents($block, $data, $disable);
 
             $tab[] = [
-                'templates' => $this->templates('content', $block),
+                'templates' => $this->templates($block, 'content'),
                 'block'     => $block,
             ];
         }
@@ -113,7 +113,7 @@ class BlockService
     /**
      * @return mixed[]
      */
-    public function getFields(?object $block, string $pageName): array
+    public function getFields(?object $block, string $pageName): mixed
     {
         if (!$block instanceof Block) {
             return [];
@@ -234,7 +234,7 @@ class BlockService
     /**
      * @return mixed[]|null
      */
-    private function templates(string $type, Block $block): ?array
+    private function templates(Block $block, string $type): ?array
     {
         $template = null;
         foreach ($this->blocks as $row) {
@@ -242,7 +242,7 @@ class BlockService
                 continue;
             }
 
-            $template = $row->templates($type);
+            $template = $row->templates($block, $type);
 
             break;
         }

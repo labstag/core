@@ -54,7 +54,6 @@ class FileService
         #[Autowire(service: 'flysystem.adapter.post.storage')]
         protected LocalFilesystemAdapter $postAdapter,
         protected KernelInterface $kernel,
-        protected SiteService $siteService,
         protected EntityManagerInterface $entityManager,
         protected ParameterBagInterface $parameterBag,
         protected PropertyMappingFactory $propertyMappingFactory,
@@ -227,13 +226,11 @@ class FileService
         }
 
         $public = str_replace($this->parameterBag->get('kernel.project_dir') . '/public', '', $file);
-        $config   = $this->siteService->getConfiguration();
 
         return [
-            'src'         => $file,
-            'public'      => $public,
-            'absoluteurl' => $config->getUrl() . $public,
-            'data'        => [
+            'src'    => $file,
+            'public' => $public,
+            'data'   => [
                 'width'  => $size[0],
                 'height' => $size[1],
                 'type'   => $mimetype,

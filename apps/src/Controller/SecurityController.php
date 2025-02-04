@@ -12,7 +12,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-
     #[Route(path: '/changepassword/{uid}', name: 'app_changepassword')]
     public function changePassword(mixed $uid): never
     {
@@ -70,7 +69,7 @@ class SecurityController extends AbstractController
         ];
 
         if (!is_null($favicon)) {
-            $data['favicon_path'] = $favicon['path'];
+            $data['favicon_path'] = $favicon['public'];
         }
 
         return $data;

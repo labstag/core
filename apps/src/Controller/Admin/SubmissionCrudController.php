@@ -53,8 +53,7 @@ class SubmissionCrudController extends AbstractCrudControllerLib
             return [];
         }
 
-        $methods = get_class_methods($form);
-        if (!in_array('getFields', $methods)) {
+        if (!method_exists($form, 'getFields')) {
             return [];
         }
 
