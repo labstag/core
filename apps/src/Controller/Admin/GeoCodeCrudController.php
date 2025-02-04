@@ -97,7 +97,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
     private function getAllData(string $type): array
     {
         $serviceEntityRepositoryLib = $this->getRepository();
-        if (!$serviceEntityRepositoryLib instanceof GeoCodeRepository || !method_exists($serviceEntityRepositoryLib, 'findAllData')) {
+        if (!$serviceEntityRepositoryLib instanceof GeoCodeRepository) {
             return [];
         }
 

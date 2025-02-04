@@ -128,9 +128,6 @@ abstract class ParagraphLib extends AbstractController
         return $this->data[$paragraphId] ?? [];
     }
 
-    /**
-     * @return Generator<FieldInterface>
-     */
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
@@ -284,9 +281,6 @@ abstract class ParagraphLib extends AbstractController
         $this->data[$paragraph->getId()] = $data;
     }
 
-    /**
-     * @param mixed[] $data
-     */
     protected function setFooter(Paragraph $paragraph, mixed $data): void
     {
         $paragraphId = $paragraph->getId();

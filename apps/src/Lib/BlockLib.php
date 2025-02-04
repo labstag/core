@@ -63,9 +63,6 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         return $this->data[$blockId] ?? null;
     }
 
-    /**
-     * @return Generator<FieldInterface>
-     */
     public function getFields(Block $block, string $pageName): mixed
     {
         unset($block, $pageName);
