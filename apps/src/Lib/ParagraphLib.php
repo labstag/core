@@ -5,12 +5,10 @@ namespace Labstag\Lib;
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Exception;
-use Generator;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Labstag\Entity\Block;
@@ -177,6 +175,7 @@ abstract class ParagraphLib extends AbstractController
     public function templates(Paragraph $paragraph, string $type): array
     {
         unset($paragraph);
+
         return $this->getTemplateContent($type, $this->getType());
     }
 

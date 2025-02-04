@@ -182,7 +182,7 @@ final class EntityListener
             return;
         }
 
-        if (!empty($entity->getImg())) {
+        if (!in_array($entity->getImg(), [null, '', '0'], true)) {
             return;
         }
 

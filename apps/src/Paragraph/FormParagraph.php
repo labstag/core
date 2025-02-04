@@ -78,7 +78,7 @@ class FormParagraph extends ParagraphLib
         return 'form';
     }
 
-    #[\Override]
+    #[Override]
     public function templates(Paragraph $paragraph, string $type): array
     {
         $templates = $this->getTemplateContent($type, $this->getType() . '/' . $paragraph->getForm());

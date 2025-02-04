@@ -3,10 +3,8 @@
 namespace Labstag\Lib;
 
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
-use Generator;
 use Labstag\Entity\Block;
 use Labstag\Interface\BlockInterface;
 use Labstag\Service\ParagraphService;
@@ -97,6 +95,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     public function templates(Block $block, string $type): array
     {
         unset($block);
+
         return $this->getTemplateContent($type, $this->getType());
     }
 
