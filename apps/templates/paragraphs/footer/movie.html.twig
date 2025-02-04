@@ -1,5 +1,4 @@
 {% for movie in pagination %}
-    
     {% if movie.duration < 60 %}
         {% set duration = movie.duration ~ " min" %}
     {% else %}
@@ -7,7 +6,6 @@
         {% set minutes = (movie.duration % 60) %}
         {% set duration = hours ~ 'h ' ~ minutes ~ " min" %}
     {% endif %}
-
     <div id="movie-modal-{{ movie.id }}" class="modal hidden modal_video">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -30,30 +28,21 @@
                     </div>
                 {% endif %}
                 <div class="modal-title">{{ movie.title }}</div>
-                <div class="modal-year">
-                    {{ 'Year : %year%'|trans({ '%year%': movie.year }) }}
-                    </div>
-                <div class="modal-country">
-                    {{ 'Country : %country%'|trans({ '%country%': movie.country }) }}
-                    </div>
-                <div class="modal-color">
-                    {{ 'Color : %color%'|trans({ '%color%': movie.color }) }}
-                    </div>
-                <div class="modal-duration">
-                    {{ 'Duration : %duration%'|trans({ '%duration%': duration }) }}
+                <div>
+                    <span class="modal-description">{{ movie.description|raw }}</span>
+                    <span class="modal-year">{{ 'Year : %year%'|trans({ '%year%': movie.year }) }}</span>
+                    <span class="modal-country">{{ 'Country : %country%'|trans({ '%country%': movie.country }) }}</span>
+                    <span class="modal-color">{{ 'Color : %color%'|trans({ '%color%': movie.color }) }}</span>
+                    <span class="modal-duration">{{ 'Duration : %duration%'|trans({ '%duration%': duration }) }}</span>
+                    {% if movie.evaluation != null %}
+                    <span class="modal-evaluation">{{ 'Evaluation : %evaluation%'|trans({ '%evaluation%': movie.evaluation }) }}</span>
+                    {% endif %}
+                    {% if movie.votes != null %}
+                    <span class="modal-votes">{{ 'Votes : %votes%'|trans({ '%votes%': movie.votes }) }}</span>
+                    {% endif %}
                 </div>
-                {% if movie.evaluation != null %}
-                <div class="modal-evaluation">
-                    {{ 'Evaluation : %evaluation%'|trans({ '%evaluation%': movie.evaluation }) }}
-                </div>
-                {% endif %}
-                {% if movie.votes != null %}
-                <div class="modal-votes">
-                    {{ 'Votes : %votes%'|trans({ '%votes%': movie.votes }) }}
-                </div>
-                {% endif %}
                 <div class="modal-imdb">
-                    <a href="https://www.imdb.com/title/tt{{ movie.imdb }}" target="_blank" title="{{ 'IMDB page for the movie "%title%"'|trans({ '%title%': movie.title})|e('html_attr') }}>
+                    <a href="https://www.imdb.com/title/tt{{ movie.imdb }}" target="_blank" title="{{ 'IMDB page for the movie "%title%"'|trans({ '%title%': movie.title})|e('html_attr') }}" area-label="{{ 'IMDB page for the movie "%title%"'|trans({ '%title%': movie.title})|e('html_attr') }}">
                         {{ 'IMDB page for the movie "%title%"'|trans({ '%title%': movie.title }) }}
                         </a>
                 </div>
