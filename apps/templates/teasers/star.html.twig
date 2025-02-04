@@ -1,10 +1,6 @@
-<a href="{{ star.url }}" target="_blank">
-    <div class="title">
-        {{ star.title }}
-    </div>
-    <div class="description">
-        {{ star.description|raw }}
-    </div>
+<a href="{{ star.url }}" target="_blank" title="{{ star.title|e('html_attr') }}">
+    <div class="title">{{ star.title }}</div>
+    <div class="description">{{ star.description|raw }}</div>
     <div>
         <b>{{ 'Informations'|trans }}</b>
         <ul>

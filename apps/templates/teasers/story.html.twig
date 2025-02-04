@@ -1,5 +1,5 @@
 {% set chapters = story.chapters|enable %}
-<a href="{{ site_path(story) }}">
+<a href="{{ site_path(story) }}" title="{{ story.title|e('html_attr') }}">
     <div class="background" style="--image-url: url('{{ site_asset(story, 'img') }}')"></div>
     {% if story.tags|length > 0 %}
         <div class="tags">
