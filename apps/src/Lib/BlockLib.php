@@ -9,6 +9,7 @@ use Labstag\Entity\Block;
 use Labstag\Interface\BlockInterface;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
@@ -43,6 +44,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     protected array $templates = [];
 
     public function __construct(
+        protected LoggerInterface $logger,
         protected RouterInterface $router,
         protected AdminUrlGenerator $adminUrlGenerator,
         protected ParagraphService $paragraphService,
@@ -142,6 +144,10 @@ abstract class BlockLib extends AbstractController implements BlockInterface
             $view = $file;
 
             break;
+        }
+
+        if ($view == end($files)) {
+            $this->logger->error('Template not found', ['folder' => $folder, 'type' => $type]);
         }
 
         $this->templates[$folder][$type] = [

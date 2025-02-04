@@ -161,7 +161,8 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             return;
         }
 
-        $paragraph->setTitle('Formulaire de contact');
+        $paragraph->setSave(true);
+        $paragraph->setContent('Formulaire envoyé');
         $paragraph->setForm('contact');
     }
 

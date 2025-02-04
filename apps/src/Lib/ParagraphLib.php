@@ -24,6 +24,7 @@ use Labstag\Service\FormService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SitemapService;
 use Labstag\Service\SiteService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,6 +60,7 @@ abstract class ParagraphLib extends AbstractController
     protected array $templates = [];
 
     public function __construct(
+        protected LoggerInterface $logger,
         protected FormService $formService,
         protected SitemapService $sitemapService,
         protected RequestStack $requestStack,
@@ -244,6 +246,10 @@ abstract class ParagraphLib extends AbstractController
             $view = $file;
 
             break;
+        }
+
+        if ($view == end($files)) {
+            $this->logger->error('Template not found', ['folder' => $folder, 'type' => $type]);
         }
 
         $this->templates[$folder][$type] = [
