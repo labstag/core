@@ -25,7 +25,7 @@ class MovieParagraph extends ParagraphLib
 
         $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
 
-        $templates = $this->templates('header');
+        $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
             $paragraph,
             $this->render(
@@ -34,7 +34,7 @@ class MovieParagraph extends ParagraphLib
             )
         );
 
-        $templates = $this->templates('footer');
+        $templates = $this->templates($paragraph, 'footer');
         $this->setFooter(
             $paragraph,
             $this->render(

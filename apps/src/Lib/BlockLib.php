@@ -97,8 +97,9 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     /**
      * @return mixed[]
      */
-    public function templates(string $type): array
+    public function templates(Block $block, string $type): array
     {
+        unset($block);
         return $this->getTemplateContent($type, $this->getType());
     }
 

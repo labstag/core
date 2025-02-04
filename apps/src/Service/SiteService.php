@@ -99,8 +99,7 @@ class SiteService
             'tags'       => $entity->getTags(),
         ];
 
-        $methods = get_class_methods($entity);
-        if (in_array('getCategories', $methods)) {
+        if (method_exists($entity, 'getCategories')) {
             $data['categories'] = $entity->getCategories();
         }
 
@@ -221,9 +220,7 @@ class SiteService
 
         $html = $this->twigEnvironment->render('metagenerate.html.twig', $this->getDataByEntity($entity, true));
 
-        $html = preg_replace('/\s+/', ' ', $html);
-
-        $text = trim(strip_tags((string) $html));
+        $text = trim((string) preg_replace('/\s+/', ' ', strip_tags($html)));
         $text = substr($text, 0, 256);
 
         $meta->setDescription($text);

@@ -25,7 +25,7 @@ class StoryListParagraph extends ParagraphLib
 
         $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
 
-        $templates = $this->templates('header');
+        $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
             $paragraph,
             $this->render(

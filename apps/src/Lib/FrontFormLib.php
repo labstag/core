@@ -31,7 +31,7 @@ abstract class FrontFormLib implements FrontFormInterface
         $request = $this->requestStack->getCurrentRequest();
         $form->handleRequest($request);
 
-        $state = (true != $disable) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
+        $state = (false != $disable) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
 
         if ($state && $save) {
             $this->saveForm($form);
@@ -40,7 +40,7 @@ abstract class FrontFormLib implements FrontFormInterface
         return $state;
     }
 
-    public function getFields(array $data): iterable
+    public function getFields(array $data): mixed
     {
         unset($data);
 

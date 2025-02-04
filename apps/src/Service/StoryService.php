@@ -9,6 +9,7 @@ use PhpOffice\PhpWord\PhpWord;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryService
@@ -84,10 +85,14 @@ class StoryService
     {
         $session = $this->getSession();
 
+        if (!method_exists($session, 'getFlashBag')) {
+            throw new RuntimeException('FlashBag not found');
+        }
+
         return $session->getFlashBag();
     }
 
-    private function getSession(): \Symfony\Component\HttpFoundation\Session\SessionInterface
+    private function getSession(): SessionInterface
     {
         return $this->requestStack->getSession();
     }

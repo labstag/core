@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Generator;
 use Labstag\Entity\Paragraph;
+use Labstag\Field\WysiwygField;
 use Labstag\Lib\FrontFormLib;
 use Labstag\Lib\ParagraphLib;
 use Override;
@@ -60,7 +61,9 @@ class FormParagraph extends ParagraphLib
         $choiceField->hideOnIndex();
         $choiceField->setChoices($this->formService->all());
         yield $choiceField;
-        yield BooleanField::new('save', new TranslatableMessage('Save'));
+        yield BooleanField::new('save', new TranslatableMessage('Save data in database'));
+        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Confirm message'));
+        yield $wysiwygField;
     }
 
     #[Override]
@@ -73,6 +76,18 @@ class FormParagraph extends ParagraphLib
     public function getType(): string
     {
         return 'form';
+    }
+
+    #[\Override]
+    public function templates(Paragraph $paragraph, string $type): array
+    {
+        $templates = $this->getTemplateContent($type, $this->getType() . '/' . $paragraph->getForm());
+
+        if ($templates['view'] != end($templates['files'])) {
+            return $templates;
+        }
+
+        return $this->getTemplateContent($type, $this->getType());
     }
 
     /**

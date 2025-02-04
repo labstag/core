@@ -70,7 +70,7 @@ class ParagraphService
             $this->setContents($paragraph, $data, $disable);
 
             $tab[] = [
-                'templates' => $this->templates('content', $paragraph),
+                'templates' => $this->templates($paragraph, 'content'),
                 'paragraph' => $paragraph,
             ];
         }
@@ -171,10 +171,7 @@ class ParagraphService
         return $object;
     }
 
-    /**
-     * @return Generator<mixed>
-     */
-    public function getFields(mixed $paragraph, string $pageName): iterable
+    public function getFields(mixed $paragraph, string $pageName): mixed
     {
         if (!$paragraph instanceof Paragraph) {
             return [];
@@ -285,7 +282,7 @@ class ParagraphService
     /**
      * @return mixed[]|null
      */
-    private function templates(string $type, Paragraph $paragraph): ?array
+    private function templates(Paragraph $paragraph, string $type): ?array
     {
         $template = null;
         foreach ($this->paragraphs as $row) {
@@ -293,7 +290,7 @@ class ParagraphService
                 continue;
             }
 
-            $template = $row->templates($type);
+            $template = $row->templates($paragraph, $type);
 
             break;
         }

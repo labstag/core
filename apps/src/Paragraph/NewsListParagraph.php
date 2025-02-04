@@ -33,7 +33,7 @@ class NewsListParagraph extends ParagraphLib
             ]
         );
 
-        $templates = $this->templates('header');
+        $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
             $paragraph,
             $this->render(

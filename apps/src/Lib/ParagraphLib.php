@@ -177,8 +177,9 @@ abstract class ParagraphLib extends AbstractController
     /**
      * @return mixed[]
      */
-    public function templates(string $type): array
+    public function templates(Paragraph $paragraph, string $type): array
     {
+        unset($paragraph);
         return $this->getTemplateContent($type, $this->getType());
     }
 

@@ -547,8 +547,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     {
         $fqcn    = $entityDto->getFqcn();
         $entity  = new $fqcn();
-        $methods = get_class_methods($entity);
-        if (in_array('getRefuser', $methods)) {
+        if (method_exists($entity, 'getRefuser')) {
             $user  = $this->getUser();
             $roles = $user->getRoles();
             if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
