@@ -45,8 +45,6 @@ class SitemapParagraph extends ParagraphLib
     #[Override]
     public function useIn(): array
     {
-        return [
-            Page::class
-        ];
+        return [Page::class];
     }
 }

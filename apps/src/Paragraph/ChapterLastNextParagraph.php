@@ -62,8 +62,6 @@ class ChapterLastNextParagraph extends ParagraphLib
     #[Override]
     public function useIn(): array
     {
-        return [
-            Block::class
-        ];
+        return [Block::class];
     }
 }
