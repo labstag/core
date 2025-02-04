@@ -53,10 +53,6 @@ class SubmissionCrudController extends AbstractCrudControllerLib
             return [];
         }
 
-        if (!method_exists($form, 'getFields')) {
-            return [];
-        }
-
         return $form->getFields($data);
     }
 }

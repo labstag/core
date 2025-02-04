@@ -22,7 +22,6 @@ use Labstag\Service\ParagraphService;
 use Labstag\Service\StoryService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Workflow\Registry;
 
 #[AsDoctrineListener(event: Events::prePersist)]
@@ -33,7 +32,6 @@ final class EntityListener
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
         private StoryService $storyService,
-        private KernelInterface $kernel,
         private MovieService $movieService,
         private PageRepository $pageRepository,
         private HttpErrorLogsRepository $httpErrorLogsRepository,
@@ -184,7 +182,7 @@ final class EntityListener
             return;
         }
 
-        if (!is_null($entity->getImg()) || '' != $entity->getImg()) {
+        if (!empty($entity->getImg())) {
             return;
         }
 

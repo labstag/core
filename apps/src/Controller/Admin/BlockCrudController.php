@@ -136,8 +136,7 @@ class BlockCrudController extends AbstractCrudControllerLib
     {
         unset($searchDto, $entityDto, $fieldCollection, $filterCollection);
         $serviceEntityRepositoryLib = $this->getRepository();
-        if (!$serviceEntityRepositoryLib instanceof BlockRepository || !method_exists($serviceEntityRepositoryLib, 'findAllOrderedByRegion')
-        ) {
+        if (!$serviceEntityRepositoryLib instanceof BlockRepository) {
             throw new Exception('findAllOrderedByRegion not found');
         }
 
@@ -166,8 +165,7 @@ class BlockCrudController extends AbstractCrudControllerLib
     {
         $request                    = $adminContext->getRequest();
         $serviceEntityRepositoryLib = $this->getRepository();
-        if (!$serviceEntityRepositoryLib instanceof BlockRepository || !method_exists($serviceEntityRepositoryLib, 'findAllOrderedByRegion')
-        ) {
+        if (!$serviceEntityRepositoryLib instanceof BlockRepository) {
             throw new Exception('findAllOrderedByRegion not found');
         }
 
@@ -239,7 +237,7 @@ class BlockCrudController extends AbstractCrudControllerLib
             $data                       = $event->getData();
             $serviceEntityRepositoryLib = $this->getRepository();
             $region                     = $form->get('region')->getData();
-            if (is_null($region) || !$serviceEntityRepositoryLib instanceof BlockRepository || method_exists($serviceEntityRepositoryLib, 'getMaxPositionByRegion')) {
+            if (is_null($region) || !$serviceEntityRepositoryLib instanceof BlockRepository) {
                 return;
             }
 
