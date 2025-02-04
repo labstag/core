@@ -73,6 +73,9 @@ class Movie
     #[ORM\Column(nullable: true)]
     private ?int $year = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -252,6 +255,18 @@ class Movie
     public function setYear(?int $year): static
     {
         $this->year = $year;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

@@ -60,6 +60,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield NumberField::new('evaluation');
         yield IntegerField::new('votes');
         yield TextField::new('trailer')->hideOnIndex();
+        yield TextField::new('description')->hideOnIndex();
         yield $this->addFieldCategories('movie');
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
@@ -103,7 +104,22 @@ class MovieCrudController extends AbstractCrudControllerLib
         $counter = 0;
         $update  = 0;
         foreach ($movies as $movie) {
-            $status = $movieService->update($movie);
+            $status = $movieService->updateImage($movie);
+            $update = $status ? ++$update : $update;
+            ++$counter;
+
+            $serviceEntityRepositoryLib->persist($movie);
+            $serviceEntityRepositoryLib->flush($counter);
+        }
+
+        $movies = $this->getRepository()->findBy(
+            ['description' => null]
+        );
+
+        $counter = 0;
+        $update  = 0;
+        foreach ($movies as $movie) {
+            $status = $movieService->updateDescription($movie);
             $update = $status ? ++$update : $update;
             ++$counter;
 

@@ -177,6 +177,26 @@ final class EntityListener
 
     private function prePersistMovie(object $entity, ObjectManager $objectManager): void
     {
+        $this->prePersistMovieImage($entity, $objectManager);
+        $this->prePersistMovieDescription($entity, $objectManager);
+    }
+
+    private function prePersistMovieDescription(object $entity, ObjectManager $objectManager): void
+    {
+        unset($objectManager);
+        if (!$entity instanceof Movie) {
+            return;
+        }
+
+        if (!in_array($entity->getDescription(), [null, '', '0'], true)) {
+            return;
+        }
+
+        $this->movieService->updateDescription($entity);
+    }
+
+    private function prePersistMovieImage(object $entity, ObjectManager $objectManager): void
+    {
         unset($objectManager);
         if (!$entity instanceof Movie) {
             return;
@@ -186,7 +206,7 @@ final class EntityListener
             return;
         }
 
-        $this->movieService->update($entity);
+        $this->movieService->updateImage($entity);
     }
 
     private function prePersistPage(object $entity, ObjectManager $objectManager): void

@@ -37,6 +37,32 @@ class MovieService
 
     public function update(Movie $movie): bool
     {
+        $statusImage = $this->updateImage($movie);
+        $statusDescription = $this->updateDescription($movie);
+
+        $status = $statusImage || $statusDescription;
+
+        return $status;
+    }
+
+    public function updateDescription(Movie $movie): bool
+    {   
+        if (!empty($movie->getDescription())) {
+            return false;
+        }
+
+        $tmdb = $this->getDetailsTmdb($movie->getImdb());
+        if (!isset($tmdb['movie_results'][0]['overview'])) {
+            return false;
+        }
+
+        $movie->setDescription($tmdb['movie_results'][0]['overview']);
+
+        return true;
+    }
+
+    public function updateImage(Movie $movie): bool
+    {
         $details = $this->getDetails($movie->getImdb());
         $poster  = $this->getImg($details);
         if ('' === $poster || 'N/A' === $poster) {
@@ -85,7 +111,7 @@ class MovieService
             return null;
         }
 
-        $url      = 'https://api.themoviedb.org/3/find/tt' . $imdbId . '?external_source=imdb_id&language=fr';
+        $url      = 'https://api.themoviedb.org/3/find/tt' . $imdbId . '?external_source=imdb_id&language=fr-FR';
         $response = $this->httpClient->request(
             'GET',
             $url,
