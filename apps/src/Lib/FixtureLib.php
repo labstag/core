@@ -66,14 +66,20 @@ abstract class FixtureLib extends Fixture
         }
     }
 
+    protected function addParagraphHead(object $entity): void
+    {
+        $this->paragraphService->addParagraph($entity, 'head');
+    }
+
     protected function addParagraphText(object $entity): void
     {
         $generator = $this->setFaker();
-        $paragraph = new Paragraph();
-        $paragraph->setType('text');
-        $paragraph->setContent($generator->text(500));
+        $paragraph = $this->paragraphService->addParagraph($entity, 'text');
+        if (is_null($paragraph)) {
+            return;
+        }
 
-        $entity->addParagraph($paragraph);
+        $paragraph->setContent($generator->text(500));
     }
 
     protected function addTagToEntity(object $entity): void

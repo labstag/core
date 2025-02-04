@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
@@ -61,6 +62,8 @@ class ChapterLastNextParagraph extends ParagraphLib
     #[Override]
     public function useIn(): array
     {
-        return $this->useInAll();
+        return [
+            Block::class
+        ];
     }
 }

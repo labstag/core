@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Override;
@@ -44,6 +45,8 @@ class SitemapParagraph extends ParagraphLib
     #[Override]
     public function useIn(): array
     {
-        return $this->useInAll();
+        return [
+            Page::class
+        ];
     }
 }

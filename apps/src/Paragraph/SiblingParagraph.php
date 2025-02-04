@@ -3,16 +3,18 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Story;
+use Labstag\Field\WysiwygField;
+use Labstag\Lib\FrontFormLib;
 use Labstag\Lib\ParagraphLib;
-use Labstag\Repository\StoryRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class LastStoryParagraph extends ParagraphLib
+class SiblingParagraph extends ParagraphLib
 {
     /**
      * @param mixed[] $data
@@ -21,18 +23,18 @@ class LastStoryParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var StoryRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Story::class);
-        $nbr                        = $paragraph->getNbr();
-        $stories                    = $serviceEntityRepositoryLib->findLastByNbr($nbr);
-        $total                      = $serviceEntityRepositoryLib->findTotalEnable();
-        $listing                    = $this->siteService->getPageByType('story');
+        $page = $paragraph->getPage();
+        $childs = $page->getChildren();
+        if (0 == count($childs)) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         $this->setData(
             $paragraph,
             [
-                'listing'   => $listing,
-                'total'     => $total,
-                'stories'   => $stories,
+                'childs'    => $childs,
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]
@@ -46,21 +48,20 @@ class LastStoryParagraph extends ParagraphLib
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-
-        yield TextField::new('title');
-        yield $this->addFieldIntegerNbr();
+        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Description'));
+        yield $wysiwygField;
     }
 
     #[Override]
     public function getName(): string
     {
-        return 'Last story';
+        return 'Page enfante';
     }
 
     #[Override]
     public function getType(): string
     {
-        return 'last-story';
+        return 'sibling';
     }
 
     /**

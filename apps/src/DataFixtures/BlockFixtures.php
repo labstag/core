@@ -41,35 +41,56 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         $objectManager->flush();
     }
 
-    private function addLinks(Block $block): void
+    private function addLinksHeader(Block $block): void
     {
-        $generator = $this->setFaker();
-
-        $count = random_int(1, 5);
-        for ($i = 1; $i <= $count; ++$i) {
+        $page = $this->getPageByTitle('Posts');
+        if (!is_null($page)) {
             $link = new Link();
-            $link->setTitle($generator->sentence(1));
-            $link->setUrl($generator->url);
-            $link->setBlank($generator->boolean);
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[page:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+
+        $page = $this->getPageByTitle('Mes étoiles github');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[page:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+
+        $page = $this->getPageByTitle('Mes derniers films vus');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[page:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+
+        $page = $this->getPageByTitle('Histoires');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[page:' . $page->getId() . ']');
             $block->addLink($link);
         }
     }
 
     private function addLinksFooter(Block $block): void
     {
-        $contact = $this->getPageByTitle('Contact');
-        if (!is_null($contact)) {
+        $page = $this->getPageByTitle('Contact');
+        if (!is_null($page)) {
             $link = new Link();
-            $link->setTitle($contact->getTitle());
-            $link->setUrl('[page:' . $contact->getId() . ']');
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[page:' . $page->getId() . ']');
             $block->addLink($link);
         }
 
-        $contact = $this->getPageByTitle('Plan du site');
-        if (!is_null($contact)) {
+        $page = $this->getPageByTitle('Plan du site');
+        if (!is_null($page)) {
             $link = new Link();
-            $link->setTitle($contact->getTitle());
-            $link->setUrl('[page:' . $contact->getId() . ']');
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[page:' . $page->getId() . ']');
             $block->addLink($link);
         }
     }
@@ -103,7 +124,7 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         $block->setRegion('header');
         $block->setTitle('Header Link');
         $block->setType('links');
-        $this->addLinks($block);
+        $this->addLinksHeader($block);
         yield $block;
 
         $block = new Block();
@@ -128,7 +149,6 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         $block->setRegion('main');
         $block->setTitle('Main Content');
         $block->setType('paragraphs');
-
         $this->addParagraphsHead($block);
         yield $block;
 

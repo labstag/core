@@ -96,6 +96,8 @@ class FormParagraph extends ParagraphLib
     #[Override]
     public function useIn(): array
     {
-        return $this->useInAll();
+        return [
+            Page::class
+        ];
     }
 }
