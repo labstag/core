@@ -1,0 +1,14 @@
+<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+    <div class="wrapper">
+        <div class="content">
+            {{ paragraph.content|raw }}
+        </div>
+        <ul>
+            {% for page in childs %}
+                <li class="page-teaser">
+                    {% include  "teasers/page.html.twig"  with {'page': page} %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>

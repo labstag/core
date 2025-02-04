@@ -2,14 +2,12 @@
 
 namespace Labstag\Paragraph;
 
-use Labstag\Entity\Edito;
-use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Override;
 
-class HeadParagraph extends ParagraphLib
+class HeroParagraph extends ParagraphLib
 {
     /**
      * @param mixed[] $data
@@ -30,13 +28,13 @@ class HeadParagraph extends ParagraphLib
     #[Override]
     public function getName(): string
     {
-        return 'Head';
+        return 'Hero';
     }
 
     #[Override]
     public function getType(): string
     {
-        return 'head';
+        return 'hero';
     }
 
     /**
@@ -46,8 +44,7 @@ class HeadParagraph extends ParagraphLib
     public function useIn(): array
     {
         return [
-            Memo::class,
-            Page::class,
+            Page::class
         ];
     }
 }

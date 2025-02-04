@@ -77,6 +77,7 @@
     "lint:stylelint:fix": "stylelint assets/*.scss --fix",
     "lint:twig": "docker exec -i $($npm_package_config_phpfpm) symfony console lint:twig templates",
     "lint:yaml": "docker exec -i $($npm_package_config_phpfpm) symfony console lint:yaml config translations --parse-tags",
+    "movie:add": "docker exec -i $($npm_package_config_phpfpm) symfony console labstag:movies-add",
     "messenger:consume": "docker exec -i $($npm_package_config_phpfpm) symfony console messenger:consume async -vv",
     "symfony:about": "docker exec -i $($npm_package_config_phpfpm) symfony console about",
     "rector": "docker exec -i $($npm_package_config_phpfpm) symfony composer run rector",
