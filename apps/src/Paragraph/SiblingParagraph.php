@@ -3,13 +3,10 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
-use Labstag\Lib\FrontFormLib;
 use Labstag\Lib\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -23,9 +20,9 @@ class SiblingParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        $page = $paragraph->getPage();
-        $childs = $page->getChildren();
-        if (0 == count($childs)) {
+        $page     = $paragraph->getPage();
+        $children = $page->getChildren();
+        if (0 == count($children)) {
             $this->setShow($paragraph, false);
 
             return;
@@ -34,7 +31,7 @@ class SiblingParagraph extends ParagraphLib
         $this->setData(
             $paragraph,
             [
-                'childs'    => $childs,
+                'childs'    => $children,
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]

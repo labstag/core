@@ -9,7 +9,6 @@ use Faker\Factory;
 use Faker\Generator;
 use Faker\Provider\Youtube;
 use Labstag\Entity\Category;
-use Labstag\Entity\Paragraph;
 use Labstag\Entity\Tag;
 use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
