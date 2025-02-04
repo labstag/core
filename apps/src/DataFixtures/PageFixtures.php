@@ -119,7 +119,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             $star,
             $info,
             $contact,
-            $sitemap
+            $sitemap,
         ];
     }
 
@@ -160,6 +160,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         if (is_null($paragraph)) {
             return;
         }
+
         $paragraph->setTitle('Formulaire de contact');
         $paragraph->setForm('contact');
     }
@@ -170,6 +171,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         if (is_null($paragraph)) {
             return;
         }
+
         $paragraph->setTitle('edito');
     }
 
@@ -184,6 +186,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         if (is_null($paragraph)) {
             return;
         }
+
         $paragraph->setTitle('Dernières news');
         $paragraph->setType('last-news');
         $paragraph->setNbr(4);
@@ -195,6 +198,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         if (is_null($paragraph)) {
             return;
         }
+
         $paragraph->setTitle('Dernière histoires');
         $paragraph->setNbr(4);
     }
@@ -210,6 +214,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         if (is_null($paragraph)) {
             return;
         }
+
         $paragraph->setTitle('Vidéo');
         $paragraph->setType('video');
         $this->setImage($paragraph, 'imgFile');
@@ -247,6 +252,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         if (is_null($paragraph)) {
             return;
         }
+
         $paragraph->setTitle('Derniers posts');
         $paragraph->setNbr(18);
     }
@@ -259,6 +265,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         if (is_null($paragraph)) {
             return;
         }
+
         $paragraph->setTitle('Sitemap');
     }
 
@@ -270,6 +277,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         if (is_null($paragraph)) {
             return;
         }
+
         $paragraph->setTitle('Mes étoiles github');
         $paragraph->setNbr(18);
     }
@@ -295,7 +303,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         if (is_null($paragraph)) {
             return;
         }
-    
+
         $paragraph->setTitle('Dernière histoires');
         $paragraph->setNbr(18);
     }
