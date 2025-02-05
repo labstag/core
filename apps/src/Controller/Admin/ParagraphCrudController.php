@@ -70,6 +70,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         foreach ($fields as $field) {
             yield $field;
         }
+
         $date = $this->addTabDate();
         foreach ($date as $field) {
             yield $field;
