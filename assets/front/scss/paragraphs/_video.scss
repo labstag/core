@@ -1,0 +1,6 @@
+@use './../mixins' as mixins;
+.paragraph_video{
+  .video{
+    @include mixins.video();
+  }
+}

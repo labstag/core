@@ -1,24 +1,18 @@
 doctrine:
   orm:
     mappings:
-      loggable:
-          type: attribute
-          alias: GedmoLoggable
-          prefix: Gedmo\Loggable\Entity
-          dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Loggable/Entity"
-          is_bundle: false
       translatable:
-          type: attribute
-          alias: GedmoTranslatable
-          prefix: Gedmo\Translatable\Entity
-          dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Translatable/Entity"
-          is_bundle: false
+        type: attribute
+        alias: GedmoTranslatable
+        prefix: Gedmo\Translatable\Entity
+        dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Translatable/Entity"
+        is_bundle: false
       tree:
-          type: attribute
-          alias: GedmoTree
-          prefix: Gedmo\Tree\Entity
-          dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Tree/Entity"
-          is_bundle: false
+        type: attribute
+        alias: GedmoTree
+        prefix: Gedmo\Tree\Entity
+        dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Tree/Entity"
+        is_bundle: false
     filters:
       softdeleteable:
         class: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
@@ -147,112 +141,112 @@ doctrine:
         uuid_short: DoctrineExtensions\Query\Mysql\UuidShort
 
 services:
-    # Attribute mapping driver for the Doctrine Extension listeners
-    gedmo.mapping.driver.attribute:
-        class: Gedmo\Mapping\Driver\AttributeReader
+  # Attribute mapping driver for the Doctrine Extension listeners
+  gedmo.mapping.driver.attribute:
+    class: Gedmo\Mapping\Driver\AttributeReader
 
-    # Gedmo Blameable Extension Listener
-    gedmo.listener.blameable:
-        class: Gedmo\Blameable\BlameableListener
-        tags:
-            - { name: doctrine.event_listener, event: 'prePersist' }
-            - { name: doctrine.event_listener, event: 'onFlush' }
-            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
-        calls:
-            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+  # Gedmo Blameable Extension Listener
+  gedmo.listener.blameable:
+    class: Gedmo\Blameable\BlameableListener
+    tags:
+    - { name: doctrine.event_listener, event: 'prePersist' }
+    - { name: doctrine.event_listener, event: 'onFlush' }
+    - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+    calls:
+    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
 
-    # Gedmo IP Traceable Extension Listener
-    gedmo.listener.ip_traceable:
-        class: Gedmo\IpTraceable\IpTraceableListener
-        tags:
-            - { name: doctrine.event_listener, event: 'prePersist' }
-            - { name: doctrine.event_listener, event: 'onFlush' }
-            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
-        calls:
-            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+  # Gedmo IP Traceable Extension Listener
+  gedmo.listener.ip_traceable:
+    class: Gedmo\IpTraceable\IpTraceableListener
+    tags:
+    - { name: doctrine.event_listener, event: 'prePersist' }
+    - { name: doctrine.event_listener, event: 'onFlush' }
+    - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+    calls:
+    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
 
-    # Gedmo Loggable Extension Listener
-    gedmo.listener.loggable:
-        class: Gedmo\Loggable\LoggableListener
-        tags:
-            - { name: doctrine.event_listener, event: 'onFlush' }
-            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
-            - { name: doctrine.event_listener, event: 'postPersist' }
-        calls:
-            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+  # Gedmo Loggable Extension Listener
+  gedmo.listener.loggable:
+    class: Gedmo\Loggable\LoggableListener
+    tags:
+    - { name: doctrine.event_listener, event: 'onFlush' }
+    - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+    - { name: doctrine.event_listener, event: 'postPersist' }
+    calls:
+    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
 
-    # Gedmo Sluggable Extension Listener
-    gedmo.listener.sluggable:
-        class: Gedmo\Sluggable\SluggableListener
-        tags:
-            - { name: doctrine.event_listener, event: 'onFlush' }
-            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
-            - { name: doctrine.event_listener, event: 'prePersist' }
-        calls:
-            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+  # Gedmo Sluggable Extension Listener
+  gedmo.listener.sluggable:
+    class: Gedmo\Sluggable\SluggableListener
+    tags:
+    - { name: doctrine.event_listener, event: 'onFlush' }
+    - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+    - { name: doctrine.event_listener, event: 'prePersist' }
+    calls:
+    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
 
-    # Gedmo Soft Deleteable Extension listener
-    gedmo.listener.soft_deleteable:
-        class: Gedmo\SoftDeleteable\SoftDeleteableListener
-        tags:
-            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
-            - { name: doctrine.event_listener, event: 'onFlush' }
-        calls:
-            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
-            # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
-            - [ setClock, [ '@clock' ] ]
+  # Gedmo Soft Deleteable Extension listener
+  gedmo.listener.soft_deleteable:
+    class: Gedmo\SoftDeleteable\SoftDeleteableListener
+    tags:
+    - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+    - { name: doctrine.event_listener, event: 'onFlush' }
+    calls:
+    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+    # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
+    - [ setClock, [ '@clock' ] ]
 
-    # Gedmo Sortable Extension listener
-    gedmo.listener.sortable:
-        class: Gedmo\Sortable\SortableListener
-        tags:
-            - { name: doctrine.event_listener, event: 'onFlush' }
-            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
-            - { name: doctrine.event_listener, event: 'prePersist' }
-            - { name: doctrine.event_listener, event: 'postPersist' }
-            - { name: doctrine.event_listener, event: 'preUpdate' }
-            - { name: doctrine.event_listener, event: 'postRemove' }
-            - { name: doctrine.event_listener, event: 'postFlush' }
-        calls:
-            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+  # Gedmo Sortable Extension listener
+  gedmo.listener.sortable:
+    class: Gedmo\Sortable\SortableListener
+    tags:
+    - { name: doctrine.event_listener, event: 'onFlush' }
+    - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+    - { name: doctrine.event_listener, event: 'prePersist' }
+    - { name: doctrine.event_listener, event: 'postPersist' }
+    - { name: doctrine.event_listener, event: 'preUpdate' }
+    - { name: doctrine.event_listener, event: 'postRemove' }
+    - { name: doctrine.event_listener, event: 'postFlush' }
+    calls:
+    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
 
-    # Gedmo Timestampable Extension Listener
-    gedmo.listener.timestampable:
-        class: Gedmo\Timestampable\TimestampableListener
-        tags:
-            - { name: doctrine.event_listener, event: 'prePersist' }
-            - { name: doctrine.event_listener, event: 'onFlush' }
-            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
-        calls:
-            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
-            # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
-            - [ setClock, [ '@clock' ] ]
+  # Gedmo Timestampable Extension Listener
+  gedmo.listener.timestampable:
+    class: Gedmo\Timestampable\TimestampableListener
+    tags:
+    - { name: doctrine.event_listener, event: 'prePersist' }
+    - { name: doctrine.event_listener, event: 'onFlush' }
+    - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+    calls:
+    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+    # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
+    - [ setClock, [ '@clock' ] ]
 
-    # Gedmo Translatable Extension Listener
-    gedmo.listener.translatable:
-        class: Gedmo\Translatable\TranslatableListener
-        tags:
-            - { name: doctrine.event_listener, event: 'postLoad' }
-            - { name: doctrine.event_listener, event: 'postPersist' }
-            - { name: doctrine.event_listener, event: 'preFlush' }
-            - { name: doctrine.event_listener, event: 'onFlush' }
-            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
-        calls:
-            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
-            # The Kernel's `locale` parameter is used to configure the default locale for the extension
-            - [ setDefaultLocale, [ 'fr' ] ]
+  # Gedmo Translatable Extension Listener
+  gedmo.listener.translatable:
+    class: Gedmo\Translatable\TranslatableListener
+    tags:
+    - { name: doctrine.event_listener, event: 'postLoad' }
+    - { name: doctrine.event_listener, event: 'postPersist' }
+    - { name: doctrine.event_listener, event: 'preFlush' }
+    - { name: doctrine.event_listener, event: 'onFlush' }
+    - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+    calls:
+    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+    # The Kernel's `locale` parameter is used to configure the default locale for the extension
+    - [ setDefaultLocale, [ 'fr' ] ]
 
-    # Gedmo Tree Extension Listener
-    gedmo.listener.tree:
-        class: Gedmo\Tree\TreeListener
-        tags:
-            - { name: doctrine.event_listener, event: 'prePersist'}
-            - { name: doctrine.event_listener, event: 'preUpdate'}
-            - { name: doctrine.event_listener, event: 'preRemove'}
-            - { name: doctrine.event_listener, event: 'onFlush'}
-            - { name: doctrine.event_listener, event: 'loadClassMetadata'}
-            - { name: doctrine.event_listener, event: 'postPersist'}
-            - { name: doctrine.event_listener, event: 'postUpdate'}
-            - { name: doctrine.event_listener, event: 'postRemove'}
-        calls:
-            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+  # Gedmo Tree Extension Listener
+  gedmo.listener.tree:
+    class: Gedmo\Tree\TreeListener
+    tags:
+    - { name: doctrine.event_listener, event: 'prePersist' }
+    - { name: doctrine.event_listener, event: 'preUpdate' }
+    - { name: doctrine.event_listener, event: 'preRemove' }
+    - { name: doctrine.event_listener, event: 'onFlush' }
+    - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+    - { name: doctrine.event_listener, event: 'postPersist' }
+    - { name: doctrine.event_listener, event: 'postUpdate' }
+    - { name: doctrine.event_listener, event: 'postRemove' }
+    calls:
+    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]

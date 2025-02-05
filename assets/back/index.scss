@@ -1,0 +1,55 @@
+@charset "UTF-8";
+/* stylelint-disable */
+@use "bootstrap/dist/css/bootstrap";
+@use "@fortawesome/fontawesome-free/css/all.min";
+@use 'ckeditor5/ckeditor5';
+/* stylelint-enable */
+@use './../wysiwyg';
+
+.sort-list{
+  li{
+    cursor: move;
+  }
+}
+
+.story-sort,
+.block-sort,
+#paragraph-sort{
+  .fa-arrows-alt{
+    cursor: move;
+  }
+}
+
+.paragraph-header{
+  @extend .accordion-header;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+a{
+  text-decoration: none;
+
+  &.paragraph-edit{
+    @extend .btn;
+    @extend .btn-sm;
+    @extend .btn-primary;
+
+    &::before{
+      @extend .fa-solid;
+      @extend .fa-pen-to-square;
+    }
+  }
+
+  &.paragraph-delete{
+    @extend .btn;
+    @extend .btn-sm;
+    @extend .btn-danger;
+
+    &::before{
+      @extend .fa-solid;
+      @extend .fa-trash;
+    }
+  }
+}

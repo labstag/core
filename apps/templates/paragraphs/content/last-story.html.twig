@@ -1,0 +1,21 @@
+<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+    <div class="wrapper">
+        <div class="title">
+            <h2>{{ paragraph.title }}</h2>
+        </div>
+        <div class="link">
+            <a href="{{ path('front', {'slug': listing.slug}) }}" class="btn">
+                {{ 'See all stories'|trans }}
+            </a>
+        </div>
+        <div class="list">
+            <ul>
+                {% for story in stories %}
+                    <li class="story-teaser">
+                        {% include  "teasers/story.html.twig"  with {'story': story} %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</section>

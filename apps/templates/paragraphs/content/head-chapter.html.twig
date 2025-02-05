@@ -1,0 +1,23 @@
+<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+	<div class="background" style="--image-url: url('{{ site_asset(chapter, 'img') }}')"></div>
+	<div class="wrapper">
+		{% if chapter.tags|length > 0 %}
+			<div class="tags">
+				{% for tag in chapter.tags %}
+					<span class="tag-{{ tag.slug }}">{{ tag.title }}</span>
+				{% endfor %}
+			</div>
+		{% endif %}
+		<div class="title">
+			{{ chapter.title }}
+		</div>
+        {% if configuration.usershow %}
+            <div class="author">
+                {{ 'Author : %author%'|trans({ '%author%': chapter.refstory.refuser.username }) }}
+            </div>
+        {% endif %}
+		<div class="date">
+            {{ 'Creation date : %date%'|trans({ '%date%': chapter.createdat|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
+		</div>
+	</div>
+</section>

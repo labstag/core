@@ -1,0 +1,10 @@
+{% set instance = entity.instance %}
+{% if ea.crud.currentAction == 'detail' %}
+  <ul>
+    {% for chapters in instance.chapters %}
+        <li>{{ chapters.title }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  {{ instance.paragraphs|length }}
+{% endif %}

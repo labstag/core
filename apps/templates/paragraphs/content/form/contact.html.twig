@@ -1,0 +1,16 @@
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+    <div class="wrapper">
+        {% if execute %}
+            <div class="alert" role="alert">
+				<div class="alert__content">{{ paragraph.content|raw }}</div>
+			</div>
+        {% endif %}
+        {{ form_start(form) }}
+        {{ form_row(form.firstname) }}
+        {{ form_row(form.lastname) }}
+        {{ form_row(form.content) }}
+        {{ form_row(form.submit) }}
+        {{ form_end(form) }}
+    </div>
+</section>

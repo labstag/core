@@ -1,0 +1,29 @@
+<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+    <div class="wrapper">
+        <ul>
+            {% for row in chapters %}
+                {% if row.position == position-1 %}
+                    <li>
+                        <a href="{{ site_path(row) }}" class="btn">
+                            {{ 'Previous chapter'|trans }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            <li>
+                <a href="{{ site_path(story) }}" class="btn">
+                    {{ 'Return to summary'|trans }}
+                </a>
+            </li>
+            {% for row in chapters %}
+                {% if row.position == position+1 %}
+                    <li>
+                        <a href="{{ site_path(row) }}" class="btn">
+                            {{ 'Next chapter'|trans }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+</section>

@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+{% block title %}401 Unauthorized{% endblock %}
+{% block body %}
+    <h1>401 Unauthorized</h1>
+    <h2>You are not authorized to access this page.</h2>
+    <p>Check your credentials and try again.</p>
+    <p>Check the URL or <a href="{{ path('front') }}">go back to the homepage</a>.</p>
+{% endblock %}

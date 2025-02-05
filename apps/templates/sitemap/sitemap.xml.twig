@@ -1,0 +1,18 @@
+{% macro sitemap(sitemap) %}
+    {% for url,data in sitemap %}
+		<url>
+			<loc>{{ site_path(data.entity) }}</loc>
+			<lastmod>{{ data.entity.updatedAt|format_datetime(pattern='y-MM-dd')~'T'~data.entity.updatedAt|format_datetime(pattern='H:m:sZ') }}</lastmod>
+            <changefreq>{{ (data.entity.slug == '') ? 'daily' : 'weekly' }}</changefreq>
+            <priority>{{ (data.entity.slug == '') ? '1.0' : '0.5' }}</priority>
+		</url>
+        {% if data.parent is not empty %}
+            {{ _self.sitemap(data.parent) }}
+        {% endif %}
+	{% endfor %}
+{% endmacro %}
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="{{ url('sitemap.xsl') }}"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+	{{ _self.sitemap(sitemap) }}
+</urlset>

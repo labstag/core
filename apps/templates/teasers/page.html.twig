@@ -1,0 +1,7 @@
+<a href="{{ site_path(page) }}" title="{{ page.title|e('html_attr') }}" area-label="{{ page.title|e('html_attr') }}">
+    <div class="background" style="--image-url: url('{{ site_asset(page, 'img') }}')">
+        <div class="title">
+            {{ page.title }}
+        </div>
+    </div>
+</a>

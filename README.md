@@ -27,7 +27,7 @@ docker swarm
 
 Hosts:
 
-- symfony.traefik.me
+- labstag.traefik.me
 
 ## Download
 

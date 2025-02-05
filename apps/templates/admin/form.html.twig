@@ -1,0 +1,37 @@
+{% extends '@EasyAdmin/crud/form_theme.html.twig' %}
+{% block paragraph_row %}
+  {% set instance = ea_crud_form.ea_entity.instance %}
+  {% set urlOrder = ea_url().setController('Labstag\\Controller\\Admin\\ParagraphCrudController').setAction('order') %}
+  {% set controller = ea_crud_form.ea_field.customOptions.get('controller') %}
+  {% include "admin/modal/paragraph.html.twig" %}
+  <div
+    class="paragraph-data"
+    data-url-add="{{ ea_url().setController(controller).setAction('addParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
+    data-url-delete="{{ ea_url().setController(controller).setAction('deleteParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
+    data-url-update="{{ ea_url().setController(controller).setAction('updateParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
+    data-url-list="{{ ea_url().setController(controller).setAction('listParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
+  >
+    {% set list = ea_crud_form.ea_field.customOptions.get('paragraphs') %}
+    <div class="row">
+        <div class="col-md-3">
+            <label class="form-control-label" for="paragraph-select">{{ 'Add paragraph'|trans }}</label>
+        </div>
+        <div class="col-md-3 form-widget">
+            <select id="paragraph-select" name="paragraph-select" class="form-select" data-ea-widget="ea-autocomplete" data-ea-autocomplete-render-items-as-html="false">
+            <option value=""></option>
+            {% for info, code in list %}
+                <option value="{{ code }}">{{ info }}</option>
+            {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <a href="#" id="paragraph-btn" class="btn btn-primary paragraph-btn">{{ 'Add'|trans }}</a>
+            <a href="#" id="paragraph-refresh" class="btn btn-primary paragraph-refresh">{{ 'Refresh'|trans }}</a>
+        </div>
+    </div>
+    <br />
+    <div id="paragraphs-list" class="row paragraphs-list">
+      {% include 'admin/pararaphs.html.twig' with {'paragraphs': instance.paragraphs} %}
+    </div>
+  </div>
+{% endblock %}

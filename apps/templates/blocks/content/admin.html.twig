@@ -1,0 +1,14 @@
+<div id="{{ block_id(block) }}" class="{{ block_class(block) }}">
+    <ul>
+        <li>
+            <a href="{{ url }}" target="_blank">
+                {{ 'Edit (%title%)'|trans({ '%title%': data.entity.title }) }}
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('app_logout') }}">
+                {{ 'Logout'|trans }}
+            </a>
+        </li>
+    </ul>
+</div>

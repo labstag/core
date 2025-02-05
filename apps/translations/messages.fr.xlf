@@ -1,0 +1,906 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="fr" target-language="fr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="PJ8dHq_" resname="vich_uploader.form_label.delete_confirm">
+        <source>vich_uploader.form_label.delete_confirm</source>
+        <target>Supprimer?</target>
+      </trans-unit>
+      <trans-unit id="SWe802A" resname="vich_uploader.link.download">
+        <source>vich_uploader.link.download</source>
+        <target>Télécharger</target>
+      </trans-unit>
+      <trans-unit id="usQ7JQq" resname="Informations">
+        <source>Informations</source>
+        <target>Informations</target>
+      </trans-unit>
+      <trans-unit id="OcNoEti" resname="Repository">
+        <source>Repository</source>
+        <target>Répertoire</target>
+      </trans-unit>
+      <trans-unit id="6EtaWNj" resname="License">
+        <source>License</source>
+        <target>Licence</target>
+      </trans-unit>
+      <trans-unit id="5q6OTdQ" resname="Language">
+        <source>Language</source>
+        <target>Langue</target>
+      </trans-unit>
+      <trans-unit id="qmlifip" resname="Forks">
+        <source>Forks</source>
+        <target>Branches</target>
+      </trans-unit>
+      <trans-unit id="b8YaNt2" resname="Stars">
+        <source>Stars</source>
+        <target>Étoiles</target>
+      </trans-unit>
+      <trans-unit id="i31n61L" resname="Watchers">
+        <source>Watchers</source>
+        <target>Observateurs</target>
+      </trans-unit>
+      <trans-unit id="M59po3Z" resname="Creation date : %date%">
+        <source>Creation date : %date%</source>
+        <target>Date de création : %date%</target>
+      </trans-unit>
+      <trans-unit id="PuEqCWH" resname="Author : %author%">
+        <source>Author : %author%</source>
+        <target>Auteur : %author%</target>
+      </trans-unit>
+      <trans-unit id="HWKMbuw" resname="Number of chapters : %count%">
+        <source>Number of chapters : %count%</source>
+        <target>Nombre de chapitres : %count%</target>
+      </trans-unit>
+      <trans-unit id="B_I2REi" resname="Previous chapter">
+        <source>Previous chapter</source>
+        <target>Chapitre précédent</target>
+      </trans-unit>
+      <trans-unit id="aP_uEWD" resname="Return to summary">
+        <source>Return to summary</source>
+        <target>Retour au sommaire</target>
+      </trans-unit>
+      <trans-unit id="qRbNyIQ" resname="Next chapter">
+        <source>Next chapter</source>
+        <target>Chapitre suivant</target>
+      </trans-unit>
+      <trans-unit id="e_3wPiu" resname="Watch the video">
+        <source>Watch the video</source>
+        <target>Regarder la vidéo</target>
+      </trans-unit>
+      <trans-unit id="VQd71Ie" resname="See all news">
+        <source>See all news</source>
+        <target>Voir toutes les actualités</target>
+      </trans-unit>
+      <trans-unit id="hVhCGW7" resname="See all stories">
+        <source>See all stories</source>
+        <target>Voir toutes les histoires</target>
+      </trans-unit>
+      <trans-unit id="mAGfhQO" resname="Edit (%title%)">
+        <source>Edit (%title%)</source>
+        <target>Modifier (%title%)</target>
+      </trans-unit>
+      <trans-unit id="JKl2Twv" resname="Logout">
+        <source>Logout</source>
+        <target>Déconnexion</target>
+      </trans-unit>
+      <trans-unit id="pz3R2Ga" resname="Trash">
+        <source>Trash</source>
+        <target>Corbeille</target>
+      </trans-unit>
+      <trans-unit id="jbejBJ7" resname="List">
+        <source>List</source>
+        <target>Liste</target>
+      </trans-unit>
+      <trans-unit id="XTK6Gxq" resname="Empty">
+        <source>Empty</source>
+        <target>Vide</target>
+      </trans-unit>
+      <trans-unit id="ZuasJDY" resname="Restore">
+        <source>Restore</source>
+        <target>Restaurer</target>
+      </trans-unit>
+      <trans-unit id="7WMRZ3R" resname="View Page">
+        <source>View Page</source>
+        <target>Voir la page</target>
+      </trans-unit>
+      <trans-unit id="2SVR0W4" resname="W3C Validator">
+        <source>W3C Validator</source>
+        <target>Validateur W3C</target>
+      </trans-unit>
+      <trans-unit id="h6kE862" resname="Change Position">
+        <source>Change Position</source>
+        <target>Changer la position</target>
+      </trans-unit>
+      <trans-unit id="PkfQkeA" resname="Move a chapter">
+        <source>Move a chapter</source>
+        <target>Déplacer un chapitre</target>
+      </trans-unit>
+      <trans-unit id="2qKU_A_" resname="Refuser">
+        <source>Refuser</source>
+        <target>Utilisateur</target>
+      </trans-unit>
+      <trans-unit id="GtGBNUT" resname="Enable">
+        <source>Enable</source>
+        <target>Activer</target>
+      </trans-unit>
+      <trans-unit id="befCKEj" resname="Principal">
+        <source>Principal</source>
+        <target>Principal</target>
+      </trans-unit>
+      <trans-unit id="wmlL5M4" resname="Categories">
+        <source>Categories</source>
+        <target>Catégories</target>
+      </trans-unit>
+      <trans-unit id="37wivZ3" resname="ID">
+        <source>ID</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="ECmoOLZ" resname="SEO">
+        <source>SEO</source>
+        <target>SEO</target>
+      </trans-unit>
+      <trans-unit id=".zZzsFp" resname="Title">
+        <source>Title</source>
+        <target>Titre</target>
+      </trans-unit>
+      <trans-unit id="nTDAnK1" resname="Keywords">
+        <source>Keywords</source>
+        <target>Mots-clés</target>
+      </trans-unit>
+      <trans-unit id="NMmVjl0" resname="Description">
+        <source>Description</source>
+        <target>Description</target>
+      </trans-unit>
+      <trans-unit id="s2.3KZ3" resname="Paragraphs">
+        <source>Paragraphs</source>
+        <target>Paragraphes</target>
+      </trans-unit>
+      <trans-unit id="bcBencE" resname="refuser">
+        <source>refuser</source>
+        <target>Utilisateur</target>
+      </trans-unit>
+      <trans-unit id="wuRP6Yk" resname="Slug">
+        <source>Slug</source>
+        <target>Slug</target>
+      </trans-unit>
+      <trans-unit id="c3JjHHp" resname="Tags">
+        <source>Tags</source>
+        <target>Étiquettes</target>
+      </trans-unit>
+      <trans-unit id="Dz0Nyiu" resname="Links">
+        <source>Links</source>
+        <target>Liens</target>
+      </trans-unit>
+      <trans-unit id="AbWvrhO" resname="Content">
+        <source>Content</source>
+        <target>Contenu</target>
+      </trans-unit>
+      <trans-unit id="DL_wAnF" resname="Type">
+        <source>Type</source>
+        <target>Type</target>
+      </trans-unit>
+      <trans-unit id=".Qke5Dq" resname="stargazers">
+        <source>stargazers</source>
+        <target>Observateurs</target>
+      </trans-unit>
+      <trans-unit id="EcKfzCh" resname="watchers">
+        <source>watchers</source>
+        <target>Veilleurs</target>
+      </trans-unit>
+      <trans-unit id="bIC_PuO" resname="forks">
+        <source>forks</source>
+        <target>Copies</target>
+      </trans-unit>
+      <trans-unit id="Wj6YhLG" resname="Region">
+        <source>Region</source>
+        <target>Région</target>
+      </trans-unit>
+      <trans-unit id="8q3F30o" resname="Position">
+        <source>Position</source>
+        <target>Position</target>
+      </trans-unit>
+      <trans-unit id="vrcHGJ2" resname="Config">
+        <source>Config</source>
+        <target>Configuration</target>
+      </trans-unit>
+      <trans-unit id="aq2eM8Q" resname="Roles">
+        <source>Roles</source>
+        <target>Rôles</target>
+      </trans-unit>
+      <trans-unit id="T67yG3A" resname="Pages">
+        <source>Pages</source>
+        <target>Pages</target>
+      </trans-unit>
+      <trans-unit id="OXGFNN_" resname="Separate pages with commas">
+        <source>Separate pages with commas</source>
+        <target>Séparez les pages par des virgules</target>
+      </trans-unit>
+      <trans-unit id="gyAv_bz" resname="Request Path">
+        <source>Request Path</source>
+        <target>Chemin de la requête</target>
+      </trans-unit>
+      <trans-unit id="bZOKg0B" resname="Show for listed pages">
+        <source>Show for listed pages</source>
+        <target>Afficher pour les pages listées</target>
+      </trans-unit>
+      <trans-unit id="Btcv0RY" resname="Masquer pour les pages listées">
+        <source>Masquer pour les pages listées</source>
+        <target>Masquer pour les pages listées</target>
+      </trans-unit>
+      <trans-unit id="7oKpSxb" resname="History">
+        <source>History</source>
+        <target>Historique</target>
+      </trans-unit>
+      <trans-unit id="Xcvfje6" resname="Page">
+        <source>Page</source>
+        <target>Page</target>
+      </trans-unit>
+      <trans-unit id="imSItxK" resname="Country">
+        <source>Country</source>
+        <target>Pays</target>
+      </trans-unit>
+      <trans-unit id="A6Xxd7y" resname="State">
+        <source>State</source>
+        <target>État</target>
+      </trans-unit>
+      <trans-unit id="P.Z4kj7" resname="Province">
+        <source>Province</source>
+        <target>Province</target>
+      </trans-unit>
+      <trans-unit id="75vLwRH" resname="Community">
+        <source>Community</source>
+        <target>Communauté</target>
+      </trans-unit>
+      <trans-unit id="blDZpHL" resname="Place">
+        <source>Place</source>
+        <target>Lieu</target>
+      </trans-unit>
+      <trans-unit id="eCaDLzG" resname="Postal code">
+        <source>Postal code</source>
+        <target>Code postal</target>
+      </trans-unit>
+      <trans-unit id="VKrWoPi" resname="Image">
+        <source>Image</source>
+        <target>Image</target>
+      </trans-unit>
+      <trans-unit id="w5RgDr9" resname="Fond">
+        <source>Fond</source>
+        <target>Fond</target>
+      </trans-unit>
+      <trans-unit id="PjsxX7B" resname="Parent">
+        <source>Parent</source>
+        <target>Parent</target>
+      </trans-unit>
+      <trans-unit id="1kLm1Gs" resname="Url">
+        <source>Url</source>
+        <target>URL</target>
+      </trans-unit>
+      <trans-unit id="sKE1xPp" resname="Stargazers">
+        <source>Stargazers</source>
+        <target>Observateurs</target>
+      </trans-unit>
+      <trans-unit id="VhxhtYo" resname="Username">
+        <source>Username</source>
+        <target>Nom d'utilisateur</target>
+      </trans-unit>
+      <trans-unit id="JZi_tm0" resname="Email">
+        <source>Email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="GqmFSHc" resname="Password">
+        <source>Password</source>
+        <target>Mot de passe</target>
+      </trans-unit>
+      <trans-unit id="Z9CSKpk" resname="Repeat Password">
+        <source>Repeat Password</source>
+        <target>Répéter le mot de passe</target>
+      </trans-unit>
+      <trans-unit id="Gyrpnv4" resname="Histories">
+        <source>Histories</source>
+        <target>Historiques</target>
+      </trans-unit>
+      <trans-unit id="5gIB7OA" resname="Editos">
+        <source>Editos</source>
+        <target>Éditos</target>
+      </trans-unit>
+      <trans-unit id="G_lfUQe" resname="editos">
+        <source>editos</source>
+        <target>Éditos</target>
+      </trans-unit>
+      <trans-unit id="lWpdmma" resname="memos">
+        <source>memos</source>
+        <target>Mémos</target>
+      </trans-unit>
+      <trans-unit id="r2op1V0" resname="pages">
+        <source>pages</source>
+        <target>Pages</target>
+      </trans-unit>
+      <trans-unit id="2Nx6ENo" resname="posts">
+        <source>posts</source>
+        <target>Articles</target>
+      </trans-unit>
+      <trans-unit id="00W0hxR" resname="Chapters">
+        <source>Chapters</source>
+        <target>Chapitres</target>
+      </trans-unit>
+      <trans-unit id="rDQjPDa" resname="State code">
+        <source>State code</source>
+        <target>Code de l'État</target>
+      </trans-unit>
+      <trans-unit id="5CPJTwc" resname="State name">
+        <source>State name</source>
+        <target>Nom de l'État</target>
+      </trans-unit>
+      <trans-unit id="Ayt4vJ_" resname="Province code">
+        <source>Province code</source>
+        <target>Code de la province</target>
+      </trans-unit>
+      <trans-unit id="ePTXTq7" resname="Province name">
+        <source>Province name</source>
+        <target>Nom de la province</target>
+      </trans-unit>
+      <trans-unit id="iKCXvuV" resname="Community code">
+        <source>Community code</source>
+        <target>Code de la communauté</target>
+      </trans-unit>
+      <trans-unit id="jioZnT0" resname="Community name">
+        <source>Community name</source>
+        <target>Nom de la communauté</target>
+      </trans-unit>
+      <trans-unit id="1R7W0IN" resname="Latitude">
+        <source>Latitude</source>
+        <target>Latitude</target>
+      </trans-unit>
+      <trans-unit id="qYjq8h7" resname="Longitude">
+        <source>Longitude</source>
+        <target>Longitude</target>
+      </trans-unit>
+      <trans-unit id="ezxXOaO" resname="Accuracy">
+        <source>Accuracy</source>
+        <target>Précision</target>
+      </trans-unit>
+      <trans-unit id="02M_HfV" resname="Title format">
+        <source>Title format</source>
+        <target>Format du titre</target>
+      </trans-unit>
+      <trans-unit id="uCtVl2y" resname="Site name">
+        <source>Site name</source>
+        <target>Nom du site</target>
+      </trans-unit>
+      <trans-unit id="naxmhLd" resname="Show user">
+        <source>Show user</source>
+        <target>Afficher l'utilisateur</target>
+      </trans-unit>
+      <trans-unit id="J2Wwgz2" resname="Link user">
+        <source>Link user</source>
+        <target>Lier l'utilisateur</target>
+      </trans-unit>
+      <trans-unit id="N1SzGat" resname="Medias">
+        <source>Medias</source>
+        <target>Médias</target>
+      </trans-unit>
+      <trans-unit id="8oJeBOq" resname="Logo">
+        <source>Logo</source>
+        <target>Logo</target>
+      </trans-unit>
+      <trans-unit id="R0dXQp4" resname="placeholder">
+        <source>placeholder</source>
+        <target>Espace réservé</target>
+      </trans-unit>
+      <trans-unit id="c9N49TA" resname="favicon">
+        <source>favicon</source>
+        <target>Favicon</target>
+      </trans-unit>
+      <trans-unit id="lJaZUJe" resname="Hide for listed pages">
+        <source>Hide for listed pages</source>
+        <target>Masquer pour les pages listées</target>
+      </trans-unit>
+      <trans-unit id="2JP4yCD" resname="Story">
+        <source>Story</source>
+        <target>Histoire</target>
+      </trans-unit>
+      <trans-unit id="Uk0.jCs" resname="States">
+        <source>States</source>
+        <target>États</target>
+      </trans-unit>
+      <trans-unit id="d8oLn3R" resname="Workflow">
+        <source>Workflow</source>
+        <target>Flux de travail</target>
+      </trans-unit>
+      <trans-unit id="5zoRrqi" resname="Position updated">
+        <source>Position updated</source>
+        <target>Position mise à jour</target>
+      </trans-unit>
+      <trans-unit id="Ln7YVD_" resname="%total% file(s) deleted">
+        <source>%total% file(s) deleted</source>
+        <target>%total% fichier(s) supprimé(s)</target>
+      </trans-unit>
+      <trans-unit id="0b6nDKh" resname="Cache cleared">
+        <source>Cache cleared</source>
+        <target>Cache vidé</target>
+      </trans-unit>
+      <trans-unit id="Lo5Tyd8" resname="The status has been successfully changed">
+        <source>The status has been successfully changed</source>
+        <target>Le statut a été modifié avec succès</target>
+      </trans-unit>
+      <trans-unit id="xHsbIh6" resname="Dashboard">
+        <source>Dashboard</source>
+        <target>Tableau de bord</target>
+      </trans-unit>
+      <trans-unit id="tceoGZr" resname="Category">
+        <source>Category</source>
+        <target>Catégorie</target>
+      </trans-unit>
+      <trans-unit id="DxuZnkH" resname="Tag">
+        <source>Tag</source>
+        <target>Étiquette</target>
+      </trans-unit>
+      <trans-unit id="fcdWVrX" resname="New">
+        <source>New</source>
+        <target>Nouveau</target>
+      </trans-unit>
+      <trans-unit id="Jgt911I" resname="Chapter">
+        <source>Chapter</source>
+        <target>Chapitre</target>
+      </trans-unit>
+      <trans-unit id="42BpiMZ" resname="Edito">
+        <source>Edito</source>
+        <target>Édito</target>
+      </trans-unit>
+      <trans-unit id="xt97jHh" resname="Memo">
+        <source>Memo</source>
+        <target>Mémo</target>
+      </trans-unit>
+      <trans-unit id="w.dQP27" resname="Post">
+        <source>Post</source>
+        <target>Publication</target>
+      </trans-unit>
+      <trans-unit id="qzknPLP" resname="Meta">
+        <source>Meta</source>
+        <target>Méta</target>
+      </trans-unit>
+      <trans-unit id="Jh9HUjE" resname="Paragraph">
+        <source>Paragraph</source>
+        <target>Paragraphe</target>
+      </trans-unit>
+      <trans-unit id="3XvGnXJ" resname="Block">
+        <source>Block</source>
+        <target>Bloc</target>
+      </trans-unit>
+      <trans-unit id="qKiRrNv" resname="Géocode">
+        <source>Géocode</source>
+        <target>Géocode</target>
+      </trans-unit>
+      <trans-unit id=".8BOH83" resname="Star">
+        <source>Star</source>
+        <target>Étoile</target>
+      </trans-unit>
+      <trans-unit id="TkiKoB6" resname="User">
+        <source>User</source>
+        <target>Utilisateur</target>
+      </trans-unit>
+      <trans-unit id="IkIkCgL" resname="Options">
+        <source>Options</source>
+        <target>Options</target>
+      </trans-unit>
+      <trans-unit id="SktrpBg" resname="Clear Cache">
+        <source>Clear Cache</source>
+        <target>Vider le cache</target>
+      </trans-unit>
+      <trans-unit id="iMOBY9t" resname="View Site">
+        <source>View Site</source>
+        <target>Voir le site</target>
+      </trans-unit>
+      <trans-unit id="e.aJs1K" resname="My profile">
+        <source>My profile</source>
+        <target>Mon profil</target>
+      </trans-unit>
+      <trans-unit id="Bsubvwg" resname="Route not found">
+        <source>Route not found</source>
+        <target>Route non trouvée</target>
+      </trans-unit>
+      <trans-unit id="zgBhG2L" resname="Data not found">
+        <source>Data not found</source>
+        <target>Données non trouvées</target>
+      </trans-unit>
+      <trans-unit id="qETlmlV" resname="Method not found">
+        <source>Method not found</source>
+        <target>Méthode non trouvée</target>
+      </trans-unit>
+      <trans-unit id="4mK5QAH" resname="Entity not found">
+        <source>Entity not found</source>
+        <target>Entité non trouvée</target>
+      </trans-unit>
+      <trans-unit id="R9ouam1" resname="Email no-reply">
+        <source>Email no-reply</source>
+        <target>Email no-reply</target>
+      </trans-unit>
+      <trans-unit id="vR8Nrrz" resname="Copyright">
+        <source>Copyright</source>
+        <target>Droits d'auteur</target>
+      </trans-unit>
+      <trans-unit id="QUUWirG" resname="code">
+        <source>code</source>
+        <target>code</target>
+      </trans-unit>
+      <trans-unit id="Xjid7TM" resname="html">
+        <source>html</source>
+        <target>html</target>
+      </trans-unit>
+      <trans-unit id="xaZO..k" resname="text">
+        <source>text</source>
+        <target>texte</target>
+      </trans-unit>
+      <trans-unit id="OuuZP.h" resname="Templates">
+        <source>Templates</source>
+        <target>Modèles</target>
+      </trans-unit>
+      <trans-unit id="3Nqz8.3" resname="Creation Date">
+        <source>Creation Date</source>
+        <target>Date de création</target>
+      </trans-unit>
+      <trans-unit id="tQhf744" resname="Last Modified">
+        <source>Last Modified</source>
+        <target>Dernière modification</target>
+      </trans-unit>
+      <trans-unit id="1_MZEgP" resname="Actions">
+        <source>Actions</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="516349u" resname="Save changes">
+        <source>Save changes</source>
+        <target>Sauvegarder les modifications</target>
+      </trans-unit>
+      <trans-unit id="qNghuqo" resname="Close">
+        <source>Close</source>
+        <target>Fermer</target>
+      </trans-unit>
+      <trans-unit id="iIh4lNe" resname="Add paragraph">
+        <source>Add paragraph</source>
+        <target>Ajouter un paragraphe</target>
+      </trans-unit>
+      <trans-unit id="g.hyGgB" resname="Add">
+        <source>Add</source>
+        <target>Ajouter</target>
+      </trans-unit>
+      <trans-unit id="njo9Voz" resname="Refresh">
+        <source>Refresh</source>
+        <target>Rafraîchir</target>
+      </trans-unit>
+      <trans-unit id="1cuPpsS" resname="Date">
+        <source>Date</source>
+        <target>Date</target>
+      </trans-unit>
+      <trans-unit id="Os9AMDG" resname="Shortcode">
+        <source>Shortcode</source>
+        <target>Code court</target>
+      </trans-unit>
+      <trans-unit id="b8IiVjT" resname="first name">
+        <source>first name</source>
+        <target>Prénom</target>
+      </trans-unit>
+      <trans-unit id="gY9iVRc" resname="last name">
+        <source>last name</source>
+        <target>Nom</target>
+      </trans-unit>
+      <trans-unit id="kX4SdCd" resname="content">
+        <source>content</source>
+        <target>Contenu</target>
+      </trans-unit>
+      <trans-unit id="xwjhdjV" resname="You can't ban your own IP">
+        <source>You can't ban your own IP</source>
+        <target>Vous ne pouvez pas interdire votre propre IP</target>
+      </trans-unit>
+      <trans-unit id="uWMHwIq" resname="Ip %ip% banned">
+        <source>Ip %ip% banned</source>
+        <target>Ip %ip% banni</target>
+      </trans-unit>
+      <trans-unit id="PjtzZ_s" resname="url">
+        <source>url</source>
+        <target>URL</target>
+      </trans-unit>
+      <trans-unit id="cyMmfc." resname="domain">
+        <source>domain</source>
+        <target>Domaine</target>
+      </trans-unit>
+      <trans-unit id="_XmQY05" resname="agent">
+        <source>agent</source>
+        <target>Agent</target>
+      </trans-unit>
+      <trans-unit id="7h7takJ" resname="InternetProtocol">
+        <source>InternetProtocol</source>
+        <target>IP</target>
+      </trans-unit>
+      <trans-unit id="cBsMJJa" resname="bot">
+        <source>bot</source>
+        <target>bot</target>
+      </trans-unit>
+      <trans-unit id="jHUPfeo" resname="Information">
+        <source>Information</source>
+        <target>Information</target>
+      </trans-unit>
+      <trans-unit id="PZlaRxK" resname="referer">
+        <source>referer</source>
+        <target>Référent</target>
+      </trans-unit>
+      <trans-unit id="OS4FDUK" resname="httpCode">
+        <source>httpCode</source>
+        <target>Code HTTP</target>
+      </trans-unit>
+      <trans-unit id="RrWwbam" resname="requestMethod">
+        <source>requestMethod</source>
+        <target>Méthode de requête</target>
+      </trans-unit>
+      <trans-unit id="JF3h82r" resname="Request DATA">
+        <source>Request DATA</source>
+        <target>DATA requête</target>
+      </trans-unit>
+      <trans-unit id="QPrPWsB" resname="Ban Ip">
+        <source>Ban Ip</source>
+        <target>Bannir Ip</target>
+      </trans-unit>
+      <trans-unit id="8dn7uBl" resname="Security">
+        <source>Security</source>
+        <target>Sécurité</target>
+      </trans-unit>
+      <trans-unit id="c7tf1F1" resname="Disable empty agent">
+        <source>Disable empty agent</source>
+        <target>Désactiver l'agent vide</target>
+      </trans-unit>
+      <trans-unit id="mfHBFdF" resname="Sitemap">
+        <source>Sitemap</source>
+        <target>Plan du site</target>
+      </trans-unit>
+      <trans-unit id="3jdANMS" resname="Show posts">
+        <source>Show posts</source>
+        <target>Afficher les messages</target>
+      </trans-unit>
+      <trans-unit id="5aLdXCY" resname="Show story">
+        <source>Show story</source>
+        <target>Afficher les histoires</target>
+      </trans-unit>
+      <trans-unit id=".B4GZGJ" resname="Update %update% movie(s)">
+        <source>Update %update% movie(s)</source>
+        <target>Mettre à jour %update% film(s)</target>
+      </trans-unit>
+      <trans-unit id="9L3ofg6" resname="Update Images">
+        <source>Update Images</source>
+        <target>Mise à jour des images</target>
+      </trans-unit>
+      <trans-unit id="P8RFk9N" resname="IMDB Page">
+        <source>IMDB Page</source>
+        <target>Page IMDB</target>
+      </trans-unit>
+      <trans-unit id="3Qn9i_." resname="IP">
+        <source>IP</source>
+        <target>IP</target>
+      </trans-unit>
+      <trans-unit id="xLvJD5U" resname="Raison">
+        <source>Raison</source>
+        <target>Raison</target>
+      </trans-unit>
+      <trans-unit id="ZItBMmh" resname="Template">
+        <source>Template</source>
+        <target>Modèle</target>
+      </trans-unit>
+      <trans-unit id=".ITtP6s" resname="type">
+        <source>type</source>
+        <target>Type</target>
+      </trans-unit>
+      <trans-unit id="dwNJFlV" resname="Update %update% storie(s)">
+        <source>Update %update% storie(s)</source>
+        <target>Mettre à jour %update% stories)</target>
+      </trans-unit>
+      <trans-unit id="88YvLvk" resname="Update PDF">
+        <source>Update PDF</source>
+        <target>Mise à jour du PDF</target>
+      </trans-unit>
+      <trans-unit id="nfHLFGI" resname="Ban IP">
+        <source>Ban IP</source>
+        <target>Bannir IP</target>
+      </trans-unit>
+      <trans-unit id="GAD1tiF" resname="Redirection">
+        <source>Redirection</source>
+        <target>Redirection</target>
+      </trans-unit>
+      <trans-unit id="FVNEIPK" resname="Http error Logs">
+        <source>Http error Logs</source>
+        <target>Log Http error</target>
+      </trans-unit>
+      <trans-unit id="3IwLEZO" resname="Submission">
+        <source>Submission</source>
+        <target>Soumission</target>
+      </trans-unit>
+      <trans-unit id="dlhXlB1" resname="Movie">
+        <source>Movie</source>
+        <target>Film</target>
+      </trans-unit>
+      <trans-unit id="gVu3NZC" resname="Source">
+        <source>Source</source>
+        <target>Source</target>
+      </trans-unit>
+      <trans-unit id="VouEW0v" resname="Destination">
+        <source>Destination</source>
+        <target>Destination</target>
+      </trans-unit>
+      <trans-unit id="wnrq0iH" resname="Regex">
+        <source>Regex</source>
+        <target>Regex</target>
+      </trans-unit>
+      <trans-unit id="bpOjfa9" resname="Story file generated for %title%">
+        <source>Story file generated for %title%</source>
+        <target>Fichier d'histoire généré pour %title%</target>
+      </trans-unit>
+      <trans-unit id="Cffojyq" resname="Watch the trailer">
+        <source>Watch the trailer</source>
+        <target>Regardez la bande annonce</target>
+      </trans-unit>
+      <trans-unit id="QeElJcn" resname="Year : %year%">
+        <source>Year : %year%</source>
+        <target>Année : %year%</target>
+      </trans-unit>
+      <trans-unit id="TOkIQPX" resname="Country : %country%">
+        <source>Country : %country%</source>
+        <target>Pays : %country%</target>
+      </trans-unit>
+      <trans-unit id="ZY55BRO" resname="Color : %color%">
+        <source>Color : %color%</source>
+        <target>Couleur : %color%</target>
+      </trans-unit>
+      <trans-unit id="lW0yd5W" resname="Duration : %duration%">
+        <source>Duration : %duration%</source>
+        <target>Durée : %duration%</target>
+      </trans-unit>
+      <trans-unit id="hkxlwSh" resname="Evaluation : %evaluation%">
+        <source>Evaluation : %evaluation%</source>
+        <target>Evaluation : %evaluation%</target>
+      </trans-unit>
+      <trans-unit id="6OxiPHG" resname="Votes : %votes%">
+        <source>Votes : %votes%</source>
+        <target>Votes : %votes%</target>
+      </trans-unit>
+      <trans-unit id="MP9tsPr" resname="IMDB page for the movie &quot;%title%&quot;">
+        <source>IMDB page for the movie "%title%"</source>
+        <target>Page IMDB pour le film "%title%"</target>
+      </trans-unit>
+      <trans-unit id="LuLiSti" resname="See all movie">
+        <source>See all movie</source>
+        <target>Voir tous les films</target>
+      </trans-unit>
+      <trans-unit id="zZCzfg2" resname="Number">
+        <source>Number</source>
+        <target>Nombre</target>
+      </trans-unit>
+      <trans-unit id="Ey2epSG" resname="Created At">
+        <source>Created At</source>
+        <target>Créer le</target>
+      </trans-unit>
+      <trans-unit id="K9rfydF" resname="Childs">
+        <source>Childs</source>
+        <target>Enfants</target>
+      </trans-unit>
+      <trans-unit id="urLxSz3" resname="updated At">
+        <source>updated At</source>
+        <target>Mis à jour le</target>
+      </trans-unit>
+      <trans-unit id="h6eEHVD" resname="First name">
+        <source>First name</source>
+        <target>Prénom</target>
+      </trans-unit>
+      <trans-unit id="ucunuSv" resname="Last name">
+        <source>Last name</source>
+        <target>Nom</target>
+      </trans-unit>
+      <trans-unit id="t.peHN3" resname="Domain">
+        <source>Domain</source>
+        <target>Domaine</target>
+      </trans-unit>
+      <trans-unit id="i9rXrKI" resname="Agent">
+        <source>Agent</source>
+        <target>Agent</target>
+      </trans-unit>
+      <trans-unit id="pueFZ_W" resname="Bot">
+        <source>Bot</source>
+        <target>Bot</target>
+      </trans-unit>
+      <trans-unit id="L6MNEI3" resname="Referer">
+        <source>Referer</source>
+        <target>Source</target>
+      </trans-unit>
+      <trans-unit id="fN7p3oU" resname="HTTP code">
+        <source>HTTP code</source>
+        <target>Code HTTP</target>
+      </trans-unit>
+      <trans-unit id=".1wAJNa" resname="Request method">
+        <source>Request method</source>
+        <target>Request method</target>
+      </trans-unit>
+      <trans-unit id="QeMjEYl" resname="Placeholder">
+        <source>Placeholder</source>
+        <target>Placeholder</target>
+      </trans-unit>
+      <trans-unit id="uLk5P90" resname="Imdb">
+        <source>Imdb</source>
+        <target>Imdb</target>
+      </trans-unit>
+      <trans-unit id="gVXPSQC" resname="Year">
+        <source>Year</source>
+        <target>Années</target>
+      </trans-unit>
+      <trans-unit id="VjYOput" resname="Color">
+        <source>Color</source>
+        <target>Couleur</target>
+      </trans-unit>
+      <trans-unit id="ROqtv4E" resname="Duration">
+        <source>Duration</source>
+        <target>Durée</target>
+      </trans-unit>
+      <trans-unit id="zGXCiug" resname="Evaluation">
+        <source>Evaluation</source>
+        <target>Evaluation</target>
+      </trans-unit>
+      <trans-unit id="7jkCtO5" resname="Votes">
+        <source>Votes</source>
+        <target>Votes</target>
+      </trans-unit>
+      <trans-unit id="RsQmmc7" resname="Trailer">
+        <source>Trailer</source>
+        <target>Trailer</target>
+      </trans-unit>
+      <trans-unit id="JP0vlmM" resname="Memos">
+        <source>Memos</source>
+        <target>Mémos</target>
+      </trans-unit>
+      <trans-unit id="rbGsuFF" resname="Posts">
+        <source>Posts</source>
+        <target>Articles</target>
+      </trans-unit>
+      <trans-unit id="Tbcnsfe" resname="Code">
+        <source>Code</source>
+        <target>Code</target>
+      </trans-unit>
+      <trans-unit id="Q1sMe9L" resname="HTML">
+        <source>HTML</source>
+        <target>HTML</target>
+      </trans-unit>
+      <trans-unit id="GEEvr2Z" resname="Texte brut">
+        <source>Texte brut</source>
+        <target>Texte brut</target>
+      </trans-unit>
+      <trans-unit id="gdAdrj5" resname="pdf">
+        <source>pdf</source>
+        <target>Pdf</target>
+      </trans-unit>
+      <trans-unit id="Fb8wV55" resname="Geocode">
+        <source>Geocode</source>
+        <target>Géocode</target>
+      </trans-unit>
+      <trans-unit id="EvmrtuR" resname="Action code">
+        <source>Action code</source>
+        <target>Code Action</target>
+      </trans-unit>
+      <trans-unit id="3Eup8Q0" resname="Last count">
+        <source>Last count</source>
+        <target>Dernier décompte</target>
+      </trans-unit>
+      <trans-unit id="TqmNo1i" resname="Form">
+        <source>Form</source>
+        <target>Formulaire</target>
+      </trans-unit>
+      <trans-unit id="JOB257O" resname="Save data in database">
+        <source>Save data in database</source>
+        <target>Enregistrer les données dans la base de données</target>
+      </trans-unit>
+      <trans-unit id="g96uHkg" resname="Confirm message">
+        <source>Confirm message</source>
+        <target>Message de confirmation</target>
+      </trans-unit>
+      <trans-unit id="cnzcOY5" resname="Text">
+        <source>Text</source>
+        <target>Texte</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
