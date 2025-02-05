@@ -50,7 +50,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         yield $this->addFieldID();
         yield TextField::new('source', new TranslatableMessage('Source'));
         yield TextField::new('destination', new TranslatableMessage('Destination'));
-        yield IntegerField::new('action_code', new TranslatableMessage("Action code"));
+        yield IntegerField::new('action_code', new TranslatableMessage('Action code'));
         yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->renderAsSwitch(false)->hideOnForm();
         yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->hideOnIndex();
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
