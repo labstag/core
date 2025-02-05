@@ -11,6 +11,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\ParagraphLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class TextMediaParagraph extends ParagraphLib
 {
@@ -71,8 +72,8 @@ class TextMediaParagraph extends ParagraphLib
     {
         unset($paragraph);
         yield $this->addFieldImageUpload('img', $pageName);
-        yield UrlField::new('url');
-        $wysiwygField = WysiwygField::new('content', 'Texte');
+        yield UrlField::new('url', new TranslatableMessage('Url'));
+        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Texte'));
 
         yield $wysiwygField;
     }

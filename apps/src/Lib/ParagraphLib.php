@@ -28,6 +28,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 use Twig\Environment;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
@@ -77,14 +78,14 @@ abstract class ParagraphLib extends AbstractController
     public function addFieldImageUpload(string $type, string $pageName): TextField|ImageField
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $textField = TextField::new($type . 'File');
+            $textField = TextField::new($type . 'File', new TranslatableMessage('Image'));
             $textField->setFormType(VichImageType::class);
 
             return $textField;
         }
 
         $basePath   = $this->fileService->getBasePath(Paragraph::class, $type . 'File');
-        $imageField = ImageField::new($type);
+        $imageField = ImageField::new($type, new TranslatableMessage('Image'));
         $imageField->setBasePath($basePath);
 
         return $imageField;
@@ -92,7 +93,7 @@ abstract class ParagraphLib extends AbstractController
 
     public function addFieldIntegerNbr(): IntegerField
     {
-        $integerField = IntegerField::new('nbr');
+        $integerField = IntegerField::new('nbr', new TranslatableMessage('Number'));
         $integerField->setFormTypeOption(
             'attr',
             ['min' => 1]

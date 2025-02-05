@@ -45,9 +45,9 @@ class ContactFrontForm extends FrontFormLib
     #[Override]
     public function getFields(array $data): iterable
     {
-        yield TextField::new('firstname', new TranslatableMessage('first name'))->setValue($data['firstname']);
-        yield TextField::new('lastname', new TranslatableMessage('last name'))->setValue($data['lastname']);
-        yield TextareaField::new('content', new TranslatableMessage('content'))->setValue($data['content']);
+        yield TextField::new('firstname', new TranslatableMessage('First name'))->setValue($data['firstname']);
+        yield TextField::new('lastname', new TranslatableMessage('Last name'))->setValue($data['lastname']);
+        yield TextareaField::new('content', new TranslatableMessage('Content'))->setValue($data['content']);
     }
 
     public function getForm(): string

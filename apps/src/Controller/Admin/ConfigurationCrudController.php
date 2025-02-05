@@ -47,7 +47,7 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
         yield BooleanField::new('sitemapStory', new TranslatableMessage('Show story'));
         yield FormField::addTab(new TranslatableMessage('Medias'));
         yield $this->addFieldImageUpload('logo', $pageName, new TranslatableMessage('Logo'));
-        yield $this->addFieldImageUpload('placeholder', $pageName, new TranslatableMessage('placeholder'));
+        yield $this->addFieldImageUpload('placeholder', $pageName, new TranslatableMessage('Placeholder'));
     }
 
     #[Override]

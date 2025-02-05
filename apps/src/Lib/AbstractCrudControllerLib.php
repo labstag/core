@@ -203,7 +203,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addCreatedAtField(): DateTimeField
     {
-        return DateTimeField::new('createdAt')->hideWhenCreating();
+        return DateTimeField::new('createdAt', new TranslatableMessage('Created At'))->hideWhenCreating();
     }
 
     protected function addFieldBoolean(string $propertyName, string $label): BooleanField
@@ -313,8 +313,8 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
             return [];
         }
 
-        $data[]           = FormField::addTab(new TranslatableMessage('refuser'));
-        $associationField = AssociationField::new('refuser', new TranslatableMessage('Refuser'));
+        $data[]           = FormField::addTab(new TranslatableMessage('User'));
+        $associationField = AssociationField::new('refuser', new TranslatableMessage('User'));
         $associationField->autocomplete();
         $associationField->setSortProperty('username');
 
@@ -374,7 +374,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFieldTotalChild(string $type): CollectionField
     {
-        $collectionField = CollectionField::new($type);
+        $collectionField = CollectionField::new($type, new TranslatableMessage('Childs'));
         $collectionField->hideOnForm();
         $collectionField->formatValue(fn ($value): int => count($value));
 
@@ -409,7 +409,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFilterRefUser(Filters $filters): void
     {
-        $filters->add(EntityFilter::new('refuser', new TranslatableMessage('Refuser')));
+        $filters->add(EntityFilter::new('refuser', new TranslatableMessage('User')));
     }
 
     protected function addFilterTags(Filters $filters, string $type): void
@@ -429,7 +429,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addUpdatedAtField(): DateTimeField
     {
-        return DateTimeField::new('updatedAt')->hideWhenCreating();
+        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating();
     }
 
     protected function configureActionsBtn(Actions $actions): void

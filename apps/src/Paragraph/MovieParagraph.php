@@ -11,6 +11,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieParagraph extends ParagraphLib
 {
@@ -62,7 +63,7 @@ class MovieParagraph extends ParagraphLib
     {
         unset($paragraph, $pageName);
 
-        yield TextField::new('title');
+        yield TextField::new('title', new TranslatableMessage('Title'));
         yield $this->addFieldIntegerNbr();
     }
 

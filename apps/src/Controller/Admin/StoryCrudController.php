@@ -58,8 +58,8 @@ class StoryCrudController extends AbstractCrudControllerLib
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('story');
         yield $this->addFieldCategories('story');
-        yield FileField::new('pdf');
-        $collectionField = CollectionField::new('chapters');
+        yield FileField::new('pdf', new TranslatableMessage('pdf'));
+        $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
         $collectionField->onlyOnIndex();
         $collectionField->formatValue(fn ($value): int => count($value));
         yield $collectionField;

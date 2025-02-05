@@ -10,6 +10,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\EditoRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class EditoParagraph extends ParagraphLib
 {
@@ -50,7 +51,7 @@ class EditoParagraph extends ParagraphLib
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-        yield TextField::new('title');
+        yield TextField::new('title', new TranslatableMessage('Title'));
     }
 
     #[Override]

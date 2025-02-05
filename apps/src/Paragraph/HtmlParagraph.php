@@ -9,6 +9,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\ParagraphLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class HtmlParagraph extends ParagraphLib
 {
@@ -36,8 +37,8 @@ class HtmlParagraph extends ParagraphLib
     {
         unset($paragraph, $pageName);
 
-        yield TextField::new('title', 'Titre');
-        $wysiwygField = WysiwygField::new('content', 'Texte');
+        yield TextField::new('title', new TranslatableMessage('Titre'));
+        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Texte'));
         yield $wysiwygField;
     }
 

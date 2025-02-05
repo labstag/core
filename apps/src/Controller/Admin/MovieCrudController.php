@@ -52,15 +52,15 @@ class MovieCrudController extends AbstractCrudControllerLib
     {
         yield $this->addFieldID();
         yield $this->addFieldTitle();
-        yield TextField::new('imdb');
-        yield IntegerField::new('year');
-        yield TextField::new('country');
-        yield TextField::new('color');
-        yield IntegerField::new('duration');
-        yield NumberField::new('evaluation');
-        yield IntegerField::new('votes');
-        yield TextField::new('trailer')->hideOnIndex();
-        yield TextField::new('description')->hideOnIndex();
+        yield TextField::new('imdb', new TranslatableMessage('Imdb'));
+        yield IntegerField::new('year', new TranslatableMessage('Year'));
+        yield TextField::new('country', new TranslatableMessage('Country'));
+        yield TextField::new('color', new TranslatableMessage('Color'));
+        yield IntegerField::new('duration', new TranslatableMessage('Duration'));
+        yield NumberField::new('evaluation', new TranslatableMessage('Evaluation'));
+        yield IntegerField::new('votes', new TranslatableMessage('Votes'));
+        yield TextField::new('trailer', new TranslatableMessage('Trailer'))->hideOnIndex();
+        yield TextField::new('description', new TranslatableMessage('Description'))->hideOnIndex();
         yield $this->addFieldCategories('movie');
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));

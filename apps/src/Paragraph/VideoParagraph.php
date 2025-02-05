@@ -10,6 +10,7 @@ use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class VideoParagraph extends ParagraphLib
 {
@@ -70,7 +71,7 @@ class VideoParagraph extends ParagraphLib
     {
         unset($paragraph);
         yield $this->addFieldImageUpload('img', $pageName);
-        yield UrlField::new('url');
+        yield UrlField::new('url', new TranslatableMessage('Url'));
     }
 
     #[Override]

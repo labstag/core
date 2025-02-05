@@ -11,6 +11,7 @@ use Labstag\Entity\Story;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\StoryRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryListParagraph extends ParagraphLib
 {
@@ -53,7 +54,7 @@ class StoryListParagraph extends ParagraphLib
     {
         unset($paragraph, $pageName);
 
-        yield TextField::new('title');
+        yield TextField::new('title', new TranslatableMessage('Title'));
         yield $this->addFieldIntegerNbr();
     }
 
