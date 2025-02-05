@@ -73,7 +73,7 @@ class TextMediaParagraph extends ParagraphLib
         unset($paragraph);
         yield $this->addFieldImageUpload('img', $pageName);
         yield UrlField::new('url', new TranslatableMessage('Url'));
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Texte'));
+        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Text'));
 
         yield $wysiwygField;
     }

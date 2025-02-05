@@ -35,7 +35,7 @@ class TextParagraph extends ParagraphLib
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Texte'));
+        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Text'));
 
         yield $wysiwygField;
     }

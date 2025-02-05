@@ -37,8 +37,8 @@ class HtmlParagraph extends ParagraphLib
     {
         unset($paragraph, $pageName);
 
-        yield TextField::new('title', new TranslatableMessage('Titre'));
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Texte'));
+        yield TextField::new('title', new TranslatableMessage('Title'));
+        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Content'));
         yield $wysiwygField;
     }
 
