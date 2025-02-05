@@ -1,0 +1,68 @@
+/* stylelint-disable */
+@use "@fortawesome/fontawesome-free/css/all.min";
+@use "flag-icons/css/flag-icons.min";
+@use './scss/reset';
+@use './scss/btn';
+@use './scss/hn';
+@use './scss/pagination';
+@use './../wysiwyg';
+@use './scss/header';
+@use './scss/footer';
+@use './scss/blocks/content' as block-content;
+@use './scss/modal/movie' as modal-movie;
+@use './scss/paragraphs/video' as paragraphs-video;
+@use './scss/paragraphs/sibling' as paragraphs-sibling;
+@use './scss/paragraphs/chapter-list' as paragraphs-chapter-list;
+@use './scss/paragraphs/chapter-lastnext' as paragraphs-chapter-lastnext;
+@use './scss/paragraphs/edito' as paragraphs-edito;
+@use './scss/paragraphs/head' as paragraphs-head;
+@use './scss/paragraphs/head-chapter' as paragraphs-head-chapter;
+@use './scss/paragraphs/head-story' as paragraphs-head-story;
+@use './scss/paragraphs/head-post' as paragraphs-head-post;
+@use './scss/paragraphs/story-list' as paragraphs-story-list;
+@use './scss/paragraphs/last-story' as paragraphs-last-story;
+@use './scss/paragraphs/star' as paragraphs-star;
+@use './scss/paragraphs/movie' as paragraphs-movie;
+@use './scss/paragraphs/movie-slider' as paragraphs-movie-slider;
+@use './scss/paragraphs/last-news' as paragraphs-last-news;
+@use './scss/paragraphs/news-list' as paragraphs-news-list;
+@use './scss/paragraphs/sitemap' as paragraphs-sitemap;
+@use './scss/paragraphs/text' as paragraphs-text;
+@use './scss/paragraphs/img' as paragraphs-img;
+@use './scss/paragraphs/text-img' as paragraphs-text-img;
+@use './scss/paragraphs/text-media' as paragraphs-text-media;
+@use './scss/teasers/movie' as teasers-movie;
+@use './scss/teasers/page' as teasers-page;
+@use './scss/teasers/chapter' as teasers-chapter;
+@use './scss/teasers/story' as teasers-story;
+@use './scss/teasers/star' as teasers-star;
+@use './scss/teasers/post' as teasers-post;
+/* stylelint-enable */
+
+body {
+  background-color: #1f1f1f;
+  color: #d1d7e0;
+}
+a[target="_blank"] {
+  cursor: alias;
+}
+section{
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.wrapper {
+  max-width: 80%;
+  margin: 0 auto;
+
+  .wrapper{
+    max-width: 100%;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}

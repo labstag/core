@@ -1,0 +1,77 @@
+{% set controller = "Labstag\\Controller\\Admin\\ParagraphCrudController" %}
+<table class="table datagrid paragraphs-list {{ paragraphs|length == 0 ? 'datagrid-empty' }}">
+	{% if paragraphs|length != 0 %}
+		<thead>
+			<tr>
+				<th>
+					<i class="fas fa-arrows-alt"></i>
+				</th>
+				{# <th class="header-for-field-select text-left" dir="ltr">
+                    Fond
+                </th> #}
+				<th class="header-for-field-text text-left" dir="ltr">
+					{{ 'Type'|trans }}
+				</th>
+				<th class="header-for-field-datetime text-left" dir="ltr">
+					{{ 'Creation Date'|trans }}
+				</th>
+				<th class="header-for-field-datetime text-left" dir="ltr">
+					{{ 'Last Modified'|trans }}
+				</th>
+				<th class="header-for-field-datetime text-center" dir="ltr">
+					{{ 'Actions'|trans }}
+				</th>
+			</tr>
+		</thead>
+	{% endif %}
+	<tbody id="paragraph-sort" class="{{ paragraphs|length == 0 ? 'body-empty' }}">
+		{% for row in paragraphs %}
+			{% set id = random() %}
+			{% set fond = paragraph_fond(row.fond) %}
+			<tr data-id="{{ row.id }}">
+				<td class="batch-actions-selector">
+					<i class="fas fa-arrows-alt"></i>
+				</td>
+				{# <td data-label="Fond" class=" text-left field-select" dir="ltr">
+                    {% if fond != null %}
+                    <span title="{{ fond|e('html_attr') }}">{{ fond }}</span>
+                    {% else %}
+                    <span class="badge badge-secondary">{{ 'label.null'|trans(domain = 'EasyAdminBundle') }}</span>
+                    {% endif %}
+                </td> #}
+				<td data-label="Type" class=" text-left field-text" dir="ltr">
+					<span title="{{ paragraph_name(row.type)|e('html_attr') }}">{{ paragraph_name(row.type) }}</span>
+				</td>
+				<td data-label="Date de création" class=" text-left field-datetime" dir="ltr">
+					<time datetime="{{ row.createdAt|date('c') }}" title="{{ row.createdAt|date('r') }}">{{ row.createdAt|format_datetime('medium', 'medium') }}</time>
+				</td>
+				<td data-label="Dernière modification" class=" text-left field-datetime" dir="ltr">
+					<time datetime="{{ row.updatedAt|date('c') }}" title="{{ row.updatedAt|date('r') }}">{{ row.updatedAt|format_datetime('medium', 'medium') }}</time>
+				</td>
+				<td class="text-center field-id" dir="ltr">
+					<a class="paragraph-edit" href="{{ ea_url().setController(controller).setAction('edit').setEntityId(row.id).set('iframe', 1) }}" data-target="#paragraph-iframe" data-bs-toggle="modal" data-bs-target="#paragraph-modal" id="paragrapEdit{{ row.id }}"></a>
+					<a class="paragraph-delete" href="#" id="paragrapDelete{{ row.id }}"></a>
+				</td>
+			</tr>
+        {% else %}
+            {% for i in 1..6 %}
+                <tr class="empty-row">
+                    <td><span></span></td>
+                    <td><span></span></td>
+                    <td><span></span></td>
+                    <td><span></span></td>
+                    <td><span></span></td>
+                    <td><span></span></td>
+                </tr>
+
+                {% if 3 == loop.index %}
+                    <tr class="no-results">
+                        <td colspan="100">
+                            {{ t('datagrid.no_results', ea.i18n.translationParameters, 'EasyAdminBundle')|trans }}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+		{% endfor %}
+	</tbody>
+</table>

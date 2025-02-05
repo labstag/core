@@ -1,0 +1,9 @@
+<ul>
+    {% for place in workflow_marked_places(entity.instance) %}
+        <li>
+            {{ place }}
+        </li>
+    {% else %}
+        <li>No </li>
+    {% endfor %}
+</ul>

@@ -1,0 +1,11 @@
+{% set urlImage = paragraph.img ? site_asset(paragraph, 'img') : image %}
+<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+    <div class="wrapper">
+        <div class="text">
+            {{ paragraph.content|raw }}
+        </div>
+        <div class="video" style="--image-url: url('{{ urlImage }}');" data-src="{{ oembed }}">
+            <button class="js-btnvideo">{{ 'Watch the video'|trans }}</button>
+        </div>
+    </div>
+</section>

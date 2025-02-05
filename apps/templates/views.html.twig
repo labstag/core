@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr-FR">
+    <head>
+        <title>{% block title %}{{ site_title(data) }}{% endblock %}</title>
+        {% block meta %}
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            {% if app.request.attributes.get('_route') != '' %}
+                <meta property="og:url" content="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" />
+                <link rel="canonical" href="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" />
+            {% endif %}
+            {{ site_metatags(data) }}
+        {% endblock %}
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('front') }}
+        {% endblock %}
+        {% block javascripts %}
+            {{ encore_entry_script_tags('front') }}
+        {% endblock %}
+        {% for row in header %}
+            {{ site_content(row) }}
+        {% endfor %}
+    </head>
+    <body>
+        {% for balise, blockposition in blocks %}
+            {% if blockposition|length != 0 %}
+                <{{ balise }}>
+                    {% for tab in blockposition %}
+                        {{ debug_begin(tab) }}
+                        {{ block_show(tab) }}
+                        {{ debug_end(tab) }}
+                    {% endfor %}
+                </{{ balise }}>
+            {% endif %}
+        {% endfor %}
+        {% for row in footer %}
+            {{ site_content(row) }}
+        {% endfor %}
+    </body>
+</html>

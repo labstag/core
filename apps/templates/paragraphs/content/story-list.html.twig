@@ -1,0 +1,17 @@
+<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+    <div class="wrapper">
+        <div class="title">
+            {{ paragraph.title }}
+        </div>
+        <ul>
+            {% for story in pagination %}
+                <li class="story-teaser">
+                    {% include  "teasers/story.html.twig"  with {'story': story} %}
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+</section>

@@ -1,0 +1,107 @@
+vich_uploader:
+  db_driver: orm
+  storage: flysystem
+  mappings:
+    avatar:
+      uri_prefix: /uploads/avatar
+      upload_destination: avatar.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: username
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    configuration:
+      uri_prefix: /uploads/configuration
+      upload_destination: configuration.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\OrignameNamer
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    chapter:
+      uri_prefix: /uploads/chapter
+      upload_destination: chapter.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: title
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    movie:
+      uri_prefix: /uploads/movie
+      upload_destination: movie.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: imdb
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    edito:
+      uri_prefix: /uploads/edito
+      upload_destination: edito.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: title
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    story:
+      uri_prefix: /uploads/story
+      upload_destination: story.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: title
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    memo:
+      uri_prefix: /uploads/memo
+      upload_destination: memo.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: title
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    page:
+      uri_prefix: /uploads/page
+      upload_destination: page.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: title
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    paragraph:
+      uri_prefix: /uploads/paragraph
+      upload_destination: paragraph.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\SmartUniqueNamer
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    post:
+      uri_prefix: /uploads/post
+      upload_destination: post.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: title
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true

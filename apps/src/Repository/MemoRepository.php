@@ -4,11 +4,12 @@ namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Memo;
+use Labstag\Lib\ServiceEntityRepositoryLib;
 
-class MemoRepository extends ContentRepository
+class MemoRepository extends ServiceEntityRepositoryLib
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Memo::class);
+        parent::__construct($managerRegistry, Memo::class);
     }
 }

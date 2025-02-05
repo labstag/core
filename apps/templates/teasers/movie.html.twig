@@ -1,0 +1,13 @@
+<a href="javascript:void(0);" class="open-modal" data-movie-id="{{ movie.id }}" title="{{ movie.title|e('html_attr') }}" area-label="{{ movie.title|e('html_attr') }}">
+    <div class="background" style="--image-url: url('{{ site_asset(movie, 'img') }}')"></div>
+    {% if movie.categories|length > 0 %}
+        <div class="categories">
+            {% for categorie in movie.categories %}
+                <span class="categorie-{{ categorie.slug }}">{{ categorie.title }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="title">
+        {{ movie.title }}
+    </div>
+</a>

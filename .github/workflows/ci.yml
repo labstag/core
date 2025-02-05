@@ -1,8 +1,8 @@
-name: ci
+name: Continuous Integration
 on: [push]
 jobs:
-  tests:
-    runs-on: ubuntu-22.04
+  linter:
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -12,31 +12,130 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          ref: 'v2.0'
+          ref: 'v3.1'
           repository: koromerzhin/lampy
           path: lampy
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - name: Install npm dependencies
         run: npm install
       - name: 'set .env'
+        run: 'cp apps/.env.test apps/.env'
+      - name: 'set .env'
         run: 'cp .env.example .env'
+      - name: 'Encore build'
+        run: npm run encore:build
       - name: 'SET BDD'
         run: npm run bdd:mariadb
       - name: 'Launch Lampy'
         run: cd lampy && npm run exec
       - name: 'Image pull'
         run: npm run docker:getpull-image
-      - name: 'create apps'
-        run: npm run create:apps
+      - name: "Launch first composer install"
+        run: npm run composer:install:first
       - name: 'Build containers'
         run: npm run docker:deploy
       - name: 'Waiting'
         run: npm run docker:waiting
       - name: linter readme.md
         run: npm run lint:markdown
-      - name: Cypress run
-        uses: cypress-io/github-action@v5
-      - name: Archive screenshots
-        uses: actions/upload-artifact@v3
+      - name: linter SCSS
+        run: npm run lint:stylelint:fix
+      - name: "install PHAR"
+        run: npm run download:phar
+      - name: 'docker ls'
+        run: npm run docker:ls
+      - name: 'CHOWN'
+        run: sudo chown -R $USER:$USER ./apps
+      - name: 'CHMOD'
+        run: sudo chmod -R 775 ./apps
+      - name: 'Symfony about'
+        run: npm run symfony:about
+      - name: linter PHP Code Sniffer
+        run: npm run lint:phpcs:error
+      - name: linter PHP MD
+        run: npm run lint:phpmd
+      - name: linter PHPMND
+        run: npm run lint:phpmnd
+      - name: Linter twig
+        run: npm run lint:twig
+      - name: Linter yaml
+        run: npm run lint:yaml
+      - name: linter phpstan
+        run: npm run lint:phpstan:0
+  launch:
+    runs-on: ubuntu-24.04
+    needs: linter
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          name: screenshot
+          submodules: recursive
+      - name: Repository lampy
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          ref: 'v3.1'
+          repository: koromerzhin/lampy
+          path: lampy
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install npm dependencies
+        run: npm install
+      - name: 'set .env'
+        run: 'cp apps/.env.test apps/.env'
+      - name: 'set .env'
+        run: 'cp .env.example .env'
+      - name: 'Encore build'
+        run: npm run encore:build
+      - name: 'SET BDD'
+        run: npm run bdd:mariadb
+      - name: 'Launch Lampy'
+        run: cd lampy && npm run exec
+      - name: 'Image pull'
+        run: npm run docker:getpull-image
+      - name: "Launch first composer install"
+        run: npm run composer:install:first
+      - name: 'Build containers'
+        run: npm run docker:deploy
+      - name: 'Waiting'
+        run: npm run docker:waiting
+      - name: 'docker ls'
+        run: npm run docker:ls
+      - name: 'CHOWN'
+        run: sudo chown -R $USER:$USER ./apps/public
+      - name: 'CHMOD'
+        run: sudo chmod -R 775 ./apps/public
+      - name: 'Symfony about'
+        run: npm run symfony:about
+      - name: Add assets
+        run: npm run assets
+      - name: 'BDD MIGRATE'
+        run: npm run doctrine:migrate
+      - name: 'BDD Schema update'
+        run: npm run doctrine:schema:update
+      - name: 'BDD Schema validate'
+        run: npm run doctrine:schema:validate
+      - name: 'Run the fixtures'
+        run: npm run doctrine:fixtures
+      - name: 'Delete old files'
+        run: npm run labstag:delete-oldfiles
+      #   - name: 'Install Labstag'
+      #     run: npm run cmd:labstag:all
+      #   - name: Run Acceptance Tests
+      #     run: npm run test:behat
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        continue-on-error: true
+      - name: Set date and branch variables
+        run: |
+          echo "CURRENT_DATE=$(date '+%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
+          echo "CURRENT_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+      - name: Archive screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: "labstag-${{ env.CURRENT_BRANCH }}_${{ env.CURRENT_DATE }}"
           path: cypress/
+          retention-days: 7

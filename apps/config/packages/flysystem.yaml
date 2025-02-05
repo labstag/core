@@ -1,0 +1,55 @@
+# Read the documentation at https://github.com/thephpleague/flysystem-bundle/blob/master/docs/1-getting-started.md
+flysystem:
+  storages:
+    private.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/private'
+    public.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads'
+    assets.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/assets'
+    configuration.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/configuration'
+    avatar.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/avatar'
+    chapter.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/chapter'
+    movie.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/movie'
+    edito.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/edito'
+    story.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/story'
+    memo.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/memo'
+    page.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/page'
+    paragraph.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/paragraph'
+    post.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/post'

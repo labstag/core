@@ -2,34 +2,53 @@
 
 namespace Labstag\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
-use Labstag\Entity\Admin;
+use Labstag\Entity\User;
 use Labstag\Lib\ServiceEntityRepositoryLib;
+use Override;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
-/**
- * @extends ServiceEntityRepositoryLib<Admin>
- */
 class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Admin::class);
+        parent::__construct($managerRegistry, User::class);
+    }
+
+    public function findUserName(string $field): ?User
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+        $queryBuilder->where('u.username = :username OR u.email = :email');
+
+        $data = new ArrayCollection([new Parameter('username', $field), new Parameter('email', $field)]);
+        $queryBuilder->setParameters($data);
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getOneOrNullResult();
     }
 
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
-    public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
+    #[Override]
+    public function upgradePassword(
+        PasswordAuthenticatedUserInterface $passwordAuthenticatedUser,
+        string $newHashedPassword,
+    ): void
     {
-        if (!$user instanceof Admin) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
+        if (!$passwordAuthenticatedUser instanceof User) {
+            $message = sprintf('Instances of "%s" are not supported.', $passwordAuthenticatedUser::class);
+
+            throw new UnsupportedUserException($message);
         }
 
-        $user->setPassword($newHashedPassword);
-        $this->getEntityManager()->persist($user);
+        $passwordAuthenticatedUser->setPassword($newHashedPassword);
+        $this->getEntityManager()->persist($passwordAuthenticatedUser);
         $this->getEntityManager()->flush();
     }
 }

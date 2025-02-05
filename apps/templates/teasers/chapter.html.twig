@@ -1,0 +1,24 @@
+<a href="{{ site_path(chapter) }}" title="{{ chapter.title|e('html_attr') }}" area-label="{{ chapter.title|e('html_attr') }}">
+    <div class="background" style="--image-url: url('{{ site_asset(chapter, 'img') }}')"></div>
+    {% if chapter.tags|length > 0 %}
+        <div class="tags">
+            {% for tag in chapter.tags %}
+                <span class="tag-{{ tag.slug }}">{{ tag.title }}</span>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="title">
+        {{ chapter.title }}
+    </div>
+    <div class="date">
+        {{ 'Creation date : %date%'|trans({ '%date%': chapter.createdat|date('d/m/Y') }) }}
+    </div>
+    {% if configuration.usershow %}
+        <div class="author">
+            {{ 'Author : %author%'|trans({ '%author%': chapter.refstory.refuser.username }) }}
+        </div>
+    {% endif %}
+    <div class="resume">
+        {{ chapter.resume|raw }}
+    </div>
+</a>

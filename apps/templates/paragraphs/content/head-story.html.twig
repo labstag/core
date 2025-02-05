@@ -1,0 +1,33 @@
+{% set chapters = story.chapters|enable %}
+<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+	<div class="background" style="--image-url: url('{{ site_asset(story, 'img') }}')"></div>
+	<div class="wrapper">
+		{% if story.tags|length > 0 %}
+            <div class="tags">
+                {% for tag in story.tags %}
+                    <span class="tag-{{ tag.slug }}">{{ tag.title }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+		<div class="title">
+			{{ story.title }}
+		</div>
+        {% if configuration.usershow %}
+            <div class="author">
+                {{ 'Author : %author%'|trans({ '%author%': story.refuser.username }) }}
+            </div>
+        {% endif %}
+        <div class="chapters">
+            {{ 'Number of chapters : %count%'|trans({ '%count%': chapters|length }) }}
+        </div>
+		<div class="date">
+            {{ 'Creation date : %date%'|trans({ '%date%': story.createdat|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
+		</div>
+		<div class="pdf">
+			<a href="{{ site_asset(story, 'pdf') }}" target="_blank">
+                <i class="fa-solid fa-file-pdf"></i>
+                {{ story.pdf }}
+            </a>
+		</div>
+	</div>
+</section>
