@@ -4,20 +4,17 @@ export class Movie {
       link.addEventListener('click', (e) => {
         const movieId = e.currentTarget.getAttribute('data-movie-id');
         const modal = document.getElementById('movie-modal-'+movieId);
-        const closeModal = modal.querySelector('.close-modal');
+        const closeModal = modal.querySelector('.close');
 
-        closeModal.addEventListener('click', () => {
-          modal.classList.add('hidden');
+        closeModal.addEventListener('click', (element) => {
+          let modal = element.currentTarget.closest('.modal_movie');
+          this.closeModal(modal);
         });
 
         // Optionnel : fermer la modal en cliquant en dehors
         window.addEventListener('click', (e) => {
           if (e.target === modal) {
-            if (modal.querySelector('.video').dataset.html != '') {
-              modal.querySelector('.video').innerHTML = modal.querySelector('.video').dataset.html;
-            }
-
-            modal.classList.add('hidden');
+            this.closeModal(modal);
           }
         });
 
@@ -25,5 +22,14 @@ export class Movie {
         modal.classList.remove('hidden');
       });
     });
+  }
+
+  closeModal(modal)
+  {
+    if (modal.querySelector('.video') && modal.querySelector('.video').dataset.html != '') {
+      modal.querySelector('.video').innerHTML = modal.querySelector('.video').dataset.html;
+    }
+
+    modal.classList.add('hidden');
   }
 }

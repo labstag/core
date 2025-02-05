@@ -46,6 +46,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
+        yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield TextField::new('source', new TranslatableMessage('Source'));
         yield TextField::new('destination', new TranslatableMessage('Destination'));
@@ -54,8 +55,10 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->hideOnIndex();
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Activé'));
         yield IntegerField::new('last_count', new TranslatableMessage('Dernier compteur'))->hideonForm();
-        yield $this->addCreatedAtField();
-        yield $this->addUpdatedAtField();
+        $date = $this->addTabDate();
+        foreach ($date as $field) {
+            yield $field;
+        }
     }
 
     #[Override]

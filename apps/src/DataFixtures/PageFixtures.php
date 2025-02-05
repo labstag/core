@@ -111,6 +111,20 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $sitemap->setType('page');
         $this->setParagraphsSitemap($sitemap);
 
+        $mentions = new Page();
+        $mentions->setPage($home);
+        $mentions->setTitle('Mentions légales');
+        $mentions->setType('page');
+        $this->addParagraphHead($mentions);
+        $this->addParagraphText($mentions);
+
+        $donneespersonnelles = new Page();
+        $donneespersonnelles->setPage($home);
+        $donneespersonnelles->setTitle('Données personnelles');
+        $donneespersonnelles->setType('page');
+        $this->addParagraphHead($donneespersonnelles);
+        $this->addParagraphText($donneespersonnelles);
+
         return [
             $home,
             $movies,
@@ -120,6 +134,8 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             $info,
             $contact,
             $sitemap,
+            $mentions,
+            $donneespersonnelles,
         ];
     }
 

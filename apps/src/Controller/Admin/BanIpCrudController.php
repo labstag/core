@@ -41,8 +41,10 @@ class BanIpCrudController extends AbstractCrudControllerLib
         yield TextField::new('InternetProtocol', new TranslatableMessage('IP'));
         $wysiwygField = WysiwygField::new('reason', new TranslatableMessage('Raison'));
         yield $wysiwygField;
-        yield $this->addCreatedAtField();
-        yield $this->addUpdatedAtField();
+        $date = $this->addTabDate();
+        foreach ($date as $field) {
+            yield $field;
+        }
     }
 
     public static function getEntityFqcn(): string

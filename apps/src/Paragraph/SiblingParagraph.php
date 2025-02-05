@@ -22,7 +22,14 @@ class SiblingParagraph extends ParagraphLib
         unset($disable);
         $page     = $paragraph->getPage();
         $children = $page->getChildren();
-        if (0 == count($children)) {
+
+        $enables = [];
+        foreach ($children as $child) {
+            if ($child->isEnable()) {
+                $enables[] = $child;
+            }
+        }
+        if (0 == count($enables)) {
             $this->setShow($paragraph, false);
 
             return;
@@ -31,7 +38,7 @@ class SiblingParagraph extends ParagraphLib
         $this->setData(
             $paragraph,
             [
-                'childs'    => $children,
+                'childs'    => $enables,
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]

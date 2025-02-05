@@ -39,8 +39,6 @@ class EditoCrudController extends AbstractCrudControllerLib
         yield $this->addFieldID();
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
         yield $this->addFieldTitle();
-        yield $this->addCreatedAtField();
-        yield $this->addUpdatedAtField();
         yield $this->addFieldImageUpload('img', $pageName);
         $fields = array_merge($this->addFieldParagraphs($pageName), $this->addFieldRefUser());
         foreach ($fields as $field) {
@@ -49,6 +47,10 @@ class EditoCrudController extends AbstractCrudControllerLib
 
         yield $this->addFieldWorkflow();
         yield $this->addFieldState();
+        $date = $this->addTabDate();
+        foreach ($date as $field) {
+            yield $field;
+        }
     }
 
     #[Override]

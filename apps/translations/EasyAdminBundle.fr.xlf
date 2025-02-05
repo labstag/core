@@ -381,6 +381,10 @@
         <source>autocomplete.loading-more-results</source>
         <target>Chargement de résultats supplémentaires…</target>
       </trans-unit>
+      <trans-unit id="3Mq5DeM" resname="files">
+        <source>files</source>
+        <target>__files</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

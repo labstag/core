@@ -43,8 +43,6 @@ class PostCrudController extends AbstractCrudControllerLib
         yield $this->addFieldSlug();
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
         yield $this->addFieldTitle();
-        yield $this->addCreatedAtField();
-        yield $this->addUpdatedAtField();
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('post');
         yield $this->addFieldCategories('post');
@@ -59,6 +57,10 @@ class PostCrudController extends AbstractCrudControllerLib
 
         yield $this->addFieldWorkflow();
         yield $this->addFieldState();
+        $date = $this->addTabDate();
+        foreach ($date as $field) {
+            yield $field;
+        }
     }
 
     #[Override]

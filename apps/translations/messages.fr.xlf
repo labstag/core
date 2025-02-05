@@ -569,6 +569,230 @@
         <source>Refresh</source>
         <target>Rafraîchir</target>
       </trans-unit>
+      <trans-unit id="1cuPpsS" resname="Date">
+        <source>Date</source>
+        <target>__Date</target>
+      </trans-unit>
+      <trans-unit id="Os9AMDG" resname="Shortcode">
+        <source>Shortcode</source>
+        <target>__Shortcode</target>
+      </trans-unit>
+      <trans-unit id="b8IiVjT" resname="first name">
+        <source>first name</source>
+        <target>__first name</target>
+      </trans-unit>
+      <trans-unit id="gY9iVRc" resname="last name">
+        <source>last name</source>
+        <target>__last name</target>
+      </trans-unit>
+      <trans-unit id="kX4SdCd" resname="content">
+        <source>content</source>
+        <target>__content</target>
+      </trans-unit>
+      <trans-unit id="xwjhdjV" resname="You can't ban your own IP">
+        <source>You can't ban your own IP</source>
+        <target>__You can't ban your own IP</target>
+      </trans-unit>
+      <trans-unit id="uWMHwIq" resname="Ip %ip% banned">
+        <source>Ip %ip% banned</source>
+        <target>__Ip %ip% banned</target>
+      </trans-unit>
+      <trans-unit id="PjtzZ_s" resname="url">
+        <source>url</source>
+        <target>__url</target>
+      </trans-unit>
+      <trans-unit id="cyMmfc." resname="domain">
+        <source>domain</source>
+        <target>__domain</target>
+      </trans-unit>
+      <trans-unit id="_XmQY05" resname="agent">
+        <source>agent</source>
+        <target>__agent</target>
+      </trans-unit>
+      <trans-unit id="7h7takJ" resname="InternetProtocol">
+        <source>InternetProtocol</source>
+        <target>__InternetProtocol</target>
+      </trans-unit>
+      <trans-unit id="cBsMJJa" resname="bot">
+        <source>bot</source>
+        <target>__bot</target>
+      </trans-unit>
+      <trans-unit id="jHUPfeo" resname="Information">
+        <source>Information</source>
+        <target>__Information</target>
+      </trans-unit>
+      <trans-unit id="PZlaRxK" resname="referer">
+        <source>referer</source>
+        <target>__referer</target>
+      </trans-unit>
+      <trans-unit id="OS4FDUK" resname="httpCode">
+        <source>httpCode</source>
+        <target>__httpCode</target>
+      </trans-unit>
+      <trans-unit id="RrWwbam" resname="requestMethod">
+        <source>requestMethod</source>
+        <target>__requestMethod</target>
+      </trans-unit>
+      <trans-unit id="JF3h82r" resname="Request DATA">
+        <source>Request DATA</source>
+        <target>__Request DATA</target>
+      </trans-unit>
+      <trans-unit id="QPrPWsB" resname="Ban Ip">
+        <source>Ban Ip</source>
+        <target>__Ban Ip</target>
+      </trans-unit>
+      <trans-unit id="8dn7uBl" resname="Security">
+        <source>Security</source>
+        <target>__Security</target>
+      </trans-unit>
+      <trans-unit id="c7tf1F1" resname="Disable empty agent">
+        <source>Disable empty agent</source>
+        <target>__Disable empty agent</target>
+      </trans-unit>
+      <trans-unit id="mfHBFdF" resname="Sitemap">
+        <source>Sitemap</source>
+        <target>__Sitemap</target>
+      </trans-unit>
+      <trans-unit id="3jdANMS" resname="Show posts">
+        <source>Show posts</source>
+        <target>__Show posts</target>
+      </trans-unit>
+      <trans-unit id="5aLdXCY" resname="Show story">
+        <source>Show story</source>
+        <target>__Show story</target>
+      </trans-unit>
+      <trans-unit id=".B4GZGJ" resname="Update %update% movie(s)">
+        <source>Update %update% movie(s)</source>
+        <target>__Update %update% movie(s)</target>
+      </trans-unit>
+      <trans-unit id="9L3ofg6" resname="Update Images">
+        <source>Update Images</source>
+        <target>__Update Images</target>
+      </trans-unit>
+      <trans-unit id="P8RFk9N" resname="IMDB Page">
+        <source>IMDB Page</source>
+        <target>__IMDB Page</target>
+      </trans-unit>
+      <trans-unit id="3Qn9i_." resname="IP">
+        <source>IP</source>
+        <target>__IP</target>
+      </trans-unit>
+      <trans-unit id="xLvJD5U" resname="Raison">
+        <source>Raison</source>
+        <target>__Raison</target>
+      </trans-unit>
+      <trans-unit id="ZItBMmh" resname="Template">
+        <source>Template</source>
+        <target>__Template</target>
+      </trans-unit>
+      <trans-unit id=".ITtP6s" resname="type">
+        <source>type</source>
+        <target>__type</target>
+      </trans-unit>
+      <trans-unit id="dwNJFlV" resname="Update %update% storie(s)">
+        <source>Update %update% storie(s)</source>
+        <target>__Update %update% storie(s)</target>
+      </trans-unit>
+      <trans-unit id="88YvLvk" resname="Update PDF">
+        <source>Update PDF</source>
+        <target>__Update PDF</target>
+      </trans-unit>
+      <trans-unit id="nfHLFGI" resname="Ban IP">
+        <source>Ban IP</source>
+        <target>__Ban IP</target>
+      </trans-unit>
+      <trans-unit id="GAD1tiF" resname="Redirection">
+        <source>Redirection</source>
+        <target>__Redirection</target>
+      </trans-unit>
+      <trans-unit id="FVNEIPK" resname="Http error Logs">
+        <source>Http error Logs</source>
+        <target>__Http error Logs</target>
+      </trans-unit>
+      <trans-unit id="3IwLEZO" resname="Submission">
+        <source>Submission</source>
+        <target>__Submission</target>
+      </trans-unit>
+      <trans-unit id="dlhXlB1" resname="Movie">
+        <source>Movie</source>
+        <target>__Movie</target>
+      </trans-unit>
+      <trans-unit id="gVu3NZC" resname="Source">
+        <source>Source</source>
+        <target>__Source</target>
+      </trans-unit>
+      <trans-unit id="VouEW0v" resname="Destination">
+        <source>Destination</source>
+        <target>__Destination</target>
+      </trans-unit>
+      <trans-unit id="mn0EIhJ" resname="Code d'action">
+        <source>Code d'action</source>
+        <target>__Code d'action</target>
+      </trans-unit>
+      <trans-unit id="wnrq0iH" resname="Regex">
+        <source>Regex</source>
+        <target>__Regex</target>
+      </trans-unit>
+      <trans-unit id="lcXixd8" resname="Activé">
+        <source>Activé</source>
+        <target>__Activé</target>
+      </trans-unit>
+      <trans-unit id="FexB8XV" resname="Dernier compteur">
+        <source>Dernier compteur</source>
+        <target>__Dernier compteur</target>
+      </trans-unit>
+      <trans-unit id="TqmNo1i" resname="Form">
+        <source>Form</source>
+        <target>__Form</target>
+      </trans-unit>
+      <trans-unit id="JOB257O" resname="Save data in database">
+        <source>Save data in database</source>
+        <target>__Save data in database</target>
+      </trans-unit>
+      <trans-unit id="g96uHkg" resname="Confirm message">
+        <source>Confirm message</source>
+        <target>__Confirm message</target>
+      </trans-unit>
+      <trans-unit id="bpOjfa9" resname="Story file generated for %title%">
+        <source>Story file generated for %title%</source>
+        <target>__Story file generated for %title%</target>
+      </trans-unit>
+      <trans-unit id="Cffojyq" resname="Watch the trailer">
+        <source>Watch the trailer</source>
+        <target>__Watch the trailer</target>
+      </trans-unit>
+      <trans-unit id="QeElJcn" resname="Year : %year%">
+        <source>Year : %year%</source>
+        <target>__Year : %year%</target>
+      </trans-unit>
+      <trans-unit id="TOkIQPX" resname="Country : %country%">
+        <source>Country : %country%</source>
+        <target>__Country : %country%</target>
+      </trans-unit>
+      <trans-unit id="ZY55BRO" resname="Color : %color%">
+        <source>Color : %color%</source>
+        <target>__Color : %color%</target>
+      </trans-unit>
+      <trans-unit id="lW0yd5W" resname="Duration : %duration%">
+        <source>Duration : %duration%</source>
+        <target>__Duration : %duration%</target>
+      </trans-unit>
+      <trans-unit id="hkxlwSh" resname="Evaluation : %evaluation%">
+        <source>Evaluation : %evaluation%</source>
+        <target>__Evaluation : %evaluation%</target>
+      </trans-unit>
+      <trans-unit id="6OxiPHG" resname="Votes : %votes%">
+        <source>Votes : %votes%</source>
+        <target>__Votes : %votes%</target>
+      </trans-unit>
+      <trans-unit id="MP9tsPr" resname="IMDB page for the movie &quot;%title%&quot;">
+        <source>IMDB page for the movie "%title%"</source>
+        <target>__IMDB page for the movie "%title%"</target>
+      </trans-unit>
+      <trans-unit id="LuLiSti" resname="See all movie">
+        <source>See all movie</source>
+        <target>__See all movie</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
