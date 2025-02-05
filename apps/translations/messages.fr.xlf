@@ -771,139 +771,135 @@
       </trans-unit>
       <trans-unit id="zZCzfg2" resname="Number">
         <source>Number</source>
-        <target>__Number</target>
+        <target>Nombre</target>
       </trans-unit>
       <trans-unit id="Ey2epSG" resname="Created At">
         <source>Created At</source>
-        <target>__Created At</target>
+        <target>Créer le</target>
       </trans-unit>
       <trans-unit id="K9rfydF" resname="Childs">
         <source>Childs</source>
-        <target>__Childs</target>
+        <target>Enfants</target>
       </trans-unit>
       <trans-unit id="urLxSz3" resname="updated At">
         <source>updated At</source>
-        <target>__updated At</target>
+        <target>Mis à jour le</target>
       </trans-unit>
       <trans-unit id="h6eEHVD" resname="First name">
         <source>First name</source>
-        <target>__First name</target>
+        <target>Prénom</target>
       </trans-unit>
       <trans-unit id="ucunuSv" resname="Last name">
         <source>Last name</source>
-        <target>__Last name</target>
+        <target>Nom</target>
       </trans-unit>
       <trans-unit id="t.peHN3" resname="Domain">
         <source>Domain</source>
-        <target>__Domain</target>
+        <target>Domaine</target>
       </trans-unit>
       <trans-unit id="i9rXrKI" resname="Agent">
         <source>Agent</source>
-        <target>__Agent</target>
+        <target>Agent</target>
       </trans-unit>
       <trans-unit id="pueFZ_W" resname="Bot">
         <source>Bot</source>
-        <target>__Bot</target>
+        <target>Bot</target>
       </trans-unit>
       <trans-unit id="L6MNEI3" resname="Referer">
         <source>Referer</source>
-        <target>__Referer</target>
+        <target>Source</target>
       </trans-unit>
       <trans-unit id="fN7p3oU" resname="HTTP code">
         <source>HTTP code</source>
-        <target>__HTTP code</target>
+        <target>Code HTTP</target>
       </trans-unit>
       <trans-unit id=".1wAJNa" resname="Request method">
         <source>Request method</source>
-        <target>__Request method</target>
+        <target>Request method</target>
       </trans-unit>
       <trans-unit id="QeMjEYl" resname="Placeholder">
         <source>Placeholder</source>
-        <target>__Placeholder</target>
+        <target>Placeholder</target>
       </trans-unit>
       <trans-unit id="uLk5P90" resname="Imdb">
         <source>Imdb</source>
-        <target>__Imdb</target>
+        <target>Imdb</target>
       </trans-unit>
       <trans-unit id="gVXPSQC" resname="Year">
         <source>Year</source>
-        <target>__Year</target>
+        <target>Années</target>
       </trans-unit>
       <trans-unit id="VjYOput" resname="Color">
         <source>Color</source>
-        <target>__Color</target>
+        <target>Couleur</target>
       </trans-unit>
       <trans-unit id="ROqtv4E" resname="Duration">
         <source>Duration</source>
-        <target>__Duration</target>
+        <target>Durée</target>
       </trans-unit>
       <trans-unit id="zGXCiug" resname="Evaluation">
         <source>Evaluation</source>
-        <target>__Evaluation</target>
+        <target>Evaluation</target>
       </trans-unit>
       <trans-unit id="7jkCtO5" resname="Votes">
         <source>Votes</source>
-        <target>__Votes</target>
+        <target>Votes</target>
       </trans-unit>
       <trans-unit id="RsQmmc7" resname="Trailer">
         <source>Trailer</source>
-        <target>__Trailer</target>
+        <target>Trailer</target>
       </trans-unit>
       <trans-unit id="JP0vlmM" resname="Memos">
         <source>Memos</source>
-        <target>__Memos</target>
+        <target>Mémos</target>
       </trans-unit>
       <trans-unit id="rbGsuFF" resname="Posts">
         <source>Posts</source>
-        <target>__Posts</target>
+        <target>Articles</target>
       </trans-unit>
       <trans-unit id="Tbcnsfe" resname="Code">
         <source>Code</source>
-        <target>__Code</target>
+        <target>Code</target>
       </trans-unit>
       <trans-unit id="Q1sMe9L" resname="HTML">
         <source>HTML</source>
-        <target>__HTML</target>
+        <target>HTML</target>
       </trans-unit>
       <trans-unit id="GEEvr2Z" resname="Texte brut">
         <source>Texte brut</source>
-        <target>__Texte brut</target>
+        <target>Texte brut</target>
       </trans-unit>
       <trans-unit id="gdAdrj5" resname="pdf">
         <source>pdf</source>
-        <target>__pdf</target>
+        <target>Pdf</target>
       </trans-unit>
       <trans-unit id="Fb8wV55" resname="Geocode">
         <source>Geocode</source>
-        <target>__Geocode</target>
+        <target>Géocode</target>
       </trans-unit>
       <trans-unit id="EvmrtuR" resname="Action code">
         <source>Action code</source>
-        <target>__Action code</target>
+        <target>Code Action</target>
       </trans-unit>
       <trans-unit id="3Eup8Q0" resname="Last count">
         <source>Last count</source>
-        <target>__Last count</target>
+        <target>Dernier décompte</target>
       </trans-unit>
       <trans-unit id="TqmNo1i" resname="Form">
         <source>Form</source>
-        <target>__Form</target>
+        <target>Formulaire</target>
       </trans-unit>
       <trans-unit id="JOB257O" resname="Save data in database">
         <source>Save data in database</source>
-        <target>__Save data in database</target>
+        <target>Enregistrer les données dans la base de données</target>
       </trans-unit>
       <trans-unit id="g96uHkg" resname="Confirm message">
         <source>Confirm message</source>
-        <target>__Confirm message</target>
+        <target>Message de confirmation</target>
       </trans-unit>
-      <trans-unit id="uezKhds" resname="Titre">
-        <source>Titre</source>
-        <target>__Titre</target>
-      </trans-unit>
-      <trans-unit id="O9XwYZT" resname="Texte">
-        <source>Texte</source>
-        <target>__Texte</target>
+      <trans-unit id="cnzcOY5" resname="Text">
+        <source>Text</source>
+        <target>Texte</target>
       </trans-unit>
     </body>
   </file>
