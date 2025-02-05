@@ -85,49 +85,61 @@ class LinksBlock extends BlockLib
     {
         $links = $block->getLinks();
         $data  = [];
-        foreach ($links as $link) {
-            $entity = clone $link;
-            $entity->setUrl($this->correctionUrl($entity->getUrl()));
+        foreach ($links as $row) {
+            $link   = clone $row;
+            $entity = $this->getEntityByTagUrl($link->getUrl());
+            if (!is_object($entity)) {
+                $data[] = $link;
+                continue;
+            }
 
-            $data[] = $entity;
+            if (!$entity->isEnable()) {
+                continue;
+            }
+
+            $link->setUrl(
+                $this->router->generate(
+                    'front',
+                    [
+                        'slug' => $this->siteService->getSlugByEntity($entity),
+                    ]
+                )
+            );
+
+            $data[] = $link;
         }
 
         return $data;
     }
 
-    private function correctionUrl(string $url): ?string
+    private function getEntityByTagUrl(string $object): mixed
     {
-        // Regex \[page:(.*)]
-        $url = preg_replace_callback(
-            '/\[page:(.*?)]/',
-            fn ($matches): ?string => $this->getEntityUrl(Page::class, $matches[1]),
-            $url
-        );
-        $url = preg_replace_callback(
-            '/\[post:(.*?)]/',
-            fn ($matches): ?string => $this->getEntityUrl(Post::class, $matches[1]),
-            (string) $url
-        );
+        preg_match('/\[pageurl:(.*?)]/', $object, $matchespage);
+        preg_match('/\[posturl:(.*?)]/', $object, $matchespost);
+        preg_match('/\[storyurl:(.*?)]/', $object, $matchesstory);
 
-        return preg_replace_callback(
-            '/\[story:(.*?)]/',
-            fn ($matches): ?string => $this->getEntityUrl(Story::class, $matches[1]),
-            (string) $url
-        );
+        if (isset($matchespage[1])) {
+            return $this->getEntity(Page::class, $matchespage[1]);
+        }
+
+        if (isset($matchespost[1])) {
+            return $this->getEntity(Post::class, $matchespost[1]);
+        }
+
+        if (isset($matchesstory[1])) {
+            return $this->getEntity(Story::class, $matchesstory[1]);
+        }
+
+        return $object;
     }
 
-    private function getEntityUrl(string $entity, string $id): ?string
+    private function getEntity(string $entity, string $id): ?object
     {
         $data = $this->getRepository($entity)->find($id);
         if (is_null($data)) {
             return null;
         }
 
-        $slug = $this->siteService->getSlugByEntity($data);
-
-        return $this->router->generate(
-            'front',
-            ['slug' => $slug]
-        );
+        return $data;
     }
 }

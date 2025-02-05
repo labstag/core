@@ -47,7 +47,7 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         if (!is_null($page)) {
             $link = new Link();
             $link->setTitle($page->getTitle());
-            $link->setUrl('[page:' . $page->getId() . ']');
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
             $block->addLink($link);
         }
 
@@ -55,7 +55,7 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         if (!is_null($page)) {
             $link = new Link();
             $link->setTitle($page->getTitle());
-            $link->setUrl('[page:' . $page->getId() . ']');
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
             $block->addLink($link);
         }
 
@@ -63,7 +63,7 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         if (!is_null($page)) {
             $link = new Link();
             $link->setTitle($page->getTitle());
-            $link->setUrl('[page:' . $page->getId() . ']');
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
             $block->addLink($link);
         }
 
@@ -71,18 +71,18 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         if (!is_null($page)) {
             $link = new Link();
             $link->setTitle($page->getTitle());
-            $link->setUrl('[page:' . $page->getId() . ']');
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
             $block->addLink($link);
         }
     }
 
-    private function addLinksFooter(Block $block): void
+    private function addLinksFooter1(Block $block): void
     {
         $page = $this->getPageByTitle('Contact');
         if (!is_null($page)) {
             $link = new Link();
             $link->setTitle($page->getTitle());
-            $link->setUrl('[page:' . $page->getId() . ']');
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
             $block->addLink($link);
         }
 
@@ -90,7 +90,26 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         if (!is_null($page)) {
             $link = new Link();
             $link->setTitle($page->getTitle());
-            $link->setUrl('[page:' . $page->getId() . ']');
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+    }
+
+    private function addLinksFooter2(Block $block): void
+    {
+        $page = $this->getPageByTitle('Mentions légales');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+
+        $page = $this->getPageByTitle('Données personnelles');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
             $block->addLink($link);
         }
     }
@@ -184,7 +203,14 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         $block->setRegion('footer');
         $block->setTitle('Footer Link');
         $block->setType('links');
-        $this->addLinksFooter($block);
+        $this->addLinksFooter1($block);
+        yield $block;
+
+        $block = new Block();
+        $block->setRegion('footer');
+        $block->setTitle('Footer Link');
+        $block->setType('links');
+        $this->addLinksFooter2($block);
         yield $block;
     }
 

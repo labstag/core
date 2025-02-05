@@ -30,13 +30,15 @@ class SubmissionCrudController extends AbstractCrudControllerLib
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addFieldID();
         yield TextField::new('type', new TranslatableMessage('type'));
-        yield $this->addCreatedAtField();
-        yield $this->addUpdatedAtField();
         if (Action::DETAIL === $pageName) {
             $fields = $this->addFieldsSubmission($currentEntity);
             foreach ($fields as $field) {
                 yield $field;
             }
+        }
+        $date = $this->addTabDate();
+        foreach ($date as $field) {
+            yield $field;
         }
     }
 

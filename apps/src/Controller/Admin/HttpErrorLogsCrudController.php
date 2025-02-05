@@ -105,8 +105,6 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         yield IntegerField::new('httpCode', new TranslatableMessage('httpCode'));
         yield TextField::new('requestMethod', new TranslatableMessage('requestMethod'));
         yield SameField::new('nbr');
-        yield $this->addCreatedAtField();
-        yield $this->addUpdatedAtField();
         if (!is_null($currentEntity)) {
             $data      = $currentEntity->getRequestData();
             $datafield = ArrayField::new('data', new TranslatableMessage('Request DATA'));
@@ -119,6 +117,10 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
 
         $fields = array_merge($this->addFieldRefUser());
         foreach ($fields as $field) {
+            yield $field;
+        }
+        $date = $this->addTabDate();
+        foreach ($date as $field) {
             yield $field;
         }
     }

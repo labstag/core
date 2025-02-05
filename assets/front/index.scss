@@ -4,13 +4,12 @@
 @use './scss/reset';
 @use './scss/btn';
 @use './scss/hn';
-@use './scss/modal';
 @use './scss/pagination';
 @use './../wysiwyg';
 @use './scss/header';
 @use './scss/footer';
 @use './scss/blocks/content' as block-content;
-@use './scss/modal/video' as modal-video;
+@use './scss/modal/movie' as modal-movie;
 @use './scss/paragraphs/video' as paragraphs-video;
 @use './scss/paragraphs/sibling' as paragraphs-sibling;
 @use './scss/paragraphs/chapter-list' as paragraphs-chapter-list;

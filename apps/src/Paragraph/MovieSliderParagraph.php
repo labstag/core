@@ -20,12 +20,18 @@ class MovieSliderParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
+        $listing = $this->siteService->getPageByType('movie');
+        if (!$listing->isEnable()) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         /** @var MovieRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
         $nbr                        = $paragraph->getNbr();
         $title                      = $paragraph->getTitle();
         $movies                     = $serviceEntityRepositoryLib->findLastByNbr($nbr);
-        $listing                    = $this->siteService->getPageByType('movie');
         $this->setData(
             $paragraph,
             [

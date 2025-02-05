@@ -194,9 +194,16 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->redirect($url);
     }
 
+    protected function addTabDate(): iterable
+    {
+        yield FormField::addTab(new TranslatableMessage('Date'));
+        yield $this->addCreatedAtField();
+        yield $this->addUpdatedAtField();
+    }
+
     protected function addCreatedAtField(): DateTimeField
     {
-        return DateTimeField::new('createdAt')->hideOnForm();
+        return DateTimeField::new('createdAt')->hideWhenCreating();
     }
 
     protected function addFieldBoolean(string $propertyName, string $label): BooleanField
@@ -422,7 +429,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addUpdatedAtField(): DateTimeField
     {
-        return DateTimeField::new('updatedAt')->hideOnForm();
+        return DateTimeField::new('updatedAt')->hideWhenCreating();
     }
 
     protected function configureActionsBtn(Actions $actions): void

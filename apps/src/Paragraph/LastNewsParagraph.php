@@ -21,12 +21,20 @@ class LastNewsParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
+        $listing = $this->siteService->getPageByType('post');
         /** @var PostRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Post::class);
+        $total                      = $serviceEntityRepositoryLib->findTotalEnable();
+        if (!$listing->isEnable() || $total == 0) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
+
         $nbr                        = $paragraph->getNbr();
         $news                       = $serviceEntityRepositoryLib->findLastByNbr($nbr);
         $total                      = $serviceEntityRepositoryLib->findTotalEnable();
-        $listing                    = $this->siteService->getPageByType('post');
         $this->setData(
             $paragraph,
             [

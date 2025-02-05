@@ -21,12 +21,18 @@ class LastStoryParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
+        $listing = $this->siteService->getPageByType('story');
         /** @var StoryRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Story::class);
+        $total                      = $serviceEntityRepositoryLib->findTotalEnable();
+        if (!$listing->isEnable() || $total == 0) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         $nbr                        = $paragraph->getNbr();
         $stories                    = $serviceEntityRepositoryLib->findLastByNbr($nbr);
-        $total                      = $serviceEntityRepositoryLib->findTotalEnable();
-        $listing                    = $this->siteService->getPageByType('story');
         $this->setData(
             $paragraph,
             [

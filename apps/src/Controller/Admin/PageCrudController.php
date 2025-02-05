@@ -56,8 +56,6 @@ class PageCrudController extends AbstractCrudControllerLib
 
         yield $this->addFieldTitle();
         yield AssociationField::new('page', new TranslatableMessage('Page'))->autocomplete();
-        yield $this->addCreatedAtField();
-        yield $this->addUpdatedAtField();
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('page');
         yield $this->addFieldCategories('page');
@@ -72,6 +70,10 @@ class PageCrudController extends AbstractCrudControllerLib
 
         yield $this->addFieldWorkflow();
         yield $this->addFieldState();
+        $date = $this->addTabDate();
+        foreach ($date as $field) {
+            yield $field;
+        }
     }
 
     #[Override]

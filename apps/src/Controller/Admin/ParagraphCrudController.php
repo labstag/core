@@ -52,6 +52,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
+        yield $this->addTabPrincipal();
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addFieldID();
         $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'));
@@ -65,10 +66,12 @@ class ParagraphCrudController extends AbstractCrudControllerLib
 
         yield $textField;
         yield ParagraphParentField::new('parent', new TranslatableMessage('Parent'));
-        yield $this->addCreatedAtField();
-        yield $this->addUpdatedAtField();
         $fields = $this->paragraphService->getFields($currentEntity, $pageName);
         foreach ($fields as $field) {
+            yield $field;
+        }
+        $date = $this->addTabDate();
+        foreach ($date as $field) {
             yield $field;
         }
     }

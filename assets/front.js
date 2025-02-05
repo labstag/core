@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', function () {
   svg4everybody();
   new Video();
   new Slider(
-    '.swiper',
-    '.swiper-button-next',
-    '.swiper-button-prev'
+    '.swiper-movie',
+    '.swiper-movie-button-next',
+    '.swiper-movie-button-prev'
   );
   new Movie();
 });
