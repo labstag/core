@@ -29,6 +29,7 @@ class SiblingParagraph extends ParagraphLib
                 $enables[] = $child;
             }
         }
+
         if (0 == count($enables)) {
             $this->setShow($paragraph, false);
 

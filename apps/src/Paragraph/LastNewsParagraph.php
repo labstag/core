@@ -31,7 +31,6 @@ class LastNewsParagraph extends ParagraphLib
             return;
         }
 
-
         $nbr                        = $paragraph->getNbr();
         $news                       = $serviceEntityRepositoryLib->findLastByNbr($nbr);
         $total                      = $serviceEntityRepositoryLib->findTotalEnable();

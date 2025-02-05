@@ -36,6 +36,7 @@ class SubmissionCrudController extends AbstractCrudControllerLib
                 yield $field;
             }
         }
+
         $date = $this->addTabDate();
         foreach ($date as $field) {
             yield $field;
