@@ -44,12 +44,12 @@ class TemplateCrudController extends AbstractCrudControllerLib
         unset($pageName);
         yield $this->addFieldID();
         yield $this->addFieldTitle();
-        $textField = TextField::new('code', new TranslatableMessage('code'));
+        $textField = TextField::new('code', new TranslatableMessage('Code'));
         $textField->setDisabled(true);
 
         yield $textField;
-        $wysiwygField  = WysiwygField::new('html', new TranslatableMessage('html'))->onlyOnForms();
-        $textareaField = TextareaField::new('text', new TranslatableMessage('text'))->onlyOnForms();
+        $wysiwygField  = WysiwygField::new('html', new TranslatableMessage('HTML'))->onlyOnForms();
+        $textareaField = TextareaField::new('text', new TranslatableMessage('Texte brut'))->onlyOnForms();
 
         if (!is_null($currentEntity)) {
             $template = $this->emailService->get($currentEntity->getCode());

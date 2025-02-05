@@ -50,11 +50,11 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         yield $this->addFieldID();
         yield TextField::new('source', new TranslatableMessage('Source'));
         yield TextField::new('destination', new TranslatableMessage('Destination'));
-        yield IntegerField::new('action_code', new TranslatableMessage("Code d'action"));
+        yield IntegerField::new('action_code', new TranslatableMessage("Action code"));
         yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->renderAsSwitch(false)->hideOnForm();
         yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->hideOnIndex();
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Activé'));
-        yield IntegerField::new('last_count', new TranslatableMessage('Dernier compteur'))->hideonForm();
+        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
+        yield IntegerField::new('last_count', new TranslatableMessage('Last count'))->hideonForm();
         $date = $this->addTabDate();
         foreach ($date as $field) {
             yield $field;

@@ -80,11 +80,11 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         $maxLength = Crud::PAGE_DETAIL === $pageName ? 1024 : 32;
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
-        yield TextField::new('url', new TranslatableMessage('url'))->setMaxLength($maxLength);
-        yield TextField::new('domain', new TranslatableMessage('domain'))->hideOnIndex();
-        yield TextField::new('agent', new TranslatableMessage('agent'))->setMaxLength($maxLength);
-        yield TextField::new('internetProtocol', new TranslatableMessage('InternetProtocol'));
-        yield IsBotField::new('bot', new TranslatableMessage('bot'));
+        yield TextField::new('url', new TranslatableMessage('Url'))->setMaxLength($maxLength);
+        yield TextField::new('domain', new TranslatableMessage('Domain'))->hideOnIndex();
+        yield TextField::new('agent', new TranslatableMessage('Agent'))->setMaxLength($maxLength);
+        yield TextField::new('internetProtocol', new TranslatableMessage('IP'));
+        yield IsBotField::new('bot', new TranslatableMessage('Bot'));
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         if (!is_null($currentEntity)) {
             $deviceDetector = new DeviceDetector($currentEntity->getAgent());
@@ -101,10 +101,10 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
             yield $info;
         }
 
-        yield TextField::new('referer', new TranslatableMessage('referer'))->setMaxLength($maxLength);
-        yield IntegerField::new('httpCode', new TranslatableMessage('httpCode'));
-        yield TextField::new('requestMethod', new TranslatableMessage('requestMethod'));
-        yield SameField::new('nbr');
+        yield TextField::new('referer', new TranslatableMessage('Referer'))->setMaxLength($maxLength);
+        yield IntegerField::new('httpCode', new TranslatableMessage('HTTP code'));
+        yield TextField::new('requestMethod', new TranslatableMessage('Request method'));
+        yield SameField::new('nbr', new TranslatableMessage('Number'));
         if (!is_null($currentEntity)) {
             $data      = $currentEntity->getRequestData();
             $datafield = ArrayField::new('data', new TranslatableMessage('Request DATA'));

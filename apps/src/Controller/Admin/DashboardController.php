@@ -94,7 +94,7 @@ class DashboardController extends AbstractDashboardController
             BlockCrudController::getEntityFqcn()
         );
         yield MenuItem::linkToCrud(
-            new TranslatableMessage('Géocode'),
+            new TranslatableMessage('Geocode'),
             'fas fa-map-signs',
             GeoCodeCrudController::getEntityFqcn()
         );

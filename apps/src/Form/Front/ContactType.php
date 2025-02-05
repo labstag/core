@@ -21,7 +21,7 @@ class ContactType extends AbstractType
             TextType::class,
             [
                 'required' => false,
-                'label'    => 'First name',
+                'label'    => new TranslatableMessage('First name'),
             ]
         );
         $formBuilder->add(
@@ -29,7 +29,7 @@ class ContactType extends AbstractType
             TextType::class,
             [
                 'required' => false,
-                'label'    => 'Last name',
+                'label'    => new TranslatableMessage('Last name'),
             ]
         );
         $formBuilder->add(
@@ -37,7 +37,7 @@ class ContactType extends AbstractType
             TextareaType::class,
             [
                 'required' => false,
-                'label'    => 'Content',
+                'label'    => new TranslatableMessage('Content'),
             ]
         );
         $formBuilder->add('submit', SubmitType::class);

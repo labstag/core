@@ -82,10 +82,10 @@ class UserCrudController extends AbstractCrudControllerLib
         );
 
         $tab = [
-            'editos' => new TranslatableMessage('editos'),
-            'memos'  => new TranslatableMessage('memos'),
-            'pages'  => new TranslatableMessage('pages'),
-            'posts'  => new TranslatableMessage('posts'),
+            'editos' => new TranslatableMessage('Editos'),
+            'memos'  => new TranslatableMessage('Memos'),
+            'pages'  => new TranslatableMessage('Pages'),
+            'posts'  => new TranslatableMessage('Posts'),
         ];
         foreach ($tab as $key => $label) {
             $collectionField = CollectionField::new($key, $label);

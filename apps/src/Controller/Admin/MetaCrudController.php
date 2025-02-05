@@ -31,7 +31,7 @@ class MetaCrudController extends AbstractCrudControllerLib
         yield $this->addFieldTitle();
         yield TextField::new('keywords', new TranslatableMessage('Keywords'));
         yield TextField::new('description', new TranslatableMessage('Description'));
-        yield MetaParentField::new('parent', 'Parent');
+        yield MetaParentField::new('parent', new TranslatableMessage('Parent'));
         $date = $this->addTabDate();
         foreach ($date as $field) {
             yield $field;

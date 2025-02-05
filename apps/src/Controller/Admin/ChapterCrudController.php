@@ -91,7 +91,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
 
     private function addFieldRefStory(): AssociationField
     {
-        $associationField = AssociationField::new('refstory')->autocomplete();
+        $associationField = AssociationField::new('refstory', new TranslatableMessage('Story'))->autocomplete();
         $user             = $this->getUser();
         $roles            = $user->getRoles();
         if (!in_array('ROLE_SUPER_ADMIN', $roles)) {
