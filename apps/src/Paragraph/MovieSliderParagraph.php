@@ -22,7 +22,7 @@ class MovieSliderParagraph extends ParagraphLib
     {
         unset($disable);
         $listing = $this->siteService->getPageByType('movie');
-        if (!$listing->isEnable()) {
+        if (!is_object($listing) || !$listing->isEnable()) {
             $this->setShow($paragraph, false);
 
             return;
