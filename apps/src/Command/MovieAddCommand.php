@@ -88,7 +88,6 @@ class MovieAddCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->disableAll();
         $csv = new Csv();
         $csv->setDelimiter(';');
         $csv->setSheetIndex(0);
@@ -143,23 +142,6 @@ class MovieAddCommand extends Command
         );
 
         return Command::SUCCESS;
-    }
-
-    private function disableAll(): void
-    {
-        $movies = $this->movieRepository->findBy(
-            ['enable' => true]
-        );
-        $counter = 0;
-        foreach ($movies as $movie) {
-            $movie->setEnable(false);
-            ++$counter;
-
-            $this->movieRepository->persist($movie);
-            $this->movieRepository->flush($counter);
-        }
-
-        $this->movieRepository->flush();
     }
 
     private function setCategories(Movie $movie, $categories): void

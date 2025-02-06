@@ -144,6 +144,10 @@ class SitemapService
      */
     private function getDataPosts(): array
     {
+        $listing = $this->siteService->getPageByType('post');
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
         return $this->getDataFromRepository(Post::class);
     }
 
@@ -152,6 +156,11 @@ class SitemapService
      */
     private function getDataStory(): array
     {
+        $listing = $this->siteService->getPageByType('story');
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
+
         return $this->getDataFromRepository(Story::class);
     }
 

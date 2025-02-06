@@ -66,11 +66,11 @@ class FrontController extends AbstractController
         priority: 1,
         defaults: ['_format' => 'xml']
     )]
-    public function sitemapXml(SitemapService $sitemapService): mixed
+    public function sitemapXml(SitemapService $sitemapService, SiteService $siteService): mixed
     {
         return $this->initCache()->get(
             'sitemap.xml',
-            function (ItemInterface $item) use ($sitemapService): Response
+            function (ItemInterface $item) use ($sitemapService, $siteService): Response
             {
                 $item->expiresAfter(3600);
 
@@ -79,6 +79,7 @@ class FrontController extends AbstractController
                 return $this->render(
                     'sitemap/sitemap.xml.twig',
                     [
+                        'config'  => $siteService->getConfiguration(),
                         'date'    => Carbon::now()->format('Y-m-d'),
                         'sitemap' => $sitemap,
                     ]

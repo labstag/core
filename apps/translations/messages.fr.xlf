@@ -123,7 +123,7 @@
       </trans-unit>
       <trans-unit id="GtGBNUT" resname="Enable">
         <source>Enable</source>
-        <target>Activer</target>
+        <target>Statut</target>
       </trans-unit>
       <trans-unit id="befCKEj" resname="Principal">
         <source>Principal</source>
@@ -655,7 +655,7 @@
       </trans-unit>
       <trans-unit id="3jdANMS" resname="Show posts">
         <source>Show posts</source>
-        <target>Afficher les messages</target>
+        <target>Afficher les articles</target>
       </trans-unit>
       <trans-unit id="5aLdXCY" resname="Show story">
         <source>Show story</source>
