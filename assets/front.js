@@ -3,6 +3,7 @@ import svg4everybody from 'svg4everybody';
 import { Video } from './front/js/video';
 import { Slider } from './front/js/slider';
 import { Movie } from './front/js/movie';
+import { ContextMenu } from './front/js/contextmenu';
 
 WebFont.load({
   google: {
@@ -15,6 +16,7 @@ WebFont.load({
 document.addEventListener('DOMContentLoaded', function () {
   svg4everybody();
   new Video();
+  new ContextMenu();
   new Slider(
     '.swiper-movie',
     '.swiper-movie-button-next',
