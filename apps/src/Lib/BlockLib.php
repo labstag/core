@@ -3,14 +3,17 @@
 namespace Labstag\Lib;
 
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
+use Labstag\Controller\Admin\BlockCrudController;
 use Labstag\Entity\Block;
 use Labstag\Interface\BlockInterface;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
@@ -45,6 +48,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
 
     public function __construct(
         protected LoggerInterface $logger,
+        protected Security $security,
         protected RouterInterface $router,
         protected AdminUrlGenerator $adminUrlGenerator,
         protected ParagraphService $paragraphService,

@@ -1,7 +1,7 @@
 <ul{% if key == '/' %} class="sitemap-main"{% endif %}>
     {% for url, data in sitemap %}
         <li>
-            <a href="{{ site_path(data.entity) }}" title="{{ data.entity.title|e('html_attr') }}" area-label="{{ data.entity.title|e('html_attr') }}">{{ data.entity.title }}</a>
+            <a href="{{ site_path(data.entity) }}" title="{{ data.entity.title|e('html_attr') }}">{{ data.entity.title }}</a>
             {% if data.parent|length != 0 %}
                 {% include  "paragraphs/scripts/sitemap.html.twig"  with {'key': url, 'sitemap': data.parent} %}
             {% endif %}

@@ -2,8 +2,12 @@
 
 namespace Labstag\Service;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Labstag\Controller\Admin\BlockCrudController;
 use Labstag\Entity\Block;
 use stdClass;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -14,10 +18,24 @@ class BlockService
     public function __construct(
         #[AutowireIterator('labstag.blocks')]
         private readonly iterable $blocks,
+        protected AdminUrlGenerator $adminUrlGenerator,
+        protected Security $security,
         protected AuthorizationCheckerInterface $authorizationChecker,
         protected TokenStorageInterface $tokenStorage,
     )
     {
+    }
+
+    public function getUrlAdmin(Block $block): string
+    {
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
+            return '';
+        }
+
+        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
+        $adminUrlGenerator->setEntityId($block->getId());
+
+        return $adminUrlGenerator->setController(BlockCrudController::class);
     }
 
     public function content(string $view, Block $block): ?Response

@@ -107,9 +107,9 @@ class SiteService
             $header,
             $main,
             $footer,
-        ]         = $this->getBlocks($data, $disable);
-        $blocks   = array_merge($header, $main, $footer);
-        $contents = $this->blockService->getContents($blocks);
+        ]            = $this->getBlocks($data, $disable);
+        $blocks      = array_merge($header, $main, $footer);
+        $contents    = $this->blockService->getContents($blocks);
 
         return [
             'meta'   => $this->getMetaByEntity($entity->getMeta()),

@@ -1,4 +1,4 @@
-<div id="{{ block_id(block) }}" class="{{ block_class(block) }}">
+<div id="{{ block_id(block) }}" class="{{ block_class(block) }}"{{ block_contextmenu(block) }}>
     <ul>
         <li>
             <a href="{{ url }}" target="_blank">
@@ -11,4 +11,7 @@
             </a>
         </li>
     </ul>
+</div>
+<div class="context-menu" id="contextMenu">
+    <ul id="menuItems"></ul>
 </div>
