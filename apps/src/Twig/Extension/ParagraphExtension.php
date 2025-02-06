@@ -21,7 +21,7 @@ class ParagraphExtension extends AbstractExtension
                 'paragraph_contextmenu',
                 [
                     ParagraphExtensionRuntime::class,
-                    'getContextMenu'
+                    'getContextMenu',
                 ],
                 [
                     'is_safe' => ['html'],

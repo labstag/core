@@ -148,6 +148,7 @@ class SitemapService
         if (!is_object($listing) || !$listing->isEnable()) {
             return [];
         }
+
         return $this->getDataFromRepository(Post::class);
     }
 

@@ -21,7 +21,7 @@ class BlockExtension extends AbstractExtension
                 'block_contextmenu',
                 [
                     BlockExtensionRuntime::class,
-                    'getContextMenu'
+                    'getContextMenu',
                 ],
                 [
                     'is_safe' => ['html'],
