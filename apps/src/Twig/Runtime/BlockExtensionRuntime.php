@@ -10,7 +10,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 class BlockExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        protected BlockService $blockService,
+        protected BlockService $blockService
     )
     {
         // Inject dependencies if needed
@@ -18,12 +18,22 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
 
     public function getClass(Block $block): string
     {
-        return 'block_' . $block->getType();
+        return 'block block_' . $block->getType();
     }
 
     public function getId(Block $block): string
     {
         return 'block_' . $block->getType() . '-' . $block->getId();
+    }
+
+    public function getContextMenu(Block $block)
+    {
+        $urlAdmin = $this->blockService->getUrlAdmin($block);
+        if ($urlAdmin == '') {
+            return '';
+        }
+
+        return ' data-context_url="'.$urlAdmin.'" data-context_text="Modifier block ('.$block->getType().')"';
     }
 
     public function getName(string $code): string

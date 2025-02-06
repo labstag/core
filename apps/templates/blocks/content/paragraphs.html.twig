@@ -1,4 +1,4 @@
-<div id="{{ block_id(block) }}" class="{{ block_class(block) }}">
+<div id="{{ block_id(block) }}" class="{{ block_class(block) }}"{{ block_contextmenu(block) }}>
     {% for tab in paragraphs %}
         {{ debug_begin(tab) }}
         {{ paragraph_show(tab) }}

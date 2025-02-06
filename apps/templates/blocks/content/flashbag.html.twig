@@ -1,4 +1,4 @@
-<div id="{{ block_id(block) }}" class="{{ block_class(block) }}">
+<div id="{{ block_id(block) }}" class="{{ block_class(block) }}"{{ block_contextmenu(block) }}>
     <div class="wrapper">
         {% for label, messages in app.flashes %}
             <div class="flash-{{ label }}">

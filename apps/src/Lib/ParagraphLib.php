@@ -4,13 +4,16 @@ namespace Labstag\Lib;
 
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
@@ -26,6 +29,7 @@ use Labstag\Service\SitemapService;
 use Labstag\Service\SiteService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -62,6 +66,8 @@ abstract class ParagraphLib extends AbstractController
 
     public function __construct(
         protected LoggerInterface $logger,
+        protected Security $security,
+        protected AdminUrlGenerator $adminUrlGenerator,
         protected FormService $formService,
         protected SitemapService $sitemapService,
         protected RequestStack $requestStack,
@@ -288,9 +294,22 @@ abstract class ParagraphLib extends AbstractController
     {
         $this->setShow($paragraph, true);
 
+        $data['url_admin'] = $this->setUrlAdmin($paragraph);
         $data['configuration'] = $this->siteService->getConfiguration();
 
         $this->data[$paragraph->getId()] = $data;
+    }
+
+    private function setUrlAdmin(Paragraph $block)
+    {
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
+            return '';
+        }
+
+        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
+        $adminUrlGenerator->setEntityId($block->getId());
+
+        return $adminUrlGenerator->setController(ParagraphCrudController::class);
     }
 
     protected function setFooter(Paragraph $paragraph, mixed $data): void
