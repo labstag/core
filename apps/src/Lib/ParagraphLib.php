@@ -294,20 +294,20 @@ abstract class ParagraphLib extends AbstractController
     {
         $this->setShow($paragraph, true);
 
-        $data['url_admin'] = $this->setUrlAdmin($paragraph);
+        $data['url_admin']     = $this->setUrlAdmin($paragraph);
         $data['configuration'] = $this->siteService->getConfiguration();
 
         $this->data[$paragraph->getId()] = $data;
     }
 
-    private function setUrlAdmin(Paragraph $block)
+    private function setUrlAdmin(Paragraph $paragraph): string|\EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface
     {
         if (!$this->security->isGranted('ROLE_ADMIN')) {
             return '';
         }
 
         $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
-        $adminUrlGenerator->setEntityId($block->getId());
+        $adminUrlGenerator->setEntityId($paragraph->getId());
 
         return $adminUrlGenerator->setController(ParagraphCrudController::class);
     }

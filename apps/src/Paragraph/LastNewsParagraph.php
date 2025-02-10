@@ -26,7 +26,7 @@ class LastNewsParagraph extends ParagraphLib
         /** @var PostRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Post::class);
         $total                      = $serviceEntityRepositoryLib->findTotalEnable();
-        if (!is_object($listing) || !$listing->isEnable() || $total == 0) {
+        if (!is_object($listing) || !$listing->isEnable() || 0 == $total) {
             $this->setShow($paragraph, false);
 
             return;

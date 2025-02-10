@@ -23,19 +23,19 @@ class ParagraphService
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
         protected AdminUrlGenerator $adminUrlGenerator,
-        protected Security $security
+        protected Security $security,
     )
     {
     }
 
-    public function getUrlAdmin(Paragraph $block): ?AdminUrlGeneratorInterface
+    public function getUrlAdmin(Paragraph $paragraph): ?AdminUrlGeneratorInterface
     {
         if (!$this->security->isGranted('ROLE_ADMIN')) {
             return null;
         }
 
         $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
-        $adminUrlGenerator->setEntityId($block->getId());
+        $adminUrlGenerator->setEntityId($paragraph->getId());
 
         return $adminUrlGenerator->setController(ParagraphCrudController::class);
     }

@@ -3,7 +3,6 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
@@ -11,7 +10,6 @@ use Labstag\Entity\Star;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\StarRepository;
 use Override;
-use Symfony\Component\Translation\TranslatableMessage;
 
 class StarParagraph extends ParagraphLib
 {
