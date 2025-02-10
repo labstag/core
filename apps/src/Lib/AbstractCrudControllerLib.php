@@ -429,7 +429,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addUpdatedAtField(): DateTimeField
     {
-        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating();
+        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating()->hideOnIndex();
     }
 
     protected function configureActionsBtn(Actions $actions): void

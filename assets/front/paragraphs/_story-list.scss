@@ -20,7 +20,14 @@
     }
   }
   li {
-    background-color: color.scale(variables.$colorbg, $lightness: 15%);
+    &.teaser-story{
+      background-color: color.scale(variables.$colorbg, $lightness: 15%);
+      &:nth-child(even)
+      {
+        background-color: color.scale(variables.$colorbg, $lightness: 10%);
+      }
+    }
+
     .wrapper {
       padding: 1rem;
     }
