@@ -27,9 +27,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         $internetProtocol = $entity->getInternetProtocol();
 
         $redirectToRoute = $this->redirectToRoute('admin_http_error_logs_index');
-
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        if ($request->server->get('REMOTE_ADDR') === $internetProtocol) {
+        if ($this->securityService->getCurrentClientIp() === $internetProtocol) {
             $this->addFlash('danger', new TranslatableMessage("You can't ban your own IP"));
 
             return $redirectToRoute;

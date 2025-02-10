@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Labstag\Entity\Paragraph;
@@ -55,16 +56,6 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         yield $this->addTabPrincipal();
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addFieldID();
-        $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'));
-        $choiceField->setChoices($this->paragraphService->getFonds());
-        yield $choiceField;
-        $allTypes  = array_flip($this->paragraphService->getAll(null));
-        $textField = TextField::new('type', new TranslatableMessage('Type'))->formatValue(
-            static fn ($value) => $allTypes[$value] ?? null
-        );
-        $textField->setDisabled(true);
-
-        yield $textField;
         yield ParagraphParentField::new('parent', new TranslatableMessage('Parent'));
         $fields = $this->paragraphService->getFields($currentEntity, $pageName);
         foreach ($fields as $field) {
@@ -75,6 +66,19 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         foreach ($date as $field) {
             yield $field;
         }
+        
+        yield FormField::addTab(new TranslatableMessage('Config'));
+        $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'))->hideOnIndex();
+        $choiceField->setChoices($this->paragraphService->getFonds());
+        yield $choiceField;
+        $allTypes  = array_flip($this->paragraphService->getAll(null));
+        $textField = TextField::new('type', new TranslatableMessage('Type'))->formatValue(
+            static fn ($value) => $allTypes[$value] ?? null
+        );
+        $textField->setDisabled(true);
+
+        yield $textField;
+        yield TextField::new('classes', new TranslatableMessage('classes'))->hideOnIndex();
     }
 
     #[Override]

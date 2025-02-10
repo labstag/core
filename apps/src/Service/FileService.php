@@ -78,8 +78,6 @@ class FileService
             }
         }
 
-        dump('aa');
-
         return $file;
     }
 

@@ -116,6 +116,7 @@ class BlockCrudController extends AbstractCrudControllerLib
             ]
         );
         yield $requestPathField;
+        yield TextField::new('classes', new TranslatableMessage('classes'))->hideOnIndex();
     }
 
     #[Override]

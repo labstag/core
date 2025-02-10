@@ -76,6 +76,9 @@ class Block implements Stringable
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $classes = null;
+
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
@@ -265,6 +268,18 @@ class Block implements Stringable
     public function setType(string $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getClasses(): ?string
+    {
+        return $this->classes;
+    }
+
+    public function setClasses(?string $classes): static
+    {
+        $this->classes = $classes;
 
         return $this;
     }
