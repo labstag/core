@@ -1,28 +1,29 @@
 {% set chapters = story.chapters|enable %}
 <a href="{{ site_path(story) }}" title="{{ story.title|e('html_attr') }}">
     <div class="background" style="--image-url: url('{{ site_asset(story, 'img') }}')"></div>
-    {% if story.tags|length > 0 %}
-        <div class="tags">
-            {% for tag in story.tags %}
-                <span class="tag-{{ tag.slug }}">{{ tag.title }}</span>
-            {% endfor %}
+    <div class="wrapper">
+        {% if story.tags|length > 0 %}
+            <div class="tags">
+                {% for tag in story.tags %}
+                    <span class="tag-{{ tag.slug }}">{{ tag.title }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="title">
+            {{ story.title }}
         </div>
-    {% endif %}
-    <div class="title">
-        {{ story.title }}
-    </div>
-    {% if configuration.usershow %}
-        <div class="author">
-            {{ 'Author : %author%'|trans({ '%author%': story.refuser.username }) }}
+        {% if configuration.usershow %}
+            <div class="author">
+                {{ 'Author : %author%'|trans({ '%author%': story.refuser.username }) }}
+            </div>
+        {% endif %}
+        <div class="date">
+            {{ 'Creation date : %date%'|trans({ '%date%': story.createdat|date('d/m/Y') }) }}
         </div>
-    {% endif %}
-    <div class="date">
-        {{ 'Creation date : %date%'|trans({ '%date%': story.createdat|date('d/m/Y') }) }}
-    </div>
-    <div class="chapters">
-        {{ 'Number of chapters : %count%'|trans({ '%count%': chapters|length }) }}
-    </div>
-    <div class="resume">
-        {{ story.resume|raw }}
-    </div>
+        <div class="chapters">
+            {{ 'Number of chapters : %count%'|trans({ '%count%': chapters|length }) }}
+        </div>
+        <div class="resume">
+            {{ story.resume|raw }}
+        </div>
 </a>

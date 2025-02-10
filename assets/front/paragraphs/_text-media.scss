@@ -1,0 +1,13 @@
+@use "../placeholders" as *;
+.paragraph_text-media{
+  .wrapper {
+
+  }
+  .text{
+
+  }
+  .video{
+    margin-bottom: 1vh;
+    @extend %video;
+  }
+}

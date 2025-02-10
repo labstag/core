@@ -1,0 +1,55 @@
+@use "../mixins";
+@use "../variables";
+
+.block_admin
+{
+  position: fixed;
+  width: 100%;
+  background-color: variables.$adminbg;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  padding: 2vh;
+  ul{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    @include mixins.respond-to(md) {
+      flex-direction: row;
+      justify-content: flex-end;
+    }
+  }
+  li{
+
+  }
+  a{
+    
+  }
+}
+.context-menu{
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  display: none;
+  min-width: 150px;
+  z-index: 1000;
+  a{
+    color: black;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 5px 0;
+  }
+  
+  li {
+    padding: 8px 15px;
+    cursor: pointer;
+  
+    &:hover {
+      background: #007bff;
+      color: white;
+    }
+  }
+}

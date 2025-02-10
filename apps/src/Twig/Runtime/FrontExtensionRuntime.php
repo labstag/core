@@ -24,9 +24,9 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     {
     }
 
-    public function asset(mixed $entity, string $field): string
+    public function asset(mixed $entity, string $field, bool $placeholder = true): string
     {
-        return $this->siteService->asset($entity, $field);
+        return $this->siteService->asset($entity, $field, $placeholder);
     }
 
     public function content(?Response $response): ?string

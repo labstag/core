@@ -23,7 +23,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
     public function getContextMenu(Paragraph $paragraph)
     {
         $urlAdmin = $this->paragraphService->getUrlAdmin($paragraph);
-        if ($urlAdmin == '') {
+        if (is_null($urlAdmin)) {
             return '';
         }
 

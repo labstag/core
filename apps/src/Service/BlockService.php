@@ -4,6 +4,7 @@ namespace Labstag\Service;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Labstag\Controller\Admin\BlockCrudController;
 use Labstag\Entity\Block;
 use stdClass;
@@ -26,10 +27,10 @@ class BlockService
     {
     }
 
-    public function getUrlAdmin(Block $block): string
+    public function getUrlAdmin(Block $block): ?AdminUrlGeneratorInterface
     {
         if (!$this->security->isGranted('ROLE_ADMIN')) {
-            return '';
+            return null;
         }
 
         $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);

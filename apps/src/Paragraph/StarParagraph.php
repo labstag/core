@@ -53,8 +53,6 @@ class StarParagraph extends ParagraphLib
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-
-        yield TextField::new('title', new TranslatableMessage('Title'));
         yield $this->addFieldIntegerNbr();
     }
 

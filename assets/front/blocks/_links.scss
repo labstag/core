@@ -1,0 +1,21 @@
+@use "../mixins";
+
+.block_links{
+  .wrapper{
+
+  }
+  ul{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    @include mixins.respond-to(md) {
+      flex-direction: row;
+    }
+  }
+  li{
+
+  }
+  a{
+    
+  }
+}
