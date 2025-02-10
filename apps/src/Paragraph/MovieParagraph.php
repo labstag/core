@@ -3,7 +3,6 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
@@ -11,7 +10,6 @@ use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
-use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieParagraph extends ParagraphLib
 {

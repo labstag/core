@@ -9,7 +9,7 @@ use Twig\Extension\RuntimeExtensionInterface;
 class ParagraphExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        protected ParagraphService $paragraphService
+        protected ParagraphService $paragraphService,
     )
     {
         // Inject dependencies if needed
@@ -20,14 +20,14 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         return 'paragraph paragraph_' . $paragraph->getType();
     }
 
-    public function getContextMenu(Paragraph $paragraph)
+    public function getContextMenu(Paragraph $paragraph): string
     {
         $urlAdmin = $this->paragraphService->getUrlAdmin($paragraph);
         if (is_null($urlAdmin)) {
             return '';
         }
 
-        return ' data-context_url="'.$urlAdmin.'" data-context_text="Modifier paragraph ('.$paragraph->getType().')"';
+        return ' data-context_url="' . $urlAdmin . '" data-context_text="Modifier paragraph (' . $paragraph->getType() . ')"';
     }
 
     public function getFond(?string $code): ?string

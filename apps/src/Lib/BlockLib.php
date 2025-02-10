@@ -3,10 +3,8 @@
 namespace Labstag\Lib;
 
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
-use Labstag\Controller\Admin\BlockCrudController;
 use Labstag\Entity\Block;
 use Labstag\Interface\BlockInterface;
 use Labstag\Service\ParagraphService;
