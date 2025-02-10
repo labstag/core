@@ -71,6 +71,8 @@ final class EntityListener
         }
 
         $this->storyService->setPdf($object);
+
+        $this->storyService->generateFlashBag();
     }
 
     private function initworkflow(object $object): void
@@ -173,6 +175,8 @@ final class EntityListener
         $entity->setPosition(count($chapters) + 1);
 
         $this->storyService->setPdf($entity->getRefstory());
+
+        $this->storyService->generateFlashBag();
     }
 
     private function prePersistMovie(object $entity, ObjectManager $objectManager): void

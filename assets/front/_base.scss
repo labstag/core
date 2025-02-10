@@ -10,6 +10,9 @@ body{
 header{
   background: color.scale(variables.$colorbg, $lightness: -10%);
   @extend %paddingdefault;
+  &:has(.block_admin) {
+    padding-top: 8vh;
+  }
 }
 
 main{

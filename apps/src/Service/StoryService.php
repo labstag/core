@@ -7,77 +7,121 @@ use Labstag\Entity\Story;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use RuntimeException;
+use PhpOffice\PhpWord\Settings;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryService
 {
+    private array $stories = [];
+
+
     public function __construct(
         private RequestStack $requestStack,
+        private KernelInterface $kernel
     )
     {
+    }
+
+    private function getChapters(Story $story): array
+    {
+        $chapters = [];
+        $data = $story->getChapters();
+        foreach ($data as $row) {
+            if (!$row->isEnable()) {
+                continue;
+            }
+
+            $chapters[] = $row;
+        }
+
+        return $chapters;
     }
 
     public function setPdf(Story $story): bool
     {
         $phpWord = new PhpWord();
-        $data    = [
-            'title'    => $story->getTitle(),
-            'chapters' => [],
-        ];
-        $chapters = $story->getChapters();
-        foreach ($chapters as $row) {
-            if (!$row->isEnable()) {
-                continue;
-            }
-
-            $this->setChapter($phpWord, $row);
-            $chapter = [
-                'title' => $row->getTitle(),
-            ];
-
-            $data['chapters'][] = $chapter;
+        Settings::setPdfRendererName(Settings::PDF_RENDERER_DOMPDF);
+        Settings::setPdfRendererPath($this->kernel->getProjectDir() . '/vendor/dompdf/dompdf');
+        $section = $phpWord->addSection();
+        $chapters = $this->getChapters($story);
+        if (count($chapters) == 0) {
+            return false;
         }
 
-        if (0 != count($data['chapters'])) {
-            $tempPath = $this->getFilename($story->getSlug(), 'odt');
-            $writer   = IOFactory::createWriter($phpWord, 'ODText');
-            $writer->save($tempPath);
+        $this->addCoverPage($section, $story, $chapters);
+        $this->addSummary($section);
 
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename((string) $tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $story->setPdfFile($uploadedFile);
-            $this->getFlashBag()->add(
-                'success',
-                new TranslatableMessage(
-                    'Story file generated for %title%',
-                    [
-                        '%title%' => $story->getTitle(),
-                    ]
-                )
-            );
-
-            return true;
+        foreach ($chapters as $chapter) {
+            $this->setChapter($section, $chapter);
         }
 
-        return false;
+        $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug()  . '.pdf';
+        $writer   = IOFactory::createWriter($phpWord, 'PDF');
+        $writer->save($tempPath);
+
+        $uploadedFile = new UploadedFile(
+            path: $tempPath,
+            originalName: basename((string) $tempPath),
+            mimeType: mime_content_type($tempPath),
+            test: true
+        );
+
+        $story->setPdfFile($uploadedFile);
+        $this->stories[] = $story->getTitle();
+
+        return true;
     }
 
-    private function getFilename(?string $filename, string $extension = 'xlsx')
+    private function addSummary($section)
     {
-        $originalExtension = pathinfo((string) $filename, PATHINFO_EXTENSION);
+        $section->addText(
+            "Table des matières",
+            [
+                'size' => 18, 'bold' => true
+            ]
+        );
+        $toc = $section->addTOC(
+            ['spaceAfter' => 60, 'size' => 12]
+        );
+        $toc->setMinDepth(0);
+        $section->addPageBreak();
+        $section->addPageBreak();
+    }
 
-        return $this->getTemporaryFolder() . '/' . str_replace(
-            '.' . $originalExtension,
-            '.' . $extension,
-            basename((string) $filename)
+    private function addCoverPage($section, Story $story, array $chapters): void
+    {        
+        // Ajout de la page de garde
+        $section->addTextBreak(10);
+        $section->addText(
+            $story->getTitle(),
+            ['size' => 24, 'bold' => true],
+            ['align' => 'center']
+        );
+        $section->addTextBreak(2);
+        $section->addText(
+            $story->getRefuser()->getUsername(),
+            ['size' => 16],
+            ['align' => 'center']
+        );
+        
+        $section->addPageBreak();
+        $section->addPageBreak();
+    }
+
+    public function generateFlashBag()
+    {
+        $this->getFlashBag()->add(
+            'success',
+            new TranslatableMessage(
+                'Story file generated for "%title%"',
+                [
+                    '%title%' => implode('"," ', $this->stories),
+                ]
+            )
         );
     }
 
@@ -97,6 +141,11 @@ class StoryService
         return $this->requestStack->getSession();
     }
 
+    public function getUpdates(): array
+    {
+        return $this->stories;
+    }
+
     private function getTemporaryFolder(): string
     {
         $tempFolder = sys_get_temp_dir();
@@ -107,13 +156,25 @@ class StoryService
         return $tempFolder;
     }
 
-    private function setChapter(PhpWord $phpWord, Chapter $chapter): void
+    private function setChapter($section, Chapter $chapter): void
     {
-        $section    = $phpWord->addSection();
         $paragraphs = $chapter->getParagraphs();
-        $section->addTitle($chapter->getTitle());
+        $section->addTitle($chapter->getTitle(), 1);
+        $section->addTextBreak(2);
         foreach ($paragraphs as $paragraph) {
-            $section->addText($paragraph->getContent());
+            $section->addText(
+                $paragraph->getContent(),
+                [
+                    'size' => 12,
+                    'bold' => false,
+                ],
+                [
+                    'spaceAfter' => 240
+                ]
+            );
         }
+
+        $section->addPageBreak();
+        $section->addPageBreak();
     }
 }

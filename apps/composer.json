@@ -13,6 +13,7 @@
         "doctrine/annotations": "2.0.*",
         "doctrine/doctrine-bundle": "2.13.*",
         "doctrine/doctrine-migrations-bundle": "3.4.*",
+        "dompdf/dompdf": "3.1.*",
         "easycorp/easyadmin-bundle": "4.24.*",
         "essence/essence": "3.5.*",
         "gedmo/doctrine-extensions": "3.18.*",

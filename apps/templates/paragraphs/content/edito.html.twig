@@ -1,7 +1,7 @@
 <section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}"{{ paragraph_contextmenu(paragraph) }}>
     <div class="background" style="--image-url: url('{{ site_asset(edito, 'img') }}')"></div>
     <div class="wrapper">
-        <h3>{{ edito.title }}</h3>
+        <h2>{{ edito.title }}</h2>
         {% for tab in paragraphs %}
             {{ debug_begin(tab) }}
             {{ paragraph_show(tab) }}

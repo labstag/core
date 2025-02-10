@@ -93,6 +93,9 @@ class Paragraph implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $classes = null;
+
     #[Override]
     public function __toString(): string
     {
@@ -330,6 +333,18 @@ class Paragraph implements Stringable
     public function setUrl(?string $url): static
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    public function getClasses(): ?string
+    {
+        return $this->classes;
+    }
+
+    public function setClasses(?string $classes): static
+    {
+        $this->classes = $classes;
 
         return $this;
     }

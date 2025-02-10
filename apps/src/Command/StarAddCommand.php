@@ -80,6 +80,7 @@ class StarAddCommand extends Command
 
             ++$counter;
             $progressBar->advance();
+            $this->starRepository->flush($counter);
         }
 
         $this->starRepository->flush();

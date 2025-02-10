@@ -71,7 +71,6 @@ class SecurityService
 
     public function getBanIp(): ?object
     {
-        $request = $this->requestStack->getCurrentRequest();
         $user    = $this->security->getUser();
         if (!is_null($user)) {
             return null;
@@ -79,74 +78,17 @@ class SecurityService
 
         return $this->banIpRepository->findOneBy(
             [
-                'internetProtocol' => $this->getClientIp($request->server),
+                'internetProtocol' => $this->getCurrentClientIp(),
                 'enable'           => true,
             ]
         );
     }
 
-    public function set($httpCode = 404): void
+    public function getCurrentClientIp(): string
     {
         $request = $this->requestStack->getCurrentRequest();
-        if (is_null($request)) {
-            return;
-        }
-
-        $server        = $request->server;
-        $httpErrorLogs = new HttpErrorLogs();
-        $domain        = $server->get('REQUEST_SCHEME') . '://' . $server->get('SERVER_NAME');
-        $url           = $server->get('REQUEST_URI');
-        if ($this->isDisableUrl($url)) {
-            return;
-        }
-
-        $agent = (string) $server->get('HTTP_USER_AGENT');
-        if ($this->setBan($agent, $server, $url)) {
-            return;
-        }
-
-        $referer = $request->headers->get('referer');
-        $method  = $server->get('REQUEST_METHOD');
-        $data    = $this->httpErrorLogsRepository->findBy(
-            [
-                'domain'        => $domain,
-                'url'           => $url,
-                'referer'       => $referer,
-                'httpCode'      => $httpCode,
-                'requestMethod' => $method,
-            ]
-        );
-
-        if (0 != count($data)) {
-            return;
-        }
-
-        $user = $this->security->getUser();
-        $user = ($user instanceof User) ? $user : null;
-
-        $httpErrorLogs->setRefUser($user);
-        $httpErrorLogs->setDomain($domain);
-        $httpErrorLogs->setUrl($url);
-        $httpErrorLogs->setAgent($agent);
-        $httpErrorLogs->setHttpCode($httpCode);
-        $httpErrorLogs->setInternetProtocol($this->getClientIp($server));
-        if (!is_null($referer)) {
-            $httpErrorLogs->setReferer($referer);
-        }
-
-        $httpErrorLogs->setRequestData(
-            [
-                'get'  => $request->query->all(),
-                'post' => $request->request->all(),
-            ]
-        );
-        $httpErrorLogs->setRequestMethod($method);
-
-        $this->httpErrorLogsRepository->save($httpErrorLogs);
-    }
-
-    private function getClientIp($server): string
-    {
+        $server = $request->server;
+        
         $headers = [
             'HTTP_CLIENT_IP',
             'HTTP_X_FORWARDED_FOR',
@@ -176,6 +118,66 @@ class SecurityService
         }
 
         return '0.0.0.0';
+    }
+
+    public function set($httpCode = 404): void
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (is_null($request)) {
+            return;
+        }
+
+        $server        = $request->server;
+        $httpErrorLogs = new HttpErrorLogs();
+        $domain        = $server->get('REQUEST_SCHEME') . '://' . $server->get('SERVER_NAME');
+        $url           = $server->get('REQUEST_URI');
+        if ($this->isDisableUrl($url)) {
+            return;
+        }
+
+        $agent = (string) $server->get('HTTP_USER_AGENT');
+        if ($this->setBan($agent, $url)) {
+            return;
+        }
+
+        $referer = $request->headers->get('referer');
+        $method  = $server->get('REQUEST_METHOD');
+        $data    = $this->httpErrorLogsRepository->findBy(
+            [
+                'domain'        => $domain,
+                'url'           => $url,
+                'referer'       => $referer,
+                'httpCode'      => $httpCode,
+                'requestMethod' => $method,
+            ]
+        );
+
+        if (0 != count($data)) {
+            return;
+        }
+
+        $user = $this->security->getUser();
+        $user = ($user instanceof User) ? $user : null;
+
+        $httpErrorLogs->setRefUser($user);
+        $httpErrorLogs->setDomain($domain);
+        $httpErrorLogs->setUrl($url);
+        $httpErrorLogs->setAgent($agent);
+        $httpErrorLogs->setHttpCode($httpCode);
+        $httpErrorLogs->setInternetProtocol($this->getCurrentClientIp());
+        if (!is_null($referer)) {
+            $httpErrorLogs->setReferer($referer);
+        }
+
+        $httpErrorLogs->setRequestData(
+            [
+                'get'  => $request->query->all(),
+                'post' => $request->request->all(),
+            ]
+        );
+        $httpErrorLogs->setRequestMethod($method);
+
+        $this->httpErrorLogsRepository->save($httpErrorLogs);
     }
 
     private function getRedirections(bool $regex): array
@@ -221,17 +223,17 @@ class SecurityService
         return $find;
     }
 
-    private function setBan(string $agent, \Symfony\Component\HttpFoundation\ServerBag $serverBag, $url): ?bool
+    private function setBan(string $agent, $url): ?bool
     {
         if ('' === $agent || '0' === $agent) {
-            $this->addBan($this->getClientIp($serverBag));
+            $this->addBan($this->getCurrentClientIp());
 
             return true;
         }
 
         if ($this->isForbiddenUrl($url)) {
             if (!is_null($this->security->getUser())) {
-                $this->addBan($this->getClientIp($serverBag));
+                $this->addBan($this->getCurrentClientIp());
             }
 
             return true;

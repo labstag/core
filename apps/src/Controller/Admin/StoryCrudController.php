@@ -166,16 +166,8 @@ class StoryCrudController extends AbstractCrudControllerLib
             $serviceEntityRepositoryLib->flush($counter);
         }
 
+        $storyService->generateFlashBag();
         $serviceEntityRepositoryLib->flush();
-
-        $this->addFlash(
-            'success',
-            new TranslatableMessage(
-                'Update %update% storie(s)',
-                ['%update%' => $update]
-            )
-        );
-
         return $this->redirectToRoute('admin_story_index');
     }
 
