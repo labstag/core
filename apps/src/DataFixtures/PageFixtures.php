@@ -266,7 +266,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             return;
         }
 
-        $paragraph->setTitle('Derniers posts');
         $paragraph->setNbr(18);
     }
 
@@ -315,7 +314,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             return;
         }
 
-        $paragraph->setTitle('Dernière histoires');
         $paragraph->setNbr(18);
     }
 }

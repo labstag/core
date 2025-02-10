@@ -50,6 +50,7 @@ class MovieCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
+        yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield $this->addFieldTitle();
         yield TextField::new('imdb', new TranslatableMessage('Imdb'));
@@ -64,6 +65,10 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield $this->addFieldCategories('movie');
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
+        $date = $this->addTabDate();
+        foreach ($date as $field) {
+            yield $field;
+        }
     }
 
     #[Override]
