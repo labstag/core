@@ -5,7 +5,7 @@
         </div>
         <ul>
             {% for row in pagination %}
-                <li class="post-teaser">
+                <li class="teaser-post">
                     {% include  "teasers/post.html.twig"  with {'post': row} %}
                 </li>
             {% endfor %}

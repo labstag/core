@@ -291,7 +291,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             return;
         }
 
-        $paragraph->setTitle('Mes étoiles github');
         $paragraph->setNbr(18);
     }
 
@@ -304,7 +303,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             return;
         }
 
-        $paragraph->setTitle('Derniers films vus');
         $paragraph->setNbr(18);
     }
 

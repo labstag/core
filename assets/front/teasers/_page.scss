@@ -1,0 +1,7 @@
+@use "../placeholders" as *;
+.teaser-page{
+  @extend %teaser;
+  .background{
+    height: 30vh;
+  }
+}

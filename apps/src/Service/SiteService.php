@@ -48,12 +48,16 @@ class SiteService
     {
     }
 
-    public function asset(mixed $entity, string $field): string
+    public function asset(mixed $entity, string $field, bool $placeholder = true): string
     {
         $file = $this->fileService->asset($entity, $field);
 
         if ('' !== $file) {
             return $file;
+        }
+
+        if (!$placeholder) {
+            return '';
         }
 
         if (!$entity instanceof Configuration) {

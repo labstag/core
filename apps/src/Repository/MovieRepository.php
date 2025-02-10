@@ -17,11 +17,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
 
     public function findLastByNbr(int $nbr): mixed
     {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->where('s.enable = :enable');
-        $queryBuilder->setParameter('enable', true);
-
-        $queryBuilder->orderBy('s.createdAt', 'DESC');
+        $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
@@ -35,7 +31,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->where('s.enable = :enable');
         $queryBuilder->setParameter('enable', true);
 
-        return $queryBuilder->orderBy('s.title', 'ASC');
+        return $queryBuilder->orderBy('s.createdAt', 'DESC');
     }
 
     public function getQueryPaginator(): Query

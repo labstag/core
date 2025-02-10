@@ -1,3 +1,5 @@
 <div id="{{ block_id(block) }}" class="{{ block_class(block) }}"{{ block_contextmenu(block) }}>
-    {{ block.content|raw }}
+    <div class="wrapper">
+        {{ block.content|raw }}
+    </div>
 </div>

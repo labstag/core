@@ -5,6 +5,7 @@ namespace Labstag\Service;
 use DateTime;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Gedmo\Tool\ClassUtils;
 use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\Paragraph;
@@ -27,10 +28,10 @@ class ParagraphService
     {
     }
 
-    public function getUrlAdmin(Paragraph $block): string
+    public function getUrlAdmin(Paragraph $block): ?AdminUrlGeneratorInterface
     {
         if (!$this->security->isGranted('ROLE_ADMIN')) {
-            return '';
+            return null;
         }
 
         $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);

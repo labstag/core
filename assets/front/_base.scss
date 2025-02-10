@@ -1,0 +1,130 @@
+@use "variables";
+@use "placeholders" as *;
+@use "sass:color";
+
+body{
+  background: variables.$colorbg;
+  color: variables.$colortext;
+}
+
+header{
+  background: color.scale(variables.$colorbg, $lightness: -10%);
+  @extend %paddingdefault;
+}
+
+main{
+}
+
+footer{
+  background: color.scale(variables.$colorbg, $lightness: -10%);
+  @extend %wrapper;
+}
+
+h1 {
+   @extend %hn;
+   margin: 12px;
+}
+
+h2 {
+   @extend %hn;
+   margin: 10px;
+}
+
+h3 {
+   @extend %hn;
+   margin: 8px;
+}
+
+h4 {
+   @extend %hn;
+   margin: 6px;
+}
+
+h5 {
+   @extend %hn;
+   margin: 4px;
+}
+
+h6 {
+   @extend %hn;
+   margin: 2px;
+}
+
+
+h2::after { width: 100%; }
+h3::after { width: 80%; }
+h4::after { width: 60%; }
+h5::after { width: 40%; }
+h6::after { width: 20%; }
+
+a {
+  
+  &[target="_blank"] {
+    cursor: alias;
+  }
+}
+
+.tags{
+  @extend %tags;
+  padding: 0.5rem;
+}
+
+.categories{
+  @extend %categories;
+  padding: 0.5rem;
+}
+
+.block {
+}
+
+.paragraph {
+  margin-top: 2vh;
+  @extend %wrapper;
+}
+
+.background{
+  background-image: var(--image-url);
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 60vh;
+}
+
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  padding-left: 0;
+  list-style: none;
+  border-radius: 0.25rem;
+  a{
+    color: black;
+    text-decoration: none;
+  }
+  span {
+    margin: 0 0.25rem;
+
+    &.first, &.previous, &.page, &.next, &.last, &.current {
+      display: inline-block;
+      border: 1px solid #dee2e6;
+      padding: 0.375rem 0.75rem;
+      margin-left: -1px;
+      line-height: 1.25;
+      border-radius: 0.25rem;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+      color: #007bff;
+      background-color: #fff;
+    }
+    &:hover {
+      color: #0056b3;
+      background-color: #e9ecef;
+      border-color: #dee2e6;
+    }
+
+    &.current {
+      color: #fff;
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+  }
+}

@@ -29,7 +29,7 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
     public function getContextMenu(Block $block)
     {
         $urlAdmin = $this->blockService->getUrlAdmin($block);
-        if ($urlAdmin == '') {
+        if (is_null($urlAdmin)) {
             return '';
         }
 

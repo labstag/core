@@ -1,0 +1,4 @@
+@use "../placeholders" as *;
+.teaser-chapter{
+  @extend %teaser;
+}
