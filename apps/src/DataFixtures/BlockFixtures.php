@@ -143,6 +143,7 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         $block->setRegion('header');
         $block->setTitle('Header Link');
         $block->setType('links');
+        $block->setClasses('headerlink_principal');
         $this->addLinksHeader($block);
         yield $block;
 

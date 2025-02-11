@@ -27,7 +27,7 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
 
         $tab = array_merge($tab, $classes);
 
-        return implode(' ', $tab);
+        return trim(implode(' ', $tab));
     }
 
     public function getId(Block $block): string

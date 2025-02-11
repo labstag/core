@@ -29,6 +29,22 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         return $this->siteService->asset($entity, $field, $placeholder);
     }
 
+    public function tarteaucitron(): string
+    {
+        $config = $this->siteService->getConfiguration();
+        if (empty(trim($config->getTacServices()))) {
+            return '';
+        }
+
+        return $this->twigEnvironment->render(
+            'tarteaucitron.html.twig',
+            [
+                'config'   => $config,
+                'services' => $config->getTacServices(),
+            ]
+        );
+    }
+
     public function content(?Response $response): ?string
     {
         if (!$response instanceof Response) {
