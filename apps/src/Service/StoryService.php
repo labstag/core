@@ -9,8 +9,6 @@ use PhpOffice\PhpWord\PhpWord;
 use RuntimeException;
 use PhpOffice\PhpWord\Settings;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -21,7 +19,6 @@ class StoryService
 
 
     public function __construct(
-        private RequestStack $requestStack,
         private KernelInterface $kernel
     )
     {
@@ -121,33 +118,14 @@ class StoryService
         $section->addPageBreak();
     }
 
-    public function generateFlashBag(): void
+    public function generateFlashBag(): string
     {
-        $this->getFlashBag()->add(
-            'success',
-            new TranslatableMessage(
-                'Story file generated for "%title%"',
-                [
-                    '%title%' => implode('"," ', $this->stories),
-                ]
-            )
+        return new TranslatableMessage(
+            'Story file generated for "%title%"',
+            [
+                '%title%' => implode('"," ', $this->stories),
+            ]
         );
-    }
-
-    private function getFlashBag()
-    {
-        $session = $this->getSession();
-
-        if (!method_exists($session, 'getFlashBag')) {
-            throw new RuntimeException('FlashBag not found');
-        }
-
-        return $session->getFlashBag();
-    }
-
-    private function getSession(): SessionInterface
-    {
-        return $this->requestStack->getSession();
     }
 
     public function getUpdates(): array
