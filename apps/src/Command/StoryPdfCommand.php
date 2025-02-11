@@ -42,7 +42,7 @@ class StoryPdfCommand extends Command
         $progressBar->start();
         foreach ($stories as $story) {
             $status = $this->storyService->setPdf($story);
-            $update = $status ? $update+1 : $update;
+            $update = $status ? $update + 1 : $update;
             ++$counter;
 
             $this->storyRepository->persist($story);

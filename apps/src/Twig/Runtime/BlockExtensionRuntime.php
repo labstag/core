@@ -23,7 +23,7 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
             'block_' . $block->getType(),
         ];
 
-        $classes = explode(" ", $block->getClasses());
+        $classes = explode(' ', (string) $block->getClasses());
 
         $tab = array_merge($tab, $classes);
 

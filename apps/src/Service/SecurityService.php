@@ -88,7 +88,7 @@ class SecurityService
     {
         $request = $this->requestStack->getCurrentRequest();
         $server = $request->server;
-        
+
         $headers = [
             'HTTP_CLIENT_IP',
             'HTTP_X_FORWARDED_FOR',
