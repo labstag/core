@@ -1,45 +1,88 @@
 {% for movie in pagination %}
-    {% if movie.duration < 60 %}
-        {% set duration = movie.duration ~ " min" %}
-    {% else %}
-        {% set hours = (movie.duration // 60) %}
-        {% set minutes = (movie.duration % 60) %}
-        {% set duration = hours ~ 'h ' ~ minutes ~ " min" %}
-    {% endif %}
-    {% set trailer = movie_oembed(movie.trailer) %}
-    <div id="movie-modal-{{ movie.id }}" class="hidden modal_movie">
-        <div class="content">
-            <span class="close">&times;</span>
-            <div class="details">
-                <div class="title">{{ movie.title }}</div>
-                {% if trailer != '' %}
-                <div class="video" style="--image-url: url('{{ site_asset(movie, 'img') }}')" data-src="{{ trailer }}" data-html="">
-                    <button class="js-btnvideo">{{ 'Watch the trailer'|trans }}</button>
-                </div>
-                {% else %}
-                    <div class="background" style="--image-url: url('{{ site_asset(movie, 'img') }}')"></div>
+	{% if movie.duration < 60 %}
+		{% set duration = movie.duration ~ " min" %}
+	{% else %}
+		{% set hours = (movie.duration // 60) %}
+		{% set minutes = (movie.duration % 60) %}
+		{% set duration = hours ~ 'h ' ~ minutes ~ " min" %}
+	{% endif %}
+	{% set trailer = movie_oembed(movie.trailer) %}
+	<div class="dialog-container dialog-movie" id="movie-modal-{{ movie.id }}" aria-hidden="true" aria-labelledby="movie-modal-{{ movie.id }}-title" aria-describedby="movie-modal-{{ movie.id }}-description">
+		<div class="dialog-overlay" data-a11y-dialog-hide></div>
+		<div class="dialog-content" role="document">
+			<button data-a11y-dialog-hide class="dialog-close" aria-label="Close this dialog window">&times;</button>
+
+			<h3 id="movie-modal-{{ movie.id }}-title">{{ movie.title }}</h3>
+
+			<div id="movie-modal-{{ movie.id }}-description">
+				{% if trailer != '' %}
+					<div class="video" style="--image-url: url('{{ site_asset(movie, 'img') }}')" data-src="{{ trailer }}" data-html="">
+						<button class="js-btnvideo">{{ 'Watch the trailer'|trans }}</button>
+					</div>
+				{% else %}
+					<div class="background" style="--image-url: url('{{ site_asset(movie, 'img') }}')"></div>
+				{% endif %}
+				<div class="info">
+					<div class="description">{{ movie.description|raw }}</div>
+					<ul>
+                        {% if movie.year != '' %}
+                            <li class="year">
+                                <b>
+                                    {{ 'Year'|trans }}
+                                </b>
+                                {{ movie.year }}
+                            </li>
+                        {% endif %}
+                        {% if movie.country  != '' %}
+                            <li class="country">
+                                <b>
+                                    {{ 'Country'|trans }}
+                                </b>
+                                {{ movie.country }}
+                            </li>
+                        {% endif %}
+                        {% if movie.color != '' %}
+						    <li class="color">
+                                <b>
+                                    {{ 'Color'|trans }}
+                                </b>
+                                {{ movie.color }}
+                            </li>
+                        {% endif %}
+                        {% if duration != '' %}
+                            <li class="duration">
+                                <b>
+                                    {{ 'Duration'|trans }}
+                                </b>
+                                {{ duration }}
+                            </li>
+                        {% endif %}
+						{% if movie.evaluation != null %}
+							<li class="evaluation">
+                                <b>
+                                    {{ 'Evaluation'|trans }}
+                                </b>
+                                {{ movie.evaluation }}
+                            </li>
+						{% endif %}
+						{% if movie.votes != null %}
+							<li class="votes">
+                                <b>
+                                    {{ 'Votes'|trans }}
+                                </b>
+                                {{ movie.votes }}
+                            </li>
+						{% endif %}
+					</ul>
+				</div>
+                {% if movie.imdb != '' %}
+                    <div class="imdb">
+                        <a href="https://www.imdb.com/title/tt{{ movie.imdb }}" target="_blank" title="{{ 'IMDB page for the movie'|trans|e('html_attr') }}">
+                            {{ 'IMDB page for the movie'|trans }}
+                        </a>
+                    </div>
                 {% endif %}
-                <div class="info">
-                    <div class="description">{{ movie.description|raw }}</div>
-                    <ul>
-                        <li class="year">{{ 'Year : %year%'|trans({ '%year%': movie.year }) }}</li>
-                        <li class="country">{{ 'Country : %country%'|trans({ '%country%': movie.country }) }}</li>
-                        <li class="color">{{ 'Color : %color%'|trans({ '%color%': movie.color }) }}</li>
-                        <li class="duration">{{ 'Duration : %duration%'|trans({ '%duration%': duration }) }}</li>
-                        {% if movie.evaluation != null %}
-                        <li class="evaluation">{{ 'Evaluation : %evaluation%'|trans({ '%evaluation%': movie.evaluation }) }}</li>
-                        {% endif %}
-                        {% if movie.votes != null %}
-                        <li class="votes">{{ 'Votes : %votes%'|trans({ '%votes%': movie.votes }) }}</li>
-                        {% endif %}
-                    </ul>
-                </div>
-                <div class="imdb">
-                    <a href="https://www.imdb.com/title/tt{{ movie.imdb }}" target="_blank" title="{{ 'IMDB page for the movie "%title%"'|trans({ '%title%': movie.title})|e('html_attr') }}">
-                        {{ 'IMDB page for the movie "%title%"'|trans({ '%title%': movie.title }) }}
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+			</div>
+		</div>
+	</div>
 {% endfor %}

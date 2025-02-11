@@ -1,4 +1,3 @@
-// import A11yDialog from 'a11y-dialog';
 export class Video
 {
   constructor()

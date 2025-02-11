@@ -1,5 +1,20 @@
+import A11yDialog from 'a11y-dialog';
+
 export class Movie {
+
   constructor() {
+    document.querySelectorAll('.dialog-container').forEach((element) => {
+      var dialog = new A11yDialog(element);
+      dialog.on('hide', function (element) {
+        console.log('aa');
+        const modal = element.target;
+        if (modal.querySelector('.video') && modal.querySelector('.video').dataset.html != '') {
+          modal.querySelector('.video').innerHTML = modal.querySelector('.video').dataset.html;
+        }
+      });
+    });
+  }
+  old() {
     document.querySelectorAll('.open-modal').forEach(link => {
       link.addEventListener('click', (e) => {
         const movieId = e.currentTarget.getAttribute('data-movie-id');
