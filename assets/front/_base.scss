@@ -60,16 +60,22 @@ h6 {
 }
 
 
-h2::after { width: 100%; }
-h3::after { width: 80%; }
-h4::after { width: 60%; }
-h5::after { width: 40%; }
-h6::after { width: 20%; }
+h2::after { width: 90%; }
+h3::after { width: 70%; }
+h4::after { width: 50%; }
+h5::after { width: 30%; }
+h6::after { width: 10%; }
 
 a {
   
   &[target="_blank"] {
     cursor: alias;
+    &::before{
+      content: "🔗";
+      margin-right: 5px;
+      font-size: 0.9em;
+    
+    }
   }
 }
 
