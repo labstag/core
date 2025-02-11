@@ -14,7 +14,7 @@ services:
       DATABASE_BDD: labstag_bdd
       DATABASE_USER: labstag
       DATABASE_PASSWORD: password
-      DATABASE_URL: "mysqli://labstag:password@mariadb:3306/labstag_bdd?serverVersion=11.6.2"
+      DATABASE_URL: "mysqli://labstag:password@mariadb:3306/labstag_bdd"
     networks:
       - net
       - serverlampy
