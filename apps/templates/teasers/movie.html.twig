@@ -1,4 +1,4 @@
-<a href="javascript:void(0);" class="open-modal" data-movie-id="{{ movie.id }}" title="{{ movie.title|e('html_attr') }}">
+<a href="javascript:void(0);" data-a11y-dialog-show="movie-modal-{{ movie.id }}">
     <div class="background" style="--image-url: url('{{ site_asset(movie, 'img') }}')"></div>
     <div class="wrapper">
         {% if movie.categories|length > 0 %}
