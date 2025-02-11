@@ -153,7 +153,7 @@
     "a11y-dialog": "8.1.*",
     "bootstrap": "5.3.*",
     "ckeditor5": "44.1.*",
-    "flag-icons": "7.2.*",
+    "flag-icons": "7.3.2",
     "leaflet": "1.9.*",
     "leaflet.markercluster": "1.5.*",
     "object-fit-images": "3.2.*",
