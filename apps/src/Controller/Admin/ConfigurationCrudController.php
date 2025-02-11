@@ -63,9 +63,9 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
     private function addTacFields(): array
     {
         $orientations = [
-            'top' => 'top',
+            'top'    => 'top',
             'bottom' => 'bottom',
-            'popup' => 'popup',
+            'popup'  => 'popup',
             'banner' => 'banner',
         ];
 
@@ -74,9 +74,9 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
 
         $iconPosition = [
             'BottomRight' => 'BottomRight',
-            'BottomLeft' => 'BottomLeft',
-            'TopRight' => 'TopRight',
-            'TopLeft' => 'TopLeft',
+            'BottomLeft'  => 'BottomLeft',
+            'TopRight'    => 'TopRight',
+            'TopLeft'     => 'TopLeft',
         ];
 
         $iconPositionField = ChoiceField::new('tacIconPosition', new TranslatableMessage('icon Position'));

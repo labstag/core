@@ -2,14 +2,8 @@
 @use "../mixins";
 .dialog-movie {
   @extend %dialog;
-
-  
-  @include mixins.respond-to(md) {
-    width: 90%;
-    padding: 1rem;
-
-  }
-
+  width: 100%;
+  padding: 1rem;
   .video {
     margin-top: 11px;
     margin-bottom: 11px;
