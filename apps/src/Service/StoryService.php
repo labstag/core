@@ -16,6 +16,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryService
 {
+
     private array $stories = [];
 
 
@@ -52,7 +53,7 @@ class StoryService
             return false;
         }
 
-        $this->addCoverPage($section, $story, $chapters);
+        $this->addCoverPage($section, $story);
         $this->addSummary($section);
 
         foreach ($chapters as $chapter) {
@@ -65,7 +66,7 @@ class StoryService
 
         $uploadedFile = new UploadedFile(
             path: $tempPath,
-            originalName: basename((string) $tempPath),
+            originalName: basename($tempPath),
             mimeType: mime_content_type($tempPath),
             test: true
         );
@@ -76,29 +77,37 @@ class StoryService
         return true;
     }
 
-    private function addSummary($section)
+    private function addSummary($section): void
     {
         $section->addText(
-            "Table des matières",
+            'Table des matières',
             [
-                'size' => 18, 'bold' => true
+                'size' => 18,
+                'bold' => true,
             ]
         );
         $toc = $section->addTOC(
-            ['spaceAfter' => 60, 'size' => 12]
+            [
+                'spaceAfter' => 60,
+                'size'       => 12,
+            ]
         );
         $toc->setMinDepth(0);
+
         $section->addPageBreak();
         $section->addPageBreak();
     }
 
-    private function addCoverPage($section, Story $story, array $chapters): void
-    {        
+    private function addCoverPage($section, Story $story): void
+    {
         // Ajout de la page de garde
         $section->addTextBreak(10);
         $section->addText(
             $story->getTitle(),
-            ['size' => 24, 'bold' => true],
+            [
+                'size' => 24,
+                'bold' => true,
+            ],
             ['align' => 'center']
         );
         $section->addTextBreak(2);
@@ -107,12 +116,12 @@ class StoryService
             ['size' => 16],
             ['align' => 'center']
         );
-        
+
         $section->addPageBreak();
         $section->addPageBreak();
     }
 
-    public function generateFlashBag()
+    public function generateFlashBag(): void
     {
         $this->getFlashBag()->add(
             'success',
@@ -168,9 +177,7 @@ class StoryService
                     'size' => 12,
                     'bold' => false,
                 ],
-                [
-                    'spaceAfter' => 240
-                ]
+                ['spaceAfter' => 240]
             );
         }
 

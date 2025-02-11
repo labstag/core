@@ -66,7 +66,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         foreach ($date as $field) {
             yield $field;
         }
-        
+
         yield FormField::addTab(new TranslatableMessage('Config'));
         $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'))->hideOnIndex();
         $choiceField->setChoices($this->paragraphService->getFonds());

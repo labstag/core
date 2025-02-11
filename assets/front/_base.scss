@@ -11,7 +11,7 @@ header{
   background: color.scale(variables.$colorbg, $lightness: -10%);
   @extend %paddingdefault;
   &:has(.block_admin) {
-    padding-top: 8vh;
+    padding-top: 86px;
   }
 }
 
@@ -25,31 +25,37 @@ footer{
 
 h1 {
    @extend %hn;
+   font-size: 3rem;
    margin: 12px;
 }
 
 h2 {
    @extend %hn;
+   font-size: 2.5rem;
    margin: 10px;
 }
 
 h3 {
    @extend %hn;
+   font-size: 2rem;
    margin: 8px;
 }
 
 h4 {
    @extend %hn;
+   font-size: 1.5rem;
    margin: 6px;
 }
 
 h5 {
    @extend %hn;
+   font-size: 1rem;
    margin: 4px;
 }
 
 h6 {
    @extend %hn;
+   font-size: 0.5rem;
    margin: 2px;
 }
 
@@ -81,7 +87,7 @@ a {
 }
 
 .paragraph {
-  margin-top: 2vh;
+  margin-top: 22px;
   @extend %wrapper;
 }
 
@@ -90,7 +96,7 @@ a {
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
-  height: 60vh;
+  height: 648px;
 }
 
 .pagination {
