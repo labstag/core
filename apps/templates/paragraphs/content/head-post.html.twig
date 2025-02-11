@@ -9,9 +9,9 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            <div class="title">
+            <h3 class="title">
                 {{ post.title }}
-            </div>
+            </h3>
             {% if post.categories|length > 0 %}
                 <div class="categories">
                     {% for category in post.categories %}

@@ -1,0 +1,64 @@
+<script src="/assets/tarteaucitron/tarteaucitron.min.js"></script>
+<script type="text/javascript">
+	tarteaucitron.init(
+        {
+            "privacyUrl": "{{ config.tacPrivacyUrl }}", /* Url de la politique de confidentialité */
+            "bodyPosition": "{{ config.tacBodyPosition }}", /* top place le bandeau de consentement au début du code html, mieux pour l'accessibilité */
+
+            "hashtag": "{{ config.tacHashtag }}", /* Hashtag qui permet d'ouvrir le panneau de contrôle  */
+            "cookieName": "{{ config.tacCookieName }}", /* Nom du cookie (uniquement lettres et chiffres) */
+
+            "orientation": "{{ config.tacOrientation }}", /* Position de la bannière (top - bottom - popup - banner) */
+
+            "groupServices": {{ config.tacGroupServices ? 'true' : 'false' }}, /* Grouper les services par catégorie */
+            "showDetailsOnClick": {{ config.tacShowDetailsOnClick ? 'true' : 'false' }}, /* Cliquer pour ouvrir la description */
+            "serviceDefaultState": "{{ config.tacServiceDefaultState }}", /* Statut par défaut (true - wait - false) */
+
+            "showAlertSmall": {{ config.tacShowAlertSmall ? 'true' : 'false' }}, /* Afficher la petite bannière en bas à droite */
+            "cookieslist": {{ config.tacCookieslist ? 'true' : 'false' }}, /* Afficher la liste des cookies */
+
+            "closePopup": {{ config.tacClosePopup ? 'true' : 'false' }}, /* Afficher un X pour fermer la bannière */
+
+            "showIcon": {{ config.tacShowIcon ? 'true' : 'false' }},
+            /* Afficher un cookie pour ouvrir le panneau */
+            {% if config.tabIconSrc != '' %}
+            "iconSrc": "{{ config.tacIconSrc }}", /* Optionnel: URL ou image en base64 */
+            {% endif %}
+            "iconPosition": "{{ config.tacIconPosition }}", /* Position de l'icons: (BottomRight - BottomLeft - TopRight - TopLeft) */
+
+            "adblocker": {{ config.tacAdblocker ? 'true' : 'false' }}, /* Afficher un message si un Adblocker est détecté */
+
+            "DenyAllCta": {{ config.tacDenyAllCta ? 'true' : 'false' }}, /* Afficher le bouton Tout refuser */
+            "AcceptAllCta": {{ config.tacAcceptAllCta ? 'true': 'false' }}, /* Afficher le bouton Tout accepter */
+            "highPrivacy": {{ config.tacHighPrivacy ? 'true' : 'false' }}, /* Attendre le consentement */
+            "alwaysNeedConsent": {{ config.tacAlwaysNeedConsent ? 'true' : 'false' }}, /* Demander le consentement même pour les services "Privacy by design" */
+
+            "handleBrowserDNTRequest": {{ config.tacHandleBrowserDNTRequest ? 'true' : 'false' }}, /* Refuser tout par défaut si Do Not Track est activé sur le navigateur */
+
+            "removeCredit": {{ config.tacRemoveCredit ? 'true' : 'false' }}, /* Retirer le lien de crédit vers tarteaucitron.io */
+            "moreInfoLink": {{ config.tacMoreInfoLink ? 'true' : 'false' }}, /* Afficher le lien En savoir plus */
+
+            "useExternalCss": {{ config.tacUseExternalCss ? 'true' : 'false' }}, /* Mode expert : désactiver le chargement des fichiers .css tarteaucitron */
+            "useExternalJs": {{ config.tacUseExternalJs ? 'true' : 'false' }},
+            /* Mode expert : désactiver le chargement des fichiers .js tarteaucitron */
+            {% if config.tacCookieDomain != '' %}
+            "cokkieDomain": "{{ config.tacCookieDomain }}", /* Optionnel: domaine principal pour partager le consentement avec des sous domaines */
+            {% endif %}
+
+            "readmoreLink": "{{ config.tacReadmoreLink }}", /* Changer le lien En savoir plus par défaut */
+
+            "mandatory": {{ config.tacMandatory ? 'true' : 'false' }}, /* Afficher un message pour l'utilisation de cookies obligatoires */
+            "mandatoryCta": {{ config.tacMandatoryCta ? 'true' : 'false' }},
+            /* Afficher un bouton pour les cookies obligatoires (déconseillé) */
+            {% if config.tacCustomCloserId != '' %}
+            "customCloserId": "{{ config.tacCustomCloserId }}", /* Optionnel a11y: ID personnalisé pour ouvrir le panel */
+            {% endif %}
+
+            "googleConsentMode": {{ config.tacGoogleConsentMode ? 'true' : 'false' }}, /* Activer le Google Consent Mode v2 pour Google ads et GA4 */
+
+            "partnersList": {{ config.tacPartnersList ? 'true' : 'false' }} /* Afficher le détail du nombre de partenaires sur la bandeau */
+        }
+    );
+    tarteaucitron.job = tarteaucitron.job || [];
+    {{ services|raw }}
+</script>

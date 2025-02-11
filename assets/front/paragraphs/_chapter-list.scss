@@ -1,4 +1,7 @@
 @use "../mixins";
+@use "../variables";
+
+@use "sass:color";
 .paragraph_chapter-list{
   .wrapper{
 
@@ -15,6 +18,16 @@
     }
   }
   li{
+    &.teaser-chapter{
+      background-color: color.scale(variables.$colorbg, $lightness: 15%);
+      &:nth-child(even)
+      {
+        background-color: color.scale(variables.$colorbg, $lightness: 10%);
+      }
+    }
 
+    .wrapper {
+      padding: 1rem;
+    }
   }
 }

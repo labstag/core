@@ -27,6 +27,16 @@ class FrontExtension extends AbstractExtension
             new TwigFunction('site_title', [FrontExtensionRuntime::class, 'title']),
             new TwigFunction('site_asset', [FrontExtensionRuntime::class, 'asset']),
             new TwigFunction(
+                'site_tarteaucitron',
+                [
+                    FrontExtensionRuntime::class,
+                    'tarteaucitron',
+                ],
+                [
+                    'is_safe' => ['html'],
+                ]
+            ),
+            new TwigFunction(
                 'site_metatags',
                 [
                     FrontExtensionRuntime::class,
