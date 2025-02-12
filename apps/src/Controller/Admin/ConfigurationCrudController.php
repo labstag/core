@@ -64,6 +64,7 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
     {
         $orientations = [
             'top'    => 'top',
+            'middle' => 'middle',
             'bottom' => 'bottom',
             'popup'  => 'popup',
             'banner' => 'banner',
