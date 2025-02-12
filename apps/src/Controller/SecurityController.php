@@ -42,7 +42,7 @@ class SecurityController extends AbstractController
      */
     protected function getDataLogin(AuthenticationUtils $authenticationUtils, SiteService $siteService): array
     {
-        $favicon      = $siteService->getFavicon();
+        $favicon      = $siteService->getFileFavicon();
         $error        = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
         $data         = $siteService->getConfiguration();

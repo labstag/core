@@ -78,8 +78,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         $metatags = $this->siteService->getMetatags($entity);
         $image    = $this->siteService->getImageForMetatags($entity);
         $config   = $this->siteService->getConfiguration();
-        $favicon  = $this->siteService->getFavicon('favicon.ico');
-        $favicon  = !is_null($favicon) ? $favicon : $this->siteService->getFavicon('favicon');
+        $favicon  = $this->siteService->getFileFavicon();
 
         return $this->twigEnvironment->render(
             'metatags.html.twig',

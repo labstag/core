@@ -172,6 +172,13 @@ class SiteService
         return $page;
     }
 
+    public function getFileFavicon(): ?array
+    {
+        $favicon  = $this->getFavicon('favicon.ico');
+
+        return !is_null($favicon) ? $favicon : $this->getFavicon('favicon');
+    }
+
     public function getFavicon(string $type): ?array
     {
         $info = null;
