@@ -45,9 +45,9 @@ class StarCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
-        unset($pageName);
         yield $this->addFieldID();
         yield $this->addFieldTitle();
+        yield $this->addFieldImageUpload('img', $pageName);
         yield TextField::new('language', new TranslatableMessage('Language'));
         yield TextField::new('repository', new TranslatableMessage('Repository'))->hideOnIndex();
         yield UrlField::new('url', new TranslatableMessage('Url'));

@@ -53,6 +53,17 @@ vich_uploader:
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
+    star:
+      uri_prefix: /uploads/star
+      upload_destination: star.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: title
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
     story:
       uri_prefix: /uploads/story
       upload_destination: story.storage

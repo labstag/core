@@ -24,4 +24,9 @@
       background: none;
     }
   }
+  a{
+    &::before{
+      content: '';
+    }
+  }
 }

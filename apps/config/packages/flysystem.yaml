@@ -53,3 +53,7 @@ flysystem:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/uploads/post'
+    star.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/star'
