@@ -13,6 +13,7 @@ use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Field\FileField;
+use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Service\StoryService;
 use Override;
@@ -67,6 +68,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         $collectionField->setTemplatePath('admin/field/chapters.html.twig');
         $collectionField->onlyOnDetail();
         yield $collectionField;
+        yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
         $fields = array_merge(
             $this->addFieldParagraphs($pageName),
             $this->addFieldMetas(),

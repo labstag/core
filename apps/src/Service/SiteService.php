@@ -172,30 +172,36 @@ class SiteService
         return $page;
     }
 
-    public function getFavicon(): ?array
+    public function getFavicon(string $type): ?array
     {
-        $favicon = '';
+        $info = null;
         $file    = $this->fileService->getFileInAdapter('assets', 'manifest.json');
         $json    = json_decode(file_get_contents($file), true);
         foreach ($json as $title => $file) {
-            if (0 === substr_count((string) $title, 'favicon')) {
+            $info = null;
+            if (0 === substr_count((string) $title, $type)) {
                 continue;
             }
 
-            $favicon = $file;
+            $file = str_replace('/assets/', '', $file);
+            $fileInAdapter = $this->fileService->getFileInAdapter('assets', $file);
+            if (is_null($fileInAdapter)) {
+                continue;
+            }
+
+            $info = $this->fileService->getInfoImage($fileInAdapter);
+            if (!is_array($info['data']) || substr_count($info['data']['type'], 'image') == 0) {
+                continue;
+            }
+
+            break;
         }
 
-        if ('' == $favicon) {
+        if (is_null($info)) {
             return null;
         }
 
-        $favicon = str_replace('/assets/', '', $favicon);
-        $favicon = $this->fileService->getFileInAdapter('assets', $favicon);
-        if (is_null($favicon)) {
-            return null;
-        }
-
-        return $this->fileService->getInfoImage($favicon);
+        return $info;
     }
 
     public function getImageForMetatags(mixed $entity): ?array

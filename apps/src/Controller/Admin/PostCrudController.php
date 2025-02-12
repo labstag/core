@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
+use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -46,6 +47,7 @@ class PostCrudController extends AbstractCrudControllerLib
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('post');
         yield $this->addFieldCategories('post');
+        yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
         $fields = array_merge(
             $this->addFieldParagraphs($pageName),
             $this->addFieldMetas(),

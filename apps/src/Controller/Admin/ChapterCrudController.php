@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\User;
+use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -49,6 +50,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         yield $this->addFieldRefStory();
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldTags('chapter');
+        yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
         $fields = array_merge($this->addFieldParagraphs($pageName), $this->addFieldMetas());
         foreach ($fields as $field) {
             yield $field;
