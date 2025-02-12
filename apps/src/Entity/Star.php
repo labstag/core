@@ -2,13 +2,18 @@
 
 namespace Labstag\Entity;
 
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\StarRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
 
 #[ORM\Entity(repositoryClass: StarRepository::class)]
+#[Vich\Uploadable]
 class Star
 {
     use TimestampableTrait;
@@ -52,6 +57,15 @@ class Star
     #[ORM\Column]
     private ?int $watchers = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $img = null;
+
+    #[Vich\UploadableField(mapping: 'star', fileNameProperty: 'img')]
+    private ?File $imgFile = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $owner = null;
+
     public function getDescription(): ?string
     {
         return $this->description;
@@ -65,6 +79,32 @@ class Star
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    public function getImg(): ?string
+    {
+        return $this->img;
+    }
+
+    public function setImg(?string $img): void
+    {
+        $this->img = $img;
+    }
+
+    public function setImgFile(?File $imgFile = null): void
+    {
+        $this->imgFile = $imgFile;
+
+        if ($imgFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function getImgFile(): ?File
+    {
+        return $this->imgFile;
     }
 
     public function getLanguage(): ?string
@@ -173,6 +213,18 @@ class Star
     public function setWatchers(int $watchers): static
     {
         $this->watchers = $watchers;
+
+        return $this;
+    }
+
+    public function getOwner(): ?string
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?string $owner): static
+    {
+        $this->owner = $owner;
 
         return $this;
     }

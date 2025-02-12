@@ -75,7 +75,7 @@ class MovieService
 
             $uploadedFile = new UploadedFile(
                 path: $tempPath,
-                originalName: basename($poster),
+                originalName: basename($tempPath),
                 mimeType: mime_content_type($tempPath),
                 test: true
             );
