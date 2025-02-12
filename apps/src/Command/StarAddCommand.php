@@ -155,8 +155,8 @@ class StarAddCommand extends Command
         if (!isset($data['owner']['avatar_url'])) {
             return;
         }
-        
-        try{
+
+        try {
             $file = $data['owner']['avatar_url'];
             $tempPath = tempnam(sys_get_temp_dir(), 'star_');
             file_put_contents($tempPath, file_get_contents($file));
@@ -168,8 +168,7 @@ class StarAddCommand extends Command
             );
 
             $star->setImgFile($uploadedFile);
-        }
-        catch (Exception $exception) {
+        } catch (Exception $exception) {
             echo $exception->getMessage();
         }
     }

@@ -57,7 +57,7 @@ class StarCrudController extends AbstractCrudControllerLib
         yield IntegerField::new('watchers', new TranslatableMessage('Watchers'));
         yield IntegerField::new('forks', new TranslatableMessage('Forks'));
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
-        
+
         $date = $this->addTabDate();
         foreach ($date as $field) {
             yield $field;
