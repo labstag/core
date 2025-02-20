@@ -87,7 +87,7 @@ class SecurityService
     public function getCurrentClientIp(): string
     {
         $request = $this->requestStack->getCurrentRequest();
-        $server = $request->server;
+        $server  = $request->server;
 
         $headers = [
             'HTTP_CLIENT_IP',

@@ -13,6 +13,8 @@ use Labstag\Entity\Page;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PageCrudController extends AbstractCrudControllerLib
@@ -20,11 +22,23 @@ class PageCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setActionPublic($actions);
+        $this->setActionPublic($actions, 'admin_page_w3c', 'admin_page_public');
         $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
 
         return $actions;
+    }
+
+    #[Route('/admin/page/{entity}/w3c', name: 'admin_page_w3c')]
+    public function w3c(Page $page): RedirectResponse
+    {
+        return $this->linkw3CValidator($page);
+    }
+
+    #[Route('/admin/page/{entity}/public', name: 'admin_page_public')]
+    protected function linkPublicAction(Page $page): RedirectResponse
+    {
+        return $this->linkPublic($page);
     }
 
     #[Override]

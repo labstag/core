@@ -132,9 +132,8 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->redirect($url);
     }
 
-    public function linkPublic(AdminContext $adminContext): RedirectResponse
+    protected function linkPublic(object $entity): RedirectResponse
     {
-        $entity = $adminContext->getEntity()->getInstance();
         $slug = $this->siteService->getSlugByEntity($entity);
 
         return $this->redirectToRoute(
@@ -143,9 +142,8 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         );
     }
 
-    public function linkw3CValidator(AdminContext $adminContext): RedirectResponse
+    protected function linkw3CValidator(object $entity): RedirectResponse
     {
-        $entity = $adminContext->getEntity()->getInstance();
         $slug = $this->siteService->getSlugByEntity($entity);
 
         return $this->redirect(
@@ -519,16 +517,16 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $doctrine->getManagerForClass(Paragraph::class)->getRepository(Paragraph::class);
     }
 
-    protected function setActionPublic(Actions $actions): void
+    protected function setActionPublic(Actions $actions, string $urlPublic, string $urlW3c): void
     {
         $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
 
-        $action = $this->setLinkPublicAction();
+        $action = $this->setLinkPublicAction($urlPublic);
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
 
-        $w3caction = $this->setW3cValidatorAction();
+        $w3caction = $this->setW3cValidatorAction($urlW3c);
         $actions->add(Crud::PAGE_EDIT, $w3caction);
         $actions->add(Crud::PAGE_INDEX, $w3caction);
         $actions->add(Crud::PAGE_DETAIL, $w3caction);
@@ -566,25 +564,39 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $queryBuilder;
     }
 
-    private function setLinkPublicAction(): Action
+    private function setLinkPublicAction(string $urlPublic): Action
     {
         $action = Action::new('linkPublic', new TranslatableMessage('View Page'));
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
-        $action->linkToCrudAction('linkPublic');
+        $action->linkToUrl(
+            fn ($entity): string => $this->generateUrl(
+                $urlPublic,
+                [
+                    'entity' => $entity->getId(),
+                ]
+            )
+        );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         return $action;
     }
 
-    private function setW3cValidatorAction(): Action
+    private function setW3cValidatorAction(string $urlW3c): Action
     {
         $action = Action::new('linkw3CValidator', new TranslatableMessage('W3C Validator'));
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
-        $action->linkToCrudAction('linkw3CValidator');
+        $action->linkToUrl(
+            fn ($entity): string => $this->generateUrl(
+                $urlW3c,
+                [
+                    'entity' => $entity->getId(),
+                ]
+            )
+        );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         return $action;

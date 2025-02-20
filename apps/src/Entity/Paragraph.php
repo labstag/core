@@ -96,6 +96,9 @@ class Paragraph implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $classes = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $leftposition = null;
+
     #[Override]
     public function __toString(): string
     {
@@ -345,6 +348,18 @@ class Paragraph implements Stringable
     public function setClasses(?string $classes): static
     {
         $this->classes = $classes;
+
+        return $this;
+    }
+
+    public function isLeftposition(): ?bool
+    {
+        return $this->leftposition;
+    }
+
+    public function setLeftposition(?bool $leftposition): static
+    {
+        $this->leftposition = $leftposition;
 
         return $this;
     }

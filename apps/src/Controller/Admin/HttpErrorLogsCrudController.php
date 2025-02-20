@@ -7,7 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -17,14 +16,15 @@ use Labstag\Field\HttpLogs\SameField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class HttpErrorLogsCrudController extends AbstractCrudControllerLib
 {
-    public function banIp(AdminContext $adminContext): RedirectResponse
+    #[Route('/admin/http-error-logs/{entity}/banip', name: 'admin_http_error_logs_banip')]
+    public function banIp(HttpErrorLogs $httpErrorLogs): RedirectResponse
     {
-        $entity = $adminContext->getEntity()->getInstance();
-        $internetProtocol = $entity->getInternetProtocol();
+        $internetProtocol = $httpErrorLogs->getInternetProtocol();
 
         $redirectToRoute = $this->redirectToRoute('admin_http_error_logs_index');
         if ($this->securityService->getCurrentClientIp() === $internetProtocol) {
@@ -152,7 +152,14 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     private function setLinkBanAction(): Action
     {
         $action = Action::new('banIp', new TranslatableMessage('Ban Ip'));
-        $action->linkToCrudAction('banIp');
+        $action->linkToUrl(
+            fn ($entity): string => $this->generateUrl(
+                'admin_http_error_logs_banip',
+                [
+                    'entity' => $entity->getId(),
+                ]
+            )
+        );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         return $action;

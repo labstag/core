@@ -6,7 +6,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -90,11 +89,10 @@ class MovieCrudController extends AbstractCrudControllerLib
         return Movie::class;
     }
 
-    public function imdb(AdminContext $adminContext): RedirectResponse
+    #[Route('/admin/movie/{entity}/imdb', name: 'admin_movie_imdb')]
+    public function imdb(Movie $movie): RedirectResponse
     {
-        $entity = $adminContext->getEntity()->getInstance();
-
-        return $this->redirect('https://www.imdb.com/title/tt' . $entity->getImdb() . '/');
+        return $this->redirect('https://www.imdb.com/title/tt' . $movie->getImdb() . '/');
     }
 
     #[Route('/admin/movie/updateimage', name: 'admin_movie_updateimage')]
@@ -166,7 +164,14 @@ class MovieCrudController extends AbstractCrudControllerLib
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
-        $action->linkToCrudAction('imdb');
+        $action->linkToUrl(
+            fn (Movie $movie): string => $this->generateUrl(
+                'admin_movie_imdb',
+                [
+                    'entity' => $movie->getId(),
+                ]
+            )
+        );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         return $action;

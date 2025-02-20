@@ -14,6 +14,8 @@ use Labstag\Entity\User;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ChapterCrudController extends AbstractCrudControllerLib
@@ -21,11 +23,23 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setActionPublic($actions);
+        $this->setActionPublic($actions, 'admin_chapter_w3c', 'admin_chapter_public');
         $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
 
         return $actions;
+    }
+
+    #[Route('/admin/chapter/{entity}/w3c', name: 'admin_chapter_w3c')]
+    public function w3c(Chapter $chapter): RedirectResponse
+    {
+        return $this->linkw3CValidator($chapter);
+    }
+
+    #[Route('/admin/chapter/{entity}/public', name: 'admin_chapter_public')]
+    protected function linkPublicAction(Chapter $chapter): RedirectResponse
+    {
+        return $this->linkPublic($chapter);
     }
 
     #[Override]

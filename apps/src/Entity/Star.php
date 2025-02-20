@@ -9,8 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\StarRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: StarRepository::class)]
 #[Vich\Uploadable]

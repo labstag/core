@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "65eeb5a1ae6c8396804c4709c2acf378",
+    "content-hash": "b3519dbe7be7bd80adf7d158cb57944a",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -1707,16 +1707,16 @@
         },
         {
             "name": "easycorp/easyadmin-bundle",
-            "version": "v4.24.1",
+            "version": "v4.24.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EasyCorp/EasyAdminBundle.git",
-                "reference": "fb8728635620d716cc007c8ad7ae819b4d84a027"
+                "reference": "5a704e741b0fc25d8c4805fce196382a6368797e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/fb8728635620d716cc007c8ad7ae819b4d84a027",
-                "reference": "fb8728635620d716cc007c8ad7ae819b4d84a027",
+                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/5a704e741b0fc25d8c4805fce196382a6368797e",
+                "reference": "5a704e741b0fc25d8c4805fce196382a6368797e",
                 "shasum": ""
             },
             "require": {
@@ -1796,7 +1796,7 @@
             ],
             "support": {
                 "issues": "https://github.com/EasyCorp/EasyAdminBundle/issues",
-                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.24.1"
+                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.24.2"
             },
             "funding": [
                 {
@@ -1804,7 +1804,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-06T18:39:58+00:00"
+            "time": "2025-02-11T18:59:07+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -3665,16 +3665,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "3.8.4",
+            "version": "3.8.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CarbonPHP/carbon.git",
-                "reference": "129700ed449b1f02d70272d2ac802357c8c30c58"
+                "reference": "b1a53a27898639579a67de42e8ced5d5386aa9a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/129700ed449b1f02d70272d2ac802357c8c30c58",
-                "reference": "129700ed449b1f02d70272d2ac802357c8c30c58",
+                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/b1a53a27898639579a67de42e8ced5d5386aa9a4",
+                "reference": "b1a53a27898639579a67de42e8ced5d5386aa9a4",
                 "shasum": ""
             },
             "require": {
@@ -3750,8 +3750,8 @@
             ],
             "support": {
                 "docs": "https://carbon.nesbot.com/docs",
-                "issues": "https://github.com/briannesbitt/Carbon/issues",
-                "source": "https://github.com/briannesbitt/Carbon"
+                "issues": "https://github.com/CarbonPHP/carbon/issues",
+                "source": "https://github.com/CarbonPHP/carbon"
             },
             "funding": [
                 {
@@ -3767,7 +3767,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-12-27T09:25:35+00:00"
+            "time": "2025-02-11T16:28:45+00:00"
         },
         {
             "name": "phpoffice/math",
@@ -11222,16 +11222,16 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.12.1",
+            "version": "1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "123267b2c49fbf30d78a7b2d333f6be754b94845"
+                "reference": "024473a478be9df5fdaca2c793f2232fe788e414"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/123267b2c49fbf30d78a7b2d333f6be754b94845",
-                "reference": "123267b2c49fbf30d78a7b2d333f6be754b94845",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/024473a478be9df5fdaca2c793f2232fe788e414",
+                "reference": "024473a478be9df5fdaca2c793f2232fe788e414",
                 "shasum": ""
             },
             "require": {
@@ -11270,7 +11270,7 @@
             ],
             "support": {
                 "issues": "https://github.com/myclabs/DeepCopy/issues",
-                "source": "https://github.com/myclabs/DeepCopy/tree/1.12.1"
+                "source": "https://github.com/myclabs/DeepCopy/tree/1.13.0"
             },
             "funding": [
                 {
@@ -11278,7 +11278,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-08T17:47:46+00:00"
+            "time": "2025-02-12T12:17:51+00:00"
         },
         {
             "name": "nette/utils",
@@ -14964,16 +14964,16 @@
         },
         {
             "name": "symplify/phpstan-rules",
-            "version": "14.2.7",
+            "version": "14.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/phpstan-rules.git",
-                "reference": "c3ecd80987b75a2c01f9e11ebbf954b7cff5b24b"
+                "reference": "c8dc0a8ea2afa0fde14fd19fc4468ada8be2b3e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/phpstan-rules/zipball/c3ecd80987b75a2c01f9e11ebbf954b7cff5b24b",
-                "reference": "c3ecd80987b75a2c01f9e11ebbf954b7cff5b24b",
+                "url": "https://api.github.com/repos/symplify/phpstan-rules/zipball/c8dc0a8ea2afa0fde14fd19fc4468ada8be2b3e6",
+                "reference": "c8dc0a8ea2afa0fde14fd19fc4468ada8be2b3e6",
                 "shasum": ""
             },
             "require": {
@@ -15005,7 +15005,7 @@
             "description": "Set of Symplify rules for PHPStan",
             "support": {
                 "issues": "https://github.com/symplify/phpstan-rules/issues",
-                "source": "https://github.com/symplify/phpstan-rules/tree/14.2.7"
+                "source": "https://github.com/symplify/phpstan-rules/tree/14.2.8"
             },
             "funding": [
                 {
@@ -15017,7 +15017,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-01-31T11:24:35+00:00"
+            "time": "2025-02-12T12:22:05+00:00"
         },
         {
             "name": "theseer/tokenizer",
