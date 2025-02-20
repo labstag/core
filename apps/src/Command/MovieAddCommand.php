@@ -183,9 +183,9 @@ class MovieAddCommand extends Command
 
         $pattern = '/(\d+\.\d+)\s+\(([\d.]+)([KMB]?) votes\)/';
         preg_match($pattern, (string) $data['Evaluation IMDb'], $matches);
-        $evaluation = $this->setEvaluation($matches);
+        $evaluation = (float) $this->setEvaluation($matches);
         $suffix     = $this->setSuffix($matches);
-        $votes      = $this->setVotes($suffix, $matches);
+        $votes      = (int) $this->setVotes($suffix, $matches);
 
         if (!$movie instanceof Movie) {
             $movie = new Movie();

@@ -27,13 +27,25 @@ class StoryCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setActionPublic($actions);
+        $this->setActionPublic($actions, 'admin_story_w3c', 'admin_story_public');
         $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
         $this->setActionMoveChapter($actions);
         $this->configureActionsUpdatePdf($actions);
 
         return $actions;
+    }
+
+    #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
+    public function w3c(Story $story): RedirectResponse
+    {
+        return $this->linkw3CValidator($story);
+    }
+
+    #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
+    protected function linkPublicAction(Story $story): RedirectResponse
+    {
+        return $this->linkPublic($story);
     }
 
     #[Override]
@@ -168,11 +180,9 @@ class StoryCrudController extends AbstractCrudControllerLib
             $serviceEntityRepositoryLib->flush($counter);
         }
 
-        $this->addFlash(
-            'success',
-            $storyService->generateFlashBag()
-        );
+        $this->addFlash('success', $storyService->generateFlashBag());
         $serviceEntityRepositoryLib->flush();
+
         return $this->redirectToRoute('admin_story_index');
     }
 

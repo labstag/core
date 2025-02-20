@@ -464,8 +464,8 @@ class Configuration
     public function getTacBodyPosition(): string
     {
         $bodyPosition = (string) $this->tacBodyPosition;
-        if ($bodyPosition == '') {
-            $bodyPosition = 'top';
+        if ('' === $bodyPosition) {
+            return 'top';
         }
 
         return $bodyPosition;
@@ -481,8 +481,8 @@ class Configuration
     public function getTacHashtag(): string
     {
         $hashtag = (string) $this->tacHashtag;
-        if ($hashtag == '') {
-            $hashtag = '#rgpd';
+        if ('' === $hashtag) {
+            return '#rgpd';
         }
 
         return $hashtag;
@@ -498,8 +498,8 @@ class Configuration
     public function getTacCookieName(): string
     {
         $cookieName = (string) $this->tacCookieName;
-        if ($cookieName == '') {
-            $cookieName = 'rgpd';
+        if ('' === $cookieName) {
+            return 'rgpd';
         }
 
         return $cookieName;
@@ -515,8 +515,8 @@ class Configuration
     public function getTacOrientation(): string
     {
         $orientation = (string) $this->tacOrientation;
-        if ($orientation == '') {
-            $orientation = 'middle';
+        if ('' === $orientation) {
+            return 'middle';
         }
 
         return $orientation;
@@ -556,8 +556,8 @@ class Configuration
     public function getTacServiceDefaultState(): ?string
     {
         $serviceDefaultState = (string) $this->tacServiceDefaultState;
-        if ($serviceDefaultState == '') {
-            $serviceDefaultState = 'wait';
+        if ('' === $serviceDefaultState) {
+            return 'wait';
         }
 
         return $serviceDefaultState;
@@ -633,8 +633,8 @@ class Configuration
     public function getTacIconPosition(): string
     {
         $iconPosition = (string) $this->tacIconPosition;
-        if ($iconPosition == '') {
-            $iconPosition = 'BottomRight';
+        if ('' === $iconPosition) {
+            return 'BottomRight';
         }
 
         return $iconPosition;

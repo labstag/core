@@ -32,7 +32,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     public function tarteaucitron(): string
     {
         $config = $this->siteService->getConfiguration();
-        if (empty(trim($config->getTacServices()))) {
+        if (in_array(trim((string) $config->getTacServices()), ['', '0'], true)) {
             return '';
         }
 

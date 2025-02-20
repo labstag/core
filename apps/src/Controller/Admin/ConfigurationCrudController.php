@@ -51,10 +51,7 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
         yield $this->addFieldImageUpload('logo', $pageName, new TranslatableMessage('Logo'));
         yield $this->addFieldImageUpload('placeholder', $pageName, new TranslatableMessage('Placeholder'));
         yield FormField::addTab(new TranslatableMessage('TAC'));
-        $fields = array_merge(
-            [],
-            $this->addTacFields(),
-        );
+        $fields = array_merge([], $this->addTacFields());
         foreach ($fields as $field) {
             yield $field;
         }
@@ -70,8 +67,8 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
             'banner' => 'banner',
         ];
 
-        $orientationField = ChoiceField::new('tacOrientation', new TranslatableMessage('Orientation'));
-        $orientationField->setChoices($orientations);
+        $choiceField = ChoiceField::new('tacOrientation', new TranslatableMessage('Orientation'));
+        $choiceField->setChoices($orientations);
 
         $iconPosition = [
             'BottomRight' => 'BottomRight',
@@ -89,7 +86,7 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
             TextField::new('tacBodyPosition', new TranslatableMessage('Body Position')),
             TextField::new('tacHashtag', new TranslatableMessage('Hashtag')),
             TextField::new('tacCookieName', new TranslatableMessage('Cookie Name')),
-            $orientationField,
+            $choiceField,
             $this->addFieldBoolean('tacGroupServices', new TranslatableMessage('Group Services')),
             $this->addFieldBoolean('tacShowDetailsOnClick', new TranslatableMessage('Show Details On Click')),
             TextField::new('tacServiceDefaultState', new TranslatableMessage('Service Default State')),

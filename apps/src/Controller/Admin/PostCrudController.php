@@ -10,6 +10,8 @@ use Labstag\Entity\Post;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PostCrudController extends AbstractCrudControllerLib
@@ -17,11 +19,23 @@ class PostCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setActionPublic($actions);
+        $this->setActionPublic($actions, 'admin_post_w3c', 'admin_post_public');
         $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
 
         return $actions;
+    }
+
+    #[Route('/admin/post/{entity}/w3c', name: 'admin_post_w3c')]
+    public function w3c(Post $post): RedirectResponse
+    {
+        return $this->linkw3CValidator($post);
+    }
+
+    #[Route('/admin/post/{entity}/public', name: 'admin_post_public')]
+    protected function linkPublicAction(Post $post): RedirectResponse
+    {
+        return $this->linkPublic($post);
     }
 
     #[Override]

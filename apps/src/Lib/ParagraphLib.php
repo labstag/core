@@ -300,7 +300,9 @@ abstract class ParagraphLib extends AbstractController
         $this->data[$paragraph->getId()] = $data;
     }
 
-    private function setUrlAdmin(Paragraph $paragraph): string|\EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface
+    private function setUrlAdmin(
+        Paragraph $paragraph,
+    ): string|\EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface
     {
         if (!$this->security->isGranted('ROLE_ADMIN')) {
             return '';

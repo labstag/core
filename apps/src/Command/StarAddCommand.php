@@ -157,7 +157,7 @@ class StarAddCommand extends Command
         }
 
         try {
-            $file = $data['owner']['avatar_url'];
+            $file     = $data['owner']['avatar_url'];
             $tempPath = tempnam(sys_get_temp_dir(), 'star_');
             file_put_contents($tempPath, file_get_contents($file));
             $uploadedFile = new UploadedFile(

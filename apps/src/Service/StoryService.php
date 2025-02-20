@@ -6,8 +6,8 @@ use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
-use RuntimeException;
 use PhpOffice\PhpWord\Settings;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -17,9 +17,8 @@ class StoryService
 
     private array $stories = [];
 
-
     public function __construct(
-        private KernelInterface $kernel
+        private KernelInterface $kernel,
     )
     {
     }
@@ -27,7 +26,7 @@ class StoryService
     private function getChapters(Story $story): array
     {
         $chapters = [];
-        $data = $story->getChapters();
+        $data     = $story->getChapters();
         foreach ($data as $row) {
             if (!$row->isEnable()) {
                 continue;
@@ -44,9 +43,9 @@ class StoryService
         $phpWord = new PhpWord();
         Settings::setPdfRendererName(Settings::PDF_RENDERER_DOMPDF);
         Settings::setPdfRendererPath($this->kernel->getProjectDir() . '/vendor/dompdf/dompdf');
-        $section = $phpWord->addSection();
+        $section  = $phpWord->addSection();
         $chapters = $this->getChapters($story);
-        if (count($chapters) == 0) {
+        if (0 == count($chapters)) {
             return false;
         }
 
@@ -57,7 +56,7 @@ class StoryService
             $this->setChapter($section, $chapter);
         }
 
-        $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug()  . '.pdf';
+        $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug() . '.pdf';
         $writer   = IOFactory::createWriter($phpWord, 'PDF');
         $writer->save($tempPath);
 

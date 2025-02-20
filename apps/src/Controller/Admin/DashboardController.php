@@ -22,7 +22,6 @@ use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 

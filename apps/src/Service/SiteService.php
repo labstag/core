@@ -176,12 +176,12 @@ class SiteService
     {
         $favicon  = $this->getFavicon('favicon.ico');
 
-        return !is_null($favicon) ? $favicon : $this->getFavicon('favicon');
+        return is_null($favicon) ? $this->getFavicon('favicon') : $favicon;
     }
 
     public function getFavicon(string $type): ?array
     {
-        $info = null;
+        $info    = null;
         $file    = $this->fileService->getFileInAdapter('assets', 'manifest.json');
         $json    = json_decode(file_get_contents($file), true);
         foreach ($json as $title => $file) {
@@ -190,14 +190,18 @@ class SiteService
                 continue;
             }
 
-            $file = str_replace('/assets/', '', $file);
+            $file          = str_replace('/assets/', '', $file);
             $fileInAdapter = $this->fileService->getFileInAdapter('assets', $file);
             if (is_null($fileInAdapter)) {
                 continue;
             }
 
             $info = $this->fileService->getInfoImage($fileInAdapter);
-            if (!is_array($info['data']) || substr_count($info['data']['type'], 'image') == 0) {
+            if (!is_array($info['data'])) {
+                continue;
+            }
+
+            if (0 == substr_count((string) $info['data']['type'], 'image')) {
                 continue;
             }
 
