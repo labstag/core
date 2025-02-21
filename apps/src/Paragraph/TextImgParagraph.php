@@ -43,6 +43,16 @@ class TextImgParagraph extends ParagraphLib
         yield $wysiwygField;
     }
 
+    public function getClasses(Paragraph $paragraph): array
+    {
+        $tab = [];
+        if ($paragraph->isLeftposition()) {
+            $tab[] = 'text-img-left';
+        }
+
+        return $tab;
+    }
+
     #[Override]
     public function getName(): string
     {

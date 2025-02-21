@@ -3,6 +3,7 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Essence\Essence;
 use Essence\Media;
@@ -72,11 +73,24 @@ class TextMediaParagraph extends ParagraphLib
     {
         unset($paragraph);
         yield $this->addFieldImageUpload('img', $pageName);
+        
+        yield BooleanField::new('leftposition', new TranslatableMessage('Media on the left'));
         yield UrlField::new('url', new TranslatableMessage('Url'));
         $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Text'));
 
         yield $wysiwygField;
     }
+
+    public function getClasses(Paragraph $paragraph): array
+    {
+        $tab = [];
+        if ($paragraph->isLeftposition()) {
+            $tab[] = 'text-media-left';
+        }
+
+        return $tab;
+    }
+
 
     #[Override]
     public function getName(): string

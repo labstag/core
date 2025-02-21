@@ -81,6 +81,13 @@ abstract class ParagraphLib extends AbstractController
     {
     }
 
+    public function getClasses(Paragraph $paragraph): array
+    {
+        unset($paragraph);
+
+        return [];
+    }
+
     public function addFieldImageUpload(string $type, string $pageName): TextField|ImageField
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {

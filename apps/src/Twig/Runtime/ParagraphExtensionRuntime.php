@@ -17,7 +17,15 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
 
     public function getClass(Paragraph $paragraph): string
     {
-        return 'paragraph paragraph_' . $paragraph->getType();
+
+        $tab = [
+            'paragraph',
+            'paragraph_'.$paragraph->getType(),
+        ];
+
+        $tab = array_merge($tab, $this->paragraphService->getClasses($paragraph));
+
+        return trim(implode(' ', $tab));
     }
 
     public function getContextMenu(Paragraph $paragraph): string

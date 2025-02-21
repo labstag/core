@@ -28,6 +28,23 @@ class ParagraphService
     {
     }
 
+    public function getClasses(Paragraph $paragraph): array
+    {
+        $classes = [];
+
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph->getType() != $row->getType()) {
+                continue;
+            }
+
+            $classes = $row->getClasses($paragraph);
+
+            break;
+        }
+
+        return $classes;
+    }
+
     public function getUrlAdmin(Paragraph $paragraph): ?AdminUrlGeneratorInterface
     {
         if (!$this->security->isGranted('ROLE_ADMIN')) {
