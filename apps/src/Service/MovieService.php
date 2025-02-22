@@ -23,13 +23,13 @@ class MovieService
     {
         $details = [];
         $omdb    = $this->getDetailsOmDBAPI($imdbId);
-        if (null !== $omdb && isset($omdb['Poster'])) {
-            return $omdb;
+        if (null !== $omdb) {
+            $details = array_merge($details, $omdb);
         }
 
         $tmdb = $this->getDetailsTmdb($imdbId);
-        if (null !== $tmdb && isset($tmdb['movie_results'][0]['poster_path'])) {
-            return $tmdb;
+        if (null !== $tmdb) {
+            $details = array_merge($details, $tmdb);
         }
 
         return $details;
@@ -63,7 +63,7 @@ class MovieService
     {
         $details = $this->getDetails($movie->getImdb());
         $poster  = $this->getImg($details);
-        if ('' === $poster || 'N/A' === $poster) {
+        if ('' === $poster) {
             return false;
         }
 
@@ -129,7 +129,7 @@ class MovieService
 
     private function getImg(array $data): string
     {
-        if (isset($data['Poster'])) {
+        if (isset($data['Poster']) && 'N/A' != $data['Poster']) {
             return $data['Poster'];
         }
 
