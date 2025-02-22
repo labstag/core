@@ -98,11 +98,33 @@ a {
 }
 
 .background{
-  background-image: var(--image-url);
   background-position: 50%;
-  background-repeat: no-repeat;
-  background-size: cover;
   height: 324px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+  &:not(.spoiler) {
+    background-image: var(--image-url);
+  }
+  &.spoiler{
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: black; // Couleur du spoiler
+        transition: opacity 1s ease-in-out;
+        opacity: 1; // Complètement caché au départ
+    }
+
+    &.loaded::before {
+        opacity: 0; // Révèle progressivement l’image
+    }
+  }
 }
 
 .pagination {
