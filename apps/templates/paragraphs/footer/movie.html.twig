@@ -58,19 +58,11 @@
                             </li>
                         {% endif %}
 						{% if movie.evaluation != null %}
-							<li class="evaluation">
+							<li class="evaluation"{% if movie.votes != null %} title="{{ 'Votes %d'|trans({'%d': movie.votes})|e('html_attr') }}"{% endif %}>
                                 <b>
                                     {{ 'Evaluation'|trans }}
                                 </b>
                                 {{ movie.evaluation }}
-                            </li>
-						{% endif %}
-						{% if movie.votes != null %}
-							<li class="votes">
-                                <b>
-                                    {{ 'Votes'|trans }}
-                                </b>
-                                {{ movie.votes }}
                             </li>
 						{% endif %}
 					</ul>
