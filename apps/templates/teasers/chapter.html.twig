@@ -1,5 +1,5 @@
 <a href="{{ site_path(chapter) }}" title="{{ chapter.title|e('html_attr') }}">
-    <div class="background" style="--image-url: url('{{ site_asset(chapter, 'img') }}')"></div>
+    <div class="background spoiler" data-bg="{{ site_asset(chapter, 'img') }}"></div>
     <div class="wrapper">
         {% if chapter.tags|length > 0 %}
             <div class="tags">

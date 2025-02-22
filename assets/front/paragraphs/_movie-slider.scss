@@ -1,10 +1,17 @@
 @use "../placeholders" as *;
+@use "../variables" as *;
 .paragraph_movie-slider{
   .wrapper{
 
   }
   .background{
-    height: 648px;
+    height: 324px;
+    background-size: contain;
+    &.spoiler{
+      &::before{
+        background: $colorbg;
+      }
+    }
   }
   h2{
 

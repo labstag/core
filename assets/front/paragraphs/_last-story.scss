@@ -24,6 +24,7 @@
     grid-area: link;
     align-self: start;
     text-align: center;
+    padding: 1rem;
     a{
       @extend %btn;
     }

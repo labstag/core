@@ -20,7 +20,7 @@
 						<button class="js-btnvideo">{{ 'Watch the trailer'|trans }}</button>
 					</div>
 				{% else %}
-					<div class="background" style="--image-url: url('{{ site_asset(movie, 'img') }}')"></div>
+					<div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}"></div>
 				{% endif %}
 				<div class="info">
 					<div class="description">{{ movie.description|raw }}</div>
