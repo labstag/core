@@ -129,14 +129,14 @@ class MovieService
 
     private function getImg(array $data): string
     {
-        if (isset($data['Poster']) && 'N/A' != $data['Poster']) {
-            return $data['Poster'];
-        }
-
         if (isset($data['movie_results'][0]['poster_path'])) {
             $img = $data['movie_results'][0]['poster_path'];
 
             return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' . $img;
+        }
+
+        if (isset($data['Poster']) && 'N/A' != $data['Poster']) {
+            return $data['Poster'];
         }
 
         return '';

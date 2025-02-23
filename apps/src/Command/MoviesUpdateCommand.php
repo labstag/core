@@ -36,9 +36,7 @@ class MoviesUpdateCommand extends Command
     private function updateImage(OutputInterface $output, SymfonyStyle $symfonyStyle): void
     {
         // Movie without img
-        $movies = $this->movieRepository->findBy(
-            ['img' => null]
-        );
+        $movies = $this->movieRepository->findall();
 
         $progressBar = new ProgressBar($output, count($movies));
         $progressBar->start();
