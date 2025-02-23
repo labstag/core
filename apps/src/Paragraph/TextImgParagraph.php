@@ -45,7 +45,7 @@ class TextImgParagraph extends ParagraphLib
 
     public function getClasses(Paragraph $paragraph): array
     {
-        $tab = [];
+        $tab = parent::getClasses($paragraph);
         if ($paragraph->isLeftposition()) {
             $tab[] = 'text-img-left';
         }

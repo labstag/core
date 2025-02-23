@@ -138,9 +138,9 @@ class MovieCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/movie/{entity}/imdb', name: 'admin_movie_imdb')]
-    public function imdb(Movie $movie): RedirectResponse
+    public function imdb(Movie $entity): RedirectResponse
     {
-        return $this->redirect('https://www.imdb.com/title/tt' . $movie->getImdb() . '/');
+        return $this->redirect('https://www.imdb.com/title/tt' . $entity->getImdb() . '/');
     }
 
     private function configureActionsUpdateImage(Actions $actions): void

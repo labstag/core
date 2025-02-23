@@ -83,9 +83,9 @@ abstract class ParagraphLib extends AbstractController
 
     public function getClasses(Paragraph $paragraph): array
     {
-        unset($paragraph);
+        $classes = explode(' ', (string) $paragraph->getClasses());
 
-        return [];
+        return $classes;
     }
 
     public function addFieldImageUpload(string $type, string $pageName): TextField|ImageField
