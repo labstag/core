@@ -163,7 +163,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         );
     }
 
-    #[Route('/admin/story/updatepdf', name: 'admin_story_updatepdf')]
+    #[Route('/admin/updatepdf', name: 'admin_story_updatepdf')]
     public function updatepdf(StoryService $storyService): RedirectResponse
     {
         $serviceEntityRepositoryLib = $this->getRepository();
@@ -195,7 +195,9 @@ class StoryCrudController extends AbstractCrudControllerLib
         }
 
         $action = Action::new('updatepdf', new TranslatableMessage('Update PDF'), 'fas fa-wrench');
-        $action->linkToRoute('admin_story_updatepdf');
+        $action->linkToUrl(
+            fn() : string => $this->generateUrl('admin_story_updatepdf')
+        );
         $action->createAsGlobalAction();
 
         $actions->add(Crud::PAGE_INDEX, $action);
