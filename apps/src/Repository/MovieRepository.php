@@ -34,6 +34,16 @@ class MovieRepository extends ServiceEntityRepositoryLib
         return $queryBuilder->orderBy('s.createdAt', 'DESC');
     }
 
+    public function findMoviesNotInImdbList(array $excludedImdbIds): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->where('m.imdb NOT IN (:imdbIds)');
+        $queryBuilder->setParameter('imdbIds', $excludedImdbIds);
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
+
     public function getQueryPaginator(): Query
     {
         $queryBuilder = $this->getQueryBuilder();

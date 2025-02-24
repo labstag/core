@@ -27,6 +27,8 @@ class MovieAddCommand extends Command
      * @var Category[]
      */
     private array $categories = [];
+    
+    private array $imdbs = [];
 
     private int $update = 0;
 
@@ -131,6 +133,17 @@ class MovieAddCommand extends Command
         $this->movieRepository->flush();
         $progressBar->finish();
 
+        $oldsMovies = $this->movieRepository->findMoviesNotInImdbList($this->imdbs);
+        foreach ($oldsMovies as $movie) {
+            $symfonyStyle->warning(
+                sprintf(
+                    'Movie %s (%d) not in list',
+                    $movie->getTitle(),
+                    $movie->getImdb()
+                )
+            );
+        }
+
         $symfonyStyle->success('All movie added');
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
         $symfonyStyle->success(
@@ -177,6 +190,7 @@ class MovieAddCommand extends Command
     private function setMovie(array $data): Movie
     {
         $imdb  = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
+        $this->imdbs[] = $imdb;
         $movie = $this->movieRepository->findOneBy(
             ['imdb' => $imdb]
         );
