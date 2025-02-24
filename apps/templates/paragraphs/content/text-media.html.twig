@@ -4,8 +4,6 @@
         <div class="text">
             {{ paragraph.content|raw }}
         </div>
-        <div class="video" style="--image-url: url('{{ urlImage }}');" data-src="{{ oembed }}">
-            <button class="js-btnvideo">{{ 'Watch the video'|trans }}</button>
-        </div>
+        {% include "embed/video.html.twig" with {'image': urlImage, 'trailer': oembed} %}
     </div>
 </section>

@@ -16,9 +16,7 @@
 
 			<div id="movie-modal-{{ movie.id }}-description">
 				{% if trailer != '' %}
-					<div class="video" style="--image-url: url('{{ site_asset(movie, 'img') }}')" data-src="{{ trailer }}" data-html="">
-						<button class="js-btnvideo">{{ 'Watch the trailer'|trans }}</button>
-					</div>
+                    {% include "embed/video.html.twig" with {'image': site_asset(movie, 'img'), 'trailer': trailer} %}
 				{% else %}
 					<div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}"></div>
 				{% endif %}
