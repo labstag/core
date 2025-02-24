@@ -21,7 +21,7 @@ class ContactType extends AbstractType
             'firstname',
             TextType::class,
             [
-                'required' => false,
+                'required' => true,
                 'label'    => new TranslatableMessage('First name'),
             ]
         );
@@ -29,7 +29,7 @@ class ContactType extends AbstractType
             'lastname',
             TextType::class,
             [
-                'required' => false,
+                'required' => true,
                 'label'    => new TranslatableMessage('Last name'),
             ]
         );
@@ -37,7 +37,7 @@ class ContactType extends AbstractType
             'content',
             TextareaType::class,
             [
-                'required' => false,
+                'required' => true,
                 'label'    => new TranslatableMessage('Content'),
             ]
         );

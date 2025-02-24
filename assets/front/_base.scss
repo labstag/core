@@ -66,6 +66,13 @@ h4::after { width: 50%; }
 h5::after { width: 30%; }
 h6::after { width: 10%; }
 
+label {
+  &::after {
+    content: " *";
+    font-weight: bold;
+    color: red;
+  }
+}
 a {
   
   &[target="_blank"] {
