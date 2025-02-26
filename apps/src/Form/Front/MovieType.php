@@ -26,6 +26,7 @@ class MovieType extends AbstractType
         array $options
     ): void
     {
+        unset($options);
         $formBuilder->add(
             'title',
             TextType::class,
