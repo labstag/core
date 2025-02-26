@@ -72,10 +72,11 @@ class MovieType extends AbstractType
             ]
         );
         $formBuilder->add(
-            'asc',
+            'orderby',
             ChoiceType::class,
             [
                 'required' => false,
+                'label' => new TranslatableMessage('Sort'),
                 'choices' => [
                     'Croissant' => 'ASC',
                     'Décroissant' => 'DESC',

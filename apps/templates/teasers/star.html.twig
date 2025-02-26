@@ -5,9 +5,12 @@
     <div>
         <b>{{ 'Informations'|trans }}</b>
         <ul>
-            <li>{{ 'Repository'|trans }}</b> : {{ star.repository }}</li>
-            <li>{{ 'License'|trans }}</b> : {{ star.license }}</li>
-            <li>{{ 'Language'|trans }}</b> : {{ star.language }}</li>
+            {% if star.license != '' %}
+                <li>{{ 'License'|trans }}</b> : {{ star.license }}</li>
+            {% endif %}
+            {% if star.language != '' %}
+                <li>{{ 'Language'|trans }}</b> : {{ star.language }}</li>
+            {% endif %}
             <li>{{ 'Forks'|trans }}</b> : {{ star.forks }}</li>
             <li>{{ 'Stars'|trans }}</b> : {{ star.stargazers }}</li>
             <li>{{ 'Watchers'|trans }}</b> : {{ star.watchers }}</li>
