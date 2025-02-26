@@ -48,12 +48,8 @@ class MovieService
     public function getCategoryForForm(): array
     {
         $data = $this->categoryRepository->findBy(
-            [
-                'type' => 'movie'
-            ],
-            [
-                'title' => 'ASC'
-            ]
+            ['type' => 'movie'],
+            ['title' => 'ASC']
         );
         $categories = [];
         foreach ($data as $category) {

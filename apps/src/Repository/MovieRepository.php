@@ -39,7 +39,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
     {
         $query = [
             'order'   => 'createdAt',
-            'orderby' => 'DESC',  
+            'orderby' => 'DESC',
         ];
         $queryBuilder = $this->getQueryBuilder($query);
         $queryBuilder->setMaxResults($nbr);

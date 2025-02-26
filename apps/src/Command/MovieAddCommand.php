@@ -27,7 +27,7 @@ class MovieAddCommand extends Command
      * @var Category[]
      */
     private array $categories = [];
-    
+
     private array $imdbs = [];
 
     private int $update = 0;
