@@ -4,12 +4,32 @@
 @use "sass:color";
 .paragraph_movie{
   .wrapper{
-
+    .content{
+      display: grid;
+      grid-template-areas:
+        "aside"
+        "list";
+      grid-template-columns: 1fr;
+      gap: 16px;
+      @include mixins.respond-to(md) {
+        grid-template-columns: 4fr 1fr;
+        grid-template-areas:
+          "list aside";
+      }
+    }
   }
   .title{
 
   }
+  aside{
+    grid-area: aside;
+    form{
+      padding: 5px;
+      background-color: #363636;
+    }
+  }
   ul{
+    grid-area: list;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;

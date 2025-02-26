@@ -144,13 +144,13 @@ class ParagraphService
         $data->footer = [];
         foreach ($paragraphs as $paragraph) {
             $header = $this->getHeader($paragraph['paragraph']);
-            $footer = $this->getFooter($paragraph['paragraph']);
             if (is_array($header)) {
                 $data->header = array_merge($data->header, $header);
             } elseif ($header instanceof Response) {
                 $data->header[] = $header;
             }
 
+            $footer = $this->getFooter($paragraph['paragraph']);
             if (is_array($footer)) {
                 $data->footer = array_merge($data->footer, $footer);
             } elseif ($footer instanceof Response) {

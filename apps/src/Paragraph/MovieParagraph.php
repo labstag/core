@@ -7,6 +7,7 @@ use Generator;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Form\Front\MovieType;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
@@ -23,7 +24,17 @@ class MovieParagraph extends ParagraphLib
         /** @var MovieRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
 
-        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
+        $request = $this->requestStack->getCurrentRequest();
+        $query = $request->query->all();
+        if (!isset($query['order'])) {
+            $query['order'] = 'createdAt';
+        }
+
+        if (!isset($query['asc'])) {
+            $query['asc'] = 'DESC';
+        }
+
+        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator($query), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
@@ -43,9 +54,12 @@ class MovieParagraph extends ParagraphLib
             )
         );
 
+        $form = $this->createForm(MovieType::class, $query);
+
         $this->setData(
             $paragraph,
             [
+                'form'       => $form,
                 'pagination' => $pagination,
                 'paragraph'  => $paragraph,
                 'data'       => $data,

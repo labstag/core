@@ -4,6 +4,8 @@ namespace Labstag\Service;
 
 use Exception;
 use Labstag\Entity\Movie;
+use Labstag\Repository\CategoryRepository;
+use Labstag\Repository\MovieRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -13,10 +15,52 @@ class MovieService
 
     public function __construct(
         protected HttpClientInterface $httpClient,
+        protected MovieRepository $movieRepository,
+        protected CategoryRepository $categoryRepository,
         protected string $omdbapiKey,
         protected string $tmdbapiKey,
     )
     {
+    }
+
+    public function getCountryForForm(): array
+    {
+        $data = $this->movieRepository->findAllUniqueCountries();
+        $country = [];
+        foreach ($data as $value) {
+            $country[$value] = $value;
+        }
+
+        return $country;
+    }
+
+    public function getYearForForm(): array
+    {
+        $data = $this->movieRepository->findAllUniqueYear();
+        $year = [];
+        foreach ($data as $value) {
+            $year[$value] = $value;
+        }
+
+        return $year;
+    }
+
+    public function getCategoryForForm(): array
+    {
+        $data = $this->categoryRepository->findBy(
+            [
+                'type' => 'movie'
+            ],
+            [
+                'title' => 'ASC'
+            ]
+        );
+        $categories = [];
+        foreach ($data as $category) {
+            $categories[$category->getTitle()] = $category->getSlug();
+        }
+
+        return $categories;
     }
 
     public function getDetails(string $imdbId): array
