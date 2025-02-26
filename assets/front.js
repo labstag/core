@@ -5,6 +5,7 @@ import { Slider } from './front/js/slider';
 import { Movie } from './front/js/movie';
 import { ContextMenu } from './front/js/contextmenu';
 import { Spoiler } from './front/js/spoiler';
+import { Form } from './front/js/form';
 
 
 WebFont.load({
@@ -14,11 +15,12 @@ WebFont.load({
 });
 
 
-  import './front/index.scss';
+import './front/index.scss';
 document.addEventListener('DOMContentLoaded', function () {
   svg4everybody();
   new Video();
   new ContextMenu();
+  new Form();
   new Spoiler();
   new Slider(
     '.swiper-movie',

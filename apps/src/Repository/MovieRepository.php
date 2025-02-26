@@ -15,9 +15,33 @@ class MovieRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Movie::class);
     }
 
+    public function findAllUniqueCountries(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->select('DISTINCT m.country');
+        $queryBuilder->orderBy('m.country', 'ASC');
+        $query = $queryBuilder->getQuery();
+
+        return $query->getSingleColumnResult();
+    }
+
+    public function findAllUniqueYear(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->select('DISTINCT m.year');
+        $queryBuilder->orderBy('m.year', 'ASC');
+        $query = $queryBuilder->getQuery();
+
+        return $query->getSingleColumnResult();
+    }
+
     public function findLastByNbr(int $nbr): mixed
     {
-        $queryBuilder = $this->getQueryBuilder();
+        $query = [
+            'order' => 'createdAt',
+            'asc'   => 'DESC',  
+        ];
+        $queryBuilder = $this->getQueryBuilder($query);
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
@@ -25,13 +49,33 @@ class MovieRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
-    public function getQueryBuilder(): QueryBuilder
+    public function getQueryBuilder(array $query): QueryBuilder
     {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->where('s.enable = :enable');
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
+        if (isset($query['title']) && !empty($query['title'])) {
+            $queryBuilder->andWhere('m.title LIKE :title');
+            $queryBuilder->setParameter('title', '%'.$query['title'].'%');
+        }
 
-        return $queryBuilder->orderBy('s.createdAt', 'DESC');
+        if (isset($query['country']) && !empty($query['country'])) {
+            $queryBuilder->andWhere('m.country = :country');
+            $queryBuilder->setParameter('country', $query['country']);
+        }
+
+        if (isset($query['categories']) && !empty($query['categories'])) {
+            $queryBuilder->leftJoin('m.categories', 'c');
+            $queryBuilder->andWhere('c.slug = :categories');
+            $queryBuilder->setParameter('categories', $query['categories']);
+        }
+
+        if (isset($query['year']) && !empty($query['year'])) {
+            $queryBuilder->andWhere('m.year = :year');
+            $queryBuilder->setParameter('year', $query['year']);
+        }
+
+        return $queryBuilder->orderBy('m.'.$query['order'], $query['asc']);
     }
 
     public function findMoviesNotInImdbList(array $excludedImdbIds): array
@@ -44,9 +88,9 @@ class MovieRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
-    public function getQueryPaginator(): Query
+    public function getQueryPaginator(array $query): Query
     {
-        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder = $this->getQueryBuilder($query);
 
         return $queryBuilder->getQuery();
     }

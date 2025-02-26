@@ -901,6 +901,198 @@
         <source>Text</source>
         <target>Texte</target>
       </trans-unit>
+      <trans-unit id="pxcIyv4" resname="TAC">
+        <source>TAC</source>
+        <target>__TAC</target>
+      </trans-unit>
+      <trans-unit id="8.lX0lh" resname="Orientation">
+        <source>Orientation</source>
+        <target>__Orientation</target>
+      </trans-unit>
+      <trans-unit id="0TxjFM7" resname="icon Position">
+        <source>icon Position</source>
+        <target>__icon Position</target>
+      </trans-unit>
+      <trans-unit id="Qox6KgM" resname="Services">
+        <source>Services</source>
+        <target>__Services</target>
+      </trans-unit>
+      <trans-unit id="byaiUPu" resname="Privacy Url">
+        <source>Privacy Url</source>
+        <target>__Privacy Url</target>
+      </trans-unit>
+      <trans-unit id="WJZmTXy" resname="Body Position">
+        <source>Body Position</source>
+        <target>__Body Position</target>
+      </trans-unit>
+      <trans-unit id="ubTRv5n" resname="Hashtag">
+        <source>Hashtag</source>
+        <target>__Hashtag</target>
+      </trans-unit>
+      <trans-unit id="pMVDnAM" resname="Cookie Name">
+        <source>Cookie Name</source>
+        <target>__Cookie Name</target>
+      </trans-unit>
+      <trans-unit id="6_xQxuW" resname="Group Services">
+        <source>Group Services</source>
+        <target>__Group Services</target>
+      </trans-unit>
+      <trans-unit id="R5cbfYJ" resname="Show Details On Click">
+        <source>Show Details On Click</source>
+        <target>__Show Details On Click</target>
+      </trans-unit>
+      <trans-unit id="IY796hB" resname="Service Default State">
+        <source>Service Default State</source>
+        <target>__Service Default State</target>
+      </trans-unit>
+      <trans-unit id="ezq_Wdl" resname="Show Alert Small">
+        <source>Show Alert Small</source>
+        <target>__Show Alert Small</target>
+      </trans-unit>
+      <trans-unit id="amtihAW" resname="Cookies List">
+        <source>Cookies List</source>
+        <target>__Cookies List</target>
+      </trans-unit>
+      <trans-unit id="j0N47Gu" resname="Close popup">
+        <source>Close popup</source>
+        <target>__Close popup</target>
+      </trans-unit>
+      <trans-unit id="Ko7Eh8a" resname="Show Icon">
+        <source>Show Icon</source>
+        <target>__Show Icon</target>
+      </trans-unit>
+      <trans-unit id="sd7LPNL" resname="Icon src">
+        <source>Icon src</source>
+        <target>__Icon src</target>
+      </trans-unit>
+      <trans-unit id="jNhUTni" resname="Adblocker">
+        <source>Adblocker</source>
+        <target>__Adblocker</target>
+      </trans-unit>
+      <trans-unit id="I1SsjYK" resname="Deny All CTA">
+        <source>Deny All CTA</source>
+        <target>__Deny All CTA</target>
+      </trans-unit>
+      <trans-unit id="K1g1fl." resname="Accept All CTA">
+        <source>Accept All CTA</source>
+        <target>__Accept All CTA</target>
+      </trans-unit>
+      <trans-unit id="EO4vtll" resname="High Privacy">
+        <source>High Privacy</source>
+        <target>__High Privacy</target>
+      </trans-unit>
+      <trans-unit id="PsLgGom" resname="Always Need Consent">
+        <source>Always Need Consent</source>
+        <target>__Always Need Consent</target>
+      </trans-unit>
+      <trans-unit id="17gLAb." resname="Handle Browser DNT Request">
+        <source>Handle Browser DNT Request</source>
+        <target>__Handle Browser DNT Request</target>
+      </trans-unit>
+      <trans-unit id="ZwTky75" resname="Remove Credit">
+        <source>Remove Credit</source>
+        <target>__Remove Credit</target>
+      </trans-unit>
+      <trans-unit id="c1aNlvY" resname="More Info Link">
+        <source>More Info Link</source>
+        <target>__More Info Link</target>
+      </trans-unit>
+      <trans-unit id="h5m32n9" resname="User External CSS">
+        <source>User External CSS</source>
+        <target>__User External CSS</target>
+      </trans-unit>
+      <trans-unit id="ym3PZbC" resname="Use External Js">
+        <source>Use External Js</source>
+        <target>__Use External Js</target>
+      </trans-unit>
+      <trans-unit id="vBd6ZWp" resname="Cookie Domain">
+        <source>Cookie Domain</source>
+        <target>__Cookie Domain</target>
+      </trans-unit>
+      <trans-unit id="dVJ1Mgl" resname="Read more Link">
+        <source>Read more Link</source>
+        <target>__Read more Link</target>
+      </trans-unit>
+      <trans-unit id="IWKatWd" resname="Mandatory">
+        <source>Mandatory</source>
+        <target>__Mandatory</target>
+      </trans-unit>
+      <trans-unit id="NTY_YpG" resname="Mandatory CTA">
+        <source>Mandatory CTA</source>
+        <target>__Mandatory CTA</target>
+      </trans-unit>
+      <trans-unit id="WxaECno" resname="Custom Close ID">
+        <source>Custom Close ID</source>
+        <target>__Custom Close ID</target>
+      </trans-unit>
+      <trans-unit id="wxIxxWz" resname="Google Censent Mode">
+        <source>Google Censent Mode</source>
+        <target>__Google Censent Mode</target>
+      </trans-unit>
+      <trans-unit id="yrYGkl3" resname="Partners List">
+        <source>Partners List</source>
+        <target>__Partners List</target>
+      </trans-unit>
+      <trans-unit id="x96sgQS" resname="resume">
+        <source>resume</source>
+        <target>__resume</target>
+      </trans-unit>
+      <trans-unit id="V5hoVok" resname="classes">
+        <source>classes</source>
+        <target>__classes</target>
+      </trans-unit>
+      <trans-unit id="SdNWA5t" resname="Search">
+        <source>Search</source>
+        <target>Recherche</target>
+      </trans-unit>
+      <trans-unit id="e9cnuAC" resname="Reset">
+        <source>Reset</source>
+        <target>Reset</target>
+      </trans-unit>
+      <trans-unit id="rwtKr3L" resname="Story file generated for &quot;%title%&quot;">
+        <source>Story file generated for "%title%"</source>
+        <target>__Story file generated for "%title%"</target>
+      </trans-unit>
+      <trans-unit id="AJ.N94a" resname="Image on the left">
+        <source>Image on the left</source>
+        <target>__Image on the left</target>
+      </trans-unit>
+      <trans-unit id="UCECai8" resname="Media on the left">
+        <source>Media on the left</source>
+        <target>__Media on the left</target>
+      </trans-unit>
+      <trans-unit id="M.l1CPU" resname="Edit">
+        <source>Edit</source>
+        <target>__Edit</target>
+      </trans-unit>
+      <trans-unit id="292RzgI" resname="Votes %d">
+        <source>Votes %d</source>
+        <target>Votes %d</target>
+      </trans-unit>
+      <trans-unit id="kkl8kUW" resname="IMDB page for the movie">
+        <source>IMDB page for the movie</source>
+        <target>Page IMDB du film</target>
+      </trans-unit>
+      <trans-unit id="fP1XvxH" resname="Paragraphs not configured">
+        <source>Paragraphs not configured</source>
+        <target>__Paragraphs not configured</target>
+      </trans-unit>
+      <trans-unit id="SPNC.0i" resname="Download the PDF version">
+        <source>Download the PDF version</source>
+        <target>__Download the PDF version</target>
+      </trans-unit>
+      <trans-unit id="kIqhHtP" resname="Admin">
+        <source>Admin</source>
+        <target>Admin</target>
+      </trans-unit>
+      <trans-unit id="W65218I" resname="Block not configured">
+        <source>Block not configured</source>
+        <target>    Block not configured</target>
+      </trans-unit>
+      <trans-unit id="V2sSnK9" resname="Order">
+        <source>Order</source>
+        <target>Ordre</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

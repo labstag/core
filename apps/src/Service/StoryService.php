@@ -122,7 +122,7 @@ class StoryService
         return new TranslatableMessage(
             'Story file generated for "%title%"',
             [
-                '%title%' => implode('"," ', $this->stories),
+                "%title%" => implode('"," ', $this->stories),
             ]
         );
     }
