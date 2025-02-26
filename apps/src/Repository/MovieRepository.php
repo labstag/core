@@ -38,8 +38,8 @@ class MovieRepository extends ServiceEntityRepositoryLib
     public function findLastByNbr(int $nbr): mixed
     {
         $query = [
-            'order' => 'createdAt',
-            'asc'   => 'DESC',  
+            'order'   => 'createdAt',
+            'orderby' => 'DESC',  
         ];
         $queryBuilder = $this->getQueryBuilder($query);
         $queryBuilder->setMaxResults($nbr);
@@ -75,7 +75,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
             $queryBuilder->setParameter('year', $query['year']);
         }
 
-        return $queryBuilder->orderBy('m.'.$query['order'], $query['asc']);
+        return $queryBuilder->orderBy('m.'.$query['order'], $query['orderby']);
     }
 
     public function findMoviesNotInImdbList(array $excludedImdbIds): array

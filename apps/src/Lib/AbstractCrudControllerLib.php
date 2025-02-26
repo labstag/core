@@ -517,7 +517,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $doctrine->getManagerForClass(Paragraph::class)->getRepository(Paragraph::class);
     }
 
-    protected function setActionPublic(Actions $actions, string $urlPublic, string $urlW3c): void
+    protected function setActionPublic(Actions $actions, string $urlW3c, string $urlPublic): void
     {
         $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
 

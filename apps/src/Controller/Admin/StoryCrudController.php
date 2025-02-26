@@ -15,6 +15,7 @@ use Labstag\Entity\Story;
 use Labstag\Field\FileField;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Repository\StoryRepository;
 use Labstag\Service\StoryService;
 use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -37,14 +38,18 @@ class StoryCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
-    public function w3c(Story $story): RedirectResponse
+    public function w3c(string $entity, StoryRepository $storyRepository): RedirectResponse
     {
+        $story = $storyRepository->find($entity);
+
         return $this->linkw3CValidator($story);
     }
 
     #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
-    protected function linkPublicAction(Story $story): RedirectResponse
+    public function linkPublicAction(string $entity, StoryRepository $storyRepository): RedirectResponse
     {
+        $story = $storyRepository->find($entity);
+
         return $this->linkPublic($story);
     }
 

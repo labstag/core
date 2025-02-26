@@ -30,8 +30,8 @@ class MovieParagraph extends ParagraphLib
             $query['order'] = 'createdAt';
         }
 
-        if (!isset($query['asc'])) {
-            $query['asc'] = 'DESC';
+        if (!isset($query['orderby'])) {
+            $query['orderby'] = 'DESC';
         }
 
         $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator($query), $paragraph->getNbr());
