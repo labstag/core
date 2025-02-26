@@ -29,16 +29,14 @@ class MovieType extends AbstractType
         $formBuilder->add(
             'title',
             TextType::class,
-            [
-                'required' => false,
-            ]
+            ['required' => false]
         );
         $formBuilder->add(
             'country',
             ChoiceType::class,
             [
                 'required' => false,
-                'choices' => $this->movieService->getCountryForForm(),
+                'choices'  => $this->movieService->getCountryForForm(),
             ]
         );
         $formBuilder->add(
@@ -46,7 +44,7 @@ class MovieType extends AbstractType
             ChoiceType::class,
             [
                 'required' => false,
-                'choices' => $this->movieService->getCategoryForForm(),
+                'choices'  => $this->movieService->getCategoryForForm(),
             ]
         );
         $formBuilder->add(
@@ -54,8 +52,8 @@ class MovieType extends AbstractType
             ChoiceType::class,
             [
                 'required' => false,
-                'label' => new TranslatableMessage('Year'),
-                'choices' => $this->movieService->getYearForForm(),
+                'label'    => new TranslatableMessage('Year'),
+                'choices'  => $this->movieService->getYearForForm(),
             ]
         );
         $formBuilder->add(
@@ -63,12 +61,12 @@ class MovieType extends AbstractType
             ChoiceType::class,
             [
                 'required' => false,
-                'label' => new TranslatableMessage('Order'),
-                'choices' => [
-                    'Titre' => 'title',
-                    'Année' => 'year',
+                'label'    => new TranslatableMessage('Order'),
+                'choices'  => [
+                    'Titre'        => 'title',
+                    'Année'        => 'year',
                     "Date d'ajout" => 'createdAt',
-                ]
+                ],
             ]
         );
         $formBuilder->add(
@@ -76,29 +74,29 @@ class MovieType extends AbstractType
             ChoiceType::class,
             [
                 'required' => false,
-                'label' => new TranslatableMessage('Sort'),
-                'choices' => [
-                    'Croissant' => 'ASC',
+                'label'    => new TranslatableMessage('Sort'),
+                'choices'  => [
+                    'Croissant'   => 'ASC',
                     'Décroissant' => 'DESC',
-                ]
+                ],
             ]
         );
         $formBuilder->add(
             'submit',
             SubmitType::class,
             [
-                'label' => new TranslatableMessage('Search')
+                'label' => new TranslatableMessage('Search'),
             ]
         );
         $formBuilder->add(
             'reset',
             ResetType::class,
             [
-                'label' => new TranslatableMessage('Reset')
+                'label' => new TranslatableMessage('Reset'),
             ]
         );
     }
-    
+
     public function configureOptions(OptionsResolver $optionsResolver)
     {
         $optionsResolver->setDefaults(

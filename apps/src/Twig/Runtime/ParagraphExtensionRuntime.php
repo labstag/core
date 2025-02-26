@@ -17,7 +17,6 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
 
     public function getClass(Paragraph $paragraph): string
     {
-
         $tab = [
             'paragraph',
             'paragraph_'.$paragraph->getType(),
