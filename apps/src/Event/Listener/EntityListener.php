@@ -186,10 +186,6 @@ final class EntityListener
             return;
         }
 
-        if (!in_array($entity->getDescription(), [null, '', '0'], true)) {
-            return;
-        }
-
         $this->movieService->update($entity);
     }
 
