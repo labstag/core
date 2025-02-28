@@ -211,13 +211,11 @@ class MovieAddCommand extends Command
         $type     = $data['Genre(s)'];
         $country  = $data['Pays'];
         $color    = ('<<Inconnu>>' == $data['Couleur']) ? null : $data['Couleur'];
-        $trailer  = empty($data['Bande-annonce']) ? null : $data['Bande-annonce'];
         $duration = empty($data['Durée']) ? null : $data['Durée'];
         $title    = trim((string) $data['Titre']);
         $movie->setEvaluation($evaluation);
         $movie->setVotes($votes);
         $movie->setDuration($duration);
-        $movie->setTrailer($trailer);
         $movie->setColor($color);
         $movie->setTitle($title);
         $movie->setYear((0 != $year) ? $year : null);
