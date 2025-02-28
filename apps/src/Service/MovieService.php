@@ -94,7 +94,7 @@ class MovieService
         if (!isset($details['movie_results'][0]['id'])) {
             return false;
         }
-        
+
         $data = $this->getVideo($details['movie_results'][0]['id']);
         $find = false;
         foreach ($data['results'] as $result) {
@@ -106,7 +106,7 @@ class MovieService
                 break;
             }
         }
-        
+
         return $find;
     }
 
@@ -167,12 +167,13 @@ class MovieService
 
         return json_decode($response->getContent(), true);
     }
-    
+
     public function getVideo(int $movieId): ?array
     {
         if ('' === $this->tmdbapiKey) {
             return null;
         }
+
         $url = 'https://api.themoviedb.org/3/movie/'.$movieId.'/videos';
         $response = $this->httpClient->request(
             'GET',
