@@ -181,6 +181,7 @@ final class EntityListener
 
     private function prePersistMovie(object $entity, ObjectManager $objectManager): void
     {
+        unset($objectManager);
         if (!$entity instanceof Movie) {
             return;
         }
