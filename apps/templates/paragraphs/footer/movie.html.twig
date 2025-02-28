@@ -6,7 +6,6 @@
 		{% set minutes = (movie.duration % 60) %}
 		{% set duration = hours ~ 'h ' ~ minutes ~ " min" %}
 	{% endif %}
-	{% set trailer = movie_oembed(movie.trailer) %}
 	<div class="dialog-container dialog-movie" id="movie-modal-{{ movie.id }}" aria-hidden="true" aria-labelledby="movie-modal-{{ movie.id }}-title" aria-describedby="movie-modal-{{ movie.id }}-description">
 		<div class="dialog-overlay" data-a11y-dialog-hide></div>
 		<div class="dialog-content" role="document">
@@ -15,8 +14,8 @@
 			<h3 id="movie-modal-{{ movie.id }}-title">{{ movie.title }}</h3>
 
 			<div id="movie-modal-{{ movie.id }}-description">
-				{% if trailer != '' %}
-                    {% include "embed/video.html.twig" with {'image': site_asset(movie, 'img'), 'trailer': trailer} %}
+				{% if movie.trailer != '' %}
+                    {% include "embed/video.html.twig" with {'image': site_asset(movie, 'img'), 'trailer': movie.trailer} %}
 				{% else %}
 					<div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}"></div>
 				{% endif %}

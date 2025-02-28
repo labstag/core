@@ -19,6 +19,8 @@ class MovieRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->select('DISTINCT m.country');
+        $queryBuilder->where('m.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
         $queryBuilder->orderBy('m.country', 'ASC');
         $query = $queryBuilder->getQuery();
 
@@ -29,10 +31,23 @@ class MovieRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->select('DISTINCT m.year');
+        $queryBuilder->where('m.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
         $queryBuilder->orderBy('m.year', 'ASC');
         $query = $queryBuilder->getQuery();
 
         return $query->getSingleColumnResult();
+    }
+
+    public function findTrailerImageDescriptionIsNull()
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->where('m.trailer IS NULL');
+        $queryBuilder->orWhere('m.img IS NULL');
+        $queryBuilder->orWhere('m.description IS NULL');
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
     }
 
     public function findLastByNbr(int $nbr): mixed

@@ -77,31 +77,56 @@ class MovieService
 
     public function update(Movie $movie): bool
     {
-        $statusImage       = $this->updateImage($movie);
-        $statusDescription = $this->updateDescription($movie);
+        $details = $this->getDetails($movie->getImdb());
+        $statusImage       = $this->updateImage($movie, $details);
+        $statusDescription = $this->updateDescription($movie, $details);
+        $statusVideo       = $this->updateTrailer($movie, $details);
 
-        return $statusImage || $statusDescription;
+        return $statusImage || $statusDescription || $statusVideo;
     }
 
-    public function updateDescription(Movie $movie): bool
+    public function updateTrailer(Movie $movie, array $details): bool
+    {
+        if (!in_array($movie->getTrailer(), [null, '', '0'], true)) {
+            return false;
+        }
+
+        if (!isset($details['movie_results'][0]['id'])) {
+            return false;
+        }
+        
+        $data = $this->getVideo($details['movie_results'][0]['id']);
+        $find = false;
+        foreach ($data['results'] as $result) {
+            if ($result['type'] == 'Trailer' && $result['site'] == 'YouTube') {
+                $url = 'https://www.youtube.com/embed/'.$result['key'];
+                $movie->setTrailer($url);
+
+                $find = true;
+                break;
+            }
+        }
+        
+        return $find;
+    }
+
+    public function updateDescription(Movie $movie, array $details): bool
     {
         if (!in_array($movie->getDescription(), [null, '', '0'], true)) {
             return false;
         }
 
-        $tmdb = $this->getDetailsTmdb($movie->getImdb());
-        if (!isset($tmdb['movie_results'][0]['overview'])) {
+        if (!isset($details['movie_results'][0]['overview'])) {
             return false;
         }
 
-        $movie->setDescription($tmdb['movie_results'][0]['overview']);
+        $movie->setDescription($details['movie_results'][0]['overview']);
 
         return true;
     }
 
-    public function updateImage(Movie $movie): bool
+    public function updateImage(Movie $movie, array $details): bool
     {
-        $details = $this->getDetails($movie->getImdb());
         $poster  = $this->getImg($details);
         if ('' === $poster) {
             return false;
@@ -136,6 +161,29 @@ class MovieService
 
         $url      = 'http://www.omdbapi.com/?i=tt' . $imdbId . '&apikey=' . $this->omdbapiKey;
         $response = $this->httpClient->request('GET', $url);
+        if (self::STATUSOK !== $response->getStatusCode()) {
+            return null;
+        }
+
+        return json_decode($response->getContent(), true);
+    }
+    
+    public function getVideo(int $movieId): ?array
+    {
+        if ('' === $this->tmdbapiKey) {
+            return null;
+        }
+        $url = 'https://api.themoviedb.org/3/movie/'.$movieId.'/videos';
+        $response = $this->httpClient->request(
+            'GET',
+            $url,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                    'accept'        => 'application/json',
+                ],
+            ]
+        );
         if (self::STATUSOK !== $response->getStatusCode()) {
             return null;
         }
