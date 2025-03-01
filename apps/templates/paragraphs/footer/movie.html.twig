@@ -22,14 +22,6 @@
 				<div class="info">
 					<div class="description">{{ movie.description|raw }}</div>
 					<ul>
-                        {% if movie.year != '' %}
-                            <li class="year">
-                                <b>
-                                    {{ 'Year'|trans }}
-                                </b>
-                                {{ movie.year }}
-                            </li>
-                        {% endif %}
                         {% if movie.country  != '' %}
                             <li class="country">
                                 <b>
