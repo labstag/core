@@ -2,6 +2,7 @@
 
 namespace Labstag\Repository;
 
+use DateTime;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -48,6 +49,8 @@ class PostRepository extends ServiceEntityRepositoryLib
         $queryBuilder = $this->createQueryBuilder('p');
         $queryBuilder->where('p.enable = :enable');
         $queryBuilder->setParameter('enable', true);
+        $queryBuilder->andWhere('p.createdAt <= :now');
+        $queryBuilder->setParameter('now', new DateTime('now'));
 
         return $queryBuilder->orderBy('p.createdAt', 'DESC');
     }
