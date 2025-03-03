@@ -132,16 +132,6 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->redirect($url);
     }
 
-    protected function linkPublic(object $entity): RedirectResponse
-    {
-        $slug = $this->siteService->getSlugByEntity($entity);
-
-        return $this->redirectToRoute(
-            'front',
-            ['slug' => $slug]
-        );
-    }
-
     protected function linkw3CValidator(object $entity): RedirectResponse
     {
         $slug = $this->siteService->getSlugByEntity($entity);

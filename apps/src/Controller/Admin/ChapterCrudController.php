@@ -40,7 +40,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/chapter/{entity}/public', name: 'admin_chapter_public')]
-    public function linkPublicAction(string $entity, ChapterRepository $chapterRepository): RedirectResponse
+    protected function linkPublic(string $entity, ?ChapterRepository $chapterRepository = null): RedirectResponse
     {
         $chapter = $chapterRepository->find($entity);
 

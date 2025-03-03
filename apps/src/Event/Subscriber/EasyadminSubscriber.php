@@ -28,7 +28,6 @@ use Symfony\Component\Workflow\Registry;
 
 class EasyadminSubscriber implements EventSubscriberInterface
 {
-
     public function __construct(
         private Registry $workflowRegistry,
         private WorkflowService $workflowService,
@@ -38,20 +37,19 @@ class EasyadminSubscriber implements EventSubscriberInterface
         private StoryService $storyService,
         private MovieService $movieService,
         private PageRepository $pageRepository,
-        private HttpErrorLogsRepository $httpErrorLogsRepository
+        private HttpErrorLogsRepository $httpErrorLogsRepository,
     )
     {
-        
     }
 
-    public function beforePersisted(BeforeEntityPersistedEvent $event): void
+    public function beforePersisted(BeforeEntityPersistedEvent $beforeEntityPersistedEvent): void
     {
-        $instance = $event->getEntityInstance();
+        $instance = $beforeEntityPersistedEvent->getEntityInstance();
         $this->initworkflow($instance);
         $this->initEntityMeta($instance);
     }
 
-    private function initEntityMeta($instance)
+    private function initEntityMeta($instance): void
     {
         $tab = [
             Page::class,
@@ -70,9 +68,9 @@ class EasyadminSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function beforeUpdated(BeforeEntityUpdatedEvent $event): void
+    public function beforeUpdated(BeforeEntityUpdatedEvent $beforeEntityUpdatedEvent): void
     {
-        $instance = $event->getEntityInstance();
+        $beforeEntityUpdatedEvent->getEntityInstance();
     }
 
     private function initworkflow(object $object): void
@@ -90,9 +88,9 @@ class EasyadminSubscriber implements EventSubscriberInterface
         $workflow->apply($object, 'submit');
     }
 
-    public function afterPersisted(AfterEntityPersistedEvent $event)
+    public function afterPersisted(AfterEntityPersistedEvent $afterEntityPersistedEvent): void
     {
-        $instance = $event->getEntityInstance();
+        $instance = $afterEntityPersistedEvent->getEntityInstance();
         $this->updateEntityParagraph($instance);
         $this->updateEntityBlock($instance);
         $this->updateEntityBanIp($instance, $this->entityManager);
@@ -104,9 +102,9 @@ class EasyadminSubscriber implements EventSubscriberInterface
         $this->entityManager->flush();
     }
 
-    public function afterUpdated(AfterEntityUpdatedEvent $event)
+    public function afterUpdated(AfterEntityUpdatedEvent $afterEntityUpdatedEvent): void
     {
-        $instance = $event->getEntityInstance();
+        $instance = $afterEntityUpdatedEvent->getEntityInstance();
         $this->updateEntityParagraph($instance);
         $this->updateEntityBlock($instance);
         $this->updateEntityBanIp($instance, $this->entityManager);
@@ -118,7 +116,7 @@ class EasyadminSubscriber implements EventSubscriberInterface
         $this->entityManager->flush();
     }
 
-    public function updateEntityPage($instance)
+    public function updateEntityPage($instance): void
     {
         if (!$instance instanceof Page) {
             return;
@@ -143,7 +141,7 @@ class EasyadminSubscriber implements EventSubscriberInterface
         $instance->setSlug('');
     }
 
-    private function updateEntityChapter($instance)
+    private function updateEntityChapter($instance): void
     {
         if (!$instance instanceof Chapter) {
             return;
@@ -161,7 +159,7 @@ class EasyadminSubscriber implements EventSubscriberInterface
         $this->storyService->generateFlashBag();
     }
 
-    private function updateEntityMovie($instance)
+    private function updateEntityMovie($instance): void
     {
         if (!$instance instanceof Movie) {
             return;
@@ -170,7 +168,7 @@ class EasyadminSubscriber implements EventSubscriberInterface
         $this->movieService->update($instance);
     }
 
-    private function updateEntityStory($instance)
+    private function updateEntityStory($instance): void
     {
         if (!$instance instanceof Story) {
             return;
@@ -179,8 +177,8 @@ class EasyadminSubscriber implements EventSubscriberInterface
         $this->storyService->setPdf($instance);
         $this->storyService->generateFlashBag();
     }
-    
-    private function updateEntityBanIp($instance, $entityManager)
+
+    private function updateEntityBanIp($instance, \Doctrine\ORM\EntityManagerInterface $entityManager): void
     {
         if (!$instance instanceof BanIp) {
             return;
@@ -196,7 +194,7 @@ class EasyadminSubscriber implements EventSubscriberInterface
         }
     }
 
-    private function updateEntityParagraph($instance)
+    private function updateEntityParagraph($instance): void
     {
         if (!$instance instanceof Paragraph) {
             return;
@@ -205,7 +203,7 @@ class EasyadminSubscriber implements EventSubscriberInterface
         $this->paragraphService->update($instance);
     }
 
-    private function updateEntityBlock($instance)
+    private function updateEntityBlock($instance): void
     {
         if (!$instance instanceof Block) {
             return;
@@ -218,9 +216,9 @@ class EasyadminSubscriber implements EventSubscriberInterface
     {
         return [
             BeforeEntityPersistedEvent::class => ['beforePersisted'],
-            BeforeEntityUpdatedEvent::class => ['beforeUpdated'],
-            AfterEntityPersistedEvent::class => ['afterPersisted'],
-            AfterEntityUpdatedEvent::class => ['afterUpdated'],
+            BeforeEntityUpdatedEvent::class   => ['beforeUpdated'],
+            AfterEntityPersistedEvent::class  => ['afterPersisted'],
+            AfterEntityUpdatedEvent::class    => ['afterUpdated'],
         ];
     }
 }

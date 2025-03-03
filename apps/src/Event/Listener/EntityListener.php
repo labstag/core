@@ -6,7 +6,6 @@ use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\BanIp;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
@@ -24,7 +23,6 @@ use Labstag\Service\ParagraphService;
 use Labstag\Service\StoryService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Workflow\Registry;
 
 #[AsDoctrineListener(event: Events::prePersist)]
@@ -49,7 +47,7 @@ final class EntityListener
     {
         $object        = $postPersistEventArgs->getObject();
         $entityManager = $postPersistEventArgs->getObjectManager();
-        
+
         $this->updateEntityParagraph($object);
         $this->updateEntityBlock($object);
         $this->updateEntityBanIp($object, $entityManager);
@@ -61,7 +59,7 @@ final class EntityListener
         $entityManager->flush();
     }
 
-    public function updateEntityPage($instance)
+    public function updateEntityPage($instance): void
     {
         if (!$instance instanceof Page) {
             return;
@@ -86,7 +84,7 @@ final class EntityListener
         $instance->setSlug('');
     }
 
-    private function updateEntityChapter($instance)
+    private function updateEntityChapter($instance): void
     {
         if (!$instance instanceof Chapter) {
             return;
@@ -104,7 +102,7 @@ final class EntityListener
         $this->storyService->generateFlashBag();
     }
 
-    private function updateEntityMovie($instance)
+    private function updateEntityMovie($instance): void
     {
         if (!$instance instanceof Movie) {
             return;
@@ -113,7 +111,7 @@ final class EntityListener
         $this->movieService->update($instance);
     }
 
-    private function updateEntityStory($instance)
+    private function updateEntityStory($instance): void
     {
         if (!$instance instanceof Story) {
             return;
@@ -122,8 +120,8 @@ final class EntityListener
         $this->storyService->setPdf($instance);
         $this->storyService->generateFlashBag();
     }
-    
-    private function updateEntityBanIp($instance, $entityManager)
+
+    private function updateEntityBanIp($instance, $entityManager): void
     {
         if (!$instance instanceof BanIp) {
             return;
@@ -139,7 +137,7 @@ final class EntityListener
         }
     }
 
-    private function updateEntityParagraph($instance)
+    private function updateEntityParagraph($instance): void
     {
         if (!$instance instanceof Paragraph) {
             return;
@@ -148,7 +146,7 @@ final class EntityListener
         $this->paragraphService->update($instance);
     }
 
-    private function updateEntityBlock($instance)
+    private function updateEntityBlock($instance): void
     {
         if (!$instance instanceof Block) {
             return;
@@ -160,11 +158,10 @@ final class EntityListener
     public function prePersist(PrePersistEventArgs $prePersistEventArgs): void
     {
         $object        = $prePersistEventArgs->getObject();
-        $entityManager = $prePersistEventArgs->getObjectManager();
+        $prePersistEventArgs->getObjectManager();
         $this->initworkflow($object);
         $this->initEntityMeta($object);
     }
-    
 
     private function initworkflow(object $object): void
     {
@@ -181,7 +178,7 @@ final class EntityListener
         $workflow->apply($object, 'submit');
     }
 
-    private function initEntityMeta($object)
+    private function initEntityMeta($object): void
     {
         $tab = [
             Page::class,

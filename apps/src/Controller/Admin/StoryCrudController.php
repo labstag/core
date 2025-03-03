@@ -46,7 +46,7 @@ class StoryCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
-    public function linkPublicAction(string $entity, StoryRepository $storyRepository): RedirectResponse
+    protected function linkPublic(string $entity, ?StoryRepository $storyRepository = null): RedirectResponse
     {
         $story = $storyRepository->find($entity);
 
@@ -200,9 +200,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         }
 
         $action = Action::new('updatepdf', new TranslatableMessage('Update PDF'), 'fas fa-wrench');
-        $action->linkToUrl(
-            fn() : string => $this->generateUrl('admin_story_updatepdf')
-        );
+        $action->linkToUrl(fn (): string => $this->generateUrl('admin_story_updatepdf'));
         $action->createAsGlobalAction();
 
         $actions->add(Crud::PAGE_INDEX, $action);

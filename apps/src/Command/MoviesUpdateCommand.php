@@ -2,7 +2,6 @@
 
 namespace Labstag\Command;
 
-use Labstag\Entity\Movie;
 use Labstag\Repository\MovieRepository;
 use Labstag\Service\MovieService;
 use NumberFormatter;
@@ -27,7 +26,7 @@ class MoviesUpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $movies = $this->movieRepository->findTrailerImageDescriptionIsNull();
+        $movies       = $this->movieRepository->findTrailerImageDescriptionIsNull();
 
         $progressBar = new ProgressBar($output, count($movies));
         $progressBar->start();

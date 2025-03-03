@@ -57,7 +57,7 @@ class VideoParagraph extends ParagraphLib
             $paragraph,
             [
                 'title'     => $media->has('title') ? $media->get('title') : '',
-                'provider'  => $media->has('providerName') ? strtolower($media->get('providerName')) : '',
+                'provider'  => $media->has('providerName') ? strtolower((string) $media->get('providerName')) : '',
                 'oembed'    => $this->parseUrlAndAddAutoplay($oembed),
                 'paragraph' => $paragraph,
                 'data'      => $data,
@@ -65,6 +65,7 @@ class VideoParagraph extends ParagraphLib
         );
     }
 
+    #[\Override]
     public function update(Paragraph $paragraph): void
     {
         if (!is_null($paragraph->getImg())) {
@@ -92,7 +93,7 @@ class VideoParagraph extends ParagraphLib
         }
 
         $thumbnailUrl = $media->get('thumbnailUrl');
-        $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $tempPath     = tempnam(sys_get_temp_dir(), 'poster_');
 
         // Télécharger l'image et l'écrire dans le fichier temporaire
         file_put_contents($tempPath, file_get_contents($thumbnailUrl));

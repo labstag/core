@@ -27,7 +27,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     {
     }
 
-    public function oembed($url)
+    public function oembed($url): array
     {
         $essence = new Essence();
 
@@ -50,8 +50,8 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         }
 
         return [
-            'provider' => $media->has('providerName') ? strtolower($media->get('providerName')) : '',
-            'oembed'    => $this->parseUrlAndAddAutoplay($oembed),
+            'provider' => $media->has('providerName') ? strtolower((string) $media->get('providerName')) : '',
+            'oembed'   => $this->parseUrlAndAddAutoplay($oembed),
         ];
     }
 
