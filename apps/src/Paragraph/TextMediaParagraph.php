@@ -12,6 +12,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\ParagraphLib;
 use Override;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class TextMediaParagraph extends ParagraphLib
@@ -82,7 +83,7 @@ class TextMediaParagraph extends ParagraphLib
         yield $wysiwygField;
     }
 
-    #[\Override]
+    #[Override]
     public function update(Paragraph $paragraph): void
     {
         if (!is_null($paragraph->getImg())) {
@@ -125,7 +126,7 @@ class TextMediaParagraph extends ParagraphLib
         $paragraph->setImgFile($uploadedFile);
     }
 
-    #[\Override]
+    #[Override]
     public function getClasses(Paragraph $paragraph): array
     {
         $tab = parent::getClasses($paragraph);

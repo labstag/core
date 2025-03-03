@@ -43,7 +43,7 @@ class TextImgParagraph extends ParagraphLib
         yield $wysiwygField;
     }
 
-    #[\Override]
+    #[Override]
     public function getClasses(Paragraph $paragraph): array
     {
         $tab = parent::getClasses($paragraph);

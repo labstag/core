@@ -65,7 +65,7 @@ class VideoParagraph extends ParagraphLib
         );
     }
 
-    #[\Override]
+    #[Override]
     public function update(Paragraph $paragraph): void
     {
         if (!is_null($paragraph->getImg())) {

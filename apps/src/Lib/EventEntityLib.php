@@ -20,8 +20,8 @@ use Labstag\Service\MovieService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\StoryService;
 use Labstag\Service\WorkflowService;
-use Symfony\Component\Workflow\Registry;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Workflow\Registry;
 
 abstract class EventEntityLib
 {
@@ -39,7 +39,7 @@ abstract class EventEntityLib
     )
     {
     }
-    
+
     protected function initEntityMeta($instance): void
     {
         $tab = [
@@ -185,5 +185,4 @@ abstract class EventEntityLib
 
         $this->blockService->update($instance);
     }
-
 }
