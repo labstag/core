@@ -25,7 +25,7 @@ class MovieParagraph extends ParagraphLib
         $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
 
         $request = $this->requestStack->getCurrentRequest();
-        $query = $request->query->all();
+        $query   = $request->query->all();
         if (!isset($query['order'])) {
             $query['order'] = 'createdAt';
         }

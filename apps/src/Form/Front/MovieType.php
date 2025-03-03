@@ -15,16 +15,12 @@ use Symfony\Component\Translation\TranslatableMessage;
 class MovieType extends AbstractType
 {
     public function __construct(
-        protected MovieService $movieService
+        protected MovieService $movieService,
     )
     {
-
     }
 
-    public function buildForm(
-        FormBuilderInterface $formBuilder,
-        array $options
-    ): void
+    public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         unset($options);
         $formBuilder->add(
@@ -98,7 +94,7 @@ class MovieType extends AbstractType
         );
     }
 
-    public function configureOptions(OptionsResolver $optionsResolver)
+    public function configureOptions(OptionsResolver $optionsResolver): void
     {
         $optionsResolver->setDefaults(
             [
@@ -110,6 +106,7 @@ class MovieType extends AbstractType
         );
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return '';

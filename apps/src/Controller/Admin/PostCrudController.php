@@ -36,7 +36,7 @@ class PostCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/post/{entity}/public', name: 'admin_post_public')]
-    public function linkPublicAction(string $entity, PostRepository $postRepository): RedirectResponse
+    protected function linkPublic(string $entity, ?PostRepository $postRepository = null): RedirectResponse
     {
         $post = $postRepository->find($entity);
 

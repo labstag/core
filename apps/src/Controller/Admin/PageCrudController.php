@@ -39,7 +39,7 @@ class PageCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/page/{entity}/public', name: 'admin_page_public')]
-    public function linkPublicAction(string $entity, PageRepository $pageRepository): RedirectResponse
+    protected function linkPublic(string $entity, ?PageRepository $pageRepository = null): RedirectResponse
     {
         $page = $pageRepository->find($entity);
 

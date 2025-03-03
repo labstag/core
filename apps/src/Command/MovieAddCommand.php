@@ -134,14 +134,8 @@ class MovieAddCommand extends Command
         $progressBar->finish();
 
         $oldsMovies = $this->movieRepository->findMoviesNotInImdbList($this->imdbs);
-        foreach ($oldsMovies as $movie) {
-            $symfonyStyle->warning(
-                sprintf(
-                    'Movie %s (%d) not in list',
-                    $movie->getTitle(),
-                    $movie->getImdb()
-                )
-            );
+        foreach ($oldsMovies as $oldMovie) {
+            $symfonyStyle->warning(sprintf('Movie %s (%d) not in list', $oldMovie->getTitle(), $oldMovie->getImdb()));
         }
 
         $symfonyStyle->success('All movie added');
@@ -189,9 +183,9 @@ class MovieAddCommand extends Command
      */
     private function setMovie(array $data): Movie
     {
-        $imdb  = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
+        $imdb          = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
         $this->imdbs[] = $imdb;
-        $movie = $this->movieRepository->findOneBy(
+        $movie         = $this->movieRepository->findOneBy(
             ['imdb' => $imdb]
         );
 

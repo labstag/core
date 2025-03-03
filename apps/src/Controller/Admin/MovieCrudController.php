@@ -138,9 +138,9 @@ class MovieCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/movie/{entity}/imdb', name: 'admin_movie_imdb')]
-    public function imdb(Movie $entity): RedirectResponse
+    public function imdb(Movie $movie): RedirectResponse
     {
-        return $this->redirect('https://www.imdb.com/title/tt' . $entity->getImdb() . '/');
+        return $this->redirect('https://www.imdb.com/title/tt' . $movie->getImdb() . '/');
     }
 
     private function configureActionsUpdateImage(Actions $actions): void
@@ -152,9 +152,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         }
 
         $action = Action::new('updateimage', new TranslatableMessage('Update Images'), 'fas fa-wrench');
-        $action->linkToUrl(
-            fn() : string => $this->generateUrl('admin_movie_imageupdate')
-        );
+        $action->linkToUrl(fn (): string => $this->generateUrl('admin_movie_imageupdate'));
         $action->createAsGlobalAction();
 
         $actions->add(Crud::PAGE_INDEX, $action);

@@ -22,6 +22,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->orderBy('m.country', 'ASC');
+
         $query = $queryBuilder->getQuery();
 
         return $query->getSingleColumnResult();
@@ -34,17 +35,19 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->orderBy('m.year', 'ASC');
+
         $query = $queryBuilder->getQuery();
 
         return $query->getSingleColumnResult();
     }
 
-    public function findTrailerImageDescriptionIsNull()
+    public function findTrailerImageDescriptionIsNull(): mixed
     {
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->where('m.trailer IS NULL');
         $queryBuilder->orWhere('m.img IS NULL');
         $queryBuilder->orWhere('m.description IS NULL');
+
         $query = $queryBuilder->getQuery();
 
         return $query->getResult();
@@ -71,7 +74,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('enable', true);
         if (isset($query['title']) && !empty($query['title'])) {
             $queryBuilder->andWhere('m.title LIKE :title');
-            $queryBuilder->setParameter('title', '%'.$query['title'].'%');
+            $queryBuilder->setParameter('title', '%' . $query['title'] . '%');
         }
 
         if (isset($query['country']) && !empty($query['country'])) {
@@ -90,7 +93,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
             $queryBuilder->setParameter('year', $query['year']);
         }
 
-        return $queryBuilder->orderBy('m.'.$query['order'], $query['orderby']);
+        return $queryBuilder->orderBy('m.' . $query['order'], $query['orderby']);
     }
 
     public function findMoviesNotInImdbList(array $excludedImdbIds): array
@@ -98,6 +101,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->where('m.imdb NOT IN (:imdbIds)');
         $queryBuilder->setParameter('imdbIds', $excludedImdbIds);
+
         $query = $queryBuilder->getQuery();
 
         return $query->getResult();

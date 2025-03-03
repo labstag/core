@@ -27,7 +27,7 @@ class MovieService
 
     public function getCountryForForm(): array
     {
-        $data = $this->movieRepository->findAllUniqueCountries();
+        $data    = $this->movieRepository->findAllUniqueCountries();
         $country = [];
         foreach ($data as $value) {
             $country[$value] = $value;
@@ -71,7 +71,7 @@ class MovieService
 
         $tmdb = $this->getDetailsTmdb($imdbId);
         if (null !== $tmdb) {
-            $details = array_merge($details, $tmdb);
+            return array_merge($details, $tmdb);
         }
 
         return $details;
@@ -79,7 +79,7 @@ class MovieService
 
     public function update(Movie $movie): bool
     {
-        $details = $this->getDetails($movie->getImdb());
+        $details           = $this->getDetails($movie->getImdb());
         $statusImage       = $this->updateImage($movie, $details);
         $statusDescription = $this->updateDescription($movie, $details);
         $statusVideo       = $this->updateTrailer($movie, $details);
@@ -104,8 +104,8 @@ class MovieService
         }
 
         foreach ($data as $result) {
-            if ($result['site'] == 'YouTube') {
-                $url = 'https://www.youtube.com/watch?v='.$result['key'];
+            if ('YouTube' == $result['site']) {
+                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
                 $movie->setTrailer($url);
 
                 $find = true;
@@ -190,7 +190,7 @@ class MovieService
             return null;
         }
 
-        $url = 'https://api.themoviedb.org/3/movie/'.$movieId.'/videos';
+        $url      = 'https://api.themoviedb.org/3/movie/' . $movieId . '/videos';
         $response = $this->httpClient->request(
             'GET',
             $url,
@@ -205,11 +205,11 @@ class MovieService
             return null;
         }
 
-        $data = json_decode($response->getContent(), true);
+        $data     = json_decode($response->getContent(), true);
         $trailers = [];
         foreach ($data['results'] as $result) {
-            if ($result['type'] == 'Trailer') {
-                $url = 'https://www.youtube.com/watch?v='.$result['key'];
+            if ('Trailer' == $result['type']) {
+                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
                 if (!$this->isVideo($url)) {
                     continue;
                 }
@@ -218,7 +218,7 @@ class MovieService
             }
         }
 
-        if (0 === count($trailers)) {
+        if ([] === $trailers) {
             return null;
         }
 
@@ -231,7 +231,7 @@ class MovieService
             return null;
         }
 
-        $url = 'https://api.themoviedb.org/3/movie/'.$movieId.'/videos?language=fr-FR';
+        $url      = 'https://api.themoviedb.org/3/movie/' . $movieId . '/videos?language=fr-FR';
         $response = $this->httpClient->request(
             'GET',
             $url,
@@ -246,11 +246,11 @@ class MovieService
             return null;
         }
 
-        $data = json_decode($response->getContent(), true);
+        $data     = json_decode($response->getContent(), true);
         $trailers = [];
         foreach ($data['results'] as $result) {
-            if ($result['type'] == 'Trailer') {
-                $url = 'https://www.youtube.com/watch?v='.$result['key'];
+            if ('Trailer' == $result['type']) {
+                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
                 if (!$this->isVideo($url)) {
                     continue;
                 }
@@ -259,14 +259,14 @@ class MovieService
             }
         }
 
-        if (0 === count($trailers)) {
+        if ([] === $trailers) {
             return null;
         }
 
         return $trailers;
     }
 
-    private function isVideo($url)
+    private function isVideo(string $url)
     {
         $essence = new Essence();
 
@@ -278,11 +278,7 @@ class MovieService
                 'maxheight' => 600,
             ]
         );
-        if (!$media instanceof Media) {
-            return false;
-        }
-
-        return true;
+        return $media instanceof Media;
     }
 
     private function getDetailsTmdb(string $imdbId): ?array
