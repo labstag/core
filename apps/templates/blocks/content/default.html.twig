@@ -1,3 +1,4 @@
-<div id="{{ block_id(block) }}" class="{{ block_class(block) }}"{{ block_contextmenu(block) }}>
+{% use "elements.html.twig" %}
+<div{% with {attr: block_contextmenu(block)} %}{{ block('attributes') }}{% endwith %}>
     {{ 'Block not configured'|trans }} ({{ block.type }})
 </div>

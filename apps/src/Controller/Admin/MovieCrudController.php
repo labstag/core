@@ -93,30 +93,18 @@ class MovieCrudController extends AbstractCrudControllerLib
     public function image(MovieService $movieService): RedirectResponse
     {
         $serviceEntityRepositoryLib = $this->getRepository();
+        if (!method_exists($serviceEntityRepositoryLib, 'findTrailerImageDescriptionIsNull')) {
+            $this->addFlash('danger', new TranslatableMessage('Method not found'));
 
-        $movies = $this->getRepository()->findBy(
-            ['img' => null]
-        );
-
-        $counter = 0;
-        $update  = 0;
-        foreach ($movies as $movie) {
-            $status = $movieService->updateImage($movie);
-            $update = $status ? ++$update : $update;
-            ++$counter;
-
-            $serviceEntityRepositoryLib->persist($movie);
-            $serviceEntityRepositoryLib->flush($counter);
+            return $this->redirectToRoute('admin_movie_index');
         }
 
-        $movies = $this->getRepository()->findBy(
-            ['description' => null]
-        );
+        $movies  = $serviceEntityRepositoryLib->findTrailerImageDescriptionIsNull();
 
         $counter = 0;
         $update  = 0;
         foreach ($movies as $movie) {
-            $status = $movieService->updateDescription($movie);
+            $status = $movieService->update($movie);
             $update = $status ? ++$update : $update;
             ++$counter;
 

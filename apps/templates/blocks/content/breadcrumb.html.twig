@@ -1,4 +1,5 @@
-<nav aria-label="breadcrumb" id="{{ block_id(block) }}" class="{{ block_class(block) }}"{{ block_contextmenu(block) }}>
+{% use "elements.html.twig" %}
+<nav aria-label="breadcrumb"{% with {attr: block_contextmenu(block)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
         <ul>
             {% for row in urls %}
