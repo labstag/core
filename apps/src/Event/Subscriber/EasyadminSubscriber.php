@@ -11,7 +11,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInterface
 {
-
     public function beforePersisted(BeforeEntityPersistedEvent $beforeEntityPersistedEvent): void
     {
         $instance = $beforeEntityPersistedEvent->getEntityInstance();

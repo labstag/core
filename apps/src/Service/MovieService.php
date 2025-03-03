@@ -278,6 +278,7 @@ class MovieService
                 'maxheight' => 600,
             ]
         );
+
         return $media instanceof Media;
     }
 
