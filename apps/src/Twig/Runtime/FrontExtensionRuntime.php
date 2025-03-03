@@ -2,6 +2,9 @@
 
 namespace Labstag\Twig\Runtime;
 
+use DOMDocument;
+use Essence\Essence;
+use Essence\Media;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -22,6 +25,61 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         protected Environment $twigEnvironment,
     )
     {
+    }
+
+    public function oembed($url)
+    {
+        $essence = new Essence();
+
+        // Load any url:
+        $media = $essence->extract(
+            $url,
+            [
+                'maxwidth'  => 800,
+                'maxheight' => 600,
+            ]
+        );
+        if (!$media instanceof Media) {
+            return [];
+        }
+
+        $html   = $media->has('html') ? $media->get('html') : '';
+        $oembed = $this->getOEmbedUrl($html);
+        if (is_null($oembed)) {
+            return [];
+        }
+
+        return [
+            'provider' => $media->has('providerName') ? strtolower($media->get('providerName')) : '',
+            'oembed'    => $this->parseUrlAndAddAutoplay($oembed),
+        ];
+    }
+
+    protected function getOEmbedUrl(string $html): ?string
+    {
+        $domDocument = new DOMDocument();
+        $domDocument->loadHTML($html);
+
+        $domNodeList = $domDocument->getElementsByTagName('iframe');
+        if (0 == count($domNodeList)) {
+            return null;
+        }
+
+        $iframe = $domNodeList->item(0);
+
+        return $iframe->getAttribute('src');
+    }
+
+    protected function parseUrlAndAddAutoplay(string $url): string
+    {
+        $parse = parse_url($url);
+        parse_str('' !== $parse['query'] && '0' !== $parse['query'] ? $parse['query'] : '', $args);
+        $args['autoplay'] = 1;
+
+        $newArgs        = http_build_query($args);
+        $parse['query'] = $newArgs;
+
+        return sprintf('%s://%s%s?%s', $parse['scheme'], $parse['host'], $parse['path'], $parse['query']);
     }
 
     public function asset(mixed $entity, string $field, bool $placeholder = true): string

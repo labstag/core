@@ -15,7 +15,17 @@
 
 			<div id="movie-modal-{{ movie.id }}-description">
 				{% if movie.trailer != '' %}
-                    {% include "embed/video.html.twig" with {'image': site_asset(movie, 'img'), 'trailer': movie.trailer} %}
+                    {% set oembed = oembed(movie.trailer) %}
+                    {% if oembed.oembed != '' %}
+					    <div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}"></div>
+                    {% else %}
+                        {% include "embed/video.html.twig" with {
+                            'btntitle': 'Watch the trailer'|trans,
+                            'image': site_asset(movie, 'img'),
+                            'provider': oembed.provider,
+                            'trailer': oembed.oembed
+                        } %}
+                    {% endif %}
 				{% else %}
 					<div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}"></div>
 				{% endif %}

@@ -58,6 +58,11 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     {
     }
 
+    public function update(Block $block): void
+    {
+        unset($block);
+    }
+
     public function getData(Block $block): ?array
     {
         $blockId = $block->getId();

@@ -2,6 +2,8 @@
 
 namespace Labstag\Service;
 
+use Essence\Essence;
+use Essence\Media;
 use Exception;
 use Labstag\Entity\Movie;
 use Labstag\Repository\CategoryRepository;
@@ -97,9 +99,13 @@ class MovieService
 
         $data = $this->getVideo($details['movie_results'][0]['id']);
         $find = false;
-        foreach ($data['results'] as $result) {
-            if ($result['type'] == 'Trailer' && $result['site'] == 'YouTube') {
-                $url = 'https://www.youtube.com/embed/'.$result['key'];
+        if (!is_array($data)) {
+            return $find;
+        }
+
+        foreach ($data as $result) {
+            if ($result['site'] == 'YouTube') {
+                $url = 'https://www.youtube.com/watch?v='.$result['key'];
                 $movie->setTrailer($url);
 
                 $find = true;
@@ -170,6 +176,16 @@ class MovieService
 
     public function getVideo(int $movieId): ?array
     {
+        $french = $this->getVideoFR($movieId);
+        if (!is_null($french)) {
+            return $french;
+        }
+
+        return $this->getVideoALL($movieId);
+    }
+
+    private function getVideoALL(int $movieId): ?array
+    {
         if ('' === $this->tmdbapiKey) {
             return null;
         }
@@ -189,7 +205,84 @@ class MovieService
             return null;
         }
 
-        return json_decode($response->getContent(), true);
+        $data = json_decode($response->getContent(), true);
+        $trailers = [];
+        foreach ($data['results'] as $result) {
+            if ($result['type'] == 'Trailer') {
+                $url = 'https://www.youtube.com/watch?v='.$result['key'];
+                if (!$this->isVideo($url)) {
+                    continue;
+                }
+
+                $trailers[] = $result;
+            }
+        }
+
+        if (0 === count($trailers)) {
+            return null;
+        }
+
+        return $trailers;
+    }
+
+    private function getVideoFR(int $movieId): ?array
+    {
+        if ('' === $this->tmdbapiKey) {
+            return null;
+        }
+
+        $url = 'https://api.themoviedb.org/3/movie/'.$movieId.'/videos?language=fr-FR';
+        $response = $this->httpClient->request(
+            'GET',
+            $url,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                    'accept'        => 'application/json',
+                ],
+            ]
+        );
+        if (self::STATUSOK !== $response->getStatusCode()) {
+            return null;
+        }
+
+        $data = json_decode($response->getContent(), true);
+        $trailers = [];
+        foreach ($data['results'] as $result) {
+            if ($result['type'] == 'Trailer') {
+                $url = 'https://www.youtube.com/watch?v='.$result['key'];
+                if (!$this->isVideo($url)) {
+                    continue;
+                }
+
+                $trailers[] = $result;
+            }
+        }
+
+        if (0 === count($trailers)) {
+            return null;
+        }
+
+        return $trailers;
+    }
+
+    private function isVideo($url)
+    {
+        $essence = new Essence();
+
+        // Load any url:
+        $media = $essence->extract(
+            $url,
+            [
+                'maxwidth'  => 800,
+                'maxheight' => 600,
+            ]
+        );
+        if (!$media instanceof Media) {
+            return false;
+        }
+
+        return true;
     }
 
     private function getDetailsTmdb(string $imdbId): ?array

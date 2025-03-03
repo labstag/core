@@ -1,6 +1,11 @@
-{% set urlImage = paragraph.img ? site_asset(paragraph, 'img') : image %}
 <section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}"{{ paragraph_contextmenu(paragraph) }}>
     <div class="wrapper">
-        {% include "embed/video.html.twig" with {'image': urlImage, 'trailer': oembed} %}
+        {% include "embed/video.html.twig" with {
+            'btntitle': 'Watch the video'|trans,
+            'image': site_asset(paragraph, 'img'),
+            'trailer': oembed,
+            'title': title,
+            'provider': provider
+        } %}
     </div>
 </section>

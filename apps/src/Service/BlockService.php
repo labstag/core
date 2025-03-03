@@ -27,6 +27,19 @@ class BlockService
     {
     }
 
+    public function update(Block $block): void
+    {
+        foreach ($this->blocks as $row) {
+            if ($block->getType() != $row->getType()) {
+                continue;
+            }
+
+            $row->update($block);
+
+            break;
+        }
+    }
+
     public function getUrlAdmin(Block $block): ?AdminUrlGeneratorInterface
     {
         if (!$this->security->isGranted('ROLE_ADMIN')) {
