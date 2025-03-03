@@ -8,6 +8,7 @@ use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\BanIp;
+use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
@@ -17,11 +18,13 @@ use Labstag\Entity\Post;
 use Labstag\Entity\Story;
 use Labstag\Repository\HttpErrorLogsRepository;
 use Labstag\Repository\PageRepository;
+use Labstag\Service\BlockService;
 use Labstag\Service\MovieService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\StoryService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Workflow\Registry;
 
 #[AsDoctrineListener(event: Events::prePersist)]
@@ -31,6 +34,7 @@ final class EntityListener
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
+        private BlockService $blockService,
         private StoryService $storyService,
         private MovieService $movieService,
         private PageRepository $pageRepository,
@@ -45,35 +49,122 @@ final class EntityListener
     {
         $object        = $postPersistEventArgs->getObject();
         $entityManager = $postPersistEventArgs->getObjectManager();
-        $this->postPersistParagraph($object, $entityManager);
-        $this->postPersistBanIp($object, $entityManager);
+        
+        $this->updateEntityParagraph($object);
+        $this->updateEntityBlock($object);
+        $this->updateEntityBanIp($object, $entityManager);
+        $this->updateEntityStory($object);
+        $this->updateEntityMovie($object);
+        $this->updateEntityChapter($object);
+        $this->updateEntityPage($object);
+
+        $entityManager->flush();
+    }
+
+    public function updateEntityPage($instance)
+    {
+        if (!$instance instanceof Page) {
+            return;
+        }
+
+        if ('home' != $instance->getType()) {
+            return;
+        }
+
+        $oldHome = $this->pageRepository->findOneBy(
+            ['type' => 'home']
+        );
+        if ($oldHome instanceof Page && $oldHome->getId() === $instance->getId()) {
+            return;
+        }
+
+        if ($oldHome instanceof Page) {
+            $oldHome->setType('page');
+            $this->pageRepository->save($oldHome);
+        }
+
+        $instance->setSlug('');
+    }
+
+    private function updateEntityChapter($instance)
+    {
+        if (!$instance instanceof Chapter) {
+            return;
+        }
+
+        if (0 < $instance->getPosition()) {
+            return;
+        }
+
+        $story    = $instance->getRefstory();
+        $chapters = $story->getChapters();
+        $instance->setPosition(count($chapters) + 1);
+
+        $this->storyService->setPdf($instance->getRefstory());
+        $this->storyService->generateFlashBag();
+    }
+
+    private function updateEntityMovie($instance)
+    {
+        if (!$instance instanceof Movie) {
+            return;
+        }
+
+        $this->movieService->update($instance);
+    }
+
+    private function updateEntityStory($instance)
+    {
+        if (!$instance instanceof Story) {
+            return;
+        }
+
+        $this->storyService->setPdf($instance);
+        $this->storyService->generateFlashBag();
+    }
+    
+    private function updateEntityBanIp($instance, $entityManager)
+    {
+        if (!$instance instanceof BanIp) {
+            return;
+        }
+
+        $httpsLogs = $this->httpErrorLogsRepository->findBy(
+            [
+                'internetProtocol' => $instance->getInternetProtocol(),
+            ]
+        );
+        foreach ($httpsLogs as $httpLog) {
+            $entityManager->remove($httpLog);
+        }
+    }
+
+    private function updateEntityParagraph($instance)
+    {
+        if (!$instance instanceof Paragraph) {
+            return;
+        }
+
+        $this->paragraphService->update($instance);
+    }
+
+    private function updateEntityBlock($instance)
+    {
+        if (!$instance instanceof Block) {
+            return;
+        }
+
+        $this->blockService->update($instance);
     }
 
     public function prePersist(PrePersistEventArgs $prePersistEventArgs): void
     {
         $object        = $prePersistEventArgs->getObject();
         $entityManager = $prePersistEventArgs->getObjectManager();
-        $this->prePersistBanIp($object, $entityManager);
-        $this->prePersistAddMeta($object, $entityManager);
-        $this->prePersistChapter($object, $entityManager);
-        $this->prePersistParagraph($object, $entityManager);
-        $this->prePersistPage($object, $entityManager);
-        $this->prePersistMovie($object, $entityManager);
-        $this->prePersistStory($object, $entityManager);
-        $this->initWorkflow($object);
+        $this->initworkflow($object);
+        $this->initEntityMeta($object);
     }
-
-    public function prePersistStory($object, ObjectManager $objectManager): void
-    {
-        unset($objectManager);
-        if (!$object instanceof Story) {
-            return;
-        }
-
-        $this->storyService->setPdf($object);
-
-        $this->storyService->generateFlashBag();
-    }
+    
 
     private function initworkflow(object $object): void
     {
@@ -90,146 +181,22 @@ final class EntityListener
         $workflow->apply($object, 'submit');
     }
 
-    private function postPersistBanIp($object, ObjectManager $objectManager): void
+    private function initEntityMeta($object)
     {
-        if (!$object instanceof BanIp) {
-            return;
-        }
-
-        $httpsLogs = $this->httpErrorLogsRepository->findBy(
-            [
-                'internetProtocol' => $object->getInternetProtocol(),
-            ]
-        );
-        foreach ($httpsLogs as $httpLog) {
-            $objectManager->remove($httpLog);
-        }
-
-        $objectManager->flush();
-    }
-
-    private function postPersistParagraph(object $paragraph, ObjectManager $objectManager): void
-    {
-        if (!$paragraph instanceof Paragraph) {
-            return;
-        }
-
-        if ('' != $paragraph->getType()) {
-            return;
-        }
-
-        $objectManager->remove($paragraph);
-    }
-
-    private function prePersistAddMeta(object $entity, ObjectManager $objectManager): void
-    {
-        unset($objectManager);
         $tab = [
             Page::class,
             Chapter::class,
             Post::class,
         ];
 
-        if (!in_array($entity::class, $tab)) {
+        if (!in_array($object::class, $tab)) {
             return;
         }
 
-        $meta = $entity->getMeta();
+        $meta = $object->getMeta();
         if (!$meta instanceof Meta) {
             $meta = new Meta();
-            $entity->setMeta($meta);
+            $object->setMeta($meta);
         }
-    }
-
-    private function prePersistBanIp($object, ObjectManager $objectManager): void
-    {
-        if (!$object instanceof BanIp) {
-            return;
-        }
-
-        $httpsLogs = $this->httpErrorLogsRepository->findBy(
-            [
-                'internetProtocol' => $object->getInternetProtocol(),
-            ]
-        );
-        foreach ($httpsLogs as $httpLog) {
-            $objectManager->remove($httpLog);
-        }
-
-        $objectManager->flush();
-    }
-
-    private function prePersistChapter(object $entity, ObjectManager $objectManager): void
-    {
-        unset($objectManager);
-        if (!$entity instanceof Chapter) {
-            return;
-        }
-
-        if (0 < $entity->getPosition()) {
-            return;
-        }
-
-        $story    = $entity->getRefstory();
-        $chapters = $story->getChapters();
-        $entity->setPosition(count($chapters) + 1);
-
-        $this->storyService->setPdf($entity->getRefstory());
-
-        $this->storyService->generateFlashBag();
-    }
-
-    private function prePersistMovie(object $entity, ObjectManager $objectManager): void
-    {
-        unset($objectManager);
-        if (!$entity instanceof Movie) {
-            return;
-        }
-
-        $this->movieService->update($entity);
-    }
-
-    private function prePersistPage(object $entity, ObjectManager $objectManager): void
-    {
-        unset($objectManager);
-        if (!$entity instanceof Page) {
-            return;
-        }
-
-        if ('home' != $entity->getType()) {
-            return;
-        }
-
-        $oldHome = $this->pageRepository->findOneBy(
-            ['type' => 'home']
-        );
-        if ($oldHome instanceof Page && $oldHome->getId() === $entity->getId()) {
-            return;
-        }
-
-        if ($oldHome instanceof Page) {
-            $oldHome->setType('page');
-            $this->pageRepository->save($oldHome);
-        }
-
-        $entity->setSlug('');
-    }
-
-    private function prePersistParagraph(object $entity, ObjectManager $objectManager): void
-    {
-        unset($objectManager);
-        if (!$entity instanceof Paragraph) {
-            return;
-        }
-
-        $entity->setEnable(true);
-
-        $data = $this->paragraphService->getEntityParent($entity);
-        if (is_null($data) || is_null($data->value)) {
-            return;
-        }
-
-        $paragraphs = $data->value->getParagraphs();
-        $entity->setPosition(count($paragraphs));
     }
 }

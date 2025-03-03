@@ -28,6 +28,19 @@ class ParagraphService
     {
     }
 
+    public function update(Paragraph $paragraph): void
+    {
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph->getType() != $row->getType()) {
+                continue;
+            }
+
+            $row->update($paragraph);
+
+            break;
+        }
+    }
+
     public function getClasses(Paragraph $paragraph): array
     {
         $classes = [];

@@ -4,6 +4,7 @@ namespace Labstag\Service;
 
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
+use PhpOffice\PhpWord\Element\Section;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Settings;
@@ -50,10 +51,13 @@ class StoryService
         }
 
         $this->addCoverPage($section, $story);
+        $section->addPageBreak();
         $this->addSummary($section);
+        $section->addPageBreak();
 
         foreach ($chapters as $chapter) {
             $this->setChapter($section, $chapter);
+            $section->addPageBreak();
         }
 
         $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug() . '.pdf';
@@ -73,7 +77,7 @@ class StoryService
         return true;
     }
 
-    private function addSummary($section): void
+    private function addSummary(Section $section): void
     {
         $section->addText(
             'Table des matières',
@@ -94,7 +98,7 @@ class StoryService
         $section->addPageBreak();
     }
 
-    private function addCoverPage($section, Story $story): void
+    private function addCoverPage(Section $section, Story $story): void
     {
         // Ajout de la page de garde
         $section->addTextBreak(10);
@@ -113,7 +117,6 @@ class StoryService
             ['align' => 'center']
         );
 
-        $section->addPageBreak();
         $section->addPageBreak();
     }
 
@@ -142,7 +145,7 @@ class StoryService
         return $tempFolder;
     }
 
-    private function setChapter($section, Chapter $chapter): void
+    private function setChapter(Section $section, Chapter $chapter): void
     {
         $paragraphs = $chapter->getParagraphs();
         $section->addTitle($chapter->getTitle(), 1);

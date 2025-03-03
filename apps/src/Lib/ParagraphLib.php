@@ -81,6 +81,11 @@ abstract class ParagraphLib extends AbstractController
     {
     }
 
+    public function update(Paragraph $paragraph): void
+    {
+        unset($paragraph);
+    }
+
     public function getClasses(Paragraph $paragraph): array
     {
         $classes = explode(' ', (string) $paragraph->getClasses());
