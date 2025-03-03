@@ -15,7 +15,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
-    public function getClass(Paragraph $paragraph): string
+    private function getClass(Paragraph $paragraph): string
     {
         $tab = [
             'paragraph',
@@ -27,14 +27,22 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         return trim(implode(' ', $tab));
     }
 
-    public function getContextMenu(Paragraph $paragraph): string
+    public function getContextMenu(Paragraph $paragraph): array
     {
         $urlAdmin = $this->paragraphService->getUrlAdmin($paragraph);
+        $data     = [
+            'id'    => $this->getId($paragraph),
+            'class' => $this->getClass($paragraph),
+        ];
+
         if (is_null($urlAdmin)) {
-            return '';
+            return $data;
         }
 
-        return ' data-context_url="' . $urlAdmin . '" data-context_text="Modifier paragraph (' . $paragraph->getType() . ')"';
+        $data['data-context_url']  = $urlAdmin;
+        $data['data-context_text'] = 'Créer paragraph (' . $paragraph->getType() . ')';
+
+        return $data;
     }
 
     public function getFond(?string $code): ?string
@@ -42,7 +50,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         return $this->paragraphService->getFond($code);
     }
 
-    public function getId(Paragraph $paragraph): string
+    private function getId(Paragraph $paragraph): string
     {
         return 'paragraph_' . $paragraph->getType() . '-' . $paragraph->getId();
     }

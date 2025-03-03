@@ -16,7 +16,7 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
-    public function getClass(Block $block): string
+    private function getClass(Block $block): string
     {
         $tab = [
             'block',
@@ -30,24 +30,26 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         return trim(implode(' ', $tab));
     }
 
-    public function getId(Block $block): string
+    private function getId(Block $block): string
     {
         return 'block_' . $block->getType() . '-' . $block->getId();
     }
 
-    public function getContextMenu(Block $block): string
+    public function getContextMenu(Block $block): array
     {
         $urlAdmin = $this->blockService->getUrlAdmin($block);
+        $data     = [
+            'id'    => $this->getId($block),
+            'class' => $this->getClass($block),
+        ];
         if (is_null($urlAdmin)) {
-            return '';
+            return $data;
         }
 
-        return ' data-context_url="' . $urlAdmin . '" data-context_text="Modifier block (' . $block->getType() . ')"';
-    }
+        $data['data-context_url']  = $urlAdmin;
+        $data['data-context_text'] = 'Créer block (' . $block->getType() . ')';
 
-    public function getName(string $code): string
-    {
-        return $this->blockService->getNameByCode($code);
+        return $data;
     }
 
     /**

@@ -1,4 +1,5 @@
-<div id="{{ block_id(block) }}" class="{{ block_class(block) }}"{{ block_contextmenu(block) }}>
+{% use "elements.html.twig" %}
+<div{% with {attr: block_contextmenu(block)} %}{{ block('attributes') }}{% endwith %}>
     <ul>
         <li>
             <a href="{{ path('admin') }}" target="_blank">
@@ -8,7 +9,7 @@
         <li>
             <a href="{{ url }}" target="_blank">
                 {{ 'Edit'|trans }}
-            </a>
+            </a>    
         </li>
         <li>
             <a href="{{ path('app_logout') }}">
