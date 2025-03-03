@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -46,9 +47,13 @@ class RedirectionCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
+        $request = $this->requestStack->getCurrentRequest();
+        $defaultSource = $request->query->get('source', '');
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
-        yield TextField::new('source', new TranslatableMessage('Source'));
+        yield TextField::new('source', new TranslatableMessage('Source'))->setFormTypeOptions([
+            'data' => $defaultSource,
+        ]);
         yield TextField::new('destination', new TranslatableMessage('Destination'));
         yield IntegerField::new('action_code', new TranslatableMessage('Action code'));
         yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->renderAsSwitch(false)->hideOnForm();

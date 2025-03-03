@@ -51,6 +51,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     {
         $this->configureActionsTrash($actions);
         $this->addToBan($actions);
+        $this->addToRedirection($actions);
         $request = $this->container->get('request_stack')->getCurrentRequest();
         $action = $request->query->get('action', null);
         if ('trash' != $action) {
@@ -139,6 +140,30 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     public static function getEntityFqcn(): string
     {
         return HttpErrorLogs::class;
+    }
+
+    private function addtoRedirection(Actions $actions): void
+    {
+        $action = $this->setLinkNewRedirectionAction();
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function setLinkNewRedirectionAction(): Action
+    {
+        $action = Action::new('newRedirection', new TranslatableMessage('new Redirection'));
+        $action->linkToUrl(
+            fn ($entity): string => $this->generateUrl(
+                'admin_redirection_new',
+                [
+                    'source' => $entity->getUrl(),
+                ]
+            )
+        );
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        return $action;
     }
 
     private function addToBan(Actions $actions): void
