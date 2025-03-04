@@ -24,6 +24,7 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 use ZipArchive;
 
@@ -45,14 +46,18 @@ class RedirectionCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
         $request       = $this->requestStack->getCurrentRequest();
         $defaultSource = $request->query->get('source', '');
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
-        yield TextField::new('source', new TranslatableMessage('Source'))->setFormTypeOptions(
-            ['data' => $defaultSource]
-        );
+        $textField = TextField::new('source', new TranslatableMessage('Source'));
+        if ($pageName == Action::NEW) {
+            $textField->setFormTypeOptions(
+                ['data' => $defaultSource]
+            );
+        }
+
+        yield $textField;
         yield TextField::new('destination', new TranslatableMessage('Destination'));
         yield IntegerField::new('action_code', new TranslatableMessage('Action code'));
         yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->renderAsSwitch(false)->hideOnForm();
@@ -142,9 +147,10 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         );
     }
 
-    public function testSource(AdminContext $adminContext): RedirectResponse
+    #[Route('/admin/redirection/{entity}/test', name: 'admin_redirection_test')]
+    public function testSource(string $entity, RedirectionRepository $redirectionRepository): RedirectResponse
     {
-        $redirection = $adminContext->getEntity()->getInstance();
+        $redirection = $redirectionRepository->find($entity);
 
         return $this->redirect($redirection->getSource());
     }
@@ -224,7 +230,14 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
-        $action->linkToCrudAction('testSource');
+        $action->linkToUrl(
+            fn ($entity): string => $this->generateUrl(
+                'admin_redirection_test',
+                [
+                    'entity' => $entity->getId(),
+                ]
+            )
+        );
 
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);

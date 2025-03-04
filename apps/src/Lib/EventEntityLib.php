@@ -25,7 +25,7 @@ use Symfony\Component\Workflow\Registry;
 
 abstract class EventEntityLib
 {
-    protected function __construct(
+    public function __construct(
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
         protected WorkflowService $workflowService,
@@ -138,6 +138,7 @@ abstract class EventEntityLib
 
     protected function updateEntityRedirection($instance, EntityManagerInterface $entityManager): void
     {
+        dump($instance);
         if (!$instance instanceof Redirection) {
             return;
         }

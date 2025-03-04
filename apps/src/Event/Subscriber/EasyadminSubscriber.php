@@ -16,11 +16,13 @@ class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInter
         $instance = $beforeEntityPersistedEvent->getEntityInstance();
         $this->initworkflow($instance);
         $this->initEntityMeta($instance);
+        $this->updateEntityRedirection($instance, $this->entityManager);
     }
 
     public function beforeUpdated(BeforeEntityUpdatedEvent $beforeEntityUpdatedEvent): void
     {
-        $beforeEntityUpdatedEvent->getEntityInstance();
+        $instance = $beforeEntityUpdatedEvent->getEntityInstance();
+        $this->updateEntityRedirection($instance, $this->entityManager);
     }
 
     public function afterPersisted(AfterEntityPersistedEvent $afterEntityPersistedEvent): void
