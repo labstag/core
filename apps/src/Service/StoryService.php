@@ -7,7 +7,6 @@ use Labstag\Entity\Story;
 use PhpOffice\PhpWord\Element\Section;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
-use PhpOffice\PhpWord\Settings;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -41,28 +40,13 @@ class StoryService
 
     public function setPdf(Story $story): bool
     {
-        $phpWord = new PhpWord();
-        Settings::setPdfRendererName(Settings::PDF_RENDERER_DOMPDF);
-        Settings::setPdfRendererPath($this->kernel->getProjectDir() . '/vendor/dompdf/dompdf');
-        $section  = $phpWord->addSection();
-        $chapters = $this->getChapters($story);
-        if (0 == count($chapters)) {
+        $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug() . '.docx';
+
+        $state = $this->setDocX($tempPath, $story);
+        if (!$state) {
             return false;
         }
 
-        $this->addCoverPage($section, $story);
-        $section->addPageBreak();
-        $this->addSummary($section);
-        $section->addPageBreak();
-
-        foreach ($chapters as $chapter) {
-            $this->setChapter($section, $chapter);
-            $section->addPageBreak();
-        }
-
-        $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug() . '.pdf';
-        $writer   = IOFactory::createWriter($phpWord, 'PDF');
-        $writer->save($tempPath);
 
         $uploadedFile = new UploadedFile(
             path: $tempPath,
@@ -73,6 +57,28 @@ class StoryService
 
         $story->setPdfFile($uploadedFile);
         $this->stories[] = $story->getTitle();
+
+        return true;
+    }
+
+    private function setDocX(string $docxFile, Story $story): bool
+    {
+        $phpWord = new PhpWord();
+        $section  = $phpWord->addSection();
+        $chapters = $this->getChapters($story);
+        if (0 == count($chapters)) {
+            return false;
+        }
+
+        $this->addCoverPage($section, $story);
+        $this->addSummary($section);
+
+        foreach ($chapters as $chapter) {
+            $this->setChapter($section, $chapter);
+        }
+        
+        $writer = IOFactory::createWriter($phpWord, 'Word2007');
+        $writer->save($docxFile);
 
         return true;
     }
@@ -93,8 +99,6 @@ class StoryService
             ]
         );
         $toc->setMinDepth(0);
-
-        $section->addPageBreak();
         $section->addPageBreak();
     }
 
@@ -161,7 +165,6 @@ class StoryService
             );
         }
 
-        $section->addPageBreak();
         $section->addPageBreak();
     }
 }
