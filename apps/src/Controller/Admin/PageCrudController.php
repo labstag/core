@@ -31,17 +31,19 @@ class PageCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/page/{entity}/w3c', name: 'admin_page_w3c')]
-    public function w3c(string $entity, PageRepository $pageRepository): RedirectResponse
+    public function w3c(string $entity): RedirectResponse
     {
-        $page = $pageRepository->find($entity);
+        $repository = $this->getRepository();
+        $page = $repository->find($entity);
 
         return $this->linkw3CValidator($page);
     }
 
     #[Route('/admin/page/{entity}/public', name: 'admin_page_public')]
-    protected function linkPublic(string $entity, ?PageRepository $pageRepository = null): RedirectResponse
+    protected function linkPublic(string $entity): RedirectResponse
     {
-        $page = $pageRepository->find($entity);
+        $repository = $this->getRepository();
+        $page = $repository->find($entity);
 
         return $this->linkPublic($page);
     }

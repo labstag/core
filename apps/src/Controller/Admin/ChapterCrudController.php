@@ -32,17 +32,19 @@ class ChapterCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/chapter/{entity}/w3c', name: 'admin_chapter_w3c')]
-    public function w3c(string $entity, ChapterRepository $chapterRepository): RedirectResponse
+    public function w3c(string $entity): RedirectResponse
     {
-        $chapter = $chapterRepository->find($entity);
+        $repository = $this->getRepository();
+        $chapter = $repository->find($entity);
 
         return $this->linkw3CValidator($chapter);
     }
 
     #[Route('/admin/chapter/{entity}/public', name: 'admin_chapter_public')]
-    protected function linkPublic(string $entity, ?ChapterRepository $chapterRepository = null): RedirectResponse
+    protected function linkPublic(string $entity): RedirectResponse
     {
-        $chapter = $chapterRepository->find($entity);
+        $repository = $this->getRepository();
+        $chapter = $repository->find($entity);
 
         return $this->linkPublic($chapter);
     }

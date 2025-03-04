@@ -28,17 +28,19 @@ class PostCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/post/{entity}/w3c', name: 'admin_post_w3c')]
-    public function w3c(string $entity, PostRepository $postRepository): RedirectResponse
+    public function w3c(string $entity): RedirectResponse
     {
-        $post = $postRepository->find($entity);
+        $repository = $this->getRepository();
+        $post = $repository->find($entity);
 
         return $this->linkw3CValidator($post);
     }
 
     #[Route('/admin/post/{entity}/public', name: 'admin_post_public')]
-    protected function linkPublic(string $entity, PostRepository $postRepository = null): RedirectResponse
+    protected function linkPublic(string $entity): RedirectResponse
     {
-        $post = $postRepository->find($entity);
+        $repository = $this->getRepository();
+        $post = $repository->find($entity);
 
         return $this->linkPublic($post);
     }
