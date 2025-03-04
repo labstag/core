@@ -9,7 +9,6 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Labstag\Repository\PostRepository;
 use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,19 +29,19 @@ class PostCrudController extends AbstractCrudControllerLib
     #[Route('/admin/post/{entity}/w3c', name: 'admin_post_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $repository = $this->getRepository();
-        $post = $repository->find($entity);
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $post                       = $serviceEntityRepositoryLib->find($entity);
 
         return $this->linkw3CValidator($post);
     }
 
     #[Route('/admin/post/{entity}/public', name: 'admin_post_public')]
-    protected function linkPublic(string $entity): RedirectResponse
+    public function linkPublic(string $entity): RedirectResponse
     {
-        $repository = $this->getRepository();
-        $post = $repository->find($entity);
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $post                       = $serviceEntityRepositoryLib->find($entity);
 
-        return $this->linkPublic($post);
+        return $this->publicLink($post);
     }
 
     #[Override]

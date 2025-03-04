@@ -7,7 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -51,7 +50,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
         $textField = TextField::new('source', new TranslatableMessage('Source'));
-        if ($pageName == Action::NEW) {
+        if (Action::NEW === $pageName) {
             $textField->setFormTypeOptions(
                 ['data' => $defaultSource]
             );
@@ -150,8 +149,8 @@ class RedirectionCrudController extends AbstractCrudControllerLib
     #[Route('/admin/redirection/{entity}/test', name: 'admin_redirection_test')]
     public function testSource(string $entity): RedirectResponse
     {
-        $repository = $this->getRepository();
-        $redirection = $repository->find($entity);
+        $serviceEntityRepositoryLib  = $this->getRepository();
+        $redirection                 = $serviceEntityRepositoryLib->find($entity);
 
         return $this->redirect($redirection->getSource());
     }

@@ -65,6 +65,16 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     {
     }
 
+    protected function publicLink(object $entity): RedirectResponse
+    {
+        $slug = $this->siteService->getSlugByEntity($entity);
+
+        return $this->redirectToRoute(
+            'front',
+            ['slug' => $slug]
+        );
+    }
+
     public function addParagraph(AdminContext $adminContext): RedirectResponse
     {
         $request  = $adminContext->getRequest();

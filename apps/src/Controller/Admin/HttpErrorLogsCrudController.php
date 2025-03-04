@@ -24,9 +24,9 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     #[Route('/admin/http-error-logs/{entity}/banip', name: 'admin_http_error_logs_banip')]
     public function banIp(string $entity): RedirectResponse
     {
-        $repository = $this->getRepository();
-        $httpErrorLogs = $repository->find($entity);
-        $internetProtocol = $httpErrorLogs->getInternetProtocol();
+        $serviceEntityRepositoryLib       = $this->getRepository();
+        $httpErrorLogs                    = $serviceEntityRepositoryLib->find($entity);
+        $internetProtocol                 = $httpErrorLogs->getInternetProtocol();
 
         $redirectToRoute = $this->redirectToRoute('admin_http_error_logs_index');
         if ($this->securityService->getCurrentClientIp() === $internetProtocol) {

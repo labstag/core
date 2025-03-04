@@ -13,7 +13,6 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\User;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Labstag\Repository\ChapterRepository;
 use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -34,19 +33,19 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[Route('/admin/chapter/{entity}/w3c', name: 'admin_chapter_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $repository = $this->getRepository();
-        $chapter = $repository->find($entity);
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $chapter                    = $serviceEntityRepositoryLib->find($entity);
 
         return $this->linkw3CValidator($chapter);
     }
 
     #[Route('/admin/chapter/{entity}/public', name: 'admin_chapter_public')]
-    protected function linkPublic(string $entity): RedirectResponse
+    public function linkPublic(string $entity): RedirectResponse
     {
-        $repository = $this->getRepository();
-        $chapter = $repository->find($entity);
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $chapter                    = $serviceEntityRepositoryLib->find($entity);
 
-        return $this->linkPublic($chapter);
+        return $this->publicLink($chapter);
     }
 
     #[Override]

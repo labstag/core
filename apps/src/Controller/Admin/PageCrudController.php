@@ -12,7 +12,6 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Labstag\Repository\PageRepository;
 use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -33,19 +32,19 @@ class PageCrudController extends AbstractCrudControllerLib
     #[Route('/admin/page/{entity}/w3c', name: 'admin_page_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $repository = $this->getRepository();
-        $page = $repository->find($entity);
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $page                       = $serviceEntityRepositoryLib->find($entity);
 
         return $this->linkw3CValidator($page);
     }
 
     #[Route('/admin/page/{entity}/public', name: 'admin_page_public')]
-    protected function linkPublic(string $entity): RedirectResponse
+    public function linkPublic(string $entity): RedirectResponse
     {
-        $repository = $this->getRepository();
-        $page = $repository->find($entity);
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $page                       = $serviceEntityRepositoryLib->find($entity);
 
-        return $this->linkPublic($page);
+        return $this->publicLink($page);
     }
 
     #[Override]
