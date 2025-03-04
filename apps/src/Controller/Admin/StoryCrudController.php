@@ -38,17 +38,19 @@ class StoryCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
-    public function w3c(string $entity, StoryRepository $storyRepository): RedirectResponse
+    public function w3c(string $entity): RedirectResponse
     {
-        $story = $storyRepository->find($entity);
+        $repository = $this->getRepository();
+        $story = $repository->find($entity);
 
         return $this->linkw3CValidator($story);
     }
 
     #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
-    protected function linkPublic(string $entity, ?StoryRepository $storyRepository = null): RedirectResponse
+    protected function linkPublic(string $entity): RedirectResponse
     {
-        $story = $storyRepository->find($entity);
+        $repository = $this->getRepository();
+        $story = $repository->find($entity);
 
         return $this->linkPublic($story);
     }
