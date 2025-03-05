@@ -87,6 +87,10 @@ abstract class EventEntityLib
         $oldHome = $this->pageRepository->findOneBy(
             ['type' => 'home']
         );
+        if ($instance->getType() == 'home') {
+            $instance->setSlug('');
+        }
+
         if ($oldHome instanceof Page && $oldHome->getId() === $instance->getId()) {
             return;
         }
@@ -138,7 +142,6 @@ abstract class EventEntityLib
 
     protected function updateEntityRedirection($instance, EntityManagerInterface $entityManager): void
     {
-        dump($instance);
         if (!$instance instanceof Redirection) {
             return;
         }
