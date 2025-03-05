@@ -34,6 +34,7 @@ final class EntityListener extends EventEntityLib
         $object        = $prePersistEventArgs->getObject();
         $prePersistEventArgs->getObjectManager();
         $this->initworkflow($object);
+        $this->updateEntityPage($object);
         $this->initEntityMeta($object);
     }
 }

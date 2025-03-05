@@ -74,6 +74,7 @@ class ParagraphService
     {
         $paragraph = null;
         $all       = $this->getAll($entity::class);
+        $position = count($entity->getParagraphs());
         foreach ($all as $row) {
             if ($row != $type) {
                 continue;
@@ -81,6 +82,7 @@ class ParagraphService
 
             $paragraph = new Paragraph();
             $paragraph->setType($type);
+            $paragraph->setPosition($position);
             $entity->addParagraph($paragraph);
 
             break;

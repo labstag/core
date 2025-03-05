@@ -10,7 +10,7 @@ use PhpOffice\PhpWord\PhpWord;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StoryService
 {
@@ -19,6 +19,7 @@ class StoryService
 
     public function __construct(
         private KernelInterface $kernel,
+        protected TranslatorInterface $translator
     )
     {
     }
@@ -126,10 +127,12 @@ class StoryService
 
     public function generateFlashBag(): string
     {
-        return new TranslatableMessage(
-            'Story file generated for "%title%"',
+
+        return $this->translator->trans(
+            'Stories file (%count%) generated for %stories%',
             [
-                '%title%' => implode('"," ', $this->stories),
+                '%stories%' => implode(', ', $this->stories),
+                '%count%' => count($this->stories),
             ]
         );
     }
