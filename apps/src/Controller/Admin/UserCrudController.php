@@ -73,15 +73,12 @@ class UserCrudController extends AbstractCrudControllerLib
         $textField->onlyOnForms();
         yield $textField;
         if (Crud::PAGE_NEW === $pageName) {
-            $field = $this->addFieldBoolean
-            (
+            $field = $this->addFieldBoolean(
                 'generatepassword',
                 new TranslatableMessage('generate Password')
             );
             $field->setFormTypeOptions(
-                [
-                    'mapped' => false,
-                ]
+                ['mapped' => false]
             );
 
             yield $field;
