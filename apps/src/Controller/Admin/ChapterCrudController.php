@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -10,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
+use Labstag\Entity\Story;
 use Labstag\Entity\User;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
@@ -98,6 +100,14 @@ class ChapterCrudController extends AbstractCrudControllerLib
     public function createEntity(string $entityFqcn): Chapter
     {
         $chapter = new $entityFqcn();
+        $request       = $this->requestStack->getCurrentRequest();
+        $defaultStory = $request->query->get('story');
+        if ($defaultStory) {
+            $repository = $this->getRepository(Story::class);
+            $story = $repository->find($defaultStory);
+            $chapter->setRefstory($story);
+        }
+
         $this->workflowService->init($chapter);
         $meta = new Meta();
         $chapter->setMeta($meta);

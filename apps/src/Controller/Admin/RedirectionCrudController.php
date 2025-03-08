@@ -45,12 +45,12 @@ class RedirectionCrudController extends AbstractCrudControllerLib
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $request       = $this->requestStack->getCurrentRequest();
-        $defaultSource = $request->query->get('source', '');
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
         $textField = TextField::new('source', new TranslatableMessage('Source'));
         if (Action::NEW === $pageName) {
+            $request       = $this->requestStack->getCurrentRequest();
+            $defaultSource = $request->query->get('source', '');
             $textField->setFormTypeOptions(
                 ['data' => $defaultSource]
             );
