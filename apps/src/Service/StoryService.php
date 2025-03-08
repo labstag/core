@@ -48,7 +48,6 @@ class StoryService
             return false;
         }
 
-
         $uploadedFile = new UploadedFile(
             path: $tempPath,
             originalName: basename($tempPath),
@@ -77,7 +76,7 @@ class StoryService
         foreach ($chapters as $chapter) {
             $this->setChapter($section, $chapter);
         }
-        
+
         $writer = IOFactory::createWriter($phpWord, 'Word2007');
         $writer->save($docxFile);
 
@@ -127,12 +126,11 @@ class StoryService
 
     public function generateFlashBag(): string
     {
-
         return $this->translator->trans(
             'Stories file (%count%) generated for %stories%',
             [
                 '%stories%' => implode(', ', $this->stories),
-                '%count%' => count($this->stories),
+                '%count%'   => count($this->stories),
             ]
         );
     }

@@ -222,12 +222,14 @@ class StoryCrudController extends AbstractCrudControllerLib
     private function setActionNewChapter(Actions $actions): void
     {
         $action = Action::new('newChapter', new TranslatableMessage('New chapter'));
-        $action->linkToUrl(fn (Story $story): string => $this->generateUrl(
-            'admin_chapter_new',
-            [
-                'story' => $story->getId()
-            ]
-        ));
+        $action->linkToUrl(
+            fn (Story $story): string => $this->generateUrl(
+                'admin_chapter_new',
+                [
+                    'story' => $story->getId(),
+                ]
+            )
+        );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $actions->add(Crud::PAGE_DETAIL, $action);
