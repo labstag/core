@@ -31,6 +31,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
         $this->setActionMoveChapter($actions);
+        $this->setActionNewChapter($actions);
         $this->configureActionsUpdatePdf($actions);
 
         return $actions;
@@ -211,6 +212,22 @@ class StoryCrudController extends AbstractCrudControllerLib
     {
         $action = Action::new('moveChapter', new TranslatableMessage('Move a chapter'));
         $action->linkToCrudAction('moveChapter');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function setActionNewChapter(Actions $actions): void
+    {
+        $action = Action::new('newChapter', new TranslatableMessage('New chapter'));
+        $action->linkToUrl(fn (Story $story): string => $this->generateUrl(
+            'admin_chapter_new',
+            [
+                'story' => $story->getId()
+            ]
+        ));
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $actions->add(Crud::PAGE_DETAIL, $action);
