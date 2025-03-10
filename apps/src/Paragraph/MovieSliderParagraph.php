@@ -33,6 +33,12 @@ class MovieSliderParagraph extends ParagraphLib
         $nbr                        = $paragraph->getNbr();
         $title                      = $paragraph->getTitle();
         $movies                     = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        if (count($movies) == 0) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         $this->setData(
             $paragraph,
             [
