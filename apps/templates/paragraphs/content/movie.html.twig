@@ -4,14 +4,15 @@
         <div class="content">
             {% if pagination|length == 0 %}
                 <p>{{ 'No movies found'|trans }}</p>
+            {% else %}
+                <ul>
+                    {% for row in pagination %}
+                        <li class="teaser-movie">
+                            {% include  "teasers/movie.html.twig"  with {'movie': row} %}
+                        </li>
+                    {% endfor %}
+                </ul>
             {% endif %}
-            <ul>
-                {% for row in pagination %}
-                    <li class="teaser-movie">
-                        {% include  "teasers/movie.html.twig"  with {'movie': row} %}
-                    </li>
-                {% endfor %}
-            </ul>
             <aside>
                 {% form_theme form 'bootstrap_5_layout.html.twig' %}
                 {{ form_start(form) }}
