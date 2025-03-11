@@ -4,9 +4,7 @@ namespace Labstag\Service;
 
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
-use PhpOffice\PhpWord\Element\Section;
-use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\PhpWord;
+use Mpdf\Mpdf;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -41,13 +39,23 @@ class StoryService
 
     public function setPdf(Story $story): bool
     {
-        $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug() . '.docx';
+        $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug() . '.pdf';
 
-        $state = $this->setDocX($tempPath, $story);
-        if (!$state) {
+        $mpdf = new Mpdf(['tempDir' => $this->getTemporaryFolder() . '/tmp']);
+        $this->addCoverPage($mpdf, $story);
+        $chapters = $this->getChapters($story);
+        if (0 == count($chapters)) {
             return false;
         }
 
+        $mpdf->TOCpagebreak();
+
+        foreach ($chapters as $chapter) {
+            $this->setChapter($mpdf, $chapter);
+        }
+
+
+        $mpdf->Output($tempPath, 'F');
         $uploadedFile = new UploadedFile(
             path: $tempPath,
             originalName: basename($tempPath),
@@ -61,67 +69,15 @@ class StoryService
         return true;
     }
 
-    private function setDocX(string $docxFile, Story $story): bool
+    private function addCoverPage($mpdf, Story $story): void
     {
-        $phpWord = new PhpWord();
-        $section  = $phpWord->addSection();
-        $chapters = $this->getChapters($story);
-        if (0 == count($chapters)) {
-            return false;
-        }
-
-        $this->addCoverPage($section, $story);
-        $this->addSummary($section);
-
-        foreach ($chapters as $chapter) {
-            $this->setChapter($section, $chapter);
-        }
-
-        $writer = IOFactory::createWriter($phpWord, 'Word2007');
-        $writer->save($docxFile);
-
-        return true;
-    }
-
-    private function addSummary(Section $section): void
-    {
-        $section->addText(
-            'Table des matières',
-            [
-                'size' => 18,
-                'bold' => true,
-            ]
-        );
-        $toc = $section->addTOC(
-            [
-                'spaceAfter' => 60,
-                'size'       => 12,
-            ]
-        );
-        $toc->setMinDepth(0);
-        $section->addPageBreak();
-    }
-
-    private function addCoverPage(Section $section, Story $story): void
-    {
-        // Ajout de la page de garde
-        $section->addTextBreak(10);
-        $section->addText(
-            $story->getTitle(),
-            [
-                'size' => 24,
-                'bold' => true,
-            ],
-            ['align' => 'center']
-        );
-        $section->addTextBreak(2);
-        $section->addText(
-            $story->getRefuser()->getUsername(),
-            ['size' => 16],
-            ['align' => 'center']
-        );
-
-        $section->addPageBreak();
+        $mpdf->WriteHTML('
+            <div style="text-align:center;">
+                <h1>'.$story->getTitle().'</h1>
+                <h3>Auteur : '.$story->getRefuser()->getUsername().'</h3>
+            </div>
+            <pagebreak />
+        ');
     }
 
     public function generateFlashBag(): string
@@ -150,22 +106,18 @@ class StoryService
         return $tempFolder;
     }
 
-    private function setChapter(Section $section, Chapter $chapter): void
+    private function setChapter($mpdf, Chapter $chapter): void
     {
         $paragraphs = $chapter->getParagraphs();
-        $section->addTitle($chapter->getTitle(), 1);
-        $section->addTextBreak(2);
-        foreach ($paragraphs as $paragraph) {
-            $section->addText(
-                $paragraph->getContent(),
-                [
-                    'size' => 12,
-                    'bold' => false,
-                ],
-                ['spaceAfter' => 240]
-            );
+        $mpdf->TOC_Entry($chapter->getTitle(), 0);
+        foreach ($paragraphs as $i => $paragraph) {
+            $html = $paragraph->getContent();
+            if ($i == 0) {
+                $html = '<h2>'.$chapter->getTitle().'</h2>'.$html;
+            }
+            $mpdf->WriteHTML($html);
         }
 
-        $section->addPageBreak();
+        $mpdf->WriteHTML('<pagebreak />');
     }
 }

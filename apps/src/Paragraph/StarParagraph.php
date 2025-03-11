@@ -23,6 +23,13 @@ class StarParagraph extends ParagraphLib
         /** @var StarRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Star::class);
 
+        $total = $serviceEntityRepositoryLib->findTotalEnable();
+        if ($total == 0) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');

@@ -25,6 +25,16 @@ class StarRepository extends ServiceEntityRepositoryLib
         return $query->getQuery()->getResult();
     }
 
+    public function findTotalEnable(): mixed
+    {
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder->select('count(s.id)');
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
+
     public function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('s');
