@@ -154,7 +154,7 @@
     "@maptiler/leaflet-maptilersdk": "2.0.*",
     "a11y-dialog": "8.1.*",
     "bootstrap": "5.3.*",
-    "ckeditor5": "44.1.*",
+    "ckeditor5": "44.2.0",
     "flag-icons": "7.2.*",
     "leaflet": "1.9.*",
     "leaflet.markercluster": "1.5.*",
