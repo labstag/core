@@ -42,13 +42,20 @@ class StoryService
         $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug() . '.pdf';
 
         $mpdf = new Mpdf(['tempDir' => $this->getTemporaryFolder() . '/tmp']);
+        $mpdf->SetAuthor($story->getRefuser()->getUsername());
+        $mpdf->SetTitle($story->getTitle());
         $this->addCoverPage($mpdf, $story);
         $chapters = $this->getChapters($story);
         if (0 == count($chapters)) {
             return false;
         }
 
-        $mpdf->TOCpagebreak();
+        $mpdf->TOCpagebreakByArray(
+            [
+                'toc-preHTML' => '<h1>Table des matières</h1>',
+                'links' => true
+            ]
+        );
 
         foreach ($chapters as $chapter) {
             $this->setChapter($mpdf, $chapter);
@@ -76,8 +83,9 @@ class StoryService
                 <h1>'.$story->getTitle().'</h1>
                 <h3>Auteur : '.$story->getRefuser()->getUsername().'</h3>
             </div>
-            <pagebreak />
         ');
+
+        $mpdf->AddPage();
     }
 
     public function generateFlashBag(): string
@@ -110,14 +118,18 @@ class StoryService
     {
         $paragraphs = $chapter->getParagraphs();
         $mpdf->TOC_Entry($chapter->getTitle(), 0);
-        foreach ($paragraphs as $i => $paragraph) {
-            $html = $paragraph->getContent();
-            if ($i == 0) {
-                $html = '<h2>'.$chapter->getTitle().'</h2>'.$html;
+        $i = 0;
+        foreach ($paragraphs as $paragraph) {
+            if ($paragraph->getType() == 'text') {
+                if ($i == 0) {
+                    $mpdf->WriteHTML('<h2>'.$chapter->getTitle().'</h2>');
+                }
+                $mpdf->WriteHTML($paragraph->getContent());
+                    $mpdf->AddPage();
             }
-            $mpdf->WriteHTML($html);
+            $i++;
         }
 
-        $mpdf->WriteHTML('<pagebreak />');
+        // $mpdf->WriteHTML('<pagebreak />');
     }
 }

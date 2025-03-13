@@ -34,6 +34,7 @@ class MovieAddCommand extends Command
 
     public function __construct(
         protected MovieRepository $movieRepository,
+        protected MovieService $movieService,
         protected FileService $fileService,
         protected CategoryRepository $categoryRepository,
     )
@@ -122,6 +123,7 @@ class MovieAddCommand extends Command
         $progressBar->start();
         foreach ($dataJson as $data) {
             $movie = $this->setMovie($data);
+            $this->movieService->update($movie);
             $this->addOrUpdate($movie);
             ++$counter;
 
