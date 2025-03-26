@@ -7,6 +7,7 @@ use Labstag\Entity\Movie;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
 use Labstag\Service\FileService;
+use Labstag\Service\MovieService;
 use NumberFormatter;
 use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;

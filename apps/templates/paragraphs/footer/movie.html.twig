@@ -16,7 +16,7 @@
 			<div id="movie-modal-{{ movie.id }}-description">
 				{% if movie.trailer != '' %}
                     {% set oembed = oembed(movie.trailer) %}
-                    {% if oembed.oembed != '' %}
+                    {% if oembed.oembed == '' %}
 					    <div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}"></div>
                     {% else %}
                         {% include "embed/video.html.twig" with {
