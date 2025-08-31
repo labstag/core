@@ -68,7 +68,7 @@
 				</div>
                 {% if movie.imdb != '' %}
                     <div class="imdb">
-                        <a href="https://www.imdb.com/title/tt{{ movie.imdb }}" target="_blank" title="{{ 'IMDB page for the movie'|trans|e('html_attr') }}">
+                        <a href="https://www.imdb.com/title/{{ movie.imdb }}" target="_blank" title="{{ 'IMDB page for the movie'|trans|e('html_attr') }}">
                             {{ 'IMDB page for the movie'|trans }}
                         </a>
                     </div>
