@@ -4,8 +4,10 @@ namespace Labstag\Command;
 
 use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
+use Labstag\Entity\Saga;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
+use Labstag\Repository\SagaRepository;
 use Labstag\Service\FileService;
 use Labstag\Service\MovieService;
 use NumberFormatter;
@@ -29,6 +31,11 @@ class MovieAddCommand extends Command
      */
     private array $categories = [];
 
+    /**
+     * @var Saga[]
+     */
+    private array $sagas = [];
+
     private array $imdbs = [];
 
     private int $update = 0;
@@ -38,6 +45,7 @@ class MovieAddCommand extends Command
         protected MovieService $movieService,
         protected FileService $fileService,
         protected CategoryRepository $categoryRepository,
+        protected SagaRepository $sagaRepository
     )
     {
         parent::__construct();
@@ -56,6 +64,7 @@ class MovieAddCommand extends Command
             ]
         );
         if ($category instanceof Category) {
+            $this->categories[$value] = $category;
             return $category;
         }
 
@@ -124,9 +133,13 @@ class MovieAddCommand extends Command
         $progressBar->start();
         foreach ($dataJson as $data) {
             $movie = $this->setMovie($data);
-            $this->movieService->update($movie);
-            $this->addOrUpdate($movie);
+            if ($movie instanceof Movie) {
+                $this->movieService->update($movie);
+                $this->addOrUpdate($movie);
+            }
+
             ++$counter;
+
 
             $this->movieRepository->persist($movie);
             $this->movieRepository->flush($counter);
@@ -176,28 +189,32 @@ class MovieAddCommand extends Command
         }
     }
 
-    private function setEvaluation(array $matches)
+    private function getMovieByImdb(string $imdb): ?Movie
     {
-        return 0.0 !== (float) isset($matches['1']) ? $matches['1'] : null;
+        $searchs[]['imdb'] = $imdb;
+        if (strpos($imdb, 'tt') == 0) {
+            $this->imdbs[] = $imdb;
+            $searchs[]['imdb'] = str_pad(substr($imdb, 2), 7, '0', STR_PAD_LEFT);
+        }else{
+            $this->imdbs[] = 'tt'.str_pad($imdb, 7, '0', STR_PAD_LEFT);
+        }
+        foreach ($searchs as $search) {
+            $movie = $this->movieRepository->findOneBy($search);
+            if ($movie instanceof Movie) {
+                return $movie;
+            }
+        }
+
+        return null;
     }
 
     /**
      * @param mixed[] $data
      */
-    private function setMovie(array $data): Movie
+    private function setMovie(array $data): ?Movie
     {
-        $imdb          = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
-        $this->imdbs[] = $imdb;
-        $movie         = $this->movieRepository->findOneBy(
-            ['imdb' => $imdb]
-        );
-
-        $pattern = '/(\d+\.\d+)\s+\(([\d.]+)([KMB]?) votes\)/';
-        preg_match($pattern, (string) $data['Evaluation IMDb'], $matches);
-        $evaluation = (float) $this->setEvaluation($matches);
-        $suffix     = $this->setSuffix($matches);
-        $votes      = (int) $this->setVotes($suffix, $matches);
-
+        $imdb = (string) $data['ID IMDb'];
+        $movie = $this->getMovieByImdb($imdb);
         if (!$movie instanceof Movie) {
             $movie = new Movie();
             $movie->setEnable(true);
@@ -207,16 +224,14 @@ class MovieAddCommand extends Command
         $year     = (int) $data['Année'];
         $type     = $data['Genre(s)'];
         $country  = $data['Pays'];
-        $color    = ('<<Inconnu>>' == $data['Couleur']) ? null : $data['Couleur'];
         $duration = empty($data['Durée']) ? null : $data['Durée'];
+        $saga     = empty($data['Saga']) ? null : $data['Saga'];
         $title    = trim((string) $data['Titre']);
-        $movie->setEvaluation($evaluation);
-        $movie->setVotes($votes);
         $movie->setDuration($duration);
-        $movie->setColor($color);
         $movie->setTitle($title);
         $movie->setYear((0 != $year) ? $year : null);
         $movie->setCountry(('' != $country) ? $country : null);
+        $this->setSaga($movie, $saga);
 
         $categories = explode(',', (string) $type);
         $this->setCategories($movie, $categories);
@@ -224,21 +239,40 @@ class MovieAddCommand extends Command
         return $movie;
     }
 
-    private function setSuffix(array $matches)
+    private function getSaga(string $value): Saga
     {
-        return $matches['3'] ?? null;
+        if (isset($this->sagas[$value])) {
+            return $this->sagas[$value];
+        }
+
+        $saga = $this->sagaRepository->findOneBy(
+            [
+                'title' => $value,
+            ]
+        );
+        if ($saga instanceof Saga) {
+            $this->sagas[$value] = $saga;
+            return $saga;
+        }
+
+        $saga = new Saga();
+        $saga->setTitle($value);
+
+        $this->sagaRepository->save($saga);
+        $this->sagas[$value] = $saga;
+
+        return $saga;
     }
 
-    private function setVotes($suffix, array $matches)
+    private function setSaga(Movie $movie, $saga): void
     {
-        $votes = 0.0 !== (float) isset($matches['2']) ? $matches['1'] : null;
-        match ($suffix) {
-            'K'     => $votes *= 1000,
-            'M'     => $votes *= 1000000,
-            'B'     => $votes *= 1000000000,
-            default => $votes,
-        };
+        if (is_null($saga) || '' === $saga) {
+            return;
+        }
 
-        return $votes;
+        $saga = trim(str_replace('- Saga', '', $saga));
+
+        $saga = $this->getSaga($saga);
+        $movie->setSaga($saga);
     }
 }
