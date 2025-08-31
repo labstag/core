@@ -45,7 +45,7 @@ class MovieAddCommand extends Command
         protected MovieService $movieService,
         protected FileService $fileService,
         protected CategoryRepository $categoryRepository,
-        protected SagaRepository $sagaRepository
+        protected SagaRepository $sagaRepository,
     )
     {
         parent::__construct();
@@ -65,6 +65,7 @@ class MovieAddCommand extends Command
         );
         if ($category instanceof Category) {
             $this->categories[$value] = $category;
+
             return $category;
         }
 
@@ -140,7 +141,6 @@ class MovieAddCommand extends Command
 
             ++$counter;
 
-
             $this->movieRepository->persist($movie);
             $this->movieRepository->flush($counter);
             $progressBar->advance();
@@ -192,12 +192,13 @@ class MovieAddCommand extends Command
     private function getMovieByImdb(string $imdb): ?Movie
     {
         $searchs[]['imdb'] = $imdb;
-        if (strpos($imdb, 'tt') == 0) {
-            $this->imdbs[] = $imdb;
+        if (str_starts_with($imdb, 'tt')) {
+            $this->imdbs[]     = $imdb;
             $searchs[]['imdb'] = str_pad(substr($imdb, 2), 7, '0', STR_PAD_LEFT);
-        }else{
-            $this->imdbs[] = 'tt'.str_pad($imdb, 7, '0', STR_PAD_LEFT);
+        } else {
+            $this->imdbs[] = 'tt' . str_pad($imdb, 7, '0', STR_PAD_LEFT);
         }
+
         foreach ($searchs as $search) {
             $movie = $this->movieRepository->findOneBy($search);
             if ($movie instanceof Movie) {
@@ -213,7 +214,7 @@ class MovieAddCommand extends Command
      */
     private function setMovie(array $data): ?Movie
     {
-        $imdb = (string) $data['ID IMDb'];
+        $imdb  = (string) $data['ID IMDb'];
         $movie = $this->getMovieByImdb($imdb);
         if (!$movie instanceof Movie) {
             $movie = new Movie();
@@ -246,12 +247,11 @@ class MovieAddCommand extends Command
         }
 
         $saga = $this->sagaRepository->findOneBy(
-            [
-                'title' => $value,
-            ]
+            ['title' => $value]
         );
         if ($saga instanceof Saga) {
             $this->sagas[$value] = $saga;
+
             return $saga;
         }
 
@@ -273,6 +273,7 @@ class MovieAddCommand extends Command
         $saga = trim(str_replace('- Saga', '', $saga));
 
         $saga = $this->getSaga($saga);
+
         $movie->setSaga($saga);
     }
 }

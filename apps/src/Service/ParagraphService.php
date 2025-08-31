@@ -74,7 +74,7 @@ class ParagraphService
     {
         $paragraph = null;
         $all       = $this->getAll($entity::class);
-        $position = count($entity->getParagraphs());
+        $position  = count($entity->getParagraphs());
         foreach ($all as $row) {
             if ($row != $type) {
                 continue;

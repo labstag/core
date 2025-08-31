@@ -24,7 +24,7 @@ class StarParagraph extends ParagraphLib
         $serviceEntityRepositoryLib = $this->getRepository(Star::class);
 
         $total = $serviceEntityRepositoryLib->findTotalEnable();
-        if ($total == 0) {
+        if (0 == $total) {
             $this->setShow($paragraph, false);
 
             return;

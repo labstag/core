@@ -79,8 +79,8 @@ class MovieService
 
     private function updateImdb(Movie $movie): void
     {
-        if (strpos($movie->getImdb(), 'tt') !== 0) {
-            $movie->setImdb('tt' . str_pad($movie->getImdb(), 7, '0', STR_PAD_LEFT));
+        if (!str_starts_with((string) $movie->getImdb(), 'tt')) {
+            $movie->setImdb('tt' . str_pad((string) $movie->getImdb(), 7, '0', STR_PAD_LEFT));
         }
     }
 

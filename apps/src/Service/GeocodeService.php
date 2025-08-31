@@ -74,7 +74,7 @@ class GeocodeService
         }
 
         $content = (string) $zipArchive->getFromName($country . '.txt');
-        $csv     = str_getcsv($content, "\n");
+        $csv     = str_getcsv($content, "\n", escape: '\\');
         $zipArchive->close();
 
         return $csv;
@@ -87,6 +87,6 @@ class GeocodeService
      */
     public function tables(array $csv): array
     {
-        return array_map(fn ($line) => str_getcsv((string) $line, "\t"), $csv);
+        return array_map(fn ($line) => str_getcsv((string) $line, "\t", escape: '\\'), $csv);
     }
 }

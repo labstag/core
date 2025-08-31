@@ -73,10 +73,7 @@ class UserCrudController extends AbstractCrudControllerLib
         $textField->onlyOnForms();
         yield $textField;
         if (Crud::PAGE_NEW === $pageName) {
-            $field = $this->addFieldBoolean(
-                'generatepassword',
-                new TranslatableMessage('generate Password')
-            );
+            $field = $this->addFieldBoolean('generatepassword', new TranslatableMessage('generate Password'));
             $field->setFormTypeOptions(
                 ['mapped' => false]
             );
@@ -85,7 +82,7 @@ class UserCrudController extends AbstractCrudControllerLib
         }
 
         $languageField = ChoiceField::new('language', new TranslatableMessage('Language'));
-        $langue = $this->userService->getLanguagesForChoices();
+        $langue        = $this->userService->getLanguagesForChoices();
         $languageField->setChoices($langue);
         yield $languageField;
         yield $this->addFieldImageUpload('avatar', $pageName);
@@ -137,7 +134,7 @@ class UserCrudController extends AbstractCrudControllerLib
         $user = new $entityFqcn();
         $this->workflowService->init($user);
         $langue = $this->userService->getLanguagesForChoices();
-        $key = array_key_first($langue);
+        $key    = array_key_first($langue);
         $user->setLanguage($langue[$key]);
 
         return $user;
@@ -178,8 +175,9 @@ class UserCrudController extends AbstractCrudControllerLib
             $generatepassword = $form->get('generatepassword')->getData();
             if ($generatepassword) {
                 $password = bin2hex(random_bytes(10));
-                $hash = $this->userService->hashPassword($event->getData(), $password);
+                $hash     = $this->userService->hashPassword($event->getData(), $password);
                 $form->getData()->setPassword($hash);
+
                 return;
             }
 

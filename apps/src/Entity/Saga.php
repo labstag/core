@@ -4,14 +4,15 @@ namespace Labstag\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\SagaRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: SagaRepository::class)]
 class Saga
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
@@ -69,11 +70,9 @@ class Saga
 
     public function removeMovie(Movie $movie): static
     {
-        if ($this->movies->removeElement($movie)) {
-            // set the owning side to null (unless already changed)
-            if ($movie->getSaga() === $this) {
-                $movie->setSaga(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->movies->removeElement($movie) && $movie->getSaga() === $this) {
+            $movie->setSaga(null);
         }
 
         return $this;
