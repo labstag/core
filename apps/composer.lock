@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "65bfd3ffe8c01a6354fb4f4d1dad4502",
+    "content-hash": "44900132fd1a9b2a630d130239325c52",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -11748,16 +11748,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.14",
+            "version": "2.1.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "8f2e03099cac24ff3b379864d171c5acbfc6b9a2"
+                "reference": "41600c8379eb5aee63e9413fe9e97273e25d57e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8f2e03099cac24ff3b379864d171c5acbfc6b9a2",
-                "reference": "8f2e03099cac24ff3b379864d171c5acbfc6b9a2",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/41600c8379eb5aee63e9413fe9e97273e25d57e4",
+                "reference": "41600c8379eb5aee63e9413fe9e97273e25d57e4",
                 "shasum": ""
             },
             "require": {
@@ -11802,25 +11802,25 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-02T15:32:28+00:00"
+            "time": "2025-08-04T19:17:37+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",
-            "version": "2.0.2",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-deprecation-rules.git",
-                "reference": "9d8e7d4e32711715ad78a1fb6ec368df9af01fdf"
+                "reference": "468e02c9176891cc901143da118f09dc9505fc2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-deprecation-rules/zipball/9d8e7d4e32711715ad78a1fb6ec368df9af01fdf",
-                "reference": "9d8e7d4e32711715ad78a1fb6ec368df9af01fdf",
+                "url": "https://api.github.com/repos/phpstan/phpstan-deprecation-rules/zipball/468e02c9176891cc901143da118f09dc9505fc2f",
+                "reference": "468e02c9176891cc901143da118f09dc9505fc2f",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4 || ^8.0",
-                "phpstan/phpstan": "^2.1.13"
+                "phpstan/phpstan": "^2.1.15"
             },
             "require-dev": {
                 "php-parallel-lint/php-parallel-lint": "^1.2",
@@ -11847,27 +11847,27 @@
             "description": "PHPStan rules for detecting usage of deprecated classes, methods, properties, constants and traits.",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-deprecation-rules/issues",
-                "source": "https://github.com/phpstan/phpstan-deprecation-rules/tree/2.0.2"
+                "source": "https://github.com/phpstan/phpstan-deprecation-rules/tree/2.0.3"
             },
-            "time": "2025-04-26T19:59:57+00:00"
+            "time": "2025-05-14T10:56:57+00:00"
         },
         {
             "name": "phpstan/phpstan-doctrine",
-            "version": "2.0.2",
+            "version": "2.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-doctrine.git",
-                "reference": "a61a04a361b60014ec04881ccb87252d3bf02e94"
+                "reference": "6271e66ce37545bd2edcddbe6bcbdd3b665ab7b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-doctrine/zipball/a61a04a361b60014ec04881ccb87252d3bf02e94",
-                "reference": "a61a04a361b60014ec04881ccb87252d3bf02e94",
+                "url": "https://api.github.com/repos/phpstan/phpstan-doctrine/zipball/6271e66ce37545bd2edcddbe6bcbdd3b665ab7b8",
+                "reference": "6271e66ce37545bd2edcddbe6bcbdd3b665ab7b8",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4 || ^8.0",
-                "phpstan/phpstan": "^2.0.3"
+                "phpstan/phpstan": "^2.1.13"
             },
             "conflict": {
                 "doctrine/collections": "<1.0",
@@ -11891,6 +11891,7 @@
                 "gedmo/doctrine-extensions": "^3.8",
                 "nesbot/carbon": "^2.49",
                 "php-parallel-lint/php-parallel-lint": "^1.2",
+                "phpstan/phpstan-deprecation-rules": "^2.0.2",
                 "phpstan/phpstan-phpunit": "^2.0",
                 "phpstan/phpstan-strict-rules": "^2.0",
                 "phpunit/phpunit": "^9.6.20",
@@ -11918,9 +11919,9 @@
             "description": "Doctrine extensions for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-doctrine/issues",
-                "source": "https://github.com/phpstan/phpstan-doctrine/tree/2.0.2"
+                "source": "https://github.com/phpstan/phpstan-doctrine/tree/2.0.4"
             },
-            "time": "2025-03-03T09:29:16+00:00"
+            "time": "2025-07-17T11:57:55+00:00"
         },
         {
             "name": "phpstan/phpstan-mockery",
@@ -11973,21 +11974,21 @@
         },
         {
             "name": "phpstan/phpstan-phpunit",
-            "version": "2.0.6",
+            "version": "2.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-phpunit.git",
-                "reference": "6b92469f8a7995e626da3aa487099617b8dfa260"
+                "reference": "9a9b161baee88a5f5c58d816943cff354ff233dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-phpunit/zipball/6b92469f8a7995e626da3aa487099617b8dfa260",
-                "reference": "6b92469f8a7995e626da3aa487099617b8dfa260",
+                "url": "https://api.github.com/repos/phpstan/phpstan-phpunit/zipball/9a9b161baee88a5f5c58d816943cff354ff233dc",
+                "reference": "9a9b161baee88a5f5c58d816943cff354ff233dc",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4 || ^8.0",
-                "phpstan/phpstan": "^2.0.4"
+                "phpstan/phpstan": "^2.1.18"
             },
             "conflict": {
                 "phpunit/phpunit": "<7.0"
@@ -12020,28 +12021,28 @@
             "description": "PHPUnit extensions and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-phpunit/issues",
-                "source": "https://github.com/phpstan/phpstan-phpunit/tree/2.0.6"
+                "source": "https://github.com/phpstan/phpstan-phpunit/tree/2.0.7"
             },
-            "time": "2025-03-26T12:47:06+00:00"
+            "time": "2025-07-13T11:31:46+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
-            "version": "2.0.4",
+            "version": "2.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-symfony.git",
-                "reference": "648087fb4dd865a09b1828a3b0396eb447665f2e"
+                "reference": "392f7ab8f52a0a776977be4e62535358c28e1b15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/648087fb4dd865a09b1828a3b0396eb447665f2e",
-                "reference": "648087fb4dd865a09b1828a3b0396eb447665f2e",
+                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/392f7ab8f52a0a776977be4e62535358c28e1b15",
+                "reference": "392f7ab8f52a0a776977be4e62535358c28e1b15",
                 "shasum": ""
             },
             "require": {
                 "ext-simplexml": "*",
                 "php": "^7.4 || ^8.0",
-                "phpstan/phpstan": "^2.1.2"
+                "phpstan/phpstan": "^2.1.13"
             },
             "conflict": {
                 "symfony/framework-bundle": "<3.0"
@@ -12051,7 +12052,7 @@
                 "phpstan/phpstan-phpunit": "^2.0",
                 "phpstan/phpstan-strict-rules": "^2.0",
                 "phpunit/phpunit": "^9.6",
-                "psr/container": "1.0 || 1.1.1",
+                "psr/container": "1.1.2",
                 "symfony/config": "^5.4 || ^6.1",
                 "symfony/console": "^5.4 || ^6.1",
                 "symfony/dependency-injection": "^5.4 || ^6.1",
@@ -12091,9 +12092,9 @@
             "description": "Symfony Framework extensions and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-symfony/issues",
-                "source": "https://github.com/phpstan/phpstan-symfony/tree/2.0.4"
+                "source": "https://github.com/phpstan/phpstan-symfony/tree/2.0.7"
             },
-            "time": "2025-03-28T12:02:03+00:00"
+            "time": "2025-07-22T09:40:57+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -14770,22 +14771,22 @@
         },
         {
             "name": "symplify/phpstan-rules",
-            "version": "14.5.3",
+            "version": "14.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symplify/phpstan-rules.git",
-                "reference": "658898bd6d2a372391843feb43eae88c307df844"
+                "reference": "83569d442ffb9373bf3124aec4fe5cbbc1b0475a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symplify/phpstan-rules/zipball/658898bd6d2a372391843feb43eae88c307df844",
-                "reference": "658898bd6d2a372391843feb43eae88c307df844",
+                "url": "https://api.github.com/repos/symplify/phpstan-rules/zipball/83569d442ffb9373bf3124aec4fe5cbbc1b0475a",
+                "reference": "83569d442ffb9373bf3124aec4fe5cbbc1b0475a",
                 "shasum": ""
             },
             "require": {
                 "nette/utils": "^3.2|^4.0",
                 "php": "^7.4|^8.0",
-                "phpstan/phpstan": "^2.1.8",
+                "phpstan/phpstan": "^2.1.22",
                 "webmozart/assert": "^1.11"
             },
             "type": "phpstan-extension",
@@ -14811,7 +14812,7 @@
             "description": "Set of Symplify rules for PHPStan",
             "support": {
                 "issues": "https://github.com/symplify/phpstan-rules/issues",
-                "source": "https://github.com/symplify/phpstan-rules/tree/14.5.3"
+                "source": "https://github.com/symplify/phpstan-rules/tree/14.7.0"
             },
             "funding": [
                 {
@@ -14823,7 +14824,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-31T10:42:38+00:00"
+            "time": "2025-08-27T10:34:20+00:00"
         },
         {
             "name": "theseer/tokenizer",
