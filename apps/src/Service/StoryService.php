@@ -16,8 +16,7 @@ class StoryService
     private array $stories = [];
 
     public function __construct(
-        private KernelInterface $kernel,
-        protected TranslatorInterface $translator
+        protected TranslatorInterface $translator,
     )
     {
     }
@@ -41,7 +40,11 @@ class StoryService
     {
         $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug() . '.pdf';
 
-        $mpdf = new Mpdf(['tempDir' => $this->getTemporaryFolder() . '/tmp']);
+        $mpdf = new Mpdf(
+            [
+                'tempDir' => $this->getTemporaryFolder() . '/tmp',
+            ]
+        );
         $mpdf->SetAuthor($story->getRefuser()->getUsername());
         $mpdf->SetTitle($story->getTitle());
         $this->addCoverPage($mpdf, $story);
@@ -53,14 +56,13 @@ class StoryService
         $mpdf->TOCpagebreakByArray(
             [
                 'toc-preHTML' => '<h1>Table des matières</h1>',
-                'links' => true
+                'links'       => true,
             ]
         );
 
         foreach ($chapters as $chapter) {
             $this->setChapter($mpdf, $chapter);
         }
-
 
         $mpdf->Output($tempPath, 'F');
         $uploadedFile = new UploadedFile(
@@ -76,14 +78,16 @@ class StoryService
         return true;
     }
 
-    private function addCoverPage($mpdf, Story $story): void
+    private function addCoverPage(\Mpdf\Mpdf $mpdf, Story $story): void
     {
-        $mpdf->WriteHTML('
+        $mpdf->WriteHTML(
+            '
             <div style="text-align:center;">
-                <h1>'.$story->getTitle().'</h1>
-                <h3>Auteur : '.$story->getRefuser()->getUsername().'</h3>
+                <h1>' . $story->getTitle() . '</h1>
+                <h3>Auteur : ' . $story->getRefuser()->getUsername() . '</h3>
             </div>
-        ');
+        '
+        );
 
         $mpdf->AddPage();
     }
@@ -114,20 +118,22 @@ class StoryService
         return $tempFolder;
     }
 
-    private function setChapter($mpdf, Chapter $chapter): void
+    private function setChapter(\Mpdf\Mpdf $mpdf, Chapter $chapter): void
     {
         $paragraphs = $chapter->getParagraphs();
         $mpdf->TOC_Entry($chapter->getTitle(), 0);
-        $i = 0;
+        $position = 0;
         foreach ($paragraphs as $paragraph) {
-            if ($paragraph->getType() == 'text') {
-                if ($i == 0) {
-                    $mpdf->WriteHTML('<h2>'.$chapter->getTitle().'</h2>');
+            if ('text' == $paragraph->getType()) {
+                if (0 == $position) {
+                    $mpdf->WriteHTML('<h2>' . $chapter->getTitle() . '</h2>');
                 }
+
                 $mpdf->WriteHTML($paragraph->getContent());
-                    $mpdf->AddPage();
+                $mpdf->AddPage();
             }
-            $i++;
+
+            ++$position;
         }
 
         // $mpdf->WriteHTML('<pagebreak />');

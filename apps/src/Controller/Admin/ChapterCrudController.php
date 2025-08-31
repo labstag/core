@@ -3,7 +3,6 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -99,12 +98,12 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[Override]
     public function createEntity(string $entityFqcn): Chapter
     {
-        $chapter = new $entityFqcn();
+        $chapter       = new $entityFqcn();
         $request       = $this->requestStack->getCurrentRequest();
-        $defaultStory = $request->query->get('story');
+        $defaultStory  = $request->query->get('story');
         if ($defaultStory) {
             $repository = $this->getRepository(Story::class);
-            $story = $repository->find($defaultStory);
+            $story      = $repository->find($defaultStory);
             $chapter->setRefstory($story);
         }
 

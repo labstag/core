@@ -87,7 +87,7 @@ abstract class EventEntityLib
         $oldHome = $this->pageRepository->findOneBy(
             ['type' => 'home']
         );
-        if ($instance->getType() == 'home') {
+        if ('home' == $instance->getType()) {
             $instance->setSlug('');
         }
 

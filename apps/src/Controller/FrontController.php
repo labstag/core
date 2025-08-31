@@ -11,11 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 
-#[Route('/')]
 class FrontController extends AbstractController
 {
     #[Route(
-        '{slug}/{page}',
+        '/{slug}/{page}',
         name: 'front',
         requirements: [
             'slug' => '.+?',
@@ -41,8 +40,7 @@ class FrontController extends AbstractController
 
         return $this->render($siteService->getViewByEntity($entity), $siteService->getDataByEntity($entity));
     }
-
-    #[Route('sitemap.css', name: 'sitemap.css', priority: 1)]
+    #[Route('/sitemap.css', name: 'sitemap.css', priority: 1)]
     public function sitemapCss(): Response
     {
         $response = new Response($this->renderView('sitemap/sitemap.css.twig'), Response::HTTP_OK);
@@ -50,8 +48,7 @@ class FrontController extends AbstractController
 
         return $response;
     }
-
-    #[Route('sitemap.js', name: 'sitemap.js', priority: 1)]
+    #[Route('/sitemap.js', name: 'sitemap.js', priority: 1)]
     public function sitemapJs(): Response
     {
         $response = new Response($this->renderView('sitemap/sitemap.js.twig'), Response::HTTP_OK);
@@ -59,9 +56,8 @@ class FrontController extends AbstractController
 
         return $response;
     }
-
     #[Route(
-        'sitemap.xml',
+        '/sitemap.xml',
         name: 'sitemap.xml',
         priority: 1,
         defaults: ['_format' => 'xml']
@@ -87,8 +83,7 @@ class FrontController extends AbstractController
             }
         );
     }
-
-    #[Route('sitemap.xsl', name: 'sitemap.xsl', priority: 1)]
+    #[Route('/sitemap.xsl', name: 'sitemap.xsl', priority: 1)]
     public function sitemapXsl(): Response
     {
         $response = new Response($this->renderView('sitemap/sitemap.xsl.twig'), Response::HTTP_OK);
@@ -96,7 +91,6 @@ class FrontController extends AbstractController
 
         return $response;
     }
-
     protected function initCache(): FilesystemAdapter
     {
         return new FilesystemAdapter('cache.app', 0, '../var');
