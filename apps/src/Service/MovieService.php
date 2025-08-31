@@ -77,8 +77,16 @@ class MovieService
         return $details;
     }
 
+    private function updateImdb(Movie $movie): void
+    {
+        if (strpos($movie->getImdb(), 'tt') !== 0) {
+            $movie->setImdb('tt' . str_pad($movie->getImdb(), 7, '0', STR_PAD_LEFT));
+        }
+    }
+
     public function update(Movie $movie): bool
     {
+        $this->updateImdb($movie);
         $details           = $this->getDetails($movie->getImdb());
         $statusImage       = $this->updateImage($movie, $details);
         $statusDescription = $this->updateDescription($movie, $details);
@@ -165,7 +173,7 @@ class MovieService
             return null;
         }
 
-        $url      = 'http://www.omdbapi.com/?i=tt' . $imdbId . '&apikey=' . $this->omdbapiKey;
+        $url      = 'http://www.omdbapi.com/?i=' . $imdbId . '&apikey=' . $this->omdbapiKey;
         $response = $this->httpClient->request('GET', $url);
         if (self::STATUSOK !== $response->getStatusCode()) {
             return null;
@@ -288,7 +296,7 @@ class MovieService
             return null;
         }
 
-        $url      = 'https://api.themoviedb.org/3/find/tt' . $imdbId . '?external_source=imdb_id&language=fr-FR';
+        $url      = 'https://api.themoviedb.org/3/find/' . $imdbId . '?external_source=imdb_id&language=fr-FR';
         $response = $this->httpClient->request(
             'GET',
             $url,

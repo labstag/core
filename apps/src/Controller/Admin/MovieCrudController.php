@@ -131,7 +131,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         $serviceEntityRepositoryLib = $this->getRepository();
         $movie                      = $serviceEntityRepositoryLib->find($entity);
 
-        return $this->redirect('https://www.imdb.com/title/tt' . $movie->getImdb() . '/');
+        return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
     }
 
     private function configureActionsUpdateImage(Actions $actions): void

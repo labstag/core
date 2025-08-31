@@ -78,6 +78,9 @@ class Movie
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\ManyToOne(inversedBy: 'movies')]
+    private ?Saga $saga = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -269,6 +272,18 @@ class Movie
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getSaga(): ?Saga
+    {
+        return $this->saga;
+    }
+
+    public function setSaga(?Saga $saga): static
+    {
+        $this->saga = $saga;
 
         return $this;
     }
