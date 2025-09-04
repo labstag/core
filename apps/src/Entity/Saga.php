@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\SagaRepository;
+use Override;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: SagaRepository::class)]
@@ -56,6 +57,12 @@ class Saga
     public function getMovies(): Collection
     {
         return $this->movies;
+    }
+
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
     }
 
     public function addMovie(Movie $movie): static

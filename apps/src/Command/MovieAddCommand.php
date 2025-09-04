@@ -4,10 +4,12 @@ namespace Labstag\Command;
 
 use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
+use Labstag\Entity\Tag;
 use Labstag\Entity\Saga;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
+use Labstag\Repository\TagRepository;
 use Labstag\Service\FileService;
 use Labstag\Service\MovieService;
 use NumberFormatter;
@@ -32,6 +34,11 @@ class MovieAddCommand extends Command
     private array $categories = [];
 
     /**
+     * @var Tag[]
+     */
+    private array $tags = [];
+
+    /**
      * @var Saga[]
      */
     private array $sagas = [];
@@ -45,6 +52,7 @@ class MovieAddCommand extends Command
         protected MovieService $movieService,
         protected FileService $fileService,
         protected CategoryRepository $categoryRepository,
+        protected TagRepository $tagRepository,
         protected SagaRepository $sagaRepository,
     )
     {
@@ -77,6 +85,35 @@ class MovieAddCommand extends Command
         $this->categories[$value] = $category;
 
         return $category;
+    }
+
+
+    public function getTag(string $value): Tag
+    {
+        if (isset($this->tags[$value])) {
+            return $this->tags[$value];
+        }
+
+        $tag = $this->tagRepository->findOneBy(
+            [
+                'type'  => 'movie',
+                'title' => $value,
+            ]
+        );
+        if ($tag instanceof Tag) {
+            $this->tags[$value] = $tag;
+
+            return $tag;
+        }
+
+        $tag = new Tag();
+        $tag->setType('movie');
+        $tag->setTitle($value);
+
+        $this->tagRepository->save($tag);
+        $this->tags[$value] = $tag;
+
+        return $tag;
     }
 
     protected function addOrUpdate(Movie $movie): void
@@ -167,6 +204,28 @@ class MovieAddCommand extends Command
         return Command::SUCCESS;
     }
 
+    private function setTags(Movie $movie, $tags): void
+    {
+        $oldTags = $movie->getTags();
+        foreach ($oldTags as $oldTag) {
+            $movie->removeTag($oldTag);
+        }
+
+        foreach ($tags as $value) {
+            $value = trim((string) $value);
+            if ('' === $value) {
+                continue;
+            }
+
+            if ('0' === $value) {
+                continue;
+            }
+
+            $tag = $this->getTag($value);
+            $movie->addTag($tag);
+        }
+    }
+
     private function setCategories(Movie $movie, $categories): void
     {
         $oldCategories = $movie->getCategories();
@@ -223,9 +282,10 @@ class MovieAddCommand extends Command
         }
 
         $year     = (int) $data['Année'];
-        $type     = $data['Genre(s)'];
+        $categories = explode(',', (string) $data['Genre(s)']);
+        $tags     = explode(',', (string) $data['Tags']);
         $country  = $data['Pays'];
-        $duration = empty($data['Durée']) ? null : $data['Durée'];
+        $duration = empty($data['Durée']) ? null : (int) $data['Durée'];
         $saga     = empty($data['Saga']) ? null : $data['Saga'];
         $title    = trim((string) $data['Titre']);
         $movie->setDuration($duration);
@@ -234,8 +294,8 @@ class MovieAddCommand extends Command
         $movie->setCountry(('' != $country) ? $country : null);
         $this->setSaga($movie, $saga);
 
-        $categories = explode(',', (string) $type);
         $this->setCategories($movie, $categories);
+        $this->setTags($movie, $tags);
 
         return $movie;
     }

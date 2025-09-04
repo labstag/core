@@ -61,7 +61,8 @@ class DashboardController extends AbstractDashboardController
 
         yield $this->configureMenuItemsStory($categories, $tags);
         yield $this->configureMenuItemsChapter($tags);
-        yield $this->configureMenuItemsMovie($categories);
+        yield $this->configureMenuItemsMovie($categories, $tags);
+        yield $this->configureMenuItemsSaga();
 
         yield MenuItem::linkToCrud(
             new TranslatableMessage('Edito'),
@@ -257,7 +258,7 @@ class DashboardController extends AbstractDashboardController
     /**
      * @param CrudMenuItem[] $categories
      */
-    private function configureMenuItemsMovie(array $categories): SubMenuItem
+    private function configureMenuItemsMovie(array $categories, array $tags): SubMenuItem
     {
         return MenuItem::subMenu(new TranslatableMessage('Movie'))->setSubItems(
             [
@@ -272,6 +273,7 @@ class DashboardController extends AbstractDashboardController
                     MovieCrudController::getEntityFqcn()
                 )->setAction(Action::NEW),
                 $categories['movie'],
+                $tags['movie'],
             ]
         );
     }
@@ -366,6 +368,24 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
+    private function configureMenuItemsSaga(): SubMenuItem
+    {
+        return MenuItem::subMenu(new TranslatableMessage('Sagas'), 'fas fa-code')->setSubItems(
+            [
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('List'),
+                    'fa fa-list',
+                    SagaCrudController::getEntityFqcn()
+                ),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('New'),
+                    'fas fa-plus',
+                    SagaCrudController::getEntityFqcn()
+                )->setAction(Action::NEW),
+            ]
+        );
+    }
+
     /**
      * @return CrudMenuItem[]
      */
@@ -423,6 +443,10 @@ class DashboardController extends AbstractDashboardController
             'post'    => [
                 'crud'       => PostTagCrudController::getEntityFqcn(),
                 'controller' => PostTagCrudController::class,
+            ],
+            'movie'   => [
+                'crud'       => MovieTagCrudController::getEntityFqcn(),
+                'controller' => MovieTagCrudController::class,
             ],
         ];
         $tags = [];

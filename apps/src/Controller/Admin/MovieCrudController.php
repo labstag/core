@@ -2,15 +2,19 @@
 
 namespace Labstag\Controller\Admin;
 
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Movie;
 use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Repository\SagaRepository;
 use Labstag\Service\MovieService;
 use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -57,6 +61,8 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield TextField::new('country', new TranslatableMessage('Country'));
         yield TextField::new('color', new TranslatableMessage('Color'));
         yield IntegerField::new('duration', new TranslatableMessage('Duration'));
+        yield $this->addFieldSaga('movie');
+        yield $this->addFieldTags('movie');
         yield NumberField::new('evaluation', new TranslatableMessage('Evaluation'));
         yield IntegerField::new('votes', new TranslatableMessage('Votes'));
         yield TextField::new('trailer', new TranslatableMessage('Trailer'))->hideOnIndex();
@@ -70,6 +76,16 @@ class MovieCrudController extends AbstractCrudControllerLib
         }
     }
 
+    protected function addFieldSaga(): AssociationField
+    {
+        
+        $associationField = AssociationField::new('saga', new TranslatableMessage('Saga'));
+        $associationField->autocomplete();
+        $associationField->setSortProperty('title');
+
+        return $associationField;
+    }
+
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
@@ -78,9 +94,17 @@ class MovieCrudController extends AbstractCrudControllerLib
         $filters->add('country');
         $filters->add('color');
 
+        $this->addFilterTags($filters, 'movie');
         $this->addFilterCategories($filters, 'movie');
+        $this->addFilterSaga($filters);
 
         return $filters;
+    }
+
+    protected function addFilterSaga(Filters $filters): void
+    {
+        $entityFilter = EntityFilter::new('saga', new TranslatableMessage('Sagas'));
+        $filters->add($entityFilter);
     }
 
     #[Override]
