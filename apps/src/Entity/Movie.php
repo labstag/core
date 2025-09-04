@@ -81,9 +81,43 @@ class Movie
     #[ORM\ManyToOne(inversedBy: 'movies')]
     private ?Saga $saga = null;
 
+    /**
+     * @var Collection<int, Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
+    private Collection $tags;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+        $this->tags       = new ArrayCollection();
+    }
+
+    public function addTag(Tag $tag): static
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+            $tag->addMovie($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function removeTag(Tag $tag): static
+    {
+        if ($this->tags->removeElement($tag)) {
+            $tag->removeMovie($this);
+        }
+
+        return $this;
     }
 
     public function addCategory(Category $category): static
