@@ -12,4 +12,16 @@ class SagaRepository extends ServiceEntityRepositoryLib
     {
         parent::__construct($managerRegistry, Saga::class);
     }
+
+    public function findAllByTypeMovie(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->orderBy('s.title', 'ASC');
+        $queryBuilder->leftJoin('s.movies', 'm');
+        $queryBuilder->andWhere('m.enable = true');
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
 }

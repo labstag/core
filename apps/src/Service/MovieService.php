@@ -6,8 +6,10 @@ use Essence\Essence;
 use Essence\Media;
 use Exception;
 use Labstag\Entity\Movie;
+use Labstag\Entity\Saga;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
+use Labstag\Repository\SagaRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -18,6 +20,7 @@ class MovieService
     public function __construct(
         protected HttpClientInterface $httpClient,
         protected MovieRepository $movieRepository,
+        protected SagaRepository $sagaRepository,
         protected CategoryRepository $categoryRepository,
         protected string $omdbapiKey,
         protected string $tmdbapiKey,
@@ -58,6 +61,17 @@ class MovieService
         return $categories;
     }
 
+    public function getSagaForForm(): array
+    {
+        $data       = $this->sagaRepository->findAllByTypeMovie();
+        $sagas = [];
+        foreach ($data as $saga) {
+            $sagas[$saga->getTitle()] = $saga->getSlug();
+        }
+
+        return $sagas;
+    }
+
     public function getDetails(string $imdbId): array
     {
         $details = [];
@@ -81,16 +95,36 @@ class MovieService
         }
     }
 
+    private function updateSaga(Movie $movie): bool
+    {
+        $saga = $movie->getSaga();
+        if (!$saga instanceof Saga) {
+            return false;
+        }
+
+        $slug = $saga->getSlug();
+        if ($slug != '') {
+            return false;
+        }
+
+        $saga->setSlug(null);
+
+        $this->sagaRepository->save($saga);
+
+        return true;
+    }
+
     public function update(Movie $movie): bool
     {
         $this->updateImdb($movie);
         $details           = $this->getDetails($movie->getImdb());
+        $statusSaga        = $this->updateSaga($movie);
         $statusVote        = $this->updateVote($movie, $details);
         $statusImage       = $this->updateImage($movie, $details);
         $statusDescription = $this->updateDescription($movie, $details);
         $statusVideo       = $this->updateTrailer($movie, $details);
 
-        return $statusVote || $statusImage || $statusDescription || $statusVideo;
+        return $statusSaga || $statusVote || $statusImage || $statusDescription || $statusVideo;
     }
 
     private function updateVote(Movie $movie, array $details): bool

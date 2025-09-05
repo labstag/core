@@ -6,12 +6,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Labstag\Repository\SagaRepository;
 use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: SagaRepository::class)]
-class Saga implements \Stringable
+class Saga implements Stringable
 {
 
     #[ORM\Id]
@@ -29,9 +31,25 @@ class Saga implements \Stringable
     #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: 'saga')]
     private Collection $movies;
 
+    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
+    private ?string $slug = null;
+
     public function __construct()
     {
         $this->movies = new ArrayCollection();
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
     }
 
     public function getId(): ?string
