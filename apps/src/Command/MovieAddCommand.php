@@ -253,7 +253,8 @@ class MovieAddCommand extends Command
         if (str_starts_with($imdb, 'tt')) {
             $this->imdbs[]     = $imdb;
             $searchs[]['imdb'] = str_pad(substr($imdb, 2), 7, '0', STR_PAD_LEFT);
-        } else {
+        }
+        if (!str_starts_with($imdb, 'tt')) {
             $this->imdbs[] = 'tt' . str_pad($imdb, 7, '0', STR_PAD_LEFT);
         }
 
