@@ -44,8 +44,12 @@ class MovieRepository extends ServiceEntityRepositoryLib
     public function findTrailerImageDescriptionIsNull(): mixed
     {
         $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->leftJoin('m.saga', 's');
         $queryBuilder->where('m.trailer IS NULL');
         $queryBuilder->orWhere('m.img IS NULL');
+        $queryBuilder->orWhere('s.slug is NULL');
+        $queryBuilder->orWhere('s.slug = :slug');
+        $queryBuilder->setParameter('slug', '');
         $queryBuilder->orWhere('m.description IS NULL');
         $queryBuilder->orWhere('m.evaluation IS NULL');
         $queryBuilder->orWhere('m.votes IS NULL');
@@ -88,6 +92,12 @@ class MovieRepository extends ServiceEntityRepositoryLib
             $queryBuilder->leftJoin('m.categories', 'c');
             $queryBuilder->andWhere('c.slug = :categories');
             $queryBuilder->setParameter('categories', $query['categories']);
+        }
+
+        if (isset($query['sagas']) && !empty($query['sagas'])) {
+            $queryBuilder->leftJoin('m.saga', 's');
+            $queryBuilder->andWhere('s.slug = :sagas');
+            $queryBuilder->setParameter('sagas', $query['sagas']);
         }
 
         if (isset($query['year']) && !empty($query['year'])) {

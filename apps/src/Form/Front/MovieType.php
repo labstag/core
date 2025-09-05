@@ -45,6 +45,14 @@ class MovieType extends AbstractType
             ]
         );
         $formBuilder->add(
+            'sagas',
+            ChoiceType::class,
+            [
+                'required' => false,
+                'choices'  => $this->movieService->getSagaForForm(),
+            ]
+        );
+        $formBuilder->add(
             'year',
             ChoiceType::class,
             [

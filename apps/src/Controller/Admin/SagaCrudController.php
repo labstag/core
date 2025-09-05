@@ -44,6 +44,7 @@ class SagaCrudController extends AbstractCrudControllerLib
     {
         yield $this->addFieldID();
         yield $this->addFieldTitle();
+        yield $this->addFieldSlug();
         $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
         $collectionField->onlyOnIndex();
         $collectionField->formatValue(fn ($value): int => count($value));
