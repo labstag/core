@@ -66,6 +66,11 @@ class MovieService
         $data       = $this->sagaRepository->findAllByTypeMovie();
         $sagas = [];
         foreach ($data as $saga) {
+            $movies = $saga->getMovies();
+            if (1 == count($movies)) {
+                continue;
+            }
+
             $sagas[$saga->getTitle()] = $saga->getSlug();
         }
 
