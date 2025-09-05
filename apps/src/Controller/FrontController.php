@@ -40,6 +40,7 @@ class FrontController extends AbstractController
 
         return $this->render($siteService->getViewByEntity($entity), $siteService->getDataByEntity($entity));
     }
+
     #[Route('/sitemap.css', name: 'sitemap.css', priority: 1)]
     public function sitemapCss(): Response
     {
@@ -48,6 +49,7 @@ class FrontController extends AbstractController
 
         return $response;
     }
+
     #[Route('/sitemap.js', name: 'sitemap.js', priority: 1)]
     public function sitemapJs(): Response
     {
@@ -56,6 +58,7 @@ class FrontController extends AbstractController
 
         return $response;
     }
+
     #[Route(
         '/sitemap.xml',
         name: 'sitemap.xml',
@@ -83,6 +86,7 @@ class FrontController extends AbstractController
             }
         );
     }
+
     #[Route('/sitemap.xsl', name: 'sitemap.xsl', priority: 1)]
     public function sitemapXsl(): Response
     {
@@ -91,6 +95,7 @@ class FrontController extends AbstractController
 
         return $response;
     }
+
     protected function initCache(): FilesystemAdapter
     {
         return new FilesystemAdapter('cache.app', 0, '../var');

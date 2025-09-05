@@ -49,10 +49,7 @@ class MovieService
 
     public function getCategoryForForm(): array
     {
-        $data = $this->categoryRepository->findBy(
-            ['type' => 'movie'],
-            ['title' => 'ASC']
-        );
+        $data = $this->categoryRepository->findAllByTypeMovie();
         $categories = [];
         foreach ($data as $category) {
             $categories[$category->getTitle()] = $category->getSlug();
@@ -88,11 +85,27 @@ class MovieService
     {
         $this->updateImdb($movie);
         $details           = $this->getDetails($movie->getImdb());
+        $statusVote        = $this->updateVote($movie, $details);
         $statusImage       = $this->updateImage($movie, $details);
         $statusDescription = $this->updateDescription($movie, $details);
         $statusVideo       = $this->updateTrailer($movie, $details);
 
-        return $statusImage || $statusDescription || $statusVideo;
+        return $statusVote || $statusImage || $statusDescription || $statusVideo;
+    }
+
+    private function updateVote(Movie $movie, array $details): bool
+    {
+        if (!isset($details['movie_results'][0]['id'])) {
+            return false;
+        }
+
+        $voteEverage = (float) $details['movie_results'][0]['vote_average'] ?? 0;
+        $voteCount   = (int) $details['movie_results'][0]['vote_count'] ?? 0;
+
+        $movie->setEvaluation($voteEverage);
+        $movie->setVotes($voteCount);
+
+        return true;
     }
 
     public function updateTrailer(Movie $movie, array $details): bool

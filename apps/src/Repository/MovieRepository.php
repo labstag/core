@@ -47,6 +47,8 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->where('m.trailer IS NULL');
         $queryBuilder->orWhere('m.img IS NULL');
         $queryBuilder->orWhere('m.description IS NULL');
+        $queryBuilder->orWhere('m.evaluation IS NULL');
+        $queryBuilder->orWhere('m.votes IS NULL');
 
         $query = $queryBuilder->getQuery();
 

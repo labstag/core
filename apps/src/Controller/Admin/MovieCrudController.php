@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -14,7 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Movie;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Labstag\Repository\SagaRepository;
 use Labstag\Service\MovieService;
 use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -61,7 +59,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield TextField::new('country', new TranslatableMessage('Country'));
         yield TextField::new('color', new TranslatableMessage('Color'));
         yield IntegerField::new('duration', new TranslatableMessage('Duration'));
-        yield $this->addFieldSaga('movie');
+        yield $this->addFieldSaga();
         yield $this->addFieldTags('movie');
         yield NumberField::new('evaluation', new TranslatableMessage('Evaluation'));
         yield IntegerField::new('votes', new TranslatableMessage('Votes'));
@@ -78,7 +76,6 @@ class MovieCrudController extends AbstractCrudControllerLib
 
     protected function addFieldSaga(): AssociationField
     {
-        
         $associationField = AssociationField::new('saga', new TranslatableMessage('Saga'));
         $associationField->autocomplete();
         $associationField->setSortProperty('title');
