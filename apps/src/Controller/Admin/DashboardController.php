@@ -238,7 +238,7 @@ class DashboardController extends AbstractDashboardController
      */
     private function configureMenuItemsChapter(array $tags): SubMenuItem
     {
-        return MenuItem::subMenu(new TranslatableMessage('Chapter'))->setSubItems(
+        return MenuItem::subMenu(new TranslatableMessage('Chapter'), 'fas fa-landmark')->setSubItems(
             [
                 MenuItem::linkToCrud(
                     new TranslatableMessage('List'),
@@ -260,7 +260,7 @@ class DashboardController extends AbstractDashboardController
      */
     private function configureMenuItemsMovie(array $categories, array $tags): SubMenuItem
     {
-        return MenuItem::subMenu(new TranslatableMessage('Movie'))->setSubItems(
+        return MenuItem::subMenu(new TranslatableMessage('Movie'), 'fas fa-film')->setSubItems(
             [
                 MenuItem::linkToCrud(
                     new TranslatableMessage('List'),
@@ -332,7 +332,7 @@ class DashboardController extends AbstractDashboardController
      */
     private function configureMenuItemsStory(array $categories, array $tags): SubMenuItem
     {
-        return MenuItem::subMenu(new TranslatableMessage('Story'))->setSubItems(
+        return MenuItem::subMenu(new TranslatableMessage('Story'), 'fas fa-landmark')->setSubItems(
             [
                 MenuItem::linkToCrud(
                     new TranslatableMessage('List'),
@@ -370,7 +370,7 @@ class DashboardController extends AbstractDashboardController
 
     private function configureMenuItemsSaga(): SubMenuItem
     {
-        return MenuItem::subMenu(new TranslatableMessage('Sagas'), 'fas fa-code')->setSubItems(
+        return MenuItem::subMenu(new TranslatableMessage('Sagas'), 'fas fa-video')->setSubItems(
             [
                 MenuItem::linkToCrud(
                     new TranslatableMessage('List'),

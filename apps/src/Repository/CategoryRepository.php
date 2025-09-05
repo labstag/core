@@ -12,4 +12,16 @@ class CategoryRepository extends ServiceEntityRepositoryLib
     {
         parent::__construct($managerRegistry, Category::class);
     }
+
+    public function findAllByTypeMovie(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->andWhere('c.type = :type');
+        $queryBuilder->setParameter('type', 'movie');
+        $queryBuilder->orderBy('c.title', 'ASC');
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
 }

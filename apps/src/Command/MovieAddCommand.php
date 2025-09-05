@@ -4,8 +4,8 @@ namespace Labstag\Command;
 
 use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
-use Labstag\Entity\Tag;
 use Labstag\Entity\Saga;
+use Labstag\Entity\Tag;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
@@ -86,7 +86,6 @@ class MovieAddCommand extends Command
 
         return $category;
     }
-
 
     public function getTag(string $value): Tag
     {
@@ -281,13 +280,13 @@ class MovieAddCommand extends Command
             $movie->setImdb($imdb);
         }
 
-        $year     = (int) $data['Année'];
+        $year       = (int) $data['Année'];
         $categories = explode(',', (string) $data['Genre(s)']);
-        $tags     = explode(',', (string) $data['Tags']);
-        $country  = $data['Pays'];
-        $duration = empty($data['Durée']) ? null : (int) $data['Durée'];
-        $saga     = empty($data['Saga']) ? null : $data['Saga'];
-        $title    = trim((string) $data['Titre']);
+        $tags       = explode(',', (string) $data['Tags']);
+        $country    = $data['Pays'];
+        $duration   = empty($data['Durée']) ? null : (int) $data['Durée'];
+        $saga       = empty($data['Saga']) ? null : $data['Saga'];
+        $title      = trim((string) $data['Titre']);
         $movie->setDuration($duration);
         $movie->setTitle($title);
         $movie->setYear((0 != $year) ? $year : null);

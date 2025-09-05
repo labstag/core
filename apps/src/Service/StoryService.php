@@ -7,7 +7,6 @@ use Labstag\Entity\Story;
 use Mpdf\Mpdf;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StoryService
@@ -78,7 +77,7 @@ class StoryService
         return true;
     }
 
-    private function addCoverPage(\Mpdf\Mpdf $mpdf, Story $story): void
+    private function addCoverPage(Mpdf $mpdf, Story $story): void
     {
         $mpdf->WriteHTML(
             '
@@ -118,7 +117,7 @@ class StoryService
         return $tempFolder;
     }
 
-    private function setChapter(\Mpdf\Mpdf $mpdf, Chapter $chapter): void
+    private function setChapter(Mpdf $mpdf, Chapter $chapter): void
     {
         $paragraphs = $chapter->getParagraphs();
         $mpdf->TOC_Entry($chapter->getTitle(), 0);

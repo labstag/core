@@ -11,7 +11,7 @@ use Override;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: SagaRepository::class)]
-class Saga
+class Saga implements \Stringable
 {
 
     #[ORM\Id]
