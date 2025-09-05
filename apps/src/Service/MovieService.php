@@ -49,7 +49,7 @@ class MovieService
 
     public function getCategoryForForm(): array
     {
-        $data = $this->categoryRepository->findAllByTypeMovie();
+        $data       = $this->categoryRepository->findAllByTypeMovie();
         $categories = [];
         foreach ($data as $category) {
             $categories[$category->getTitle()] = $category->getSlug();
