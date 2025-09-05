@@ -52,5 +52,7 @@ class SagaCrudController extends AbstractCrudControllerLib
         $collectionField->setTemplatePath('admin/field/movies.html.twig');
         $collectionField->onlyOnDetail();
         yield $collectionField;
+
+        unset($pageName);
     }
 }
