@@ -187,7 +187,7 @@ class MovieAddCommand extends Command
 
         $oldsMovies = $this->movieRepository->findMoviesNotInImdbList($this->imdbs);
         foreach ($oldsMovies as $oldMovie) {
-            $symfonyStyle->warning(sprintf('Movie %s (%d) not in list', $oldMovie->getTitle(), $oldMovie->getImdb()));
+            $symfonyStyle->warning(sprintf('Movie %s (%s) not in list', $oldMovie->getTitle(), $oldMovie->getImdb()));
         }
 
         $symfonyStyle->success('All movie added');
