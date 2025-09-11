@@ -129,7 +129,7 @@
     "@symfony/webpack-encore": "5.0.*",
     "autoprefixer": "10.4.*",
     "clean-webpack-plugin": "4.0.*",
-    "core-js": "3.39.*",
+    "core-js": "3.45.*",
     "dotenv-webpack": "8.1.*",
     "eslint": "9.17.*",
     "favicons-webpack-plugin": "6.0.*",
