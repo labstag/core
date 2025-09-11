@@ -44,7 +44,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
     public function findTrailerImageDescriptionIsNull(): mixed
     {
         $queryBuilder = $this->createQueryBuilder('m');
-        $queryBuilder->leftJoin('m.saga', 's');
+        $queryBuilder->leftJoin('m.saga', 's')->addSelect('s');
         $queryBuilder->where('m.trailer IS NULL');
         $queryBuilder->orWhere('m.img IS NULL');
         $queryBuilder->orWhere('s.slug is NULL');
@@ -78,6 +78,8 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
+        $queryBuilder->leftJoin('m.categories', 'c')->addSelect('c');
+        $queryBuilder->leftJoin('m.saga', 's')->addSelect('s');
         if (isset($query['title']) && !empty($query['title'])) {
             $queryBuilder->andWhere('m.title LIKE :title');
             $queryBuilder->setParameter('title', '%' . $query['title'] . '%');
@@ -89,13 +91,11 @@ class MovieRepository extends ServiceEntityRepositoryLib
         }
 
         if (isset($query['categories']) && !empty($query['categories'])) {
-            $queryBuilder->leftJoin('m.categories', 'c');
             $queryBuilder->andWhere('c.slug = :categories');
             $queryBuilder->setParameter('categories', $query['categories']);
         }
 
         if (isset($query['sagas']) && !empty($query['sagas'])) {
-            $queryBuilder->leftJoin('m.saga', 's');
             $queryBuilder->andWhere('s.slug = :sagas');
             $queryBuilder->setParameter('sagas', $query['sagas']);
         }
@@ -122,7 +122,10 @@ class MovieRepository extends ServiceEntityRepositoryLib
     public function getQueryPaginator(array $query): Query
     {
         $queryBuilder = $this->getQueryBuilder($query);
+        $query        = $queryBuilder->getQuery();
 
-        return $queryBuilder->getQuery();
+        $query->enableResultCache(600, 'movies_search');
+
+        return $query;
     }
 }
