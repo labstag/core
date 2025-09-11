@@ -13,7 +13,7 @@
         "doctrine/annotations": "2.0.*",
         "doctrine/doctrine-bundle": "2.16.*",
         "doctrine/doctrine-migrations-bundle": "3.4.*",
-        "easycorp/easyadmin-bundle": "4.24.*",
+        "easycorp/easyadmin-bundle": "4.25.*",
         "essence/essence": "3.5.*",
         "gedmo/doctrine-extensions": "3.20.*",
         "giggsey/libphonenumber-for-php": "9.0.*",
@@ -119,7 +119,7 @@
     },
     "require-dev": {
         "aalaap/faker-youtube": "2.0.*",
-        "behat/behat": "3.23.*",
+        "behat/behat": "3.24.*",
         "doctrine/doctrine-fixtures-bundle": "4.1.*",
         "fakerphp/faker": "1.24.*",
         "friendsofphp/php-cs-fixer": "3.87.*",
@@ -144,7 +144,7 @@
         "symfony/phpunit-bridge": "7.3.*",
         "symfony/stopwatch": "7.3.*",
         "symfony/web-profiler-bundle": "7.3.*",
-        "symplify/easy-coding-standard": "12.5.*",
+        "symplify/easy-coding-standard": "12.6.*",
         "symplify/phpstan-rules": "14.7.*"
     }
 }
