@@ -19,7 +19,7 @@ class CategoryRepository extends ServiceEntityRepositoryLib
         $queryBuilder->andWhere('c.type = :type');
         $queryBuilder->setParameter('type', 'movie');
         $queryBuilder->orderBy('c.title', 'ASC');
-        $queryBuilder->leftJoin('c.movies', 'm');
+        $queryBuilder->leftJoin('c.movies', 'm')->addSelect('m');
         $queryBuilder->andWhere('m.enable = true');
 
         $query = $queryBuilder->getQuery();

@@ -17,7 +17,7 @@ class SagaRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->orderBy('s.title', 'ASC');
-        $queryBuilder->leftJoin('s.movies', 'm');
+        $queryBuilder->leftJoin('s.movies', 'm')->addSelect('m');
         $queryBuilder->andWhere('m.enable = true');
 
         $query = $queryBuilder->getQuery();
