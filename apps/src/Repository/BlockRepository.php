@@ -14,18 +14,9 @@ class BlockRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Block::class);
     }
 
-    private function getCreateQueryBuilder(): QueryBuilder
-    {
-        $queryBuilder = $this->createQueryBuilder('b');
-        $queryBuilder->leftJoin('b.links', 'links')->addSelect('links');
-        $queryBuilder->leftJoin('b.paragraphs', 'paragraphs')->addSelect('paragraphs');
-
-        return $queryBuilder;
-    }
-
     public function findAllOrderedByRegion(): QueryBuilder
     {
-        $queryBuilder = $this->getCreateQueryBuilder();
+        $queryBuilder = $this->createQueryBuilder('b');
         $queryBuilder->orderBy(
             "CASE 
                 WHEN b.region = 'header' THEN 1
@@ -42,7 +33,7 @@ class BlockRepository extends ServiceEntityRepositoryLib
 
     public function getMaxPositionByRegion(string $region): ?int
     {
-        $queryBuilder = $this->getCreateQueryBuilder();
+        $queryBuilder = $this->createQueryBuilder('b');
         $queryBuilder->select('MAX(b.position) as maxposition');
         $queryBuilder->where('b.region = :region');
         $queryBuilder->setParameter('region', $region);

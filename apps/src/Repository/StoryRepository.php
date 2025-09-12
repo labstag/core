@@ -15,19 +15,6 @@ class StoryRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Story::class);
     }
 
-    private function getCreateQueryBuilder(): QueryBuilder
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->leftJoin('s.categories', 'categories')->addSelect('categories');
-        $queryBuilder->leftJoin('s.chapters', 'chapters')->addSelect('chapters');
-        $queryBuilder->leftJoin('s.paragraphs', 'paragraphs')->addSelect('paragraphs');
-        $queryBuilder->leftJoin('s.refuser', 'refuser')->addSelect('refuser');
-        $queryBuilder->leftJoin('s.tags', 'tags')->addSelect('tags');
-
-        return $queryBuilder;
-
-    }
-
     public function findLastByNbr(int $nbr): mixed
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -41,7 +28,7 @@ class StoryRepository extends ServiceEntityRepositoryLib
     public function findTotalEnable(): mixed
     {
         $queryBuilder = $this->getQueryBuilder();
-        $queryBuilder->select('count(s.id)');
+        $queryBuilder->select('count(h.id)');
 
         $query = $queryBuilder->getQuery();
 
@@ -65,11 +52,12 @@ class StoryRepository extends ServiceEntityRepositoryLib
 
     private function getQueryBuilder(): QueryBuilder
     {
-        $queryBuilder = $this->getCreateQueryBuilder();
-        $queryBuilder->where('s.enable = :enable');
-        $queryBuilder->andWhere('chapters.enable = :enable');
+        $queryBuilder = $this->createQueryBuilder('h');
+        $queryBuilder->innerJoin('h.chapters', 'c');
+        $queryBuilder->where('h.enable = :enable');
+        $queryBuilder->andWhere('c.enable = :enable');
         $queryBuilder->setParameter('enable', true);
 
-        return $queryBuilder->orderBy('s.createdAt', 'DESC');
+        return $queryBuilder->orderBy('h.createdAt', 'DESC');
     }
 }
