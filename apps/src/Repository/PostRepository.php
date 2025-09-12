@@ -16,18 +16,6 @@ class PostRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Post::class);
     }
 
-    private function getCreateQueryBuilder(): QueryBuilder
-    {
-        $queryBuilder = $this->createQueryBuilder('p');
-        $queryBuilder->leftJoin('p.categories', 'categories')->addSelect('categories');
-        $queryBuilder->leftJoin('p.paragraphs', 'paragraphs')->addSelect('paragraphs');
-        $queryBuilder->leftJoin('p.tags', 'tags')->addSelect('tags');
-        $queryBuilder->leftJoin('p.refuser', 'refuser')->addSelect('refuser');
-
-        return $queryBuilder;
-
-    }
-
     public function findLastByNbr(int $nbr): mixed
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -58,7 +46,7 @@ class PostRepository extends ServiceEntityRepositoryLib
 
     public function getQueryBuilder(): QueryBuilder
     {
-        $queryBuilder = $this->getCreateQueryBuilder();
+        $queryBuilder = $this->createQueryBuilder('p');
         $queryBuilder->where('p.enable = :enable');
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->andWhere('p.createdAt <= :now');

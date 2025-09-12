@@ -2,7 +2,6 @@
 
 namespace Labstag\Repository;
 
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Saga;
 use Labstag\Lib\ServiceEntityRepositoryLib;
@@ -14,20 +13,12 @@ class SagaRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Saga::class);
     }
 
-    private function getCreateQueryBuilder(): QueryBuilder
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->leftJoin('s.movies', 'movies')->addSelect('movies');
-
-        return $queryBuilder;
-
-    }
-
     public function findAllByTypeMovie(): array
     {
-        $queryBuilder = $this->getCreateQueryBuilder();
+        $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->orderBy('s.title', 'ASC');
-        $queryBuilder->andWhere('movies.enable = true');
+        $queryBuilder->leftJoin('s.movies', 'm')->addSelect('m');
+        $queryBuilder->andWhere('m.enable = true');
 
         $query = $queryBuilder->getQuery();
 
