@@ -15,9 +15,20 @@ class MovieRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Movie::class);
     }
 
-    public function findAllUniqueCountries(): array
+    private function getCreateQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->leftJoin('m.paragraphs', 'paragraphs')->addSelect('categories');
+        $queryBuilder->leftJoin('m.saga', 'saga')->addSelect('saga');
+        $queryBuilder->leftJoin('m.tags', 'tags')->addSelect('tags');
+
+        return $queryBuilder;
+
+    }
+
+    public function findAllUniqueCountries(): array
+    {
+        $queryBuilder = $this->getCreateQueryBuilder();
         $queryBuilder->select('DISTINCT m.country');
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
@@ -122,10 +133,8 @@ class MovieRepository extends ServiceEntityRepositoryLib
     public function getQueryPaginator(array $query): Query
     {
         $queryBuilder = $this->getQueryBuilder($query);
-        $query        = $queryBuilder->getQuery();
-
-        $query->enableResultCache(600, 'movies_search');
-
-        return $query;
+        
+        
+        return $queryBuilder->getQuery();
     }
 }

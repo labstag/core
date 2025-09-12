@@ -29,6 +29,10 @@ use Twig\Environment;
 
 class SiteService
 {
+
+    protected array $types = [];
+    protected ?Configuration $configuration = null;
+
     public function __construct(
         protected ChapterRepository $chapterRepository,
         protected FileService $fileService,
@@ -71,9 +75,15 @@ class SiteService
 
     public function getConfiguration(): ?Configuration
     {
+        if ($this->configuration instanceof Configuration) {
+            return $this->configuration;
+        }
+
         $configurations = $this->configurationRepository->findAll();
 
-        return $configurations[0] ?? null;
+        $this->configuration = $configurations[0] ?? null;
+
+        return $this->configuration;
     }
 
     public function getCrudController(string $entity): ?string
@@ -426,6 +436,10 @@ class SiteService
      */
     private function getPageByTypes(): array
     {
+        if (count($this->types) > 0) {
+            return $this->types;
+        }
+
         $types = array_flip($this->getTypesPages());
         unset($types['page']);
         foreach (array_keys($types) as $type) {
@@ -433,6 +447,8 @@ class SiteService
                 ['type' => $type]
             );
         }
+
+        $this->types = $types;
 
         return $types;
     }
