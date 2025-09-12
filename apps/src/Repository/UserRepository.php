@@ -4,6 +4,7 @@ namespace Labstag\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\User;
 use Labstag\Lib\ServiceEntityRepositoryLib;
@@ -19,9 +20,23 @@ class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgra
         parent::__construct($managerRegistry, User::class);
     }
 
-    public function findUserName(string $field): ?User
+    private function getCreateQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('u');
+        $queryBuilder->leftJoin('u.editos', 'editos')->addSelect('editos');
+        $queryBuilder->leftJoin('u.httpErrorLogs', 'httpErrorLogs')->addSelect('httpErrorLogs');
+        $queryBuilder->leftJoin('u.memos', 'memos')->addSelect('memos');
+        $queryBuilder->leftJoin('u.pages', 'pages')->addSelect('pages');
+        $queryBuilder->leftJoin('u.posts', 'posts')->addSelect('posts');
+        $queryBuilder->leftJoin('u.stories', 'stories')->addSelect('stories');
+
+        return $queryBuilder;
+
+    }
+
+    public function findUserName(string $field): ?User
+    {
+        $queryBuilder = $this->getCreateQueryBuilder();
         $queryBuilder->where('u.username = :username OR u.email = :email');
 
         $data = new ArrayCollection([new Parameter('username', $field), new Parameter('email', $field)]);

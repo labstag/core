@@ -3,6 +3,7 @@
 namespace Labstag\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Link;
 
@@ -16,28 +17,12 @@ class LinkRepository extends ServiceEntityRepository
         parent::__construct($managerRegistry, Link::class);
     }
 
-    //    /**
-    //     * @return Link[] Returns an array of Link objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('l.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    private function getCreateQueryBuilder(): QueryBuilder
+    {
+        $queryBuilder = $this->createQueryBuilder('l');
+        $queryBuilder->leftJoin('l.block', 'block')->addSelect('block');
 
-    //    public function findOneBySomeField($value): ?Link
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $queryBuilder;
+
+    }
 }

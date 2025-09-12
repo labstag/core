@@ -2,6 +2,7 @@
 
 namespace Labstag\Repository;
 
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Edito;
 use Labstag\Lib\ServiceEntityRepositoryLib;
@@ -13,12 +14,22 @@ class EditoRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Edito::class);
     }
 
+    private function getCreateQueryBuilder(): QueryBuilder
+    {
+        $queryBuilder = $this->createQueryBuilder('e');
+        $queryBuilder->leftJoin('e.paragraphs', 'paragraphs')->addSelect('paragraphs');
+        $queryBuilder->leftJoin('e.refuser', 'refuser')->addSelect('refuser');
+
+        return $queryBuilder;
+
+    }
+
     public function findLast(): mixed
     {
-        $queryBuilder = $this->createQueryBuilder('a');
-        $queryBuilder->where('a.enable = :enable');
+        $queryBuilder = $this->getCreateQueryBuilder();
+        $queryBuilder->where('e.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('a.createdAt', 'DESC');
+        $queryBuilder->orderBy('e.createdAt', 'DESC');
         $queryBuilder->setMaxResults(1);
 
         $query = $queryBuilder->getQuery();
