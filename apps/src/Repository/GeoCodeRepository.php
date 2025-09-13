@@ -21,7 +21,7 @@ class GeoCodeRepository extends ServiceEntityRepositoryLib
         $query->groupBy('g.' . $type);
 
         $query = $query->getQuery()->getResult();
-        $query->enableResultCache(3600, 'geocode-'.$type);
+        $query->enableResultCache(3600, 'geocode-' . $type);
 
         return $query;
     }

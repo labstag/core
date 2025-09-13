@@ -135,7 +135,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
     private function configureFirst(
         FieldDto $fieldDto,
         EntityDto $entityDto,
-        $propertyNameParts,
+        array $propertyNameParts,
         string $propertyName,
     ): void {
         // prepare starting class for association

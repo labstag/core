@@ -30,8 +30,10 @@ use Twig\Environment;
 class SiteService
 {
 
-    protected array $types = [];
-    protected array $pages = [];
+    protected array $types                  = [];
+
+    protected array $pages                  = [];
+
     protected ?Configuration $configuration = null;
 
     public function __construct(
@@ -187,7 +189,7 @@ class SiteService
             return $this->pages[$slug];
         }
 
-        $page = $this->pageRepository->getOneBySlug($slug);
+        $page               = $this->pageRepository->getOneBySlug($slug);
         $this->pages[$slug] = $page;
 
         return $page;
@@ -386,8 +388,9 @@ class SiteService
     private function getBlocks(array $data, bool $disable): array
     {
         $queryBuilder = $this->blockRepository->findAllOrderedByRegion();
-        $query       = $queryBuilder->getQuery();
+        $query        = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'block-position');
+
         $blocks = $query->getResult();
         $header = [];
         $main   = [];
@@ -449,7 +452,7 @@ class SiteService
      */
     private function getPageByTypes(): array
     {
-        if (count($this->types) > 0) {
+        if ([] !== $this->types) {
             return $this->types;
         }
 

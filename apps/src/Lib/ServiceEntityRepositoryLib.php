@@ -19,7 +19,7 @@ abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'service-find_deleted');
-        
+
         return $query->getResult();
     }
 

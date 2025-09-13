@@ -254,6 +254,7 @@ class MovieAddCommand extends Command
             $this->imdbs[]     = $imdb;
             $searchs[]['imdb'] = str_pad(substr($imdb, 2), 7, '0', STR_PAD_LEFT);
         }
+
         if (!str_starts_with($imdb, 'tt')) {
             $this->imdbs[] = 'tt' . str_pad($imdb, 7, '0', STR_PAD_LEFT);
         }
@@ -271,7 +272,7 @@ class MovieAddCommand extends Command
     /**
      * @param mixed[] $data
      */
-    private function setMovie(array $data): ?Movie
+    private function setMovie(array $data): \Labstag\Entity\Movie
     {
         $imdb  = (string) $data['ID IMDb'];
         $movie = $this->getMovieByImdb($imdb);

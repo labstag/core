@@ -171,9 +171,10 @@ class BlockCrudController extends AbstractCrudControllerLib
         }
 
         $queryBuilder = $serviceEntityRepositoryLib->findAllOrderedByRegion();
-        $query       = $queryBuilder->getQuery();
+        $query        = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'block-position');
-        $blocks = $query->getResult();
+
+        $blocks    = $query->getResult();
         $generator = $this->container->get(AdminUrlGenerator::class);
 
         if ($request->isMethod('POST')) {
