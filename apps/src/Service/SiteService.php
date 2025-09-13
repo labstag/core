@@ -31,6 +31,7 @@ class SiteService
 {
 
     protected array $types = [];
+    protected array $pages = [];
     protected ?Configuration $configuration = null;
 
     public function __construct(
@@ -157,9 +158,7 @@ class SiteService
         $page  = null;
         $types = array_filter($types, fn ($type): bool => !is_null($type) && 'home' != $type->getType());
 
-        $page = $this->pageRepository->findOneBy(
-            ['slug' => $slug]
-        );
+        $page = $this->getPageBySlug($slug);
         if ($page instanceof Page) {
             return $page;
         }
@@ -178,6 +177,18 @@ class SiteService
                 break;
             }
         }
+
+        return $page;
+    }
+
+    private function getPageBySlug(string $slug): ?Page
+    {
+        if (isset($this->pages[$slug])) {
+            return $this->pages[$slug];
+        }
+
+        $page = $this->pageRepository->getOneBySlug($slug);
+        $this->pages[$slug] = $page;
 
         return $page;
     }
@@ -375,7 +386,9 @@ class SiteService
     private function getBlocks(array $data, bool $disable): array
     {
         $queryBuilder = $this->blockRepository->findAllOrderedByRegion();
-        $blocks       = $queryBuilder->getQuery()->getResult();
+        $query       = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'block-position');
+        $blocks = $query->getResult();
         $header = [];
         $main   = [];
         $footer = [];
@@ -443,9 +456,7 @@ class SiteService
         $types = array_flip($this->getTypesPages());
         unset($types['page']);
         foreach (array_keys($types) as $type) {
-            $types[$type] = $this->pageRepository->findOneBy(
-                ['type' => $type]
-            );
+            $types[$type] = $this->pageRepository->getOneByType($type);
         }
 
         $this->types = $types;

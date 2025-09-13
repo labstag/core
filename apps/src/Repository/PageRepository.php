@@ -21,7 +21,32 @@ class PageRepository extends ServiceEntityRepositoryLib
         $queryBuilder->orderBy('a.createdAt', 'DESC');
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'page-activate');
 
         return $query->getResult();
+    }
+
+    public function getOneBySlug(string $slug): ?Page
+    {
+        $queryBuilder = $this->createQueryBuilder('a');
+        $queryBuilder->where('a.slug = :slug');
+        $queryBuilder->setParameter('slug', $slug);
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'page-slug');
+
+        return $query->getOneOrNullResult();
+    }
+
+    public function getOneByType(string $type): ?Page
+    {
+        $queryBuilder = $this->createQueryBuilder('a');
+        $queryBuilder->where('a.type = :type');
+        $queryBuilder->setParameter('type', $type);
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'page-type');
+
+        return $query->getOneOrNullResult();
     }
 }

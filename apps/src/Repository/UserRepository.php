@@ -28,6 +28,7 @@ class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgra
         $queryBuilder->setParameters($data);
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'user-by-username-'.$field);
 
         return $query->getOneOrNullResult();
     }

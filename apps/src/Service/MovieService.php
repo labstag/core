@@ -17,6 +17,11 @@ class MovieService
 {
     private const STATUSOK = 200;
 
+    protected array $country = [];
+    protected array $year    = [];
+    protected array $category = [];
+    protected array $saga = [];
+
     public function __construct(
         protected HttpClientInterface $httpClient,
         protected MovieRepository $movieRepository,
@@ -30,39 +35,60 @@ class MovieService
 
     public function getCountryForForm(): array
     {
+        if ([] !== $this->country) {
+            return $this->country;
+        }
+
         $data    = $this->movieRepository->findAllUniqueCountries();
         $country = [];
         foreach ($data as $value) {
             $country[$value] = $value;
         }
 
+        $this->country = $country;
+
         return $country;
     }
 
     public function getYearForForm(): array
     {
+        if ([] !== $this->year) {
+            return $this->year;
+        }
+
         $data = $this->movieRepository->findAllUniqueYear();
         $year = [];
         foreach ($data as $value) {
             $year[$value] = $value;
         }
 
+        $this->year = $year;
+
         return $year;
     }
 
     public function getCategoryForForm(): array
     {
+        if ([] !== $this->category) {
+            return $this->category;
+        }
+
         $data       = $this->categoryRepository->findAllByTypeMovie();
         $categories = [];
         foreach ($data as $category) {
             $categories[$category->getTitle()] = $category->getSlug();
         }
 
+        $this->category = $categories;
         return $categories;
     }
 
     public function getSagaForForm(): array
     {
+        if ([] !== $this->saga) {
+            return $this->saga;
+        }
+
         $data       = $this->sagaRepository->findAllByTypeMovie();
         $sagas = [];
         foreach ($data as $saga) {
@@ -73,6 +99,8 @@ class MovieService
 
             $sagas[$saga->getTitle()] = $saga->getSlug();
         }
+
+        $this->saga = $sagas;
 
         return $sagas;
     }

@@ -22,6 +22,7 @@ class PostRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'post-last-'.$nbr);
 
         return $query->getResult();
     }
@@ -32,6 +33,7 @@ class PostRepository extends ServiceEntityRepositoryLib
         $queryBuilder->select('count(p.id)');
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'post-total-enable');
 
         return $query->getSingleScalarResult();
     }
@@ -40,6 +42,7 @@ class PostRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->getQueryBuilder();
         $query        = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'post-activate');
 
         return $query->getResult();
     }
@@ -59,6 +62,9 @@ class PostRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->getQueryBuilder();
 
-        return $queryBuilder->getQuery();
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'post-query-paginator');
+
+        return $query;
     }
 }
