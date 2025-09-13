@@ -21,6 +21,7 @@ class StoryRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'stories-last-'.$nbr);
 
         return $query->getResult();
     }
@@ -31,6 +32,7 @@ class StoryRepository extends ServiceEntityRepositoryLib
         $queryBuilder->select('count(h.id)');
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'stories-total-enable');
 
         return $query->getSingleScalarResult();
     }
@@ -39,6 +41,7 @@ class StoryRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->getQueryBuilder();
         $query        = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'stories-activate');
 
         return $query->getResult();
     }
@@ -47,7 +50,10 @@ class StoryRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->getQueryBuilder();
 
-        return $queryBuilder->getQuery();
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'stories-query-paginator');
+
+        return $query;
     }
 
     private function getQueryBuilder(): QueryBuilder

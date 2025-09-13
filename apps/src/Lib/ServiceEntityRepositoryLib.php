@@ -17,7 +17,10 @@ abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('entity');
         $queryBuilder->andWhere('entity.deletedAt IS NOT NULL');
 
-        return $queryBuilder->getQuery()->getResult();
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'service-find_deleted');
+        
+        return $query->getResult();
     }
 
     public function flush(int $counter = 0): void

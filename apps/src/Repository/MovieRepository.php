@@ -24,6 +24,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->orderBy('m.country', 'ASC');
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-unique-countries');
 
         return $query->getSingleColumnResult();
     }
@@ -37,6 +38,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->orderBy('m.year', 'ASC');
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-unique-year');
 
         return $query->getSingleColumnResult();
     }
@@ -55,6 +57,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->orWhere('m.votes IS NULL');
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-trailer-image-description-null');
 
         return $query->getResult();
     }
@@ -69,6 +72,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-last-'.$nbr);
 
         return $query->getResult();
     }
@@ -115,6 +119,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('imdbIds', $excludedImdbIds);
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-not-in-imdb-list');
 
         return $query->getResult();
     }
@@ -123,8 +128,8 @@ class MovieRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->getQueryBuilder($query);
         $query        = $queryBuilder->getQuery();
-
-        $query->enableResultCache(600, 'movies_search');
+        $dql = $query->getDQL();
+        $query->enableResultCache(3600, 'movies-query-paginator-'.md5($dql));
 
         return $query;
     }

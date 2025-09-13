@@ -21,6 +21,7 @@ class SagaRepository extends ServiceEntityRepositoryLib
         $queryBuilder->andWhere('m.enable = true');
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'saga-type-movie');
 
         return $query->getResult();
     }

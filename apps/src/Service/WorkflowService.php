@@ -13,6 +13,8 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class WorkflowService
 {
+    protected array $objects = [];
+
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
         protected Registry $workflowRegistry,
@@ -22,11 +24,24 @@ class WorkflowService
     {
     }
 
-    public function change(string $entity, string $transition, mixed $uid): void
+    protected function getEntity($entity, mixed $uid)
     {
         $entityRepository = $this->entityManager->getRepository($entity);
 
+        if (isset($this->objects[$entity][$uid])) {
+            return $this->objects[$entity][$uid];
+        }
+        
         $object = $entityRepository->find($uid);
+        $this->objects[$entity][$uid] = $object;
+
+        return $object;
+    }
+
+    public function change(string $entity, string $transition, mixed $uid): void
+    {
+        $object = $this->getEntity($entity, $uid);
+
         if (!$this->workflowRegistry->has($object)) {
             return;
         }

@@ -22,6 +22,7 @@ class EditoRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setMaxResults(1);
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'edito-last');
 
         return $query->getOneOrNullResult();
     }

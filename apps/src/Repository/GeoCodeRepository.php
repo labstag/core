@@ -20,6 +20,9 @@ class GeoCodeRepository extends ServiceEntityRepositoryLib
         $query = $queryBuilder->select('g.' . $type . ', count(g.id) as count');
         $query->groupBy('g.' . $type);
 
-        return $query->getQuery()->getResult();
+        $query = $query->getQuery()->getResult();
+        $query->enableResultCache(3600, 'geocode-'.$type);
+
+        return $query;
     }
 }

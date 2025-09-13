@@ -27,6 +27,7 @@ class ChapterRepository extends ServiceEntityRepositoryLib
         $queryBuilder->orderBy('a.position', 'ASC');
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'chapter-activate-story-'.$story->getId());
 
         return $query->getResult();
     }

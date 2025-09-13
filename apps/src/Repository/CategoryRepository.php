@@ -23,6 +23,7 @@ class CategoryRepository extends ServiceEntityRepositoryLib
         $queryBuilder->andWhere('m.enable = true');
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'category-type-movie');
 
         return $query->getResult();
     }
