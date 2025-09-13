@@ -22,7 +22,7 @@ class PostRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'post-last-'.$nbr);
+        $query->enableResultCache(3600, 'post-last-' . $nbr);
 
         return $query->getResult();
     }

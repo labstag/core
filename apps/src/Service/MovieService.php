@@ -17,10 +17,13 @@ class MovieService
 {
     private const STATUSOK = 200;
 
-    protected array $country = [];
-    protected array $year    = [];
+    protected array $country  = [];
+
+    protected array $year     = [];
+
     protected array $category = [];
-    protected array $saga = [];
+
+    protected array $saga     = [];
 
     public function __construct(
         protected HttpClientInterface $httpClient,
@@ -80,6 +83,7 @@ class MovieService
         }
 
         $this->category = $categories;
+
         return $categories;
     }
 
@@ -90,7 +94,7 @@ class MovieService
         }
 
         $data       = $this->sagaRepository->findAllByTypeMovie();
-        $sagas = [];
+        $sagas      = [];
         foreach ($data as $saga) {
             $movies = $saga->getMovies();
             if (1 == count($movies)) {
@@ -136,7 +140,7 @@ class MovieService
         }
 
         $slug = $saga->getSlug();
-        if ($slug != '') {
+        if ('' != $slug) {
             return false;
         }
 
@@ -354,7 +358,7 @@ class MovieService
         return $trailers;
     }
 
-    private function isVideo(string $url)
+    private function isVideo(string $url): bool
     {
         $essence = new Essence();
 

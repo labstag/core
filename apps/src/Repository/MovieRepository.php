@@ -72,7 +72,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'movies-last-'.$nbr);
+        $query->enableResultCache(3600, 'movies-last-' . $nbr);
 
         return $query->getResult();
     }
@@ -128,8 +128,8 @@ class MovieRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->getQueryBuilder($query);
         $query        = $queryBuilder->getQuery();
-        $dql = $query->getDQL();
-        $query->enableResultCache(3600, 'movies-query-paginator-'.md5($dql));
+        $dql          = $query->getDQL();
+        $query->enableResultCache(3600, 'movies-query-paginator-' . md5((string) $dql));
 
         return $query;
     }

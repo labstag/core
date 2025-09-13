@@ -13,6 +13,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class WorkflowService
 {
+
     protected array $objects = [];
 
     public function __construct(
@@ -31,8 +32,8 @@ class WorkflowService
         if (isset($this->objects[$entity][$uid])) {
             return $this->objects[$entity][$uid];
         }
-        
-        $object = $entityRepository->find($uid);
+
+        $object                       = $entityRepository->find($uid);
         $this->objects[$entity][$uid] = $object;
 
         return $object;
