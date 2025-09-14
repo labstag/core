@@ -29,7 +29,7 @@ class StoryRepository extends ServiceEntityRepositoryLib
     public function findTotalEnable(): mixed
     {
         $queryBuilder = $this->getQueryBuilder();
-        $queryBuilder->select('count(h.id)');
+        $queryBuilder->select('count(s.id)');
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'stories-total-enable');
