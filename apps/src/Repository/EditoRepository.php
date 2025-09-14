@@ -15,10 +15,10 @@ class EditoRepository extends ServiceEntityRepositoryLib
 
     public function findLast(): mixed
     {
-        $queryBuilder = $this->createQueryBuilder('a');
-        $queryBuilder->where('a.enable = :enable');
+        $queryBuilder = $this->createQueryBuilder('e');
+        $queryBuilder->where('e.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('a.createdAt', 'DESC');
+        $queryBuilder->orderBy('e.createdAt', 'DESC');
         $queryBuilder->setMaxResults(1);
 
         $query = $queryBuilder->getQuery();
