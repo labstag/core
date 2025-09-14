@@ -15,10 +15,10 @@ class PageRepository extends ServiceEntityRepositoryLib
 
     public function getAllActivate(): mixed
     {
-        $queryBuilder = $this->createQueryBuilder('a');
-        $queryBuilder->where('a.enable = :enable');
+        $queryBuilder = $this->createQueryBuilder('p');
+        $queryBuilder->where('p.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('a.createdAt', 'DESC');
+        $queryBuilder->orderBy('p.createdAt', 'DESC');
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'page-activate');
@@ -28,8 +28,8 @@ class PageRepository extends ServiceEntityRepositoryLib
 
     public function getOneBySlug(string $slug): ?Page
     {
-        $queryBuilder = $this->createQueryBuilder('a');
-        $queryBuilder->where('a.slug = :slug');
+        $queryBuilder = $this->createQueryBuilder('p');
+        $queryBuilder->where('p.slug = :slug');
         $queryBuilder->setParameter('slug', $slug);
 
         $query = $queryBuilder->getQuery();
@@ -40,12 +40,12 @@ class PageRepository extends ServiceEntityRepositoryLib
 
     public function getOneByType(string $type): ?Page
     {
-        $queryBuilder = $this->createQueryBuilder('a');
-        $queryBuilder->where('a.type = :type');
+        $queryBuilder = $this->createQueryBuilder('p');
+        $queryBuilder->where('p.type = :type');
         $queryBuilder->setParameter('type', $type);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'page-type');
+        $query->enableResultCache(3600, 'page-type'. $type);
 
         return $query->getOneOrNullResult();
     }

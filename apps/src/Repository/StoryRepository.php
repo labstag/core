@@ -58,12 +58,12 @@ class StoryRepository extends ServiceEntityRepositoryLib
 
     private function getQueryBuilder(): QueryBuilder
     {
-        $queryBuilder = $this->createQueryBuilder('h');
-        $queryBuilder->innerJoin('h.chapters', 'c');
-        $queryBuilder->where('h.enable = :enable');
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->innerJoin('s.chapters', 'c');
+        $queryBuilder->where('s.enable = :enable');
         $queryBuilder->andWhere('c.enable = :enable');
         $queryBuilder->setParameter('enable', true);
 
-        return $queryBuilder->orderBy('h.createdAt', 'DESC');
+        return $queryBuilder->orderBy('s.createdAt', 'DESC');
     }
 }
