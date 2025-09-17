@@ -17,12 +17,12 @@ class GeoCodeRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->createQueryBuilder('g');
 
-        $query = $queryBuilder->select('g.' . $type . ', count(g.id) as count');
-        $query->groupBy('g.' . $type);
+        $queryBuilder->select('g.' . $type . ', count(g.id) as count');
+        $queryBuilder->groupBy('g.' . $type);
 
-        $query = $query->getQuery()->getResult();
-        $query->enableResultCache(3600, 'geocode-' . $type);
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'geocode-' . md5((string) $type));
 
-        return $query;
+        return $query->getResult();
     }
 }

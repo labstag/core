@@ -12,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\MovieRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
+use Override;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -87,10 +88,23 @@ class Movie
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
     private Collection $tags;
 
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'refmovie')]
+    private Collection $paragraphs;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->tags       = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
+    }
+
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
     }
 
     public function addTag(Tag $tag): static
@@ -318,6 +332,36 @@ class Movie
     public function setSaga(?Saga $saga): static
     {
         $this->saga = $saga;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setRefmovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        if ($this->paragraphs->removeElement($paragraph)) {
+            // set the owning side to null (unless already changed)
+            if ($paragraph->getRefmovie() === $this) {
+                $paragraph->setRefmovie(null);
+            }
+        }
 
         return $this;
     }

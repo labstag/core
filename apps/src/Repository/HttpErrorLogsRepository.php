@@ -12,4 +12,20 @@ class HttpErrorLogsRepository extends ServiceEntityRepositoryLib
     {
         parent::__construct($managerRegistry, HttpErrorLogs::class);
     }
+
+    public function getAllinternetProtocolWithNbr(int $nbr): array
+    {
+        $queryBuilder = $this->createQueryBuilder('hel');
+        $queryBuilder->select('hel.internetProtocol, COUNT(hel.internetProtocol) AS nbr');
+        $queryBuilder->groupBy('hel.internetProtocol');
+        $queryBuilder->having('nbr >= :nbr');
+        $queryBuilder->setParameter('nbr', $nbr);
+        $queryBuilder->andWhere('hel.refuser IS NULL');
+        $queryBuilder->orderBy('nbr', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'http-error-logs-ip-nbr-'.$nbr);
+
+        return $query->getResult();
+    }
 }

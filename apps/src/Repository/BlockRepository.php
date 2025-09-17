@@ -39,7 +39,7 @@ class BlockRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('region', $region);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'block-maxposition-' . $region);
+        $query->enableResultCache(3600, 'block-maxposition-' . md5((string) $region));
 
         $data  = $query->getOneOrNullResult();
 

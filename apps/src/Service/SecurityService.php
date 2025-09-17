@@ -196,7 +196,7 @@ class SecurityService
         $file    = $this->fileService->getFileInAdapter('private', 'disable.txt');
         $disable = explode("\n", file_get_contents($file));
 
-        return array_any($disable, fn($type): bool => str_contains((string) $url, (string) $type));
+        return array_any($disable, fn ($type): bool => str_contains((string) $url, $type));
     }
 
     private function isForbiddenUrl($url): bool
@@ -204,7 +204,17 @@ class SecurityService
         $file      = $this->fileService->getFileInAdapter('private', 'forbidden.txt');
         $forbidden = explode("\n", file_get_contents($file));
 
-        return array_any($forbidden, fn($type): bool => str_contains((string) $url, (string) $type) || str_contains(strtolower((string) $url), strtolower((string) $type)));
+        return array_any(
+            $forbidden,
+            fn ($type): bool => str_contains((string) $url, $type) || str_contains(
+                strtolower(
+                    (string) $url
+                ),
+                strtolower(
+                    $type
+                )
+            )
+        );
     }
 
     private function setBan(string $agent, $url): ?bool
