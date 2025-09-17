@@ -11,6 +11,9 @@ use Labstag\Repository\HttpErrorLogsRepository;
 
 final class SameConfigurator implements FieldConfiguratorInterface
 {
+
+    private array $logs = [];
+
     public function __construct(
         private HttpErrorLogsRepository $httpErrorLogsRepository,
     )
@@ -28,11 +31,21 @@ final class SameConfigurator implements FieldConfiguratorInterface
         }
 
         $internetProtocol = $instance->getInternetProtocol();
+        if (isset($this->logs[$internetProtocol])) {
+            $fieldDto->setValue($this->logs[$internetProtocol]);
+
+            return;
+        }
+
         $logs             = $this->httpErrorLogsRepository->findBy(
             ['internetProtocol' => $internetProtocol]
         );
 
-        $fieldDto->setValue(count($logs));
+        $total = count($logs);
+
+        $this->logs[$internetProtocol] = $total;
+
+        $fieldDto->setValue($total);
     }
 
     public function supports(FieldDto $fieldDto, EntityDto $entityDto): bool

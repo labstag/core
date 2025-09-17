@@ -170,10 +170,8 @@ class MovieAddCommand extends Command
         $progressBar->start();
         foreach ($dataJson as $data) {
             $movie = $this->setMovie($data);
-            if ($movie instanceof Movie) {
-                $this->movieService->update($movie);
-                $this->addOrUpdate($movie);
-            }
+            $this->movieService->update($movie);
+            $this->addOrUpdate($movie);
 
             ++$counter;
 
@@ -272,7 +270,7 @@ class MovieAddCommand extends Command
     /**
      * @param mixed[] $data
      */
-    private function setMovie(array $data): \Labstag\Entity\Movie
+    private function setMovie(array $data): Movie
     {
         $imdb  = (string) $data['ID IMDb'];
         $movie = $this->getMovieByImdb($imdb);

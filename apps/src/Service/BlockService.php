@@ -248,7 +248,8 @@ class BlockService
         if (is_null($roles) || 0 == count($roles)) {
             return true;
         }
-        return array_any($roles, fn($role): bool => $this->isGranted($role));
+
+        return array_any($roles, fn ($role): bool => $this->isGranted($role));
     }
 
     protected function isGranted(mixed $attribute, mixed $subject = null): bool

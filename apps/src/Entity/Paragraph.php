@@ -99,6 +99,9 @@ class Paragraph implements Stringable
     #[ORM\Column(nullable: true)]
     private ?bool $leftposition = null;
 
+    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    private ?Movie $refmovie = null;
+
     #[Override]
     public function __toString(): string
     {
@@ -360,6 +363,18 @@ class Paragraph implements Stringable
     public function setLeftposition(?bool $leftposition): static
     {
         $this->leftposition = $leftposition;
+
+        return $this;
+    }
+
+    public function getRefmovie(): ?Movie
+    {
+        return $this->refmovie;
+    }
+
+    public function setRefmovie(?Movie $refmovie): static
+    {
+        $this->refmovie = $refmovie;
 
         return $this;
     }
