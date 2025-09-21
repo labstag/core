@@ -58,11 +58,6 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     {
     }
 
-    public function update(Block $block): void
-    {
-        unset($block);
-    }
-
     public function getData(Block $block): ?array
     {
         $blockId = $block->getId();
@@ -106,6 +101,11 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         unset($block);
 
         return $this->getTemplateContent($type, $this->getType());
+    }
+
+    public function update(Block $block): void
+    {
+        unset($block);
     }
 
     /**

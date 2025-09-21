@@ -29,24 +29,6 @@ class PageCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Route('/admin/page/{entity}/w3c', name: 'admin_page_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $page                       = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->linkw3CValidator($page);
-    }
-
-    #[Route('/admin/page/{entity}/public', name: 'admin_page_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $page                       = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->publicLink($page);
-    }
-
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
@@ -134,6 +116,24 @@ class PageCrudController extends AbstractCrudControllerLib
     public static function getEntityFqcn(): string
     {
         return Page::class;
+    }
+
+    #[Route('/admin/page/{entity}/public', name: 'admin_page_public')]
+    public function linkPublic(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $page                       = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->publicLink($page);
+    }
+
+    #[Route('/admin/page/{entity}/w3c', name: 'admin_page_w3c')]
+    public function w3c(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $page                       = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->linkw3CValidator($page);
     }
 
     protected function addFieldIsHome(?Page $page, string $pageName): ?ChoiceField

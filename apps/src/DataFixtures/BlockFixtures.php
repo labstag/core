@@ -41,41 +41,6 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         $objectManager->flush();
     }
 
-    private function addLinksHeader(Block $block): void
-    {
-        $page = $this->getPageByTitle('Posts');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-
-        $page = $this->getPageByTitle('Mes étoiles github');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-
-        $page = $this->getPageByTitle('Mes derniers films vus');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-
-        $page = $this->getPageByTitle('Histoires');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-    }
-
     private function addLinksFooter1(Block $block): void
     {
         $page = $this->getPageByTitle('Contact');
@@ -106,6 +71,41 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         }
 
         $page = $this->getPageByTitle('Données personnelles');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+    }
+
+    private function addLinksHeader(Block $block): void
+    {
+        $page = $this->getPageByTitle('Posts');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+
+        $page = $this->getPageByTitle('Mes étoiles github');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+
+        $page = $this->getPageByTitle('Mes derniers films vus');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+
+        $page = $this->getPageByTitle('Histoires');
         if (!is_null($page)) {
             $link = new Link();
             $link->setTitle($page->getTitle());

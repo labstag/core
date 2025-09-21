@@ -13,6 +13,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Repository\MovieRepository;
 use Labstag\Traits\Entity\TimestampableTrait;
 use Override;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -20,7 +21,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Movie
+class Movie implements Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
@@ -36,6 +37,9 @@ class Movie
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $country = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $duration = null;
@@ -64,6 +68,21 @@ class Movie
     #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'img')]
     private ?File $imgFile = null;
 
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'refmovie')]
+    private Collection $paragraphs;
+
+    #[ORM\ManyToOne(inversedBy: 'movies')]
+    private ?Saga $saga = null;
+
+    /**
+     * @var Collection<int, Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
+    private Collection $tags;
+
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
@@ -75,24 +94,6 @@ class Movie
 
     #[ORM\Column(nullable: true)]
     private ?int $year = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
-
-    #[ORM\ManyToOne(inversedBy: 'movies')]
-    private ?Saga $saga = null;
-
-    /**
-     * @var Collection<int, Tag>
-     */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
-    private Collection $tags;
-
-    /**
-     * @var Collection<int, Paragraph>
-     */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'refmovie')]
-    private Collection $paragraphs;
 
     public function __construct()
     {
@@ -107,38 +108,31 @@ class Movie
         return (string) $this->getTitle();
     }
 
-    public function addTag(Tag $tag): static
-    {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addMovie($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Tag>
-     */
-    public function getTags(): Collection
-    {
-        return $this->tags;
-    }
-
-    public function removeTag(Tag $tag): static
-    {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removeMovie($this);
-        }
-
-        return $this;
-    }
-
     public function addCategory(Category $category): static
     {
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
             $category->addMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setRefmovie($this);
+        }
+
+        return $this;
+    }
+
+    public function addTag(Tag $tag): static
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+            $tag->addMovie($this);
         }
 
         return $this;
@@ -160,6 +154,11 @@ class Movie
     public function getCountry(): ?string
     {
         return $this->country;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
     }
 
     public function getDuration(): ?int
@@ -190,6 +189,27 @@ class Movie
     public function getImgFile(): ?File
     {
         return $this->imgFile;
+    }
+
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
+    public function getSaga(): ?Saga
+    {
+        return $this->saga;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
     }
 
     public function getTitle(): ?string
@@ -226,6 +246,25 @@ class Movie
         return $this;
     }
 
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getRefmovie() === $this) {
+            $paragraph->setRefmovie(null);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): static
+    {
+        if ($this->tags->removeElement($tag)) {
+            $tag->removeMovie($this);
+        }
+
+        return $this;
+    }
+
     public function setColor(?string $color): static
     {
         $this->color = $color;
@@ -236,6 +275,13 @@ class Movie
     public function setCountry(?string $country): static
     {
         $this->country = $country;
+
+        return $this;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }
@@ -284,6 +330,13 @@ class Movie
         }
     }
 
+    public function setSaga(?Saga $saga): static
+    {
+        $this->saga = $saga;
+
+        return $this;
+    }
+
     public function setTitle(?string $title): static
     {
         $this->title = $title;
@@ -308,60 +361,6 @@ class Movie
     public function setYear(?int $year): static
     {
         $this->year = $year;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getSaga(): ?Saga
-    {
-        return $this->saga;
-    }
-
-    public function setSaga(?Saga $saga): static
-    {
-        $this->saga = $saga;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Paragraph>
-     */
-    public function getParagraphs(): Collection
-    {
-        return $this->paragraphs;
-    }
-
-    public function addParagraph(Paragraph $paragraph): static
-    {
-        if (!$this->paragraphs->contains($paragraph)) {
-            $this->paragraphs->add($paragraph);
-            $paragraph->setRefmovie($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParagraph(Paragraph $paragraph): static
-    {
-        if ($this->paragraphs->removeElement($paragraph)) {
-            // set the owning side to null (unless already changed)
-            if ($paragraph->getRefmovie() === $this) {
-                $paragraph->setRefmovie(null);
-            }
-        }
 
         return $this;
     }

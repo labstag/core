@@ -11,20 +11,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInterface
 {
-    public function beforePersisted(BeforeEntityPersistedEvent $beforeEntityPersistedEvent): void
-    {
-        $instance = $beforeEntityPersistedEvent->getEntityInstance();
-        $this->initworkflow($instance);
-        $this->initEntityMeta($instance);
-        $this->updateEntityRedirection($instance, $this->entityManager);
-    }
-
-    public function beforeUpdated(BeforeEntityUpdatedEvent $beforeEntityUpdatedEvent): void
-    {
-        $instance = $beforeEntityUpdatedEvent->getEntityInstance();
-        $this->updateEntityRedirection($instance, $this->entityManager);
-    }
-
     public function afterPersisted(AfterEntityPersistedEvent $afterEntityPersistedEvent): void
     {
         $instance = $afterEntityPersistedEvent->getEntityInstance();
@@ -53,6 +39,20 @@ class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInter
         $this->updateEntityRedirection($instance, $this->entityManager);
 
         $this->entityManager->flush();
+    }
+
+    public function beforePersisted(BeforeEntityPersistedEvent $beforeEntityPersistedEvent): void
+    {
+        $instance = $beforeEntityPersistedEvent->getEntityInstance();
+        $this->initworkflow($instance);
+        $this->initEntityMeta($instance);
+        $this->updateEntityRedirection($instance, $this->entityManager);
+    }
+
+    public function beforeUpdated(BeforeEntityUpdatedEvent $beforeEntityUpdatedEvent): void
+    {
+        $instance = $beforeEntityUpdatedEvent->getEntityInstance();
+        $this->updateEntityRedirection($instance, $this->entityManager);
     }
 
     public static function getSubscribedEvents(): array

@@ -71,7 +71,7 @@ class SecurityService
 
     public function getBanIp(): ?object
     {
-        $user    = $this->security->getUser();
+        $user = $this->security->getUser();
         if (!is_null($user)) {
             return null;
         }
@@ -87,7 +87,15 @@ class SecurityService
     public function getCurrentClientIp(): string
     {
         $request = $this->requestStack->getCurrentRequest();
-        $server  = $request->server;
+        if (is_null($request)) {
+            return '0.0.0.0';
+        }
+
+        $server = $request->server;
+
+        if (!is_object($server)) {
+            return '0.0.0.0';
+        }
 
         $headers = [
             'HTTP_CLIENT_IP',
@@ -207,12 +215,8 @@ class SecurityService
         return array_any(
             $forbidden,
             fn ($type): bool => str_contains((string) $url, $type) || str_contains(
-                strtolower(
-                    (string) $url
-                ),
-                strtolower(
-                    $type
-                )
+                strtolower((string) $url),
+                strtolower($type)
             )
         );
     }

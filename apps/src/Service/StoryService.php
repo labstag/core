@@ -20,19 +20,20 @@ class StoryService
     {
     }
 
-    private function getChapters(Story $story): array
+    public function generateFlashBag(): string
     {
-        $chapters = [];
-        $data     = $story->getChapters();
-        foreach ($data as $row) {
-            if (!$row->isEnable()) {
-                continue;
-            }
+        return $this->translator->trans(
+            'Stories file (%count%) generated for %stories%',
+            [
+                '%stories%' => implode(', ', $this->stories),
+                '%count%'   => count($this->stories),
+            ]
+        );
+    }
 
-            $chapters[] = $row;
-        }
-
-        return $chapters;
+    public function getUpdates(): array
+    {
+        return $this->stories;
     }
 
     public function setPdf(Story $story): bool
@@ -91,20 +92,19 @@ class StoryService
         $mpdf->AddPage();
     }
 
-    public function generateFlashBag(): string
+    private function getChapters(Story $story): array
     {
-        return $this->translator->trans(
-            'Stories file (%count%) generated for %stories%',
-            [
-                '%stories%' => implode(', ', $this->stories),
-                '%count%'   => count($this->stories),
-            ]
-        );
-    }
+        $chapters = [];
+        $data     = $story->getChapters();
+        foreach ($data as $row) {
+            if (!$row->isEnable()) {
+                continue;
+            }
 
-    public function getUpdates(): array
-    {
-        return $this->stories;
+            $chapters[] = $row;
+        }
+
+        return $chapters;
     }
 
     private function getTemporaryFolder(): string

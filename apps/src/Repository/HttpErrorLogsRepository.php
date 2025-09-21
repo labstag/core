@@ -24,7 +24,7 @@ class HttpErrorLogsRepository extends ServiceEntityRepositoryLib
         $queryBuilder->orderBy('nbr', 'DESC');
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'http-error-logs-ip-nbr-'.$nbr);
+        $query->enableResultCache(3600, 'http-error-logs-ip-nbr-' . $nbr);
 
         return $query->getResult();
     }

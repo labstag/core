@@ -12,11 +12,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaCrudController extends AbstractCrudControllerLib
 {
-    public static function getEntityFqcn(): string
-    {
-        return Saga::class;
-    }
-
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -55,5 +50,10 @@ class SagaCrudController extends AbstractCrudControllerLib
         yield $collectionField;
 
         unset($pageName);
+    }
+
+    public static function getEntityFqcn(): string
+    {
+        return Saga::class;
     }
 }

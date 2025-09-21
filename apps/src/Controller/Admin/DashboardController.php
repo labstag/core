@@ -326,6 +326,24 @@ class DashboardController extends AbstractDashboardController
         );
     }
 
+    private function configureMenuItemsSaga(): SubMenuItem
+    {
+        return MenuItem::subMenu(new TranslatableMessage('Sagas'), 'fas fa-video')->setSubItems(
+            [
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('List'),
+                    'fa fa-list',
+                    SagaCrudController::getEntityFqcn()
+                ),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('New'),
+                    'fas fa-plus',
+                    SagaCrudController::getEntityFqcn()
+                )->setAction(Action::NEW),
+            ]
+        );
+    }
+
     /**
      * @param CrudMenuItem[] $categories
      * @param CrudMenuItem[] $tags
@@ -363,24 +381,6 @@ class DashboardController extends AbstractDashboardController
                     new TranslatableMessage('New'),
                     'fas fa-plus',
                     TemplateCrudController::getEntityFqcn()
-                )->setAction(Action::NEW),
-            ]
-        );
-    }
-
-    private function configureMenuItemsSaga(): SubMenuItem
-    {
-        return MenuItem::subMenu(new TranslatableMessage('Sagas'), 'fas fa-video')->setSubItems(
-            [
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('List'),
-                    'fa fa-list',
-                    SagaCrudController::getEntityFqcn()
-                ),
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('New'),
-                    'fas fa-plus',
-                    SagaCrudController::getEntityFqcn()
                 )->setAction(Action::NEW),
             ]
         );

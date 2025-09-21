@@ -57,6 +57,12 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
         }
     }
 
+    #[Override]
+    public static function getEntityFqcn(): string
+    {
+        return Configuration::class;
+    }
+
     private function addTacFields(): array
     {
         $orientations = [
@@ -114,11 +120,5 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
             $this->addFieldBoolean('tacGoogleConsentMode', new TranslatableMessage('Google Censent Mode')),
             $this->addFieldBoolean('tacPartnersList', new TranslatableMessage('Partners List')),
         ];
-    }
-
-    #[Override]
-    public static function getEntityFqcn(): string
-    {
-        return Configuration::class;
     }
 }

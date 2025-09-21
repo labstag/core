@@ -67,6 +67,17 @@ class TextMediaParagraph extends ParagraphLib
         );
     }
 
+    #[Override]
+    public function getClasses(Paragraph $paragraph): array
+    {
+        $tab = parent::getClasses($paragraph);
+        if ($paragraph->isLeftposition()) {
+            $tab[] = 'text-media-left';
+        }
+
+        return $tab;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -81,6 +92,18 @@ class TextMediaParagraph extends ParagraphLib
         $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Text'));
 
         yield $wysiwygField;
+    }
+
+    #[Override]
+    public function getName(): string
+    {
+        return 'Texte media';
+    }
+
+    #[Override]
+    public function getType(): string
+    {
+        return 'text-media';
     }
 
     #[Override]
@@ -124,29 +147,6 @@ class TextMediaParagraph extends ParagraphLib
         );
 
         $paragraph->setImgFile($uploadedFile);
-    }
-
-    #[Override]
-    public function getClasses(Paragraph $paragraph): array
-    {
-        $tab = parent::getClasses($paragraph);
-        if ($paragraph->isLeftposition()) {
-            $tab[] = 'text-media-left';
-        }
-
-        return $tab;
-    }
-
-    #[Override]
-    public function getName(): string
-    {
-        return 'Texte media';
-    }
-
-    #[Override]
-    public function getType(): string
-    {
-        return 'text-media';
     }
 
     /**

@@ -65,16 +65,6 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     {
     }
 
-    protected function publicLink(object $entity): RedirectResponse
-    {
-        $slug = $this->siteService->getSlugByEntity($entity);
-
-        return $this->redirectToRoute(
-            'front',
-            ['slug' => $slug]
-        );
-    }
-
     public function addParagraph(AdminContext $adminContext): RedirectResponse
     {
         $request  = $adminContext->getRequest();
@@ -142,22 +132,9 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->redirect($url);
     }
 
-    protected function linkw3CValidator(object $entity): RedirectResponse
-    {
-        $slug = $this->siteService->getSlugByEntity($entity);
-
-        return $this->redirect(
-            'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
-                'front',
-                ['slug' => $slug],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            )
-        );
-    }
-
     public function listParagraph(AdminContext $adminContext): Response
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                   = $adminContext->getRequest()->query->get('entityId');
         $serviceEntityRepositoryLib = $this->getRepository();
         $entity                     = $serviceEntityRepositoryLib->find($entityId);
         $paragraphs                 = $entity->getParagraphs();
@@ -192,13 +169,6 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->redirect($url);
     }
 
-    protected function addTabDate(): iterable
-    {
-        yield FormField::addTab(new TranslatableMessage('Date'));
-        yield $this->addCreatedAtField();
-        yield $this->addUpdatedAtField();
-    }
-
     protected function addCreatedAtField(): DateTimeField
     {
         return DateTimeField::new('createdAt', new TranslatableMessage('Created At'))->hideWhenCreating();
@@ -206,7 +176,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addFieldBoolean(string $propertyName, string $label): BooleanField
     {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
+        $request      = $this->container->get('request_stack')->getCurrentRequest();
         $action       = $request->query->get('action', null);
         $booleanField = BooleanField::new($propertyName, $label);
         $booleanField->renderAsSwitch(empty($action));
@@ -420,6 +390,13 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $filters->add($entityFilter);
     }
 
+    protected function addTabDate(): iterable
+    {
+        yield FormField::addTab(new TranslatableMessage('Date'));
+        yield $this->addCreatedAtField();
+        yield $this->addUpdatedAtField();
+    }
+
     protected function addTabPrincipal(): FormField
     {
         return FormField::addTab(new TranslatableMessage('Principal'));
@@ -427,10 +404,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function addUpdatedAtField(): DateTimeField
     {
-        return DateTimeField::new(
-            'updatedAt',
-            new TranslatableMessage('updated At')
-        )->hideWhenCreating()->hideOnIndex();
+        $datetimeField = DateTimeField::new('updatedAt', new TranslatableMessage('updated At'));
+        $datetimeField->hideWhenCreating();
+        $datetimeField->hideOnIndex();
+
+        return $datetimeField;
     }
 
     protected function configureActionsBtn(Actions $actions): void
@@ -520,6 +498,29 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $doctrine->getManagerForClass(Paragraph::class)->getRepository(Paragraph::class);
     }
 
+    protected function linkw3CValidator(object $entity): RedirectResponse
+    {
+        $slug = $this->siteService->getSlugByEntity($entity);
+
+        return $this->redirect(
+            'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
+                'front',
+                ['slug' => $slug],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            )
+        );
+    }
+
+    protected function publicLink(object $entity): RedirectResponse
+    {
+        $slug = $this->siteService->getSlugByEntity($entity);
+
+        return $this->redirectToRoute(
+            'front',
+            ['slug' => $slug]
+        );
+    }
+
     protected function setActionPublic(Actions $actions, string $urlW3c, string $urlPublic): void
     {
         $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
@@ -553,8 +554,8 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     private function filterListRefUser(QueryBuilder $queryBuilder, EntityDto $entityDto): QueryBuilder
     {
-        $fqcn    = $entityDto->getFqcn();
-        $entity  = new $fqcn();
+        $fqcn   = $entityDto->getFqcn();
+        $entity = new $fqcn();
         if (method_exists($entity, 'getRefuser')) {
             $user  = $this->getUser();
             $roles = $user->getRoles();

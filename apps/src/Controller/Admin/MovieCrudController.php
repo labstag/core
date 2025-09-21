@@ -74,15 +74,6 @@ class MovieCrudController extends AbstractCrudControllerLib
         }
     }
 
-    protected function addFieldSaga(): AssociationField
-    {
-        $associationField = AssociationField::new('saga', new TranslatableMessage('Saga'));
-        $associationField->autocomplete();
-        $associationField->setSortProperty('title');
-
-        return $associationField;
-    }
-
     #[Override]
     public function configureFilters(Filters $filters): Filters
     {
@@ -96,12 +87,6 @@ class MovieCrudController extends AbstractCrudControllerLib
         $this->addFilterSaga($filters);
 
         return $filters;
-    }
-
-    protected function addFilterSaga(Filters $filters): void
-    {
-        $entityFilter = EntityFilter::new('saga', new TranslatableMessage('Sagas'));
-        $filters->add($entityFilter);
     }
 
     #[Override]
@@ -120,7 +105,7 @@ class MovieCrudController extends AbstractCrudControllerLib
             return $this->redirectToRoute('admin_movie_index');
         }
 
-        $movies  = $serviceEntityRepositoryLib->findTrailerImageDescriptionIsNull();
+        $movies = $serviceEntityRepositoryLib->findTrailerImageDescriptionIsNull();
 
         $counter = 0;
         $update  = 0;
@@ -155,10 +140,25 @@ class MovieCrudController extends AbstractCrudControllerLib
         return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
     }
 
+    protected function addFieldSaga(): AssociationField
+    {
+        $associationField = AssociationField::new('saga', new TranslatableMessage('Saga'));
+        $associationField->autocomplete();
+        $associationField->setSortProperty('title');
+
+        return $associationField;
+    }
+
+    protected function addFilterSaga(Filters $filters): void
+    {
+        $entityFilter = EntityFilter::new('saga', new TranslatableMessage('Sagas'));
+        $filters->add($entityFilter);
+    }
+
     private function configureActionsUpdateImage(Actions $actions): void
     {
         $request = $this->container->get('request_stack')->getCurrentRequest();
-        $action = $request->query->get('action', null);
+        $action  = $request->query->get('action', null);
         if ('trash' == $action) {
             return;
         }

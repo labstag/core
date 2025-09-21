@@ -44,7 +44,7 @@ class MovieInfoParagraph extends ParagraphLib
         $associationField = AssociationField::new('refmovie', new TranslatableMessage('Movie'));
         $associationField->autocomplete();
         $associationField->setSortProperty('title');
-        
+
         yield $associationField;
     }
 

@@ -29,6 +29,17 @@ class TextImgParagraph extends ParagraphLib
         );
     }
 
+    #[Override]
+    public function getClasses(Paragraph $paragraph): array
+    {
+        $tab = parent::getClasses($paragraph);
+        if ($paragraph->isLeftposition()) {
+            $tab[] = 'text-img-left';
+        }
+
+        return $tab;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -41,17 +52,6 @@ class TextImgParagraph extends ParagraphLib
         $wysiwygField = WysiwygField::new('content', 'Texte');
 
         yield $wysiwygField;
-    }
-
-    #[Override]
-    public function getClasses(Paragraph $paragraph): array
-    {
-        $tab = parent::getClasses($paragraph);
-        if ($paragraph->isLeftposition()) {
-            $tab[] = 'text-img-left';
-        }
-
-        return $tab;
     }
 
     #[Override]

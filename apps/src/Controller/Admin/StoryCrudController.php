@@ -37,24 +37,6 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $story                      = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->linkw3CValidator($story);
-    }
-
-    #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $story                      = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->publicLink($story);
-    }
-
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
@@ -134,6 +116,15 @@ class StoryCrudController extends AbstractCrudControllerLib
         return Story::class;
     }
 
+    #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
+    public function linkPublic(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $story                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->publicLink($story);
+    }
+
     public function moveChapter(AdminContext $adminContext): RedirectResponse|Response
     {
         $request    = $adminContext->getRequest();
@@ -193,10 +184,19 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $this->redirectToRoute('admin_story_index');
     }
 
+    #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
+    public function w3c(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $story                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->linkw3CValidator($story);
+    }
+
     private function configureActionsUpdatePdf(Actions $actions): void
     {
         $request = $this->container->get('request_stack')->getCurrentRequest();
-        $action = $request->query->get('action', null);
+        $action  = $request->query->get('action', null);
         if ('trash' == $action) {
             return;
         }

@@ -32,8 +32,8 @@ class LastStoryParagraph extends ParagraphLib
             return;
         }
 
-        $nbr                        = $paragraph->getNbr();
-        $stories                    = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        $nbr     = $paragraph->getNbr();
+        $stories = $serviceEntityRepositoryLib->findLastByNbr($nbr);
         $this->setData(
             $paragraph,
             [

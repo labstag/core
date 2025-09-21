@@ -33,6 +33,13 @@ class Tag implements Stringable
     private ?string $id = null;
 
     /**
+     * @var Collection<int, Movie>
+     */
+    #[ORM\ManyToMany(targetEntity: Movie::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
+    #[ORM\JoinTable(name: 'tag_movie')]
+    private Collection $movies;
+
+    /**
      * @var Collection<int, Page>
      */
     #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
@@ -56,13 +63,6 @@ class Tag implements Stringable
     #[ORM\ManyToMany(targetEntity: Story::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
     #[ORM\JoinTable(name: 'tag_story')]
     private Collection $stories;
-
-    /**
-     * @var Collection<int, Movie>
-     */
-    #[ORM\ManyToMany(targetEntity: Movie::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
-    #[ORM\JoinTable(name: 'tag_movie')]
-    private Collection $movies;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
@@ -138,17 +138,17 @@ class Tag implements Stringable
         return $this->chapters;
     }
 
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
     /**
      * @return Collection<int, Movie>
      */
     public function getMovies(): Collection
     {
         return $this->movies;
-    }
-
-    public function getId(): ?string
-    {
-        return $this->id;
     }
 
     /**

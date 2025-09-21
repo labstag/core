@@ -3,6 +3,7 @@
 namespace Labstag\Form\Front;
 
 use Labstag\Service\MovieService;
+use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
@@ -114,7 +115,7 @@ class MovieType extends AbstractType
         );
     }
 
-    #[\Override]
+    #[Override]
     public function getBlockPrefix(): string
     {
         return '';

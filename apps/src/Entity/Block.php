@@ -16,6 +16,9 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 class Block implements Stringable
 {
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $classes = null;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
@@ -76,9 +79,6 @@ class Block implements Stringable
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $classes = null;
-
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
@@ -109,6 +109,11 @@ class Block implements Stringable
         }
 
         return $this;
+    }
+
+    public function getClasses(): ?string
+    {
+        return $this->classes;
     }
 
     public function getContent(): ?string
@@ -202,6 +207,13 @@ class Block implements Stringable
         return $this;
     }
 
+    public function setClasses(?string $classes): static
+    {
+        $this->classes = $classes;
+
+        return $this;
+    }
+
     public function setContent(?string $content): static
     {
         $this->content = $content;
@@ -268,18 +280,6 @@ class Block implements Stringable
     public function setType(string $type): static
     {
         $this->type = $type;
-
-        return $this;
-    }
-
-    public function getClasses(): ?string
-    {
-        return $this->classes;
-    }
-
-    public function setClasses(?string $classes): static
-    {
-        $this->classes = $classes;
 
         return $this;
     }

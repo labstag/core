@@ -65,6 +65,29 @@ class VideoParagraph extends ParagraphLib
         );
     }
 
+    /**
+     * @return Generator<FieldInterface>
+     */
+    #[Override]
+    public function getFields(Paragraph $paragraph, string $pageName): mixed
+    {
+        unset($paragraph);
+        yield $this->addFieldImageUpload('img', $pageName);
+        yield UrlField::new('url', new TranslatableMessage('Url'));
+    }
+
+    #[Override]
+    public function getName(): string
+    {
+        return 'Video';
+    }
+
+    #[Override]
+    public function getType(): string
+    {
+        return 'video';
+    }
+
     #[Override]
     public function update(Paragraph $paragraph): void
     {
@@ -106,29 +129,6 @@ class VideoParagraph extends ParagraphLib
         );
 
         $paragraph->setImgFile($uploadedFile);
-    }
-
-    /**
-     * @return Generator<FieldInterface>
-     */
-    #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): mixed
-    {
-        unset($paragraph);
-        yield $this->addFieldImageUpload('img', $pageName);
-        yield UrlField::new('url', new TranslatableMessage('Url'));
-    }
-
-    #[Override]
-    public function getName(): string
-    {
-        return 'Video';
-    }
-
-    #[Override]
-    public function getType(): string
-    {
-        return 'video';
     }
 
     /**

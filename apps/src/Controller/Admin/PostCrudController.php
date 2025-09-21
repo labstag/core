@@ -26,24 +26,6 @@ class PostCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Route('/admin/post/{entity}/w3c', name: 'admin_post_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $post                       = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->linkw3CValidator($post);
-    }
-
-    #[Route('/admin/post/{entity}/public', name: 'admin_post_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $post                       = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->publicLink($post);
-    }
-
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
@@ -112,5 +94,23 @@ class PostCrudController extends AbstractCrudControllerLib
     public static function getEntityFqcn(): string
     {
         return Post::class;
+    }
+
+    #[Route('/admin/post/{entity}/public', name: 'admin_post_public')]
+    public function linkPublic(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $post                       = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->publicLink($post);
+    }
+
+    #[Route('/admin/post/{entity}/w3c', name: 'admin_post_w3c')]
+    public function w3c(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $post                       = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->linkw3CValidator($post);
     }
 }
