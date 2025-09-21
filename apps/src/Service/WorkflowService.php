@@ -25,20 +25,6 @@ class WorkflowService
     {
     }
 
-    protected function getEntity($entity, mixed $uid)
-    {
-        $entityRepository = $this->entityManager->getRepository($entity);
-
-        if (isset($this->objects[$entity][$uid])) {
-            return $this->objects[$entity][$uid];
-        }
-
-        $object                       = $entityRepository->find($uid);
-        $this->objects[$entity][$uid] = $object;
-
-        return $object;
-    }
-
     public function change(string $entity, string $transition, mixed $uid): void
     {
         $object = $this->getEntity($entity, $uid);
@@ -88,5 +74,19 @@ class WorkflowService
 
         $markingStore = $workflow->getMarkingStore();
         $markingStore->setMarking($entity, $initialMarking);
+    }
+
+    protected function getEntity($entity, mixed $uid)
+    {
+        $entityRepository = $this->entityManager->getRepository($entity);
+
+        if (isset($this->objects[$entity][$uid])) {
+            return $this->objects[$entity][$uid];
+        }
+
+        $object                       = $entityRepository->find($uid);
+        $this->objects[$entity][$uid] = $object;
+
+        return $object;
     }
 }

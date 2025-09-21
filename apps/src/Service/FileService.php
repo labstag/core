@@ -113,7 +113,7 @@ class FileService
         $data     = $this->getFiles();
         $entities = $this->getEntity();
         foreach ($data as $type => $files) {
-            $deletes    = [];
+            $deletes = [];
             if (!isset($entities[$type])) {
                 continue;
             }

@@ -119,6 +119,29 @@ class StarAddCommand extends Command
         $this->starRepository->flush();
     }
 
+    private function setImage(Star $star, array $data): void
+    {
+        if (!isset($data['owner']['avatar_url'])) {
+            return;
+        }
+
+        try {
+            $file     = $data['owner']['avatar_url'];
+            $tempPath = tempnam(sys_get_temp_dir(), 'star_');
+            file_put_contents($tempPath, file_get_contents($file));
+            $uploadedFile = new UploadedFile(
+                path: $tempPath,
+                originalName: basename($tempPath),
+                mimeType: mime_content_type($tempPath),
+                test: true
+            );
+
+            $star->setImgFile($uploadedFile);
+        } catch (Exception $exception) {
+            echo $exception->getMessage();
+        }
+    }
+
     /**
      * @param mixed[] $data
      */
@@ -148,28 +171,5 @@ class StarAddCommand extends Command
         $this->setImage($star, $data);
 
         return $star;
-    }
-
-    private function setImage(Star $star, array $data): void
-    {
-        if (!isset($data['owner']['avatar_url'])) {
-            return;
-        }
-
-        try {
-            $file     = $data['owner']['avatar_url'];
-            $tempPath = tempnam(sys_get_temp_dir(), 'star_');
-            file_put_contents($tempPath, file_get_contents($file));
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $star->setImgFile($uploadedFile);
-        } catch (Exception $exception) {
-            echo $exception->getMessage();
-        }
     }
 }

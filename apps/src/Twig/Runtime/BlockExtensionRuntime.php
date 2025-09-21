@@ -16,25 +16,6 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
-    private function getClass(Block $block): string
-    {
-        $tab = [
-            'block',
-            'block_' . $block->getType(),
-        ];
-
-        $classes = explode(' ', (string) $block->getClasses());
-
-        $tab = array_merge($tab, $classes);
-
-        return trim(implode(' ', $tab));
-    }
-
-    private function getId(Block $block): string
-    {
-        return 'block_' . $block->getType() . '-' . $block->getId();
-    }
-
     public function getContextMenu(Block $block): array
     {
         $urlAdmin = $this->blockService->getUrlAdmin($block);
@@ -68,5 +49,24 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         }
 
         return $content->getContent();
+    }
+
+    private function getClass(Block $block): string
+    {
+        $tab = [
+            'block',
+            'block_' . $block->getType(),
+        ];
+
+        $classes = explode(' ', (string) $block->getClasses());
+
+        $tab = array_merge($tab, $classes);
+
+        return trim(implode(' ', $tab));
+    }
+
+    private function getId(Block $block): string
+    {
+        return 'block_' . $block->getType() . '-' . $block->getId();
     }
 }

@@ -30,6 +30,9 @@ class Paragraph implements Stringable
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Chapter $chapter = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $classes = null;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
@@ -60,6 +63,9 @@ class Paragraph implements Stringable
     #[Vich\UploadableField(mapping: 'paragraph', fileNameProperty: 'img')]
     private ?File $imgFile = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $leftposition = null;
+
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Memo $memo = null;
 
@@ -74,6 +80,9 @@ class Paragraph implements Stringable
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Post $post = null;
+
+    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    private ?Movie $refmovie = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
@@ -93,15 +102,6 @@ class Paragraph implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $classes = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?bool $leftposition = null;
-
-    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
-    private ?Movie $refmovie = null;
-
     #[Override]
     public function __toString(): string
     {
@@ -116,6 +116,11 @@ class Paragraph implements Stringable
     public function getChapter(): ?Chapter
     {
         return $this->chapter;
+    }
+
+    public function getClasses(): ?string
+    {
+        return $this->classes;
     }
 
     public function getContent(): ?string
@@ -178,6 +183,11 @@ class Paragraph implements Stringable
         return $this->post;
     }
 
+    public function getRefmovie(): ?Movie
+    {
+        return $this->refmovie;
+    }
+
     public function getStory(): ?Story
     {
         return $this->story;
@@ -203,6 +213,11 @@ class Paragraph implements Stringable
         return $this->enable;
     }
 
+    public function isLeftposition(): ?bool
+    {
+        return $this->leftposition;
+    }
+
     public function isSave(): ?bool
     {
         return $this->save;
@@ -218,6 +233,13 @@ class Paragraph implements Stringable
     public function setChapter(?Chapter $chapter): static
     {
         $this->chapter = $chapter;
+
+        return $this;
+    }
+
+    public function setClasses(?string $classes): static
+    {
+        $this->classes = $classes;
 
         return $this;
     }
@@ -273,6 +295,13 @@ class Paragraph implements Stringable
         }
     }
 
+    public function setLeftposition(?bool $leftposition): static
+    {
+        $this->leftposition = $leftposition;
+
+        return $this;
+    }
+
     public function setMemo(?Memo $memo): static
     {
         $this->memo = $memo;
@@ -308,6 +337,13 @@ class Paragraph implements Stringable
         return $this;
     }
 
+    public function setRefmovie(?Movie $movie): static
+    {
+        $this->refmovie = $movie;
+
+        return $this;
+    }
+
     public function setSave(bool $save): static
     {
         $this->save = $save;
@@ -339,42 +375,6 @@ class Paragraph implements Stringable
     public function setUrl(?string $url): static
     {
         $this->url = $url;
-
-        return $this;
-    }
-
-    public function getClasses(): ?string
-    {
-        return $this->classes;
-    }
-
-    public function setClasses(?string $classes): static
-    {
-        $this->classes = $classes;
-
-        return $this;
-    }
-
-    public function isLeftposition(): ?bool
-    {
-        return $this->leftposition;
-    }
-
-    public function setLeftposition(?bool $leftposition): static
-    {
-        $this->leftposition = $leftposition;
-
-        return $this;
-    }
-
-    public function getRefmovie(): ?Movie
-    {
-        return $this->refmovie;
-    }
-
-    public function setRefmovie(?Movie $refmovie): static
-    {
-        $this->refmovie = $refmovie;
 
         return $this;
     }

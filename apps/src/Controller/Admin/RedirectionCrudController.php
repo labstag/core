@@ -149,8 +149,8 @@ class RedirectionCrudController extends AbstractCrudControllerLib
     #[Route('/admin/redirection/{entity}/test', name: 'admin_redirection_test')]
     public function testSource(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib  = $this->getRepository();
-        $redirection                 = $serviceEntityRepositoryLib->find($entity);
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $redirection                = $serviceEntityRepositoryLib->find($entity);
 
         return $this->redirect($redirection->getSource());
     }
@@ -271,8 +271,8 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         $csv         = new Csv();
         $spreadsheet = $csv->load($file->getPathname());
         $sheetData   = $spreadsheet->getActiveSheet()->toArray();
-        $head = $sheetData[0];
-        $find = $this->setFind($head);
+        $head        = $sheetData[0];
+        $find        = $this->setFind($head);
         if (self::FIELDCSV != $find) {
             $this->addFlash('danger', 'Le fichier n\'est pas correctement formaté');
 

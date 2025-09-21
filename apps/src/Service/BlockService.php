@@ -27,31 +27,6 @@ class BlockService
     {
     }
 
-    public function update(Block $block): void
-    {
-        foreach ($this->blocks as $row) {
-            if ($block->getType() != $row->getType()) {
-                continue;
-            }
-
-            $row->update($block);
-
-            break;
-        }
-    }
-
-    public function getUrlAdmin(Block $block): ?AdminUrlGeneratorInterface
-    {
-        if (!$this->security->isGranted('ROLE_ADMIN')) {
-            return null;
-        }
-
-        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
-        $adminUrlGenerator->setEntityId($block->getId());
-
-        return $adminUrlGenerator->setController(BlockCrudController::class);
-    }
-
     public function content(string $view, Block $block): ?Response
     {
         $content = null;
@@ -222,6 +197,18 @@ class BlockService
         ];
     }
 
+    public function getUrlAdmin(Block $block): ?AdminUrlGeneratorInterface
+    {
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
+            return null;
+        }
+
+        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
+        $adminUrlGenerator->setEntityId($block->getId());
+
+        return $adminUrlGenerator->setController(BlockCrudController::class);
+    }
+
     /**
      * @param mixed[] $data
      */
@@ -237,6 +224,19 @@ class BlockService
             }
 
             $row->generate($block, $data, $disable);
+
+            break;
+        }
+    }
+
+    public function update(Block $block): void
+    {
+        foreach ($this->blocks as $row) {
+            if ($block->getType() != $row->getType()) {
+                continue;
+            }
+
+            $row->update($block);
 
             break;
         }

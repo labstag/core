@@ -33,7 +33,7 @@ class PageRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('slug', $slug);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'page-slug_' . md5((string) $slug));
+        $query->enableResultCache(3600, 'page-slug_' . md5($slug));
 
         return $query->getOneOrNullResult();
     }
@@ -45,7 +45,7 @@ class PageRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('type', $type);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'page-type_' . md5((string) $type));
+        $query->enableResultCache(3600, 'page-type_' . md5($type));
 
         return $query->getOneOrNullResult();
     }

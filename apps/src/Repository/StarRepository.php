@@ -23,7 +23,7 @@ class StarRepository extends ServiceEntityRepositoryLib
         $queryBuilder->groupBy('s.' . $type);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'star-' . md5((string) $type));
+        $query->enableResultCache(3600, 'star-' . md5($type));
 
         return $query->getResult();
     }

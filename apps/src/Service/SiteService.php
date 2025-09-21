@@ -30,11 +30,11 @@ use Twig\Environment;
 class SiteService
 {
 
-    protected array $types                  = [];
-
-    protected array $pages                  = [];
-
     protected ?Configuration $configuration = null;
+
+    protected array $pages = [];
+
+    protected array $types = [];
 
     public function __construct(
         protected ChapterRepository $chapterRepository,
@@ -124,9 +124,9 @@ class SiteService
             $header,
             $main,
             $footer,
-        ]            = $this->getBlocks($data, $disable);
-        $blocks      = array_merge($header, $main, $footer);
-        $contents    = $this->blockService->getContents($blocks);
+        ]         = $this->getBlocks($data, $disable);
+        $blocks   = array_merge($header, $main, $footer);
+        $contents = $this->blockService->getContents($blocks);
 
         return [
             'meta'   => $this->getMetaByEntity($entity->getMeta()),
@@ -183,30 +183,11 @@ class SiteService
         return $page;
     }
 
-    private function getPageBySlug(string $slug): ?Page
-    {
-        if (isset($this->pages[$slug])) {
-            return $this->pages[$slug];
-        }
-
-        $page               = $this->pageRepository->getOneBySlug($slug);
-        $this->pages[$slug] = $page;
-
-        return $page;
-    }
-
-    public function getFileFavicon(): ?array
-    {
-        $favicon  = $this->getFavicon('favicon.ico');
-
-        return is_null($favicon) ? $this->getFavicon('favicon') : $favicon;
-    }
-
     public function getFavicon(string $type): ?array
     {
-        $info    = null;
-        $file    = $this->fileService->getFileInAdapter('assets', 'manifest.json');
-        $json    = json_decode(file_get_contents($file), true);
+        $info = null;
+        $file = $this->fileService->getFileInAdapter('assets', 'manifest.json');
+        $json = json_decode(file_get_contents($file), true);
         foreach ($json as $title => $file) {
             $info = null;
             if (0 === substr_count((string) $title, $type)) {
@@ -236,6 +217,13 @@ class SiteService
         }
 
         return $info;
+    }
+
+    public function getFileFavicon(): ?array
+    {
+        $favicon = $this->getFavicon('favicon.ico');
+
+        return is_null($favicon) ? $this->getFavicon('favicon') : $favicon;
     }
 
     public function getImageForMetatags(mixed $entity): ?array
@@ -445,6 +433,18 @@ class SiteService
         return $repos['story']->findOneBy(
             ['slug' => $slug]
         );
+    }
+
+    private function getPageBySlug(string $slug): ?Page
+    {
+        if (isset($this->pages[$slug])) {
+            return $this->pages[$slug];
+        }
+
+        $page               = $this->pageRepository->getOneBySlug($slug);
+        $this->pages[$slug] = $page;
+
+        return $page;
     }
 
     /**

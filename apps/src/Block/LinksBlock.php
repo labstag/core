@@ -90,6 +90,7 @@ class LinksBlock extends BlockLib
             $entity = $this->getEntityByTagUrl($link->getUrl());
             if (!is_object($entity)) {
                 $data[] = $link;
+
                 continue;
             }
 
@@ -107,6 +108,16 @@ class LinksBlock extends BlockLib
             );
 
             $data[] = $link;
+        }
+
+        return $data;
+    }
+
+    private function getEntity(string $entity, string $id): ?object
+    {
+        $data = $this->getRepository($entity)->find($id);
+        if (is_null($data)) {
+            return null;
         }
 
         return $data;
@@ -131,15 +142,5 @@ class LinksBlock extends BlockLib
         }
 
         return $object;
-    }
-
-    private function getEntity(string $entity, string $id): ?object
-    {
-        $data = $this->getRepository($entity)->find($id);
-        if (is_null($data)) {
-            return null;
-        }
-
-        return $data;
     }
 }

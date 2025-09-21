@@ -17,13 +17,13 @@ class MovieService
 {
     private const STATUSOK = 200;
 
-    protected array $country  = [];
-
-    protected array $year     = [];
-
     protected array $category = [];
 
-    protected array $saga     = [];
+    protected array $country = [];
+
+    protected array $saga = [];
+
+    protected array $year = [];
 
     public function __construct(
         protected HttpClientInterface $httpClient,
@@ -34,40 +34,6 @@ class MovieService
         protected string $tmdbapiKey,
     )
     {
-    }
-
-    public function getCountryForForm(): array
-    {
-        if ([] !== $this->country) {
-            return $this->country;
-        }
-
-        $data    = $this->movieRepository->findAllUniqueCountries();
-        $country = [];
-        foreach ($data as $value) {
-            $country[$value] = $value;
-        }
-
-        $this->country = $country;
-
-        return $country;
-    }
-
-    public function getYearForForm(): array
-    {
-        if ([] !== $this->year) {
-            return $this->year;
-        }
-
-        $data = $this->movieRepository->findAllUniqueYear();
-        $year = [];
-        foreach ($data as $value) {
-            $year[$value] = $value;
-        }
-
-        $this->year = $year;
-
-        return $year;
     }
 
     public function getCategoryForForm(): array
@@ -87,26 +53,21 @@ class MovieService
         return $categories;
     }
 
-    public function getSagaForForm(): array
+    public function getCountryForForm(): array
     {
-        if ([] !== $this->saga) {
-            return $this->saga;
+        if ([] !== $this->country) {
+            return $this->country;
         }
 
-        $data       = $this->sagaRepository->findAllByTypeMovie();
-        $sagas      = [];
-        foreach ($data as $saga) {
-            $movies = $saga->getMovies();
-            if (1 == count($movies)) {
-                continue;
-            }
-
-            $sagas[$saga->getTitle()] = $saga->getSlug();
+        $data    = $this->movieRepository->findAllUniqueCountries();
+        $country = [];
+        foreach ($data as $value) {
+            $country[$value] = $value;
         }
 
-        $this->saga = $sagas;
+        $this->country = $country;
 
-        return $sagas;
+        return $country;
     }
 
     public function getDetails(string $imdbId): array
@@ -125,30 +86,53 @@ class MovieService
         return $details;
     }
 
-    private function updateImdb(Movie $movie): void
+    public function getSagaForForm(): array
     {
-        if (!str_starts_with((string) $movie->getImdb(), 'tt')) {
-            $movie->setImdb('tt' . str_pad((string) $movie->getImdb(), 7, '0', STR_PAD_LEFT));
+        if ([] !== $this->saga) {
+            return $this->saga;
         }
+
+        $data  = $this->sagaRepository->findAllByTypeMovie();
+        $sagas = [];
+        foreach ($data as $saga) {
+            $movies = $saga->getMovies();
+            if (1 == count($movies)) {
+                continue;
+            }
+
+            $sagas[$saga->getTitle()] = $saga->getSlug();
+        }
+
+        $this->saga = $sagas;
+
+        return $sagas;
     }
 
-    private function updateSaga(Movie $movie): bool
+    public function getVideo(int $movieId): ?array
     {
-        $saga = $movie->getSaga();
-        if (!$saga instanceof Saga) {
-            return false;
+        $french = $this->getVideoFR($movieId);
+        if (!is_null($french)) {
+            return $french;
         }
 
-        $slug = $saga->getSlug();
-        if ('' != $slug) {
-            return false;
+        return $this->getVideoALL($movieId);
+    }
+
+    public function getYearForForm(): array
+    {
+        if ([] !== $this->year) {
+            return $this->year;
         }
 
-        $saga->setSlug(null);
+        $data = $this->movieRepository->findAllUniqueYear();
+        $year = [];
+        foreach ($data as $value) {
+            $year[$value] = $value;
+        }
 
-        $this->sagaRepository->save($saga);
+        $this->year = $year;
 
-        return true;
+        return $year;
     }
 
     public function update(Movie $movie): bool
@@ -162,50 +146,6 @@ class MovieService
         $statusVideo       = $this->updateTrailer($movie, $details);
 
         return $statusSaga || $statusVote || $statusImage || $statusDescription || $statusVideo;
-    }
-
-    private function updateVote(Movie $movie, array $details): bool
-    {
-        if (!isset($details['movie_results'][0]['id'])) {
-            return false;
-        }
-
-        $voteEverage = (float) $details['movie_results'][0]['vote_average'] ?? 0;
-        $voteCount   = (int) $details['movie_results'][0]['vote_count'] ?? 0;
-
-        $movie->setEvaluation($voteEverage);
-        $movie->setVotes($voteCount);
-
-        return true;
-    }
-
-    public function updateTrailer(Movie $movie, array $details): bool
-    {
-        if (!in_array($movie->getTrailer(), [null, '', '0'], true)) {
-            return false;
-        }
-
-        if (!isset($details['movie_results'][0]['id'])) {
-            return false;
-        }
-
-        $data = $this->getVideo($details['movie_results'][0]['id']);
-        $find = false;
-        if (!is_array($data)) {
-            return $find;
-        }
-
-        foreach ($data as $result) {
-            if ('YouTube' == $result['site']) {
-                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
-                $movie->setTrailer($url);
-
-                $find = true;
-                break;
-            }
-        }
-
-        return $find;
     }
 
     public function updateDescription(Movie $movie, array $details): bool
@@ -225,7 +165,7 @@ class MovieService
 
     public function updateImage(Movie $movie, array $details): bool
     {
-        $poster  = $this->getImg($details);
+        $poster = $this->getImg($details);
         if ('' === $poster) {
             return false;
         }
@@ -251,6 +191,36 @@ class MovieService
         }
     }
 
+    public function updateTrailer(Movie $movie, array $details): bool
+    {
+        if (!in_array($movie->getTrailer(), [null, '', '0'], true)) {
+            return false;
+        }
+
+        if (!isset($details['movie_results'][0]['id'])) {
+            return false;
+        }
+
+        $data = $this->getVideo($details['movie_results'][0]['id']);
+        $find = false;
+        if (!is_array($data)) {
+            return $find;
+        }
+
+        foreach ($data as $result) {
+            if ('YouTube' == $result['site']) {
+                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
+                $movie->setTrailer($url);
+
+                $find = true;
+
+                break;
+            }
+        }
+
+        return $find;
+    }
+
     private function getDetailsOmDBAPI(string $imdbId): ?array
     {
         if ('' === $this->omdbapiKey) {
@@ -266,14 +236,43 @@ class MovieService
         return json_decode($response->getContent(), true);
     }
 
-    public function getVideo(int $movieId): ?array
+    private function getDetailsTmdb(string $imdbId): ?array
     {
-        $french = $this->getVideoFR($movieId);
-        if (!is_null($french)) {
-            return $french;
+        if ('' === $this->tmdbapiKey) {
+            return null;
         }
 
-        return $this->getVideoALL($movieId);
+        $url      = 'https://api.themoviedb.org/3/find/' . $imdbId . '?external_source=imdb_id&language=fr-FR';
+        $response = $this->httpClient->request(
+            'GET',
+            $url,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                    'accept'        => 'application/json',
+                ],
+            ]
+        );
+        if (self::STATUSOK !== $response->getStatusCode()) {
+            return null;
+        }
+
+        return json_decode($response->getContent(), true);
+    }
+
+    private function getImg(array $data): string
+    {
+        if (isset($data['movie_results'][0]['poster_path'])) {
+            $img = $data['movie_results'][0]['poster_path'];
+
+            return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' . $img;
+        }
+
+        if (isset($data['Poster']) && 'N/A' != $data['Poster']) {
+            return $data['Poster'];
+        }
+
+        return '';
     }
 
     private function getVideoALL(int $movieId): ?array
@@ -374,42 +373,44 @@ class MovieService
         return $media instanceof Media;
     }
 
-    private function getDetailsTmdb(string $imdbId): ?array
+    private function updateImdb(Movie $movie): void
     {
-        if ('' === $this->tmdbapiKey) {
-            return null;
+        if (!str_starts_with((string) $movie->getImdb(), 'tt')) {
+            $movie->setImdb('tt' . str_pad((string) $movie->getImdb(), 7, '0', STR_PAD_LEFT));
         }
-
-        $url      = 'https://api.themoviedb.org/3/find/' . $imdbId . '?external_source=imdb_id&language=fr-FR';
-        $response = $this->httpClient->request(
-            'GET',
-            $url,
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                    'accept'        => 'application/json',
-                ],
-            ]
-        );
-        if (self::STATUSOK !== $response->getStatusCode()) {
-            return null;
-        }
-
-        return json_decode($response->getContent(), true);
     }
 
-    private function getImg(array $data): string
+    private function updateSaga(Movie $movie): bool
     {
-        if (isset($data['movie_results'][0]['poster_path'])) {
-            $img = $data['movie_results'][0]['poster_path'];
-
-            return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' . $img;
+        $saga = $movie->getSaga();
+        if (!$saga instanceof Saga) {
+            return false;
         }
 
-        if (isset($data['Poster']) && 'N/A' != $data['Poster']) {
-            return $data['Poster'];
+        $slug = $saga->getSlug();
+        if ('' != $slug) {
+            return false;
         }
 
-        return '';
+        $saga->setSlug(null);
+
+        $this->sagaRepository->save($saga);
+
+        return true;
+    }
+
+    private function updateVote(Movie $movie, array $details): bool
+    {
+        if (!isset($details['movie_results'][0]['id'])) {
+            return false;
+        }
+
+        $voteEverage = (float) $details['movie_results'][0]['vote_average'] ?? 0;
+        $voteCount   = (int) $details['movie_results'][0]['vote_count'] ?? 0;
+
+        $movie->setEvaluation($voteEverage);
+        $movie->setVotes($voteCount);
+
+        return true;
     }
 }

@@ -24,9 +24,9 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     #[Route('/admin/http-error-logs/{entity}/banip', name: 'admin_http_error_logs_banip')]
     public function banIp(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib       = $this->getRepository();
-        $httpErrorLogs                    = $serviceEntityRepositoryLib->find($entity);
-        $internetProtocol                 = $httpErrorLogs->getInternetProtocol();
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $httpErrorLogs              = $serviceEntityRepositoryLib->find($entity);
+        $internetProtocol           = $httpErrorLogs->getInternetProtocol();
 
         $redirectToRoute = $this->redirectToRoute('admin_http_error_logs_index');
         if ($this->securityService->getCurrentClientIp() === $internetProtocol) {
@@ -55,7 +55,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         $this->addToBan($actions);
         $this->addToRedirection($actions);
         $request = $this->container->get('request_stack')->getCurrentRequest();
-        $action = $request->query->get('action', null);
+        $action  = $request->query->get('action', null);
         if ('trash' != $action) {
             $actions->remove(Crud::PAGE_INDEX, Action::NEW);
             $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
@@ -144,33 +144,17 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         return HttpErrorLogs::class;
     }
 
-    private function addtoRedirection(Actions $actions): void
+    private function addToBan(Actions $actions): void
     {
-        $action = $this->setLinkNewRedirectionAction();
+        $action = $this->setLinkBanAction();
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function setLinkNewRedirectionAction(): Action
+    private function addtoRedirection(Actions $actions): void
     {
-        $action = Action::new('newRedirection', new TranslatableMessage('new Redirection'));
-        $action->linkToUrl(
-            fn ($entity): string => $this->generateUrl(
-                'admin_redirection_new',
-                [
-                    'source' => $entity->getUrl(),
-                ]
-            )
-        );
-        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
-
-        return $action;
-    }
-
-    private function addToBan(Actions $actions): void
-    {
-        $action = $this->setLinkBanAction();
+        $action = $this->setLinkNewRedirectionAction();
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
@@ -184,6 +168,22 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
                 'admin_http_error_logs_banip',
                 [
                     'entity' => $entity->getId(),
+                ]
+            )
+        );
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        return $action;
+    }
+
+    private function setLinkNewRedirectionAction(): Action
+    {
+        $action = Action::new('newRedirection', new TranslatableMessage('new Redirection'));
+        $action->linkToUrl(
+            fn ($entity): string => $this->generateUrl(
+                'admin_redirection_new',
+                [
+                    'source' => $entity->getUrl(),
                 ]
             )
         );

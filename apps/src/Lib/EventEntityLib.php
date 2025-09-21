@@ -74,31 +74,29 @@ abstract class EventEntityLib
         $workflow->apply($object, 'submit');
     }
 
-    protected function updateEntityPage($instance): void
+    protected function updateEntityBanIp($instance, EntityManagerInterface $entityManager): void
     {
-        if (!$instance instanceof Page) {
+        if (!$instance instanceof BanIp) {
             return;
         }
 
-        if ('home' != $instance->getType()) {
+        $httpsLogs = $this->httpErrorLogsRepository->findBy(
+            [
+                'internetProtocol' => $instance->getInternetProtocol(),
+            ]
+        );
+        foreach ($httpsLogs as $httpLog) {
+            $entityManager->remove($httpLog);
+        }
+    }
+
+    protected function updateEntityBlock($instance): void
+    {
+        if (!$instance instanceof Block) {
             return;
         }
 
-        $oldHome = $this->pageRepository->getOneByType('home');
-        if ('home' == $instance->getType()) {
-            $instance->setSlug('');
-        }
-
-        if ($oldHome instanceof Page && $oldHome->getId() === $instance->getId()) {
-            return;
-        }
-
-        if ($oldHome instanceof Page) {
-            $oldHome->setType('page');
-            $this->pageRepository->save($oldHome);
-        }
-
-        $instance->setSlug('');
+        $this->blockService->update($instance);
     }
 
     protected function updateEntityChapter($instance): void
@@ -128,14 +126,40 @@ abstract class EventEntityLib
         $this->movieService->update($instance);
     }
 
-    protected function updateEntityStory($instance): void
+    protected function updateEntityPage($instance): void
     {
-        if (!$instance instanceof Story) {
+        if (!$instance instanceof Page) {
             return;
         }
 
-        $this->storyService->setPdf($instance);
-        $this->storyService->generateFlashBag();
+        if ('home' != $instance->getType()) {
+            return;
+        }
+
+        $oldHome = $this->pageRepository->getOneByType('home');
+        if ('home' == $instance->getType()) {
+            $instance->setSlug('');
+        }
+
+        if ($oldHome instanceof Page && $oldHome->getId() === $instance->getId()) {
+            return;
+        }
+
+        if ($oldHome instanceof Page) {
+            $oldHome->setType('page');
+            $this->pageRepository->save($oldHome);
+        }
+
+        $instance->setSlug('');
+    }
+
+    protected function updateEntityParagraph($instance): void
+    {
+        if (!$instance instanceof Paragraph) {
+            return;
+        }
+
+        $this->paragraphService->update($instance);
     }
 
     protected function updateEntityRedirection($instance, EntityManagerInterface $entityManager): void
@@ -154,37 +178,13 @@ abstract class EventEntityLib
         }
     }
 
-    protected function updateEntityBanIp($instance, EntityManagerInterface $entityManager): void
+    protected function updateEntityStory($instance): void
     {
-        if (!$instance instanceof BanIp) {
+        if (!$instance instanceof Story) {
             return;
         }
 
-        $httpsLogs = $this->httpErrorLogsRepository->findBy(
-            [
-                'internetProtocol' => $instance->getInternetProtocol(),
-            ]
-        );
-        foreach ($httpsLogs as $httpLog) {
-            $entityManager->remove($httpLog);
-        }
-    }
-
-    protected function updateEntityParagraph($instance): void
-    {
-        if (!$instance instanceof Paragraph) {
-            return;
-        }
-
-        $this->paragraphService->update($instance);
-    }
-
-    protected function updateEntityBlock($instance): void
-    {
-        if (!$instance instanceof Block) {
-            return;
-        }
-
-        $this->blockService->update($instance);
+        $this->storyService->setPdf($instance);
+        $this->storyService->generateFlashBag();
     }
 }

@@ -25,7 +25,7 @@ class BanautoCommand extends Command
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
 
-        $data = $this->httpErrorLogsRepository->getAllinternetProtocolWithNbr(10);
+        $data = $this->httpErrorLogsRepository->getAllinternetProtocolWithNbr(5);
         foreach ($data as $httpErroLogs) {
             $internetProtocol = $httpErroLogs['internetProtocol'];
             if ($this->securityService->getCurrentClientIp() === $internetProtocol) {

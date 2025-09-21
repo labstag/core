@@ -31,24 +31,6 @@ class ChapterCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Route('/admin/chapter/{entity}/w3c', name: 'admin_chapter_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $chapter                    = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->linkw3CValidator($chapter);
-    }
-
-    #[Route('/admin/chapter/{entity}/public', name: 'admin_chapter_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $chapter                    = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->publicLink($chapter);
-    }
-
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
@@ -98,9 +80,9 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[Override]
     public function createEntity(string $entityFqcn): Chapter
     {
-        $chapter       = new $entityFqcn();
-        $request       = $this->requestStack->getCurrentRequest();
-        $defaultStory  = $request->query->get('story');
+        $chapter      = new $entityFqcn();
+        $request      = $this->requestStack->getCurrentRequest();
+        $defaultStory = $request->query->get('story');
         if ($defaultStory) {
             $repository = $this->getRepository(Story::class);
             $story      = $repository->find($defaultStory);
@@ -118,6 +100,24 @@ class ChapterCrudController extends AbstractCrudControllerLib
     public static function getEntityFqcn(): string
     {
         return Chapter::class;
+    }
+
+    #[Route('/admin/chapter/{entity}/public', name: 'admin_chapter_public')]
+    public function linkPublic(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $chapter                    = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->publicLink($chapter);
+    }
+
+    #[Route('/admin/chapter/{entity}/w3c', name: 'admin_chapter_w3c')]
+    public function w3c(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $chapter                    = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->linkw3CValidator($chapter);
     }
 
     private function addFieldRefStory(): AssociationField

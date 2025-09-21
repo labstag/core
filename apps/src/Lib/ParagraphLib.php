@@ -81,16 +81,6 @@ abstract class ParagraphLib extends AbstractController
     {
     }
 
-    public function update(Paragraph $paragraph): void
-    {
-        unset($paragraph);
-    }
-
-    public function getClasses(Paragraph $paragraph): array
-    {
-        return explode(' ', (string) $paragraph->getClasses());
-    }
-
     public function addFieldImageUpload(string $type, string $pageName): TextField|ImageField
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
@@ -133,6 +123,11 @@ abstract class ParagraphLib extends AbstractController
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($paragraph, $data, $disable);
+    }
+
+    public function getClasses(Paragraph $paragraph): array
+    {
+        return explode(' ', (string) $paragraph->getClasses());
     }
 
     /**
@@ -196,6 +191,11 @@ abstract class ParagraphLib extends AbstractController
         unset($paragraph);
 
         return $this->getTemplateContent($type, $this->getType());
+    }
+
+    public function update(Paragraph $paragraph): void
+    {
+        unset($paragraph);
     }
 
     /**
@@ -310,20 +310,6 @@ abstract class ParagraphLib extends AbstractController
         $this->data[$paragraph->getId()] = $data;
     }
 
-    private function setUrlAdmin(
-        Paragraph $paragraph,
-    ): string|\EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface
-    {
-        if (!$this->security->isGranted('ROLE_ADMIN')) {
-            return '';
-        }
-
-        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
-        $adminUrlGenerator->setEntityId($paragraph->getId());
-
-        return $adminUrlGenerator->setController(ParagraphCrudController::class);
-    }
-
     protected function setFooter(Paragraph $paragraph, mixed $data): void
     {
         $paragraphId = $paragraph->getId();
@@ -361,5 +347,19 @@ abstract class ParagraphLib extends AbstractController
             Page::class,
             Post::class,
         ];
+    }
+
+    private function setUrlAdmin(
+        Paragraph $paragraph,
+    ): string|\EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface
+    {
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
+            return '';
+        }
+
+        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
+        $adminUrlGenerator->setEntityId($paragraph->getId());
+
+        return $adminUrlGenerator->setController(ParagraphCrudController::class);
     }
 }

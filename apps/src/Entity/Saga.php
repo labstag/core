@@ -22,9 +22,6 @@ class Saga implements Stringable
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
-
     /**
      * @var Collection<int, Movie>
      */
@@ -35,46 +32,12 @@ class Saga implements Stringable
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     private ?string $slug = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $title = null;
+
     public function __construct()
     {
         $this->movies = new ArrayCollection();
-    }
-
-    public function setSlug(?string $slug): static
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function getId(): ?string
-    {
-        return $this->id;
-    }
-
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Movie>
-     */
-    public function getMovies(): Collection
-    {
-        return $this->movies;
     }
 
     #[Override]
@@ -93,12 +56,49 @@ class Saga implements Stringable
         return $this;
     }
 
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return Collection<int, Movie>
+     */
+    public function getMovies(): Collection
+    {
+        return $this->movies;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
     public function removeMovie(Movie $movie): static
     {
         // set the owning side to null (unless already changed)
         if ($this->movies->removeElement($movie) && $movie->getSaga() === $this) {
             $movie->setSaga(null);
         }
+
+        return $this;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
 
         return $this;
     }

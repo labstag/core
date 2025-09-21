@@ -37,7 +37,7 @@ final class SameConfigurator implements FieldConfiguratorInterface
             return;
         }
 
-        $logs             = $this->httpErrorLogsRepository->findBy(
+        $logs = $this->httpErrorLogsRepository->findBy(
             ['internetProtocol' => $internetProtocol]
         );
 

@@ -33,17 +33,17 @@ class MovieAddCommand extends Command
      */
     private array $categories = [];
 
-    /**
-     * @var Tag[]
-     */
-    private array $tags = [];
+    private array $imdbs = [];
 
     /**
      * @var Saga[]
      */
     private array $sagas = [];
 
-    private array $imdbs = [];
+    /**
+     * @var Tag[]
+     */
+    private array $tags = [];
 
     private int $update = 0;
 
@@ -201,26 +201,50 @@ class MovieAddCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function setTags(Movie $movie, $tags): void
+    private function getMovieByImdb(string $imdb): ?Movie
     {
-        $oldTags = $movie->getTags();
-        foreach ($oldTags as $oldTag) {
-            $movie->removeTag($oldTag);
+        $searchs[]['imdb'] = $imdb;
+        if (str_starts_with($imdb, 'tt')) {
+            $this->imdbs[]     = $imdb;
+            $searchs[]['imdb'] = str_pad(substr($imdb, 2), 7, '0', STR_PAD_LEFT);
         }
 
-        foreach ($tags as $value) {
-            $value = trim((string) $value);
-            if ('' === $value) {
-                continue;
-            }
-
-            if ('0' === $value) {
-                continue;
-            }
-
-            $tag = $this->getTag($value);
-            $movie->addTag($tag);
+        if (!str_starts_with($imdb, 'tt')) {
+            $this->imdbs[] = 'tt' . str_pad($imdb, 7, '0', STR_PAD_LEFT);
         }
+
+        foreach ($searchs as $search) {
+            $movie = $this->movieRepository->findOneBy($search);
+            if ($movie instanceof Movie) {
+                return $movie;
+            }
+        }
+
+        return null;
+    }
+
+    private function getSaga(string $value): Saga
+    {
+        if (isset($this->sagas[$value])) {
+            return $this->sagas[$value];
+        }
+
+        $saga = $this->sagaRepository->findOneBy(
+            ['title' => $value]
+        );
+        if ($saga instanceof Saga) {
+            $this->sagas[$value] = $saga;
+
+            return $saga;
+        }
+
+        $saga = new Saga();
+        $saga->setTitle($value);
+
+        $this->sagaRepository->save($saga);
+        $this->sagas[$value] = $saga;
+
+        return $saga;
     }
 
     private function setCategories(Movie $movie, $categories): void
@@ -243,28 +267,6 @@ class MovieAddCommand extends Command
             $category = $this->getCategory($value);
             $movie->addCategory($category);
         }
-    }
-
-    private function getMovieByImdb(string $imdb): ?Movie
-    {
-        $searchs[]['imdb'] = $imdb;
-        if (str_starts_with($imdb, 'tt')) {
-            $this->imdbs[]     = $imdb;
-            $searchs[]['imdb'] = str_pad(substr($imdb, 2), 7, '0', STR_PAD_LEFT);
-        }
-
-        if (!str_starts_with($imdb, 'tt')) {
-            $this->imdbs[] = 'tt' . str_pad($imdb, 7, '0', STR_PAD_LEFT);
-        }
-
-        foreach ($searchs as $search) {
-            $movie = $this->movieRepository->findOneBy($search);
-            if ($movie instanceof Movie) {
-                return $movie;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -299,30 +301,6 @@ class MovieAddCommand extends Command
         return $movie;
     }
 
-    private function getSaga(string $value): Saga
-    {
-        if (isset($this->sagas[$value])) {
-            return $this->sagas[$value];
-        }
-
-        $saga = $this->sagaRepository->findOneBy(
-            ['title' => $value]
-        );
-        if ($saga instanceof Saga) {
-            $this->sagas[$value] = $saga;
-
-            return $saga;
-        }
-
-        $saga = new Saga();
-        $saga->setTitle($value);
-
-        $this->sagaRepository->save($saga);
-        $this->sagas[$value] = $saga;
-
-        return $saga;
-    }
-
     private function setSaga(Movie $movie, $saga): void
     {
         if (is_null($saga) || '' === $saga) {
@@ -334,5 +312,27 @@ class MovieAddCommand extends Command
         $saga = $this->getSaga($saga);
 
         $movie->setSaga($saga);
+    }
+
+    private function setTags(Movie $movie, $tags): void
+    {
+        $oldTags = $movie->getTags();
+        foreach ($oldTags as $oldTag) {
+            $movie->removeTag($oldTag);
+        }
+
+        foreach ($tags as $value) {
+            $value = trim((string) $value);
+            if ('' === $value) {
+                continue;
+            }
+
+            if ('0' === $value) {
+                continue;
+            }
+
+            $tag = $this->getTag($value);
+            $movie->addTag($tag);
+        }
     }
 }

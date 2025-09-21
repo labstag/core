@@ -15,18 +15,6 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
-    private function getClass(Paragraph $paragraph): string
-    {
-        $tab = [
-            'paragraph',
-            'paragraph_' . $paragraph->getType(),
-        ];
-
-        $tab = array_merge($tab, $this->paragraphService->getClasses($paragraph));
-
-        return trim(implode(' ', $tab));
-    }
-
     public function getContextMenu(Paragraph $paragraph): array
     {
         $urlAdmin = $this->paragraphService->getUrlAdmin($paragraph);
@@ -50,11 +38,6 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         return $this->paragraphService->getFond($code);
     }
 
-    private function getId(Paragraph $paragraph): string
-    {
-        return 'paragraph_' . $paragraph->getType() . '-' . $paragraph->getId();
-    }
-
     public function getName(string $code): string
     {
         return $this->paragraphService->getNameByCode($code);
@@ -76,5 +59,22 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         }
 
         return $content->getContent();
+    }
+
+    private function getClass(Paragraph $paragraph): string
+    {
+        $tab = [
+            'paragraph',
+            'paragraph_' . $paragraph->getType(),
+        ];
+
+        $tab = array_merge($tab, $this->paragraphService->getClasses($paragraph));
+
+        return trim(implode(' ', $tab));
+    }
+
+    private function getId(Paragraph $paragraph): string
+    {
+        return 'paragraph_' . $paragraph->getType() . '-' . $paragraph->getId();
     }
 }
