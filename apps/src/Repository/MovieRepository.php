@@ -79,7 +79,10 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->orWhere('s.slug is NULL');
         $queryBuilder->orWhere('s.slug = :slug');
         $queryBuilder->setParameter('slug', '');
+        $queryBuilder->orWhere('s.img IS NULL');
+        $queryBuilder->orWhere('s.description IS NULL');
         $queryBuilder->orWhere('m.description IS NULL');
+        $queryBuilder->orWhere('m.citation IS NULL');
         $queryBuilder->orWhere('m.evaluation IS NULL');
         $queryBuilder->orWhere('m.votes IS NULL');
 

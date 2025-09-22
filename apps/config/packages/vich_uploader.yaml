@@ -42,6 +42,17 @@ vich_uploader:
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
+    saga:
+      uri_prefix: /uploads/saga
+      upload_destination: saga.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: tmdb
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
     edito:
       uri_prefix: /uploads/edito
       upload_destination: edito.storage

@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use Labstag\Entity\Saga;
+use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -44,12 +45,12 @@ class SagaCrudController extends AbstractCrudControllerLib
         $collectionField->onlyOnIndex();
         $collectionField->formatValue(fn ($value): int => count($value));
         yield $collectionField;
+        yield $this->addFieldImageUpload('img', $pageName);
+        yield WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex();
         $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
         $collectionField->setTemplatePath('admin/field/movies.html.twig');
         $collectionField->onlyOnDetail();
         yield $collectionField;
-
-        unset($pageName);
     }
 
     public static function getEntityFqcn(): string

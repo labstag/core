@@ -70,17 +70,27 @@ class MovieService
         return $country;
     }
 
-    public function getDetails(string $imdbId): array
+    public function getDetails(Movie $movie): array
     {
         $details = [];
-        $omdb    = $this->getDetailsOmDBAPI($imdbId);
+        $omdb    = $this->getDetailsOmDBAPI($movie->getImdb());
         if (null !== $omdb) {
             $details = array_merge($details, $omdb);
         }
 
-        $tmdb = $this->getDetailsTmdb($imdbId);
+        $tmdb = $this->getDetailsTmdb($movie->getImdb());
         if (null !== $tmdb) {
-            return array_merge($details, $tmdb);
+            $details = array_merge($details, $tmdb);
+        }
+
+        $tmdbmovie = $this->getDetailsTmdbMovie($movie->getTmdb());
+        if (null !== $tmdbmovie) {
+            $details = array_merge($details, $tmdbmovie);
+        }
+
+        if (isset($details['belongs_to_collection']['id'])) {
+            $idCollection          = (string) $details['belongs_to_collection']['id'];
+            $details['collection'] = $this->getDetailsTmdbCollection($idCollection);
         }
 
         return $details;
@@ -138,14 +148,15 @@ class MovieService
     public function update(Movie $movie): bool
     {
         $this->updateImdb($movie);
-        $details           = $this->getDetails($movie->getImdb());
-        $statusSaga        = $this->updateSaga($movie);
+        $details           = $this->getDetails($movie);
+        $statusMovie       = $this->updateMovie($movie, $details);
+        $statusSaga        = $this->updateSaga($movie, $details);
         $statusVote        = $this->updateVote($movie, $details);
-        $statusImage       = $this->updateImage($movie, $details);
+        $statusImage       = $this->updateImageMovie($movie, $details);
         $statusDescription = $this->updateDescription($movie, $details);
         $statusVideo       = $this->updateTrailer($movie, $details);
 
-        return $statusSaga || $statusVote || $statusImage || $statusDescription || $statusVideo;
+        return $statusSaga || $statusMovie || $statusVote || $statusImage || $statusDescription || $statusVideo;
     }
 
     public function updateDescription(Movie $movie, array $details): bool
@@ -163,9 +174,9 @@ class MovieService
         return true;
     }
 
-    public function updateImage(Movie $movie, array $details): bool
+    public function updateImageMovie(Movie $movie, array $details): bool
     {
-        $poster = $this->getImg($details);
+        $poster = $this->getImgMovie($details);
         if ('' === $poster) {
             return false;
         }
@@ -184,6 +195,34 @@ class MovieService
             );
 
             $movie->setImgFile($uploadedFile);
+
+            return true;
+        } catch (Exception) {
+            return false;
+        }
+    }
+
+    public function updateImageSaga(Saga $saga, array $details): bool
+    {
+        $poster = $this->getImgSaga($details);
+        if ('' === $poster) {
+            return false;
+        }
+
+        try {
+            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+
+            // Télécharger l'image et l'écrire dans le fichier temporaire
+            file_put_contents($tempPath, file_get_contents($poster));
+
+            $uploadedFile = new UploadedFile(
+                path: $tempPath,
+                originalName: basename($tempPath),
+                mimeType: mime_content_type($tempPath),
+                test: true
+            );
+
+            $saga->setImgFile($uploadedFile);
 
             return true;
         } catch (Exception) {
@@ -260,16 +299,76 @@ class MovieService
         return json_decode($response->getContent(), true);
     }
 
-    private function getImg(array $data): string
+    private function getDetailsTmdbCollection(string $tmdbId): ?array
+    {
+        if ('' === $this->tmdbapiKey) {
+            return null;
+        }
+
+        $url      = 'https://api.themoviedb.org/3/collection/' . $tmdbId . '?language=fr-FR';
+        $response = $this->httpClient->request(
+            'GET',
+            $url,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                    'accept'        => 'application/json',
+                ],
+            ]
+        );
+        if (self::STATUSOK !== $response->getStatusCode()) {
+            return null;
+        }
+
+        return json_decode($response->getContent(), true);
+    }
+
+    private function getDetailsTmdbMovie(string $tmdbId): ?array
+    {
+        if ('' === $this->tmdbapiKey) {
+            return null;
+        }
+
+        $url      = 'https://api.themoviedb.org/3/movie/' . $tmdbId . '?language=fr-FR';
+        $response = $this->httpClient->request(
+            'GET',
+            $url,
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                    'accept'        => 'application/json',
+                ],
+            ]
+        );
+        if (self::STATUSOK !== $response->getStatusCode()) {
+            return null;
+        }
+
+        return json_decode($response->getContent(), true);
+    }
+
+    private function getImgImdb(string $img): string
+    {
+        return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' . $img;
+    }
+
+    private function getImgMovie(array $data): string
     {
         if (isset($data['movie_results'][0]['poster_path'])) {
-            $img = $data['movie_results'][0]['poster_path'];
-
-            return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' . $img;
+            return $this->getImgImdb($data['movie_results'][0]['poster_path']);
         }
 
         if (isset($data['Poster']) && 'N/A' != $data['Poster']) {
             return $data['Poster'];
+        }
+
+        return '';
+    }
+
+    private function getImgSaga(array $data): string
+    {
+        if (isset($data['collection']['poster_path'])) {
+            return $this->getImgImdb($data['collection']['poster_path']);
         }
 
         return '';
@@ -380,19 +479,32 @@ class MovieService
         }
     }
 
-    private function updateSaga(Movie $movie): bool
+    private function updateMovie(Movie $movie, array $details): bool
+    {
+        $movie->setAdult($details['movie_results'][0]['adult']);
+        $tagline = (string) $details['tagline'];
+        $movie->setCitation($tagline);
+
+        return true;
+    }
+
+    private function updateSaga(Movie $movie, array $details): bool
     {
         $saga = $movie->getSaga();
         if (!$saga instanceof Saga) {
             return false;
         }
 
-        $slug = $saga->getSlug();
-        if ('' != $slug) {
-            return false;
+        $this->updateImageSaga($saga, $details);
+        if (isset($details['collection']['id'])) {
+            $saga->setTmdb($details['collection']['id']);
         }
 
-        $saga->setSlug(null);
+        $saga->setDescription($details['collection']['overview'] ?? '');
+        $slug = $saga->getSlug();
+        if ('' != $slug) {
+            $saga->setSlug(null);
+        }
 
         $this->sagaRepository->save($saga);
 

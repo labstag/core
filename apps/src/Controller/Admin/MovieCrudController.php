@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Movie;
+use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Service\MovieService;
 use Override;
@@ -64,7 +65,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield NumberField::new('evaluation', new TranslatableMessage('Evaluation'));
         yield IntegerField::new('votes', new TranslatableMessage('Votes'));
         yield TextField::new('trailer', new TranslatableMessage('Trailer'))->hideOnIndex();
-        yield TextField::new('description', new TranslatableMessage('Description'))->hideOnIndex();
+        yield WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex();
         yield $this->addFieldCategories('movie');
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));

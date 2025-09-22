@@ -26,11 +26,17 @@ class Movie implements Stringable
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
+    #[ORM\Column]
+    private ?bool $adult = null;
+
     /**
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
     private Collection $categories;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $citation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $color = null;
@@ -85,6 +91,9 @@ class Movie implements Stringable
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $tmdb = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $trailer = null;
@@ -144,6 +153,11 @@ class Movie implements Stringable
     public function getCategories(): Collection
     {
         return $this->categories;
+    }
+
+    public function getCitation(): ?string
+    {
+        return $this->citation;
     }
 
     public function getColor(): ?string
@@ -217,6 +231,11 @@ class Movie implements Stringable
         return $this->title;
     }
 
+    public function getTmdb(): ?string
+    {
+        return $this->tmdb;
+    }
+
     public function getTrailer(): ?string
     {
         return $this->trailer;
@@ -230,6 +249,11 @@ class Movie implements Stringable
     public function getYear(): ?int
     {
         return $this->year;
+    }
+
+    public function isAdult(): ?bool
+    {
+        return $this->adult;
     }
 
     public function isEnable(): ?bool
@@ -261,6 +285,20 @@ class Movie implements Stringable
         if ($this->tags->removeElement($tag)) {
             $tag->removeMovie($this);
         }
+
+        return $this;
+    }
+
+    public function setAdult(bool $adult): static
+    {
+        $this->adult = $adult;
+
+        return $this;
+    }
+
+    public function setCitation(?string $citation): static
+    {
+        $this->citation = $citation;
 
         return $this;
     }
@@ -340,6 +378,13 @@ class Movie implements Stringable
     public function setTitle(?string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function setTmdb(?string $tmdb): static
+    {
+        $this->tmdb = $tmdb;
 
         return $this;
     }

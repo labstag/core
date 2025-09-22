@@ -2,25 +2,41 @@
 
 namespace Labstag\Entity;
 
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Labstag\Repository\SagaRepository;
+use Labstag\Traits\Entity\TimestampableTrait;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: SagaRepository::class)]
+#[Vich\Uploadable]
 class Saga implements Stringable
 {
+    use TimestampableTrait;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $img = null;
+
+    #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'img')]
+    private ?File $imgFile = null;
 
     /**
      * @var Collection<int, Movie>
@@ -34,6 +50,9 @@ class Saga implements Stringable
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $tmdb = null;
 
     public function __construct()
     {
@@ -56,9 +75,24 @@ class Saga implements Stringable
         return $this;
     }
 
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    public function getImg(): ?string
+    {
+        return $this->img;
+    }
+
+    public function getImgFile(): ?File
+    {
+        return $this->imgFile;
     }
 
     /**
@@ -79,6 +113,11 @@ class Saga implements Stringable
         return $this->title;
     }
 
+    public function getTmdb(): ?string
+    {
+        return $this->tmdb;
+    }
+
     public function removeMovie(Movie $movie): static
     {
         // set the owning side to null (unless already changed)
@@ -87,6 +126,29 @@ class Saga implements Stringable
         }
 
         return $this;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function setImg(?string $img): void
+    {
+        $this->img = $img;
+    }
+
+    public function setImgFile(?File $imgFile = null): void
+    {
+        $this->imgFile = $imgFile;
+
+        if ($imgFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setSlug(?string $slug): static
@@ -99,6 +161,13 @@ class Saga implements Stringable
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function setTmdb(?string $tmdb): static
+    {
+        $this->tmdb = $tmdb;
 
         return $this;
     }
