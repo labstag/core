@@ -29,6 +29,10 @@ flysystem:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/uploads/movie'
+    saga.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/saga'
     edito.storage:
       adapter: 'local'
       options:

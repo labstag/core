@@ -286,9 +286,11 @@ class MovieAddCommand extends Command
         $categories = explode(',', (string) $data['Genre(s)']);
         $tags       = explode(',', (string) $data['Tags']);
         $country    = $data['Pays'];
+        $tmdb       = (string) $data['ID TMDB'];
         $duration   = empty($data['Durée']) ? null : (int) $data['Durée'];
         $saga       = empty($data['Saga']) ? null : $data['Saga'];
         $title      = trim((string) $data['Titre']);
+        $movie->setTmdb($tmdb);
         $movie->setDuration($duration);
         $movie->setTitle($title);
         $movie->setYear((0 != $year) ? $year : null);
