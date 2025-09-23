@@ -279,6 +279,7 @@ class MovieAddCommand extends Command
         if (!$movie instanceof Movie) {
             $movie = new Movie();
             $movie->setEnable(true);
+            $movie->setAdult(false);
             $movie->setImdb($imdb);
         }
 
