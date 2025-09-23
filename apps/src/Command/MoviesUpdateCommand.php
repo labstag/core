@@ -26,7 +26,7 @@ class MoviesUpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $movies       = $this->movieRepository->findTrailerImageDescriptionIsNull();
+        $movies       = $this->movieRepository->findAllUpdate();
 
         $progressBar = new ProgressBar($output, count($movies));
         $progressBar->start();
