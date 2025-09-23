@@ -31,6 +31,10 @@ class MovieCrudController extends AbstractCrudControllerLib
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
+        $action = $this->setUpdateAction();
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
         $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
         $this->configureActionsUpdateImage($actions);
@@ -70,6 +74,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield $this->addFieldCategories('movie');
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
+        yield $this->addFieldBoolean('adult', new TranslatableMessage('Adult'));
         $date = $this->addTabDate();
         foreach ($date as $field) {
             yield $field;
@@ -142,6 +147,17 @@ class MovieCrudController extends AbstractCrudControllerLib
         return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
     }
 
+    #[Route('/admin/movie/{entity}/update', name: 'admin_movie_update')]
+    public function update(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $movie                      = $serviceEntityRepositoryLib->find($entity);
+        $this->movieService->update($movie);
+        $serviceEntityRepositoryLib->save($movie);
+
+        return $this->redirectToRoute('admin_movie_index');
+    }
+
     protected function addFieldSaga(): AssociationField
     {
         $associationField = AssociationField::new('saga', new TranslatableMessage('Saga'));
@@ -181,6 +197,22 @@ class MovieCrudController extends AbstractCrudControllerLib
         $action->linkToUrl(
             fn (Movie $movie): string => $this->generateUrl(
                 'admin_movie_imdb',
+                [
+                    'entity' => $movie->getId(),
+                ]
+            )
+        );
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        return $action;
+    }
+
+    private function setUpdateAction(): Action
+    {
+        $action = Action::new('update', new TranslatableMessage('Update'));
+        $action->linkToUrl(
+            fn (Movie $movie): string => $this->generateUrl(
+                'admin_movie_update',
                 [
                     'entity' => $movie->getId(),
                 ]

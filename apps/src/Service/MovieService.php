@@ -348,12 +348,8 @@ class MovieService
 
     private function getImgMovie(array $data): string
     {
-        if (isset($data['movie_results'][0]['poster_path'])) {
-            return $this->getImgImdb($data['movie_results'][0]['poster_path']);
-        }
-
-        if (isset($data['Poster']) && 'N/A' != $data['Poster']) {
-            return $data['Poster'];
+        if (isset($data['tmdb']['movie_results'][0]['poster_path'])) {
+            return $this->getImgImdb($data['tmdb']['movie_results'][0]['poster_path']);
         }
 
         return '';
