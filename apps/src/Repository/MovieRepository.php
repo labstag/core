@@ -43,6 +43,17 @@ class MovieRepository extends ServiceEntityRepositoryLib
         return $query->getSingleColumnResult();
     }
 
+    public function findAllUpdate(): mixed
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->leftJoin('m.saga', 's')->addSelect('s');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-trailer-image-description-null');
+
+        return $query->getResult();
+    }
+
     public function findLastByNbr(int $nbr): mixed
     {
         $query = [
@@ -66,28 +77,6 @@ class MovieRepository extends ServiceEntityRepositoryLib
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'movies-not-in-imdb-list');
-
-        return $query->getResult();
-    }
-
-    public function findTrailerImageDescriptionIsNull(): mixed
-    {
-        $queryBuilder = $this->createQueryBuilder('m');
-        $queryBuilder->leftJoin('m.saga', 's')->addSelect('s');
-        $queryBuilder->where('m.trailer IS NULL');
-        $queryBuilder->orWhere('m.img IS NULL');
-        $queryBuilder->orWhere('s.slug is NULL');
-        $queryBuilder->orWhere('s.slug = :slug');
-        $queryBuilder->setParameter('slug', '');
-        $queryBuilder->orWhere('s.img IS NULL');
-        $queryBuilder->orWhere('s.description IS NULL');
-        $queryBuilder->orWhere('m.description IS NULL');
-        $queryBuilder->orWhere('m.citation IS NULL');
-        $queryBuilder->orWhere('m.evaluation IS NULL');
-        $queryBuilder->orWhere('m.votes IS NULL');
-
-        $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'movies-trailer-image-description-null');
 
         return $query->getResult();
     }

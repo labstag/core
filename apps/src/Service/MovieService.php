@@ -19,18 +19,21 @@ class MovieService
 
     protected array $category = [];
 
+    protected array $collection = [];
+
     protected array $country = [];
 
     protected array $saga = [];
 
     protected array $year = [];
 
+    protected array $updatesaga = [];
+
     public function __construct(
         protected HttpClientInterface $httpClient,
         protected MovieRepository $movieRepository,
         protected SagaRepository $sagaRepository,
         protected CategoryRepository $categoryRepository,
-        protected string $omdbapiKey,
         protected string $tmdbapiKey,
     )
     {
@@ -73,23 +76,21 @@ class MovieService
     public function getDetails(Movie $movie): array
     {
         $details = [];
-        $omdb    = $this->getDetailsOmDBAPI($movie->getImdb());
-        if (null !== $omdb) {
-            $details = array_merge($details, $omdb);
-        }
 
         $tmdb = $this->getDetailsTmdb($movie->getImdb());
         if (null !== $tmdb) {
-            $details = array_merge($details, $tmdb);
+            $details['tmdb'] = $tmdb;
         }
 
-        $tmdbmovie = $this->getDetailsTmdbMovie($movie->getTmdb());
-        if (null !== $tmdbmovie) {
-            $details = array_merge($details, $tmdbmovie);
+        if (isset($details['tmdb']['movie_results'][0]['id'])) {
+            $tmdbmovie = $this->getDetailsTmdbMovie($details['tmdb']['movie_results'][0]['id']);
+            if (null !== $tmdbmovie) {
+                $details['tmdb'] = array_merge($details['tmdb'], $tmdbmovie);
+            }
         }
 
-        if (isset($details['belongs_to_collection']['id'])) {
-            $idCollection          = (string) $details['belongs_to_collection']['id'];
+        if (isset($details['tmdb']['belongs_to_collection']['id'])) {
+            $idCollection          = (string) $details['tmdb']['belongs_to_collection']['id'];
             $details['collection'] = $this->getDetailsTmdbCollection($idCollection);
         }
 
@@ -260,21 +261,6 @@ class MovieService
         return $find;
     }
 
-    private function getDetailsOmDBAPI(string $imdbId): ?array
-    {
-        if ('' === $this->omdbapiKey) {
-            return null;
-        }
-
-        $url      = 'http://www.omdbapi.com/?i=' . $imdbId . '&apikey=' . $this->omdbapiKey;
-        $response = $this->httpClient->request('GET', $url);
-        if (self::STATUSOK !== $response->getStatusCode()) {
-            return null;
-        }
-
-        return json_decode($response->getContent(), true);
-    }
-
     private function getDetailsTmdb(string $imdbId): ?array
     {
         if ('' === $this->tmdbapiKey) {
@@ -305,6 +291,10 @@ class MovieService
             return null;
         }
 
+        if (isset($this->collection[$tmdbId])) {
+            return $this->collection[$tmdbId];
+        }
+
         $url      = 'https://api.themoviedb.org/3/collection/' . $tmdbId . '?language=fr-FR';
         $response = $this->httpClient->request(
             'GET',
@@ -317,10 +307,14 @@ class MovieService
             ]
         );
         if (self::STATUSOK !== $response->getStatusCode()) {
-            return null;
+            $this->collection[$tmdbId] = null;
+
+            return $this->collection[$tmdbId];
         }
 
-        return json_decode($response->getContent(), true);
+        $this->collection[$tmdbId] = json_decode($response->getContent(), true);
+
+        return $this->collection[$tmdbId];
     }
 
     private function getDetailsTmdbMovie(string $tmdbId): ?array
@@ -481,32 +475,39 @@ class MovieService
 
     private function updateMovie(Movie $movie, array $details): bool
     {
-        $movie->setAdult($details['movie_results'][0]['adult']);
-        $tagline = (string) $details['tagline'];
+        if (!isset($details['tmdb'])) {
+            return false;
+        }
+
+        $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
+        $movie->setAdult($adult);
+        $tagline = (string) $details['tmdb']['tagline'];
         $movie->setCitation($tagline);
+        $movie->setTmdb($details['tmdb']['id']);
 
         return true;
     }
 
     private function updateSaga(Movie $movie, array $details): bool
     {
+        if (!isset($details['collection'])) {
+            return false;
+        }
+
         $saga = $movie->getSaga();
         if (!$saga instanceof Saga) {
             return false;
         }
 
+        if (isset($this->updatesaga[$saga->getId()])) {
+            return false;
+        }
+
         $this->updateImageSaga($saga, $details);
-        if (isset($details['collection']['id'])) {
-            $saga->setTmdb($details['collection']['id']);
-        }
-
+        $saga->setTmdb($details['collection']['id']);
         $saga->setDescription($details['collection']['overview'] ?? '');
-        $slug = $saga->getSlug();
-        if ('' != $slug) {
-            $saga->setSlug(null);
-        }
 
-        $this->sagaRepository->save($saga);
+        $this->updatesaga[$saga->getId()] = true;
 
         return true;
     }
