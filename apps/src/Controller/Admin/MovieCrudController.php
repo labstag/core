@@ -31,6 +31,12 @@ class MovieCrudController extends AbstractCrudControllerLib
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
+
+        $action = $this->setLinkTmdbAction();
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+
         $action = $this->setUpdateAction();
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
@@ -60,6 +66,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield $this->addFieldID();
         yield $this->addFieldTitle();
         yield TextField::new('imdb', new TranslatableMessage('Imdb'));
+        yield TextField::new('tmdb', new TranslatableMessage('Tmdb'));
         yield IntegerField::new('year', new TranslatableMessage('Year'));
         yield TextField::new('country', new TranslatableMessage('Country'));
         yield TextField::new('color', new TranslatableMessage('Color'));
@@ -147,6 +154,15 @@ class MovieCrudController extends AbstractCrudControllerLib
         return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
     }
 
+    #[Route('/admin/movie/{entity}/tmdb', name: 'admin_movie_tmdb')]
+    public function tmdb(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $movie                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->redirect('https://www.themoviedb.org/movie/' . $movie->getTmdb());
+    }
+
     #[Route('/admin/movie/{entity}/update', name: 'admin_movie_update')]
     public function update(string $entity): RedirectResponse
     {
@@ -203,6 +219,24 @@ class MovieCrudController extends AbstractCrudControllerLib
             )
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        return $action;
+    }
+
+    private function setLinkTmdbAction(): Action
+    {
+        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToUrl(
+            fn (Movie $movie): string => $this->generateUrl(
+                'admin_movie_tmdb',
+                [
+                    'entity' => $movie->getId(),
+                ]
+            )
+        );
 
         return $action;
     }

@@ -25,9 +25,9 @@ class MovieService
 
     protected array $saga = [];
 
-    protected array $year = [];
-
     protected array $updatesaga = [];
+
+    protected array $year = [];
 
     public function __construct(
         protected HttpClientInterface $httpClient,
