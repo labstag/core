@@ -93,7 +93,7 @@ class StarAddCommand extends Command
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
         $symfonyStyle->success(
             sprintf(
-                'Added: %d, Updated: %d',
+                'Added: %s, Updated: %s',
                 $numberFormatter->format($this->add),
                 $numberFormatter->format($this->update)
             )

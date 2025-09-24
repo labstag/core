@@ -192,7 +192,7 @@ class MovieAddCommand extends Command
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
         $symfonyStyle->success(
             sprintf(
-                'Added: %d, Updated: %d',
+                'Added: %s, Updated: %s',
                 $numberFormatter->format($this->add),
                 $numberFormatter->format($this->update)
             )
@@ -247,28 +247,6 @@ class MovieAddCommand extends Command
         return $saga;
     }
 
-    private function setCategories(Movie $movie, $categories): void
-    {
-        $oldCategories = $movie->getCategories();
-        foreach ($oldCategories as $oldCategory) {
-            $movie->removeCategory($oldCategory);
-        }
-
-        foreach ($categories as $value) {
-            $value = trim((string) $value);
-            if ('' === $value) {
-                continue;
-            }
-
-            if ('0' === $value) {
-                continue;
-            }
-
-            $category = $this->getCategory($value);
-            $movie->addCategory($category);
-        }
-    }
-
     /**
      * @param mixed[] $data
      */
@@ -284,7 +262,6 @@ class MovieAddCommand extends Command
         }
 
         $year       = (int) $data['Année'];
-        $categories = explode(',', (string) $data['Genre(s)']);
         $tags       = explode(',', (string) $data['Tags']);
         $country    = $data['Pays'];
         $tmdb       = (string) $data['ID TMDB'];
@@ -297,8 +274,6 @@ class MovieAddCommand extends Command
         $movie->setYear((0 != $year) ? $year : null);
         $movie->setCountry(('' != $country) ? $country : null);
         $this->setSaga($movie, $saga);
-
-        $this->setCategories($movie, $categories);
         $this->setTags($movie, $tags);
 
         return $movie;

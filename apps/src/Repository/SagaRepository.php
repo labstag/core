@@ -13,7 +13,7 @@ class SagaRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Saga::class);
     }
 
-    public function findAllByTypeMovie(): array
+    public function findAllByTypeMovieEnable(): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->orderBy('s.title', 'ASC');
@@ -22,6 +22,18 @@ class SagaRepository extends ServiceEntityRepositoryLib
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'saga-type-movie');
+
+        return $query->getResult();
+    }
+
+    public function findSagaWithoutMovie(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->leftJoin('s.movies', 'm')->addSelect('m');
+        $queryBuilder->andWhere('m.id IS NULL');
+        $queryBuilder->orderBy('s.title', 'ASC');
+
+        $query = $queryBuilder->getQuery();
 
         return $query->getResult();
     }

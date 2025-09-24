@@ -39,9 +39,6 @@ class Movie implements Stringable
     private ?string $citation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $color = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
     private ?string $country = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -79,6 +76,9 @@ class Movie implements Stringable
      */
     #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'refmovie')]
     private Collection $paragraphs;
+
+    #[ORM\Column(name: 'release_date', type: Types::DATE_MUTABLE, nullable: true)]
+    private ?DateTime $releaseDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'movies')]
     private ?Saga $saga = null;
@@ -160,11 +160,6 @@ class Movie implements Stringable
         return $this->citation;
     }
 
-    public function getColor(): ?string
-    {
-        return $this->color;
-    }
-
     public function getCountry(): ?string
     {
         return $this->country;
@@ -211,6 +206,11 @@ class Movie implements Stringable
     public function getParagraphs(): Collection
     {
         return $this->paragraphs;
+    }
+
+    public function getReleaseDate(): ?DateTime
+    {
+        return $this->releaseDate;
     }
 
     public function getSaga(): ?Saga
@@ -303,13 +303,6 @@ class Movie implements Stringable
         return $this;
     }
 
-    public function setColor(?string $color): static
-    {
-        $this->color = $color;
-
-        return $this;
-    }
-
     public function setCountry(?string $country): static
     {
         $this->country = $country;
@@ -366,6 +359,13 @@ class Movie implements Stringable
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setReleaseDate(?DateTime $releaseDate): static
+    {
+        $this->releaseDate = $releaseDate;
+
+        return $this;
     }
 
     public function setSaga(?Saga $saga): static
