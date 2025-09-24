@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -68,8 +69,8 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield TextField::new('imdb', new TranslatableMessage('Imdb'));
         yield TextField::new('tmdb', new TranslatableMessage('Tmdb'));
         yield IntegerField::new('year', new TranslatableMessage('Year'));
+        yield DateField::new('releaseDate', new TranslatableMessage('Release date'));
         yield TextField::new('country', new TranslatableMessage('Country'));
-        yield TextField::new('color', new TranslatableMessage('Color'));
         yield IntegerField::new('duration', new TranslatableMessage('Duration'));
         yield $this->addFieldSaga();
         yield $this->addFieldTags('movie');
@@ -94,7 +95,6 @@ class MovieCrudController extends AbstractCrudControllerLib
         $this->addFilterEnable($filters);
         $filters->add('year');
         $filters->add('country');
-        $filters->add('color');
 
         $this->addFilterTags($filters, 'movie');
         $this->addFilterCategories($filters, 'movie');

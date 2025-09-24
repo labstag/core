@@ -53,7 +53,7 @@ class StoryPdfCommand extends Command
         $progressBar->finish();
 
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
-        $symfonyStyle->success(sprintf('Updated: %d', $numberFormatter->format($update)));
+        $symfonyStyle->success(sprintf('Updated: %s', $numberFormatter->format($update)));
 
         $symfonyStyle->success(
             new TranslatableMessage(

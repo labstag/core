@@ -2,15 +2,17 @@
 
 namespace Labstag\Service;
 
-use Essence\Essence;
-use Essence\Media;
+use DateTime;
 use Exception;
+use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Saga;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class MovieService
@@ -23,6 +25,8 @@ class MovieService
 
     protected array $country = [];
 
+    protected array $genres = [];
+
     protected array $saga = [];
 
     protected array $updatesaga = [];
@@ -30,6 +34,7 @@ class MovieService
     protected array $year = [];
 
     public function __construct(
+        protected CacheInterface $cache,
         protected HttpClientInterface $httpClient,
         protected MovieRepository $movieRepository,
         protected SagaRepository $sagaRepository,
@@ -39,13 +44,39 @@ class MovieService
     {
     }
 
+    public function deleteOldCategory(): void
+    {
+        $data = $this->categoryRepository->findAllByTypeMovieWithoutMovie();
+        foreach ($data as $category) {
+            $total = count($category->getMovies());
+            if (0 != $total) {
+                continue;
+            }
+
+            $this->categoryRepository->delete($category);
+        }
+    }
+
+    public function deleteOldSaga(): void
+    {
+        $data = $this->sagaRepository->findSagaWithoutMovie();
+        foreach ($data as $saga) {
+            $total = count($saga->getMovies());
+            if (0 != $total) {
+                continue;
+            }
+
+            $this->sagaRepository->delete($saga);
+        }
+    }
+
     public function getCategoryForForm(): array
     {
         if ([] !== $this->category) {
             return $this->category;
         }
 
-        $data       = $this->categoryRepository->findAllByTypeMovie();
+        $data       = $this->categoryRepository->findAllByTypeMovieEnable();
         $categories = [];
         foreach ($data as $category) {
             $categories[$category->getTitle()] = $category->getSlug();
@@ -77,16 +108,24 @@ class MovieService
     {
         $details = [];
 
-        $tmdb = $this->getDetailsTmdb($movie->getImdb());
-        if (null !== $tmdb) {
-            $details['tmdb'] = $tmdb;
+        $tmdbId = $movie->getTmdb();
+        $data   = $this->getDetailsTmdb($movie->getImdb());
+        if (null !== $data && isset($data['tmdb']['movie_results'][0]['id'])) {
+            $tmdbId = $data['tmdb']['movie_results'][0]['id'];
         }
 
-        if (isset($details['tmdb']['movie_results'][0]['id'])) {
-            $tmdbmovie = $this->getDetailsTmdbMovie($details['tmdb']['movie_results'][0]['id']);
-            if (null !== $tmdbmovie) {
-                $details['tmdb'] = array_merge($details['tmdb'], $tmdbmovie);
-            }
+        if (empty($tmdbId)) {
+            return [];
+        }
+
+        $tmdbmovie = $this->getDetailsTmdbMovie($tmdbId);
+        if (null !== $tmdbmovie) {
+            $details['tmdb'] = $tmdbmovie;
+        }
+
+        $trailers = $this->getTrailersTmdbMovie($tmdbId);
+        if (null !== $trailers) {
+            $details['trailers'] = $trailers;
         }
 
         if (isset($details['tmdb']['belongs_to_collection']['id'])) {
@@ -103,7 +142,7 @@ class MovieService
             return $this->saga;
         }
 
-        $data  = $this->sagaRepository->findAllByTypeMovie();
+        $data  = $this->sagaRepository->findAllByTypeMovieEnable();
         $sagas = [];
         foreach ($data as $saga) {
             $movies = $saga->getMovies();
@@ -117,16 +156,6 @@ class MovieService
         $this->saga = $sagas;
 
         return $sagas;
-    }
-
-    public function getVideo(int $movieId): ?array
-    {
-        $french = $this->getVideoFR($movieId);
-        if (!is_null($french)) {
-            return $french;
-        }
-
-        return $this->getVideoALL($movieId);
     }
 
     public function getYearForForm(): array
@@ -146,33 +175,37 @@ class MovieService
         return $year;
     }
 
+    public function initGenres(): array
+    {
+        if ([] !== $this->genres) {
+            return $this->genres;
+        }
+
+        $data       = $this->categoryRepository->findAllByTypeMovie();
+        $categories = [];
+        foreach ($data as $category) {
+            $title              = trim((string) $category->getTitle());
+            $categories[$title] = $category;
+        }
+
+        $this->genres = $categories;
+
+        return $categories;
+    }
+
     public function update(Movie $movie): bool
     {
         $this->updateImdb($movie);
         $details           = $this->getDetails($movie);
-        $statusMovie       = $this->updateMovie($movie, $details);
-        $statusSaga        = $this->updateSaga($movie, $details);
-        $statusVote        = $this->updateVote($movie, $details);
-        $statusImage       = $this->updateImageMovie($movie, $details);
-        $statusDescription = $this->updateDescription($movie, $details);
-        $statusVideo       = $this->updateTrailer($movie, $details);
+        $statuses          = [
+            $this->updateMovie($movie, $details),
+            $this->updateSaga($movie, $details),
+            $this->updateCategory($movie, $details),
+            $this->updateImageMovie($movie, $details),
+            $this->updateTrailer($movie, $details),
+        ];
 
-        return $statusSaga || $statusMovie || $statusVote || $statusImage || $statusDescription || $statusVideo;
-    }
-
-    public function updateDescription(Movie $movie, array $details): bool
-    {
-        if (!in_array($movie->getDescription(), [null, '', '0'], true)) {
-            return false;
-        }
-
-        if (!isset($details['movie_results'][0]['overview'])) {
-            return false;
-        }
-
-        $movie->setDescription($details['movie_results'][0]['overview']);
-
-        return true;
+        return in_array(true, $statuses, true);
     }
 
     public function updateImageMovie(Movie $movie, array $details): bool
@@ -237,18 +270,14 @@ class MovieService
             return false;
         }
 
-        if (!isset($details['movie_results'][0]['id'])) {
+        if (!isset($details['trailers'])) {
             return false;
         }
 
-        $data = $this->getVideo($details['movie_results'][0]['id']);
         $find = false;
-        if (!is_array($data)) {
-            return $find;
-        }
 
-        foreach ($data as $result) {
-            if ('YouTube' == $result['site']) {
+        foreach ($details['trailers']['results'] as $result) {
+            if ('YouTube' == $result['site'] && 'Trailer' == $result['type']) {
                 $url = 'https://www.youtube.com/watch?v=' . $result['key'];
                 $movie->setTrailer($url);
 
@@ -267,22 +296,33 @@ class MovieService
             return null;
         }
 
-        $url      = 'https://api.themoviedb.org/3/find/' . $imdbId . '?external_source=imdb_id&language=fr-FR';
-        $response = $this->httpClient->request(
-            'GET',
-            $url,
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                    'accept'        => 'application/json',
-                ],
-            ]
-        );
-        if (self::STATUSOK !== $response->getStatusCode()) {
-            return null;
-        }
+        $cacheKey = 'tmdb_find_' . $imdbId;
 
-        return json_decode($response->getContent(), true);
+        return $this->cache->get(
+            $cacheKey,
+            function (ItemInterface $item) use ($imdbId) {
+                $url      = 'https://api.themoviedb.org/3/find/' . $imdbId . '?external_source=imd_id&language=fr-FR';
+                $response = $this->httpClient->request(
+                    'GET',
+                    $url,
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                            'accept'        => 'application/json',
+                        ],
+                    ]
+                );
+                if (self::STATUSOK !== $response->getStatusCode()) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+
+                return json_decode($response->getContent(), true);
+            }
+        );
     }
 
     private function getDetailsTmdbCollection(string $tmdbId): ?array
@@ -295,24 +335,32 @@ class MovieService
             return $this->collection[$tmdbId];
         }
 
-        $url      = 'https://api.themoviedb.org/3/collection/' . $tmdbId . '?language=fr-FR';
-        $response = $this->httpClient->request(
-            'GET',
-            $url,
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                    'accept'        => 'application/json',
-                ],
-            ]
+        $cacheKey                  = 'tmdb_collection_' . $tmdbId;
+        $this->collection[$tmdbId] = $this->cache->get(
+            $cacheKey,
+            function (ItemInterface $item) use ($tmdbId) {
+                $url      = 'https://api.themoviedb.org/3/collection/' . $tmdbId . '?language=fr-FR';
+                $response = $this->httpClient->request(
+                    'GET',
+                    $url,
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                            'accept'        => 'application/json',
+                        ],
+                    ]
+                );
+                if (self::STATUSOK !== $response->getStatusCode()) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+
+                return json_decode($response->getContent(), true);
+            }
         );
-        if (self::STATUSOK !== $response->getStatusCode()) {
-            $this->collection[$tmdbId] = null;
-
-            return $this->collection[$tmdbId];
-        }
-
-        $this->collection[$tmdbId] = json_decode($response->getContent(), true);
 
         return $this->collection[$tmdbId];
     }
@@ -323,22 +371,33 @@ class MovieService
             return null;
         }
 
-        $url      = 'https://api.themoviedb.org/3/movie/' . $tmdbId . '?language=fr-FR';
-        $response = $this->httpClient->request(
-            'GET',
-            $url,
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                    'accept'        => 'application/json',
-                ],
-            ]
-        );
-        if (self::STATUSOK !== $response->getStatusCode()) {
-            return null;
-        }
+        $cacheKey = 'tmdb_movie_' . $tmdbId;
 
-        return json_decode($response->getContent(), true);
+        return $this->cache->get(
+            $cacheKey,
+            function (ItemInterface $item) use ($tmdbId) {
+                $url      = 'https://api.themoviedb.org/3/movie/' . $tmdbId . '?language=fr-FR';
+                $response = $this->httpClient->request(
+                    'GET',
+                    $url,
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                            'accept'        => 'application/json',
+                        ],
+                    ]
+                );
+                if (self::STATUSOK !== $response->getStatusCode()) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+
+                return json_decode($response->getContent(), true);
+            }
+        );
     }
 
     private function getImgImdb(string $img): string
@@ -364,102 +423,73 @@ class MovieService
         return '';
     }
 
-    private function getVideoALL(int $movieId): ?array
+    private function getTrailersTmdbMovie(string $tmdbId): ?array
     {
         if ('' === $this->tmdbapiKey) {
             return null;
         }
 
-        $url      = 'https://api.themoviedb.org/3/movie/' . $movieId . '/videos';
-        $response = $this->httpClient->request(
-            'GET',
-            $url,
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                    'accept'        => 'application/json',
-                ],
-            ]
-        );
-        if (self::STATUSOK !== $response->getStatusCode()) {
-            return null;
-        }
+        $cacheKey = 'tmdb_movie-trailers_' . $tmdbId;
 
-        $data     = json_decode($response->getContent(), true);
-        $trailers = [];
-        foreach ($data['results'] as $result) {
-            if ('Trailer' == $result['type']) {
-                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
-                if (!$this->isVideo($url)) {
-                    continue;
+        return $this->cache->get(
+            $cacheKey,
+            function (ItemInterface $item) use ($tmdbId) {
+                $url      = 'https://api.themoviedb.org/3/movie/' . $tmdbId . '/videos?language=fr-FR';
+                $response = $this->httpClient->request(
+                    'GET',
+                    $url,
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                            'accept'        => 'application/json',
+                        ],
+                    ]
+                );
+                if (self::STATUSOK !== $response->getStatusCode()) {
+                    $item->expiresAfter(0);
+
+                    return null;
                 }
 
-                $trailers[] = $result;
+                $item->expiresAfter(86400);
+
+                return json_decode($response->getContent(), true);
             }
-        }
-
-        if ([] === $trailers) {
-            return null;
-        }
-
-        return $trailers;
+        );
     }
 
-    private function getVideoFR(int $movieId): ?array
+    private function updateCategory(Movie $movie, array $details): bool
     {
-        if ('' === $this->tmdbapiKey) {
-            return null;
+        if (!isset($details['tmdb']['genres'])) {
+            return false;
         }
 
-        $url      = 'https://api.themoviedb.org/3/movie/' . $movieId . '/videos?language=fr-FR';
-        $response = $this->httpClient->request(
-            'GET',
-            $url,
-            [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                    'accept'        => 'application/json',
-                ],
-            ]
-        );
-        if (self::STATUSOK !== $response->getStatusCode()) {
-            return null;
+        $this->initGenres();
+        if (0 == count($details['tmdb']['genres'])) {
+            return false;
         }
 
-        $data     = json_decode($response->getContent(), true);
-        $trailers = [];
-        foreach ($data['results'] as $result) {
-            if ('Trailer' == $result['type']) {
-                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
-                if (!$this->isVideo($url)) {
-                    continue;
-                }
+        foreach ($movie->getCategories() as $category) {
+            $movie->removeCategory($category);
+        }
 
-                $trailers[] = $result;
+        foreach ($details['tmdb']['genres'] as $genre) {
+            $title = trim((string) $genre['name']);
+            if (isset($this->genres[$title])) {
+                $category = $this->genres[$title];
+                continue;
             }
+            
+            $category = new Category();
+            $category->setTitle($title);
+            $category->setType('movie');
+            $this->categoryRepository->save($category);
+            $this->genres[$title] = $category;
+
+            $movie->addCategory($category);
         }
 
-        if ([] === $trailers) {
-            return null;
-        }
-
-        return $trailers;
-    }
-
-    private function isVideo(string $url): bool
-    {
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
-
-        return $media instanceof Media;
+        return true;
     }
 
     private function updateImdb(Movie $movie): void
@@ -478,8 +508,25 @@ class MovieService
         $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
         $movie->setAdult($adult);
         $tagline = (string) $details['tmdb']['tagline'];
-        $movie->setCitation($tagline);
+        if ($tagline !== '' && $tagline !== '0' && in_array($movie->getCitation(), [null, '', '0'], true)) {
+            $movie->setCitation($tagline);
+        }
+
+        $overview = (string) $details['tmdb']['overview'];
+        if ($overview !== '' && $overview !== '0' && in_array($movie->getDescription(), [null, '', '0'], true)) {
+            $movie->setDescription($overview);
+        }
+
+        $voteEverage = (float) $details['tmdb']['vote_average'] ?? 0;
+        $voteCount   = (int) $details['tmdb']['vote_count'] ?? 0;
+
+        $movie->setEvaluation($voteEverage);
+        $movie->setVotes($voteCount);
+
         $movie->setTmdb($details['tmdb']['id']);
+
+        $movie->setReleaseDate(new DateTime($details['tmdb']['release_date']));
+        $movie->setDuration((int) $details['tmdb']['runtime']);
 
         return true;
     }
@@ -504,21 +551,6 @@ class MovieService
         $saga->setDescription($details['collection']['overview'] ?? '');
 
         $this->updatesaga[$saga->getId()] = true;
-
-        return true;
-    }
-
-    private function updateVote(Movie $movie, array $details): bool
-    {
-        if (!isset($details['movie_results'][0]['id'])) {
-            return false;
-        }
-
-        $voteEverage = (float) $details['movie_results'][0]['vote_average'] ?? 0;
-        $voteCount   = (int) $details['movie_results'][0]['vote_count'] ?? 0;
-
-        $movie->setEvaluation($voteEverage);
-        $movie->setVotes($voteCount);
 
         return true;
     }

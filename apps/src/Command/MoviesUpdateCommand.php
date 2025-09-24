@@ -33,6 +33,8 @@ class MoviesUpdateCommand extends Command
 
         $update  = 0;
         $counter = 0;
+        $this->movieService->deleteOldCategory();
+        $this->movieService->deleteOldSaga();
         foreach ($movies as $movie) {
             $status = $this->movieService->update($movie);
             $update = $status ? ++$update : $update;
@@ -43,11 +45,14 @@ class MoviesUpdateCommand extends Command
             $progressBar->advance();
         }
 
+        $this->movieService->deleteOldCategory();
+        $this->movieService->deleteOldSaga();
+
         $this->movieRepository->flush();
         $progressBar->finish();
 
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
-        $symfonyStyle->success(sprintf('Movie updated: %d', $numberFormatter->format($update)));
+        $symfonyStyle->success(sprintf('Movie updated: %s', $numberFormatter->format($update)));
 
         return Command::SUCCESS;
     }
