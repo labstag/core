@@ -49,7 +49,6 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->leftJoin('m.saga', 's')->addSelect('s');
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'movies-trailer-image-description-null');
 
         return $query->getResult();
     }

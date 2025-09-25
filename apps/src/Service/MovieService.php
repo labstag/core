@@ -201,7 +201,6 @@ class MovieService
             $this->updateMovie($movie, $details),
             $this->updateSaga($movie, $details),
             $this->updateCategory($movie, $details),
-            $this->updateImageMovie($movie, $details),
             $this->updateTrailer($movie, $details),
         ];
 
@@ -266,10 +265,6 @@ class MovieService
 
     public function updateTrailer(Movie $movie, array $details): bool
     {
-        if (!in_array($movie->getTrailer(), [null, '', '0'], true)) {
-            return false;
-        }
-
         if (!isset($details['trailers'])) {
             return false;
         }
@@ -407,8 +402,8 @@ class MovieService
 
     private function getImgMovie(array $data): string
     {
-        if (isset($data['tmdb']['movie_results'][0]['poster_path'])) {
-            return $this->getImgImdb($data['tmdb']['movie_results'][0]['poster_path']);
+        if (isset($data['tmdb']['poster_path'])) {
+            return $this->getImgImdb($data['tmdb']['poster_path']);
         }
 
         return '';
@@ -479,7 +474,7 @@ class MovieService
                 $category = $this->genres[$title];
                 continue;
             }
-            
+
             $category = new Category();
             $category->setTitle($title);
             $category->setType('movie');
@@ -508,12 +503,12 @@ class MovieService
         $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
         $movie->setAdult($adult);
         $tagline = (string) $details['tmdb']['tagline'];
-        if ($tagline !== '' && $tagline !== '0' && in_array($movie->getCitation(), [null, '', '0'], true)) {
+        if ('' !== $tagline && '0' !== $tagline && in_array($movie->getCitation(), [null, '', '0'], true)) {
             $movie->setCitation($tagline);
         }
 
         $overview = (string) $details['tmdb']['overview'];
-        if ($overview !== '' && $overview !== '0' && in_array($movie->getDescription(), [null, '', '0'], true)) {
+        if ('' !== $overview && '0' !== $overview && in_array($movie->getDescription(), [null, '', '0'], true)) {
             $movie->setDescription($overview);
         }
 
@@ -527,6 +522,8 @@ class MovieService
 
         $movie->setReleaseDate(new DateTime($details['tmdb']['release_date']));
         $movie->setDuration((int) $details['tmdb']['runtime']);
+
+        $this->updateImageMovie($movie, $details);
 
         return true;
     }
@@ -546,9 +543,11 @@ class MovieService
             return false;
         }
 
-        $this->updateImageSaga($saga, $details);
         $saga->setTmdb($details['collection']['id']);
         $saga->setDescription($details['collection']['overview'] ?? '');
+
+        $this->updateImageSaga($saga, $details);
+        $this->sagaRepository->save($saga);
 
         $this->updatesaga[$saga->getId()] = true;
 
