@@ -70,7 +70,7 @@ class MovieType extends AbstractType
                 'label'    => new TranslatableMessage('Order'),
                 'choices'  => [
                     'Titre'        => 'title',
-                    'Année'        => 'year',
+                    'Année'        => 'releaseDate',
                     "Date d'ajout" => 'createdAt',
                 ],
             ]

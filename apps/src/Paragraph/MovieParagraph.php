@@ -25,14 +25,7 @@ class MovieParagraph extends ParagraphLib
         $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
 
         $request = $this->requestStack->getCurrentRequest();
-        $query   = $request->query->all();
-        if (!isset($query['order'])) {
-            $query['order'] = 'createdAt';
-        }
-
-        if (!isset($query['orderby'])) {
-            $query['orderby'] = 'DESC';
-        }
+        $query   = $this->setQuery($request->query->all());
 
         $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator($query), $paragraph->getNbr());
 
@@ -96,5 +89,26 @@ class MovieParagraph extends ParagraphLib
     public function useIn(): array
     {
         return [Page::class];
+    }
+
+    private function setQuery(array $query): array
+    {
+        if (isset($query['order']) && !in_array($query['order'], ['title', 'releaseDate', 'createdAt'])) {
+            unset($query['order']);
+        }
+
+        if (!isset($query['order'])) {
+            $query['order'] = 'createdAt';
+        }
+
+        if (isset($query['orderby']) && !in_array($query['orderby'], ['ASC', 'DESC'])) {
+            unset($query['orderby']);
+        }
+
+        if (!isset($query['orderby'])) {
+            $query['orderby'] = 'DESC';
+        }
+
+        return $query;
     }
 }

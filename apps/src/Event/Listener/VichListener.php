@@ -36,8 +36,13 @@ final class VichListener
         $delete           = false;
         $reflectionClass  = new ReflectionClass($entity);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
-        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            $name  = $reflectionProperty->getName();
+        $properties       = $reflectionClass->getProperties();
+        foreach ($properties as $property) {
+            $name  = $property->getName();
+            if ('lazyObjectState' == $name) {
+                continue;
+            }
+
             $value = $propertyAccessor->getValue($entity, $name);
             if (!$value instanceof UploadedFile) {
                 continue;
