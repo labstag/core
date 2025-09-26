@@ -101,9 +101,6 @@ class Movie implements Stringable
     #[ORM\Column(nullable: true)]
     private ?int $votes = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $year = null;
-
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -244,11 +241,6 @@ class Movie implements Stringable
     public function getVotes(): ?int
     {
         return $this->votes;
-    }
-
-    public function getYear(): ?int
-    {
-        return $this->year;
     }
 
     public function isAdult(): ?bool
@@ -399,13 +391,6 @@ class Movie implements Stringable
     public function setVotes(?int $votes): static
     {
         $this->votes = $votes;
-
-        return $this;
-    }
-
-    public function setYear(?int $year): static
-    {
-        $this->year = $year;
 
         return $this;
     }

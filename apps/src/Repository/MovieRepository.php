@@ -32,7 +32,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
     public function findAllUniqueYear(): array
     {
         $queryBuilder = $this->createQueryBuilder('m');
-        $queryBuilder->select('DISTINCT m.year');
+        $queryBuilder->select('DISTINCT YEAR(m.releaseDate)');
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->orderBy('m.year', 'ASC');
@@ -148,11 +148,11 @@ class MovieRepository extends ServiceEntityRepositoryLib
 
     private function getQueryBuilderYear(QueryBuilder $queryBuilder, array $query): void
     {
-        if (empty($query['year'])) {
+        if (empty($query['year']) && !is_numeric($query['year'])) {
             return;
         }
 
-        $queryBuilder->andWhere('m.year = :year');
+        $queryBuilder->andWhere('YEAR(m.releaseDate) = :year');
         $queryBuilder->setParameter('year', $query['year']);
     }
 }
