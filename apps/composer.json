@@ -15,7 +15,7 @@
         "doctrine/doctrine-migrations-bundle": "3.4.*",
         "easycorp/easyadmin-bundle": "4.25.*",
         "essence/essence": "3.5.*",
-        "gedmo/doctrine-extensions": "3.20.*",
+        "gedmo/doctrine-extensions": "3.21.*",
         "giggsey/libphonenumber-for-php": "9.0.*",
         "knplabs/knp-menu-bundle": "3.6.*",
         "knplabs/knp-paginator-bundle": "6.9.*",
