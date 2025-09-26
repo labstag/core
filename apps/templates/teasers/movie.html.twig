@@ -2,7 +2,7 @@
     <div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}">
         {% if movie.year != '' %}
             <span class="year">
-                {{ movie.year }}
+                {{ movie.releaseDate|date('Y') }}
             </span>
         {% endif %}
     </div>

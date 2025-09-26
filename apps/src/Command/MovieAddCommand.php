@@ -261,7 +261,6 @@ class MovieAddCommand extends Command
             $movie->setImdb($imdb);
         }
 
-        $year       = (int) $data['Année'];
         $tags       = explode(',', (string) $data['Tags']);
         $country    = $data['Pays'];
         $tmdb       = (string) $data['ID TMDB'];
@@ -271,7 +270,6 @@ class MovieAddCommand extends Command
         $movie->setTmdb($tmdb);
         $movie->setDuration($duration);
         $movie->setTitle($title);
-        $movie->setYear((0 != $year) ? $year : null);
         $movie->setCountry(('' != $country) ? $country : null);
         $this->setSaga($movie, $saga);
         $this->setTags($movie, $tags);

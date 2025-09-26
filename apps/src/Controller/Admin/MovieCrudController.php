@@ -68,7 +68,6 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield $this->addFieldTitle();
         yield TextField::new('imdb', new TranslatableMessage('Imdb'));
         yield TextField::new('tmdb', new TranslatableMessage('Tmdb'));
-        yield IntegerField::new('year', new TranslatableMessage('Year'));
         yield DateField::new('releaseDate', new TranslatableMessage('Release date'));
         yield TextField::new('country', new TranslatableMessage('Country'));
         yield IntegerField::new('duration', new TranslatableMessage('Duration'));
