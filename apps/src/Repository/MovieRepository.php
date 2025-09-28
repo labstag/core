@@ -7,6 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Movie;
 use Labstag\Lib\ServiceEntityRepositoryLib;
+use Symfony\Component\Intl\Countries;
 
 class MovieRepository extends ServiceEntityRepositoryLib
 {
@@ -18,15 +19,29 @@ class MovieRepository extends ServiceEntityRepositoryLib
     public function findAllUniqueCountries(): array
     {
         $queryBuilder = $this->createQueryBuilder('m');
-        $queryBuilder->select('DISTINCT m.country');
+        $queryBuilder->select('DISTINCT m.countries');
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('m.country', 'ASC');
+        $queryBuilder->orderBy('m.countries', 'ASC');
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'movies-unique-countries');
 
-        return $query->getSingleColumnResult();
+        $data    = $query->getSingleColumnResult();
+        $country = [];
+        foreach ($data as $value) {
+            $country = array_merge($country, json_decode((string) $value));
+        }
+
+        $country = array_unique($country);
+        sort($country, SORT_STRING);
+        $data    = $country;
+        $country = [];
+        foreach ($data as $value) {
+            $country[Countries::getName($value)] = $value;
+        }
+
+        return $country;
     }
 
     public function findAllUniqueYear(): array
@@ -35,10 +50,10 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->select('DISTINCT YEAR(m.releaseDate)');
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('m.year', 'ASC');
+        $queryBuilder->orderBy('m.releaseDate', 'ASC');
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'movies-unique-year');
+        $query->enableResultCache(3600, 'movies-unique-releaseDate');
 
         return $query->getSingleColumnResult();
     }
@@ -118,12 +133,13 @@ class MovieRepository extends ServiceEntityRepositoryLib
 
     private function getQueryBuilderCountry(QueryBuilder $queryBuilder, array $query): void
     {
+        array_flip($this->findAllUniqueCountries());
         if (empty($query['country'])) {
             return;
         }
 
-        $queryBuilder->andWhere('m.country = :country');
-        $queryBuilder->setParameter('country', $query['country']);
+        $queryBuilder->andWhere('JSON_CONTAINS(m.countries, :country) = 1');
+        $queryBuilder->setParameter('country', json_encode($query['country']));
     }
 
     private function getQueryBuilderSaga(QueryBuilder $queryBuilder, array $query): void
@@ -148,7 +164,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
 
     private function getQueryBuilderYear(QueryBuilder $queryBuilder, array $query): void
     {
-        if (empty($query['year']) && !is_numeric($query['year'])) {
+        if (!isset($query['year']) || !is_numeric($query['year'])) {
             return;
         }
 

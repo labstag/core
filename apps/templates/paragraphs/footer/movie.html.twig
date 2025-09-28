@@ -32,12 +32,14 @@
 				<div class="info">
 					<div class="description">{{ movie.description|raw }}</div>
 					<ul>
-                        {% if movie.country  != '' %}
+                        {% if movie.countries|length != 0 %}
                             <li class="country">
                                 <b>
                                     {{ 'Country'|trans }}
                                 </b>
-                                {{ movie.country }}
+                                {% for country in movie.countries %}
+                                    {{ country|country_name  }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
                             </li>
                         {% endif %}
                         {% if duration != '' %}
