@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
@@ -15,9 +16,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Labstag\Service\MovieService;
 use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Intl\Countries;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -44,7 +45,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         $actions->add(Crud::PAGE_INDEX, $action);
         $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
-        $this->configureActionsUpdateImage($actions);
+        $this->configureActionsUpdateImage();
 
         return $actions;
     }
@@ -66,10 +67,15 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield $this->addFieldTitle();
-        yield TextField::new('imdb', new TranslatableMessage('Imdb'));
-        yield TextField::new('tmdb', new TranslatableMessage('Tmdb'));
+        yield TextField::new('imdb', new TranslatableMessage('Imdb'))->hideOnIndex();
+        yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
         yield DateField::new('releaseDate', new TranslatableMessage('Release date'));
-        yield TextField::new('country', new TranslatableMessage('Country'));
+        $choiceField = ChoiceField::new('countries', new TranslatableMessage('Countries'));
+        $choiceField->setChoices(array_flip(Countries::getNames()));
+        $choiceField->allowMultipleChoices();
+        $choiceField->renderExpanded(false);
+
+        yield $choiceField;
         yield IntegerField::new('duration', new TranslatableMessage('Duration'));
         yield $this->addFieldSaga();
         yield $this->addFieldTags('movie');
@@ -81,6 +87,7 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield $this->addFieldCategories('movie');
         yield $this->addFieldImageUpload('img', $pageName);
         yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
+        yield $this->addFieldBoolean('file', new TranslatableMessage('File'))->hideOnIndex();
         yield $this->addFieldBoolean('adult', new TranslatableMessage('Adult'));
         $date = $this->addTabDate();
         foreach ($date as $field) {
@@ -92,8 +99,8 @@ class MovieCrudController extends AbstractCrudControllerLib
     public function configureFilters(Filters $filters): Filters
     {
         $this->addFilterEnable($filters);
-        $filters->add('year');
-        $filters->add('country');
+        $filters->add('releaseDate');
+        $filters->add('countries');
 
         $this->addFilterTags($filters, 'movie');
         $this->addFilterCategories($filters, 'movie');
@@ -106,42 +113,6 @@ class MovieCrudController extends AbstractCrudControllerLib
     public static function getEntityFqcn(): string
     {
         return Movie::class;
-    }
-
-    #[Route('/admin/movieimageupdate', name: 'admin_movie_imageupdate')]
-    public function image(MovieService $movieService): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        if (!method_exists($serviceEntityRepositoryLib, 'findTrailerImageDescriptionIsNull')) {
-            $this->addFlash('danger', new TranslatableMessage('Method not found'));
-
-            return $this->redirectToRoute('admin_movie_index');
-        }
-
-        $movies = $serviceEntityRepositoryLib->findTrailerImageDescriptionIsNull();
-
-        $counter = 0;
-        $update  = 0;
-        foreach ($movies as $movie) {
-            $status = $movieService->update($movie);
-            $update = $status ? ++$update : $update;
-            ++$counter;
-
-            $serviceEntityRepositoryLib->persist($movie);
-            $serviceEntityRepositoryLib->flush($counter);
-        }
-
-        $serviceEntityRepositoryLib->flush();
-
-        $this->addFlash(
-            'success',
-            new TranslatableMessage(
-                'Update %update% movie(s)',
-                ['%update%' => $update]
-            )
-        );
-
-        return $this->redirectToRoute('admin_movie_index');
     }
 
     #[Route('/admin/movie/{entity}/imdb', name: 'admin_movie_imdb')]
@@ -188,19 +159,10 @@ class MovieCrudController extends AbstractCrudControllerLib
         $filters->add($entityFilter);
     }
 
-    private function configureActionsUpdateImage(Actions $actions): void
+    private function configureActionsUpdateImage(): void
     {
         $request = $this->container->get('request_stack')->getCurrentRequest();
-        $action  = $request->query->get('action', null);
-        if ('trash' == $action) {
-            return;
-        }
-
-        $action = Action::new('updateimage', new TranslatableMessage('Update Images'), 'fas fa-wrench');
-        $action->linkToUrl(fn (): string => $this->generateUrl('admin_movie_imageupdate'));
-        $action->createAsGlobalAction();
-
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $request->query->get('action', null);
     }
 
     private function setLinkImdbAction(): Action

@@ -185,7 +185,11 @@ class MovieAddCommand extends Command
 
         $oldsMovies = $this->movieRepository->findMoviesNotInImdbList($this->imdbs);
         foreach ($oldsMovies as $oldMovie) {
-            $symfonyStyle->warning(sprintf('Movie %s (%s) not in list', $oldMovie->getTitle(), $oldMovie->getImdb()));
+            if ($oldMovie->isFile()) {
+                $symfonyStyle->warning(
+                    sprintf('Movie %s (%s) not in list', $oldMovie->getTitle(), $oldMovie->getImdb())
+                );
+            }
         }
 
         $symfonyStyle->success('All movie added');
@@ -256,13 +260,13 @@ class MovieAddCommand extends Command
         $movie = $this->getMovieByImdb($imdb);
         if (!$movie instanceof Movie) {
             $movie = new Movie();
+            $movie->setFile(true);
             $movie->setEnable(true);
             $movie->setAdult(false);
             $movie->setImdb($imdb);
         }
 
         $tags       = explode(',', (string) $data['Tags']);
-        $country    = $data['Pays'];
         $tmdb       = (string) $data['ID TMDB'];
         $duration   = empty($data['Durée']) ? null : (int) $data['Durée'];
         $saga       = empty($data['Saga']) ? null : $data['Saga'];
@@ -270,7 +274,6 @@ class MovieAddCommand extends Command
         $movie->setTmdb($tmdb);
         $movie->setDuration($duration);
         $movie->setTitle($title);
-        $movie->setCountry(('' != $country) ? $country : null);
         $this->setSaga($movie, $saga);
         $this->setTags($movie, $tags);
 

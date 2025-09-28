@@ -1,6 +1,6 @@
 <a href="javascript:void(0);" data-a11y-dialog-show="movie-modal-{{ movie.id }}">
     <div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}">
-        {% if movie.year != '' %}
+        {% if movie.releaseDate != '' %}
             <span class="year">
                 {{ movie.releaseDate|date('Y') }}
             </span>

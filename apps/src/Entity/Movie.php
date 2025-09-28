@@ -38,8 +38,8 @@ class Movie implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $citation = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $country = null;
+    #[ORM\Column(nullable: true)]
+    private ?array $countries = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
@@ -56,13 +56,16 @@ class Movie implements Stringable
     #[ORM\Column(nullable: true)]
     private ?float $evaluation = null;
 
+    #[ORM\Column]
+    private ?bool $file = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $imdb = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -157,9 +160,9 @@ class Movie implements Stringable
         return $this->citation;
     }
 
-    public function getCountry(): ?string
+    public function getCountries(): ?array
     {
-        return $this->country;
+        return $this->countries;
     }
 
     public function getDescription(): ?string
@@ -253,6 +256,11 @@ class Movie implements Stringable
         return $this->enable;
     }
 
+    public function isFile(): ?bool
+    {
+        return $this->file;
+    }
+
     public function removeCategory(Category $category): static
     {
         if ($this->categories->removeElement($category)) {
@@ -295,9 +303,9 @@ class Movie implements Stringable
         return $this;
     }
 
-    public function setCountry(?string $country): static
+    public function setCountries(?array $countries): static
     {
-        $this->country = $country;
+        $this->countries = $countries;
 
         return $this;
     }
@@ -326,6 +334,13 @@ class Movie implements Stringable
     public function setEvaluation(?float $evaluation): static
     {
         $this->evaluation = $evaluation;
+
+        return $this;
+    }
+
+    public function setFile(bool $file): static
+    {
+        $this->file = $file;
 
         return $this;
     }

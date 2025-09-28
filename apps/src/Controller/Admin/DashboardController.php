@@ -62,7 +62,6 @@ class DashboardController extends AbstractDashboardController
         yield $this->configureMenuItemsStory($categories, $tags);
         yield $this->configureMenuItemsChapter($tags);
         yield $this->configureMenuItemsMovie($categories, $tags);
-        yield $this->configureMenuItemsSaga();
 
         yield MenuItem::linkToCrud(
             new TranslatableMessage('Edito'),
@@ -272,6 +271,11 @@ class DashboardController extends AbstractDashboardController
                     'fas fa-plus',
                     MovieCrudController::getEntityFqcn()
                 )->setAction(Action::NEW),
+                MenuItem::linkToCrud(
+                    new TranslatableMessage('Sagas'),
+                    'fas fa-video',
+                    SagaCrudController::getEntityFqcn()
+                ),
                 $categories['movie'],
                 $tags['movie'],
             ]
@@ -322,24 +326,6 @@ class DashboardController extends AbstractDashboardController
                 )->setAction(Action::NEW),
                 $categories['post'],
                 $tags['post'],
-            ]
-        );
-    }
-
-    private function configureMenuItemsSaga(): SubMenuItem
-    {
-        return MenuItem::subMenu(new TranslatableMessage('Sagas'), 'fas fa-video')->setSubItems(
-            [
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('List'),
-                    'fa fa-list',
-                    SagaCrudController::getEntityFqcn()
-                ),
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('New'),
-                    'fas fa-plus',
-                    SagaCrudController::getEntityFqcn()
-                )->setAction(Action::NEW),
             ]
         );
     }

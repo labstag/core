@@ -45,10 +45,10 @@ class MoviesUpdateCommand extends Command
             $progressBar->advance();
         }
 
+        $this->movieRepository->flush();
         $this->movieService->deleteOldCategory();
         $this->movieService->deleteOldSaga();
 
-        $this->movieRepository->flush();
         $progressBar->finish();
 
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
