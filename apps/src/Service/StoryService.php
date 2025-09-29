@@ -95,9 +95,9 @@ class StoryService
 
     private function getChapters(Story $story): array
     {
-        $chapters = $this->cacheService->getOrSet(
+        return $this->cacheService->getOrSet(
             'story_chapters_' . $story->getId(),
-            function() use ($story) {
+            function () use ($story) {
                 $chapters = [];
                 $data     = $story->getChapters();
                 foreach ($data as $row) {
@@ -112,8 +112,6 @@ class StoryService
             },
             1800
         );
-        
-        return $chapters;
     }
 
     private function getTemporaryFolder(): string
