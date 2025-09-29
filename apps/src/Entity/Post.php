@@ -22,6 +22,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
+#[ORM\Table(
+    indexes: [
+        new ORM\Index(name: 'IDX_POST_SLUG', columns: ['slug'])
+    ]
+)]
 class Post implements Stringable
 {
     use SoftDeleteableEntity;
