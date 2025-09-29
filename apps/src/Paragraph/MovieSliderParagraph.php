@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Paragraph;
+use Labstag\Enum\PageEnum;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
@@ -21,7 +22,7 @@ class MovieSliderParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        $listing = $this->siteService->getPageByType('movie');
+        $listing = $this->slugService->getPageByType(PageEnum::MOVIES->value);
         if (!is_object($listing) || !$listing->isEnable()) {
             $this->setShow($paragraph, false);
 

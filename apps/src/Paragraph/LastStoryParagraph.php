@@ -8,6 +8,7 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Story;
+use Labstag\Enum\PageEnum;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\StoryRepository;
 use Override;
@@ -22,7 +23,7 @@ class LastStoryParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        $listing = $this->siteService->getPageByType('story');
+        $listing = $this->slugService->getPageByType(PageEnum::STORIES->value);
         /** @var StoryRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Story::class);
         $total                      = $serviceEntityRepositoryLib->findTotalEnable();

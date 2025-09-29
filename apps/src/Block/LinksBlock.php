@@ -102,7 +102,7 @@ class LinksBlock extends BlockLib
                 $this->router->generate(
                     'front',
                     [
-                        'slug' => $this->siteService->getSlugByEntity($entity),
+                        'slug' => $this->slugService->forEntity($entity),
                     ]
                 )
             );

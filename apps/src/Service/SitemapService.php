@@ -8,6 +8,7 @@ use Labstag\Entity\Chapter;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
+use Labstag\Enum\PageEnum;
 use Labstag\Lib\ServiceEntityRepositoryLib;
 use Labstag\Repository\ChapterRepository;
 
@@ -20,6 +21,7 @@ class SitemapService
     protected array $parent = [];
 
     public function __construct(
+        protected SlugService $slugService,
         protected EntityManagerInterface $entityManager,
         protected SiteService $siteService,
     )
@@ -93,7 +95,7 @@ class SitemapService
      */
     private function formatData(object $entity): array
     {
-        $url = $this->siteService->getSlugByEntity($entity);
+        $url = $this->slugService->forEntity($entity);
 
         return [
             '/' . $url => ['entity' => $entity],
@@ -144,7 +146,7 @@ class SitemapService
      */
     private function getDataPosts(): array
     {
-        $listing = $this->siteService->getPageByType('post');
+        $listing = $this->slugService->getPageByType(PageEnum::POSTS->value);
         if (!is_object($listing) || !$listing->isEnable()) {
             return [];
         }
@@ -157,7 +159,7 @@ class SitemapService
      */
     private function getDataStory(): array
     {
-        $listing = $this->siteService->getPageByType('story');
+        $listing = $this->slugService->getPageByType(PageEnum::STORIES->value);
         if (!is_object($listing) || !$listing->isEnable()) {
             return [];
         }
