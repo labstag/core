@@ -402,7 +402,7 @@ class MovieService
 
         $details['tmdb'] = $data;
 
-        return $data;
+        return $details;
     }
 
     private function getImgImdb(string $img): string

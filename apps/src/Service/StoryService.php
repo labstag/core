@@ -15,6 +15,7 @@ class StoryService
     private array $stories = [];
 
     public function __construct(
+        protected CacheService $cacheService,
         protected TranslatorInterface $translator,
     )
     {
@@ -94,16 +95,24 @@ class StoryService
 
     private function getChapters(Story $story): array
     {
-        $chapters = [];
-        $data     = $story->getChapters();
-        foreach ($data as $row) {
-            if (!$row->isEnable()) {
-                continue;
-            }
+        $chapters = $this->cacheService->getOrSet(
+            'story_chapters_' . $story->getId(),
+            function() use ($story) {
+                $chapters = [];
+                $data     = $story->getChapters();
+                foreach ($data as $row) {
+                    if (!$row->isEnable()) {
+                        continue;
+                    }
 
-            $chapters[] = $row;
-        }
+                    $chapters[] = $row;
+                }
 
+                return $chapters;
+            },
+            1800
+        );
+        
         return $chapters;
     }
 

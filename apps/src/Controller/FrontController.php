@@ -8,6 +8,7 @@ use Labstag\Service\SiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpKernel\Attribute\Cache;
@@ -29,7 +30,7 @@ class FrontController extends AbstractController
         priority: -1
     )]
     #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
-    public function index(SiteService $siteService): Response
+    public function index(SiteService $siteService, Request $request): Response
     {
         $entity = $siteService->getEntity();
         if (!is_object($entity)) {
@@ -40,12 +41,40 @@ class FrontController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $response = $this->render($siteService->getViewByEntity($entity), $siteService->getDataByEntity($entity));
+        // Données pour le rendu
+        $view = $siteService->getViewByEntity($entity);
+        $data = $siteService->getDataByEntity($entity);
 
+        // ETag & Last-Modified basés sur l'entité (si méthodes dispo)
+        $etagParts = [get_class($entity), method_exists($entity, 'getId') ? $entity->getId() : ''];
+        if (method_exists($entity, 'getUpdatedAt') && $entity->getUpdatedAt() instanceof \DateTimeInterface) {
+            $lastModified = $entity->getUpdatedAt();
+            $etagParts[]  = $lastModified->getTimestamp();
+        } elseif (method_exists($entity, 'getCreatedAt') && $entity->getCreatedAt() instanceof \DateTimeInterface) {
+            $lastModified = $entity->getCreatedAt();
+            $etagParts[]  = $lastModified->getTimestamp();
+        } else {
+            $lastModified = null;
+        }
+
+        $etag = sha1(implode('|', $etagParts));
+
+        $response = $this->render($view, $data);
+        $response->setEtag($etag);
+        if ($lastModified) {
+            $response->setLastModified($lastModified);
+        }
+        $response->setPublic();
         $response->setSharedMaxAge(3600);
+        $response->setMaxAge(3600);
         $response->headers->addCacheControlDirective('must-revalidate', true);
-        
-        return $response;
+
+        // 304 Not Modified support
+        if ($response->isNotModified($request)) {
+            return $response; // Symfony ajuste automatiquement le contenu pour 304
+        }
+
+        return $response;        
     }
 
     #[Route('/sitemap.css', name: 'sitemap.css', priority: 1)]

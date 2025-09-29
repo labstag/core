@@ -36,6 +36,13 @@ class SiteService
 
     protected array $types = [];
 
+    /**
+     * Cache interne (durée de vie = requête courante) pour éviter des recalculs
+     * répétés de la vue et des données quand contrôleur ou Twig ré-appellent le service.
+     * @var array<string,mixed>
+     */
+    private array $requestCache = [];
+
     public function __construct(
         protected ChapterRepository $chapterRepository,
         protected FileService $fileService,
@@ -109,6 +116,10 @@ class SiteService
      */
     public function getDataByEntity(object $entity, bool $disable = false): array
     {
+        $cacheKey = 'data:' . spl_object_hash($entity) . ':' . ($disable ? '1' : '0');
+        if (isset($this->requestCache[$cacheKey])) {
+            return $this->requestCache[$cacheKey];
+        }
         $data = [
             'entity'     => $entity,
             'paragraphs' => $entity->getParagraphs()->getValues(),
@@ -128,7 +139,7 @@ class SiteService
         $blocks   = array_merge($header, $main, $footer);
         $contents = $this->blockService->getContents($blocks);
 
-        return [
+        return $this->requestCache[$cacheKey] = [
             'meta'   => $this->getMetaByEntity($entity->getMeta()),
             'blocks' => [
                 'header' => $header,
@@ -293,10 +304,13 @@ class SiteService
 
     public function getViewByEntity(object $entity): string
     {
+        $cacheKey = 'view:' . spl_object_hash($entity);
+        if (isset($this->requestCache[$cacheKey])) {
+            return $this->requestCache[$cacheKey];
+        }
         $reflectionClass = new ReflectionClass($entity);
         $entityName      = ucfirst($reflectionClass->getShortName());
-
-        return $this->getViewByEntityName($entity, $entityName);
+        return $this->requestCache[$cacheKey] = $this->getViewByEntityName($entity, $entityName);
     }
 
     public function isEnable(object $entity): bool
