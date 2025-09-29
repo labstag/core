@@ -23,11 +23,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: PageRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-#[ORM\Table(
-    indexes: [
-        new ORM\Index(name: 'IDX_PAGE_SLUG', columns: ['slug'])
-    ]
-)]
+#[ORM\Table(indexes: [new ORM\Index(name: 'IDX_PAGE_SLUG', columns: ['slug'])])]
 class Page implements Stringable
 {
     use SoftDeleteableEntity;

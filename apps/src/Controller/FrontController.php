@@ -50,7 +50,7 @@ class FrontController extends AbstractController
         [
             $etagParts,
             $lastModified,
-        ] = $this->setEtagLastModified($entity);
+        ]                           = $siteService->getEtagLastModified($entity);
         $etag                       = sha1(implode('|', $etagParts));
 
         $response = $this->render($view, $data);
@@ -131,26 +131,5 @@ class FrontController extends AbstractController
     protected function initCache(): FilesystemAdapter
     {
         return new FilesystemAdapter('cache.app', 0, '../var');
-    }
-
-    private function setEtagLastModified(object $entity): array
-    {
-        $etagParts    = [
-            $entity::class,
-            method_exists($entity, 'getId') ? $entity->getId() : '',
-        ];
-        $lastModified = null;
-        if (method_exists($entity, 'getUpdatedAt') && $entity->getUpdatedAt() instanceof \DateTimeInterface) {
-            $lastModified = $entity->getUpdatedAt();
-            $etagParts[]  = $lastModified->getTimestamp();
-        } elseif (method_exists($entity, 'getCreatedAt') && $entity->getCreatedAt() instanceof \DateTimeInterface) {
-            $lastModified = $entity->getCreatedAt();
-            $etagParts[]  = $lastModified->getTimestamp();
-        }
-
-        return [
-            $etagParts,
-            $lastModified,
-        ];
     }
 }
