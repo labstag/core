@@ -5,6 +5,7 @@ namespace Labstag\Controller;
 use Carbon\Carbon;
 use Labstag\Service\SitemapService;
 use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,9 +31,13 @@ class FrontController extends AbstractController
         priority: -1
     )]
     #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
-    public function index(SiteService $siteService, Request $request): Response
+    public function index(
+        SlugService $slugService,
+        SiteService $siteService,
+        Request $request
+    ): Response
     {
-        $entity = $siteService->getEntity();
+        $entity = $slugService->getEntity();
         if (!is_object($entity)) {
             throw $this->createNotFoundException();
         }

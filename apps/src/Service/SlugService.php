@@ -9,17 +9,114 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
+use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\PageRepository;
+use Labstag\Repository\PostRepository;
+use Labstag\Repository\StoryRepository;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SlugService
 {
 
     protected array $types = [];
 
+    protected array $pages = [];
+
     public function __construct(
+        protected StoryRepository $storyRepository,
         protected PageRepository $pageRepository,
+        protected ChapterRepository $chapterRepository,
+        protected PostRepository $postRepository,
+        protected RequestStack $requestStack,
     )
     {
+    }
+
+    public function getEntity(): ?object
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $slug    = $request->attributes->get('slug');
+
+        return $this->getEntityBySlug($slug);
+    }
+
+    public function getEntityBySlug(?string $slug): ?object
+    {
+        $types = $this->getPageByTypes();
+        if ('' === $slug || is_null($slug)) {
+            return $types[PageEnum::HOME->value];
+        }
+
+        $page  = null;
+        $types = array_filter($types, fn ($type): bool => !is_null($type) && PageEnum::HOME->value != $type->getType());
+
+        $page = $this->getPageBySlug($slug);
+        if ($page instanceof Page) {
+            return $page;
+        }
+
+        foreach ($types as $type => $row) {
+            if ($slug == $row->getSlug()) {
+                $page = $row;
+
+                break;
+            }
+
+            if (str_contains($slug, (string) $row->getSlug()) && str_starts_with($slug, (string) $row->getSlug())) {
+                $newslug = substr($slug, strlen((string) $row->getSlug()) + 1);
+                $page    = $this->getContentByType($type, $newslug);
+
+                break;
+            }
+        }
+
+        return $page;
+    }
+
+    private function getContentByType(string $type, string $slug): ?object
+    {
+        if ('post' === $type) {
+            return $this->postRepository->findOneBy(
+                ['slug' => $slug]
+            );
+        }
+
+        $repos = [
+            'story'   => $this->storyRepository,
+            'chapter' => $this->chapterRepository,
+        ];
+
+        if (1 == substr_count($slug, '/')) {
+            [
+                $slugstory,
+                $slugchapter,
+            ]      = explode('/', $slug);
+            $story = $repos['story']->findOneBy(
+                ['slug' => $slugstory]
+            );
+            $chapter = $repos['chapter']->findOneBy(
+                ['slug' => $slugchapter]
+            );
+            if ($story instanceof Story && $chapter instanceof Chapter && $story->getId() === $chapter->getRefStory()->getId()) {
+                return $chapter;
+            }
+        }
+
+        return $repos['story']->findOneBy(
+            ['slug' => $slug]
+        );
+    }
+
+    private function getPageBySlug(string $slug): ?Page
+    {
+        if (array_key_exists($slug, $this->pages)) {
+            return $this->pages[$slug];
+        }
+
+        $page               = $this->pageRepository->getOneBySlug($slug);
+        $this->pages[$slug] = $page;
+
+        return $page;
     }
 
     public function forEntity(object $entity): string

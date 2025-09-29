@@ -9,6 +9,7 @@ use Labstag\Entity\Category;
 use Labstag\Entity\Page;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
+use Labstag\Enum\PageEnum;
 use Labstag\Lib\FixtureLib;
 use Override;
 
@@ -66,62 +67,62 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
     {
         $home = new Page();
         $home->setTitle('Accueil');
-        $home->setType('home');
+        $home->setType(PageEnum::HOME->value);
         $this->setParagraphsHome($home);
 
         $movies = new Page();
         $movies->setPage($home);
         $movies->setTitle('Mes derniers films vus');
-        $movies->setType('movie');
+        $movies->setType(PageEnum::MOVIES->value);
         $this->setParagraphsMovie($movies);
 
         $stories = new Page();
         $stories->setPage($home);
         $stories->setTitle('Histoires');
-        $stories->setType('story');
+        $stories->setType(PageEnum::STORIES->value);
         $this->setParagraphsStory($stories);
 
         $post = new Page();
         $post->setPage($home);
         $post->setTitle('Posts');
-        $post->setType('post');
+        $post->setType(PageEnum::POSTS->value);
         $this->setParagraphsPost($post);
 
         $star = new Page();
         $star->setPage($home);
         $star->setTitle('Mes étoiles github');
-        $star->setType('page');
+        $star->setType(PageEnum::PAGE->value);
         $this->setParagraphsStar($star);
 
         $info = new Page();
         $info->setPage($home);
         $info->setTitle('Informations');
-        $info->setType('page');
+        $info->setType(PageEnum::PAGE->value);
         $this->setParagraphsInfo($info);
 
         $contact = new Page();
         $contact->setPage($info);
         $contact->setTitle('Contact');
-        $contact->setType('page');
+        $contact->setType(PageEnum::PAGE->value);
         $this->setParagraphsContact($contact);
 
         $sitemap = new Page();
         $sitemap->setPage($info);
         $sitemap->setTitle('Plan du site');
-        $sitemap->setType('page');
+        $sitemap->setType(PageEnum::PAGE->value);
         $this->setParagraphsSitemap($sitemap);
 
         $mentions = new Page();
         $mentions->setPage($home);
         $mentions->setTitle('Mentions légales');
-        $mentions->setType('page');
+        $mentions->setType(PageEnum::PAGE->value);
         $this->addParagraphHead($mentions);
         $this->addParagraphText($mentions);
 
         $donneespersonnelles = new Page();
         $donneespersonnelles->setPage($home);
         $donneespersonnelles->setTitle('Données personnelles');
-        $donneespersonnelles->setType('page');
+        $donneespersonnelles->setType(PageEnum::PAGE->value);
         $this->addParagraphHead($donneespersonnelles);
         $this->addParagraphText($donneespersonnelles);
 

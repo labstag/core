@@ -4,6 +4,7 @@ namespace Labstag\Block;
 
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
+use Labstag\Enum\PageEnum;
 use Labstag\Lib\BlockLib;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +28,7 @@ class BreadcrumbBlock extends BlockLib
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
-        if ($data['entity'] instanceof Page && 'home' == $data['entity']->getType()) {
+        if ($data['entity'] instanceof Page && PageEnum::HOME->value == $data['entity']->getType()) {
             $this->setShow($block, false);
 
             return;
@@ -73,7 +74,7 @@ class BreadcrumbBlock extends BlockLib
      */
     private function setBreadcrumb(array $urls, string $slug): array
     {
-        $entity = $this->siteService->getEntityBySlug($slug);
+        $entity = $this->slugService->getEntityBySlug($slug);
         if (is_object($entity)) {
             $urls[] = [
                 'title' => $entity->getTitle(),
