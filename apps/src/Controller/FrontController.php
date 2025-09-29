@@ -10,6 +10,7 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 
 class FrontController extends AbstractController
 {
@@ -27,6 +28,7 @@ class FrontController extends AbstractController
         ],
         priority: -1
     )]
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function index(SiteService $siteService): Response
     {
         $entity = $siteService->getEntity();
