@@ -48,7 +48,7 @@ class PageCrudController extends AbstractCrudControllerLib
         yield $this->addTabPrincipal();
         yield $this->addFieldID();
         yield $this->addFieldIDShortcode('page');
-        if ($currentEntity instanceof Page && 'home' != $currentEntity->getType()) {
+        if ($currentEntity instanceof Page && PageEnum::HOME->value != $currentEntity->getType()) {
             yield $this->addFieldSlug();
         }
 
@@ -101,13 +101,13 @@ class PageCrudController extends AbstractCrudControllerLib
         $meta = new Meta();
         $page->setMeta($meta);
         $home = $this->getRepository()->findOneBy(
-            ['type' => 'home']
+            ['type' => PageEnum::HOME->value]
         );
         if ($home instanceof Page) {
             $page->setPage($home);
         }
 
-        $page->setType(($home instanceof Page) ? 'page' : 'home');
+        $page->setType(($home instanceof Page) ? PageEnum::PAGE->value : PageEnum::HOME->value);
         $page->setRefuser($this->getUser());
 
         return $page;
@@ -139,7 +139,7 @@ class PageCrudController extends AbstractCrudControllerLib
 
     protected function addFieldIsHome(?Page $page, string $pageName): ?ChoiceField
     {
-        if ('new' === $pageName || ($page instanceof Page && 'home' == $page->getType())) {
+        if ('new' === $pageName || ($page instanceof Page && PageEnum::HOME->value == $page->getType())) {
             return null;
         }
 

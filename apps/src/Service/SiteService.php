@@ -100,7 +100,13 @@ class SiteService
 
     public function getCrudController(string $entity): ?string
     {
-        return $this->getDataCrudController()[$entity] ?? null;
+        $tab = [
+            Story::class   => StoryCrudController::class,
+            Chapter::class => ChapterCrudController::class,
+            Page::class    => PageCrudController::class,
+            Post::class    => PostCrudController::class,
+        ];
+        return $tab[$entity] ?? null;
     }
 
     /**
@@ -144,47 +150,6 @@ class SiteService
             'config' => $this->getConfiguration(),
             'data'   => $data,
         ];
-    }
-
-    public function getEntity(): ?object
-    {
-        $request = $this->requestStack->getCurrentRequest();
-        $slug    = $request->attributes->get('slug');
-
-        return $this->getEntityBySlug($slug);
-    }
-
-    public function getEntityBySlug(?string $slug): ?object
-    {
-        $types = $this->getPageByTypes();
-        if ('' === $slug || is_null($slug)) {
-            return $types[PageEnum::HOME->value];
-        }
-
-        $page  = null;
-        $types = array_filter($types, fn ($type): bool => !is_null($type) && 'home' != $type->getType());
-
-        $page = $this->getPageBySlug($slug);
-        if ($page instanceof Page) {
-            return $page;
-        }
-
-        foreach ($types as $type => $row) {
-            if ($slug == $row->getSlug()) {
-                $page = $row;
-
-                break;
-            }
-
-            if (str_contains($slug, (string) $row->getSlug()) && str_starts_with($slug, (string) $row->getSlug())) {
-                $newslug = substr($slug, strlen((string) $row->getSlug()) + 1);
-                $page    = $this->getContentByType($type, $newslug);
-
-                break;
-            }
-        }
-
-        return $page;
     }
 
     public function getEtagLastModified(object $entity): array
@@ -278,7 +243,7 @@ class SiteService
         $html = $this->twigEnvironment->render('metagenerate.html.twig', $this->getDataByEntity($entity, true));
 
         $text = trim((string) preg_replace('/\s+/', ' ', strip_tags($html)));
-        $text = substr($text, 0, 256);
+        $text = mb_substr($text, 0, 256);
 
         $meta->setDescription($text);
 
@@ -300,14 +265,7 @@ class SiteService
 
     public function isEnable(object $entity): bool
     {
-        // Vérifier si l'entité a la méthode isEnable et si elle est activée
-        if (!method_exists($entity, 'isEnable') || $entity->isEnable()) {
-            return true;
-        }
-
-        // Si désactivée, vérifier si utilisateur connecté (pour prévisualisation)
-        return $this->getUser() instanceof UserInterface;
-
+        return !(!$entity->isEnable() && !$this->getUser() instanceof UserInterface);
         // TODO : Prévoir de vérifier les droits de l'utilisateur
     }
 
@@ -316,7 +274,7 @@ class SiteService
      */
     public function isHome(array $data): bool
     {
-        return isset($data['entity']) && $data['entity'] instanceof Page && 'home' == $data['entity']->getType();
+        return isset($data['entity']) && $data['entity'] instanceof Page && PageEnum::HOME->value == $data['entity']->getType();
     }
 
     public function setTitle(object $entity): ?string
@@ -330,19 +288,6 @@ class SiteService
         }
 
         return '';
-    }
-
-    /**
-     * @return mixed[]
-     */
-    protected function getDataCrudController(): array
-    {
-        return [
-            Story::class   => StoryCrudController::class,
-            Chapter::class => ChapterCrudController::class,
-            Page::class    => PageCrudController::class,
-            Post::class    => PostCrudController::class,
-        ];
     }
 
     protected function getMetaByEntity(Meta $meta): Meta
@@ -399,76 +344,6 @@ class SiteService
             $this->blockService->generate($main, $data, $disable),
             $this->blockService->generate($footer, $data, $disable),
         ];
-    }
-
-    private function getContentByType(string $type, string $slug): ?object
-    {
-        if ('post' === $type) {
-            return $this->postRepository->findOneBy(
-                ['slug' => $slug]
-            );
-        }
-
-        $repos = [
-            'story'   => $this->storyRepository,
-            'chapter' => $this->chapterRepository,
-        ];
-
-        if (1 == substr_count($slug, '/')) {
-            [
-                $slugstory,
-                $slugchapter,
-            ]      = explode('/', $slug);
-            $story = $repos['story']->findOneBy(
-                ['slug' => $slugstory]
-            );
-            $chapter = $repos['chapter']->findOneBy(
-                ['slug' => $slugchapter]
-            );
-            if ($story instanceof Story && $chapter instanceof Chapter && $story->getId() === $chapter->getRefStory()->getId()) {
-                return $chapter;
-            }
-        }
-
-        return $repos['story']->findOneBy(
-            ['slug' => $slug]
-        );
-    }
-
-    private function getPageBySlug(string $slug): ?Page
-    {
-        if (array_key_exists($slug, $this->pages)) {
-            return $this->pages[$slug];
-        }
-
-        $page               = $this->pageRepository->getOneBySlug($slug);
-        $this->pages[$slug] = $page;
-
-        return $page;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    private function getPageByTypes(): array
-    {
-        if ([] !== $this->types) {
-            return $this->types;
-        }
-
-        $types = [];
-        $data  = PageEnum::cases();
-        foreach ($data as $row) {
-            if ($row->value == PageEnum::PAGE->value) {
-                continue;
-            }
-
-            $types[$row->value] = $this->pageRepository->getOneByType($row->value);
-        }
-
-        $this->types = $types;
-
-        return $types;
     }
 
     private function getUser(): ?UserInterface

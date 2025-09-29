@@ -13,6 +13,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Redirection;
 use Labstag\Entity\Story;
+use Labstag\Enum\PageEnum;
 use Labstag\Repository\HttpErrorLogsRepository;
 use Labstag\Repository\PageRepository;
 use Labstag\Service\BlockService;
@@ -132,12 +133,12 @@ abstract class EventEntityLib
             return;
         }
 
-        if ('home' != $instance->getType()) {
+        if (PageEnum::HOME->value != $instance->getType()) {
             return;
         }
 
-        $oldHome = $this->pageRepository->getOneByType('home');
-        if ('home' == $instance->getType()) {
+        $oldHome = $this->pageRepository->getOneByType(PageEnum::HOME->value);
+        if (PageEnum::HOME->value == $instance->getType()) {
             $instance->setSlug('');
         }
 
@@ -146,7 +147,7 @@ abstract class EventEntityLib
         }
 
         if ($oldHome instanceof Page) {
-            $oldHome->setType('page');
+            $oldHome->setType(PageEnum::PAGE->value);
             $this->pageRepository->save($oldHome);
         }
 
