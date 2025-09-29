@@ -30,7 +30,9 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $data    = $query->getSingleColumnResult();
         $country = [];
         foreach ($data as $value) {
-            $country = array_merge($country, json_decode((string) $value));
+            if (!is_null($value)) {
+                $country = array_merge($country, json_decode((string) $value));
+            }
         }
 
         $country = array_unique($country);
