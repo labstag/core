@@ -7,6 +7,7 @@ use Essence\Essence;
 use Essence\Media;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,6 +19,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         protected RequestStack $requestStack,
+        protected SlugService $slugService,
         protected RouterInterface $router,
         protected SiteService $siteService,
         protected ParameterBagInterface $parameterBag,
@@ -109,7 +111,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 
     public function path(object $entity): string
     {
-        $slug = $this->siteService->getSlugByEntity($entity);
+        $slug = $this->slugService->forEntity($entity);
 
         return $this->router->generate(
             'front',

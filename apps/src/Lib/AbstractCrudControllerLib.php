@@ -38,6 +38,7 @@ use Labstag\Service\MovieService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SecurityService;
 use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
@@ -56,6 +57,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         protected FormService $formService,
         protected FileService $fileService,
         protected SiteService $siteService,
+        protected SlugService $slugService,
         protected SecurityService $securityService,
         protected BlockService $blockService,
         protected MovieService $movieService,
@@ -502,7 +504,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function linkw3CValidator(object $entity): RedirectResponse
     {
-        $slug = $this->siteService->getSlugByEntity($entity);
+        $slug = $this->slugService->forEntity($entity);
 
         return $this->redirect(
             'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
@@ -515,7 +517,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function publicLink(object $entity): RedirectResponse
     {
-        $slug = $this->siteService->getSlugByEntity($entity);
+        $slug = $this->slugService->forEntity($entity);
 
         return $this->redirectToRoute(
             'front',

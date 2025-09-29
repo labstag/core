@@ -9,6 +9,7 @@ use Labstag\Entity\Block;
 use Labstag\Interface\BlockInterface;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -51,6 +52,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         protected AdminUrlGenerator $adminUrlGenerator,
         protected ParagraphService $paragraphService,
         protected SiteService $siteService,
+        protected SlugService $slugService,
         protected RequestStack $requestStack,
         protected EntityManagerInterface $entityManager,
         protected Environment $twigEnvironment,

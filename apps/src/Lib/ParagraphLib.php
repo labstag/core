@@ -27,6 +27,7 @@ use Labstag\Service\FormService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SitemapService;
 use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -76,6 +77,7 @@ abstract class ParagraphLib extends AbstractController
         protected SiteService $siteService,
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
+        protected SlugService $slugService,
         protected Environment $twigEnvironment,
     )
     {

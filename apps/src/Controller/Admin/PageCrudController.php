@@ -144,8 +144,8 @@ class PageCrudController extends AbstractCrudControllerLib
         }
 
         $choiceField = ChoiceField::new('type', new TranslatableMessage('Type'));
-        $data = PageEnum::cases();
-        $choices = [];
+        $data        = PageEnum::cases();
+        $choices     = [];
         foreach ($data as $row) {
             $choices[$row->name] = $row->value;
         }

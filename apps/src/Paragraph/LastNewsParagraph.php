@@ -8,6 +8,7 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
+use Labstag\Enum\PageEnum;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\PostRepository;
 use Override;
@@ -22,7 +23,7 @@ class LastNewsParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        $listing = $this->siteService->getPageByType('post');
+        $listing = $this->slugService->getPageByType(PageEnum::POSTS->value);
         /** @var PostRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Post::class);
         $total                      = $serviceEntityRepositoryLib->findTotalEnable();

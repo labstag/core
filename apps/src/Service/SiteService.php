@@ -3,7 +3,6 @@
 namespace Labstag\Service;
 
 use DateTimeInterface;
-use Exception;
 use Labstag\Controller\Admin\ChapterCrudController;
 use Labstag\Controller\Admin\PageCrudController;
 use Labstag\Controller\Admin\PostCrudController;
@@ -101,17 +100,7 @@ class SiteService
 
     public function getCrudController(string $entity): ?string
     {
-        $cruds  = $this->getDataCrudController();
-        $return = null;
-        foreach ($cruds as $object => $crud) {
-            if ($object != $entity) {
-                continue;
-            }
-
-            $return = $crud;
-        }
-
-        return $return;
+        return $this->getDataCrudController()[$entity] ?? null;
     }
 
     /**
@@ -296,37 +285,6 @@ class SiteService
         return $meta;
     }
 
-    public function getPageByType(string $type): ?Page
-    {
-        $types = $this->getPageByTypes();
-
-        return $types[$type] ?? null;
-    }
-
-    public function getSlugByEntity(object $entity): string
-    {
-        $types = $this->getPageByTypes();
-        $page  = $this->getSlugByEntityIfPage($entity);
-        $page  = ('' == $page) ? $this->getSlugByEntityIfPost($types, $entity) : $page;
-        $page  = ('' == $page) ? $this->getSlugByEntityIfStory($types, $entity) : $page;
-
-        return ('' === $page) ? $this->getSlugByEntityIfChapter($types, $entity) : $page;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getTypesPages(): array
-    {
-        return [
-            'Home'      => 'home',
-            'Posts'     => 'post',
-            'Movie'     => 'movie',
-            'Histoires' => 'story',
-            'Page'      => 'page',
-        ];
-    }
-
     public function getViewByEntity(object $entity): string
     {
         $cacheKey = 'view:' . spl_object_hash($entity);
@@ -342,7 +300,13 @@ class SiteService
 
     public function isEnable(object $entity): bool
     {
-        return !(!$entity->isEnable() && !$this->getUser() instanceof UserInterface);
+        // Vérifier si l'entité a la méthode isEnable et si elle est activée
+        if (!method_exists($entity, 'isEnable') || $entity->isEnable()) {
+            return true;
+        }
+
+        // Si désactivée, vérifier si utilisateur connecté (pour prévisualisation)
+        return $this->getUser() instanceof UserInterface;
 
         // TODO : Prévoir de vérifier les droits de l'utilisateur
     }
@@ -394,19 +358,14 @@ class SiteService
             'views/' . $entityName . '.html.twig',
             'views/default.html.twig',
         ];
-        $view   = end($files);
-        $loader = $this->twigEnvironment->getLoader();
+
         foreach ($files as $file) {
-            if (!$loader->exists($file)) {
-                continue;
+            if ($loader->exists($file)) {
+                return $file;
             }
-
-            $view = $file;
-
-            break;
         }
 
-        return $view;
+        return end($files);
     }
 
     /**
@@ -478,7 +437,7 @@ class SiteService
 
     private function getPageBySlug(string $slug): ?Page
     {
-        if (array_key_exists($slug, $this->pages)){
+        if (array_key_exists($slug, $this->pages)) {
             return $this->pages[$slug];
         }
 
@@ -498,7 +457,7 @@ class SiteService
         }
 
         $types = [];
-        $data = PageEnum::cases();
+        $data  = PageEnum::cases();
         foreach ($data as $row) {
             if ($row->value == PageEnum::PAGE->value) {
                 continue;
@@ -510,63 +469,6 @@ class SiteService
         $this->types = $types;
 
         return $types;
-    }
-
-    /**
-     * @param mixed[] $types
-     */
-    private function getSlugByEntityIfChapter(array $types, object $entity): string
-    {
-        if (!$entity instanceof Chapter) {
-            return '';
-        }
-
-        if (is_null($types[PageEnum::STORIES->value]) || !$types[PageEnum::STORIES->value] instanceof Page) {
-            throw new Exception('Story page not found');
-        }
-
-        return $types[PageEnum::STORIES->value]->getSlug() . '/' . $entity->getRefStory()->getSlug() . '/' . $entity->getSlug();
-    }
-
-    private function getSlugByEntityIfPage(object $entity): ?string
-    {
-        if (!$entity instanceof Page) {
-            return '';
-        }
-
-        return $entity->getSlug();
-    }
-
-    /**
-     * @param mixed[] $types
-     */
-    private function getSlugByEntityIfPost(array $types, object $entity): ?string
-    {
-        if (!$entity instanceof Post) {
-            return null;
-        }
-
-        if (is_null($types[PageEnum::POSTS->value]) || !$types[PageEnum::POSTS->value] instanceof Page) {
-            throw new Exception('Post page not found');
-        }
-
-        return $types[PageEnum::POSTS->value]->getSlug() . '/' . $entity->getSlug();
-    }
-
-    /**
-     * @param mixed[] $types
-     */
-    private function getSlugByEntityIfStory(array $types, object $entity): string
-    {
-        if (!$entity instanceof Story) {
-            return '';
-        }
-
-        if (is_null($types[PageEnum::STORIES->value]) || !$types[PageEnum::STORIES->value] instanceof Page) {
-            throw new Exception('Story page not found');
-        }
-
-        return $types[PageEnum::STORIES->value]->getSlug() . '/' . $entity->getSlug();
     }
 
     private function getUser(): ?UserInterface
