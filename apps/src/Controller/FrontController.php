@@ -38,7 +38,12 @@ class FrontController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        return $this->render($siteService->getViewByEntity($entity), $siteService->getDataByEntity($entity));
+        $response = $this->render($siteService->getViewByEntity($entity), $siteService->getDataByEntity($entity));
+
+        $response->setSharedMaxAge(3600);
+        $response->headers->addCacheControlDirective('must-revalidate', true);
+        
+        return $response;
     }
 
     #[Route('/sitemap.css', name: 'sitemap.css', priority: 1)]
