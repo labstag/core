@@ -17,7 +17,6 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[ORM\Table(
     indexes: [
-        new ORM\Index(name: 'IDX_TAG_SLUG', columns: ['slug']),
         new ORM\Index(name: 'IDX_TAG_TYPE_SLUG', columns: ['type', 'slug']),
     ]
 )]
