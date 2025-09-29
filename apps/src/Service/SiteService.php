@@ -14,6 +14,7 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
+use Labstag\Enum\PageEnum;
 use Labstag\Repository\BlockRepository;
 use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\ConfigurationRepository;
@@ -168,7 +169,7 @@ class SiteService
     {
         $types = $this->getPageByTypes();
         if ('' === $slug || is_null($slug)) {
-            return $types['home'];
+            return $types[PageEnum::HOME->value];
         }
 
         $page  = null;
@@ -277,11 +278,11 @@ class SiteService
     public function getMetatags(object $entity): Meta
     {
         $meta = $entity->getMeta();
-        if ($meta instanceof Meta) {
+        if (!$meta instanceof Meta) {
             $meta = new Meta();
         }
 
-        if (!is_null($meta->getDescription()) && '' !== $meta->getDescription() && '0' !== $meta->getDescription()) {
+        if (!is_null($meta->getDescription()) && '' !== $meta->getDescription()) {
             return $meta;
         }
 
@@ -477,7 +478,7 @@ class SiteService
 
     private function getPageBySlug(string $slug): ?Page
     {
-        if (isset($this->pages[$slug])) {
+        if (array_key_exists($slug, $this->pages)){
             return $this->pages[$slug];
         }
 
@@ -496,10 +497,14 @@ class SiteService
             return $this->types;
         }
 
-        $types = array_flip($this->getTypesPages());
-        unset($types['page']);
-        foreach (array_keys($types) as $type) {
-            $types[$type] = $this->pageRepository->getOneByType($type);
+        $types = [];
+        $data = PageEnum::cases();
+        foreach ($data as $row) {
+            if ($row->value == PageEnum::PAGE->value) {
+                continue;
+            }
+
+            $types[$row->value] = $this->pageRepository->getOneByType($row->value);
         }
 
         $this->types = $types;
@@ -516,11 +521,11 @@ class SiteService
             return '';
         }
 
-        if (is_null($types['story']) || !$types['story'] instanceof Page) {
+        if (is_null($types[PageEnum::STORIES->value]) || !$types[PageEnum::STORIES->value] instanceof Page) {
             throw new Exception('Story page not found');
         }
 
-        return $types['story']->getSlug() . '/' . $entity->getRefStory()->getSlug() . '/' . $entity->getSlug();
+        return $types[PageEnum::STORIES->value]->getSlug() . '/' . $entity->getRefStory()->getSlug() . '/' . $entity->getSlug();
     }
 
     private function getSlugByEntityIfPage(object $entity): ?string
@@ -541,11 +546,11 @@ class SiteService
             return null;
         }
 
-        if (is_null($types['post']) || !$types['post'] instanceof Page) {
+        if (is_null($types[PageEnum::POSTS->value]) || !$types[PageEnum::POSTS->value] instanceof Page) {
             throw new Exception('Post page not found');
         }
 
-        return $types['post']->getSlug() . '/' . $entity->getSlug();
+        return $types[PageEnum::POSTS->value]->getSlug() . '/' . $entity->getSlug();
     }
 
     /**
@@ -557,11 +562,11 @@ class SiteService
             return '';
         }
 
-        if (is_null($types['story']) || !$types['story'] instanceof Page) {
+        if (is_null($types[PageEnum::STORIES->value]) || !$types[PageEnum::STORIES->value] instanceof Page) {
             throw new Exception('Story page not found');
         }
 
-        return $types['story']->getSlug() . '/' . $entity->getSlug();
+        return $types[PageEnum::STORIES->value]->getSlug() . '/' . $entity->getSlug();
     }
 
     private function getUser(): ?UserInterface

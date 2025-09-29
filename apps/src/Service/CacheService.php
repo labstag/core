@@ -31,9 +31,4 @@ class CacheService
             return $callback();
         }
     }
-
-    public function invalidateTag(string $tag): void
-    {
-        $this->cache->invalidateTags([$tag]);
-    }
 }
