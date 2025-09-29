@@ -487,22 +487,27 @@ class StoriesAddCommand extends Command
             $titre = trim((string) $chapter['titre']);
             // Regroupement optimisé des chapitres par histoire et numéro de chapitre
             $patterns = [
-                '/^(.*?)(?:\s+|_)?\((\d+)[\/\.-](\d+)\)$/', // Titre (1/10)
-                '/^(.*?)(?:\s+|_)?\((\d+)\)$/',              // Titre (1)
-                '/^(.*?)(?:\s+|_)?(\d+[\/\.-]\d+)$/',        // Titre 1/10
-                '/^(.*?)(?:\s+|_)?(\d+)$/'                   // Titre 1
+                '/^(.*?)(?:\s+|_)?\((\d+)[\/\.-](\d+)\)$/',
+                // Titre (1/10)
+                '/^(.*?)(?:\s+|_)?\((\d+)\)$/',
+                // Titre (1)
+                '/^(.*?)(?:\s+|_)?(\d+[\/\.-]\d+)$/',
+                // Titre 1/10
+                '/^(.*?)(?:\s+|_)?(\d+)$/',
+                // Titre 1
             ];
 
             $matched = false;
             foreach ($patterns as $pattern) {
                 if (preg_match($pattern, $titre, $matches)) {
-                    $titre = trim($matches[1]);
-                    $idChapter = isset($matches[3]) ? (isset($matches[4]) ? $matches[3] . '/' . $matches[4] : $matches[3]) : $matches[2];
+                    $titre                       = trim($matches[1]);
+                    $idChapter                   = isset($matches[3]) ? (isset($matches[4]) ? $matches[3] . '/' . $matches[4] : $matches[3]) : $matches[2];
                     $stories[$titre][$idChapter] = $chapter;
-                    $matched = true;
+                    $matched                     = true;
                     break;
                 }
             }
+
             if (!$matched) {
                 $stories[$titre][] = $chapter;
             }

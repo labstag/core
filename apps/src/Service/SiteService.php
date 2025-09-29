@@ -39,6 +39,7 @@ class SiteService
     /**
      * Cache interne (durée de vie = requête courante) pour éviter des recalculs
      * répétés de la vue et des données quand contrôleur ou Twig ré-appellent le service.
+     *
      * @var array<string,mixed>
      */
     private array $requestCache = [];
@@ -120,6 +121,7 @@ class SiteService
         if (isset($this->requestCache[$cacheKey])) {
             return $this->requestCache[$cacheKey];
         }
+
         $data = [
             'entity'     => $entity,
             'paragraphs' => $entity->getParagraphs()->getValues(),
@@ -308,8 +310,10 @@ class SiteService
         if (isset($this->requestCache[$cacheKey])) {
             return $this->requestCache[$cacheKey];
         }
+
         $reflectionClass = new ReflectionClass($entity);
         $entityName      = ucfirst($reflectionClass->getShortName());
+
         return $this->requestCache[$cacheKey] = $this->getViewByEntityName($entity, $entityName);
     }
 

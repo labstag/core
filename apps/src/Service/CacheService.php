@@ -10,15 +10,24 @@ class CacheService
 {
     public function __construct(
         private CacheInterface $cache,
-        private LoggerInterface $logger
-    ) {}
+        private LoggerInterface $logger,
+    )
+    {
+    }
 
     public function getOrSet(string $key, callable $callback, int $ttl = 3600): mixed
     {
         try {
             return $this->cache->get($key, $callback, $ttl);
-        } catch (Exception $e) {
-            $this->logger->error('Cache error', ['key' => $key, 'error' => $e->getMessage()]);
+        } catch (Exception $exception) {
+            $this->logger->error(
+                'Cache error',
+                [
+                    'key'   => $key,
+                    'error' => $exception->getMessage(),
+                ]
+            );
+
             return $callback();
         }
     }

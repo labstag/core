@@ -60,8 +60,3 @@ when@prod:
         channels: [ deprecation ]
         path: php://stderr
         formatter: monolog.formatter.json
-      performance:
-        type: stream
-        path: "%kernel.logs_dir%/performance.log"
-        level: info
-        channels: [ "performance" ]
