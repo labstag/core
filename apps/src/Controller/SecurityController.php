@@ -25,10 +25,16 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('admin');
         }
 
-        return $this->render(
+        $response = $this->render(
             '@EasyAdmin/page/login.html.twig',
             $this->getDataLogin($authenticationUtils, $siteService)
         );
+
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('X-Frame-Options', 'DENY');
+        $response->headers->set('X-XSS-Protection', '1; mode=block');
+
+        return $response;
     }
 
     #[Route(path: '/logout', name: 'app_logout')]

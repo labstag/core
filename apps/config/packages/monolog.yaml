@@ -1,9 +1,4 @@
 monolog:
-  handlers:
-    performance:
-      type: stream
-      path: '%kernel.logs_dir%/performance.log'
-      channels: [ 'performance' ]
   channels:
   - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
 
@@ -65,3 +60,8 @@ when@prod:
         channels: [ deprecation ]
         path: php://stderr
         formatter: monolog.formatter.json
+      performance:
+        type: stream
+        path: "%kernel.logs_dir%/performance.log"
+        level: info
+        channels: [ "performance" ]
