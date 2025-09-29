@@ -15,11 +15,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-#[ORM\Table(
-    indexes: [
-        new ORM\Index(name: 'IDX_TAG_TYPE_SLUG', columns: ['type', 'slug']),
-    ]
-)]
+#[ORM\Table(indexes: [new ORM\Index(name: 'IDX_TAG_TYPE_SLUG', columns: ['type', 'slug'])])]
 class Tag implements Stringable
 {
     use SoftDeleteableEntity;

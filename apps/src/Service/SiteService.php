@@ -2,6 +2,7 @@
 
 namespace Labstag\Service;
 
+use DateTimeInterface;
 use Exception;
 use Labstag\Controller\Admin\ChapterCrudController;
 use Labstag\Controller\Admin\PageCrudController;
@@ -194,6 +195,27 @@ class SiteService
         }
 
         return $page;
+    }
+
+    public function getEtagLastModified(object $entity): array
+    {
+        $etagParts    = [
+            $entity::class,
+            method_exists($entity, 'getId') ? $entity->getId() : '',
+        ];
+        $lastModified = null;
+        if (method_exists($entity, 'getUpdatedAt') && $entity->getUpdatedAt() instanceof DateTimeInterface) {
+            $lastModified = $entity->getUpdatedAt();
+            $etagParts[]  = $lastModified->getTimestamp();
+        } elseif (method_exists($entity, 'getCreatedAt') && $entity->getCreatedAt() instanceof DateTimeInterface) {
+            $lastModified = $entity->getCreatedAt();
+            $etagParts[]  = $lastModified->getTimestamp();
+        }
+
+        return [
+            $etagParts,
+            $lastModified,
+        ];
     }
 
     public function getFavicon(string $type): ?array
