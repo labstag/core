@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
+use Labstag\Enum\PageEnum;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Override;
@@ -143,7 +144,13 @@ class PageCrudController extends AbstractCrudControllerLib
         }
 
         $choiceField = ChoiceField::new('type', new TranslatableMessage('Type'));
-        $choiceField->setChoices($this->siteService->getTypesPages());
+        $data = PageEnum::cases();
+        $choices = [];
+        foreach ($data as $row) {
+            $choices[$row->name] = $row->value;
+        }
+
+        $choiceField->setChoices($choices);
         $choiceField->setRequired(true);
 
         return $choiceField;

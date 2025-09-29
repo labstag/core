@@ -15,6 +15,7 @@ use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\StoryRepository;
 use Labstag\Repository\TagRepository;
 use Labstag\Repository\UserRepository;
+use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
@@ -39,6 +40,7 @@ class StoriesAddCommand extends Command
     protected array $users = [];
 
     public function __construct(
+        protected FileService $fileService,
         protected StoryRepository $storyRepository,
         protected ParagraphService $paragraphService,
         protected ChapterRepository $chapterRepository,
@@ -68,10 +70,11 @@ class StoriesAddCommand extends Command
         $symfonyStyle = new SymfonyStyle($input, $output);
 
         // Chemin vers le fichier SQLite
-        $sqliteFile = __DIR__ . '/../../private/stories.sqlite';
+        $filename     = 'stories.sqlite';
+        $file         = $this->fileService->getFileInAdapter('private', $filename);
 
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
-        if (!file_exists($sqliteFile)) {
+        if (!is_file($file)) {
             $symfonyStyle->error("Le fichier SQLite stories.sqlite n'existe pas.");
 
             return Command::FAILURE;
@@ -79,7 +82,7 @@ class StoriesAddCommand extends Command
 
         try {
             // Ouvrir la connexion SQLite
-            $pdo = new PDO('sqlite:' . $sqliteFile);
+            $pdo = new PDO('sqlite:' . $file);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             $symfonyStyle->success('Connexion SQLite établie avec succès !');
