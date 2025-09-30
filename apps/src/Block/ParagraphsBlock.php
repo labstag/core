@@ -4,8 +4,6 @@ namespace Labstag\Block;
 
 use Labstag\Block\Abstract\AbstractParagraphBlock;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
 
 class ParagraphsBlock extends AbstractParagraphBlock
 {

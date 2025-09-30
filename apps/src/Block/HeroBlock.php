@@ -2,23 +2,12 @@
 
 namespace Labstag\Block;
 
-use Labstag\Entity\Block;
 use Labstag\Block\Abstract\AbstractParagraphBlock;
+use Labstag\Entity\Block;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
 
 class HeroBlock extends AbstractParagraphBlock
 {
-    /**
-     * @param mixed[] $data
-     */
-    #[Override]
-    protected function shouldHideBlock(Block $block, array $data): bool
-    {
-        return $this->siteService->isHome($data);
-    }
-
     #[Override]
     public function getName(): string
     {
@@ -29,5 +18,14 @@ class HeroBlock extends AbstractParagraphBlock
     public function getType(): string
     {
         return 'hero';
+    }
+
+    /**
+     * @param mixed[] $data
+     */
+    #[Override]
+    protected function shouldHideBlock(Block $block, array $data): bool
+    {
+        return $this->siteService->isHome($data);
     }
 }

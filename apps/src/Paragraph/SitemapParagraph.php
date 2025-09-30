@@ -6,8 +6,6 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
 
 class SitemapParagraph extends ParagraphLib
 {

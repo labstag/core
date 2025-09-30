@@ -4,8 +4,6 @@ namespace Labstag\Block;
 
 use Labstag\Block\Abstract\AbstractSimpleBlock;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
 
 class FlashbagBlock extends AbstractSimpleBlock
 {

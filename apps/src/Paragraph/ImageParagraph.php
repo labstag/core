@@ -7,8 +7,6 @@ use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
 
 class ImageParagraph extends ParagraphLib
 {

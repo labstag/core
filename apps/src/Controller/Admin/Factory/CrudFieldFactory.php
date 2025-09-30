@@ -13,14 +13,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Field\ParagraphsField;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\TagRepository;
 use Labstag\Service\FileService;
 use Symfony\Component\Translation\TranslatableMessage;
 use Vich\UploaderBundle\Form\Type\VichImageType;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 
 /**
  * Centralized factory for fields (EasyAdmin Fields) to reduce
@@ -37,10 +37,7 @@ final class CrudFieldFactory
     public function addFilterCategories(Filters $filters, string $type): void
     {
         $filters->add(
-            EntityFilter::new(
-                'categories',
-                new TranslatableMessage('Categories')
-            )->setFormTypeOption(
+            EntityFilter::new('categories', new TranslatableMessage('Categories'))->setFormTypeOption(
                 'value_type_options.query_builder',
                 static fn (CategoryRepository $categoryRepository): QueryBuilder => $categoryRepository->createQueryBuilder(
                     'c'
@@ -51,25 +48,18 @@ final class CrudFieldFactory
 
     public function addFilterEnable(Filters $filters): void
     {
-        $filters->add(
-            BooleanFilter::new('enable', new TranslatableMessage('Enable'))
-        );
+        $filters->add(BooleanFilter::new('enable', new TranslatableMessage('Enable')));
     }
 
     public function addFilterRefUser(Filters $filters): void
     {
-        $filters->add(
-            EntityFilter::new('refuser', new TranslatableMessage('User'))
-        );
+        $filters->add(EntityFilter::new('refuser', new TranslatableMessage('User')));
     }
 
     public function addFilterTags(Filters $filters, string $type): void
     {
         $filters->add(
-            EntityFilter::new(
-                'tags',
-                new TranslatableMessage('Tags')
-            )->setFormTypeOption(
+            EntityFilter::new('tags', new TranslatableMessage('Tags'))->setFormTypeOption(
                 'value_type_options.query_builder',
                 static fn (TagRepository $tagRepository): QueryBuilder => $tagRepository->createQueryBuilder('t')->andWhere('t.type = :type')->setParameter('type', $type)
             )

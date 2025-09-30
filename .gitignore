@@ -16,3 +16,4 @@ docker-compose-*.yml
 /apps/public/uploads/*
 !/apps/public/uploads/.gitkeep
 .phpcs-cache
+apps/.htpasswd

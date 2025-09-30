@@ -10,8 +10,6 @@ use Labstag\Entity\Star;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\StarRepository;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
 
 class StarParagraph extends ParagraphLib
 {

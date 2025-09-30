@@ -2,16 +2,13 @@
 
 namespace Labstag\Block;
 
+use Labstag\Block\Traits\CacheableTrait;
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Lib\BlockLib;
-use Labstag\Block\Traits\CacheableTrait;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\Response;
-
-
 
 class BreadcrumbBlock extends BlockLib
 {
@@ -78,29 +75,35 @@ class BreadcrumbBlock extends BlockLib
     private function setBreadcrumb(string $slug): array
     {
         $cacheKey = 'breadcrumb_' . md5($slug);
-        
-        return $this->getCached($cacheKey, function() use ($slug) {
-            $urls = [];
-            $currentSlug = $slug;
-            
-            while ($currentSlug !== '') {
-                $entity = $this->slugService->getEntityBySlug($currentSlug);
-                if (is_object($entity)) {
-                    $urls[] = [
-                        'title' => $entity->getTitle(),
-                        'url'   => $currentSlug,
-                    ];
+
+        return $this->getCached(
+            $cacheKey,
+            function () use ($slug) {
+                $urls        = [];
+                $currentSlug = $slug;
+
+                while ('' !== $currentSlug) {
+                    $entity = $this->slugService->getEntityBySlug($currentSlug);
+                    if (is_object($entity)) {
+                        $urls[] = [
+                            'title' => $entity->getTitle(),
+                            'url'   => $currentSlug,
+                        ];
+                    }
+
+                    if ('' === $currentSlug) {
+                        break;
+                    }
+
+                    $currentSlug = (0 < substr_count($currentSlug, '/')) ? substr(
+                        $currentSlug,
+                        0,
+                        strrpos($currentSlug, '/')
+                    ) : '';
                 }
-                
-                if ($currentSlug === '') {
-                    break;
-                }
-                
-                $currentSlug = (substr_count($currentSlug, '/') > 0) ? 
-                    substr($currentSlug, 0, strrpos($currentSlug, '/')) : '';
+
+                return array_reverse($urls);
             }
-            
-            return array_reverse($urls);
-        });
+        );
     }
 }

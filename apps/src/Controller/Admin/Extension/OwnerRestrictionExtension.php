@@ -3,10 +3,7 @@
 namespace Labstag\Controller\Admin\Extension;
 
 use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use ReflectionClass;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -23,10 +20,7 @@ final class OwnerRestrictionExtension
     {
     }
 
-    public function applyToCollection(
-        QueryBuilder $queryBuilder,
-        EntityDto $entityDto,
-    ): void
+    public function applyToCollection(QueryBuilder $queryBuilder, EntityDto $entityDto): void
     {
         $this->restrict($entityDto, $queryBuilder);
     }

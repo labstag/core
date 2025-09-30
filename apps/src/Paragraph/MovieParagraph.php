@@ -11,8 +11,6 @@ use Labstag\Form\Front\MovieType;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
 
 class MovieParagraph extends ParagraphLib
 {
