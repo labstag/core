@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\User;
-use Override;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +20,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class ProfilCrudController extends UserCrudController
 {
-    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
@@ -32,7 +30,6 @@ class ProfilCrudController extends UserCrudController
         return $actions;
     }
 
-    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -43,7 +40,6 @@ class ProfilCrudController extends UserCrudController
         return $crud;
     }
 
-    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('username', new TranslatableMessage('Username'));
@@ -70,7 +66,7 @@ class ProfilCrudController extends UserCrudController
         $choiceField = ChoiceField::new('language', new TranslatableMessage('Language'));
         $choiceField->setChoices($this->userService->getLanguagesForChoices());
         yield $choiceField;
-        yield $this->addFieldImageUpload('avatar', $pageName);
+    yield $this->crudFieldFactory->imageField('avatar', $pageName, self::getEntityFqcn());
         yield CollectionField::new('stories', new TranslatableMessage('Histories'))->onlyOnDetail();
         yield CollectionField::new('editos', new TranslatableMessage('Editos'))->onlyOnDetail()->formatValue(
             fn ($entity): int => count($entity)
@@ -90,19 +86,16 @@ class ProfilCrudController extends UserCrudController
         }
     }
 
-    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         return $filters;
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return User::class;
     }
 
-    #[Override]
     public function index(AdminContext $adminContext): Response
     {
         unset($adminContext);

@@ -8,20 +8,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use Labstag\Entity\Category;
-use Override;
 
 class StoryCategoryCrudController extends CategoryCrudController
 {
-    #[Override]
+    // Inhérite d'un identity set sans image (Category non uploadable)
     public function configureFields(string $pageName): iterable
     {
-        $data   = parent::configureFields($pageName);
-        $data[] = $this->addFieldTotalChild('stories');
+    $data   = parent::configureFields($pageName);
+    $data[] = $this->crudFieldFactory->totalChildField('stories');
 
         return $data;
     }
 
-    #[Override]
     public function createEntity(string $entityFqcn): Category
     {
         $category = new $entityFqcn();
@@ -30,7 +28,6 @@ class StoryCategoryCrudController extends CategoryCrudController
         return $category;
     }
 
-    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,

@@ -1,2 +1,11 @@
 parameters:
   labstag.admin.w3c_enabled: '%env(bool:ENABLE_W3C_VALIDATOR)%'
+
+services:
+  Labstag\Lib\Admin\Factory\CrudFieldFactory: ~
+  Labstag\Lib\Admin\Factory\LinkActionFactory:
+    arguments:
+      $w3cEnabled: '%labstag.admin.w3c_enabled%'
+  Labstag\Lib\Admin\Extension\OwnerRestrictionExtension:
+    public: true
+    tags: [ 'easy_admin.extension' ]

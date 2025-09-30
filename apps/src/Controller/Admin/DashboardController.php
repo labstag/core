@@ -21,7 +21,6 @@ use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
-use Override;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -41,7 +40,6 @@ class DashboardController extends AbstractDashboardController
     {
     }
 
-    #[Override]
     public function configureDashboard(): Dashboard
     {
         $data      = $this->configurationService->getConfiguration();
@@ -54,7 +52,6 @@ class DashboardController extends AbstractDashboardController
         return $dashboard;
     }
 
-    #[Override]
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
@@ -150,7 +147,6 @@ class DashboardController extends AbstractDashboardController
         )->setLinkTarget('_blank');
     }
 
-    #[Override]
     public function configureUserMenu(UserInterface $user): UserMenu
     {
         $userMenu = parent::configureUserMenu($user);
@@ -188,7 +184,6 @@ class DashboardController extends AbstractDashboardController
         return $userMenu;
     }
 
-    #[Override]
     public function index(): Response
     {
         return $this->render('admin/dashboard.html.twig', []);

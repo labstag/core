@@ -13,14 +13,12 @@ use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PageCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions, 'admin_page_w3c', 'admin_page_public');
@@ -30,7 +28,6 @@ class PageCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -41,59 +38,41 @@ class PageCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addTabPrincipal();
-        yield $this->addFieldID();
-        yield $this->addFieldIDShortcode('page');
-        if ($currentEntity instanceof Page && PageEnum::HOME->value != $currentEntity->getType()) {
-            yield $this->addFieldSlug();
+        $isSuperAdmin = $this->isSuperAdmin();
+        // Base identity set but slug possibly excluded depending on home type
+        $identity = $this->crudFieldFactory->baseIdentitySet('page', $pageName, self::getEntityFqcn());
+        if ($currentEntity instanceof Page && PageEnum::HOME->value == $currentEntity->getType()) {
+            // Remove slug field (present at index 2 if withSlug kept)
+            unset($identity[2]);
         }
-
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
-        $fieldChoice = $this->addFieldIsHome($currentEntity, $pageName);
-        if ($fieldChoice instanceof ChoiceField) {
-            yield $fieldChoice;
-        }
-
-        yield $this->addFieldTitle();
+        foreach ($identity as $field) { yield $field; }
+        if (($fieldChoice = $this->addFieldIsHome($currentEntity, $pageName)) instanceof ChoiceField) { yield $fieldChoice; }
         yield AssociationField::new('page', new TranslatableMessage('Page'))->autocomplete();
-        yield $this->addFieldImageUpload('img', $pageName);
-        yield $this->addFieldTags('page');
-        yield $this->addFieldCategories('page');
+        foreach ($this->crudFieldFactory->taxonomySet('page') as $field) { yield $field; }
         yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        $fields = array_merge(
-            $this->addFieldParagraphs($pageName),
-            $this->addFieldMetas(),
-            $this->addFieldRefUser()
-        );
-        foreach ($fields as $field) {
-            yield $field;
-        }
-
-        yield $this->addFieldWorkflow();
-        yield $this->addFieldState();
-        $date = $this->addTabDate();
-        foreach ($date as $field) {
-            yield $field;
-        }
+        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->metaFields() as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->refUserFields($isSuperAdmin) as $field) { yield $field; }
+        yield $this->crudFieldFactory->workflowField();
+        yield $this->crudFieldFactory->stateField();
+        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
     }
 
-    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->addFilterRefUser($filters);
-        $this->addFilterEnable($filters);
+        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterEnable($filters);
         $filters->add(EntityFilter::new('page', new TranslatableMessage('Page')));
-        $this->addFilterTags($filters, 'page');
-        $this->addFilterCategories($filters, 'page');
+        $this->crudFieldFactory->addFilterTags($filters, 'page');
+        $this->crudFieldFactory->addFilterCategories($filters, 'page');
 
         return $filters;
     }
 
-    #[Override]
     public function createEntity(string $entityFqcn): Page
     {
         $page = new $entityFqcn();
@@ -115,7 +94,6 @@ class PageCrudController extends AbstractCrudControllerLib
         return $page;
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return Page::class;

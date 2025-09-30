@@ -8,20 +8,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use Labstag\Entity\Tag;
-use Override;
 
 class PostTagCrudController extends TagCrudController
 {
-    #[Override]
+    // Identity set Tag sans image
     public function configureFields(string $pageName): iterable
     {
-        $data   = parent::configureFields($pageName);
-        $data[] = $this->addFieldTotalChild('posts');
+    $data   = parent::configureFields($pageName); // parent déjà filtré (pas de enable)
+    $data[] = $this->crudFieldFactory->totalChildField('posts');
 
         return $data;
     }
 
-    #[Override]
     public function createEntity(string $entityFqcn): Tag
     {
         $tag = new $entityFqcn();
@@ -30,7 +28,6 @@ class PostTagCrudController extends TagCrudController
         return $tag;
     }
 
-    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,

@@ -6,11 +6,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use Labstag\Entity\Category;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 
 abstract class CategoryCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
@@ -18,7 +16,6 @@ abstract class CategoryCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -29,19 +26,12 @@ abstract class CategoryCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
-
-        return [
-            $this->addFieldID(),
-            $this->addFieldSlug(),
-            $this->addFieldTitle(),
-        ];
+        // Category n'est pas uploadable : pas d'image, et pas de propriété enable dans l'entité -> on la retire
+        return $this->crudFieldFactory->baseIdentitySet('category', $pageName, self::getEntityFqcn(), withSlug: true, withImage: false, withEnable: false);
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return Category::class;

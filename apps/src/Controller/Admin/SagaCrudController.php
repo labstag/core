@@ -10,14 +10,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Saga;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setEditDetail($actions);
@@ -30,7 +28,6 @@ class SagaCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -43,18 +40,14 @@ class SagaCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addFieldID();
-        yield $this->addFieldTitle();
+        foreach ($this->crudFieldFactory->baseIdentitySet('saga', $pageName, self::getEntityFqcn(), withEnable: false) as $field) { yield $field; }
         yield TextField::new('tmdb', new TranslatableMessage('Tmdb'));
-        yield $this->addFieldSlug();
         $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
         $collectionField->onlyOnIndex();
         $collectionField->formatValue(fn ($value): int => count($value));
         yield $collectionField;
-        yield $this->addFieldImageUpload('img', $pageName);
         yield WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex();
         $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
         $collectionField->setTemplatePath('admin/field/movies.html.twig');
