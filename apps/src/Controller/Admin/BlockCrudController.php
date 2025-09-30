@@ -93,7 +93,6 @@ class BlockCrudController extends AbstractCrudControllerLib
         yield $numberField;
         $allTypes = array_flip($this->blockService->getAll(null));
         yield $this->getChoiceType($pageName, $allTypes);
-        yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
         $fields = array_merge(
             $this->addFieldParagraphsForBlock($currentEntity, $pageName),
             $this->blockService->getFields($currentEntity, $pageName)

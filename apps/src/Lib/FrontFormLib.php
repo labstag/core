@@ -8,11 +8,13 @@ use Labstag\Entity\Submission;
 use Labstag\Interface\FrontFormInterface;
 use Labstag\Repository\SubmissionRepository;
 use Labstag\Service\EmailService;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mailer\MailerInterface;
 
+#[AutoconfigureTag('labstag.forms')]
 abstract class FrontFormLib implements FrontFormInterface
 {
     public function __construct(

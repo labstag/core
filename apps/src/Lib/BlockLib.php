@@ -5,6 +5,7 @@ namespace Labstag\Lib;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
+use Labstag\Block\Processors\LinkUrlProcessor;
 use Labstag\Entity\Block;
 use Labstag\Interface\BlockInterface;
 use Labstag\Service\ConfigurationService;
@@ -15,10 +16,12 @@ use Labstag\Service\SlugService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 
+#[AutoconfigureTag('labstag.blocks')]
 abstract class BlockLib extends AbstractController implements BlockInterface
 {
 
@@ -48,6 +51,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     protected array $templates = [];
 
     public function __construct(
+        protected LinkUrlProcessor $linkUrlProcessor,
         protected LoggerInterface $logger,
         protected Security $security,
         protected RouterInterface $router,

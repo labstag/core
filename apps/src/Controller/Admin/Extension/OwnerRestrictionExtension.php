@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib\Admin\Extension;
+namespace Labstag\Controller\Admin\Extension;
 
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;

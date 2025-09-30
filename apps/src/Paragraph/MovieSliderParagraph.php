@@ -11,7 +11,9 @@ use Labstag\Enum\PageEnum;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Translation\TranslatableMessage;
+
 
 class MovieSliderParagraph extends ParagraphLib
 {

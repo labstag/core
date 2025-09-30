@@ -6,17 +6,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use Generator;
 use Labstag\Entity\Block;
-use Labstag\Entity\Page;
-use Labstag\Entity\Post;
-use Labstag\Entity\Story;
 use Labstag\Form\LinkType;
 use Labstag\Lib\BlockLib;
+use Labstag\Block\Processors\LinkUrlProcessor;
 use Override;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
+
 class LinksBlock extends BlockLib
 {
+
     #[Override]
     public function content(string $view, Block $block): ?Response
     {
@@ -34,10 +35,17 @@ class LinksBlock extends BlockLib
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
+        
+        $this->logger->debug('Starting links block generation', [
+            'block_id' => $block->getId()
+        ]);
+        
         $links = $this->correctionLinks($block);
         if (0 == count($links)) {
+            $this->logger->debug('No valid links found', [
+                'block_id' => $block->getId()
+            ]);
             $this->setShow($block, false);
-
             return;
         }
 
@@ -85,62 +93,33 @@ class LinksBlock extends BlockLib
     {
         $links = $block->getLinks();
         $data  = [];
+        
         foreach ($links as $row) {
-            $link   = clone $row;
-            $entity = $this->getEntityByTagUrl($link->getUrl());
-            if (!is_object($entity)) {
-                $data[] = $link;
-
-                continue;
+            $link = clone $row;
+            $processedUrl = $this->linkUrlProcessor->processUrl($link->getUrl());
+            
+            // If processedUrl is an object (entity), check if it's enabled
+            if (is_object($processedUrl)) {
+                if (!$processedUrl->isEnable()) {
+                    continue;
+                }
+                
+                $link->setUrl(
+                    $this->router->generate(
+                        'front',
+                        [
+                            'slug' => $this->slugService->forEntity($processedUrl),
+                        ]
+                    )
+                );
+            } else {
+                // It's a regular URL string
+                $link->setUrl($processedUrl);
             }
-
-            if (!$entity->isEnable()) {
-                continue;
-            }
-
-            $link->setUrl(
-                $this->router->generate(
-                    'front',
-                    [
-                        'slug' => $this->slugService->forEntity($entity),
-                    ]
-                )
-            );
 
             $data[] = $link;
         }
 
         return $data;
-    }
-
-    private function getEntity(string $entity, string $id): ?object
-    {
-        $data = $this->getRepository($entity)->find($id);
-        if (is_null($data)) {
-            return null;
-        }
-
-        return $data;
-    }
-
-    private function getEntityByTagUrl(string $object): mixed
-    {
-        preg_match('/\[pageurl:(.*?)]/', $object, $matchespage);
-        preg_match('/\[posturl:(.*?)]/', $object, $matchespost);
-        preg_match('/\[storyurl:(.*?)]/', $object, $matchesstory);
-
-        if (isset($matchespage[1])) {
-            return $this->getEntity(Page::class, $matchespage[1]);
-        }
-
-        if (isset($matchespost[1])) {
-            return $this->getEntity(Post::class, $matchespost[1]);
-        }
-
-        if (isset($matchesstory[1])) {
-            return $this->getEntity(Story::class, $matchesstory[1]);
-        }
-
-        return $object;
     }
 }

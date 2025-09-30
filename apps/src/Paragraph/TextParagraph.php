@@ -8,7 +8,9 @@ use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\ParagraphLib;
 use Override;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Translation\TranslatableMessage;
+
 
 class TextParagraph extends ParagraphLib
 {

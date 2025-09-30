@@ -5,8 +5,10 @@ namespace Labstag\Lib;
 use Labstag\Interface\ReplaceInterface;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\SiteService;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Routing\RouterInterface;
 
+#[AutoconfigureTag('labstag.replaces')]
 abstract class ReplaceLib implements ReplaceInterface
 {
 
