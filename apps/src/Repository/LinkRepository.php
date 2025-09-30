@@ -2,14 +2,11 @@
 
 namespace Labstag\Repository;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Link;
+use Labstag\Lib\ServiceEntityRepositoryLib;
 
-/**
- * @extends ServiceEntityRepository<Link>
- */
-class LinkRepository extends ServiceEntityRepository
+class LinkRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
