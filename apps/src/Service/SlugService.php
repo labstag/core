@@ -18,9 +18,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class SlugService
 {
 
-    protected array $types = [];
-
     protected array $pages = [];
+
+    protected array $types = [];
 
     public function __construct(
         protected StoryRepository $storyRepository,
@@ -30,6 +30,30 @@ class SlugService
         protected RequestStack $requestStack,
     )
     {
+    }
+
+    public function forEntity(object $entity): string
+    {
+        $types = $this->getPageByTypes();
+
+        return match (true) {
+            $entity instanceof Page    => $entity->getSlug(),
+            $entity instanceof Post    => $this->buildPrefixedSlug($types[PageEnum::POSTS->value], $entity->getSlug()),
+            $entity instanceof Story   => $this->buildPrefixedSlug(
+                $types[PageEnum::STORIES->value],
+                $entity->getSlug()
+            ),
+            $entity instanceof Chapter => $this->buildPrefixedSlug(
+                $types[PageEnum::STORIES->value],
+                $entity->getRefStory()->getSlug() . '/' . $entity->getSlug()
+            ),
+            default => throw new InvalidArgumentException(
+                sprintf(
+                    'Unsupported entity type: %s',
+                    get_debug_type($entity)
+                )
+            ),
+        };
     }
 
     public function getEntity(): ?object
@@ -71,6 +95,25 @@ class SlugService
         }
 
         return $page;
+    }
+
+    public function getPageByType(string $type): ?Page
+    {
+        $types = $this->getPageByTypes();
+
+        return $types[$type] ?? null;
+    }
+
+    /**
+     * Construit un slug préfixé avec validation de l'existence de la page type.
+     */
+    private function buildPrefixedSlug($page, string $suffix): string
+    {
+        if (!$page instanceof Page) {
+            throw new Exception('No page found for this type');
+        }
+
+        return $page->getSlug() . '/' . $suffix;
     }
 
     private function getContentByType(string $type, string $slug): ?object
@@ -117,46 +160,6 @@ class SlugService
         $this->pages[$slug] = $page;
 
         return $page;
-    }
-
-    public function forEntity(object $entity): string
-    {
-        $types = $this->getPageByTypes();
-
-        return match (true) {
-            $entity instanceof Page    => $entity->getSlug(),
-            $entity instanceof Post    => $this->buildPrefixedSlug($types[PageEnum::POSTS->value], $entity->getSlug()),
-            $entity instanceof Story   => $this->buildPrefixedSlug($types[PageEnum::STORIES->value], $entity->getSlug()),
-            $entity instanceof Chapter => $this->buildPrefixedSlug(
-                $types[PageEnum::STORIES->value],
-                $entity->getRefStory()->getSlug() . '/' . $entity->getSlug()
-            ),
-            default => throw new InvalidArgumentException(
-                sprintf(
-                    'Unsupported entity type: %s',
-                    get_debug_type($entity)
-                )
-            ),
-        };
-    }
-
-    public function getPageByType(string $type): ?Page
-    {
-        $types = $this->getPageByTypes();
-
-        return $types[$type] ?? null;
-    }
-
-    /**
-     * Construit un slug préfixé avec validation de l'existence de la page type.
-     */
-    private function buildPrefixedSlug($page, string $suffix): string
-    {
-        if (!$page instanceof Page) {
-            throw new Exception('No page found for this type');
-        }
-
-        return $page->getSlug() . '/' . $suffix;
     }
 
     /**

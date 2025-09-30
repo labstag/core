@@ -21,7 +21,6 @@ use Labstag\Repository\PageRepository;
 use Labstag\Repository\PostRepository;
 use Labstag\Repository\StoryRepository;
 use ReflectionClass;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -58,7 +57,6 @@ class SiteService
         protected PageRepository $pageRepository,
         protected PostRepository $postRepository,
         protected Environment $twigEnvironment,
-        protected ParameterBagInterface $parameterBag,
         protected ConfigurationRepository $configurationRepository,
     )
     {
@@ -106,49 +104,18 @@ class SiteService
             Page::class    => PageCrudController::class,
             Post::class    => PostCrudController::class,
         ];
+
         return $tab[$entity] ?? null;
     }
 
-    /**
-     * @return mixed[]
-     */
-    public function getDataByEntity(object $entity, bool $disable = false): array
+    public function getDataViewByEntity(object $entity, bool $disable = false): array
     {
-        $cacheKey = 'data:' . spl_object_hash($entity) . ':' . ($disable ? '1' : '0');
-        if (isset($this->requestCache[$cacheKey])) {
-            return $this->requestCache[$cacheKey];
-        }
+        $data = $this->getDataByEntity($entity, $disable);
+        $view = $this->getViewByEntity($entity);
 
-        $data = [
-            'entity'     => $entity,
-            'paragraphs' => $entity->getParagraphs()->getValues(),
-            'img'        => $entity->getImg(),
-            'tags'       => $entity->getTags(),
-        ];
-
-        if (method_exists($entity, 'getCategories')) {
-            $data['categories'] = $entity->getCategories();
-        }
-
-        [
-            $header,
-            $main,
-            $footer,
-        ]         = $this->getBlocks($data, $disable);
-        $blocks   = array_merge($header, $main, $footer);
-        $contents = $this->blockService->getContents($blocks);
-
-        return $this->requestCache[$cacheKey] = [
-            'meta'   => $this->getMetaByEntity($entity->getMeta()),
-            'blocks' => [
-                'header' => $header,
-                'main'   => $main,
-                'footer' => $footer,
-            ],
-            'header' => $contents->header,
-            'footer' => $contents->footer,
-            'config' => $this->getConfiguration(),
-            'data'   => $data,
+        return [
+            $data,
+            $view,
         ];
     }
 
@@ -171,42 +138,6 @@ class SiteService
             $etagParts,
             $lastModified,
         ];
-    }
-
-    public function getFavicon(string $type): ?array
-    {
-        $info = null;
-        $file = $this->fileService->getFileInAdapter('assets', 'manifest.json');
-        $json = json_decode(file_get_contents($file), true);
-        foreach ($json as $title => $file) {
-            $info = null;
-            if (0 === substr_count((string) $title, $type)) {
-                continue;
-            }
-
-            $file          = str_replace('/assets/', '', $file);
-            $fileInAdapter = $this->fileService->getFileInAdapter('assets', $file);
-            if (is_null($fileInAdapter)) {
-                continue;
-            }
-
-            $info = $this->fileService->getInfoImage($fileInAdapter);
-            if (!is_array($info['data'])) {
-                continue;
-            }
-
-            if (0 == substr_count((string) $info['data']['type'], 'image')) {
-                continue;
-            }
-
-            break;
-        }
-
-        if (is_null($info)) {
-            return null;
-        }
-
-        return $info;
     }
 
     public function getFileFavicon(): ?array
@@ -250,19 +181,6 @@ class SiteService
         return $meta;
     }
 
-    public function getViewByEntity(object $entity): string
-    {
-        $cacheKey = 'view:' . spl_object_hash($entity);
-        if (isset($this->requestCache[$cacheKey])) {
-            return $this->requestCache[$cacheKey];
-        }
-
-        $reflectionClass = new ReflectionClass($entity);
-        $entityName      = ucfirst($reflectionClass->getShortName());
-
-        return $this->requestCache[$cacheKey] = $this->getViewByEntityName($entity, $entityName);
-    }
-
     public function isEnable(object $entity): bool
     {
         return !(!$entity->isEnable() && !$this->getUser() instanceof UserInterface);
@@ -288,29 +206,6 @@ class SiteService
         }
 
         return '';
-    }
-
-    protected function getMetaByEntity(Meta $meta): Meta
-    {
-        return $meta;
-    }
-
-    protected function getViewByEntityName(object $entity, string $entityName): string
-    {
-        unset($entity);
-        $loader = $this->twigEnvironment->getLoader();
-        $files  = [
-            'views/' . $entityName . '.html.twig',
-            'views/default.html.twig',
-        ];
-
-        foreach ($files as $file) {
-            if ($loader->exists($file)) {
-                return $file;
-            }
-        }
-
-        return end($files);
     }
 
     /**
@@ -346,10 +241,125 @@ class SiteService
         ];
     }
 
+    /**
+     * @return mixed[]
+     */
+    private function getDataByEntity(object $entity, bool $disable = false): array
+    {
+        $cacheKey = 'data:' . spl_object_hash($entity) . ':' . ($disable ? '1' : '0');
+        if (isset($this->requestCache[$cacheKey])) {
+            return $this->requestCache[$cacheKey];
+        }
+
+        $data = [
+            'entity'     => $entity,
+            'paragraphs' => $entity->getParagraphs()->getValues(),
+            'img'        => $entity->getImg(),
+            'tags'       => $entity->getTags(),
+        ];
+
+        if (method_exists($entity, 'getCategories')) {
+            $data['categories'] = $entity->getCategories();
+        }
+
+        [
+            $header,
+            $main,
+            $footer,
+        ]         = $this->getBlocks($data, $disable);
+        $blocks   = array_merge($header, $main, $footer);
+        $contents = $this->blockService->getContents($blocks);
+
+        return $this->requestCache[$cacheKey] = [
+            'meta'   => $this->getMetaByEntity($entity->getMeta()),
+            'blocks' => [
+                'header' => $header,
+                'main'   => $main,
+                'footer' => $footer,
+            ],
+            'header' => $contents->header,
+            'footer' => $contents->footer,
+            'config' => $this->getConfiguration(),
+            'data'   => $data,
+        ];
+    }
+
+    private function getFavicon(string $type): ?array
+    {
+        $info = null;
+        $file = $this->fileService->getFileInAdapter('assets', 'manifest.json');
+        $json = json_decode(file_get_contents($file), true);
+        foreach ($json as $title => $file) {
+            $info = null;
+            if (0 === substr_count((string) $title, $type)) {
+                continue;
+            }
+
+            $file          = str_replace('/assets/', '', $file);
+            $fileInAdapter = $this->fileService->getFileInAdapter('assets', $file);
+            if (is_null($fileInAdapter)) {
+                continue;
+            }
+
+            $info = $this->fileService->getInfoImage($fileInAdapter);
+            if (!is_array($info['data'])) {
+                continue;
+            }
+
+            if (0 == substr_count((string) $info['data']['type'], 'image')) {
+                continue;
+            }
+
+            break;
+        }
+
+        if (is_null($info)) {
+            return null;
+        }
+
+        return $info;
+    }
+
+    private function getMetaByEntity(Meta $meta): Meta
+    {
+        return $meta;
+    }
+
     private function getUser(): ?UserInterface
     {
         $token = $this->tokenStorage->getToken();
 
         return $token instanceof TokenInterface ? $token->getUser() : null;
+    }
+
+    private function getViewByEntity(object $entity): string
+    {
+        $cacheKey = 'view:' . spl_object_hash($entity);
+        if (isset($this->requestCache[$cacheKey])) {
+            return $this->requestCache[$cacheKey];
+        }
+
+        $reflectionClass = new ReflectionClass($entity);
+        $entityName      = ucfirst($reflectionClass->getShortName());
+
+        return $this->requestCache[$cacheKey] = $this->getViewByEntityName($entity, $entityName);
+    }
+
+    private function getViewByEntityName(object $entity, string $entityName): string
+    {
+        unset($entity);
+        $loader = $this->twigEnvironment->getLoader();
+        $files  = [
+            'views/' . $entityName . '.html.twig',
+            'views/default.html.twig',
+        ];
+
+        foreach ($files as $file) {
+            if ($loader->exists($file)) {
+                return $file;
+            }
+        }
+
+        return end($files);
     }
 }

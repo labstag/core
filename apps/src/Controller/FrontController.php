@@ -31,11 +31,7 @@ class FrontController extends AbstractController
         priority: -1
     )]
     #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
-    public function index(
-        SlugService $slugService,
-        SiteService $siteService,
-        Request $request
-    ): Response
+    public function index(SlugService $slugService, SiteService $siteService, Request $request): Response
     {
         $entity = $slugService->getEntity();
         if (!is_object($entity)) {
@@ -46,9 +42,10 @@ class FrontController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        // Données pour le rendu
-        $view = $siteService->getViewByEntity($entity);
-        $data = $siteService->getDataByEntity($entity);
+        [
+            $data,
+            $view,
+        ] = $siteService->getDataViewByEntity($entity);
 
         // ETag & Last-Modified basés sur l'entité (si méthodes dispo)
 
