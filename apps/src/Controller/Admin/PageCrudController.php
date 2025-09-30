@@ -40,25 +40,32 @@ class PageCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
-    public function configureFields(string $pageName): iterable
+    // Base identity set but slug possibly excluded depending on home type
+    private function getIdEntity(string $pageName, $currentEntity)
     {
-        $currentEntity = $this->getContext()->getEntity()->getInstance();
-        yield $this->addTabPrincipal();
-        $isSuperAdmin = $this->isSuperAdmin();
-        // Base identity set but slug possibly excluded depending on home type
         $identity = $this->crudFieldFactory->baseIdentitySet('page', $pageName, self::getEntityFqcn());
         if ($currentEntity instanceof Page && PageEnum::HOME->value == $currentEntity->getType()) {
             // Remove slug field (present at index 2 if withSlug kept)
             unset($identity[2]);
         }
 
+        return $identity;
+    }
+
+    #[\Override]
+    public function configureFields(string $pageName): iterable
+    {
+        $currentEntity = $this->getContext()->getEntity()->getInstance();
+        yield $this->addTabPrincipal();
+        $isSuperAdmin = $this->isSuperAdmin();
+        $identity = $this->getIdEntity($pageName, $currentEntity);
+
         foreach ($identity as $field) {
             yield $field;
         }
 
-        if (($fieldChoice = $this->addFieldIsHome($currentEntity, $pageName)) instanceof ChoiceField
-        ) {
+        $fieldChoice = $this->addFieldIsHome($currentEntity, $pageName);
+        if ($fieldChoice instanceof ChoiceField) {
             yield $fieldChoice;
         }
 
@@ -68,16 +75,13 @@ class PageCrudController extends AbstractCrudControllerLib
         }
 
         yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) {
-            yield $field;
-        }
-
-        foreach ($this->crudFieldFactory->metaFields() as $field) {
-            yield $field;
-        }
-
-        foreach ($this->crudFieldFactory->refUserFields($isSuperAdmin) as $field) {
-            yield $field;
+        $fieldsTabs = [
+            $this->crudFieldFactory->paragraphFields($pageName),
+            $this->crudFieldFactory->metaFields(),
+            $this->crudFieldFactory->refUserFields($isSuperAdmin)
+        ];
+        foreach ($fieldsTabs as $fields) {
+            yield from $fields;
         }
 
         yield $this->crudFieldFactory->workflowField();

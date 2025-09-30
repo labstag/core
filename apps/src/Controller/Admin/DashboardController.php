@@ -56,21 +56,23 @@ class DashboardController extends AbstractDashboardController
     #[\Override]
     public function configureMenuItems(): iterable
     {
+        $categories = $this->menuItemFactory->createCategoryMenuItems();
+        $tags       = $this->menuItemFactory->createTagMenuItems();
         // Dashboard home
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
 
         // Shared taxonomy items (categories / tags) used in several content sub-menus
-        $categories = $this->menuItemFactory->createCategoryMenuItems();
-        $tags       = $this->menuItemFactory->createTagMenuItems();
-
-        // Content related grouped menus
-        yield from $this->buildContentMenus($categories, $tags);
-
-        // Simple CRUD (flat) menus
-        yield from $this->buildSimpleCrudMenus();
+        $fieldsTAbs = [
+            $this->buildContentMenus($categories, $tags),
+            $this->buildSimpleCrudMenus()
+        ];
+        foreach ($fieldsTAbs as $fields) {
+            yield from $fields;
+        }
 
         // Configuration (single editable entity)
-        if (($configMenu = $this->buildConfigurationMenuItem()) !== null) {
+        $configMenu = $this->buildConfigurationMenuItem();
+        if ($configMenu !== null) {
             yield $configMenu;
         }
 
