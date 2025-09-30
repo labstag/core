@@ -1,0 +1,211 @@
+<?php
+
+namespace Labstag\Lib\Admin\Factory;
+
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use Doctrine\ORM\QueryBuilder;
+use Labstag\Field\ParagraphsField;
+use Labstag\Repository\CategoryRepository;
+use Labstag\Repository\TagRepository;
+use Labstag\Service\FileService;
+use Symfony\Component\Translation\TranslatableMessage;
+use Vich\UploaderBundle\Form\Type\VichImageType;
+
+/**
+ * Fabrique centralisée pour les champs (EasyAdmin Fields) afin de réduire
+ * la duplication dans AbstractCrudControllerLib.
+ */
+final class CrudFieldFactory
+{
+    public function __construct(private FileService $fileService)
+    {
+    }
+
+    public function idField(): IdField
+    {
+        return IdField::new('id', new TranslatableMessage('ID'))->onlyOnDetail();
+    }
+
+    public function idShortcodeField(string $type): TextField
+    {
+        return TextField::new('id', new TranslatableMessage('Shortcode'))
+            ->formatValue(fn ($identity): string => sprintf('[%s:%s]', $type, $identity))
+            ->onlyOnDetail();
+    }
+
+    public function booleanField(string $propertyName, string $label, bool $asSwitch = true): BooleanField
+    {
+        $field = BooleanField::new($propertyName, $label);
+        if ($asSwitch) {
+            $field->renderAsSwitch(true);
+        }
+
+        return $field;
+    }
+
+    public function imageField(string $type, string $pageName, string $entityFqcn, ?string $label = null): ImageField|TextField
+    {
+        if ('edit' === $pageName || 'new' === $pageName) {
+            return TextField::new($type . 'File', $label ?? new TranslatableMessage('Image'))
+                ->setFormType(VichImageType::class);
+        }
+
+        $basePath = $this->fileService->getBasePath($entityFqcn, $type . 'File');
+
+        return ImageField::new($type, $label ?? new TranslatableMessage('Image'))
+            ->setBasePath($basePath);
+    }
+
+    /**
+     * @return array<int, FormField|TextField>
+     */
+    public function metaFields(): array
+    {
+        return [
+            FormField::addTab(new TranslatableMessage('SEO')),
+            TextField::new('meta.title', new TranslatableMessage('Title'))->hideOnIndex(),
+            TextField::new('meta.keywords', new TranslatableMessage('Keywords'))->hideOnIndex(),
+            TextField::new('meta.description', new TranslatableMessage('Description'))->hideOnIndex(),
+        ];
+    }
+
+    /**
+     * @return array<int, FormField|ParagraphsField>
+     */
+    public function paragraphFields(string $pageName): array
+    {
+        if ('new' === $pageName) {
+            return [];
+        }
+        if ('edit' !== $pageName) {
+            return [ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'))];
+        }
+
+        return [
+            FormField::addTab(new TranslatableMessage('Paragraphs'))->hideWhenCreating(),
+            ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'))->hideWhenCreating(),
+        ];
+    }
+
+    /**
+     * @return array<int, FormField|AssociationField>
+     */
+    public function refUserFields(bool $isSuperAdmin): array
+    {
+        if (!$isSuperAdmin) {
+            return [];
+        }
+
+        $associationField = AssociationField::new('refuser', new TranslatableMessage('User'))
+            ->autocomplete()
+            ->setSortProperty('username');
+
+        return [
+            FormField::addTab(new TranslatableMessage('User')),
+            $associationField,
+        ];
+    }
+
+    public function slugField(): SlugField
+    {
+        return SlugField::new('slug', new TranslatableMessage('Slug'))
+            ->hideOnIndex()
+            ->setFormTypeOptions(['required' => false])
+            ->setTargetFieldName('title')
+            ->setUnlockConfirmationMessage('Attention, si vous changez le titre, le slug sera modifié');
+    }
+
+    public function stateField(): TextField
+    {
+        return TextField::new('states', new TranslatableMessage('States'))
+            ->setTemplatePath('admin/field/states.html.twig')
+            ->onlyOnIndex();
+    }
+
+    public function tagsField(string $type): AssociationField
+    {
+        return AssociationField::new('tags', new TranslatableMessage('Tags'))
+            ->autocomplete()
+            ->setTemplatePath('admin/field/tags.html.twig')
+            ->setFormTypeOption('by_reference', false)
+            ->setQueryBuilder(function (QueryBuilder $qb) use ($type): void {
+                $qb->andWhere('entity.type = :type')->setParameter('type', $type);
+            });
+    }
+
+    public function categoriesField(string $type): AssociationField
+    {
+        return AssociationField::new('categories', new TranslatableMessage('Categories'))
+            ->autocomplete()
+            ->setTemplatePath('admin/field/categories.html.twig')
+            ->setFormTypeOption('by_reference', false)
+            ->setQueryBuilder(function (QueryBuilder $qb) use ($type): void {
+                $qb->andWhere('entity.type = :type')->setParameter('type', $type);
+            });
+    }
+
+    public function titleField(): TextField
+    {
+        return TextField::new('title', new TranslatableMessage('Title'));
+    }
+
+    public function totalChildField(string $type): CollectionField
+    {
+        return CollectionField::new($type, new TranslatableMessage('Childs'))
+            ->hideOnForm()
+            ->formatValue(fn ($value): int => is_countable($value) ? count($value) : 0);
+    }
+
+    public function workflowField(): TextField
+    {
+        return TextField::new('workflow', new TranslatableMessage('Workflow'))
+            ->setTemplatePath('admin/field/workflow.html.twig')
+            ->onlyOnIndex();
+    }
+
+    public function createdAtField(): DateTimeField
+    {
+        return DateTimeField::new('createdAt', new TranslatableMessage('Created At'))
+            ->hideWhenCreating();
+    }
+
+    public function updatedAtField(): DateTimeField
+    {
+        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))
+            ->hideWhenCreating()
+            ->hideOnIndex();
+    }
+
+    public function addFilterEnable(Filters $filters): void
+    {
+        $filters->add(\EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter::new('enable', new TranslatableMessage('Enable')));
+    }
+
+    public function addFilterRefUser(Filters $filters): void
+    {
+        $filters->add(\EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter::new('refuser', new TranslatableMessage('User')));
+    }
+
+    public function addFilterTags(Filters $filters, string $type): void
+    {
+        $filters->add(\EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter::new('tags', new TranslatableMessage('Tags'))
+            ->setFormTypeOption('value_type_options.query_builder', static fn (TagRepository $repo): QueryBuilder => $repo->createQueryBuilder('t')->andWhere('t.type = :type')->setParameter('type', $type))
+        );
+    }
+
+    public function addFilterCategories(Filters $filters, string $type): void
+    {
+        $filters->add(\EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter::new('categories', new TranslatableMessage('Categories'))
+            ->setFormTypeOption('value_type_options.query_builder', static fn (CategoryRepository $repo): QueryBuilder => $repo->createQueryBuilder('c')->andWhere('c.type = :type')->setParameter('type', $type))
+        );
+    }
+}
