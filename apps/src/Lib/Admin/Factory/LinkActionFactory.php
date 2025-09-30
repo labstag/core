@@ -13,12 +13,6 @@ use Symfony\Component\Translation\TranslatableMessage;
  */
 final class LinkActionFactory
 {
-    /**
-     * @param bool $w3cEnabled Injecté via paramètre de config (app.w3c_enabled)
-     */
-    public function __construct(private bool $w3cEnabled = false)
-    {
-    }
 
     public function createPublicAction(string $routeName): Action
     {
@@ -30,9 +24,6 @@ final class LinkActionFactory
 
     public function createW3cAction(string $routeName): ?Action
     {
-        if (!$this->w3cEnabled) {
-            return null;
-        }
 
         return Action::new('linkw3CValidator', new TranslatableMessage('W3C Validator'))
             ->setHtmlAttributes(['target' => '_blank'])
