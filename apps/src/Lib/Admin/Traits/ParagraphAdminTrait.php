@@ -11,8 +11,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Trait isolant la gestion des paragraphes dans l'admin.
- * Il suppose que la classe consommatrice dispose de méthodes :
+ * Trait isolating paragraph management in admin.
+ * It assumes that the consuming class has methods:
  *   - getRepository(): ServiceEntityRepositoryLib
  *   - render(string $view, array $params = []): Response
  *   - redirect(string $url): RedirectResponse

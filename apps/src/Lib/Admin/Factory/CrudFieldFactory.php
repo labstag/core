@@ -21,8 +21,8 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 /**
- * Fabrique centralisée pour les champs (EasyAdmin Fields) afin de réduire
- * la duplication dans AbstractCrudControllerLib.
+ * Centralized factory for fields (EasyAdmin Fields) to reduce
+ * duplication in AbstractCrudControllerLib.
  */
 final class CrudFieldFactory
 {
