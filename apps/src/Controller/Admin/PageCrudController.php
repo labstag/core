@@ -101,7 +101,9 @@ class PageCrudController extends AbstractCrudControllerLib
         $meta = new Meta();
         $page->setMeta($meta);
         $home = $this->getRepository()->findOneBy(
-            ['type' => PageEnum::HOME->value]
+            [
+                'type' => PageEnum::HOME->value,
+            ]
         );
         if ($home instanceof Page) {
             $page->setPage($home);
