@@ -30,21 +30,4 @@ final class LinkActionFactory
             ->linkToRoute($routeName, fn ($entity): array => ['entity' => $entity->getId()])
             ->displayIf(static fn ($entity): bool => !method_exists($entity, 'getDeletedAt') || null === $entity->getDeletedAt());
     }
-
-    public function apply(Actions $actions, string $publicRoute, ?string $w3cRoute = null): void
-    {
-        $public = $this->createPublicAction($publicRoute);
-        $actions->add(Crud::PAGE_DETAIL, $public);
-        $actions->add(Crud::PAGE_EDIT, $public);
-        $actions->add(Crud::PAGE_INDEX, $public);
-
-        if ($w3cRoute) {
-            $w3c = $this->createW3cAction($w3cRoute);
-            if ($w3c) {
-                $actions->add(Crud::PAGE_DETAIL, $w3c);
-                $actions->add(Crud::PAGE_EDIT, $w3c);
-                $actions->add(Crud::PAGE_INDEX, $w3c);
-            }
-        }
-    }
 }

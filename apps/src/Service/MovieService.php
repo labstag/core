@@ -100,7 +100,7 @@ final class MovieService
         return $country;
     }
 
-    public function getDetails(Movie $movie): array
+    private function getDetails(Movie $movie): array
     {
         $details = [];
 
@@ -161,7 +161,7 @@ final class MovieService
         return $year;
     }
 
-    public function initGenres(): array
+    private function initGenres(): array
     {
         if ([] !== $this->genres) {
             return $this->genres;
@@ -193,7 +193,7 @@ final class MovieService
         return in_array(true, $statuses, true);
     }
 
-    public function updateImageMovie(Movie $movie, array $details): bool
+    private function updateImageMovie(Movie $movie, array $details): bool
     {
         $poster = $this->getImgMovie($details);
         if ('' === $poster) {
@@ -221,7 +221,7 @@ final class MovieService
         }
     }
 
-    public function updateImageSaga(Saga $saga, array $details): bool
+    private function updateImageSaga(Saga $saga, array $details): bool
     {
         $poster = $this->getImgSaga($details);
         if ('' === $poster) {
@@ -249,7 +249,7 @@ final class MovieService
         }
     }
 
-    public function updateTrailer(Movie $movie, array $details): bool
+    private function updateTrailer(Movie $movie, array $details): bool
     {
         if (!isset($details['trailers'])) {
             return false;

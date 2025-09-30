@@ -21,26 +21,7 @@ final class MetaService
     {
     }
 
-    public function asset(mixed $entity, string $field, bool $placeholder = true): string
-    {
-        $file = $this->fileService->asset($entity, $field);
 
-        if ('' !== $file) {
-            return $file;
-        }
-
-        if (!$placeholder) {
-            return '';
-        }
-
-        if (!$entity instanceof Configuration) {
-            $config = $this->configurationService->getConfiguration();
-
-            return $this->asset($config, 'placeholder');
-        }
-
-        return 'https://picsum.photos/1200/1200?md5=' . md5((string) $entity->getId());
-    }
 
     public function getEntityParent(?Meta $meta): ?object
     {
@@ -75,8 +56,8 @@ final class MetaService
 
     public function getImageForMetatags(mixed $entity): ?array
     {
-        $file = $this->asset($entity, 'img');
-        if (null == $file) {
+        $file = $this->fileService->asset($entity, 'img');
+        if ('' === $file) {
             return null;
         }
 

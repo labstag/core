@@ -19,7 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 trait ParagraphAdminTrait
 {
-    protected function paragraphAdd(AdminContext $adminContext, AdminUrlGenerator $urlGenerator, ParagraphService $paragraphService): RedirectResponse
+    // Public paragraph management endpoints (add/delete/list/update)
+    public function addParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator, ParagraphService $paragraphService): RedirectResponse
     {
         $request  = $adminContext->getRequest();
         $entityId = $request->query->get('entityId');
@@ -40,7 +41,7 @@ trait ParagraphAdminTrait
         return $this->redirect($urlGenerator->generateUrl());
     }
 
-    protected function paragraphDelete(AdminContext $adminContext, AdminUrlGenerator $urlGenerator, ParagraphRepository $paragraphRepository): RedirectResponse
+    public function deleteParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator, ParagraphRepository $paragraphRepository): RedirectResponse
     {
         $request  = $adminContext->getRequest();
         $entityId = $request->query->get('entityId');
@@ -60,7 +61,7 @@ trait ParagraphAdminTrait
         return $this->redirect($urlGenerator->generateUrl());
     }
 
-    protected function paragraphList(AdminContext $adminContext): Response
+    public function listParagraph(AdminContext $adminContext): Response
     {
         $entityId   = $adminContext->getRequest()->query->get('entityId');
         $repository = $this->getRepository();
@@ -72,7 +73,7 @@ trait ParagraphAdminTrait
         ]);
     }
 
-    protected function paragraphUpdate(AdminContext $adminContext, AdminUrlGenerator $urlGenerator, ParagraphRepository $paragraphRepository): RedirectResponse
+    public function updateParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator, ParagraphRepository $paragraphRepository): RedirectResponse
     {
         $request    = $adminContext->getRequest();
         $entityId   = $request->query->get('entityId');
