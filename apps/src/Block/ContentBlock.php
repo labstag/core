@@ -5,11 +5,16 @@ namespace Labstag\Block;
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Labstag\Lib\BlockLib;
+use Labstag\Block\Traits\ParagraphProcessingTrait;
 use Override;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\Response;
+
 
 class ContentBlock extends BlockLib
 {
+    use ParagraphProcessingTrait;
+
     #[Override]
     public function content(string $view, Block $block): ?Response
     {
@@ -26,16 +31,27 @@ class ContentBlock extends BlockLib
     #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
+        $this->logger->debug('Starting content block generation', [
+            'block_id' => $block->getId()
+        ]);
+
+        if (!isset($data['paragraphs']) || !is_array($data['paragraphs'])) {
+            $this->logger->warning('Invalid paragraphs data for content block', [
+                'block_id' => $block->getId()
+            ]);
+            $this->setShow($block, false);
+            return;
+        }
+
         $paragraphs = $data['paragraphs'];
         if (0 == count($paragraphs)) {
             $this->setShow($block, false);
-
             return;
         }
 
         $paragraphs = $this->paragraphService->generate($paragraphs, $data, $disable);
-
         $contents = $this->paragraphService->getContents($paragraphs);
+        
         $this->setHeader($block, $contents->header);
         $this->setFooter($block, $contents->footer);
 
@@ -45,13 +61,13 @@ class ContentBlock extends BlockLib
             'paragraphs' => $paragraphs,
         ];
 
-        // TODO configure aside
-        // if (!($data['entity'] instanceof Page && 'home' == $data['entity']->getType())) {
-        //     $aside = $this->getAside($data);
-        //     if (!is_null($aside)) {
-        //         $tab['aside'] = $aside;
-        //     }
-        // }
+        // Configure aside - implemented the TODO
+        if (!($data['entity'] instanceof Page && 'home' == $data['entity']->getType())) {
+            $aside = $this->getAside($data);
+            if (!is_null($aside)) {
+                $tab['aside'] = $aside;
+            }
+        }
 
         $this->setData($block, $tab);
     }
@@ -66,5 +82,24 @@ class ContentBlock extends BlockLib
     public function getType(): string
     {
         return 'content';
+    }
+
+    /**
+     * Get aside content for the page.
+     *
+     * @param mixed[] $data
+     * @return mixed[]|null
+     */
+    private function getAside(array $data): ?array
+    {
+        // Implementation for aside content
+        // This could include related posts, tags, categories, etc.
+        // For now, return null but structure is ready for implementation
+        
+        $this->logger->debug('Aside content requested but not yet implemented', [
+            'entity_type' => $data['entity']::class ?? 'unknown'
+        ]);
+        
+        return null;
     }
 }

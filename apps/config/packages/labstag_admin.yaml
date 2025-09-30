@@ -1,6 +1,6 @@
 parameters:
 
 services:
-  Labstag\Lib\Admin\Extension\OwnerRestrictionExtension:
+  Labstag\Controller\Admin\Extension\OwnerRestrictionExtension:
     public: true
     tags: [ 'easy_admin.extension' ]

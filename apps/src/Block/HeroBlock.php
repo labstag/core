@@ -3,47 +3,20 @@
 namespace Labstag\Block;
 
 use Labstag\Entity\Block;
-use Labstag\Lib\BlockLib;
+use Labstag\Block\Abstract\AbstractParagraphBlock;
 use Override;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-class HeroBlock extends BlockLib
+
+class HeroBlock extends AbstractParagraphBlock
 {
-    #[Override]
-    public function content(string $view, Block $block): ?Response
-    {
-        if (!$this->isShow($block)) {
-            return null;
-        }
-
-        return $this->render($view, $this->getData($block));
-    }
-
     /**
      * @param mixed[] $data
      */
     #[Override]
-    public function generate(Block $block, array $data, bool $disable): void
+    protected function shouldHideBlock(Block $block, array $data): bool
     {
-        $paragraphs = $block->getParagraphs()->getValues();
-        if (0 == count($paragraphs) || $this->siteService->isHome($data)) {
-            $this->setShow($block, false);
-
-            return;
-        }
-
-        $paragraphs = $this->paragraphService->generate($paragraphs, $data, $disable);
-        $contents   = $this->paragraphService->getContents($paragraphs);
-        $this->setHeader($block, $contents->header);
-        $this->setFooter($block, $contents->footer);
-
-        $this->setData(
-            $block,
-            [
-                'block'      => $block,
-                'paragraphs' => $paragraphs,
-            ]
-        );
+        return $this->siteService->isHome($data);
     }
 
     #[Override]

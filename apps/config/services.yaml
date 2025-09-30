@@ -20,26 +20,6 @@ services:
     - '../src/DependencyInjection/'
     - '../src/Entity/'
     - '../src/Kernel.php'
-  Labstag\Paragraph\:
-    resource: "../src/Paragraph/"
-    public: true
-    tags: [ 'labstag.paragraphs' ]
-  Labstag\Block\:
-    resource: "../src/Block/"
-    public: true
-    tags: [ 'labstag.blocks' ]
-  Labstag\Email\:
-    resource: "../src/Email/"
-    public: true
-    tags: [ 'labstag.emails' ]
-  Labstag\FrontForm\:
-    resource: "../src/FrontForm/"
-    public: true
-    tags: [ 'labstag.forms' ]
-  Labstag\Replace\:
-    resource: "../src/Replace/"
-    public: true
-    tags: [ 'labstag.replaces' ]
   Labstag\Service\MovieService:
     arguments:
       $tmdbapiKey: '%env(TMDB_API_KEY)%'

@@ -7,7 +7,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Labstag\Entity\Block;
 use Labstag\Lib\BlockLib;
 use Override;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\Response;
+
 
 class AdminBlock extends BlockLib
 {
@@ -28,10 +30,26 @@ class AdminBlock extends BlockLib
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
+        
+        $this->logger->debug('Starting admin block generation', [
+            'block_id' => $block->getId()
+        ]);
+        
+        if (!isset($data['entity']) || !is_object($data['entity'])) {
+            $this->logger->warning('Invalid entity data for admin block', [
+                'block_id' => $block->getId()
+            ]);
+            $this->setShow($block, false);
+            return;
+        }
+        
         $url = $this->setUrl($data['entity']);
         if (!$url instanceof AdminUrlGeneratorInterface) {
+            $this->logger->debug('No admin URL found for entity', [
+                'block_id' => $block->getId(),
+                'entity_class' => $data['entity']::class
+            ]);
             $this->setShow($block, false);
-
             return;
         }
 

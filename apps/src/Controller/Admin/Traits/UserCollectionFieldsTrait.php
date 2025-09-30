@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib\Admin\Traits;
+namespace Labstag\Controller\Admin\Traits;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use Symfony\Component\Translation\TranslatableMessage;

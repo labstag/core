@@ -38,7 +38,9 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Twig\Environment;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
+#[AutoconfigureTag('labstag.paragraphs')]
 abstract class ParagraphLib extends AbstractController
 {
 

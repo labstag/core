@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib\Admin\Traits;
+namespace Labstag\Controller\Admin\Traits;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;

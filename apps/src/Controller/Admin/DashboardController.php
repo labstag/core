@@ -12,7 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\User;
-use Labstag\Lib\Admin\Factory\MenuItemFactory;
+use Labstag\Controller\Admin\Factory\MenuItemFactory;
 use Labstag\Lib\ServiceEntityRepositoryLib;
 use Labstag\Repository\ConfigurationRepository;
 use Labstag\Service\ConfigurationService;

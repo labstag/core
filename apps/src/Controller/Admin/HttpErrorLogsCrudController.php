@@ -14,7 +14,7 @@ use Labstag\Entity\HttpErrorLogs;
 use Labstag\Field\HttpLogs\IsBotField;
 use Labstag\Field\HttpLogs\SameField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Labstag\Lib\Admin\Traits\ReadOnlyActionsTrait;
+use Labstag\Controller\Admin\Traits\ReadOnlyActionsTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;

@@ -12,12 +12,14 @@ use Labstag\Service\ConfigurationService;
 use Labstag\Service\SiteService;
 use Labstag\Service\WorkflowService;
 use Override;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 
+#[AutoconfigureTag('labstag.emails')]
 abstract class EmailLib extends Email
 {
 

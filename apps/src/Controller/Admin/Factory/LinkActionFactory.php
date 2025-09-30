@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib\Admin\Factory;
+namespace Labstag\Controller\Admin\Factory;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
