@@ -16,6 +16,7 @@ use Exception;
 use Labstag\Entity\User;
 use Labstag\Lib\ServiceEntityRepositoryLib;
 use Labstag\Repository\ConfigurationRepository;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
@@ -30,6 +31,7 @@ class DashboardController extends AbstractDashboardController
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
+        protected ConfigurationService $configurationService,
         protected ConfigurationRepository $configurationRepository,
         protected UserService $userService,
         protected FileService $fileService,
@@ -42,7 +44,7 @@ class DashboardController extends AbstractDashboardController
     #[Override]
     public function configureDashboard(): Dashboard
     {
-        $data      = $this->siteService->getConfiguration();
+        $data      = $this->configurationService->getConfiguration();
         $dashboard = Dashboard::new();
         $dashboard->setTitle($data->getName());
         $dashboard->setTranslationDomain('admin');

@@ -8,6 +8,7 @@ use Labstag\Replace\UserEmailReplace;
 use Labstag\Replace\UsernameReplace;
 use Labstag\Replace\UserRolesReplace;
 use Labstag\Repository\TemplateRepository;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\SiteService;
 use Labstag\Service\WorkflowService;
 use Override;
@@ -38,6 +39,7 @@ abstract class EmailLib extends Email
         private readonly iterable $replaces,
         protected RouterInterface $router,
         protected SiteService $siteService,
+        protected ConfigurationService $configurationService,
         protected WorkflowService $workflowService,
         protected Environment $twigEnvironment,
         protected TemplateRepository $templateRepository,
@@ -49,7 +51,7 @@ abstract class EmailLib extends Email
     #[Override]
     public function from(Address|string ...$addresses): static
     {
-        $configuration = $this->siteService->getConfiguration();
+        $configuration = $this->configurationService->getConfiguration();
         $addresses     = $configuration->getNoReply();
 
         return parent::from($addresses);
@@ -142,7 +144,7 @@ abstract class EmailLib extends Email
     #[Override]
     public function subject(string $subject): static
     {
-        $configuration = $this->siteService->getConfiguration();
+        $configuration = $this->configurationService->getConfiguration();
         $entity        = $this->getEntity();
         $subject       = str_replace(
             [

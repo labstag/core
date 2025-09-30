@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller;
 
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\SiteService;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,7 +20,11 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils, SiteService $siteService): Response
+    public function login(
+        AuthenticationUtils $authenticationUtils,
+        ConfigurationService $configurationService,
+        SiteService $siteService,
+    ): Response
     {
         if ($this->getUser() instanceof UserInterface) {
             return $this->redirectToRoute('admin');
@@ -27,7 +32,7 @@ class SecurityController extends AbstractController
 
         $response = $this->render(
             '@EasyAdmin/page/login.html.twig',
-            $this->getDataLogin($authenticationUtils, $siteService)
+            $this->getDataLogin($authenticationUtils, $configurationService, $siteService)
         );
 
         $response->headers->set('X-Content-Type-Options', 'nosniff');
@@ -46,12 +51,16 @@ class SecurityController extends AbstractController
     /**
      * @return mixed[]
      */
-    protected function getDataLogin(AuthenticationUtils $authenticationUtils, SiteService $siteService): array
+    protected function getDataLogin(
+        AuthenticationUtils $authenticationUtils,
+        ConfigurationService $configurationService,
+        SiteService $siteService,
+    ): array
     {
         $favicon      = $siteService->getFileFavicon();
         $error        = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
-        $data         = $siteService->getConfiguration();
+        $data         = $configurationService->getConfiguration();
 
         $data = [
             // parameters usually defined in Symfony login forms

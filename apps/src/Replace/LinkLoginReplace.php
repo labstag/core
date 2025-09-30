@@ -8,7 +8,7 @@ class LinkLoginReplace extends ReplaceLib
 {
     public function exec(): string
     {
-        $configuration = $this->siteService->getConfiguration();
+        $configuration = $this->configurationService->getConfiguration();
 
         return $configuration->getUrl() . $this->router->generate('app_login', []);
     }

@@ -3,6 +3,7 @@
 namespace Labstag\Lib;
 
 use Labstag\Interface\ReplaceInterface;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\SiteService;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -15,6 +16,7 @@ abstract class ReplaceLib implements ReplaceInterface
     protected array $data;
 
     public function __construct(
+        protected ConfigurationService $configurationService,
         protected SiteService $siteService,
         protected RouterInterface $router,
     )

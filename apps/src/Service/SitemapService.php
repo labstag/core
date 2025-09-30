@@ -21,6 +21,7 @@ class SitemapService
     protected array $parent = [];
 
     public function __construct(
+        protected ConfigurationService $configurationService,
         protected SlugService $slugService,
         protected EntityManagerInterface $entityManager,
         protected SiteService $siteService,
@@ -33,7 +34,7 @@ class SitemapService
      */
     public function getData(bool $all = false): array
     {
-        $configuration = $this->siteService->getConfiguration();
+        $configuration = $this->configurationService->getConfiguration();
 
         $tabs = $this->getDataPages();
         if ($configuration->isSitemapPosts() || true == $all) {

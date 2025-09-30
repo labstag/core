@@ -3,9 +3,11 @@
 namespace Labstag\Controller;
 
 use Carbon\Carbon;
+use Labstag\Service\EtagCacheService;
 use Labstag\Service\SitemapService;
 use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
+use Labstag\Service\ViewResolverService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +33,13 @@ class FrontController extends AbstractController
         priority: -1
     )]
     #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
-    public function index(SlugService $slugService, SiteService $siteService, Request $request): Response
+    public function index(
+        EtagCacheService $etagCacheService,
+        ViewResolverService $viewResolverService,
+        SlugService $slugService,
+        SiteService $siteService,
+        Request $request,
+    ): Response
     {
         $entity = $slugService->getEntity();
         if (!is_object($entity)) {
@@ -45,20 +53,15 @@ class FrontController extends AbstractController
         [
             $data,
             $view,
-        ] = $siteService->getDataViewByEntity($entity);
+        ] = $viewResolverService->getDataViewByEntity($entity);
 
         // ETag & Last-Modified basés sur l'entité (si méthodes dispo)
-
-        [
-            $etagParts,
-            $lastModified,
-        ]                           = $siteService->getEtagLastModified($entity);
-        $etag                       = sha1(implode('|', $etagParts));
+        $cacheData = $etagCacheService->getCacheHeaders($entity);
 
         $response = $this->render($view, $data);
-        $response->setEtag($etag);
-        if ($lastModified instanceof \DateTimeInterface) {
-            $response->setLastModified($lastModified);
+        $response->setEtag($cacheData['etag']);
+        if ($cacheData['lastModified']) {
+            $response->setLastModified($cacheData['lastModified']);
         }
 
         $response->setPublic();
@@ -99,11 +102,11 @@ class FrontController extends AbstractController
         priority: 1,
         defaults: ['_format' => 'xml']
     )]
-    public function sitemapXml(SitemapService $sitemapService, SiteService $siteService): mixed
+    public function sitemapXml(SitemapService $sitemapService, ConfigurationService $configurationService): mixed
     {
         return $this->initCache()->get(
             'sitemap.xml',
-            function (ItemInterface $item) use ($sitemapService, $siteService): Response
+            function (ItemInterface $item) use ($sitemapService, $configurationService): Response
             {
                 $item->expiresAfter(3600);
 
@@ -112,7 +115,7 @@ class FrontController extends AbstractController
                 return $this->render(
                     'sitemap/sitemap.xml.twig',
                     [
-                        'config'  => $siteService->getConfiguration(),
+                        'config'  => $configurationService->getConfiguration(),
                         'date'    => Carbon::now()->format('Y-m-d'),
                         'sitemap' => $sitemap,
                     ]
