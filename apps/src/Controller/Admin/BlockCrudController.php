@@ -23,6 +23,8 @@ use Exception;
 use Labstag\Entity\Block;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\BlockRepository;
+use Labstag\Repository\ParagraphRepository;
+use Labstag\Service\ParagraphService;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;

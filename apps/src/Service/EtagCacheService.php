@@ -1,16 +1,8 @@
 <?php
 
-namesp    /**
-     * Cache of calculated ETags to avoid multiple recalculations
-     * during the same request.
-     */Labs    /**
-     * Cache of last modifications to avoid multiple recalculations
-     * during the same request.
-     */Service;
+namespace Labstag\Service;
 
-use    /**
-     * Generates an ETag for a collection of entities.
-     */teTime;
+use DateTime;
 use DateTimeInterface;
 use Exception;
 use ReflectionClass;
@@ -20,16 +12,16 @@ final class EtagCacheService
 {
 
     /**
-     * Cache des ETags calculés pour éviter les recalculs multiples
-     * durant la même requête.
+     * Cache of calculated ETags to avoid multiple recalculations
+     * during the same request.
      *
      * @var array<string, string>
      */
     private array $etagCache = [];
 
     /**
-     * Cache des dernières modifications pour éviter les recalculs multiples
-     * durant la même requête.
+     * Cache of last modifications to avoid multiple recalculations
+     * during the same request.
      *
      * @var array<string, DateTimeInterface|null>
      */
@@ -45,7 +37,7 @@ final class EtagCacheService
     }
 
     /**
-     * Génère un ETag pour une collection d'entités.
+     * Generates an ETag for a collection of entities.
      *
      * @param object[] $entities
      */
@@ -67,13 +59,13 @@ final class EtagCacheService
     }
 
     /**
-     * Génère un ETag unique pour une entité donnée.
+     * Generates a unique ETag for a given entity.
      *
-     * L'ETag est basé sur :
-     * - Le nom de la classe de l'entité
-     * - L'ID de l'entité (si disponible)
-     * - La date de dernière modification (si disponible)
-     * - Un hash des propriétés critiques de l'entité
+     * The ETag is based on:
+     * - The entity's class name
+     * - The entity's ID (if available)
+     * - The last modification date (if available)
+     * - A hash of the entity's critical properties
      */
     public function generateEtag(object $entity): string
     {
@@ -92,7 +84,7 @@ final class EtagCacheService
     }
 
     /**
-     * Génère tous les headers de cache nécessaires pour une entité.
+     * Generates all necessary cache headers for an entity.
      *
      * @return array{etag: string, lastModified: DateTimeInterface|null, headers: array<string, string>}
      */
@@ -118,11 +110,11 @@ final class EtagCacheService
     }
 
     /**
-     * Récupère la date de dernière modification d'une entité.
+     * Retrieves the last modification date of an entity.
      *
-     * Priorité :
-     * 1. updatedAt (si disponible et non null)
-     * 2. createdAt (si disponible et non null)
+     * Priority:
+     * 1. updatedAt (if available and not null)
+     * 2. createdAt (if available and not null)
      * 3. null
      */
     public function getLastModified(object $entity): ?DateTimeInterface
@@ -140,7 +132,7 @@ final class EtagCacheService
     }
 
     /**
-     * Génère des headers de cache optimisés selon le type d'entité.
+     * Generates optimized cache headers according to entity type.
      */
     public function getOptimizedCacheHeaders(object $entity): array
     {
@@ -154,7 +146,7 @@ final class EtagCacheService
     }
 
     /**
-     * Invalide le cache pour une entité donnée.
+     * Invalidates the cache for a given entity.
      */
     public function invalidateCache(object $entity): void
     {
@@ -165,7 +157,7 @@ final class EtagCacheService
     }
 
     /**
-     * Vérifie si une entité a été modifiée depuis un ETag donné.
+     * Checks if an entity has been modified since a given ETag.
      */
     public function isModifiedSince(object $entity, string $clientEtag): bool
     {
@@ -179,7 +171,7 @@ final class EtagCacheService
     }
 
     /**
-     * Vérifie si une entité a été modifiée depuis une date donnée.
+     * Checks if an entity has been modified since a given date.
      */
     public function isModifiedSinceDate(object $entity, DateTimeInterface $ifModifiedSince): bool
     {
@@ -187,14 +179,14 @@ final class EtagCacheService
 
         if (!$lastModified instanceof DateTimeInterface) {
             return true;
-            // Si on ne peut pas déterminer, considérer comme modifié
+            // If we can't determine, consider as modified
         }
 
         return $lastModified > $ifModifiedSince;
     }
 
     /**
-     * Vérifie si une réponse 304 Not Modified peut être envoyée.
+     * Checks if a 304 Not Modified response can be sent.
      */
     public function shouldSendNotModified(
         object $entity,
@@ -202,12 +194,12 @@ final class EtagCacheService
         ?string $ifModifiedSince = null,
     ): bool
     {
-        // Vérification ETag
+        // ETag verification
         if (null !== $ifNoneMatch && !$this->isModifiedSince($entity, $ifNoneMatch)) {
             return true;
         }
 
-        // Vérification If-Modified-Since
+        // If-Modified-Since verification
         if (null !== $ifModifiedSince) {
             try {
                 $ifModifiedSinceDate = new DateTime($ifModifiedSince);
@@ -224,7 +216,7 @@ final class EtagCacheService
     }
 
     /**
-     * Construit les parties de l'ETag pour une entité.
+     * Builds the ETag parts for an entity.
      *
      * @return string[]
      */
@@ -232,19 +224,19 @@ final class EtagCacheService
     {
         $parts = [$entity::class];
 
-        // Ajouter l'ID si disponible
+        // Add ID if available
         $id = $this->extractEntityId($entity);
         if (null !== $id) {
             $parts[] = (string) $id;
         }
 
-        // Ajouter le timestamp de dernière modification
+        // Add last modification timestamp
         $lastModified = $this->extractLastModified($entity);
         if ($lastModified instanceof DateTimeInterface) {
             $parts[] = (string) $lastModified->getTimestamp();
         }
 
-        // Ajouter un hash des propriétés critiques
+        // Add hash of critical properties
         $criticalProperties = $this->extractCriticalProperties($entity);
         if ([] !== $criticalProperties) {
             $parts[] = md5(serialize($criticalProperties));
@@ -254,8 +246,8 @@ final class EtagCacheService
     }
 
     /**
-     * Extrait les propriétés critiques d'une entité pour la génération d'ETag.
-     * Ces propriétés influencent le rendu et doivent déclencher un changement d'ETag.
+     * Extracts critical properties of an entity for ETag generation.
+     * These properties influence rendering and should trigger an ETag change.
      *
      * @return array<string, mixed>
      */
@@ -266,7 +258,7 @@ final class EtagCacheService
         try {
             $reflectionClass = new ReflectionClass($entity);
 
-            // Propriétés critiques communes
+            // Common critical properties
             $criticalMethods = [
                 'getTitle',
                 'getSlug',
@@ -281,7 +273,7 @@ final class EtagCacheService
             foreach ($criticalMethods as $criticalMethod) {
                 if ($reflectionClass->hasMethod($criticalMethod)) {
                     $value = $entity->{$criticalMethod}();
-                    // Sérialiser seulement les valeurs scalaires pour éviter les problèmes
+                    // Serialize only scalar values to avoid problems
                     if (is_scalar($value) || is_null($value)) {
                         $properties[$criticalMethod] = $value;
                     }
@@ -296,7 +288,7 @@ final class EtagCacheService
     }
 
     /**
-     * Extrait l'ID d'une entité si disponible.
+     * Extracts the ID of an entity if available.
      */
     private function extractEntityId(object $entity): mixed
     {
@@ -308,11 +300,11 @@ final class EtagCacheService
     }
 
     /**
-     * Extrait la date de dernière modification d'une entité.
+     * Extracts the last modification date of an entity.
      */
     private function extractLastModified(object $entity): ?DateTimeInterface
     {
-        // Priorité à updatedAt
+        // Priority to updatedAt
         if (method_exists($entity, 'getUpdatedAt')) {
             $updatedAt = $entity->getUpdatedAt();
             if ($updatedAt instanceof DateTimeInterface) {
@@ -320,7 +312,7 @@ final class EtagCacheService
             }
         }
 
-        // Fallback sur createdAt
+        // Fallback to createdAt
         if (method_exists($entity, 'getCreatedAt')) {
             $createdAt = $entity->getCreatedAt();
             if ($createdAt instanceof DateTimeInterface) {
@@ -332,7 +324,7 @@ final class EtagCacheService
     }
 
     /**
-     * Génère une clé de cache unique pour une entité.
+     * Generates a unique cache key for an entity.
      */
     private function getCacheKey(object $entity): string
     {
@@ -343,31 +335,31 @@ final class EtagCacheService
     }
 
     /**
-     * Détermine la durée de cache optimale selon le type d'entité.
+     * Determines the optimal cache duration according to entity type.
      */
     private function getOptimalCacheTime(object $entity): int
     {
-        // Configuration par défaut selon le type d'entité
+        // Default configuration according to entity type
         $cacheTimings = [
             'Configuration' => 86400,
-            // 24h pour la configuration
+            // 24h for configuration
             'Page'          => 7200,
-            // 2h pour les pages
+            // 2h for pages
             'Post'          => 3600,
-            // 1h pour les posts
+            // 1h for posts
             'Story'         => 3600,
-            // 1h pour les stories
+            // 1h for stories
             'Chapter'       => 1800,
-            // 30min pour les chapitres
+            // 30min for chapters
             'Movie'         => 7200,
-            // 2h pour les films
+            // 2h for movies
         ];
 
-        // Extraire le nom de classe simple
+        // Extract simple class name
         $reflectionClass     = new ReflectionClass($entity);
         $shortClassName      = $reflectionClass->getShortName();
 
         return $cacheTimings[$shortClassName] ?? 3600;
-        // 1h par défaut
+        // 1h by default
     }
 }

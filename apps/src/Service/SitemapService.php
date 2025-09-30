@@ -55,7 +55,7 @@ final class SitemapService
      *
      * @return mixed[]
      */
-    public function setTabsByParent(array $urls, string $parent): array
+    private function setTabsByParent(array $urls, string $parent): array
     {
         $tabs = [];
         foreach ($urls as $url => $data) {

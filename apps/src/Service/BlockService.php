@@ -137,7 +137,7 @@ final class BlockService
         return $fields;
     }
 
-    public function getFooter(Block $block): mixed
+    private function getFooter(Block $block): mixed
     {
         $footer = null;
         foreach ($this->blocks as $row) {
@@ -153,7 +153,7 @@ final class BlockService
         return $footer;
     }
 
-    public function getHeader(Block $block): mixed
+    private function getHeader(Block $block): mixed
     {
         $header = null;
         foreach ($this->blocks as $row) {
@@ -169,7 +169,7 @@ final class BlockService
         return $header;
     }
 
-    public function getNameByCode(string $code): string
+    private function getNameByCode(string $code): string
     {
         $name = '';
         foreach ($this->blocks as $block) {
@@ -210,7 +210,7 @@ final class BlockService
     /**
      * @param mixed[] $data
      */
-    public function setContents(?Block $block, array $data, bool $disable): void
+    private function setContents(?Block $block, array $data, bool $disable): void
     {
         if (!$block instanceof Block) {
             return;

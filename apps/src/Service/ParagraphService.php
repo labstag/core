@@ -237,7 +237,7 @@ final class ParagraphService
         return [];
     }
 
-    public function getFooter(Paragraph $paragraph): mixed
+    private function getFooter(Paragraph $paragraph): mixed
     {
         $footer = null;
 
@@ -254,7 +254,7 @@ final class ParagraphService
         return $footer;
     }
 
-    public function getHeader(Paragraph $paragraph): mixed
+    private function getHeader(Paragraph $paragraph): mixed
     {
         $header = null;
 
@@ -300,7 +300,7 @@ final class ParagraphService
     /**
      * @param mixed[] $data
      */
-    public function setContents(?Paragraph $paragraph, array $data, bool $disable): void
+    private function setContents(?Paragraph $paragraph, array $data, bool $disable): void
     {
         if (!$paragraph instanceof Paragraph) {
             return;
