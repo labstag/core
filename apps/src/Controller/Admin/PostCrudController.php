@@ -15,6 +15,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class PostCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         // Actions de base (trash + navigation + détail)
@@ -27,6 +28,7 @@ class PostCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -37,23 +39,33 @@ class PostCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         // Principal tab + full content set (identity + taxonomy + paragraphs + meta + ref user)
         yield $this->addTabPrincipal();
         $isSuperAdmin = $this->isSuperAdmin();
-        foreach ($this->crudFieldFactory->fullContentSet('post', $pageName, self::getEntityFqcn(), $isSuperAdmin) as $field) {
+        foreach ($this->crudFieldFactory->fullContentSet(
+            'post',
+            $pageName,
+            self::getEntityFqcn(),
+            $isSuperAdmin
+        ) as $field) {
             yield $field;
         }
+
         // Additional specific field (resume) not yet in factory bundle
         yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
         // Workflow + states
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();
         // Dates
-        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterRefUser($filters);
@@ -64,6 +76,7 @@ class PostCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
+    #[\Override]
     public function createEntity(string $entityFqcn): Post
     {
         $post = new $entityFqcn();

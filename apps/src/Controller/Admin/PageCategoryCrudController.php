@@ -2,43 +2,23 @@
 
 namespace Labstag\Controller\Admin;
 
-use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
-use Labstag\Entity\Category;
+use Labstag\Lib\CategoryCrudControllerLib;
 
-class PageCategoryCrudController extends CategoryCrudController
+class PageCategoryCrudController extends CategoryCrudControllerLib
 {
-    // Identity set hérité sans image
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
-    $data   = parent::configureFields($pageName);
-    $data[] = $this->crudFieldFactory->totalChildField('pages');
-
-        return $data;
+        return $this->configureBaseFields($pageName);
     }
 
-    public function createEntity(string $entityFqcn): Category
+    protected function getChildRelationshipProperty(): string
     {
-        $category = new $entityFqcn();
-        $category->setType('page');
-
-        return $category;
+        return 'pages';
     }
 
-    public function createIndexQueryBuilder(
-        SearchDto $searchDto,
-        EntityDto $entityDto,
-        FieldCollection $fieldCollection,
-        FilterCollection $filterCollection,
-    ): QueryBuilder
+    protected function getEntityType(): string
     {
-        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
-        $queryBuilder->andWhere('entity.type = :type');
-        $queryBuilder->setParameter('type', 'page');
-
-        return $queryBuilder;
+        return 'page';
     }
 }

@@ -51,29 +51,6 @@ final class SitemapService
     }
 
     /**
-     * @param mixed[] $urls
-     *
-     * @return mixed[]
-     */
-    private function setTabsByParent(array $urls, string $parent): array
-    {
-        $tabs = [];
-        foreach ($urls as $url => $data) {
-            $result = str_replace($parent, '', (string) $url);
-            if (str_starts_with((string) $url, $parent) && !isset($this->parent[$url]) && $this->verifFirstChar(
-                $result
-            )
-            ) {
-                $this->parent[$url] = true;
-                $data['parent']     = $this->setTabsByParent($urls, $url);
-                $tabs[$url]         = $data;
-            }
-        }
-
-        return $tabs;
-    }
-
-    /**
      * @return mixed[]
      */
     private function formatData(object $entity): array
@@ -170,6 +147,29 @@ final class SitemapService
         $tabs = [];
         foreach ($data as $row) {
             $tabs = array_merge($tabs, $this->formatData($row), $this->getDataChaptersByStory($row));
+        }
+
+        return $tabs;
+    }
+
+    /**
+     * @param mixed[] $urls
+     *
+     * @return mixed[]
+     */
+    private function setTabsByParent(array $urls, string $parent): array
+    {
+        $tabs = [];
+        foreach ($urls as $url => $data) {
+            $result = str_replace($parent, '', (string) $url);
+            if (str_starts_with((string) $url, $parent) && !isset($this->parent[$url]) && $this->verifFirstChar(
+                $result
+            )
+            ) {
+                $this->parent[$url] = true;
+                $data['parent']     = $this->setTabsByParent($urls, $url);
+                $tabs[$url]         = $data;
+            }
         }
 
         return $tabs;

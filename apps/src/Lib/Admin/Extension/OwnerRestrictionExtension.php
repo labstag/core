@@ -7,8 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
-use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
-use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
+use ReflectionClass;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -20,33 +19,38 @@ final class OwnerRestrictionExtension
 {
     public function __construct(
         private TokenStorageInterface $tokenStorage,
-        private AdminContextProvider $adminContextProvider,
-    ) {
-    }
-
-    public function applyToCollection(QueryBuilder $qb, SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): void
+    )
     {
-        $this->restrict($entityDto, $qb);
     }
 
-    public function applyToItem(QueryBuilder $qb, EntityDto $entityDto, KeyValueStore $keyValueStore): void
+    public function applyToCollection(
+        QueryBuilder $queryBuilder,
+        EntityDto $entityDto,
+    ): void
     {
-        $this->restrict($entityDto, $qb);
+        $this->restrict($entityDto, $queryBuilder);
     }
 
-    private function restrict(EntityDto $entityDto, QueryBuilder $qb): void
+    public function applyToItem(QueryBuilder $queryBuilder, EntityDto $entityDto): void
+    {
+        $this->restrict($entityDto, $queryBuilder);
+    }
+
+    private function restrict(EntityDto $entityDto, QueryBuilder $queryBuilder): void
     {
         $token = $this->tokenStorage->getToken();
-        if (!$token) {
+        if (!$token instanceof \Symfony\Component\Security\Core\Authentication\Token\TokenInterface) {
             return;
         }
+
         $user = $token->getUser();
         if (!is_object($user) || !method_exists($user, 'getRoles')) {
             return;
         }
 
         if (in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true)) {
-            return; // pas de restriction
+            return;
+            // pas de restriction
         }
 
         $fqcn = $entityDto->getFqcn();
@@ -54,15 +58,15 @@ final class OwnerRestrictionExtension
             return;
         }
 
-        $ref = new \ReflectionClass($fqcn);
-        $hasRefUser = $ref->hasProperty('refuser') || $ref->hasMethod('getRefuser');
+        $reflectionClass        = new ReflectionClass($fqcn);
+        $hasRefUser             = $reflectionClass->hasProperty('refuser') || $reflectionClass->hasMethod('getRefuser');
         if (!$hasRefUser) {
             return;
         }
 
-        $aliases = $qb->getRootAliases();
+        $aliases = $queryBuilder->getRootAliases();
         $alias   = $aliases[0] ?? 'entity';
-        $qb->andWhere(sprintf('%s.refuser = :_ea_current_user', $alias));
-        $qb->setParameter('_ea_current_user', $user);
+        $queryBuilder->andWhere(sprintf('%s.refuser = :_ea_current_user', $alias));
+        $queryBuilder->setParameter('_ea_current_user', $user);
     }
 }

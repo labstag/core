@@ -13,6 +13,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class SubmissionCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
@@ -22,6 +23,7 @@ class SubmissionCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
@@ -33,7 +35,10 @@ class SubmissionCrudController extends AbstractCrudControllerLib
                 yield $field;
             }
         }
-        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
+
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
     }
 
     public static function getEntityFqcn(): string

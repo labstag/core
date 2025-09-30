@@ -15,8 +15,6 @@ use Labstag\Entity\Story;
 use Labstag\Field\FileField;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Labstag\Repository\ParagraphRepository;
-use Labstag\Service\ParagraphService;
 use Labstag\Service\StoryService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +23,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions, 'admin_story_w3c', 'admin_story_public');
@@ -37,6 +36,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -47,14 +47,21 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         // Principal tab + standard full content set
         yield $this->addTabPrincipal();
         $isSuperAdmin = $this->isSuperAdmin();
-        foreach ($this->crudFieldFactory->fullContentSet('story', $pageName, self::getEntityFqcn(), $isSuperAdmin) as $field) {
+        foreach ($this->crudFieldFactory->fullContentSet(
+            'story',
+            $pageName,
+            self::getEntityFqcn(),
+            $isSuperAdmin
+        ) as $field) {
             yield $field;
         }
+
         // Extra specific field not part of the generic bundle
         yield FileField::new('pdf', new TranslatableMessage('pdf'));
         $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
@@ -70,9 +77,12 @@ class StoryCrudController extends AbstractCrudControllerLib
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();
         // Dates
-        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterRefUser($filters);
@@ -83,6 +93,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
+    #[\Override]
     public function createEntity(string $entityFqcn): Story
     {
         $story = new $entityFqcn();

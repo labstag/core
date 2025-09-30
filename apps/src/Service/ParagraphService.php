@@ -237,6 +237,45 @@ final class ParagraphService
         return [];
     }
 
+    public function getNameByCode(string $code): string
+    {
+        $name = '';
+        foreach ($this->paragraphs as $paragraph) {
+            if ($paragraph->getType() == $code) {
+                $name = $paragraph->getName();
+
+                break;
+            }
+        }
+
+        return $name;
+    }
+
+    public function getUrlAdmin(Paragraph $paragraph): ?AdminUrlGeneratorInterface
+    {
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
+            return null;
+        }
+
+        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
+        $adminUrlGenerator->setEntityId($paragraph->getId());
+
+        return $adminUrlGenerator->setController(ParagraphCrudController::class);
+    }
+
+    public function update(Paragraph $paragraph): void
+    {
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph->getType() != $row->getType()) {
+                continue;
+            }
+
+            $row->update($paragraph);
+
+            break;
+        }
+    }
+
     private function getFooter(Paragraph $paragraph): mixed
     {
         $footer = null;
@@ -271,32 +310,6 @@ final class ParagraphService
         return $header;
     }
 
-    public function getNameByCode(string $code): string
-    {
-        $name = '';
-        foreach ($this->paragraphs as $paragraph) {
-            if ($paragraph->getType() == $code) {
-                $name = $paragraph->getName();
-
-                break;
-            }
-        }
-
-        return $name;
-    }
-
-    public function getUrlAdmin(Paragraph $paragraph): ?AdminUrlGeneratorInterface
-    {
-        if (!$this->security->isGranted('ROLE_ADMIN')) {
-            return null;
-        }
-
-        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
-        $adminUrlGenerator->setEntityId($paragraph->getId());
-
-        return $adminUrlGenerator->setController(ParagraphCrudController::class);
-    }
-
     /**
      * @param mixed[] $data
      */
@@ -312,19 +325,6 @@ final class ParagraphService
             }
 
             $row->generate($paragraph, $data, $disable);
-
-            break;
-        }
-    }
-
-    public function update(Paragraph $paragraph): void
-    {
-        foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
-                continue;
-            }
-
-            $row->update($paragraph);
 
             break;
         }

@@ -22,6 +22,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class UserCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setEditDetail($actions);
@@ -30,6 +31,7 @@ class UserCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -40,6 +42,7 @@ class UserCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('username', new TranslatableMessage('Username'));
@@ -69,7 +72,10 @@ class UserCrudController extends AbstractCrudControllerLib
         $textField->onlyOnForms();
         yield $textField;
         if (Crud::PAGE_NEW === $pageName) {
-            $field = $this->crudFieldFactory->booleanField('generatepassword', (string) new TranslatableMessage('generate Password'));
+            $field = $this->crudFieldFactory->booleanField(
+                'generatepassword',
+                (string) new TranslatableMessage('generate Password')
+            );
             $field->setFormTypeOptions(
                 ['mapped' => false]
             );
@@ -81,7 +87,7 @@ class UserCrudController extends AbstractCrudControllerLib
         $langue        = $this->userService->getLanguagesForChoices();
         $languageField->setChoices($langue);
         yield $languageField;
-    yield $this->crudFieldFactory->imageField('avatar', $pageName, self::getEntityFqcn());
+        yield $this->crudFieldFactory->imageField('avatar', $pageName, self::getEntityFqcn());
         yield CollectionField::new('stories', new TranslatableMessage('Histories'))->onlyOnDetail();
         yield CollectionField::new('editos', new TranslatableMessage('Editos'))->onlyOnDetail()->formatValue(
             fn ($entity): int => count($entity)
@@ -104,13 +110,15 @@ class UserCrudController extends AbstractCrudControllerLib
         yield $this->crudFieldFactory->stateField();
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-    $this->crudFieldFactory->addFilterEnable($filters);
+        $this->crudFieldFactory->addFilterEnable($filters);
 
         return $filters;
     }
 
+    #[\Override]
     public function createEditFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
@@ -122,6 +130,7 @@ class UserCrudController extends AbstractCrudControllerLib
         return $this->addPasswordEventListener($formBuilder);
     }
 
+    #[\Override]
     public function createEntity(string $entityFqcn): User
     {
         $user = new $entityFqcn();
@@ -133,6 +142,7 @@ class UserCrudController extends AbstractCrudControllerLib
         return $user;
     }
 
+    #[\Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,

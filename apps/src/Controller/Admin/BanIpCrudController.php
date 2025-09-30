@@ -12,6 +12,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class BanIpCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
@@ -19,6 +20,7 @@ class BanIpCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -29,6 +31,7 @@ class BanIpCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
@@ -38,7 +41,9 @@ class BanIpCrudController extends AbstractCrudControllerLib
         yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
         yield TextField::new('InternetProtocol', new TranslatableMessage('IP'));
         yield WysiwygField::new('reason', new TranslatableMessage('Raison'));
-        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
     }
 
     public static function getEntityFqcn(): string

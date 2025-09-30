@@ -23,8 +23,6 @@ use Exception;
 use Labstag\Entity\Block;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\BlockRepository;
-use Labstag\Repository\ParagraphRepository;
-use Labstag\Service\ParagraphService;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -42,11 +40,14 @@ class BlockCrudController extends AbstractCrudControllerLib
             if (in_array($block->getType(), ['paragraphs', 'content'])) {
                 return $this->crudFieldFactory->paragraphFields($pageName);
             }
+
             return [];
         }
+
         return $this->crudFieldFactory->paragraphFields($pageName);
     }
 
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $action = Action::new('positionBlock', new TranslatableMessage('Change Position'), 'fas fa-arrows-alt');
@@ -59,6 +60,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -69,11 +71,21 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addTabPrincipal();
-        foreach ($this->crudFieldFactory->baseIdentitySet('block', $pageName, self::getEntityFqcn(), withSlug: false, withImage: false) as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->baseIdentitySet(
+            'block',
+            $pageName,
+            self::getEntityFqcn(),
+            withSlug: false,
+            withImage: false
+        ) as $field) {
+            yield $field;
+        }
+
         yield ChoiceField::new('region', new TranslatableMessage('Region'))->setChoices(
             $this->blockService->getRegions()
         );
@@ -114,6 +126,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         yield TextField::new('classes', new TranslatableMessage('classes'))->hideOnIndex();
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -121,6 +134,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
+    #[\Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
@@ -137,6 +151,7 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $serviceEntityRepositoryLib->findAllOrderedByRegion();
     }
 
+    #[\Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,

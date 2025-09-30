@@ -15,12 +15,16 @@ use Symfony\Component\HttpFoundation\Response;
  * It assumes that the consuming class has methods:
  *   - getRepository(): ServiceEntityRepositoryLib
  *   - render(string $view, array $params = []): Response
- *   - redirect(string $url): RedirectResponse
+ *   - redirect(string $url): RedirectResponse.
  */
 trait ParagraphAdminTrait
 {
     // Public paragraph management endpoints (add/delete/list/update)
-    public function addParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator, ParagraphService $paragraphService): RedirectResponse
+    public function addParagraph(
+        AdminContext $adminContext,
+        AdminUrlGenerator $urlGenerator,
+        ParagraphService $paragraphService,
+    ): RedirectResponse
     {
         $request  = $adminContext->getRequest();
         $entityId = $request->query->get('entityId');
@@ -41,7 +45,11 @@ trait ParagraphAdminTrait
         return $this->redirect($urlGenerator->generateUrl());
     }
 
-    public function deleteParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator, ParagraphRepository $paragraphRepository): RedirectResponse
+    public function deleteParagraph(
+        AdminContext $adminContext,
+        AdminUrlGenerator $urlGenerator,
+        ParagraphRepository $paragraphRepository,
+    ): RedirectResponse
     {
         $request  = $adminContext->getRequest();
         $entityId = $request->query->get('entityId');
@@ -50,7 +58,7 @@ trait ParagraphAdminTrait
         $paragraphId = $request->request->get('paragraph');
         if (null !== $paragraphId) {
             $paragraph = $paragraphRepository->find($paragraphId);
-            if ($paragraph) {
+            if (null !== $paragraph) {
                 $paragraphRepository->remove($paragraph);
                 $paragraphRepository->flush();
             }
@@ -68,12 +76,17 @@ trait ParagraphAdminTrait
         $entity     = $repository->find($entityId);
         $paragraphs = method_exists($entity, 'getParagraphs') ? $entity->getParagraphs() : [];
 
-        return $this->render('admin/pararaphs.html.twig', [
-            'paragraphs' => $paragraphs,
-        ]);
+        return $this->render(
+            'admin/pararaphs.html.twig',
+            ['paragraphs' => $paragraphs]
+        );
     }
 
-    public function updateParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator, ParagraphRepository $paragraphRepository): RedirectResponse
+    public function updateParagraph(
+        AdminContext $adminContext,
+        AdminUrlGenerator $urlGenerator,
+        ParagraphRepository $paragraphRepository,
+    ): RedirectResponse
     {
         $request    = $adminContext->getRequest();
         $entityId   = $request->query->get('entityId');

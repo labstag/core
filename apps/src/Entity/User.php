@@ -132,7 +132,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return [
             $this->id,
             $this->username,
-            $this->email
+            $this->email,
         ];
     }
 
@@ -148,7 +148,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
             [
                 $this->id,
                 $this->username,
-                $this->email
+                $this->email,
             ] = $data;
         }
     }

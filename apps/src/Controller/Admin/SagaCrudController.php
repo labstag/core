@@ -16,6 +16,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setEditDetail($actions);
@@ -28,6 +29,7 @@ class SagaCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -40,9 +42,18 @@ class SagaCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        foreach ($this->crudFieldFactory->baseIdentitySet('saga', $pageName, self::getEntityFqcn(), withEnable: false) as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->baseIdentitySet(
+            'saga',
+            $pageName,
+            self::getEntityFqcn(),
+            withEnable: false
+        ) as $field) {
+            yield $field;
+        }
+
         yield TextField::new('tmdb', new TranslatableMessage('Tmdb'));
         $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
         $collectionField->onlyOnIndex();

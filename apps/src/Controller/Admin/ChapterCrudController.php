@@ -6,25 +6,21 @@ use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Entity\User;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Labstag\Repository\ParagraphRepository;
-use Labstag\Service\ParagraphService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ChapterCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions, 'admin_chapter_w3c', 'admin_chapter_public');
@@ -34,6 +30,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -44,31 +41,45 @@ class ChapterCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
-        $isSuperAdmin = $this->isSuperAdmin();
-        foreach ($this->crudFieldFactory->baseIdentitySet('chapter', $pageName, self::getEntityFqcn()) as $field) { yield $field; }
+        $this->isSuperAdmin();
+        foreach ($this->crudFieldFactory->baseIdentitySet('chapter', $pageName, self::getEntityFqcn()) as $field) {
+            yield $field;
+        }
+
         yield $this->addFieldRefStory();
         yield $this->crudFieldFactory->tagsField('chapter');
         yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) { yield $field; }
-        foreach ($this->crudFieldFactory->metaFields() as $field) { yield $field; }
-    // Pas de relation refuser sur Chapter -> on n'injecte pas les refUserFields ici
+        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) {
+            yield $field;
+        }
+
+        foreach ($this->crudFieldFactory->metaFields() as $field) {
+            yield $field;
+        }
+
+        // Pas de relation refuser sur Chapter -> on n'injecte pas les refUserFields ici
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();
-        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-    $this->crudFieldFactory->addFilterEnable($filters);
+        $this->crudFieldFactory->addFilterEnable($filters);
         $filters->add(EntityFilter::new('refstory', new TranslatableMessage('Story')));
-    $this->crudFieldFactory->addFilterTags($filters, 'chapter');
+        $this->crudFieldFactory->addFilterTags($filters, 'chapter');
 
         return $filters;
     }
 
+    #[\Override]
     public function createEntity(string $entityFqcn): Chapter
     {
         $chapter      = new $entityFqcn();
