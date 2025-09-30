@@ -42,6 +42,7 @@ use Labstag\Service\SlugService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -50,6 +51,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
+#[AutoconfigureTag('labstag.admincontroller')]
 abstract class AbstractCrudControllerLib extends AbstractCrudController
 {
     public function __construct(

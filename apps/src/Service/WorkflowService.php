@@ -11,16 +11,16 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class WorkflowService
+final class WorkflowService
 {
 
-    protected array $objects = [];
+    private array $objects = [];
 
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
-        protected Registry $workflowRegistry,
-        protected RequestStack $requestStack,
-        protected EntityManagerInterface $entityManager,
+        private Registry $workflowRegistry,
+        private RequestStack $requestStack,
+        private EntityManagerInterface $entityManager,
     )
     {
     }
@@ -76,7 +76,7 @@ class WorkflowService
         $markingStore->setMarking($entity, $initialMarking);
     }
 
-    protected function getEntity($entity, mixed $uid)
+    private function getEntity(string $entity, mixed $uid)
     {
         $entityRepository = $this->entityManager->getRepository($entity);
 

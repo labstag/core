@@ -3,27 +3,20 @@
 namespace Labstag\Service;
 
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Configuration;
 use Labstag\Entity\Meta;
-use Labstag\Repository\ConfigurationRepository;
 use ReflectionClass;
 use stdClass;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Twig\Environment;
 
-class MetaService
+final class MetaService
 {
-
-    protected ?Configuration $configuration = null;
-
     public function __construct(
-        protected Environment $twigEnvironment,
-        protected ViewResolverService $viewResolverService,
-        protected ConfigurationService $configurationService,
-        protected FileService $fileService,
-        protected EntityManagerInterface $entityManager,
-        protected ConfigurationRepository $configurationRepository,
+        private Environment $twigEnvironment,
+        private ViewResolverService $viewResolverService,
+        private ConfigurationService $configurationService,
+        private FileService $fileService,
     )
     {
     }

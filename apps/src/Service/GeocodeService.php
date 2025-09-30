@@ -7,13 +7,13 @@ use Labstag\Repository\GeoCodeRepository;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use ZipArchive;
 
-class GeocodeService
+final class GeocodeService
 {
     public const HTTP_OK = 200;
 
     public function __construct(
-        protected HttpClientInterface $httpClient,
-        protected GeoCodeRepository $geoCodeRepository,
+        private HttpClientInterface $httpClient,
+        private GeoCodeRepository $geoCodeRepository,
     )
     {
     }

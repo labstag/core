@@ -6,10 +6,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Locale;
 use Labstag\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserService
+final class UserService
 {
     public function __construct(
-        protected UserPasswordHasherInterface $userPasswordHasher,
+        private UserPasswordHasherInterface $userPasswordHasher,
     )
     {
     }

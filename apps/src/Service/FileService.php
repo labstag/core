@@ -7,19 +7,17 @@ use Exception;
 use Labstag\Lib\ServiceEntityRepositoryLib;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
-class FileService
+final class FileService
 {
     public function __construct(
         #[AutowireIterator(tag: 'labstag.filestorage')]
-        protected iterable $fileStorages,
-        protected KernelInterface $kernel,
-        protected EntityManagerInterface $entityManager,
-        protected ParameterBagInterface $parameterBag,
-        protected PropertyMappingFactory $propertyMappingFactory,
+        private iterable $fileStorages,
+        private EntityManagerInterface $entityManager,
+        private ParameterBagInterface $parameterBag,
+        private PropertyMappingFactory $propertyMappingFactory,
     )
     {
     }
@@ -155,6 +153,8 @@ class FileService
                 return $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), '');
             }
         }
+
+        return [];
     }
 
     public function getFullBasePath(mixed $entity, string $type): string
@@ -197,7 +197,7 @@ class FileService
         return $this->propertyMappingFactory->fromObject($entity);
     }
 
-    protected function getRepository(string $entity): ServiceEntityRepositoryLib
+    private function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {

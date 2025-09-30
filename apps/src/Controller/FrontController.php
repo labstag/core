@@ -3,6 +3,7 @@
 namespace Labstag\Controller;
 
 use Carbon\Carbon;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\EtagCacheService;
 use Labstag\Service\SitemapService;
 use Labstag\Service\SiteService;

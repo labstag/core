@@ -2,24 +2,21 @@
 
 namespace Labstag\Service;
 
-use Labstag\Entity\Configuration;
 use Labstag\Entity\Meta;
 use Labstag\Repository\BlockRepository;
-use Labstag\Repository\ConfigurationRepository;
 use ReflectionClass;
 use Twig\Environment;
 
-class ViewResolverService
+final class ViewResolverService
 {
 
     private array $requestCache           = [];
 
     public function __construct(
-        protected ConfigurationService $configurationService,
-        protected BlockService $blockService,
-        protected BlockRepository $blockRepository,
-        protected Environment $twigEnvironment,
-        protected ConfigurationRepository $configurationRepository,
+        private ConfigurationService $configurationService,
+        private BlockService $blockService,
+        private BlockRepository $blockRepository,
+        private Environment $twigEnvironment,
     )
     {
     }

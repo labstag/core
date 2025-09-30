@@ -59,7 +59,7 @@ class AdminBlock extends BlockLib
 
     protected function setUrl(object $entity): ?AdminUrlGeneratorInterface
     {
-        $controller = $this->siteService->getCrudController($entity::class);
+        $controller = $this->crudAdminService->getCrudAdmin($entity::class);
         if (is_null($controller)) {
             return null;
         }

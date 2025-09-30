@@ -13,15 +13,15 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class SecurityService
+final class SecurityService
 {
     public function __construct(
-        protected Security $security,
-        protected RequestStack $requestStack,
-        protected FileService $fileService,
-        protected BanIpRepository $banIpRepository,
-        protected RedirectionRepository $redirectionRepository,
-        protected HttpErrorLogsRepository $httpErrorLogsRepository,
+        private Security $security,
+        private RequestStack $requestStack,
+        private FileService $fileService,
+        private BanIpRepository $banIpRepository,
+        private RedirectionRepository $redirectionRepository,
+        private HttpErrorLogsRepository $httpErrorLogsRepository,
     )
     {
     }

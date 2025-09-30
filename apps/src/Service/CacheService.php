@@ -6,7 +6,7 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
-class CacheService
+final class CacheService
 {
     public function __construct(
         private CacheInterface $cache,
