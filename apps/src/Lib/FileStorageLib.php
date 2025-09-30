@@ -5,8 +5,8 @@ namespace Labstag\Lib;
 use Exception;
 use Labstag\Interface\FileStorageInterface;
 use League\Flysystem\Filesystem;
-use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Yaml\Yaml;
 
 abstract class FileStorageLib implements FileStorageInterface
 {
@@ -14,41 +14,11 @@ abstract class FileStorageLib implements FileStorageInterface
     protected $adapter;
 
     protected string $type;
+
     public function __construct(
-        protected KernelInterface $kernel
+        protected KernelInterface $kernel,
     )
     {
-
-    }
-
-    protected function setAdapter($adapter)
-    {
-        $this->adapter = $adapter;
-    }
-
-    protected function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    public function getEntity(): ?string
-    {
-        return null;
-    }
-    
-    public function getFilesystem()
-    {
-        return new Filesystem(
-            $this->adapter,
-            [
-                'public_url' => $this->getFolder(),
-            ]
-        );
     }
 
     /**
@@ -56,14 +26,18 @@ abstract class FileStorageLib implements FileStorageInterface
      */
     public function deleteFilesByType(array $files): void
     {
-
-        $filesystem = $this->getFilesystem();
+        $filesystem       = $this->getFilesystem();
         $directoryListing = $filesystem->listContents('');
         foreach ($directoryListing as $content) {
             if (in_array($content->path(), $files)) {
                 $filesystem->delete($content->path());
             }
         }
+    }
+
+    public function getEntity(): ?string
+    {
+        return null;
     }
 
     /**
@@ -89,6 +63,31 @@ abstract class FileStorageLib implements FileStorageInterface
         }
 
         return $files;
+    }
+
+    public function getFilesystem()
+    {
+        return new Filesystem(
+            $this->adapter,
+            [
+                'public_url' => $this->getFolder(),
+            ]
+        );
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    protected function setAdapter($adapter)
+    {
+        $this->adapter = $adapter;
+    }
+
+    protected function setType(string $type)
+    {
+        $this->type = $type;
     }
 
     private function getFolder(): mixed

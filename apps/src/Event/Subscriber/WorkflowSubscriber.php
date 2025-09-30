@@ -8,6 +8,7 @@ use Labstag\Entity\Memo;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
 use Labstag\Entity\User;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\EmailService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
@@ -21,6 +22,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         protected UserService $userService,
+        protected ConfigurationService $configurationService,
         protected EmailService $emailService,
         protected SiteService $siteService,
         protected MailerInterface $mailer,
@@ -108,7 +110,7 @@ class WorkflowSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $configuration = $this->siteService->getConfiguration();
+        $configuration = $this->configurationService->getConfiguration();
         $data          = [
             'user'          => $entity,
             'configuration' => $configuration,

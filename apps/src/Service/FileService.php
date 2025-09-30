@@ -52,7 +52,7 @@ class FileService
                 continue;
             }
 
-            $filesystem = $fileStorage->getFilesystem();
+            $filesystem       = $fileStorage->getFilesystem();
             $directoryListing = $filesystem->listContents('');
             foreach ($directoryListing as $content) {
                 $filesystem->delete($content->path());
@@ -64,7 +64,7 @@ class FileService
     {
         $total = 0;
         foreach ($this->fileStorages as $fileStorage) {
-            $deletes = [];
+            $deletes     = [];
             $entityClass = $fileStorage->getEntity();
             if (is_null($entityClass)) {
                 continue;
@@ -72,7 +72,7 @@ class FileService
 
             $repository = $this->getRepository($entityClass);
             $mappings   = $this->propertyMappingFactory->fromObject(new $entityClass());
-            $files = $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), '');
+            $files      = $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), '');
             foreach ($files as $row) {
                 $file = $row['path'];
                 $find = 0;

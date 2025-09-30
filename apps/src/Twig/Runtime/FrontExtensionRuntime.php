@@ -5,7 +5,9 @@ namespace Labstag\Twig\Runtime;
 use DOMDocument;
 use Essence\Essence;
 use Essence\Media;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Labstag\Service\MetaService;
 use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -19,8 +21,10 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         protected RequestStack $requestStack,
+        protected MetaService $metaService,
         protected SlugService $slugService,
         protected RouterInterface $router,
+        protected ConfigurationService $configurationService,
         protected SiteService $siteService,
         protected ParameterBagInterface $parameterBag,
         protected FileService $fileService,
@@ -64,9 +68,9 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     public function metatags(array $value): string
     {
         $entity   = $value['entity'];
-        $metatags = $this->siteService->getMetatags($entity);
-        $image    = $this->siteService->getImageForMetatags($entity);
-        $config   = $this->siteService->getConfiguration();
+        $metatags = $this->metaService->getMetatags($entity);
+        $image    = $this->metaService->getImageForMetatags($entity);
+        $config   = $this->configurationService->getConfiguration();
         $favicon  = $this->siteService->getFileFavicon();
 
         return $this->twigEnvironment->render(
@@ -121,7 +125,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 
     public function tarteaucitron(): string
     {
-        $config = $this->siteService->getConfiguration();
+        $config = $this->configurationService->getConfiguration();
         if (in_array(trim((string) $config->getTacServices()), ['', '0'], true)) {
             return '';
         }
@@ -141,7 +145,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     public function title(array $data): string
     {
         $request   = $this->requestStack->getCurrentRequest();
-        $config    = $this->siteService->getConfiguration();
+        $config    = $this->configurationService->getConfiguration();
         $siteTitle = $config->getName();
         $format    = $config->getTitleFormat();
         if ($this->siteService->isHome($data)) {

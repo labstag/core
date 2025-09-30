@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\Block;
 use Labstag\Interface\BlockInterface;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
@@ -49,6 +50,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         protected LoggerInterface $logger,
         protected Security $security,
         protected RouterInterface $router,
+        protected ConfigurationService $configurationService,
         protected AdminUrlGenerator $adminUrlGenerator,
         protected ParagraphService $paragraphService,
         protected SiteService $siteService,
@@ -182,7 +184,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     {
         $this->setShow($block, true);
 
-        $data['configuration'] = $this->siteService->getConfiguration();
+        $data['configuration'] = $this->configurationService->getConfiguration();
 
         $this->data[$block->getId()] = $data;
     }

@@ -22,6 +22,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\FormService;
 use Labstag\Service\ParagraphService;
@@ -78,6 +79,7 @@ abstract class ParagraphLib extends AbstractController
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
         protected SlugService $slugService,
+        protected ConfigurationService $configurationService,
         protected Environment $twigEnvironment,
     )
     {
@@ -307,7 +309,7 @@ abstract class ParagraphLib extends AbstractController
         $this->setShow($paragraph, true);
 
         $data['url_admin']     = $this->setUrlAdmin($paragraph);
-        $data['configuration'] = $this->siteService->getConfiguration();
+        $data['configuration'] = $this->configurationService->getConfiguration();
 
         $this->data[$paragraph->getId()] = $data;
     }

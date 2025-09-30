@@ -12,7 +12,7 @@ class LinkChangePasswordReplace extends ReplaceLib
             return '';
         }
 
-        $configuration = $this->siteService->getConfiguration();
+        $configuration = $this->configurationService->getConfiguration();
         $entity        = $this->data['user'];
 
         return $configuration->getUrl() . $this->router->generate(
