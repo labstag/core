@@ -172,6 +172,65 @@ final class CrudFieldFactory
             ->onlyOnIndex();
     }
 
+    /**
+     * Helper bundle returning the standard identity fields for most content entities.
+     * Order is important for UI coherence.
+     * @return array<int, IdField|TextField|SlugField|BooleanField|ImageField|AssociationField>
+     */
+    public function baseIdentitySet(
+        string $shortcodeType,
+        string $pageName,
+        string $entityFqcn,
+        bool $withSlug = true,
+        bool $withImage = true,
+        bool $withEnable = true,
+    ): array
+    {
+        $fields   = [];
+        $fields[] = $this->idField();
+        $fields[] = $this->idShortcodeField($shortcodeType);
+        if ($withSlug) {
+            $fields[] = $this->slugField();
+        }
+        if ($withEnable) {
+            $fields[] = $this->booleanField('enable', (string) new TranslatableMessage('Enable'));
+        }
+        $fields[] = $this->titleField();
+        if ($withImage) {
+            $fields[] = $this->imageField('img', $pageName, $entityFqcn);
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Helper returning taxonomy related fields (tags + categories) for a given type.
+     * @return array<int, AssociationField>
+     */
+    public function taxonomySet(string $type): array
+    {
+        return [
+            $this->tagsField($type),
+            $this->categoriesField($type),
+        ];
+    }
+
+    /**
+     * Full common content set (identity + taxonomy + optional paragraphs + meta + ref user).
+     * Simplifies controllers migrating away from legacy wrappers.
+     * @return array<int, mixed>
+     */
+    public function fullContentSet(string $type, string $pageName, string $entityFqcn, bool $isSuperAdmin): array
+    {
+        return array_merge(
+            $this->baseIdentitySet($type, $pageName, $entityFqcn),
+            $this->taxonomySet($type),
+            $this->paragraphFields($pageName),
+            $this->metaFields(),
+            $this->refUserFields($isSuperAdmin)
+        );
+    }
+
     public function createdAtField(): DateTimeField
     {
         return DateTimeField::new('createdAt', new TranslatableMessage('Created At'))
@@ -183,6 +242,19 @@ final class CrudFieldFactory
         return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))
             ->hideWhenCreating()
             ->hideOnIndex();
+    }
+
+    /**
+     * Date tab helper (tab + createdAt + updatedAt)
+     * @return array<int, mixed>
+     */
+    public function dateSet(): array
+    {
+        return [
+            FormField::addTab(new TranslatableMessage('Date')),
+            $this->createdAtField(),
+            $this->updatedAtField(),
+        ];
     }
 
     public function addFilterEnable(Filters $filters): void
@@ -207,5 +279,20 @@ final class CrudFieldFactory
         $filters->add(\EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter::new('categories', new TranslatableMessage('Categories'))
             ->setFormTypeOption('value_type_options.query_builder', static fn (CategoryRepository $repo): QueryBuilder => $repo->createQueryBuilder('c')->andWhere('c.type = :type')->setParameter('type', $type))
         );
+    }
+
+    /**
+     * Helper group for TAC boolean configuration fields (Configuration entity).
+     * @param array<string,string> $names label translation raw strings
+     * @return array<int, BooleanField>
+     */
+    public function tacBooleanSet(array $names): array
+    {
+        $fields = [];
+        foreach ($names as $property => $label) {
+            $fields[] = $this->booleanField($property, $label);
+        }
+
+        return $fields;
     }
 }

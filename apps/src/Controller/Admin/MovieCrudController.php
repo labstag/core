@@ -16,7 +16,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,7 +23,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
@@ -50,7 +48,6 @@ class MovieCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -61,12 +58,10 @@ class MovieCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
-        yield $this->addFieldID();
-        yield $this->addFieldTitle();
+        foreach ($this->crudFieldFactory->baseIdentitySet('movie', $pageName, self::getEntityFqcn(), withSlug: false) as $field) { yield $field; }
         yield TextField::new('imdb', new TranslatableMessage('Imdb'))->hideOnIndex();
         yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
         yield DateField::new('releaseDate', new TranslatableMessage('Release date'));
@@ -74,42 +69,37 @@ class MovieCrudController extends AbstractCrudControllerLib
         $choiceField->setChoices(array_flip(Countries::getNames()));
         $choiceField->allowMultipleChoices();
         $choiceField->renderExpanded(false);
-
         yield $choiceField;
-        yield IntegerField::new('duration', new TranslatableMessage('Duration'));
-        yield $this->addFieldSaga();
-        yield $this->addFieldTags('movie');
-        yield NumberField::new('evaluation', new TranslatableMessage('Evaluation'));
-        yield IntegerField::new('votes', new TranslatableMessage('Votes'));
-        yield TextField::new('trailer', new TranslatableMessage('Trailer'))->hideOnIndex();
-        yield WysiwygField::new('citation', new TranslatableMessage('Citation'))->hideOnIndex();
-        yield WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex();
-        yield $this->addFieldCategories('movie');
-        yield $this->addFieldImageUpload('img', $pageName);
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
-        yield $this->addFieldBoolean('file', new TranslatableMessage('File'))->hideOnIndex();
-        yield $this->addFieldBoolean('adult', new TranslatableMessage('Adult'));
-        $date = $this->addTabDate();
-        foreach ($date as $field) {
-            yield $field;
-        }
+        yield from [
+            IntegerField::new('duration', new TranslatableMessage('Duration')),
+            $this->addFieldSaga(),
+            $this->crudFieldFactory->tagsField('movie'),
+            NumberField::new('evaluation', new TranslatableMessage('Evaluation')),
+            IntegerField::new('votes', new TranslatableMessage('Votes')),
+            TextField::new('trailer', new TranslatableMessage('Trailer'))->hideOnIndex(),
+            WysiwygField::new('citation', new TranslatableMessage('Citation'))->hideOnIndex(),
+            WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex(),
+            $this->crudFieldFactory->categoriesField('movie'),
+            // image field déjà incluse dans baseIdentitySet
+            $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+            $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'))->hideOnIndex(),
+            $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
+        ];
+        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
     }
 
-    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->addFilterEnable($filters);
+        $this->crudFieldFactory->addFilterEnable($filters);
         $filters->add('releaseDate');
         $filters->add('countries');
-
-        $this->addFilterTags($filters, 'movie');
-        $this->addFilterCategories($filters, 'movie');
+        $this->crudFieldFactory->addFilterTags($filters, 'movie');
+        $this->crudFieldFactory->addFilterCategories($filters, 'movie');
         $this->addFilterSaga($filters);
 
         return $filters;
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return Movie::class;

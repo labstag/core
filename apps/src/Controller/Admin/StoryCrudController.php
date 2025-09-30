@@ -16,7 +16,6 @@ use Labstag\Field\FileField;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Service\StoryService;
-use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,7 +23,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions, 'admin_story_w3c', 'admin_story_public');
@@ -37,7 +35,6 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -48,18 +45,15 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
     public function configureFields(string $pageName): iterable
     {
+        // Principal tab + standard full content set
         yield $this->addTabPrincipal();
-        yield $this->addFieldID();
-        yield $this->addFieldIDShortcode('story');
-        yield $this->addFieldSlug();
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
-        yield $this->addFieldTitle();
-        yield $this->addFieldImageUpload('img', $pageName);
-        yield $this->addFieldTags('story');
-        yield $this->addFieldCategories('story');
+        $isSuperAdmin = $this->isSuperAdmin();
+        foreach ($this->crudFieldFactory->fullContentSet('story', $pageName, self::getEntityFqcn(), $isSuperAdmin) as $field) {
+            yield $field;
+        }
+        // Extra specific field not part of the generic bundle
         yield FileField::new('pdf', new TranslatableMessage('pdf'));
         $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
         $collectionField->onlyOnIndex();
@@ -70,35 +64,23 @@ class StoryCrudController extends AbstractCrudControllerLib
         $collectionField->onlyOnDetail();
         yield $collectionField;
         yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        $fields = array_merge(
-            $this->addFieldParagraphs($pageName),
-            $this->addFieldMetas(),
-            $this->addFieldRefUser()
-        );
-        foreach ($fields as $field) {
-            yield $field;
-        }
-
-        yield $this->addFieldWorkflow();
-        yield $this->addFieldState();
-        $date = $this->addTabDate();
-        foreach ($date as $field) {
-            yield $field;
-        }
+        // Workflow + state
+        yield $this->crudFieldFactory->workflowField();
+        yield $this->crudFieldFactory->stateField();
+        // Dates
+        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
     }
 
-    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->addFilterRefUser($filters);
-        $this->addFilterEnable($filters);
-        $this->addFilterTags($filters, 'story');
-        $this->addFilterCategories($filters, 'story');
+        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterEnable($filters);
+        $this->crudFieldFactory->addFilterTags($filters, 'story');
+        $this->crudFieldFactory->addFilterCategories($filters, 'story');
 
         return $filters;
     }
 
-    #[Override]
     public function createEntity(string $entityFqcn): Story
     {
         $story = new $entityFqcn();
@@ -110,7 +92,6 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $story;
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return Story::class;

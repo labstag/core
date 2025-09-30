@@ -14,13 +14,14 @@ use Labstag\Entity\HttpErrorLogs;
 use Labstag\Field\HttpLogs\IsBotField;
 use Labstag\Field\HttpLogs\SameField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
+use Labstag\Lib\Admin\Traits\ReadOnlyActionsTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class HttpErrorLogsCrudController extends AbstractCrudControllerLib
 {
+    use ReadOnlyActionsTrait;
     #[Route('/admin/http-error-logs/{entity}/banip', name: 'admin_http_error_logs_banip')]
     public function banIp(string $entity): RedirectResponse
     {
@@ -48,23 +49,16 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         return $redirectToRoute;
     }
 
-    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
         $this->addToBan($actions);
         $this->addToRedirection($actions);
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $action  = $request->query->get('action', null);
-        if ('trash' != $action) {
-            $actions->remove(Crud::PAGE_INDEX, Action::NEW);
-            $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
-        }
+        $this->applyReadOnly($actions);
 
         return $actions;
     }
 
-    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -75,12 +69,11 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $maxLength = Crud::PAGE_DETAIL === $pageName ? 1024 : 32;
         yield $this->addTabPrincipal();
-        yield $this->addFieldID();
+        yield $this->crudFieldFactory->idField();
         yield TextField::new('url', new TranslatableMessage('Url'))->setMaxLength($maxLength);
         yield TextField::new('domain', new TranslatableMessage('Domain'))->hideOnIndex();
         yield TextField::new('agent', new TranslatableMessage('Agent'))->setMaxLength($maxLength);
@@ -116,22 +109,14 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
             yield $datafield;
         }
 
-        $fields = array_merge($this->addFieldRefUser());
-        foreach ($fields as $field) {
-            yield $field;
-        }
-
-        $date = $this->addTabDate();
-        foreach ($date as $field) {
-            yield $field;
-        }
+        foreach ($this->crudFieldFactory->refUserFields($this->isSuperAdmin()) as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
     }
 
-    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->addFilterRefUser($filters);
-        $this->addFilterEnable($filters);
+    $this->crudFieldFactory->addFilterRefUser($filters);
+    // Pas de champ enable pour les logs => pas de filtre enable
         $filters->add('internetProtocol');
         $filters->add('httpCode');
         $filters->add('requestMethod');

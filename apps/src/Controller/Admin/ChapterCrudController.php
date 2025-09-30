@@ -14,14 +14,12 @@ use Labstag\Entity\Story;
 use Labstag\Entity\User;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ChapterCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions, 'admin_chapter_w3c', 'admin_chapter_public');
@@ -31,7 +29,6 @@ class ChapterCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -42,42 +39,31 @@ class ChapterCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
-        yield $this->addFieldID();
-        yield $this->addFieldSlug();
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
-        yield $this->addFieldTitle();
+        $isSuperAdmin = $this->isSuperAdmin();
+        foreach ($this->crudFieldFactory->baseIdentitySet('chapter', $pageName, self::getEntityFqcn()) as $field) { yield $field; }
         yield $this->addFieldRefStory();
-        yield $this->addFieldImageUpload('img', $pageName);
-        yield $this->addFieldTags('chapter');
+        yield $this->crudFieldFactory->tagsField('chapter');
         yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        $fields = array_merge($this->addFieldParagraphs($pageName), $this->addFieldMetas());
-        foreach ($fields as $field) {
-            yield $field;
-        }
-
-        yield $this->addFieldWorkflow();
-        yield $this->addFieldState();
-        $date = $this->addTabDate();
-        foreach ($date as $field) {
-            yield $field;
-        }
+        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->metaFields() as $field) { yield $field; }
+    // Pas de relation refuser sur Chapter -> on n'injecte pas les refUserFields ici
+        yield $this->crudFieldFactory->workflowField();
+        yield $this->crudFieldFactory->stateField();
+        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
     }
 
-    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->addFilterEnable($filters);
+    $this->crudFieldFactory->addFilterEnable($filters);
         $filters->add(EntityFilter::new('refstory', new TranslatableMessage('Story')));
-        $this->addFilterTags($filters, 'chapter');
+    $this->crudFieldFactory->addFilterTags($filters, 'chapter');
 
         return $filters;
     }
 
-    #[Override]
     public function createEntity(string $entityFqcn): Chapter
     {
         $chapter      = new $entityFqcn();
@@ -96,7 +82,6 @@ class ChapterCrudController extends AbstractCrudControllerLib
         return $chapter;
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return Chapter::class;

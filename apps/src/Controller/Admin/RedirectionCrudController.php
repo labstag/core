@@ -15,7 +15,6 @@ use Labstag\Entity\Redirection;
 use Labstag\Form\Admin\RedirectionImportType;
 use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\RedirectionRepository;
-use Override;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -31,7 +30,6 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 {
     private const FIELDCSV = 2;
 
-    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
@@ -42,11 +40,10 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
-        yield $this->addFieldID();
+        yield $this->crudFieldFactory->idField();
         $textField = TextField::new('source', new TranslatableMessage('Source'));
         if (Action::NEW === $pageName) {
             $request       = $this->requestStack->getCurrentRequest();
@@ -59,25 +56,20 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         yield $textField;
         yield TextField::new('destination', new TranslatableMessage('Destination'));
         yield IntegerField::new('action_code', new TranslatableMessage('Action code'));
-        yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->renderAsSwitch(false)->hideOnForm();
-        yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->hideOnIndex();
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
+        yield $this->crudFieldFactory->booleanField('regex', (string) new TranslatableMessage('Regex'), false)->hideOnForm();
+        yield $this->crudFieldFactory->booleanField('regex', (string) new TranslatableMessage('Regex'), false)->hideOnIndex();
+        yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
         yield IntegerField::new('last_count', new TranslatableMessage('Last count'))->hideonForm();
-        $date = $this->addTabDate();
-        foreach ($date as $field) {
-            yield $field;
-        }
+        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
     }
 
-    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->addFilterEnable($filters);
+    $this->crudFieldFactory->addFilterEnable($filters);
 
         return $filters;
     }
 
-    #[Override]
     public function createEntity(string $entityFqcn): Redirection
     {
         $redirection = new $entityFqcn();

@@ -8,20 +8,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use Labstag\Entity\Category;
-use Override;
 
 class MovieCategoryCrudController extends CategoryCrudController
 {
-    #[Override]
+    // Identity set hérité sans image
     public function configureFields(string $pageName): iterable
     {
-        $data   = parent::configureFields($pageName);
-        $data[] = $this->addFieldTotalChild('movies');
+    $data   = parent::configureFields($pageName);
+    $data[] = $this->crudFieldFactory->totalChildField('movies');
 
         return $data;
     }
 
-    #[Override]
     public function createEntity(string $entityFqcn): Category
     {
         $category = new $entityFqcn();
@@ -30,7 +28,6 @@ class MovieCategoryCrudController extends CategoryCrudController
         return $category;
     }
 
-    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,

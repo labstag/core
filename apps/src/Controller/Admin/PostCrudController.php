@@ -9,24 +9,24 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PostCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setActionPublic($actions, 'admin_post_w3c', 'admin_post_public');
-        $this->setEditDetail($actions);
+        // Actions de base (trash + navigation + détail)
         $this->configureActionsTrash($actions);
+        $this->setEditDetail($actions);
+
+        // Actions publiques et W3C via la factory (héritées abstrait)
+        $this->setActionPublic($actions, 'admin_post_w3c', 'admin_post_public');
 
         return $actions;
     }
 
-    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -37,48 +37,33 @@ class PostCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
     public function configureFields(string $pageName): iterable
     {
+        // Principal tab + full content set (identity + taxonomy + paragraphs + meta + ref user)
         yield $this->addTabPrincipal();
-        yield $this->addFieldID();
-        yield $this->addFieldIDShortcode('post');
-        yield $this->addFieldSlug();
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
-        yield $this->addFieldTitle();
-        yield $this->addFieldImageUpload('img', $pageName);
-        yield $this->addFieldTags('post');
-        yield $this->addFieldCategories('post');
+        $isSuperAdmin = $this->isSuperAdmin();
+        foreach ($this->crudFieldFactory->fullContentSet('post', $pageName, self::getEntityFqcn(), $isSuperAdmin) as $field) {
+            yield $field;
+        }
+        // Additional specific field (resume) not yet in factory bundle
         yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        $fields = array_merge(
-            $this->addFieldParagraphs($pageName),
-            $this->addFieldMetas(),
-            $this->addFieldRefUser()
-        );
-        foreach ($fields as $field) {
-            yield $field;
-        }
-
-        yield $this->addFieldWorkflow();
-        yield $this->addFieldState();
-        $date = $this->addTabDate();
-        foreach ($date as $field) {
-            yield $field;
-        }
+        // Workflow + states
+        yield $this->crudFieldFactory->workflowField();
+        yield $this->crudFieldFactory->stateField();
+        // Dates
+        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
     }
 
-    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->addFilterRefUser($filters);
-        $this->addFilterEnable($filters);
-        $this->addFilterTags($filters, 'post');
-        $this->addFilterCategories($filters, 'post');
+        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterEnable($filters);
+        $this->crudFieldFactory->addFilterTags($filters, 'post');
+        $this->crudFieldFactory->addFilterCategories($filters, 'post');
 
         return $filters;
     }
 
-    #[Override]
     public function createEntity(string $entityFqcn): Post
     {
         $post = new $entityFqcn();
@@ -90,7 +75,6 @@ class PostCrudController extends AbstractCrudControllerLib
         return $post;
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return Post::class;

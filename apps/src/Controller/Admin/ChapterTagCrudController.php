@@ -8,20 +8,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use Labstag\Entity\Tag;
-use Override;
 
 class ChapterTagCrudController extends TagCrudController
 {
-    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $data   = parent::configureFields($pageName);
-        $data[] = $this->addFieldTotalChild('chapters');
+    $data   = parent::configureFields($pageName);
+    $data[] = $this->crudFieldFactory->totalChildField('chapters');
 
         return $data;
     }
 
-    #[Override]
     public function createEntity(string $entityFqcn): Tag
     {
         $tag = new $entityFqcn();
@@ -30,7 +27,6 @@ class ChapterTagCrudController extends TagCrudController
         return $tag;
     }
 
-    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
