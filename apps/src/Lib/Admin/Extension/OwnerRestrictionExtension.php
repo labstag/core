@@ -12,8 +12,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
- * Extension EasyAdmin appliquant une restriction sur les entités possédant un champ/méthode refuser
- * pour les utilisateurs qui ne sont pas SUPER_ADMIN.
+ * EasyAdmin extension applying restriction on entities having a refuser field/method
+ * (ownership-based access control). Users only see their own entities,
+ * except super-admins who see everything.
  */
 final class OwnerRestrictionExtension
 {

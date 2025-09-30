@@ -12,8 +12,8 @@ use Symfony\Component\Translation\TranslatableMessage;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- * Gestion des actions liées à la corbeille (soft delete) et filtrage associé.
- * La classe consommatrice doit fournir :
+ * Management of trash-related actions (soft delete) and associated filtering.
+ * The consuming class must provide:
  *  - generateUrl(...)
  *  - getEntityFqcn()
  */
@@ -40,7 +40,7 @@ trait TrashActionsTrait
     {
         $current = $request->query->get('action');
         if ('trash' === $current) {
-            return; // déjà en mode corbeille
+            return; // already in trash mode
         }
 
         $action = Action::new('trash', new TranslatableMessage('Trash'), 'fa fa-trash');
@@ -57,7 +57,7 @@ trait TrashActionsTrait
     {
         $current = $request->query->get('action');
         if (empty($current)) {
-            return; // pas en mode corbeille
+            return; // not in trash mode
         }
 
         $list = Action::new('list', new TranslatableMessage('List'), 'fa fa-list');
@@ -77,7 +77,7 @@ trait TrashActionsTrait
         ]);
         $actions->add(Crud::PAGE_INDEX, $restore);
 
-        // retirer New/Edit pour éviter modifications directes sur éléments supprimés
+                // remove New/Edit to avoid direct modifications on deleted elements
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
         $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
     }

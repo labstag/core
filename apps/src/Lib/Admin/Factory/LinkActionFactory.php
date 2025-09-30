@@ -8,8 +8,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
- * Fabrique pour les actions (lien public + validation W3C optionnelle).
- * Ne génère pas directement l'URL front (c'est géré par les routes existantes de chaque CrudController).
+ * Factory for actions (public link + optional W3C validation).
+ * Does not directly generate front URLs (handled by existing routes in each CrudController).
  */
 final class LinkActionFactory
 {

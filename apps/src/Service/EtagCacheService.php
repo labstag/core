@@ -1,8 +1,16 @@
 <?php
 
-namespace Labstag\Service;
+namesp    /**
+     * Cache of calculated ETags to avoid multiple recalculations
+     * during the same request.
+     */Labs    /**
+     * Cache of last modifications to avoid multiple recalculations
+     * during the same request.
+     */Service;
 
-use DateTime;
+use    /**
+     * Generates an ETag for a collection of entities.
+     */teTime;
 use DateTimeInterface;
 use Exception;
 use ReflectionClass;
@@ -28,7 +36,7 @@ final class EtagCacheService
     private array $lastModifiedCache = [];
 
     /**
-     * Vide complètement le cache interne.
+     * Completely clears the internal cache.
      */
     public function clearCache(): void
     {
@@ -52,7 +60,7 @@ final class EtagCacheService
             $etags[] = $this->generateEtag($entity);
         }
 
-        // Ajouter le count pour détecter les changements de taille
+        // Add count to detect size changes
         $etags[] = (string) count($entities);
 
         return sha1(implode('|', $etags));
