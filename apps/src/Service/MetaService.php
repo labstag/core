@@ -3,7 +3,6 @@
 namespace Labstag\Service;
 
 use DateTime;
-use Labstag\Entity\Configuration;
 use Labstag\Entity\Meta;
 use ReflectionClass;
 use stdClass;
@@ -15,13 +14,10 @@ final class MetaService
     public function __construct(
         private Environment $twigEnvironment,
         private ViewResolverService $viewResolverService,
-        private ConfigurationService $configurationService,
         private FileService $fileService,
     )
     {
     }
-
-
 
     public function getEntityParent(?Meta $meta): ?object
     {

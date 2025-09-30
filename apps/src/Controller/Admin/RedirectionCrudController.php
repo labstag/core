@@ -30,6 +30,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 {
     private const FIELDCSV = 2;
 
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
@@ -40,6 +41,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
@@ -60,16 +62,20 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         yield $this->crudFieldFactory->booleanField('regex', (string) new TranslatableMessage('Regex'), false)->hideOnIndex();
         yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
         yield IntegerField::new('last_count', new TranslatableMessage('Last count'))->hideonForm();
-        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-    $this->crudFieldFactory->addFilterEnable($filters);
+        $this->crudFieldFactory->addFilterEnable($filters);
 
         return $filters;
     }
 
+    #[\Override]
     public function createEntity(string $entityFqcn): Redirection
     {
         $redirection = new $entityFqcn();

@@ -19,6 +19,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class ConfigurationCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
@@ -28,6 +29,7 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
@@ -47,8 +49,18 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
         yield BooleanField::new('sitemapPosts', new TranslatableMessage('Show posts'));
         yield BooleanField::new('sitemapStory', new TranslatableMessage('Show story'));
         yield FormField::addTab(new TranslatableMessage('Medias'));
-    yield $this->crudFieldFactory->imageField('logo', $pageName, self::getEntityFqcn(), (string) new TranslatableMessage('Logo'));
-    yield $this->crudFieldFactory->imageField('placeholder', $pageName, self::getEntityFqcn(), (string) new TranslatableMessage('Placeholder'));
+        yield $this->crudFieldFactory->imageField(
+            'logo',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Logo')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'placeholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Placeholder')
+        );
         yield FormField::addTab(new TranslatableMessage('TAC'));
         $fields = array_merge([], $this->addTacFields());
         foreach ($fields as $field) {

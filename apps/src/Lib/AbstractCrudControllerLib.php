@@ -9,8 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
@@ -36,10 +34,8 @@ use Labstag\Service\WorkflowService;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatableMessage;
-
 
 #[AutoconfigureTag('labstag.admincontroller')]
 abstract class AbstractCrudControllerLib extends AbstractCrudController
@@ -64,9 +60,11 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         protected LinkActionFactory $linkActionFactory,
         protected AdminUrlGenerator $adminUrlGenerator,
         protected ManagerRegistry $managerRegistry,
-    ) {
+    )
+    {
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->addFormTheme('admin/form.html.twig');
@@ -74,20 +72,25 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $crud;
     }
 
+    #[\Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
         FieldCollection $fieldCollection,
         FilterCollection $filterCollection,
-    ): QueryBuilder {
+    ): QueryBuilder
+    {
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
         $queryBuilder = $this->filterListeTrash($searchDto, $queryBuilder);
 
-        return $this->filterListRefUser($queryBuilder, $entityDto);
+        return $this->filterListRefUser($queryBuilder);
     }
 
     // Tabs helpers retained (principal) for consistent UI; dateSet now provided by CrudFieldFactory.
-    protected function addTabPrincipal(): FormField { return FormField::addTab(new TranslatableMessage('Principal')); }
+    protected function addTabPrincipal(): FormField
+    {
+        return FormField::addTab(new TranslatableMessage('Principal'));
+    }
 
     protected function configureActionsBtn(Actions $actions): void
     {
@@ -116,18 +119,37 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->getDoctrineRepository(Paragraph::class);
     }
 
+    protected function isSuperAdmin(): bool
+    {
+        $user = $this->getUser();
+        if (!is_object($user) || !method_exists($user, 'getRoles')) {
+            return false;
+        }
+
+        return in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
+    }
+
     protected function linkw3CValidator(object $entity): RedirectResponse
     {
         $slug = $this->slugService->forEntity($entity);
 
-        return $this->redirect('https://validator.w3.org/nu/?doc=' . $this->generateUrl('front', ['slug' => $slug], UrlGeneratorInterface::ABSOLUTE_URL));
+        return $this->redirect(
+            'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
+                'front',
+                ['slug' => $slug],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            )
+        );
     }
 
     protected function publicLink(object $entity): RedirectResponse
     {
         $slug = $this->slugService->forEntity($entity);
 
-        return $this->redirectToRoute('front', ['slug' => $slug]);
+        return $this->redirectToRoute(
+            'front',
+            ['slug' => $slug]
+        );
     }
 
     protected function setActionPublic(Actions $actions, string $urlW3c, string $urlPublic): void
@@ -140,11 +162,9 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         $actions->add(Crud::PAGE_INDEX, $action);
 
         $w3cAction = $this->setW3cValidatorAction($urlW3c);
-        if ($w3cAction) {
-            $actions->add(Crud::PAGE_EDIT, $w3cAction);
-            $actions->add(Crud::PAGE_INDEX, $w3cAction);
-            $actions->add(Crud::PAGE_DETAIL, $w3cAction);
-        }
+        $actions->add(Crud::PAGE_EDIT, $w3cAction);
+        $actions->add(Crud::PAGE_INDEX, $w3cAction);
+        $actions->add(Crud::PAGE_DETAIL, $w3cAction);
     }
 
     protected function setEditDetail(Actions $actions): void
@@ -157,35 +177,31 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         return $this->filterTrash($searchDto, $queryBuilder);
     }
 
-    private function filterListRefUser(QueryBuilder $queryBuilder, EntityDto $entityDto): QueryBuilder
+    private function filterListRefUser(QueryBuilder $queryBuilder): QueryBuilder
     {
         // Ownership filter now handled by dedicated extension (OwnerRestrictionExtension)
         return $queryBuilder;
     }
-
-    private function setLinkPublicAction(string $urlPublic): Action { return $this->linkActionFactory->createPublicAction($urlPublic); }
-
-    private function setW3cValidatorAction(string $urlW3c): ?Action { return $this->linkActionFactory->createW3cAction($urlW3c); }
 
     /**
      * Internal helper to fetch a Doctrine repository with generics-like safety.
      */
     private function getDoctrineRepository(string $entity): ServiceEntityRepositoryLib
     {
-        $em = $this->managerRegistry->getManagerForClass($entity);
-        $repository = $em->getRepository($entity);
-        \assert($repository instanceof ServiceEntityRepositoryLib);
+        $objectManager    = $this->managerRegistry->getManagerForClass($entity);
+        $objectRepository = $objectManager->getRepository($entity);
+        assert($objectRepository instanceof ServiceEntityRepositoryLib);
 
-        return $repository;
+        return $objectRepository;
     }
 
-    protected function isSuperAdmin(): bool
+    private function setLinkPublicAction(string $urlPublic): Action
     {
-        $user = $this->getUser();
-        if (!is_object($user) || !method_exists($user, 'getRoles')) {
-            return false;
-        }
+        return $this->linkActionFactory->createPublicAction($urlPublic);
+    }
 
-        return in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
+    private function setW3cValidatorAction(string $urlW3c): Action
+    {
+        return $this->linkActionFactory->createW3cAction($urlW3c);
     }
 }

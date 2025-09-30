@@ -5,25 +5,21 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Field\WysiwygField;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Labstag\Repository\ParagraphRepository;
-use Labstag\Service\ParagraphService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PageCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setActionPublic($actions, 'admin_page_w3c', 'admin_page_public');
@@ -33,6 +29,7 @@ class PageCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -43,6 +40,7 @@ class PageCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
@@ -54,23 +52,47 @@ class PageCrudController extends AbstractCrudControllerLib
             // Remove slug field (present at index 2 if withSlug kept)
             unset($identity[2]);
         }
-        foreach ($identity as $field) { yield $field; }
-        if (($fieldChoice = $this->addFieldIsHome($currentEntity, $pageName)) instanceof ChoiceField) { yield $fieldChoice; }
+
+        foreach ($identity as $field) {
+            yield $field;
+        }
+
+        if (($fieldChoice = $this->addFieldIsHome($currentEntity, $pageName)) instanceof ChoiceField
+        ) {
+            yield $fieldChoice;
+        }
+
         yield AssociationField::new('page', new TranslatableMessage('Page'))->autocomplete();
-        foreach ($this->crudFieldFactory->taxonomySet('page') as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->taxonomySet('page') as $field) {
+            yield $field;
+        }
+
         yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) { yield $field; }
-        foreach ($this->crudFieldFactory->metaFields() as $field) { yield $field; }
-        foreach ($this->crudFieldFactory->refUserFields($isSuperAdmin) as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) {
+            yield $field;
+        }
+
+        foreach ($this->crudFieldFactory->metaFields() as $field) {
+            yield $field;
+        }
+
+        foreach ($this->crudFieldFactory->refUserFields($isSuperAdmin) as $field) {
+            yield $field;
+        }
+
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();
-        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterRefUser($filters);
         $this->crudFieldFactory->addFilterEnable($filters);
+
         $filters->add(EntityFilter::new('page', new TranslatableMessage('Page')));
         $this->crudFieldFactory->addFilterTags($filters, 'page');
         $this->crudFieldFactory->addFilterCategories($filters, 'page');
@@ -78,6 +100,7 @@ class PageCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
+    #[\Override]
     public function createEntity(string $entityFqcn): Page
     {
         $page = new $entityFqcn();

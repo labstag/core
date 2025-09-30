@@ -100,28 +100,6 @@ final class MovieService
         return $country;
     }
 
-    private function getDetails(Movie $movie): array
-    {
-        $details = [];
-
-        $tmdbId = $movie->getTmdb();
-        if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
-            $data   = $this->getDetailsTmdb($movie->getImdb());
-            if (null !== $data && isset($data['movie_results'][0]['id'])) {
-                $tmdbId = $data['movie_results'][0]['id'];
-            }
-        }
-
-        if (empty($tmdbId)) {
-            return [];
-        }
-
-        $details = $this->getDetailsTmdbMovie($details, $tmdbId);
-        $details = $this->getTrailersTmdbMovie($details, $tmdbId);
-
-        return $this->getDetailsTmdbCollection($details);
-    }
-
     public function getSagaForForm(): array
     {
         if ([] !== $this->saga) {
@@ -161,24 +139,6 @@ final class MovieService
         return $year;
     }
 
-    private function initGenres(): array
-    {
-        if ([] !== $this->genres) {
-            return $this->genres;
-        }
-
-        $data       = $this->categoryRepository->findAllByTypeMovie();
-        $categories = [];
-        foreach ($data as $category) {
-            $title              = trim((string) $category->getTitle());
-            $categories[$title] = $category;
-        }
-
-        $this->genres = $categories;
-
-        return $categories;
-    }
-
     public function update(Movie $movie): bool
     {
         $this->updateImdb($movie);
@@ -193,82 +153,26 @@ final class MovieService
         return in_array(true, $statuses, true);
     }
 
-    private function updateImageMovie(Movie $movie, array $details): bool
+    private function getDetails(Movie $movie): array
     {
-        $poster = $this->getImgMovie($details);
-        if ('' === $poster) {
-            return false;
-        }
+        $details = [];
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
-
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $movie->setImgFile($uploadedFile);
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
-    }
-
-    private function updateImageSaga(Saga $saga, array $details): bool
-    {
-        $poster = $this->getImgSaga($details);
-        if ('' === $poster) {
-            return false;
-        }
-
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
-
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $saga->setImgFile($uploadedFile);
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
-    }
-
-    private function updateTrailer(Movie $movie, array $details): bool
-    {
-        if (!isset($details['trailers'])) {
-            return false;
-        }
-
-        $find = false;
-
-        foreach ($details['trailers']['results'] as $result) {
-            if ('YouTube' == $result['site'] && 'Trailer' == $result['type']) {
-                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
-                $movie->setTrailer($url);
-
-                $find = true;
-
-                break;
+        $tmdbId = $movie->getTmdb();
+        if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
+            $data   = $this->getDetailsTmdb($movie->getImdb());
+            if (null !== $data && isset($data['movie_results'][0]['id'])) {
+                $tmdbId = $data['movie_results'][0]['id'];
             }
         }
 
-        return $find;
+        if (empty($tmdbId)) {
+            return [];
+        }
+
+        $details = $this->getDetailsTmdbMovie($details, $tmdbId);
+        $details = $this->getTrailersTmdbMovie($details, $tmdbId);
+
+        return $this->getDetailsTmdbCollection($details);
     }
 
     private function getDetailsTmdb(string $imdbId): ?array
@@ -471,6 +375,24 @@ final class MovieService
         return $details;
     }
 
+    private function initGenres(): array
+    {
+        if ([] !== $this->genres) {
+            return $this->genres;
+        }
+
+        $data       = $this->categoryRepository->findAllByTypeMovie();
+        $categories = [];
+        foreach ($data as $category) {
+            $title              = trim((string) $category->getTitle());
+            $categories[$title] = $category;
+        }
+
+        $this->genres = $categories;
+
+        return $categories;
+    }
+
     private function updateCategory(Movie $movie, array $details): bool
     {
         if (!isset($details['tmdb']['genres']) || 0 == count($details['tmdb']['genres'])) {
@@ -501,6 +423,62 @@ final class MovieService
         }
 
         return true;
+    }
+
+    private function updateImageMovie(Movie $movie, array $details): bool
+    {
+        $poster = $this->getImgMovie($details);
+        if ('' === $poster) {
+            return false;
+        }
+
+        try {
+            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+
+            // Télécharger l'image et l'écrire dans le fichier temporaire
+            file_put_contents($tempPath, file_get_contents($poster));
+
+            $uploadedFile = new UploadedFile(
+                path: $tempPath,
+                originalName: basename($tempPath),
+                mimeType: mime_content_type($tempPath),
+                test: true
+            );
+
+            $movie->setImgFile($uploadedFile);
+
+            return true;
+        } catch (Exception) {
+            return false;
+        }
+    }
+
+    private function updateImageSaga(Saga $saga, array $details): bool
+    {
+        $poster = $this->getImgSaga($details);
+        if ('' === $poster) {
+            return false;
+        }
+
+        try {
+            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+
+            // Télécharger l'image et l'écrire dans le fichier temporaire
+            file_put_contents($tempPath, file_get_contents($poster));
+
+            $uploadedFile = new UploadedFile(
+                path: $tempPath,
+                originalName: basename($tempPath),
+                mimeType: mime_content_type($tempPath),
+                test: true
+            );
+
+            $saga->setImgFile($uploadedFile);
+
+            return true;
+        } catch (Exception) {
+            return false;
+        }
     }
 
     private function updateImdb(Movie $movie): void
@@ -572,5 +550,27 @@ final class MovieService
         $this->updatesaga[$saga->getId()] = true;
 
         return true;
+    }
+
+    private function updateTrailer(Movie $movie, array $details): bool
+    {
+        if (!isset($details['trailers'])) {
+            return false;
+        }
+
+        $find = false;
+
+        foreach ($details['trailers']['results'] as $result) {
+            if ('YouTube' == $result['site'] && 'Trailer' == $result['type']) {
+                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
+                $movie->setTrailer($url);
+
+                $find = true;
+
+                break;
+            }
+        }
+
+        return $find;
     }
 }

@@ -37,6 +37,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 use Twig\Environment;
 use Vich\UploaderBundle\Form\Type\VichImageType;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 
 abstract class ParagraphLib extends AbstractController
 {
@@ -355,7 +356,7 @@ abstract class ParagraphLib extends AbstractController
 
     private function setUrlAdmin(
         Paragraph $paragraph,
-    ): string|\EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface
+    ): string|AdminUrlGeneratorInterface
     {
         if (!$this->security->isGranted('ROLE_ADMIN')) {
             return '';

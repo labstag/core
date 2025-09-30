@@ -22,6 +22,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 class HttpErrorLogsCrudController extends AbstractCrudControllerLib
 {
     use ReadOnlyActionsTrait;
+
     #[Route('/admin/http-error-logs/{entity}/banip', name: 'admin_http_error_logs_banip')]
     public function banIp(string $entity): RedirectResponse
     {
@@ -49,6 +50,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         return $redirectToRoute;
     }
 
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
@@ -59,6 +61,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -69,6 +72,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $maxLength = Crud::PAGE_DETAIL === $pageName ? 1024 : 32;
@@ -109,14 +113,20 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
             yield $datafield;
         }
 
-        foreach ($this->crudFieldFactory->refUserFields($this->isSuperAdmin()) as $field) { yield $field; }
-        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->refUserFields($this->isSuperAdmin()) as $field) {
+            yield $field;
+        }
+
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-    $this->crudFieldFactory->addFilterRefUser($filters);
-    // Pas de champ enable pour les logs => pas de filtre enable
+        $this->crudFieldFactory->addFilterRefUser($filters);
+        // Pas de champ enable pour les logs => pas de filtre enable
         $filters->add('internetProtocol');
         $filters->add('httpCode');
         $filters->add('requestMethod');

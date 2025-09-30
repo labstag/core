@@ -19,6 +19,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class StarCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsBtn($actions);
@@ -28,6 +29,7 @@ class StarCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -38,10 +40,19 @@ class StarCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
-    foreach ($this->crudFieldFactory->baseIdentitySet('star', $pageName, self::getEntityFqcn(), false) as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->baseIdentitySet(
+            'star',
+            $pageName,
+            self::getEntityFqcn(),
+            false
+        ) as $field) {
+            yield $field;
+        }
+
         yield TextField::new('language', new TranslatableMessage('Language'));
         yield TextField::new('repository', new TranslatableMessage('Repository'))->hideOnIndex();
         yield UrlField::new('url', new TranslatableMessage('Url'));
@@ -51,9 +62,12 @@ class StarCrudController extends AbstractCrudControllerLib
         yield IntegerField::new('watchers', new TranslatableMessage('Watchers'));
         yield IntegerField::new('forks', new TranslatableMessage('Forks'));
         yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
-        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $licences = $this->getallData('license');
@@ -69,7 +83,8 @@ class StarCrudController extends AbstractCrudControllerLib
         $filters->add(NumericFilter::new('stargazers', new TranslatableMessage('stargazers')));
         $filters->add(NumericFilter::new('watchers', new TranslatableMessage('watchers')));
         $filters->add(NumericFilter::new('forks', new TranslatableMessage('forks')));
-    $this->crudFieldFactory->addFilterEnable($filters);
+
+        $this->crudFieldFactory->addFilterEnable($filters);
 
         return $filters;
     }

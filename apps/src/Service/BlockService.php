@@ -137,6 +137,53 @@ final class BlockService
         return $fields;
     }
 
+    /**
+     * @return mixed[]
+     */
+    public function getRegions(): array
+    {
+        return [
+            'header' => 'header',
+            'footer' => 'footer',
+            'main'   => 'main',
+        ];
+    }
+
+    public function getUrlAdmin(Block $block): ?AdminUrlGeneratorInterface
+    {
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
+            return null;
+        }
+
+        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
+        $adminUrlGenerator->setEntityId($block->getId());
+
+        return $adminUrlGenerator->setController(BlockCrudController::class);
+    }
+
+    public function update(Block $block): void
+    {
+        foreach ($this->blocks as $row) {
+            if ($block->getType() != $row->getType()) {
+                continue;
+            }
+
+            $row->update($block);
+
+            break;
+        }
+    }
+
+    private function acces(Block $block): bool
+    {
+        $roles = $block->getRoles();
+        if (is_null($roles) || 0 == count($roles)) {
+            return true;
+        }
+
+        return array_any($roles, fn ($role): bool => $this->isGranted($role));
+    }
+
     private function getFooter(Block $block): mixed
     {
         $footer = null;
@@ -169,42 +216,9 @@ final class BlockService
         return $header;
     }
 
-    private function getNameByCode(string $code): string
+    private function isGranted(mixed $attribute, mixed $subject = null): bool
     {
-        $name = '';
-        foreach ($this->blocks as $block) {
-            if ($block->getType() == $code) {
-                $name = $block->getName();
-
-                break;
-            }
-        }
-
-        return $name;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getRegions(): array
-    {
-        return [
-            'header' => 'header',
-            'footer' => 'footer',
-            'main'   => 'main',
-        ];
-    }
-
-    public function getUrlAdmin(Block $block): ?AdminUrlGeneratorInterface
-    {
-        if (!$this->security->isGranted('ROLE_ADMIN')) {
-            return null;
-        }
-
-        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
-        $adminUrlGenerator->setEntityId($block->getId());
-
-        return $adminUrlGenerator->setController(BlockCrudController::class);
+        return $this->authorizationChecker->isGranted($attribute, $subject);
     }
 
     /**
@@ -225,34 +239,6 @@ final class BlockService
 
             break;
         }
-    }
-
-    public function update(Block $block): void
-    {
-        foreach ($this->blocks as $row) {
-            if ($block->getType() != $row->getType()) {
-                continue;
-            }
-
-            $row->update($block);
-
-            break;
-        }
-    }
-
-    private function acces(Block $block): bool
-    {
-        $roles = $block->getRoles();
-        if (is_null($roles) || 0 == count($roles)) {
-            return true;
-        }
-
-        return array_any($roles, fn ($role): bool => $this->isGranted($role));
-    }
-
-    private function isGranted(mixed $attribute, mixed $subject = null): bool
-    {
-        return $this->authorizationChecker->isGranted($attribute, $subject);
     }
 
     /**

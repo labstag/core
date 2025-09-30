@@ -2,43 +2,23 @@
 
 namespace Labstag\Controller\Admin;
 
-use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
-use Labstag\Entity\Tag;
+use Labstag\Lib\TagCrudControllerLib;
 
-class PostTagCrudController extends TagCrudController
+class PostTagCrudController extends TagCrudControllerLib
 {
-    // Identity set Tag sans image
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
-    $data   = parent::configureFields($pageName); // parent déjà filtré (pas de enable)
-    $data[] = $this->crudFieldFactory->totalChildField('posts');
-
-        return $data;
+        return $this->configureBaseFields($pageName);
     }
 
-    public function createEntity(string $entityFqcn): Tag
+    protected function getChildRelationshipProperty(): string
     {
-        $tag = new $entityFqcn();
-        $tag->setType('post');
-
-        return $tag;
+        return 'posts';
     }
 
-    public function createIndexQueryBuilder(
-        SearchDto $searchDto,
-        EntityDto $entityDto,
-        FieldCollection $fieldCollection,
-        FilterCollection $filterCollection,
-    ): QueryBuilder
+    protected function getEntityType(): string
     {
-        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
-        $queryBuilder->andWhere('entity.type = :type');
-        $queryBuilder->setParameter('type', 'post');
-
-        return $queryBuilder;
+        return 'post';
     }
 }

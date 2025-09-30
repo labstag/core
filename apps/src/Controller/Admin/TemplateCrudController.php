@@ -14,6 +14,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class TemplateCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setEditDetail($actions);
@@ -22,6 +23,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -34,11 +36,22 @@ class TemplateCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-    // Template n'a ni slug ni enable ni image : withSlug: false, withImage: false, withEnable: false
-    foreach ($this->crudFieldFactory->baseIdentitySet('template', $pageName, self::getEntityFqcn(), withSlug: false, withImage: false, withEnable: false) as $field) { yield $field; }
+        // Template n'a ni slug ni enable ni image : withSlug: false, withImage: false, withEnable: false
+        foreach ($this->crudFieldFactory->baseIdentitySet(
+            'template',
+            $pageName,
+            self::getEntityFqcn(),
+            withSlug: false,
+            withImage: false,
+            withEnable: false
+        ) as $field) {
+            yield $field;
+        }
+
         $textField = TextField::new('code', new TranslatableMessage('Code'));
         $textField->setDisabled(true);
 

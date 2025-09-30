@@ -5,18 +5,12 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Edito;
 use Labstag\Lib\AbstractCrudControllerLib;
-use Labstag\Repository\ParagraphRepository;
-use Labstag\Service\ParagraphService;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\TranslatableMessage;
 
 class EditoCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setEditDetail($actions);
@@ -25,6 +19,7 @@ class EditoCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -35,19 +30,37 @@ class EditoCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
         $isSuperAdmin = $this->isSuperAdmin();
-    // Edito n'a pas de slug : withSlug: false
-    foreach ($this->crudFieldFactory->baseIdentitySet('edito', $pageName, self::getEntityFqcn(), withSlug: false) as $field) { yield $field; }
-        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) { yield $field; }
-        foreach ($this->crudFieldFactory->refUserFields($isSuperAdmin) as $field) { yield $field; }
+        // Edito n'a pas de slug : withSlug: false
+        foreach ($this->crudFieldFactory->baseIdentitySet(
+            'edito',
+            $pageName,
+            self::getEntityFqcn(),
+            withSlug: false
+        ) as $field) {
+            yield $field;
+        }
+
+        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) {
+            yield $field;
+        }
+
+        foreach ($this->crudFieldFactory->refUserFields($isSuperAdmin) as $field) {
+            yield $field;
+        }
+
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();
-        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterRefUser($filters);
@@ -56,6 +69,7 @@ class EditoCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
+    #[\Override]
     public function createEntity(string $entityFqcn): Edito
     {
         $edito = new $entityFqcn();

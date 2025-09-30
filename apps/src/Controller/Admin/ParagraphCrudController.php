@@ -17,6 +17,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class ParagraphCrudController extends AbstractCrudControllerLib
 {
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         if ($this->isIframeEdit()) {
@@ -30,6 +31,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -47,25 +49,35 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->crudFieldFactory->idField();
         yield ParagraphParentField::new('parent', new TranslatableMessage('Parent'));
-        foreach ($this->paragraphService->getFields($currentEntity, $pageName) as $field) { yield $field; }
-        foreach ($this->crudFieldFactory->dateSet() as $field) { yield $field; }
+        foreach ($this->paragraphService->getFields($currentEntity, $pageName) as $field) {
+            yield $field;
+        }
+
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
+
         yield FormField::addTab(new TranslatableMessage('Config'));
         $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'))->hideOnIndex();
         $choiceField->setChoices($this->paragraphService->getFonds());
         yield $choiceField;
-        $allTypes = array_flip($this->paragraphService->getAll(null));
-        $textField = TextField::new('type', new TranslatableMessage('Type'))->formatValue(static fn ($value) => $allTypes[$value] ?? null);
+        $allTypes  = array_flip($this->paragraphService->getAll(null));
+        $textField = TextField::new('type', new TranslatableMessage('Type'))->formatValue(
+            static fn ($value) => $allTypes[$value] ?? null
+        );
         $textField->setDisabled(true);
         yield $textField;
         yield TextField::new('classes', new TranslatableMessage('classes'))->hideOnIndex();
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $filters->add(
