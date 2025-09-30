@@ -12,9 +12,7 @@ use Labstag\Enum\PageEnum;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\PostRepository;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\Translation\TranslatableMessage;
-
 
 class LastNewsParagraph extends ParagraphLib
 {

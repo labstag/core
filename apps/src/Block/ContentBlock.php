@@ -2,14 +2,12 @@
 
 namespace Labstag\Block;
 
+use Labstag\Block\Traits\ParagraphProcessingTrait;
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Labstag\Lib\BlockLib;
-use Labstag\Block\Traits\ParagraphProcessingTrait;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\Response;
-
 
 class ContentBlock extends BlockLib
 {
@@ -31,27 +29,35 @@ class ContentBlock extends BlockLib
     #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
-        $this->logger->debug('Starting content block generation', [
-            'block_id' => $block->getId()
-        ]);
+        $this->logger->debug(
+            'Starting content block generation',
+            [
+                'block_id' => $block->getId(),
+            ]
+        );
 
         if (!isset($data['paragraphs']) || !is_array($data['paragraphs'])) {
-            $this->logger->warning('Invalid paragraphs data for content block', [
-                'block_id' => $block->getId()
-            ]);
+            $this->logger->warning(
+                'Invalid paragraphs data for content block',
+                [
+                    'block_id' => $block->getId(),
+                ]
+            );
             $this->setShow($block, false);
+
             return;
         }
 
         $paragraphs = $data['paragraphs'];
         if (0 == count($paragraphs)) {
             $this->setShow($block, false);
+
             return;
         }
 
         $paragraphs = $this->paragraphService->generate($paragraphs, $data, $disable);
-        $contents = $this->paragraphService->getContents($paragraphs);
-        
+        $contents   = $this->paragraphService->getContents($paragraphs);
+
         $this->setHeader($block, $contents->header);
         $this->setFooter($block, $contents->footer);
 
@@ -88,6 +94,7 @@ class ContentBlock extends BlockLib
      * Get aside content for the page.
      *
      * @param mixed[] $data
+     *
      * @return mixed[]|null
      */
     private function getAside(array $data): ?array
@@ -95,11 +102,14 @@ class ContentBlock extends BlockLib
         // Implementation for aside content
         // This could include related posts, tags, categories, etc.
         // For now, return null but structure is ready for implementation
-        
-        $this->logger->debug('Aside content requested but not yet implemented', [
-            'entity_type' => $data['entity']::class ?? 'unknown'
-        ]);
-        
+
+        $this->logger->debug(
+            'Aside content requested but not yet implemented',
+            [
+                'entity_type' => $data['entity']::class ?? 'unknown',
+            ]
+        );
+
         return null;
     }
 }

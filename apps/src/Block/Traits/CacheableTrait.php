@@ -4,10 +4,27 @@ namespace Labstag\Block\Traits;
 
 trait CacheableTrait
 {
+
     /**
      * @var mixed[]
      */
     private array $cache = [];
+
+    /**
+     * Clear all cache entries.
+     */
+    protected function clearAllCache(): void
+    {
+        $this->cache = [];
+    }
+
+    /**
+     * Clear specific cache entry.
+     */
+    protected function clearCache(string $key): void
+    {
+        unset($this->cache[$key]);
+    }
 
     /**
      * Get cached value or compute and cache it.
@@ -21,22 +38,6 @@ trait CacheableTrait
         }
 
         return $this->cache[$key];
-    }
-
-    /**
-     * Clear specific cache entry.
-     */
-    protected function clearCache(string $key): void
-    {
-        unset($this->cache[$key]);
-    }
-
-    /**
-     * Clear all cache entries.
-     */
-    protected function clearAllCache(): void
-    {
-        $this->cache = [];
     }
 
     /**

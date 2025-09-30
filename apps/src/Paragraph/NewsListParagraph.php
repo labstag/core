@@ -10,8 +10,6 @@ use Labstag\Entity\Post;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\PostRepository;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
 
 class NewsListParagraph extends ParagraphLib
 {

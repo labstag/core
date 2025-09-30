@@ -8,16 +8,12 @@ use Generator;
 use Labstag\Entity\Block;
 use Labstag\Form\LinkType;
 use Labstag\Lib\BlockLib;
-use Labstag\Block\Processors\LinkUrlProcessor;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
-
 class LinksBlock extends BlockLib
 {
-
     #[Override]
     public function content(string $view, Block $block): ?Response
     {
@@ -35,17 +31,24 @@ class LinksBlock extends BlockLib
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
-        
-        $this->logger->debug('Starting links block generation', [
-            'block_id' => $block->getId()
-        ]);
-        
+
+        $this->logger->debug(
+            'Starting links block generation',
+            [
+                'block_id' => $block->getId(),
+            ]
+        );
+
         $links = $this->correctionLinks($block);
         if (0 == count($links)) {
-            $this->logger->debug('No valid links found', [
-                'block_id' => $block->getId()
-            ]);
+            $this->logger->debug(
+                'No valid links found',
+                [
+                    'block_id' => $block->getId(),
+                ]
+            );
             $this->setShow($block, false);
+
             return;
         }
 
@@ -93,17 +96,17 @@ class LinksBlock extends BlockLib
     {
         $links = $block->getLinks();
         $data  = [];
-        
+
         foreach ($links as $row) {
-            $link = clone $row;
+            $link         = clone $row;
             $processedUrl = $this->linkUrlProcessor->processUrl($link->getUrl());
-            
+
             // If processedUrl is an object (entity), check if it's enabled
             if (is_object($processedUrl)) {
                 if (!$processedUrl->isEnable()) {
                     continue;
                 }
-                
+
                 $link->setUrl(
                     $this->router->generate(
                         'front',

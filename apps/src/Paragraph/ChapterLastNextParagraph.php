@@ -8,8 +8,6 @@ use Labstag\Entity\Paragraph;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\ChapterRepository;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
 
 class ChapterLastNextParagraph extends ParagraphLib
 {

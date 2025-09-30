@@ -10,8 +10,6 @@ use Labstag\Entity\Story;
 use Labstag\Lib\ParagraphLib;
 use Labstag\Repository\StoryRepository;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-
 
 class StoryListParagraph extends ParagraphLib
 {
