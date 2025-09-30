@@ -5,9 +5,11 @@ namespace Labstag\Lib;
 use Exception;
 use Labstag\Interface\FileStorageInterface;
 use League\Flysystem\Filesystem;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Yaml\Yaml;
 
+#[AutoconfigureTag('labstag.filestorage')]
 abstract class FileStorageLib implements FileStorageInterface
 {
 
