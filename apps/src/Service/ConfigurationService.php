@@ -5,13 +5,13 @@ namespace Labstag\Service;
 use Labstag\Entity\Configuration;
 use Labstag\Repository\ConfigurationRepository;
 
-class ConfigurationService
+final class ConfigurationService
 {
 
     private ?Configuration $configuration = null;
 
     public function __construct(
-        protected ConfigurationRepository $configurationRepository,
+        private ConfigurationRepository $configurationRepository,
     )
     {
     }

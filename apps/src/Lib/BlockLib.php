@@ -8,6 +8,7 @@ use Exception;
 use Labstag\Entity\Block;
 use Labstag\Interface\BlockInterface;
 use Labstag\Service\ConfigurationService;
+use Labstag\Service\CrudAdminService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
@@ -53,6 +54,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         protected ConfigurationService $configurationService,
         protected AdminUrlGenerator $adminUrlGenerator,
         protected ParagraphService $paragraphService,
+        protected CrudAdminService $crudAdminService,
         protected SiteService $siteService,
         protected SlugService $slugService,
         protected RequestStack $requestStack,

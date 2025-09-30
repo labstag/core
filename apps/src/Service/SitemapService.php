@@ -12,19 +12,18 @@ use Labstag\Enum\PageEnum;
 use Labstag\Lib\ServiceEntityRepositoryLib;
 use Labstag\Repository\ChapterRepository;
 
-class SitemapService
+final class SitemapService
 {
 
     /**
      * @var string[]
      */
-    protected array $parent = [];
+    private array $parent = [];
 
     public function __construct(
-        protected ConfigurationService $configurationService,
-        protected SlugService $slugService,
-        protected EntityManagerInterface $entityManager,
-        protected SiteService $siteService,
+        private ConfigurationService $configurationService,
+        private SlugService $slugService,
+        private EntityManagerInterface $entityManager,
     )
     {
     }
@@ -72,23 +71,6 @@ class SitemapService
         }
 
         return $tabs;
-    }
-
-    protected function getRepository(string $entity): ServiceEntityRepositoryLib
-    {
-        $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
-            throw new Exception('Repository not found');
-        }
-
-        return $entityRepository;
-    }
-
-    protected function verifFirstChar(string $url): bool
-    {
-        $result = substr($url, 0, 1);
-
-        return '-' !== $result;
     }
 
     /**
@@ -168,6 +150,16 @@ class SitemapService
         return $this->getDataFromRepository(Story::class);
     }
 
+    private function getRepository(string $entity): ServiceEntityRepositoryLib
+    {
+        $entityRepository = $this->entityManager->getRepository($entity);
+        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+            throw new Exception('Repository not found');
+        }
+
+        return $entityRepository;
+    }
+
     /**
      * @param mixed[] $data
      *
@@ -181,5 +173,12 @@ class SitemapService
         }
 
         return $tabs;
+    }
+
+    private function verifFirstChar(string $url): bool
+    {
+        $result = substr($url, 0, 1);
+
+        return '-' !== $result;
     }
 }

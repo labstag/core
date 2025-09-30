@@ -9,14 +9,14 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class StoryService
+final class StoryService
 {
 
     private array $stories = [];
 
     public function __construct(
-        protected CacheService $cacheService,
-        protected TranslatorInterface $translator,
+        private CacheService $cacheService,
+        private TranslatorInterface $translator,
     )
     {
     }

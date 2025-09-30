@@ -15,19 +15,19 @@ use Labstag\Repository\PostRepository;
 use Labstag\Repository\StoryRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class SlugService
+final class SlugService
 {
 
-    protected array $pages = [];
+    private array $pages = [];
 
-    protected array $types = [];
+    private array $types = [];
 
     public function __construct(
-        protected StoryRepository $storyRepository,
-        protected PageRepository $pageRepository,
-        protected ChapterRepository $chapterRepository,
-        protected PostRepository $postRepository,
-        protected RequestStack $requestStack,
+        private StoryRepository $storyRepository,
+        private PageRepository $pageRepository,
+        private ChapterRepository $chapterRepository,
+        private PostRepository $postRepository,
+        private RequestStack $requestStack,
     )
     {
     }

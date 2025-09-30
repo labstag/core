@@ -11,18 +11,16 @@ use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class BlockService
+final class BlockService
 {
     public function __construct(
         #[AutowireIterator('labstag.blocks')]
         private readonly iterable $blocks,
-        protected AdminUrlGenerator $adminUrlGenerator,
-        protected Security $security,
-        protected AuthorizationCheckerInterface $authorizationChecker,
-        protected TokenStorageInterface $tokenStorage,
+        private AdminUrlGenerator $adminUrlGenerator,
+        private Security $security,
+        private AuthorizationCheckerInterface $authorizationChecker,
     )
     {
     }
@@ -242,7 +240,7 @@ class BlockService
         }
     }
 
-    protected function acces(Block $block): bool
+    private function acces(Block $block): bool
     {
         $roles = $block->getRoles();
         if (is_null($roles) || 0 == count($roles)) {
@@ -252,7 +250,7 @@ class BlockService
         return array_any($roles, fn ($role): bool => $this->isGranted($role));
     }
 
-    protected function isGranted(mixed $attribute, mixed $subject = null): bool
+    private function isGranted(mixed $attribute, mixed $subject = null): bool
     {
         return $this->authorizationChecker->isGranted($attribute, $subject);
     }

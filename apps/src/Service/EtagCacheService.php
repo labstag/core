@@ -8,7 +8,7 @@ use Exception;
 use ReflectionClass;
 use ReflectionException;
 
-class EtagCacheService
+final class EtagCacheService
 {
 
     /**
@@ -17,7 +17,7 @@ class EtagCacheService
      *
      * @var array<string, string>
      */
-    protected array $etagCache = [];
+    private array $etagCache = [];
 
     /**
      * Cache des dernières modifications pour éviter les recalculs multiples
@@ -25,7 +25,7 @@ class EtagCacheService
      *
      * @var array<string, DateTimeInterface|null>
      */
-    protected array $lastModifiedCache = [];
+    private array $lastModifiedCache = [];
 
     /**
      * Vide complètement le cache interne.
@@ -43,7 +43,7 @@ class EtagCacheService
      */
     public function generateCollectionEtag(array $entities): string
     {
-        if ($entities === []) {
+        if ([] === $entities) {
             return sha1('empty-collection');
         }
 
@@ -207,6 +207,7 @@ class EtagCacheService
                     return true;
                 }
             } catch (Exception) {
+                throw new Exception('Invalid If-Modified-Since date: ' . $ifModifiedSince);
                 // Date invalide, ignorer
             }
         }
@@ -237,7 +238,7 @@ class EtagCacheService
 
         // Ajouter un hash des propriétés critiques
         $criticalProperties = $this->extractCriticalProperties($entity);
-        if ($criticalProperties !== []) {
+        if ([] !== $criticalProperties) {
             $parts[] = md5(serialize($criticalProperties));
         }
 
@@ -279,6 +280,7 @@ class EtagCacheService
                 }
             }
         } catch (ReflectionException) {
+            throw new Exception('Reflection error on entity: ' . $entity::class);
             // En cas d'erreur de réflection, continuer sans les propriétés
         }
 
@@ -340,22 +342,22 @@ class EtagCacheService
         // Configuration par défaut selon le type d'entité
         $cacheTimings = [
             'Configuration' => 86400,
-        // 24h pour la configuration
+            // 24h pour la configuration
             'Page'          => 7200,
-        // 2h pour les pages
+            // 2h pour les pages
             'Post'          => 3600,
-        // 1h pour les posts
+            // 1h pour les posts
             'Story'         => 3600,
-        // 1h pour les stories
+            // 1h pour les stories
             'Chapter'       => 1800,
-        // 30min pour les chapitres
+            // 30min pour les chapitres
             'Movie'         => 7200,
-        // 2h pour les films
+            // 2h pour les films
         ];
 
         // Extraire le nom de classe simple
-        $reflection = new ReflectionClass($entity);
-        $shortClassName = $reflection->getShortName();
+        $reflectionClass     = new ReflectionClass($entity);
+        $shortClassName      = $reflectionClass->getShortName();
 
         return $cacheTimings[$shortClassName] ?? 3600;
         // 1h par défaut

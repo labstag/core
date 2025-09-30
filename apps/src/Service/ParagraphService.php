@@ -17,13 +17,13 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class ParagraphService
+final class ParagraphService
 {
     public function __construct(
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
-        protected AdminUrlGenerator $adminUrlGenerator,
-        protected Security $security,
+        private AdminUrlGenerator $adminUrlGenerator,
+        private Security $security,
     )
     {
     }

@@ -15,31 +15,31 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class MovieService
+final class MovieService
 {
     private const STATUSOK = 200;
 
-    protected array $category = [];
+    private array $category = [];
 
-    protected array $collection = [];
+    private array $collection = [];
 
-    protected array $country = [];
+    private array $country = [];
 
-    protected array $genres = [];
+    private array $genres = [];
 
-    protected array $saga = [];
+    private array $saga = [];
 
-    protected array $updatesaga = [];
+    private array $updatesaga = [];
 
-    protected array $year = [];
+    private array $year = [];
 
     public function __construct(
-        protected CacheInterface $cache,
-        protected HttpClientInterface $httpClient,
-        protected MovieRepository $movieRepository,
-        protected SagaRepository $sagaRepository,
-        protected CategoryRepository $categoryRepository,
-        protected string $tmdbapiKey,
+        private CacheInterface $cache,
+        private HttpClientInterface $httpClient,
+        private MovieRepository $movieRepository,
+        private SagaRepository $sagaRepository,
+        private CategoryRepository $categoryRepository,
+        private string $tmdbapiKey,
     )
     {
     }
