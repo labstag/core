@@ -1,0 +1,2 @@
+parameters:
+  labstag.admin.w3c_enabled: '%env(bool:ENABLE_W3C_VALIDATOR)%'

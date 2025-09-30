@@ -34,7 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @var int
      */
-    protected const DATAUNSERIALIZE = 4;
+    protected const DATAUNSERIALIZE = 3;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
@@ -132,8 +132,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return [
             $this->id,
             $this->username,
-            $this->email,
-            $this->password,
+            $this->email
         ];
     }
 
@@ -149,8 +148,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
             [
                 $this->id,
                 $this->username,
-                $this->email,
-                $this->password,
+                $this->email
             ] = $data;
         }
     }
@@ -294,7 +292,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
      * @see PasswordAuthenticatedUserInterface
      */
     #[Override]
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
