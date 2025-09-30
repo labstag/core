@@ -33,12 +33,15 @@ use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
+
+#[AutoconfigureTag('labstag.admincontroller')]
 abstract class AbstractCrudControllerLib extends AbstractCrudController
 {
     use ParagraphAdminTrait;
