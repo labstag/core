@@ -4,8 +4,8 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Labstag\Entity\User;
 use Labstag\DataFixtures\Abstract\FixtureLib;
+use Labstag\Entity\User;
 use Override;
 
 class UserFixtures extends FixtureLib implements DependentFixtureInterface

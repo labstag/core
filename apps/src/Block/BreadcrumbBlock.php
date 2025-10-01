@@ -2,11 +2,11 @@
 
 namespace Labstag\Block;
 
+use Labstag\Block\Abstract\BlockLib;
 use Labstag\Block\Traits\CacheableTrait;
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
-use Labstag\Block\Abstract\BlockLib;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 

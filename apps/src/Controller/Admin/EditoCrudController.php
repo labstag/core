@@ -5,8 +5,8 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use Labstag\Entity\Edito;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
+use Labstag\Entity\Edito;
 
 class EditoCrudController extends AbstractCrudControllerLib
 {

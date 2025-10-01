@@ -12,8 +12,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
-use Labstag\Entity\Star;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
+use Labstag\Entity\Star;
 use Labstag\Repository\StarRepository;
 use Symfony\Component\Translation\TranslatableMessage;
 

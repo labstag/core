@@ -19,6 +19,7 @@ use Labstag\Controller\Admin\Factory\LinkActionFactory;
 use Labstag\Controller\Admin\Traits\ParagraphAdminTrait;
 use Labstag\Controller\Admin\Traits\TrashActionsTrait;
 use Labstag\Entity\Paragraph;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Repository\ParagraphRepository;
 use Labstag\Service\BlockService;
 use Labstag\Service\EmailService;

@@ -5,12 +5,12 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
+use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Category;
 use Labstag\Entity\Page;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Enum\PageEnum;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Override;
 
 class PageFixtures extends FixtureLib implements DependentFixtureInterface

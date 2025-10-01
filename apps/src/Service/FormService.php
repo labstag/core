@@ -2,7 +2,7 @@
 
 namespace Labstag\Service;
 
-use Labstag\Lib\FrontFormLib;
+use Labstag\FrontForm\Abstract\FrontFormLib;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Form\FormInterface;
 

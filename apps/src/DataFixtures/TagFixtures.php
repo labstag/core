@@ -4,8 +4,8 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\Entity\Tag;
 use Labstag\DataFixtures\Abstract\FixtureLib;
+use Labstag\Entity\Tag;
 use Override;
 
 class TagFixtures extends FixtureLib
