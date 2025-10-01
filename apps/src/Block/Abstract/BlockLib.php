@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib;
+namespace Labstag\Block\Abstract;
 
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -8,6 +8,7 @@ use Exception;
 use Labstag\Block\Processors\LinkUrlProcessor;
 use Labstag\Entity\Block;
 use Labstag\Interface\BlockInterface;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\CrudAdminService;
 use Labstag\Service\ParagraphService;

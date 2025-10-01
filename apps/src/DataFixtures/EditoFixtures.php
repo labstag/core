@@ -7,7 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Edito;
 use Labstag\Entity\User;
-use Labstag\Lib\FixtureLib;
+use Labstag\DataFixtures\Abstract\FixtureLib;
 use Override;
 
 class EditoFixtures extends FixtureLib implements DependentFixtureInterface

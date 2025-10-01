@@ -7,7 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
-use Labstag\Lib\FixtureLib;
+use Labstag\DataFixtures\Abstract\FixtureLib;
 use Override;
 
 class MemoFixtures extends FixtureLib implements DependentFixtureInterface

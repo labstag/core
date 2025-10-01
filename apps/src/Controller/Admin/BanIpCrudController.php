@@ -7,7 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\BanIp;
 use Labstag\Field\WysiwygField;
-use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class BanIpCrudController extends AbstractCrudControllerLib

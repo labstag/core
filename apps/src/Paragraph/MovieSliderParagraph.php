@@ -8,7 +8,7 @@ use Generator;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Paragraph;
 use Labstag\Enum\PageEnum;
-use Labstag\Lib\ParagraphLib;
+use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;

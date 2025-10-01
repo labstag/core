@@ -10,7 +10,7 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
-use Labstag\Lib\FixtureLib;
+use Labstag\DataFixtures\Abstract\FixtureLib;
 use Override;
 
 class PostFixtures extends FixtureLib implements DependentFixtureInterface

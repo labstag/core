@@ -6,7 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityUpdatedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
-use Labstag\Lib\EventEntityLib;
+use Labstag\Event\Abstract\EventEntityLib;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInterface

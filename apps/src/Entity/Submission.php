@@ -5,7 +5,7 @@ namespace Labstag\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\SubmissionRepository;
-use Labstag\Traits\Entity\TimestampableTrait;
+use Labstag\Entity\Traits\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: SubmissionRepository::class)]

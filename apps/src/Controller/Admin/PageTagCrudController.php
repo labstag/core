@@ -2,7 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Lib\TagCrudControllerLib;
+use Labstag\Controller\Admin\Abstract\TagCrudControllerLib;
 
 class PageTagCrudController extends TagCrudControllerLib
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib;
+namespace Labstag\Event\Abstract;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\BanIp;

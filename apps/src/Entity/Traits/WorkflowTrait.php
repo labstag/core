@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Traits\Entity;
+namespace Labstag\Entity\Traits;
 
 use DateTime;
 use Doctrine\DBAL\Types\Types;

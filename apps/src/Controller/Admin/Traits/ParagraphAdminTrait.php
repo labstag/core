@@ -4,7 +4,7 @@ namespace Labstag\Controller\Admin\Traits;
 
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Repository\ParagraphRepository;
 use Labstag\Service\ParagraphService;
 use Symfony\Component\HttpFoundation\RedirectResponse;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib;
+namespace Labstag\Email\Abstract;
 
 use Labstag\Entity\Template;
 use Labstag\Replace\LinkLoginReplace;

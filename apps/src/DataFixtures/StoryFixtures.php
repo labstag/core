@@ -10,7 +10,7 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
-use Labstag\Lib\FixtureLib;
+use Labstag\DataFixtures\Abstract\FixtureLib;
 use Override;
 
 class StoryFixtures extends FixtureLib implements DependentFixtureInterface

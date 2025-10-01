@@ -4,7 +4,7 @@ namespace Labstag\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;

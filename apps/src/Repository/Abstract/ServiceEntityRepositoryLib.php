@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib;
+namespace Labstag\Repository\Abstract;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 

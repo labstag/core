@@ -2,7 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Lib\CategoryCrudControllerLib;
+use Labstag\Controller\Admin\Abstract\CategoryCrudControllerLib;
 
 class MovieCategoryCrudController extends CategoryCrudControllerLib
 {
