@@ -69,13 +69,6 @@ DirectoryIndex index.php
     </IfModule>
 </IfModule>
 
-<IfFile "/var/www/.htpasswd">
-    AuthType Basic
-    AuthName "Accès restreint"
-    AuthUserFile /var/www/.htpasswd
-    Require valid-user
-</IfFile>
-
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresByType text/css "access plus 1 year"
