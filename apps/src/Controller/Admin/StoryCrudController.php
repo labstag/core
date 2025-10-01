@@ -14,7 +14,7 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Field\FileField;
 use Labstag\Field\WysiwygField;
-use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Service\StoryService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;

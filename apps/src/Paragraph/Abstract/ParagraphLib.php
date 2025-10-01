@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib;
+namespace Labstag\Paragraph\Abstract;
 
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
@@ -23,6 +23,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\FormService;

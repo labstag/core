@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Labstag\Traits\Entity;
+namespace Labstag\Entity\Traits;
 
 use DateTime;
 use Doctrine\DBAL\Types\Types;

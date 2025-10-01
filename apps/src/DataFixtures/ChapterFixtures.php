@@ -8,7 +8,7 @@ use Faker\Generator;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
 use Labstag\Entity\Tag;
-use Labstag\Lib\FixtureLib;
+use Labstag\DataFixtures\Abstract\FixtureLib;
 use Override;
 
 class ChapterFixtures extends FixtureLib implements DependentFixtureInterface

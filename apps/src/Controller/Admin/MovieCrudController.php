@@ -15,7 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
-use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Routing\Attribute\Route;

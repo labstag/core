@@ -2,7 +2,7 @@
 
 namespace Labstag\Replace;
 
-use Labstag\Lib\ReplaceLib;
+use Labstag\Replace\Abstract\ReplaceLib;
 
 class UserRolesReplace extends ReplaceLib
 {

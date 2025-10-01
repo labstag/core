@@ -5,7 +5,7 @@ namespace Labstag\Paragraph;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
-use Labstag\Lib\ParagraphLib;
+use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 
 class HeadChapterParagraph extends ParagraphLib

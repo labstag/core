@@ -7,7 +7,7 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Story;
-use Labstag\Lib\ParagraphLib;
+use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\StoryRepository;
 use Override;
 

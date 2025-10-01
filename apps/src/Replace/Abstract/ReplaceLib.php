@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib;
+namespace Labstag\Replace\Abstract;
 
 use Labstag\Interface\ReplaceInterface;
 use Labstag\Service\ConfigurationService;

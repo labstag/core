@@ -7,7 +7,7 @@ use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 class ChapterRepository extends ServiceEntityRepositoryLib
 {

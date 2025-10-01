@@ -4,7 +4,7 @@ namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Paragraph;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 class ParagraphRepository extends ServiceEntityRepositoryLib
 {

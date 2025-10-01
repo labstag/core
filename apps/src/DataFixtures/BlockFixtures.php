@@ -8,7 +8,7 @@ use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Link;
 use Labstag\Entity\Page;
-use Labstag\Lib\FixtureLib;
+use Labstag\DataFixtures\Abstract\FixtureLib;
 use Override;
 
 class BlockFixtures extends FixtureLib implements DependentFixtureInterface

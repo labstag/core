@@ -4,9 +4,9 @@ namespace Labstag\FrontForm;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Email\Abstract\EmailLib;
 use Labstag\Form\Front\ContactType;
-use Labstag\Lib\EmailLib;
-use Labstag\Lib\FrontFormLib;
+use Labstag\FrontForm\Abstract\FrontFormLib;
 use Override;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatableMessage;

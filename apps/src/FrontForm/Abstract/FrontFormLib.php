@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib;
+namespace Labstag\FrontForm\Abstract;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;

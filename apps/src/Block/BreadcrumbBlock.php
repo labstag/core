@@ -6,7 +6,7 @@ use Labstag\Block\Traits\CacheableTrait;
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
-use Labstag\Lib\BlockLib;
+use Labstag\Block\Abstract\BlockLib;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 

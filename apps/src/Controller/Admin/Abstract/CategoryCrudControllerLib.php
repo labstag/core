@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib;
+namespace Labstag\Controller\Admin\Abstract;
 
 use Labstag\Entity\Category;
 

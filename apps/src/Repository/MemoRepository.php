@@ -4,7 +4,7 @@ namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Memo;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 class MemoRepository extends ServiceEntityRepositoryLib
 {

@@ -4,7 +4,7 @@ namespace Labstag\Paragraph;
 
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Lib\ParagraphLib;
+use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 
 class HeroParagraph extends ParagraphLib

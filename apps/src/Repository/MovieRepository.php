@@ -6,7 +6,7 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Movie;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Symfony\Component\Intl\Countries;
 
 class MovieRepository extends ServiceEntityRepositoryLib

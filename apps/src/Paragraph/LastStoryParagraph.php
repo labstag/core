@@ -9,7 +9,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
-use Labstag\Lib\ParagraphLib;
+use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\StoryRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;

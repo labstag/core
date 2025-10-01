@@ -7,7 +7,7 @@ use Exception;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 class LinkUrlProcessor
 {

@@ -7,7 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use Generator;
 use Labstag\Entity\Block;
 use Labstag\Form\LinkType;
-use Labstag\Lib\BlockLib;
+use Labstag\Block\Abstract\BlockLib;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;

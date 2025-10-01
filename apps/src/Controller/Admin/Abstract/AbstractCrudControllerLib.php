@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib;
+namespace Labstag\Controller\Admin\Abstract;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;

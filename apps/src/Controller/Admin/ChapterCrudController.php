@@ -13,7 +13,7 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Entity\User;
 use Labstag\Field\WysiwygField;
-use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;

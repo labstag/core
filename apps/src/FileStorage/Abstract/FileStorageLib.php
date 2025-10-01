@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Lib;
+namespace Labstag\FileStorage\Abstract;
 
 use Exception;
 use Labstag\Interface\FileStorageInterface;

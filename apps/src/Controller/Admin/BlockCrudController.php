@@ -21,7 +21,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\Block;
-use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Repository\BlockRepository;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;

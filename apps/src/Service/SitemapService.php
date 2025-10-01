@@ -9,7 +9,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Repository\ChapterRepository;
 
 final class SitemapService
