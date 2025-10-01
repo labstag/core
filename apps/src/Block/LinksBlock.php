@@ -120,8 +120,7 @@ class LinksBlock extends BlockLib
                 continue;
             }
 
-
-                // It's a regular URL string
+            // It's a regular URL string
             $link->setUrl($processedUrl);
 
             $data[] = $link;
