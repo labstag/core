@@ -40,25 +40,13 @@ class PageCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    // Base identity set but slug possibly excluded depending on home type
-    private function getIdEntity(string $pageName, $currentEntity)
-    {
-        $identity = $this->crudFieldFactory->baseIdentitySet('page', $pageName, self::getEntityFqcn());
-        if ($currentEntity instanceof Page && PageEnum::HOME->value == $currentEntity->getType()) {
-            // Remove slug field (present at index 2 if withSlug kept)
-            unset($identity[2]);
-        }
-
-        return $identity;
-    }
-
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addTabPrincipal();
         $isSuperAdmin = $this->isSuperAdmin();
-        $identity = $this->getIdEntity($pageName, $currentEntity);
+        $identity     = $this->getIdEntity($pageName, $currentEntity);
 
         foreach ($identity as $field) {
             yield $field;
@@ -78,10 +66,10 @@ class PageCrudController extends AbstractCrudControllerLib
         $fieldsTabs = [
             $this->crudFieldFactory->paragraphFields($pageName),
             $this->crudFieldFactory->metaFields(),
-            $this->crudFieldFactory->refUserFields($isSuperAdmin)
+            $this->crudFieldFactory->refUserFields($isSuperAdmin),
         ];
-        foreach ($fieldsTabs as $fields) {
-            yield from $fields;
+        foreach ($fieldsTabs as $fieldTab) {
+            yield from $fieldTab;
         }
 
         yield $this->crudFieldFactory->workflowField();
@@ -166,5 +154,20 @@ class PageCrudController extends AbstractCrudControllerLib
         $choiceField->setRequired(true);
 
         return $choiceField;
+    }
+
+    // Base identity set but slug possibly excluded depending on home type
+    /**
+     * @return mixed[]
+     */
+    private function getIdEntity(string $pageName, $currentEntity): array
+    {
+        $identity = $this->crudFieldFactory->baseIdentitySet('page', $pageName, self::getEntityFqcn());
+        if ($currentEntity instanceof Page && PageEnum::HOME->value == $currentEntity->getType()) {
+            // Remove slug field (present at index 2 if withSlug kept)
+            unset($identity[2]);
+        }
+
+        return $identity;
     }
 }

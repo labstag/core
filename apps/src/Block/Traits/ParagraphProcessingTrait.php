@@ -54,6 +54,7 @@ trait ParagraphProcessingTrait
     protected function validateParagraphData(array $data): bool
     {
         unset($data);
+
         // Override in specific blocks if needed
         return true;
     }

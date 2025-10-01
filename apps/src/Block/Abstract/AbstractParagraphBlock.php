@@ -70,6 +70,7 @@ abstract class AbstractParagraphBlock extends BlockLib
     protected function buildBlockData(Block $block, array $paragraphs, array $data): array
     {
         unset($data);
+
         return [
             'block'      => $block,
             'paragraphs' => $paragraphs,
@@ -84,6 +85,7 @@ abstract class AbstractParagraphBlock extends BlockLib
     protected function shouldHideBlock(Block $block, array $data): bool
     {
         unset($block, $data);
+
         // Override in specific blocks if needed
         return false;
     }

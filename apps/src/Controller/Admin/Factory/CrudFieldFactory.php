@@ -112,7 +112,15 @@ final class CrudFieldFactory
 
     public function categoriesField(string $type): AssociationField
     {
-        return AssociationField::new('categories', new TranslatableMessage('Categories'))->autocomplete()->setTemplatePath('admin/field/categories.html.twig')->setFormTypeOption('by_reference', false)->setQueryBuilder(
+        return AssociationField::new(
+            'categories',
+            new TranslatableMessage('Categories')
+        )->autocomplete()->setTemplatePath(
+            'admin/field/categories.html.twig'
+        )->setFormTypeOption(
+            'by_reference',
+            false
+        )->setQueryBuilder(
             function (QueryBuilder $queryBuilder) use ($type): void {
                 $queryBuilder->andWhere('entity.type = :type')->setParameter('type', $type);
             }
@@ -226,7 +234,12 @@ final class CrudFieldFactory
             return [];
         }
 
-        $associationField = AssociationField::new('refuser', new TranslatableMessage('User'))->autocomplete()->setSortProperty('username');
+        $associationField = AssociationField::new(
+            'refuser',
+            new TranslatableMessage('User')
+        )->autocomplete()->setSortProperty(
+            'username'
+        );
 
         return [
             FormField::addTab(new TranslatableMessage('User')),
@@ -303,7 +316,10 @@ final class CrudFieldFactory
 
     public function updatedAtField(): DateTimeField
     {
-        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating()->hideOnIndex();
+        return DateTimeField::new(
+            'updatedAt',
+            new TranslatableMessage('updated At')
+        )->hideWhenCreating()->hideOnIndex();
     }
 
     public function workflowField(): TextField

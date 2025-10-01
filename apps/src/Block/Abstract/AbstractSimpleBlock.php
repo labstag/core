@@ -75,6 +75,7 @@ abstract class AbstractSimpleBlock extends BlockLib
     protected function validateBlockData(array $data): bool
     {
         unset($data);
+
         // Override in specific blocks if needed
         return true;
     }

@@ -64,15 +64,15 @@ class DashboardController extends AbstractDashboardController
         // Shared taxonomy items (categories / tags) used in several content sub-menus
         $fieldsTAbs = [
             $this->buildContentMenus($categories, $tags),
-            $this->buildSimpleCrudMenus()
+            $this->buildSimpleCrudMenus(),
         ];
-        foreach ($fieldsTAbs as $fields) {
-            yield from $fields;
+        foreach ($fieldsTAbs as $fieldTAb) {
+            yield from $fieldTAb;
         }
 
         // Configuration (single editable entity)
         $configMenu = $this->buildConfigurationMenuItem();
-        if ($configMenu !== null) {
+        if (null !== $configMenu) {
             yield $configMenu;
         }
 
