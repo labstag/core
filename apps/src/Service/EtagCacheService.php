@@ -11,6 +11,10 @@ use ReflectionException;
 final class EtagCacheService
 {
 
+    private const TIME_DAY = 86400;
+    private const TIME_HOUR = 3600;
+    private const TIME_HALF_HOUR = 1800;
+    private const TIME_TWO_HOURS = 7200;
     /**
      * Cache of calculated ETags to avoid multiple recalculations
      * during the same request.
@@ -341,17 +345,17 @@ final class EtagCacheService
     {
         // Default configuration according to entity type
         $cacheTimings = [
-            'Configuration' => 86400,
+            'Configuration' => self::TIME_DAY,
             // 24h for configuration
-            'Page'          => 7200,
+            'Page'          => self::TIME_TWO_HOURS,
             // 2h for pages
-            'Post'          => 3600,
+            'Post'          => self::TIME_HOUR,
             // 1h for posts
-            'Story'         => 3600,
+            'Story'         => self::TIME_HOUR,
             // 1h for stories
-            'Chapter'       => 1800,
+            'Chapter'       => self::TIME_HALF_HOUR,
             // 30min for chapters
-            'Movie'         => 7200,
+            'Movie'         => self::TIME_TWO_HOURS,
             // 2h for movies
         ];
 
@@ -359,7 +363,7 @@ final class EtagCacheService
         $reflectionClass     = new ReflectionClass($entity);
         $shortClassName      = $reflectionClass->getShortName();
 
-        return $cacheTimings[$shortClassName] ?? 3600;
+        return $cacheTimings[$shortClassName] ?? self::TIME_HOUR;
         // 1h by default
     }
 }
