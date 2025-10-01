@@ -10,11 +10,14 @@ use ReflectionException;
 
 final class EtagCacheService
 {
+    private const TIME_DAY       = 86400;
 
-    private const TIME_DAY = 86400;
-    private const TIME_HOUR = 3600;
     private const TIME_HALF_HOUR = 1800;
+
+    private const TIME_HOUR      = 3600;
+
     private const TIME_TWO_HOURS = 7200;
+
     /**
      * Cache of calculated ETags to avoid multiple recalculations
      * during the same request.
