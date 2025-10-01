@@ -12,9 +12,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Configuration;
 use Labstag\Field\WysiwygField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ConfigurationCrudController extends AbstractCrudControllerLib

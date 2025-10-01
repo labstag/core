@@ -4,8 +4,8 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\Entity\Category;
 use Labstag\DataFixtures\Abstract\FixtureLib;
+use Labstag\Entity\Category;
 use Override;
 
 class CategoryFixtures extends FixtureLib

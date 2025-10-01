@@ -6,10 +6,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
+use Labstag\Email\Abstract\EmailLib;
 use Labstag\Entity\Template;
 use Labstag\Field\WysiwygField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
-use Labstag\Lib\EmailLib;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class TemplateCrudController extends AbstractCrudControllerLib

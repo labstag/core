@@ -3,8 +3,8 @@
 namespace Labstag\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
-use Labstag\Entity\Template;
 use Labstag\DataFixtures\Abstract\FixtureLib;
+use Labstag\Entity\Template;
 use Override;
 
 class TemplateFixtures extends FixtureLib

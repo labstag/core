@@ -4,7 +4,6 @@ namespace Labstag\Block\Abstract;
 
 use Labstag\Block\Traits\ParagraphProcessingTrait;
 use Labstag\Entity\Block;
-use Labstag\Block\Abstract\BlockLib;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 

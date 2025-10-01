@@ -2,7 +2,7 @@
 
 namespace Labstag\Service;
 
-use Labstag\Lib\EmailLib;
+use Labstag\Email\Abstract\EmailLib;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 final class EmailService

@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Labstag\Entity\Submission;
 use Labstag\Interface\FrontFormInterface;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Repository\SubmissionRepository;
 use Labstag\Service\EmailService;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;

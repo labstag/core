@@ -4,8 +4,8 @@ namespace Labstag\Block;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
-use Labstag\Entity\Block;
 use Labstag\Block\Abstract\BlockLib;
+use Labstag\Entity\Block;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 

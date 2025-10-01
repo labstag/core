@@ -5,10 +5,10 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Generator;
+use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Block;
 use Labstag\Entity\Link;
 use Labstag\Entity\Page;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Override;
 
 class BlockFixtures extends FixtureLib implements DependentFixtureInterface

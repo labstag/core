@@ -6,9 +6,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Entity\Submission;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
-use Labstag\Lib\FrontFormLib;
+use Labstag\Entity\Submission;
+use Labstag\FrontForm\Abstract\FrontFormLib;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SubmissionCrudController extends AbstractCrudControllerLib
