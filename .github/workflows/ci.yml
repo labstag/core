@@ -68,17 +68,17 @@ jobs:
       - name: 'Symfony about'
         run: task symfony:about
       - name: linter PHP Code Sniffer
-        run: npm run lint:phpcs:error
+        run: task lint:phpcs:error
       - name: linter PHP MD
-        run: npm run lint:phpmd
+        run: task lint:phpmd
       - name: linter PHPMND
-        run: npm run lint:phpmnd
+        run: task lint:phpmnd
       - name: Linter twig
-        run: npm run lint:twig
+        run: task lint:twig
       - name: Linter yaml
-        run: npm run lint:yaml
+        run: task lint:yaml
       - name: linter phpstan
-        run: npm run lint:phpstan:0
+        run: task phpstan:0
   launch:
     runs-on: ubuntu-24.04
     needs: linter
@@ -143,19 +143,15 @@ jobs:
       - name: Add assets
         run: task labstag:assets
       - name: 'BDD MIGRATE'
-        run: npm run doctrine:migrate
+        run: task doctrine:migrate
       - name: 'BDD Schema update'
-        run: npm run doctrine:schema:update
+        run: task doctrine:schema:update
       - name: 'BDD Schema validate'
-        run: npm run doctrine:schema:validate
+        run: task doctrine:schema:validate
       - name: 'Run the fixtures'
-        run: npm run doctrine:fixtures
+        run: task doctrine:fixtures
       - name: 'Delete old files'
-        run: npm run labstag:delete-oldfiles
-      #   - name: 'Install Labstag'
-      #     run: npm run cmd:labstag:all
-      #   - name: Run Acceptance Tests
-      #     run: npm run test:behat
+        run: task labstag:delete-oldfiles
       - name: Cypress run
         uses: cypress-io/github-action@v6
         continue-on-error: true

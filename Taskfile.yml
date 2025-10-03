@@ -613,13 +613,13 @@ tasks:
     cmds:
     - task: labstag:cmd-exec
       vars:
-        COMMAND: "symfony console workflow:dump {{.ENTITY}} > {{.DOT_FILE}}"
+        COMMAND: "sh -c 'symfony console workflow:dump {{.ENTITY}} > {{.DOT_FILE}}'"
     - task: labstag:cmd-exec
       vars:
-        COMMAND: "dot -Tpng {{.DOT_FILE}} -o {{.FILE}}"
+        COMMAND: "sh -c 'dot -Tpng {{.DOT_FILE}} -o {{.FILE}}'"
     - task: labstag:cmd-exec
       vars:
-        COMMAND: "rm {{.DOT_FILE}}"
+        COMMAND: "rm {{.DOT_FILE}} && echo 'Fichier temporaire DOT supprimé'"
 
   workflow:dump:chapter:
     desc: "Affiche le workflow des chapitres"
