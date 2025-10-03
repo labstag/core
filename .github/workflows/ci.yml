@@ -3,6 +3,8 @@ on: [push]
 jobs:
   linter:
     runs-on: ubuntu-24.04
+    env:
+      DOCKER_INTERACTIVE: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -82,6 +84,8 @@ jobs:
   launch:
     runs-on: ubuntu-24.04
     needs: linter
+    env:
+      DOCKER_INTERACTIVE: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
