@@ -53,7 +53,7 @@ tasks:
     cmds:
     - task: utils:file:copy
       vars:
-        SOURCE: ./{{.FOLDERSQL}}/{{.FILESQL}}
+        SOURCE_FILE: ./{{.FOLDERSQL}}/{{.FILESQL}}
         DESTINATION: ./{{.FOLDERlabstag}}/mariadb/{{.FILESQL}}
 
   labstag:getpull-image:
