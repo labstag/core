@@ -58,7 +58,7 @@ jobs:
       - name: linter SCSS
         run: npm run lint:stylelint:fix
       - name: "install PHAR"
-        run: npm run download:phar
+        run: task labstag:download-phar
       - name: 'docker ls'
         run: task labstag:ls
       - name: 'CHOWN'
