@@ -22,6 +22,7 @@ vars:
   FOLDERSQL: '{{.FOLDERSQL | default "database_init"}}'
   FILESQL: '{{.FILESQL | default "dump.sql"}}'
   FOLDERLAMPY: '{{.FOLDERLAMPY | default "labstag"}}'
+  DOCKERCOMPOSEFILE: '{{.DOCKERCOMPOSEFILE | default "docker-compose.yml"}}'
   DOCKERCOMPOSEFILES: '{{.DOCKERCOMPOSEFILES | default "docker-compose.yml docker-compose-lampy.yml"}}'
 
 tasks:
@@ -63,7 +64,7 @@ tasks:
     cmds:
     - task: docker:images:pull
       vars:
-        COMPOSE_FILE: "{{.DOCKERCOMPOSEFILES}}"
+        COMPOSE_FILE: "{{.DOCKERCOMPOSEFILE}}"
   labstag:deploy:
     desc: "Déploie les stacks Docker définies dans les fichiers docker-compose"
     silent: true
