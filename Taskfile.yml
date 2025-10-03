@@ -22,6 +22,7 @@ vars:
   FOLDERSQL: '{{.FOLDERSQL | default "database_init"}}'
   FILESQL: '{{.FILESQL | default "dump.sql"}}'
   FOLDERLAMPY: '{{.FOLDERLAMPY | default "labstag"}}'
+  DOCKERCOMPOSEFILES: '{{.DOCKERCOMPOSEFILES | default "docker-compose.yml docker-compose-lampy.yml"}}'
 
 tasks:
   default:
@@ -62,15 +63,15 @@ tasks:
     cmds:
     - task: docker:images:pull
       vars:
-        COMPOSE_FILE: ./docker-compose.yml ./docker-compose-hackariens.yml
+        COMPOSE_FILE: "{{.DOCKERCOMPOSEFILES}}"
   labstag:deploy:
     desc: "Déploie les stacks Docker définies dans les fichiers docker-compose"
     silent: true
     cmds:
     - task: docker:stack:deploy
       vars:
-        COMPOSE_FILE: ./docker-compose.yml ./docker-compose-hackariens.yml
-        STACK_NAME: labstag
+        COMPOSE_FILE: "{{.DOCKERCOMPOSEFILES}}"
+        STACK_NAME: "{{.STACK_NAME}}"
   labstag:install-first:
     desc: "Installation initiale de Composer et des dépendances"
     silent: true
@@ -83,14 +84,14 @@ tasks:
     - task: docker:stack:check:containers:ready
       vars:
         CONTAINERS: "phpfpm"
-        STACK_NAME: labstag
+        STACK_NAME: "{{.STACK_NAME}}"
   labstag:ls:
     desc: "Liste les stacks et services Docker"
     silent: true
     cmds:
     - task: docker:stack:services
       vars:
-        STACK_NAME: labstag
+        STACK_NAME: "{{.STACK_NAME}}"
   labstag:exec:
     desc: "Exécute une commande dans un conteneur en cours d'exécution"
     cmds:
