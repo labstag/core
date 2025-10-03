@@ -21,7 +21,7 @@ vars:
   STACK_NAME: '{{.STACK | default "labstag"}}'
   FOLDERSQL: '{{.FOLDERSQL | default "database_init"}}'
   FILESQL: '{{.FILESQL | default "dump.sql"}}'
-  FOLDERlabstag: '{{.FOLDERLAMY | default "labstag"}}'
+  FOLDERLAMPY: '{{.FOLDERLAMPY | default "labstag"}}'
 
 tasks:
   default:
@@ -54,7 +54,7 @@ tasks:
     - task: utils:file:copy
       vars:
         SOURCE_FILE: ./{{.FOLDERSQL}}/{{.FILESQL}}
-        DESTINATION: ./{{.FOLDERlabstag}}/mariadb/{{.FILESQL}}
+        DEST_DIR: ./{{.FOLDERLAMPY}}/mariadb/
 
   labstag:getpull-image:
     desc: "Télécharge les images Docker définies dans le docker-compose.yml"
