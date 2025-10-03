@@ -1093,6 +1093,74 @@
         <source>Order</source>
         <target>Ordre</target>
       </trans-unit>
+      <trans-unit id="4KRDzJg" resname="new Redirection">
+        <source>new Redirection</source>
+        <target>__new Redirection</target>
+      </trans-unit>
+      <trans-unit id="5YWYm3H" resname="Tmdb">
+        <source>Tmdb</source>
+        <target>__Tmdb</target>
+      </trans-unit>
+      <trans-unit id="uKosMcB" resname="Release date">
+        <source>Release date</source>
+        <target>__Release date</target>
+      </trans-unit>
+      <trans-unit id="3moZ5hC" resname="Countries">
+        <source>Countries</source>
+        <target>__Countries</target>
+      </trans-unit>
+      <trans-unit id="YvpCrY5" resname="Citation">
+        <source>Citation</source>
+        <target>__Citation</target>
+      </trans-unit>
+      <trans-unit id=".jhcwBR" resname="File">
+        <source>File</source>
+        <target>__File</target>
+      </trans-unit>
+      <trans-unit id="WpQH_12" resname="Adult">
+        <source>Adult</source>
+        <target>__Adult</target>
+      </trans-unit>
+      <trans-unit id="9_Vhjkb" resname="Saga">
+        <source>Saga</source>
+        <target>__Saga</target>
+      </trans-unit>
+      <trans-unit id="1HR..en" resname="Sagas">
+        <source>Sagas</source>
+        <target>__Sagas</target>
+      </trans-unit>
+      <trans-unit id="lMZX9Qb" resname="TMDB Page">
+        <source>TMDB Page</source>
+        <target>__TMDB Page</target>
+      </trans-unit>
+      <trans-unit id="1wWwR2z" resname="Update">
+        <source>Update</source>
+        <target>__Update</target>
+      </trans-unit>
+      <trans-unit id="xhdmAuG" resname="generate Password">
+        <source>generate Password</source>
+        <target>__generate Password</target>
+      </trans-unit>
+      <trans-unit id="DeOL3lT" resname="New chapter">
+        <source>New chapter</source>
+        <target>__New chapter</target>
+      </trans-unit>
+      <trans-unit id="0c4AmFi" resname="Movies">
+        <source>Movies</source>
+        <target>__Movies</target>
+      </trans-unit>
+      <trans-unit id="tWUGgRh" resname="Sort">
+        <source>Sort</source>
+        <target>__Sort</target>
+      </trans-unit>
+      <trans-unit id="ABiEFoY" resname="Stories file (%count%) generated for %stories%">
+        <source>Stories file (%count%) generated for %stories%</source>
+        <target>__Stories file (%count%) generated for %stories%</target>
+      </trans-unit>
+      <trans-unit id="b9k8tz3" resname="No movies found">
+        <source>No movies found</source>
+        <target>__No movies found</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
