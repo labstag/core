@@ -75,7 +75,6 @@ jobs:
         run: task phpstan:0
   launch:
     runs-on: ubuntu-24.04
-    needs: linter
     env:
       DOCKER_INTERACTIVE: false
     steps:
