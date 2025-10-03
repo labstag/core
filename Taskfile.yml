@@ -55,7 +55,7 @@ tasks:
     - task: utils:file:copy
       vars:
         SOURCE_FILE: ./{{.FOLDERSQL}}/{{.FILESQL}}
-        DEST_DIR: ./{{.FOLDERLAMPY}}/mariadb/
+        DEST_DIR: ./{{.FOLDERLAMPY}}/mariadb_init/
 
   labstag:getpull-image:
     desc: "Télécharge les images Docker définies dans le docker-compose.yml"
@@ -101,3 +101,9 @@ tasks:
     - task: labstag:deploy
     - task: labstag:waiting
     - task: labstag:ls
+  labstag:download-phar:
+    desc: "Télécharger les différents fichiers phar"
+    cmds:
+    - task: download:php:tools
+      vars:
+        TOOLS_DIR: ./../apps
