@@ -23,7 +23,6 @@ vars:
   FILESQL: '{{.FILESQL | default "dump.sql"}}'
   FOLDERLAMPY: '{{.FOLDERLAMPY | default "labstag"}}'
   DOCKERCOMPOSEFILE: '{{.DOCKERCOMPOSEFILE | default "docker-compose.yml"}}'
-  DOCKERCOMPOSEFILES: '{{.DOCKERCOMPOSEFILES | default "docker-compose.yml docker-compose-lampy.yml"}}'
 
 tasks:
   default:
@@ -71,7 +70,7 @@ tasks:
     cmds:
     - task: docker:stack:deploy
       vars:
-        COMPOSE_FILE: "{{.DOCKERCOMPOSEFILES}}"
+        COMPOSE_FILE: "{{.DOCKERCOMPOSEFILE}}"
         STACK_NAME: "{{.STACK_NAME}}"
   labstag:install-first:
     desc: "Installation initiale de Composer et des dépendances"
