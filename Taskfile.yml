@@ -125,12 +125,15 @@ tasks:
   labstag:cmd-exec:
     desc: "Affiche les informations Symfony"
     silent: true
+    vars:
+      INTERACTIVE: '{{.INTERACTIVE | default "true"}}'
     cmds:
     - task: docker:stack:exec
       vars:
         STACK_NAME: "labstag"
         SERVICE_NAME: "phpfpm"
         COMMAND: "{{.COMMAND}}"
+        INTERACTIVE: "{{.INTERACTIVE}}"
 
   symfony:about:
     desc: "Affiche les informations Symfony"
@@ -145,6 +148,8 @@ tasks:
     silent: true
     vars:
       CMD: '{{.CMD | default ""}}'
+      # Désactiver l'interactivité en environnement CI/CD
+      INTERACTIVE: '{{if or (eq (env "DOCKER_INTERACTIVE") "false") (eq (env "CI") "true") (eq (env "GITHUB_ACTIONS") "true")}}false{{else}}true{{end}}'
     cmds:
     - task: labstag:cmd-exec
       vars:
