@@ -85,10 +85,10 @@ jobs:
         run: |
           task labstag:copysql
           cd lampy && task lampy:exec
-          task labstag:getpull-image
       
       - name: Deploy containers
         run: |
+          task labstag:getpull-image
           task labstag:install-first
           task labstag:deploy
           task labstag:waiting
