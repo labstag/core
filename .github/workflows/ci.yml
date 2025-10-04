@@ -55,10 +55,6 @@ jobs:
           repository: koromerzhin/lampy
           ref: 'v4.0'
           path: lampy
-          sparse-checkout: |
-            taskfiles/
-            docker/
-          sparse-checkout-cone-mode: false
       
       # === BUILD PHASE ===
       - name: Install dependencies
