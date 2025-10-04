@@ -52,6 +52,7 @@ jobs:
       - name: Repository lampy
         uses: actions/checkout@v4
         with:
+          submodules: recursive
           repository: koromerzhin/lampy
           ref: 'v4.0'
           path: lampy
