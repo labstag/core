@@ -1,7 +1,11 @@
 name: Continuous Integration
-on: [push]
+on: 
+  push:
+    branches: [ develop, main ]
+  pull_request:
+    branches: [ develop, main ]
 jobs:
-  linter:
+  ci:
     runs-on: ubuntu-24.04
     env:
       DOCKER_INTERACTIVE: false
@@ -10,13 +14,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Installer docker-compose
-        run: |
-            sudo curl -L "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
-            docker-compose version
+      
+      - name: Setup Docker Compose
+        uses: KengoTODA/actions-setup-docker-compose@v1
+        with:
+          version: '2.29.7'
+      
       - name: Install Task
         uses: go-task/setup-task@v1
+      
       - name: Repository lampy
         uses: actions/checkout@v4
         with:
@@ -24,15 +30,19 @@ jobs:
           ref: 'v4.0'
           repository: koromerzhin/lampy
           path: lampy
-      - uses: actions/setup-node@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
+      
       - name: Install npm dependencies
         run: npm install
-      - name: 'set apps/.env'
-        run: 'cp apps/.env.test apps/.env'
-      - name: 'set .env'
-        run: 'cp .env.example .env'
+      - name: Setup environment files
+        run: |
+          cp apps/.env.test apps/.env
+          cp .env.example .env
       - name: 'Encore build'
         run: npm run encore:build
       - name: 'SET BDD'
@@ -55,10 +65,12 @@ jobs:
         run: task labstag:download-phar
       - name: 'docker ls'
         run: task labstag:ls
-      - name: 'CHOWN'
-        run: sudo chown -R $USER:$USER ./apps
-      - name: 'CHMOD'
-        run: sudo chmod -R 775 ./apps
+      - name: Set permissions
+        run: |
+          sudo chown -R $USER:$USER ./apps
+          sudo chmod -R 775 ./apps
+          sudo chown -R $USER:$USER ./apps/public
+          sudo chmod -R 775 ./apps/public
       - name: 'Symfony about'
         run: task symfony:about
       - name: linter PHP Code Sniffer
@@ -73,70 +85,15 @@ jobs:
         run: task lint:yaml
       - name: linter phpstan
         run: task phpstan:0
-  launch:
-    runs-on: ubuntu-24.04
-    env:
-      DOCKER_INTERACTIVE: false
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Installer docker-compose
-        run: |
-            sudo curl -L "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
-            docker-compose version
-      - name: Install Task
-        uses: go-task/setup-task@v1
-      - name: Repository lampy
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          ref: 'v4.0'
-          repository: koromerzhin/lampy
-          path: lampy
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Install npm dependencies
-        run: npm install
-      - name: 'set apps/.env'
-        run: 'cp apps/.env.test apps/.env'
-      - name: 'set .env'
-        run: 'cp .env.example .env'
-      - name: 'Encore build'
-        run: npm run encore:build
-      - name: 'SET BDD'
-        run: task labstag:copysql
-      - name: 'Launch Lampy'
-        run: cd lampy && task lampy:exec
-      - name: 'Image pull'
-        run: task labstag:getpull-image
-      - name: "Launch first composer install"
-        run: task labstag:install-first
-      - name: 'Build containers'
-        run: task labstag:deploy
-      - name: 'Waiting'
-        run: task labstag:waiting
-      - name: 'docker ls'
-        run: task labstag:ls
-      - name: 'CHOWN'
-        run: sudo chown -R $USER:$USER ./apps/public
-      - name: 'CHMOD'
-        run: sudo chmod -R 775 ./apps/public
-      - name: 'Symfony about'
-        run: task symfony:about
       - name: Add assets
         run: task labstag:assets
-      - name: 'BDD MIGRATE'
-        run: task doctrine:migrate
-      - name: 'BDD Schema update'
-        run: task doctrine:schema:update
-      - name: 'BDD Schema validate'
-        run: task doctrine:schema:validate
-      - name: 'Run the fixtures'
-        run: task doctrine:fixtures
+      
+      - name: Database setup
+        run: |
+          task doctrine:migrate
+          task doctrine:schema:update
+          task doctrine:schema:validate
+          task doctrine:fixtures
       - name: 'Delete old files'
         run: task labstag:delete-oldfiles
       - name: Cypress run
@@ -148,7 +105,9 @@ jobs:
           echo "CURRENT_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
       - name: Archive screenshots
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: "labstag-${{ env.CURRENT_BRANCH }}_${{ env.CURRENT_DATE }}"
-          path: cypress/
+          name: "labstag-${{ github.ref_name }}_${{ env.CURRENT_DATE }}"
+          path: cypress/screenshots
           retention-days: 7
+          if-no-files-found: ignore
