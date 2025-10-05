@@ -65,6 +65,9 @@ class MovieType extends AbstractType
                 'choices'  => $this->movieService->getYearForForm(),
             ]
         );
+        $title       = new TranslatableMessage('Title');
+        $releaseDate = new TranslatableMessage('Release date');
+        $dateAdded   = new TranslatableMessage('Date added');
         $formBuilder->add(
             'order',
             ChoiceType::class,
@@ -72,12 +75,14 @@ class MovieType extends AbstractType
                 'required' => false,
                 'label'    => new TranslatableMessage('Order'),
                 'choices'  => [
-                    new TranslatableMessage('Title')->__toString()        => 'title',
-                    new TranslatableMessage('Release date')->__toString() => 'releaseDate',
-                    new TranslatableMessage('Date added')->__toString()   => 'createdAt',
+                    $title->__toString()       => 'title',
+                    $releaseDate->__toString() => 'releaseDate',
+                    $dateAdded->__toString()   => 'createdAt',
                 ],
             ]
         );
+        $ascending  = new TranslatableMessage('Ascending');
+        $descending = new TranslatableMessage('Descending');
         $formBuilder->add(
             'orderby',
             ChoiceType::class,
@@ -85,8 +90,8 @@ class MovieType extends AbstractType
                 'required' => false,
                 'label'    => new TranslatableMessage('Sort'),
                 'choices'  => [
-                    new TranslatableMessage('Ascending')->__toString()  => 'ASC',
-                    new TranslatableMessage('Descending')->__toString() => 'DESC',
+                    $ascending->__toString()  => 'ASC',
+                    $descending->__toString() => 'DESC',
                 ],
             ]
         );

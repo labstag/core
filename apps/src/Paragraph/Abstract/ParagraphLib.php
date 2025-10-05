@@ -95,12 +95,16 @@ abstract class ParagraphLib extends AbstractController
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
             $textField = TextField::new($type . 'File', new TranslatableMessage('Image'));
             $textField->setFormType(VichImageType::class);
+            $deleteLabel      = new TranslatableMessage('Delete image');
+            $downloadLabel    = new TranslatableMessage('Download');
+            $mimeTypesMessage = new TranslatableMessage('Please upload a valid image (JPEG, PNG, GIF, WebP).');
+            $maxSizeMessage   = new TranslatableMessage('The file is too large. Its size should not exceed {{ limit }}.');
             $textField->setFormTypeOptions(
                 [
                     'required'       => false,
                     'allow_delete'   => true,
-                    'delete_label'   => new TranslatableMessage('Delete image')->__toString(),
-                    'download_label' => new TranslatableMessage('Download')->__toString(),
+                    'delete_label'   => $deleteLabel->__toString(),
+                    'download_label' => $downloadLabel->__toString(),
                     'download_uri'   => true,
                     'image_uri'      => true,
                     'asset_helper'   => true,
@@ -114,12 +118,8 @@ abstract class ParagraphLib extends AbstractController
                                     'image/gif',
                                     'image/webp',
                                 ],
-                                'mimeTypesMessage' => new TranslatableMessage(
-                                    'Please upload a valid image (JPEG, PNG, GIF, WebP).'
-                                )->__toString(),
-                                'maxSizeMessage'   => new TranslatableMessage(
-                                    'The file is too large. Its size should not exceed {{ limit }}.'
-                                )->__toString(),
+                                'mimeTypesMessage' => $mimeTypesMessage->__toString(),
+                                'maxSizeMessage'   => $maxSizeMessage->__toString(),
                             ]
                         ),
                     ],

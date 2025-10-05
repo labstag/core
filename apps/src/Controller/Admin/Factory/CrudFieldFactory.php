@@ -113,7 +113,15 @@ final class CrudFieldFactory
 
     public function categoriesField(string $type): AssociationField
     {
-        return AssociationField::new('categories', new TranslatableMessage('Categories'))->autocomplete()->setTemplatePath('admin/field/categories.html.twig')->setFormTypeOption('by_reference', false)->setQueryBuilder(
+        return AssociationField::new(
+            'categories',
+            new TranslatableMessage('Categories')
+        )->autocomplete()->setTemplatePath(
+            'admin/field/categories.html.twig'
+        )->setFormTypeOption(
+            'by_reference',
+            false
+        )->setQueryBuilder(
             function (QueryBuilder $queryBuilder) use ($type): void {
                 $queryBuilder->andWhere('entity.type = :type')->setParameter('type', $type);
             }
@@ -176,14 +184,19 @@ final class CrudFieldFactory
     ): ImageField|TextField
     {
         if ('edit' === $pageName || 'new' === $pageName) {
+            $deleteLabel      = new TranslatableMessage('Delete image');
+            $downloadLabel    = new TranslatableMessage('Download');
+            $mimeTypesMessage = new TranslatableMessage('Please upload a valid image (JPEG, PNG, GIF, WebP).');
+            $maxSizeMessage   = new TranslatableMessage('The file is too large. Its size should not exceed {{ limit }}.');
+
             return TextField::new($type . 'File', $label ?? new TranslatableMessage('Image'))->setFormType(
                 VichImageType::class
             )->setFormTypeOptions(
                 [
                     'required'       => false,
                     'allow_delete'   => true,
-                    'delete_label'   => new TranslatableMessage('Delete image')->__toString(),
-                    'download_label' => new TranslatableMessage('Download')->__toString(),
+                    'delete_label'   => $deleteLabel->__toString(),
+                    'download_label' => $downloadLabel->__toString(),
                     'download_uri'   => true,
                     'image_uri'      => true,
                     'asset_helper'   => true,
@@ -197,12 +210,8 @@ final class CrudFieldFactory
                                     'image/gif',
                                     'image/webp',
                                 ],
-                                'mimeTypesMessage' => new TranslatableMessage(
-                                    'Please upload a valid image (JPEG, PNG, GIF, WebP).'
-                                )->__toString(),
-                                'maxSizeMessage'   => new TranslatableMessage(
-                                    'The file is too large. Its size should not exceed {{ limit }}.'
-                                )->__toString(),
+                                'mimeTypesMessage' => $mimeTypesMessage->__toString(),
+                                'maxSizeMessage'   => $maxSizeMessage->__toString(),
                             ]
                         ),
                     ],
@@ -256,7 +265,12 @@ final class CrudFieldFactory
             return [];
         }
 
-        $associationField = AssociationField::new('refuser', new TranslatableMessage('User'))->autocomplete()->setSortProperty('username');
+        $associationField = AssociationField::new(
+            'refuser',
+            new TranslatableMessage('User')
+        )->autocomplete()->setSortProperty(
+            'username'
+        );
 
         return [
             FormField::addTab(new TranslatableMessage('User')),
@@ -333,7 +347,10 @@ final class CrudFieldFactory
 
     public function updatedAtField(): DateTimeField
     {
-        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating()->hideOnIndex();
+        return DateTimeField::new(
+            'updatedAt',
+            new TranslatableMessage('updated At')
+        )->hideWhenCreating()->hideOnIndex();
     }
 
     public function workflowField(): TextField
