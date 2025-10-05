@@ -156,6 +156,7 @@ export class Paragraphs {
         element.addEventListener(
           'click',
           async (event) => {
+            document.querySelector('#paragraph-select').tomselect.clear();
             event.preventDefault();
             var dataParagraph = document.querySelector('.paragraphs-list').closest('.paragraph-data');
             const data = await fetch(dataParagraph.dataset.urlList).then(response => response.text());
