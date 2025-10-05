@@ -96,6 +96,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
 
     /**
      * @param array<string> $excludedImdbIds
+     *
      * @return list<Movie>
      */
     public function findMoviesNotInImdbList(array $excludedImdbIds = []): array
@@ -131,6 +132,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
 
     /**
      * @param array<string, mixed> $query
+     *
      * @return Query<mixed, mixed>
      */
     public function getQueryPaginator(array $query): Query

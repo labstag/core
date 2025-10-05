@@ -20,7 +20,9 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 final class ParagraphService
 {
     public function __construct(
-        /** @var iterable<\Labstag\Paragraph\Abstract\ParagraphLib> $paragraphs */
+        /**
+         * @var iterable<\Labstag\Paragraph\Abstract\ParagraphLib>
+         */
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
         private AdminUrlGenerator $adminUrlGenerator,
@@ -153,7 +155,6 @@ final class ParagraphService
         }
 
         $data->header = array_filter($data->header, fn ($row): bool => !is_null($row));
-
         $data->footer = array_filter($data->footer, fn ($row): bool => !is_null($row));
 
         return $data;

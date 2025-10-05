@@ -117,14 +117,18 @@ class StoriesAddCommand extends Command
             }
 
             $option = $input->getArgument('option');
+
             return match ($option) {
                 'delete'     => $this->deleteAll(),
                 'authors'    => $this->addUsers($symfonyStyle, $pdo),
                 'categories' => $this->addCategories($symfonyStyle, $pdo),
                 'stories'    => $this->addStoryByUsers($symfonyStyle, $pdo),
                 'tags'       => $this->addTags($symfonyStyle, $pdo),
-                default      => (function() use ($symfonyStyle) {
-                    $symfonyStyle->error('Option invalide. Utilisez "authors", "categories", "stories", "tags" ou "delete".');
+                default      => (function () use ($symfonyStyle): int {
+                    $symfonyStyle->error(
+                        'Option invalide. Utilisez "authors", "categories", "stories", "tags" ou "delete".'
+                    );
+
                     return Command::FAILURE;
                 })(),
             };
@@ -490,6 +494,7 @@ class StoriesAddCommand extends Command
 
     /**
      * @param array<string, mixed> $chapters
+     *
      * @return array<string, non-empty-array<(int | non-falsy-string | numeric-string), mixed>>
      */
     private function groupByStory(array $chapters): array
@@ -514,7 +519,9 @@ class StoriesAddCommand extends Command
             foreach ($patterns as $pattern) {
                 if (preg_match($pattern, $titre, $matches)) {
                     $titre                       = trim($matches[1]);
-                    $idChapter                   = isset($matches[3]) ? (count($matches) > 4 ? $matches[3] . '/' . $matches[4] : $matches[3]) : $matches[2];
+                    $idChapter                   = isset($matches[3]) ? (4 < count(
+                        $matches
+                    ) ? $matches[3] . '/' . $matches[4] : $matches[3]) : $matches[2];
                     $stories[$titre][$idChapter] = $chapter;
                     $matched                     = true;
                     break;

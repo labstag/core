@@ -72,9 +72,9 @@ class MovieType extends AbstractType
                 'required' => false,
                 'label'    => new TranslatableMessage('Order'),
                 'choices'  => [
-                    (new TranslatableMessage('Title'))->__toString()        => 'title',
-                    (new TranslatableMessage('Release date'))->__toString()        => 'releaseDate',
-                    (new TranslatableMessage('Date added'))->__toString() => 'createdAt',
+                    new TranslatableMessage('Title')->__toString()        => 'title',
+                    new TranslatableMessage('Release date')->__toString() => 'releaseDate',
+                    new TranslatableMessage('Date added')->__toString()   => 'createdAt',
                 ],
             ]
         );
@@ -85,8 +85,8 @@ class MovieType extends AbstractType
                 'required' => false,
                 'label'    => new TranslatableMessage('Sort'),
                 'choices'  => [
-                    (new TranslatableMessage('Ascending'))->__toString()   => 'ASC',
-                    (new TranslatableMessage('Descending'))->__toString() => 'DESC',
+                    new TranslatableMessage('Ascending')->__toString()  => 'ASC',
+                    new TranslatableMessage('Descending')->__toString() => 'DESC',
                 ],
             ]
         );

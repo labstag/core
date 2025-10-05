@@ -7,12 +7,6 @@ use Labstag\Entity\Tag;
 abstract class TagCrudControllerLib extends AbstractTypedCrudControllerLib
 {
     #[\Override]
-    protected function getChildType(): string
-    {
-        return 'tag';
-    }
-
-    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         // Tag is not uploadable: no image and no enable field in the entity
@@ -29,5 +23,11 @@ abstract class TagCrudControllerLib extends AbstractTypedCrudControllerLib
     public static function getEntityFqcn(): string
     {
         return Tag::class;
+    }
+
+    #[\Override]
+    protected function getChildType(): string
+    {
+        return 'tag';
     }
 }

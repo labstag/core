@@ -36,6 +36,9 @@ class Movie implements Stringable
     private Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
+    private ?string $certification = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $citation = null;
 
     /**
@@ -107,9 +110,6 @@ class Movie implements Stringable
     #[ORM\Column(nullable: true)]
     private ?int $votes = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $certification = null;
-
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -159,6 +159,11 @@ class Movie implements Stringable
     public function getCategories(): Collection
     {
         return $this->categories;
+    }
+
+    public function getCertification(): ?string
+    {
+        return $this->certification;
     }
 
     public function getCitation(): ?string
@@ -305,6 +310,13 @@ class Movie implements Stringable
         return $this;
     }
 
+    public function setCertification(?string $certification): static
+    {
+        $this->certification = $certification;
+
+        return $this;
+    }
+
     public function setCitation(?string $citation): static
     {
         $this->citation = $citation;
@@ -367,7 +379,7 @@ class Movie implements Stringable
     public function setImg(?string $img): void
     {
         $this->img = $img;
-        
+
         // Si l'image est supprimée (img devient null), on force la mise à jour
         if (null === $img) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
@@ -423,18 +435,6 @@ class Movie implements Stringable
     public function setVotes(?int $votes): static
     {
         $this->votes = $votes;
-
-        return $this;
-    }
-
-    public function getCertification(): ?string
-    {
-        return $this->certification;
-    }
-
-    public function setCertification(?string $certification): static
-    {
-        $this->certification = $certification;
 
         return $this;
     }

@@ -42,6 +42,12 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[\Override]
+    public function configureCrud(): Crud
+    {
+        return Crud::new()->setFormThemes(['admin/form.html.twig', '@EasyAdmin/crud/form_theme.html.twig']);
+    }
+
+    #[\Override]
     public function configureDashboard(): Dashboard
     {
         $data      = $this->configurationService->getConfiguration();
@@ -52,13 +58,6 @@ class DashboardController extends AbstractDashboardController
         $dashboard->setLocales($this->userService->getLanguages());
 
         return $dashboard;
-    }
-
-    #[\Override]
-    public function configureCrud(): Crud
-    {
-        return Crud::new()
-            ->setFormThemes(['admin/form.html.twig', '@EasyAdmin/crud/form_theme.html.twig']);
     }
 
     #[\Override]
@@ -208,9 +207,10 @@ class DashboardController extends AbstractDashboardController
 
     /**
      * Build content (sub) menus that share a common pattern.
-     * 
+     *
      * @param array<string, mixed> $categories
      * @param array<string, mixed> $tags
+     *
      * @return iterable<MenuItem>
      */
     private function buildContentMenus(array $categories, array $tags): iterable
@@ -361,6 +361,7 @@ class DashboardController extends AbstractDashboardController
 
     /**
      * Utility / maintenance links.
+     *
      * @return iterable<MenuItem>
      */
     private function buildUtilityMenus(): iterable

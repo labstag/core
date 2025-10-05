@@ -17,17 +17,29 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
  */
 abstract class AbstractTypedCrudControllerLib extends AbstractCrudControllerLib
 {
-    /**
-     * Get the child type for this controller.
-     */
-    abstract protected function getChildType(): string;
-
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
 
         return $actions;
+    }
+
+    /**
+     * Configure base fields with child count.
+     *
+     * @return FieldInterface[]
+     */
+    public function configureBaseFields(): array
+    {
+        return $this->crudFieldFactory->baseIdentitySet(
+            $this->getChildType(),
+            '',
+            static::getEntityFqcn(),
+            withSlug: true,
+            withImage: true,
+            withEnable: true
+        );
     }
 
     #[\Override]
@@ -69,25 +81,14 @@ abstract class AbstractTypedCrudControllerLib extends AbstractCrudControllerLib
     }
 
     /**
-     * Configure base fields with child count.
-     * @return FieldInterface[]
-     */
-    public function configureBaseFields(): array
-    {
-        return $this->crudFieldFactory->baseIdentitySet(
-            $this->getChildType(),
-            '',
-            static::getEntityFqcn(),
-            withSlug: true,
-            withImage: true,
-            withEnable: true
-        );
-    }
-
-    /**
      * Get the child relationship property name for counting.
      */
     abstract protected function getChildRelationshipProperty(): string;
+
+    /**
+     * Get the child type for this controller.
+     */
+    abstract protected function getChildType(): string;
 
     /**
      * Get the type identifier for this specific controller.

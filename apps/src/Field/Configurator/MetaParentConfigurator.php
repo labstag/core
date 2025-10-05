@@ -81,6 +81,20 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         $this->configureLast($fieldDto);
     }
 
+    public function generateLinkToAssociatedEntity(?string $crudController, EntityDto $entityDto): ?string
+    {
+        if (is_null($crudController)) {
+            return null;
+        }
+
+        $url = $this->adminUrlGenerator;
+        $url->setController($crudController);
+        $url->setAction(Action::DETAIL);
+        $url->setEntityId($entityDto->getPrimaryKeyValue());
+
+        return $url->generateUrl();
+    }
+
     #[Override]
     public function supports(FieldDto $fieldDto, EntityDto $entityDto): bool
     {
@@ -181,7 +195,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
                 $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $relatedEntityDto)
             );
             $fieldDto->setFormattedValue(
-                $this->formatAsString($relatedEntityDto->getInstance(), $relatedEntityDto)
+                $this->formatAsString($relatedEntityDto->getInstance())
             );
         } catch (UnexpectedTypeException) {
             throw new RuntimeException(sprintf(
@@ -256,7 +270,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
             $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto)
         );
 
-        $fieldDto->setFormattedValue($this->formatAsString($fieldToValue, $targetEntityDto));
+        $fieldDto->setFormattedValue($this->formatAsString($fieldToValue));
     }
 
     private function countNumElements(mixed $collection): int
@@ -283,19 +297,5 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         }
 
         return (string) $entityInstance;
-    }
-
-    public function generateLinkToAssociatedEntity(?string $crudController, EntityDto $entityDto): ?string
-    {
-        if (is_null($crudController)) {
-            return null;
-        }
-
-        $url = $this->adminUrlGenerator;
-        $url->setController($crudController);
-        $url->setAction(Action::DETAIL);
-        $url->setEntityId($entityDto->getPrimaryKeyValue());
-
-        return $url->generateUrl();
     }
 }

@@ -165,8 +165,9 @@ class UserCrudController extends AbstractCrudControllerLib
         return User::class;
     }
 
-        /**
+    /**
      * @param FormBuilderInterface<mixed> $formBuilder
+     *
      * @return FormBuilderInterface<mixed>
      */
     private function addPasswordEventListener(FormBuilderInterface $formBuilder): FormBuilderInterface

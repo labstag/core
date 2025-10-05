@@ -69,6 +69,20 @@ class LinkUrlProcessor
     }
 
     /**
+     * @return ServiceEntityRepositoryLib<object>
+     */
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
+    {
+        $entityRepository = $this->entityManager->getRepository($entity);
+
+        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+            throw new Exception('Repository not found for entity: ' . $entity);
+        }
+
+        return $entityRepository;
+    }
+
+    /**
      * Batch load entities by type to reduce database queries.
      *
      * @param mixed[] $entityIds
@@ -133,19 +147,5 @@ class LinkUrlProcessor
         $this->entityCache[$cacheKey] = $entity;
 
         return $entity;
-    }
-
-        /**
-     * @return ServiceEntityRepositoryLib<object>
-     */
-    protected function getRepository(string $entity): ServiceEntityRepositoryLib
-    {
-        $entityRepository = $this->entityManager->getRepository($entity);
-
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
-            throw new Exception('Repository not found for entity: ' . $entity);
-        }
-
-        return $entityRepository;
     }
 }

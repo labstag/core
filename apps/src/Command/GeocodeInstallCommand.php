@@ -60,7 +60,7 @@ class GeocodeInstallCommand extends Command
             throw new Exception('Argument country invalide');
         }
 
-        if (empty($country)) {
+        if ($country === '' || $country === '0') {
             $symfonyStyle->note(sprintf('Argument country invalide: %s', $country));
 
             return Command::FAILURE;

@@ -91,9 +91,9 @@ abstract class BlockLib extends AbstractController implements BlockInterface
      */
     public function getFooter(Block $block): ?array
     {
-        unset($block);
+        $blockId = $block->getId();
 
-        return null;
+        return $this->footer[$blockId] ?? null;
     }
 
     /**
@@ -104,6 +104,11 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         $blockId = $block->getId();
 
         return $this->header[$blockId] ?? null;
+    }
+
+    public function isEnable(): bool
+    {
+        return true;
     }
 
     public function isShow(Block $block): bool
@@ -214,6 +219,9 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     protected function setFooter(Block $block, array $data): void
     {
         $blockId = $block->getId();
+        if (0 == count($data)) {
+            return;
+        }
 
         $this->footer[$blockId] = $data;
     }
@@ -224,6 +232,9 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     protected function setHeader(Block $block, array $data): void
     {
         $blockId = $block->getId();
+        if (0 == count($data)) {
+            return;
+        }
 
         $this->header[$blockId] = $data;
     }
@@ -235,10 +246,5 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         }
 
         $this->show[$block->getId()] = $show;
-    }
-
-    public function isEnable(): bool
-    {
-        return true;
     }
 }

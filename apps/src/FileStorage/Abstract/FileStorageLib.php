@@ -43,7 +43,6 @@ abstract class FileStorageLib implements FileStorageInterface
     }
 
     /**
-     * @param mixed $filesystem
      * @return mixed[]
      */
     public function getFilesByDirectory($filesystem, string $directory): array

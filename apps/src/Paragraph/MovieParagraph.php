@@ -93,6 +93,7 @@ class MovieParagraph extends ParagraphLib
 
     /**
      * @param array<string, mixed> $query
+     *
      * @return array<string, mixed>
      */
     private function setQuery(array $query): array

@@ -140,6 +140,7 @@ final class EtagCacheService
 
     /**
      * Generates optimized cache headers according to entity type.
+     *
      * @return array{etag: string, lastModified: DateTimeInterface|null, headers: array<string, string>}
      */
     public function getOptimizedCacheHeaders(object $entity): array

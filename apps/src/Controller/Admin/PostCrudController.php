@@ -45,38 +45,35 @@ class PostCrudController extends AbstractCrudControllerLib
         // Principal tab + full content set (identity + taxonomy + paragraphs + meta + ref user)
         yield $this->addTabPrincipal();
         $isSuperAdmin = $this->isSuperAdmin();
-        
+
         // Base identity fields (id, title, slug, enable, image)
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            'post',
-            $pageName,
-            self::getEntityFqcn()
-        ) as $field) {
+        foreach ($this->crudFieldFactory->baseIdentitySet('post', $pageName, self::getEntityFqcn()) as $field) {
             yield $field;
         }
-        
+
         // Taxonomy fields (tags, categories)
         foreach ($this->crudFieldFactory->taxonomySet('post') as $field) {
             yield $field;
         }
-        
+
         // Additional specific field (resume) not yet in factory bundle - placed at end of principal tab
         yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        
+
         // Paragraphs fields
         foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) {
             yield $field;
         }
-        
+
         // Meta fields (creates SEO tab)
         foreach ($this->crudFieldFactory->metaFields() as $field) {
             yield $field;
         }
-        
+
         // Ref user fields (creates User tab if super admin)
         foreach ($this->crudFieldFactory->refUserFields($isSuperAdmin) as $field) {
             yield $field;
         }
+
         // Workflow + states
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();

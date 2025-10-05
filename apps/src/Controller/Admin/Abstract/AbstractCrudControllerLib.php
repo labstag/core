@@ -41,6 +41,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 #[AutoconfigureTag('labstag.admincontroller')]
 /**
  * @template TEntity of object
+ *
  * @extends AbstractCrudController<TEntity>
  */
 abstract class AbstractCrudControllerLib extends AbstractCrudController
@@ -111,6 +112,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     /**
      * Backward compatibility helper - new code should call getRepository() or inject repositories directly.
+     *
      * @return ServiceEntityRepositoryLib<object>
      */
     protected function getRepository(?string $entity = null): ServiceEntityRepositoryLib
@@ -122,10 +124,10 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function getRepositoryParagraph(): ParagraphRepository
     {
-        $repository = $this->getDoctrineRepository(Paragraph::class);
-        assert($repository instanceof ParagraphRepository);
-        
-        return $repository;
+        $serviceEntityRepositoryLib = $this->getDoctrineRepository(Paragraph::class);
+        assert($serviceEntityRepositoryLib instanceof ParagraphRepository);
+
+        return $serviceEntityRepositoryLib;
     }
 
     protected function isSuperAdmin(): bool

@@ -4,7 +4,6 @@ namespace Labstag\Block;
 
 use Labstag\Block\Abstract\BlockLib;
 use Labstag\Block\Traits\ParagraphProcessingTrait;
-use Labstag\Block\Traits;
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Override;
@@ -58,7 +57,6 @@ class ContentBlock extends BlockLib
 
         $paragraphs = $this->paragraphService->generate($paragraphs, $data, $disable);
         $contents   = $this->paragraphService->getContents($paragraphs);
-
         $this->setHeader($block, $contents->header);
         $this->setFooter($block, $contents->footer);
 
@@ -94,8 +92,6 @@ class ContentBlock extends BlockLib
      * Get aside content for the page.
      *
      * @param mixed[] $data
-     *
-     * @return null
      */
     private function getAside(array $data): null
     {

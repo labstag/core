@@ -989,6 +989,10 @@
         <source>Certification</source>
         <target>Certification</target>
       </trans-unit>
+      <trans-unit id="7yBqnNC" resname="All public">
+        <source>All public</source>
+        <target>Tout public</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

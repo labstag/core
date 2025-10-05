@@ -51,8 +51,8 @@ class FrontController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $result = $viewResolverService->getDataViewByEntity($entity);
-        $view = $result['view'];
+        $result       = $viewResolverService->getDataViewByEntity($entity);
+        $view         = $result['view'];
         $templateData = $result['data'];
 
         // ETag & Last-Modified basés sur l'entité (si méthodes dispo)

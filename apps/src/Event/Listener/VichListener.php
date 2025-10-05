@@ -25,17 +25,17 @@ final class VichListener
     {
         $filterCollection = $this->entityManager->getFilters();
         $object           = $event->getObject();
-        
+
         // Si le filtre deletedfile est activé, on autorise toujours la suppression
         if ($filterCollection->isEnabled('deletedfile')) {
             return;
         }
-        
+
         // Si c'est un nouveau fichier uploadé, on autorise la suppression
         if ($this->isDeletedFileNotEntity($object)) {
             return;
         }
-        
+
         // Si c'est une requête admin, on autorise la suppression (simplifié)
         if ($this->isAdminRequest()) {
             return;
@@ -48,14 +48,16 @@ final class VichListener
     private function isAdminRequest(): bool
     {
         $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
+        if (!$request instanceof \Symfony\Component\HttpFoundation\Request) {
             return false;
         }
-        
+
         // Vérifier si c'est une requête admin
         $pathInfo = $request->getPathInfo();
+
         return str_contains($pathInfo, '/admin/');
     }
+
     private function isDeletedFileNotEntity(object $entity): bool
     {
         $delete           = false;

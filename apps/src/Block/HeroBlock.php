@@ -26,6 +26,8 @@ class HeroBlock extends AbstractParagraphBlock
     #[Override]
     protected function shouldHideBlock(Block $block, array $data): bool
     {
+        unset($block);
+
         return $this->siteService->isHome($data);
     }
 }
