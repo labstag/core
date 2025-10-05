@@ -33,6 +33,8 @@ class StarCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Star'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Stars'));
         $crud->setDefaultSort(
             ['title' => 'ASC']
         );

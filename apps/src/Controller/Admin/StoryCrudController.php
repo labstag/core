@@ -40,6 +40,8 @@ class StoryCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Story'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Stories'));
         $crud->setDefaultSort(
             ['createdAt' => 'DESC']
         );

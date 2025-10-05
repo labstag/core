@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Movie;
@@ -53,6 +54,8 @@ class MovieCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Movie'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Movies'));
         $crud->setDefaultSort(
             ['title' => 'ASC']
         );
@@ -105,8 +108,12 @@ class MovieCrudController extends AbstractCrudControllerLib
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $certifications = $serviceEntityRepositoryLib->getCertifications();
+
         $filters->add('releaseDate');
         $filters->add('countries');
+        $filters->add(ChoiceFilter::new('certification', new TranslatableMessage('Certification'))->setChoices($certifications));
 
         $this->crudFieldFactory->addFilterTags($filters, 'movie');
         $this->crudFieldFactory->addFilterCategories($filters, 'movie');

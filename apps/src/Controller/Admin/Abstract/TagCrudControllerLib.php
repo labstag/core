@@ -2,7 +2,9 @@
 
 namespace Labstag\Controller\Admin\Abstract;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use Labstag\Entity\Tag;
+use Symfony\Component\Translation\TranslatableMessage;
 
 abstract class TagCrudControllerLib extends AbstractTypedCrudControllerLib
 {
@@ -18,6 +20,16 @@ abstract class TagCrudControllerLib extends AbstractTypedCrudControllerLib
             withImage: false,
             withEnable: false
         );
+    }
+
+    #[\Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Tag'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Tags'));
+
+        return $crud;
     }
 
     public static function getEntityFqcn(): string

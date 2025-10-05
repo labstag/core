@@ -32,6 +32,8 @@ class PostCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Post'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Posts'));
         $crud->setDefaultSort(
             ['createdAt' => 'DESC']
         );

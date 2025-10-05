@@ -171,7 +171,7 @@
       </trans-unit>
       <trans-unit id="viEpaXN" resname="action.save_and_continue">
         <source>action.save_and_continue</source>
-        <target>Sauvegarder et modifier</target>
+        <target>Sauvegarder et continuer</target>
       </trans-unit>
       <trans-unit id="IvOrJqD" resname="batch_action_modal.title">
         <source>batch_action_modal.title</source>

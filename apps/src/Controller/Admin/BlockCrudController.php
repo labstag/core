@@ -64,6 +64,8 @@ class BlockCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Block'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Blocks'));
         $crud->setDefaultSort(
             ['title' => 'ASC']
         );

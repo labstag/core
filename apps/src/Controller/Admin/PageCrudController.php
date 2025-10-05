@@ -33,6 +33,8 @@ class PageCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Page'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Pages'));
         $crud->setDefaultSort(
             ['createdAt' => 'DESC']
         );

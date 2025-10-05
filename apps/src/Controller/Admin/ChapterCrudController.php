@@ -34,6 +34,8 @@ class ChapterCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Chapter'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Chapters'));
         $crud->setDefaultSort(
             ['createdAt' => 'DESC']
         );

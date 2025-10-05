@@ -65,6 +65,8 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('HTTP Error Log'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('HTTP Error Logs'));
         $crud->setDefaultSort(
             ['createdAt' => 'DESC']
         );

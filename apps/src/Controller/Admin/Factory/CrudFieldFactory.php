@@ -189,9 +189,10 @@ final class CrudFieldFactory
             $mimeTypesMessage = new TranslatableMessage('Please upload a valid image (JPEG, PNG, GIF, WebP).');
             $maxSizeMessage   = new TranslatableMessage('The file is too large. Its size should not exceed {{ limit }}.');
 
-            return TextField::new($type . 'File', $label ?? new TranslatableMessage('Image'))->setFormType(
+            $imageField = TextField::new($type . 'File', $label ?? new TranslatableMessage('Image'))->setFormType(
                 VichImageType::class
-            )->setFormTypeOptions(
+            );
+            $imageField->setFormTypeOptions(
                 [
                     'required'       => false,
                     'allow_delete'   => true,
@@ -217,6 +218,8 @@ final class CrudFieldFactory
                     ],
                 ]
             );
+
+            return $imageField;
         }
 
         $basePath = $this->fileService->getBasePath($entityFqcn, $type . 'File');
