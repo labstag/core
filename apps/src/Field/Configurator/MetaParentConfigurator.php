@@ -194,9 +194,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
                 MetaParentField::OPTION_RELATED_URL,
                 $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $relatedEntityDto)
             );
-            $fieldDto->setFormattedValue(
-                $this->formatAsString($relatedEntityDto->getInstance())
-            );
+            $fieldDto->setFormattedValue($this->formatAsString($relatedEntityDto->getInstance()));
         } catch (UnexpectedTypeException) {
             throw new RuntimeException(sprintf(
                 'The property "%s" is not accessible in the entity "%s"',

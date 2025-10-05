@@ -91,7 +91,7 @@ class BreadcrumbBlock extends BlockLib
                         ];
                     }
 
-                    if ($currentSlug === '0') {
+                    if ('0' === $currentSlug) {
                         break;
                     }
 
