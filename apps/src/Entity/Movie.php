@@ -107,6 +107,9 @@ class Movie implements Stringable
     #[ORM\Column(nullable: true)]
     private ?int $votes = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $certification = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -420,6 +423,18 @@ class Movie implements Stringable
     public function setVotes(?int $votes): static
     {
         $this->votes = $votes;
+
+        return $this;
+    }
+
+    public function getCertification(): ?string
+    {
+        return $this->certification;
+    }
+
+    public function setCertification(?string $certification): static
+    {
+        $this->certification = $certification;
 
         return $this;
     }

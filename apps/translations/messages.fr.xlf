@@ -415,7 +415,7 @@
       </trans-unit>
       <trans-unit id="zGXCiug" resname="Evaluation">
         <source>Evaluation</source>
-                <target>Évaluation</target>
+        <target>Évaluation</target>
       </trans-unit>
       <trans-unit id="7jkCtO5" resname="Votes">
         <source>Votes</source>
@@ -984,6 +984,10 @@
       <trans-unit id="ExFLJqx" resname="Home">
         <source>Home</source>
         <target>Accueil</target>
+      </trans-unit>
+      <trans-unit id="phRbEFv" resname="Certification">
+        <source>Certification</source>
+        <target>Certification</target>
       </trans-unit>
     </body>
   </file>

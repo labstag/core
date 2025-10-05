@@ -205,6 +205,7 @@ final class MovieService
             return [];
         }
 
+        $details = $this->getDetailsReleasesDates($details, $tmdbId);
         $details = $this->getDetailsTmdbMovie($details, $tmdbId);
         $details = $this->getTrailersTmdbMovie($details, $tmdbId);
 
@@ -306,6 +307,52 @@ final class MovieService
         );
 
         $details['collection'] = $this->collection[$tmdbId];
+
+        return $details;
+    }
+
+    /**
+     * @param array<string, mixed> $details
+     * @return array<string, mixed>
+     */
+    private function getDetailsReleasesDates(array $details, string $tmdbId): array
+    {
+        if ('' === $this->tmdbapiKey) {
+            return $details;
+        }
+
+        $cacheKey = 'tmdb_movie-release_dates_' . $tmdbId;
+
+        $data = $this->cache->get(
+            $cacheKey,
+            function (ItemInterface $item) use ($tmdbId) {
+                $url      = 'https://api.themoviedb.org/3/movie/' . $tmdbId . '/release_dates';
+                $response = $this->httpClient->request(
+                    'GET',
+                    $url,
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                            'accept'        => 'application/json',
+                        ],
+                    ]
+                );
+                if (self::STATUSOK !== $response->getStatusCode()) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+
+                return json_decode($response->getContent(), true);
+            }
+        );
+        if (null == $data) {
+            return $details;
+        }
+
+        $details['release_dates'] = $data;
 
         return $details;
     }
@@ -570,6 +617,8 @@ final class MovieService
         $movie->setAdult($adult);
         $movie->setTitle((string) $details['tmdb']['title']);
 
+        $this->setCertification($details, $movie);
+
         $tagline = (string) $details['tmdb']['tagline'];
         if ('' !== $tagline && '0' !== $tagline) {
             $movie->setCitation($tagline);
@@ -596,6 +645,32 @@ final class MovieService
         $this->updateImageMovie($movie, $details);
 
         return true;
+    }
+
+    /**
+     * @param array<string, mixed> $details
+     */
+    private function setCertification(array $details, Movie $movie): void
+    {
+        if (!isset($details['release_dates']['results']) || 0 == count($details['release_dates']['results'])) {
+            return;
+        }
+
+        foreach ($details['release_dates']['results'] as $result) {
+            if ('FR' != $result['iso_3166_1']) {
+                continue;
+            }
+
+            foreach ($result['release_dates'] as $release) {
+                if ('' === (string) $release['certification']) {
+                    continue;
+                }
+
+                $movie->setCertification((string) $release['certification']);
+
+                return;
+            }
+        }
     }
 
     /**

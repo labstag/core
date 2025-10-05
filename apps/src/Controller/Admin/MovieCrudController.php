@@ -75,6 +75,7 @@ class MovieCrudController extends AbstractCrudControllerLib
 
         yield TextField::new('imdb', new TranslatableMessage('Imdb'))->hideOnIndex();
         yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
+        yield TextField::new('certification', new TranslatableMessage('Certification'))->hideOnIndex();
         yield DateField::new('releaseDate', new TranslatableMessage('Release date'));
         $choiceField = ChoiceField::new('countries', new TranslatableMessage('Countries'));
         $choiceField->setChoices(array_flip(Countries::getNames()));
