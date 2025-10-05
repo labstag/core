@@ -35,6 +35,8 @@ class UserCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('User'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Users'));
         $crud->setDefaultSort(
             ['username' => 'ASC']
         );

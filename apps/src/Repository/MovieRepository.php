@@ -19,6 +19,28 @@ class MovieRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Movie::class);
     }
 
+    public function getCertifications(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->select('DISTINCT m.certification');
+        $queryBuilder->where('m.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        $queryBuilder->orderBy('m.certification', 'ASC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-unique-certifications');
+
+        $data          = $query->getSingleColumnResult();
+        $certifications = [];
+        foreach ($data as $value) {
+            if (!is_null($value) && $value !== '') {
+                $certifications[$value] = $value;
+            }
+        }
+
+        return $certifications;
+    }
+
     /**
      * @return array<string, mixed>
      */

@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Edito;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class EditoCrudController extends AbstractCrudControllerLib
 {
@@ -23,6 +24,8 @@ class EditoCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Edito'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Editos'));
         $crud->setDefaultSort(
             ['createdAt' => 'DESC']
         );

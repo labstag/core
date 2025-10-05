@@ -24,6 +24,8 @@ class BanIpCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Ban IP'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Ban IP'));
         $crud->setDefaultSort(
             ['createdAt' => 'DESC']
         );

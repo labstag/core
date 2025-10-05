@@ -2,7 +2,9 @@
 
 namespace Labstag\Controller\Admin\Abstract;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use Labstag\Entity\Category;
+use Symfony\Component\Translation\TranslatableMessage;
 
 abstract class CategoryCrudControllerLib extends AbstractTypedCrudControllerLib
 {
@@ -18,6 +20,16 @@ abstract class CategoryCrudControllerLib extends AbstractTypedCrudControllerLib
             withImage: false,
             withEnable: false
         );
+    }
+
+    #[\Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Category'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Categories'));
+
+        return $crud;
     }
 
     public static function getEntityFqcn(): string

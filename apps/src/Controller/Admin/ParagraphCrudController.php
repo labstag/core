@@ -35,6 +35,8 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Paragraph'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Paragraphs'));
         if ($this->isIframeEdit()) {
             $crud->renderSidebarMinimized();
             $crud->overrideTemplates(

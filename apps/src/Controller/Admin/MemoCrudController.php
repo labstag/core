@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Memo;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class MemoCrudController extends AbstractCrudControllerLib
 {
@@ -23,6 +24,8 @@ class MemoCrudController extends AbstractCrudControllerLib
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Memo'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Memos'));
         $crud->setDefaultSort(
             ['createdAt' => 'DESC']
         );
