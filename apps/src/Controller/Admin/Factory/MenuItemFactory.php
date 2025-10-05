@@ -46,7 +46,7 @@ final class MenuItemFactory
             ],
         ];
 
-        return $this->createMenuItems($categoryControllers, 'Category', 'fas fa-hashtag');
+        return $this->createMenuItems($categoryControllers, new TranslatableMessage('Category'), 'fas fa-hashtag');
     }
 
     /**
@@ -88,7 +88,7 @@ final class MenuItemFactory
             $items[] = $tags[$type];
         }
 
-        return MenuItem::subMenu(new TranslatableMessage($label), $icon)->setSubItems($items);
+        return MenuItem::subMenu($label, $icon)->setSubItems($items);
     }
 
     /**
@@ -119,7 +119,7 @@ final class MenuItemFactory
             ],
         ];
 
-        return $this->createMenuItems($tagControllers, 'Tag', 'fas fa-tags');
+        return $this->createMenuItems($tagControllers, new TranslatableMessage('Tag'), 'fas fa-tags');
     }
 
     /**
@@ -131,7 +131,7 @@ final class MenuItemFactory
     {
         $menuItems = [];
         foreach ($controllers as $key => $data) {
-            $menuItem = MenuItem::linkToCrud(new TranslatableMessage($label), $icon, $data['crud']);
+            $menuItem = MenuItem::linkToCrud($label, $icon, $data['crud']);
             $menuItem->setController($data['controller']);
             $menuItems[$key] = $menuItem;
         }

@@ -219,7 +219,7 @@ class DashboardController extends AbstractDashboardController
         $definitions = [
             [
                 'story',
-                'Story',
+                new TranslatableMessage('Story'),
                 'fas fa-landmark',
                 StoryCrudController::class,
                 $categories,
@@ -228,7 +228,7 @@ class DashboardController extends AbstractDashboardController
             ],
             [
                 'chapter',
-                'Chapter',
+                new TranslatableMessage('Chapter'),
                 'fas fa-landmark',
                 ChapterCrudController::class,
                 null,
@@ -237,7 +237,7 @@ class DashboardController extends AbstractDashboardController
             ],
             [
                 'movie',
-                'Movie',
+                new TranslatableMessage('Movie'),
                 'fas fa-film',
                 MovieCrudController::class,
                 $categories,
@@ -252,7 +252,7 @@ class DashboardController extends AbstractDashboardController
             ],
             [
                 'page',
-                'Page',
+                new TranslatableMessage('Page'),
                 'fas fa-columns',
                 PageCrudController::class,
                 $categories,
@@ -261,7 +261,7 @@ class DashboardController extends AbstractDashboardController
             ],
             [
                 'post',
-                'Post',
+                new TranslatableMessage('Post'),
                 'fas fa-newspaper',
                 PostCrudController::class,
                 $categories,
@@ -293,69 +293,69 @@ class DashboardController extends AbstractDashboardController
     {
         $items = [
             [
-                'Edito',
+                new TranslatableMessage('Edito'),
                 'fas fa-info',
                 EditoCrudController::getEntityFqcn(),
             ],
             [
-                'Memo',
+                new TranslatableMessage('Memo'),
                 'fas fa-memory',
                 MemoCrudController::getEntityFqcn(),
             ],
             [
-                'Meta',
+                new TranslatableMessage('Meta'),
                 'fa fa-file-alt',
                 MetaCrudController::getEntityFqcn(),
             ],
             [
-                'Paragraph',
+                new TranslatableMessage('Paragraph'),
                 'fa fa-paragraph',
                 ParagraphCrudController::getEntityFqcn(),
             ],
             [
-                'Block',
+                new TranslatableMessage('Block'),
                 'fa fa-cubes',
                 BlockCrudController::getEntityFqcn(),
             ],
             [
-                'Geocode',
+                new TranslatableMessage('Geocode'),
                 'fas fa-map-signs',
                 GeoCodeCrudController::getEntityFqcn(),
             ],
             [
-                'Star',
+                new TranslatableMessage('Star'),
                 'fas fa-star',
                 StarCrudController::getEntityFqcn(),
             ],
             [
-                'User',
+                new TranslatableMessage('User'),
                 'fa fa-user',
                 UserCrudController::getEntityFqcn(),
             ],
             [
-                'Ban IP',
+                new TranslatableMessage('Ban IP'),
                 'fas fa-ban',
                 BanIpCrudController::getEntityFqcn(),
             ],
             [
-                'Redirection',
+                new TranslatableMessage('Redirection'),
                 'fas fa-directions',
                 RedirectionCrudController::getEntityFqcn(),
             ],
             [
-                'Http error Logs',
+                new TranslatableMessage('Http error Logs'),
                 'fas fa-clipboard-list',
                 HttpErrorLogsCrudController::getEntityFqcn(),
             ],
             [
-                'Submission',
+                new TranslatableMessage('Submission'),
                 'fas fa-clipboard-list',
                 SubmissionCrudController::getEntityFqcn(),
             ],
         ];
 
         foreach ($items as [$label, $icon, $fqcn]) {
-            yield MenuItem::linkToCrud(new TranslatableMessage($label), $icon, $fqcn);
+            yield MenuItem::linkToCrud($label, $icon, $fqcn);
         }
     }
 
