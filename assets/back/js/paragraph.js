@@ -1,8 +1,10 @@
 import Sortable from 'sortablejs';
+import TomSelect from 'tom-select';
 
 export class Paragraphs {
   constructor()
   {
+    this.disableBeforeUnload();
     this.actionDelete();
     this.actionModal();
     this.actionEdit();
@@ -10,6 +12,13 @@ export class Paragraphs {
     this.actionRefresh();
     this.actionSort()
   }
+
+  disableBeforeUnload()
+  {
+    window.onbeforeunload = null;
+
+  }
+
   actionSort()
   {
     document.querySelectorAll(".paragraphs-list").forEach(
@@ -105,6 +114,7 @@ export class Paragraphs {
               body: new URLSearchParams({ paragraph: document.querySelector('#paragraph-select').value })
             })
               .then(response => response.text());
+            document.querySelector('#paragraph-select').tomselect.clear();
             this.list(data);
           }
         );
