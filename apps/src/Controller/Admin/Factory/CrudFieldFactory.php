@@ -19,8 +19,8 @@ use Labstag\Field\ParagraphsField;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\TagRepository;
 use Labstag\Service\FileService;
-use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Component\Validator\Constraints\File;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 /**
@@ -113,15 +113,7 @@ final class CrudFieldFactory
 
     public function categoriesField(string $type): AssociationField
     {
-        return AssociationField::new(
-            'categories',
-            new TranslatableMessage('Categories')
-        )->autocomplete()->setTemplatePath(
-            'admin/field/categories.html.twig'
-        )->setFormTypeOption(
-            'by_reference',
-            false
-        )->setQueryBuilder(
+        return AssociationField::new('categories', new TranslatableMessage('Categories'))->autocomplete()->setTemplatePath('admin/field/categories.html.twig')->setFormTypeOption('by_reference', false)->setQueryBuilder(
             function (QueryBuilder $queryBuilder) use ($type): void {
                 $queryBuilder->andWhere('entity.type = :type')->setParameter('type', $type);
             }
@@ -186,23 +178,36 @@ final class CrudFieldFactory
         if ('edit' === $pageName || 'new' === $pageName) {
             return TextField::new($type . 'File', $label ?? new TranslatableMessage('Image'))->setFormType(
                 VichImageType::class
-            )->setFormTypeOptions([
-                'required' => false,
-                'allow_delete' => true,
-                'delete_label' => (new TranslatableMessage('Delete image'))->__toString(),
-                'download_label' => (new TranslatableMessage('Download'))->__toString(),
-                'download_uri' => true,
-                'image_uri' => true,
-                'asset_helper' => true,
-                'constraints' => [
-                    new File([
-                        'maxSize' => ini_get('upload_max_filesize'),
-                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-                        'mimeTypesMessage' => (new TranslatableMessage('Please upload a valid image (JPEG, PNG, GIF, WebP).'))->__toString(),
-                        'maxSizeMessage' => (new TranslatableMessage('The file is too large. Its size should not exceed {{ limit }}.'))->__toString(),
-                    ])
-                ],
-            ]);
+            )->setFormTypeOptions(
+                [
+                    'required'       => false,
+                    'allow_delete'   => true,
+                    'delete_label'   => new TranslatableMessage('Delete image')->__toString(),
+                    'download_label' => new TranslatableMessage('Download')->__toString(),
+                    'download_uri'   => true,
+                    'image_uri'      => true,
+                    'asset_helper'   => true,
+                    'constraints'    => [
+                        new File(
+                            [
+                                'maxSize'          => ini_get('upload_max_filesize'),
+                                'mimeTypes'        => [
+                                    'image/jpeg',
+                                    'image/png',
+                                    'image/gif',
+                                    'image/webp',
+                                ],
+                                'mimeTypesMessage' => new TranslatableMessage(
+                                    'Please upload a valid image (JPEG, PNG, GIF, WebP).'
+                                )->__toString(),
+                                'maxSizeMessage'   => new TranslatableMessage(
+                                    'The file is too large. Its size should not exceed {{ limit }}.'
+                                )->__toString(),
+                            ]
+                        ),
+                    ],
+                ]
+            );
         }
 
         $basePath = $this->fileService->getBasePath($entityFqcn, $type . 'File');
@@ -251,12 +256,7 @@ final class CrudFieldFactory
             return [];
         }
 
-        $associationField = AssociationField::new(
-            'refuser',
-            new TranslatableMessage('User')
-        )->autocomplete()->setSortProperty(
-            'username'
-        );
+        $associationField = AssociationField::new('refuser', new TranslatableMessage('User'))->autocomplete()->setSortProperty('username');
 
         return [
             FormField::addTab(new TranslatableMessage('User')),
@@ -333,10 +333,7 @@ final class CrudFieldFactory
 
     public function updatedAtField(): DateTimeField
     {
-        return DateTimeField::new(
-            'updatedAt',
-            new TranslatableMessage('updated At')
-        )->hideWhenCreating()->hideOnIndex();
+        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating()->hideOnIndex();
     }
 
     public function workflowField(): TextField

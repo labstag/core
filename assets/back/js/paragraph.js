@@ -1,5 +1,4 @@
 import Sortable from 'sortablejs';
-import TomSelect from 'tom-select';
 
 export class Paragraphs {
   constructor()

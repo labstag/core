@@ -410,7 +410,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function setAvatar(?string $avatar): void
     {
         $this->avatar = $avatar;
-        
+
         // Si l'image est supprimée (img devient null), on force la mise à jour
         if (null === $avatar) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());

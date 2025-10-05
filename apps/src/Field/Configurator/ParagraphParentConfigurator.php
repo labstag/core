@@ -177,7 +177,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
                 ParagraphParentField::OPTION_RELATED_URL,
                 $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $relatedEntityDto)
             );
-            $fieldDto->setFormattedValue($this->formatAsString($relatedEntityDto->getInstance(), $relatedEntityDto));
+            $fieldDto->setFormattedValue($this->formatAsString($relatedEntityDto->getInstance()));
         } catch (UnexpectedTypeException) {
             // this may crash if something in the tree is null, so just do nothing then
         }
@@ -196,7 +196,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
     private function configureTest(FieldDto $fieldDto, EntityDto $entityDto, string $propertyName): void
     {
-        $propertyNameParts = explode('.', (string) $propertyName);
+        $propertyNameParts = explode('.', $propertyName);
         if (1 < \count($propertyNameParts)) {
             $this->configureFirst($entityDto, $propertyNameParts, $fieldDto, $propertyName);
 
@@ -250,7 +250,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
             $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto)
         );
 
-        $fieldDto->setFormattedValue($this->formatAsString($fieldDto->getValue(), $targetEntityDto));
+        $fieldDto->setFormattedValue($this->formatAsString($fieldDto->getValue()));
     }
 
     private function countNumElements(mixed $collection): int

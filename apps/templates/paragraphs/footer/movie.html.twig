@@ -1,3 +1,4 @@
+
 {% for movie in pagination %}
 	{% if movie.duration < 60 %}
 		{% set duration = movie.duration ~ " min" %}
@@ -32,6 +33,26 @@
 				<div class="info">
 					<div class="description">{{ movie.description|raw }}</div>
 					<ul>
+                        {% if movie.certification != '' %}
+                            <li class="certification">
+                                <b>
+                                    {{ 'Certification'|trans }}
+                                </b>
+                                {% if movie.certification =='U' or movie.certification == 'TP' %}
+                                    {{ 'All public'|trans }}
+                                {% else %}
+                                    {{ movie.certification }}
+                                {% endif %}
+                            </li>
+                        {% endif %}
+                        {% if movie.releaseDate != null %}
+                            <li class="release-date">
+                                <b>
+                                    {{ 'Release date'|trans }}
+                                </b>
+                                {{ movie.releaseDate|date('d/m/Y') }}
+                            </li>
+                        {% endif %}
                         {% if movie.countries|length != 0 %}
                             <li class="country">
                                 <b>

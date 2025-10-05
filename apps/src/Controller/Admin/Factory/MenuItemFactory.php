@@ -52,7 +52,7 @@ final class MenuItemFactory
     /**
      * @param array<string, mixed>|null $categories
      * @param array<string, mixed>|null $tags
-     * @param array<string, mixed> $additionalItems
+     * @param array<string, mixed>      $additionalItems
      */
     public function createContentSubMenu(
         string $type,

@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @template TEntityClass of object
+ *
  * @extends ServiceEntityRepository<TEntityClass>
  */
 abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository

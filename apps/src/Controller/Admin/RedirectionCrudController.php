@@ -163,7 +163,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
     }
 
     /**
-     * @param array<int, string> $header
+     * @param array<int, string>            $header
      * @param list<array<int, string|null>> $rows
      */
     protected function sendToExport(array $header, array $rows): Response
@@ -184,7 +184,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
                 $path   = $this->getFilename($now->format('Ymd') . '-export.', mb_strtolower($writerType));
                 $writer = IOFactory::createWriter($spreadsheet, $writerType);
                 $writer->save($path);
-                $zipArchive->addFile($path, basename((string) $path));
+                $zipArchive->addFile($path, basename($path));
             }
         } catch (Exception $exception) {
             throw new Exception($exception->getMessage(), $exception->getCode(), $exception);
@@ -270,11 +270,14 @@ class RedirectionCrudController extends AbstractCrudControllerLib
     /**
      * @return Redirection[]
      */
-    private function importCsv(\Symfony\Component\HttpFoundation\File\UploadedFile $file, RedirectionRepository $redirectionRepository): array
+    private function importCsv(
+        \Symfony\Component\HttpFoundation\File\UploadedFile $uploadedFile,
+        RedirectionRepository $redirectionRepository,
+    ): array
     {
         $data        = [];
         $csv         = new Csv();
-        $spreadsheet = $csv->load($file->getPathname());
+        $spreadsheet = $csv->load($uploadedFile->getPathname());
         $sheetData   = $spreadsheet->getActiveSheet()->toArray();
         $head        = $sheetData[0];
         $find        = $this->setFind($head);

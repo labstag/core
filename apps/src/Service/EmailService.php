@@ -8,7 +8,9 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 final class EmailService
 {
     public function __construct(
-        /** @var iterable<\Labstag\Email\Abstract\EmailLib> $emails */
+        /**
+         * @var iterable<EmailLib>
+         */
         #[AutowireIterator('labstag.emails')]
         private readonly iterable $emails,
     )

@@ -47,6 +47,7 @@ class ContactFrontForm extends FrontFormLib
 
     /**
      * @param array<string, mixed> $data
+     *
      * @return iterable<mixed>
      */
     #[Override]

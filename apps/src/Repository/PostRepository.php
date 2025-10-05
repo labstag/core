@@ -69,6 +69,7 @@ class PostRepository extends ServiceEntityRepositoryLib
 
     /**
      * @param Query<mixed, mixed> $query
+     *
      * @return Query<mixed, mixed>
      */
     private function cacheQuery(Query $query, string $suffix, int $ttl = 600): Query

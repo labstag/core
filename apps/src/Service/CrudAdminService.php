@@ -7,7 +7,9 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 final class CrudAdminService
 {
     public function __construct(
-        /** @var iterable<\Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib> $controllers */
+        /**
+         * @var iterable<\Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib>
+         */
         #[AutowireIterator('labstag.admincontroller')]
         private readonly iterable $controllers,
     )

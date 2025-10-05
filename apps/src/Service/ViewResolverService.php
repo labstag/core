@@ -10,7 +10,7 @@ use Twig\Environment;
 final class ViewResolverService
 {
 
-        /**
+    /**
      * @var array<string, mixed>
      */
     private array $requestCache = [];
@@ -67,7 +67,7 @@ final class ViewResolverService
         ];
     }
 
-        /**
+    /**
      * @return array<string, mixed>
      */
     public function getDataViewByEntity(object $entity): array

@@ -16,7 +16,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 final class BlockService
 {
     public function __construct(
-        /** @var iterable<\Labstag\Block\Abstract\BlockLib> $blocks */
+        /**
+         * @var iterable<\Labstag\Block\Abstract\BlockLib>
+         */
         #[AutowireIterator('labstag.blocks')]
         private readonly iterable $blocks,
         private AdminUrlGenerator $adminUrlGenerator,

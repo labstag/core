@@ -9,7 +9,9 @@ use Symfony\Component\Form\FormInterface;
 final class FormService
 {
     public function __construct(
-        /** @var iterable<\Labstag\FrontForm\Abstract\FrontFormLib> $forms */
+        /**
+         * @var iterable<FrontFormLib>
+         */
         #[AutowireIterator('labstag.frontforms')]
         private readonly iterable $forms,
     )

@@ -48,7 +48,6 @@ abstract class FrontFormLib implements FrontFormInterface
 
     /**
      * @param array<string, mixed> $data
-     * @return mixed
      */
     public function getFields(array $data): mixed
     {

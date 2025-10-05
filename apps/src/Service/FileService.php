@@ -13,7 +13,9 @@ use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 final class FileService
 {
     public function __construct(
-        /** @var iterable<\Labstag\FileStorage\Abstract\FileStorageLib> $fileStorages */
+        /**
+         * @var iterable<\Labstag\FileStorage\Abstract\FileStorageLib>
+         */
         #[AutowireIterator('labstag.filestorage')]
         private readonly iterable $fileStorages,
         private EntityManagerInterface $entityManager,

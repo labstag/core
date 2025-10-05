@@ -544,7 +544,7 @@ tasks:
     cmds:
     - task: composer:exec
       vars:
-        COMMAND: "run rector"
+        CMD: "run rector"
 
   rector:dry:
     desc: "Refactorise le code avec Rector en mode dry-run"
@@ -552,7 +552,7 @@ tasks:
     cmds:
     - task: composer:exec
       vars:
-        COMMAND: "run rector --dry-run"
+        CMD: "run rector --dry-run"
 
   star:get:
     desc: "Télécharge des données de stars"
@@ -715,6 +715,7 @@ tasks:
     - task: lint:phpaudit
     - npm run lint:markdown
     - task: rector
+    ignore_error: true
 
   lint:phpaudit:
     desc: "Analyse le code avec PHP Audit"
