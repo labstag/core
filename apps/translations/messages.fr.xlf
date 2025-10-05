@@ -993,6 +993,66 @@
         <source>All public</source>
         <target>Tout public</target>
       </trans-unit>
+      <trans-unit id="tceoGZr" resname="Category">
+        <source>Category</source>
+        <target>Catégorie</target>
+      </trans-unit>
+      <trans-unit id="DxuZnkH" resname="Tag">
+        <source>Tag</source>
+        <target>Étiquette</target>
+      </trans-unit>
+      <trans-unit id="Jgt911I" resname="Chapter">
+        <source>Chapter</source>
+        <target>Chapitre</target>
+      </trans-unit>
+      <trans-unit id="w.dQP27" resname="Post">
+        <source>Post</source>
+        <target>Article</target>
+      </trans-unit>
+      <trans-unit id="42BpiMZ" resname="Edito">
+        <source>Edito</source>
+        <target>Edito</target>
+      </trans-unit>
+      <trans-unit id="xt97jHh" resname="Memo">
+        <source>Memo</source>
+        <target>Mémo</target>
+      </trans-unit>
+      <trans-unit id="qzknPLP" resname="Meta">
+        <source>Meta</source>
+        <target>Métadonnées</target>
+      </trans-unit>
+      <trans-unit id="Jh9HUjE" resname="Paragraph">
+        <source>Paragraph</source>
+        <target>Paragraphe</target>
+      </trans-unit>
+      <trans-unit id="3XvGnXJ" resname="Block">
+        <source>Block</source>
+        <target>Bloc</target>
+      </trans-unit>
+      <trans-unit id="Fb8wV55" resname="Geocode">
+        <source>Geocode</source>
+        <target>Géocodage</target>
+      </trans-unit>
+      <trans-unit id=".8BOH83" resname="Star">
+        <source>Star</source>
+        <target>Étoile</target>
+      </trans-unit>
+      <trans-unit id="nfHLFGI" resname="Ban IP">
+        <source>Ban IP</source>
+        <target>Bannir IP</target>
+      </trans-unit>
+      <trans-unit id="GAD1tiF" resname="Redirection">
+        <source>Redirection</source>
+        <target>Redirection</target>
+      </trans-unit>
+      <trans-unit id="FVNEIPK" resname="Http error Logs">
+        <source>Http error Logs</source>
+        <target>Journaux d'erreurs HTTP</target>
+      </trans-unit>
+      <trans-unit id="3IwLEZO" resname="Submission">
+        <source>Submission</source>
+        <target>Soumission</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
