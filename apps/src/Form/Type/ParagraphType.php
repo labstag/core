@@ -6,6 +6,9 @@ use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class ParagraphType extends AbstractType
 {
     #[Override]

@@ -38,7 +38,7 @@ final class OwnerRestrictionExtension
         }
 
         $user = $token->getUser();
-        if (!is_object($user) || !method_exists($user, 'getRoles')) {
+        if (!is_object($user)) {
             return;
         }
 

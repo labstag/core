@@ -6,6 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Saga;
 use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<Saga>
+ */
 class SagaRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -13,6 +16,9 @@ class SagaRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Saga::class);
     }
 
+    /**
+     * @return array<Saga>
+     */
     public function findAllByTypeMovieEnable(): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
@@ -26,6 +32,9 @@ class SagaRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
+    /**
+     * @return array<Saga>
+     */
     public function findSagaWithoutMovie(): array
     {
         $queryBuilder = $this->createQueryBuilder('s');

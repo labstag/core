@@ -20,6 +20,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 final class ParagraphService
 {
     public function __construct(
+        /** @var iterable<\Labstag\Paragraph\Abstract\ParagraphLib> $paragraphs */
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
         private AdminUrlGenerator $adminUrlGenerator,
@@ -107,6 +108,9 @@ final class ParagraphService
         return $paragraphs;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getClasses(Paragraph $paragraph): array
     {
         $classes = [];

@@ -8,6 +8,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Story;
 use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<Story>
+ */
 class StoryRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -46,6 +49,9 @@ class StoryRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
+    /**
+     * @return Query<mixed, mixed>
+     */
     public function getQueryPaginator(): Query
     {
         $queryBuilder = $this->getQueryBuilder();

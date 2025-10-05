@@ -15,7 +15,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mailer\MailerInterface;
 
-#[AutoconfigureTag('labstag.forms')]
+#[AutoconfigureTag('labstag.frontforms')]
 abstract class FrontFormLib implements FrontFormInterface
 {
     public function __construct(
@@ -29,12 +29,15 @@ abstract class FrontFormLib implements FrontFormInterface
     {
     }
 
-    public function execute(bool $save, FormInterface $form, bool $disable): bool
+    /**
+     * @param FormInterface<mixed> $form
+     */
+    public function execute(FormInterface $form, bool $disable = false, bool $save = true): bool
     {
         $request = $this->requestStack->getCurrentRequest();
         $form->handleRequest($request);
 
-        $state = (false != $disable) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
+        $state = (false == $disable) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
 
         if ($state && $save) {
             $this->saveForm($form);
@@ -43,6 +46,10 @@ abstract class FrontFormLib implements FrontFormInterface
         return $state;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return mixed
+     */
     public function getFields(array $data): mixed
     {
         unset($data);
@@ -50,6 +57,9 @@ abstract class FrontFormLib implements FrontFormInterface
         return [];
     }
 
+    /**
+     * @return ServiceEntityRepositoryLib<object>
+     */
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
@@ -60,6 +70,9 @@ abstract class FrontFormLib implements FrontFormInterface
         return $entityRepository;
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     protected function saveForm(FormInterface $form): void
     {
         $raw  = $form->all();

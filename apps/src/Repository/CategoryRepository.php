@@ -6,6 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Category;
 use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<Category>
+ */
 class CategoryRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -13,6 +16,9 @@ class CategoryRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Category::class);
     }
 
+    /**
+     * @return array<Category>
+     */
     public function findAllByTypeMovie(): array
     {
         $queryBuilder = $this->createQueryBuilder('c');
@@ -26,6 +32,9 @@ class CategoryRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
+    /**
+     * @return array<Category>
+     */
     public function findAllByTypeMovieEnable(): array
     {
         $queryBuilder = $this->createQueryBuilder('c');
@@ -41,6 +50,9 @@ class CategoryRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
+    /**
+     * @return array<Category>
+     */
     public function findAllByTypeMovieWithoutMovie(): array
     {
         $queryBuilder = $this->createQueryBuilder('c');

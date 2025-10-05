@@ -91,6 +91,10 @@ class MovieParagraph extends ParagraphLib
         return [Page::class];
     }
 
+    /**
+     * @param array<string, mixed> $query
+     * @return array<string, mixed>
+     */
     private function setQuery(array $query): array
     {
         if (isset($query['order']) && !in_array($query['order'], ['title', 'releaseDate', 'createdAt'])) {

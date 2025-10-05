@@ -135,12 +135,15 @@ class LinkUrlProcessor
         return $entity;
     }
 
-    private function getRepository(string $entityClass): ServiceEntityRepositoryLib
+        /**
+     * @return ServiceEntityRepositoryLib<object>
+     */
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
-        $entityRepository = $this->entityManager->getRepository($entityClass);
+        $entityRepository = $this->entityManager->getRepository($entity);
 
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
-            throw new Exception('Repository not found for entity: ' . $entityClass);
+            throw new Exception('Repository not found for entity: ' . $entity);
         }
 
         return $entityRepository;

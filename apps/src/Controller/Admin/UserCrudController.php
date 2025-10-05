@@ -118,6 +118,9 @@ class UserCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
+    /**
+     * @return FormBuilderInterface<mixed>
+     */
     #[\Override]
     public function createEditFormBuilder(
         EntityDto $entityDto,
@@ -142,6 +145,9 @@ class UserCrudController extends AbstractCrudControllerLib
         return $user;
     }
 
+    /**
+     * @return FormBuilderInterface<mixed>
+     */
     #[\Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
@@ -159,7 +165,11 @@ class UserCrudController extends AbstractCrudControllerLib
         return User::class;
     }
 
-    private function addPasswordEventListener(FormBuilderInterface $formBuilder): mixed
+        /**
+     * @param FormBuilderInterface<mixed> $formBuilder
+     * @return FormBuilderInterface<mixed>
+     */
+    private function addPasswordEventListener(FormBuilderInterface $formBuilder): FormBuilderInterface
     {
         return $formBuilder->addEventListener(FormEvents::POST_SUBMIT, $this->hashPassword());
     }

@@ -4,6 +4,10 @@ namespace Labstag\Repository\Abstract;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
+/**
+ * @template TEntityClass of object
+ * @extends ServiceEntityRepository<TEntityClass>
+ */
 abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
 {
     public function delete(object $entity): void

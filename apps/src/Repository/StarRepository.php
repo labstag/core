@@ -8,6 +8,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Star;
 use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<Star>
+ */
 class StarRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -48,6 +51,9 @@ class StarRepository extends ServiceEntityRepositoryLib
         return $queryBuilder->orderBy('s.title', 'ASC');
     }
 
+    /**
+     * @return Query<mixed, mixed>
+     */
     public function getQueryPaginator(): Query
     {
         $queryBuilder = $this->getQueryBuilder();

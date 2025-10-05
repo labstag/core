@@ -19,18 +19,39 @@ final class MovieService
 {
     private const STATUSOK = 200;
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $category = [];
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $collection = [];
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $country = [];
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $genres = [];
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $saga = [];
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $updatesaga = [];
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $year = [];
 
     public function __construct(
@@ -70,6 +91,9 @@ final class MovieService
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCategoryForForm(): array
     {
         if ([] !== $this->category) {
@@ -87,6 +111,9 @@ final class MovieService
         return $categories;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCountryForForm(): array
     {
         if ([] !== $this->country) {
@@ -100,6 +127,9 @@ final class MovieService
         return $country;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getSagaForForm(): array
     {
         if ([] !== $this->saga) {
@@ -122,6 +152,9 @@ final class MovieService
         return $sagas;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getYearForForm(): array
     {
         if ([] !== $this->year) {
@@ -153,6 +186,9 @@ final class MovieService
         return in_array(true, $statuses, true);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getDetails(Movie $movie): array
     {
         $details = [];
@@ -175,6 +211,9 @@ final class MovieService
         return $this->getDetailsTmdbCollection($details);
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     private function getDetailsTmdb(string $imdbId): ?array
     {
         if ('' === $this->tmdbapiKey) {
@@ -217,6 +256,10 @@ final class MovieService
         );
     }
 
+    /**
+     * @param array<string, mixed> $details
+     * @return array<string, mixed>
+     */
     private function getDetailsTmdbCollection(array $details): array
     {
         if ('' === $this->tmdbapiKey) {
@@ -267,6 +310,10 @@ final class MovieService
         return $details;
     }
 
+    /**
+     * @param array<string, mixed> $details
+     * @return array<string, mixed>
+     */
     private function getDetailsTmdbMovie(array $details, string $tmdbId): array
     {
         if ('' === $this->tmdbapiKey) {
@@ -314,6 +361,9 @@ final class MovieService
         return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' . $img;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function getImgMovie(array $data): string
     {
         if (isset($data['tmdb']['poster_path'])) {
@@ -323,6 +373,9 @@ final class MovieService
         return '';
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function getImgSaga(array $data): string
     {
         if (isset($data['collection']['poster_path'])) {
@@ -332,6 +385,10 @@ final class MovieService
         return '';
     }
 
+    /**
+     * @param array<string, mixed> $details
+     * @return array<string, mixed>
+     */
     private function getTrailersTmdbMovie(array $details, string $tmdbId): array
     {
         if ('' === $this->tmdbapiKey) {
@@ -375,6 +432,9 @@ final class MovieService
         return $details;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function initGenres(): array
     {
         if ([] !== $this->genres) {
@@ -393,6 +453,9 @@ final class MovieService
         return $categories;
     }
 
+    /**
+     * @param array<string, mixed> $details
+     */
     private function updateCategory(Movie $movie, array $details): bool
     {
         if (!isset($details['tmdb']['genres']) || 0 == count($details['tmdb']['genres'])) {
@@ -425,6 +488,9 @@ final class MovieService
         return true;
     }
 
+    /**
+     * @param array<string, mixed> $details
+     */
     private function updateImageMovie(Movie $movie, array $details): bool
     {
         $poster = $this->getImgMovie($details);
@@ -453,6 +519,9 @@ final class MovieService
         }
     }
 
+    /**
+     * @param array<string, mixed> $details
+     */
     private function updateImageSaga(Saga $saga, array $details): bool
     {
         $poster = $this->getImgSaga($details);
@@ -488,6 +557,9 @@ final class MovieService
         }
     }
 
+    /**
+     * @param array<string, mixed> $details
+     */
     private function updateMovie(Movie $movie, array $details): bool
     {
         if (!isset($details['tmdb'])) {
@@ -508,8 +580,8 @@ final class MovieService
             $movie->setDescription($overview);
         }
 
-        $voteEverage = (float) $details['tmdb']['vote_average'] ?? 0;
-        $voteCount   = (int) $details['tmdb']['vote_count'] ?? 0;
+        $voteEverage = (float) ($details['tmdb']['vote_average'] ?? 0);
+        $voteCount   = (int) ($details['tmdb']['vote_count'] ?? 0);
 
         $movie->setEvaluation($voteEverage);
         $movie->setVotes($voteCount);
@@ -526,6 +598,9 @@ final class MovieService
         return true;
     }
 
+    /**
+     * @param array<string, mixed> $details
+     */
     private function updateSaga(Movie $movie, array $details): bool
     {
         if (!isset($details['collection'])) {
@@ -552,6 +627,9 @@ final class MovieService
         return true;
     }
 
+    /**
+     * @param array<string, mixed> $details
+     */
     private function updateTrailer(Movie $movie, array $details): bool
     {
         if (!isset($details['trailers'])) {

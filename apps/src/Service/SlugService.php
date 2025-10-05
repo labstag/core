@@ -18,8 +18,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class SlugService
 {
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $pages = [];
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $types = [];
 
     public function __construct(
@@ -107,7 +113,7 @@ final class SlugService
     /**
      * Construit un slug préfixé avec validation de l'existence de la page type.
      */
-    private function buildPrefixedSlug($page, string $suffix): string
+    private function buildPrefixedSlug(object $page, string $suffix): string
     {
         if (!$page instanceof Page) {
             throw new Exception('No page found for this type');

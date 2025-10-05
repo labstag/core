@@ -6,6 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\GeoCode;
 use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<GeoCode>
+ */
 class GeoCodeRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)

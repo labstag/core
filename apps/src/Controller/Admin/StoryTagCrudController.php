@@ -9,7 +9,7 @@ class StoryTagCrudController extends TagCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        return $this->configureBaseFields($pageName);
+        return $this->configureBaseFields();
     }
 
     protected function getChildRelationshipProperty(): string

@@ -13,10 +13,13 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class ContactFrontForm extends FrontFormLib
 {
+    /**
+     * @param FormInterface<mixed> $form
+     */
     #[Override]
-    public function execute(bool $save, FormInterface $form, bool $disable): bool
+    public function execute(FormInterface $form, bool $disable = false, bool $save = true): bool
     {
-        $state = parent::execute($save, $form, $disable);
+        $state = parent::execute($form, $disable, $save);
         if (!$state) {
             return false;
         }
@@ -42,6 +45,10 @@ class ContactFrontForm extends FrontFormLib
         return 'contact';
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return iterable<mixed>
+     */
     #[Override]
     public function getFields(array $data): iterable
     {

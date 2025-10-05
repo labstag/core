@@ -11,6 +11,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInterface
 {
+    /**
+     * @param AfterEntityPersistedEvent<object> $afterEntityPersistedEvent
+     */
     public function afterPersisted(AfterEntityPersistedEvent $afterEntityPersistedEvent): void
     {
         $instance = $afterEntityPersistedEvent->getEntityInstance();
@@ -21,11 +24,14 @@ class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInter
         $this->updateEntityMovie($instance);
         $this->updateEntityChapter($instance);
         $this->updateEntityPage($instance);
-        $this->updateEntityRedirection($instance, $this->entityManager);
+        $this->updateEntityRedirection($instance);
 
         $this->entityManager->flush();
     }
 
+    /**
+     * @param AfterEntityUpdatedEvent<object> $afterEntityUpdatedEvent
+     */
     public function afterUpdated(AfterEntityUpdatedEvent $afterEntityUpdatedEvent): void
     {
         $instance = $afterEntityUpdatedEvent->getEntityInstance();
@@ -36,23 +42,29 @@ class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInter
         $this->updateEntityMovie($instance);
         $this->updateEntityChapter($instance);
         $this->updateEntityPage($instance);
-        $this->updateEntityRedirection($instance, $this->entityManager);
+        $this->updateEntityRedirection($instance);
 
         $this->entityManager->flush();
     }
 
+    /**
+     * @param BeforeEntityPersistedEvent<object> $beforeEntityPersistedEvent
+     */
     public function beforePersisted(BeforeEntityPersistedEvent $beforeEntityPersistedEvent): void
     {
         $instance = $beforeEntityPersistedEvent->getEntityInstance();
         $this->initworkflow($instance);
         $this->initEntityMeta($instance);
-        $this->updateEntityRedirection($instance, $this->entityManager);
+        $this->updateEntityRedirection($instance);
     }
 
+    /**
+     * @param BeforeEntityUpdatedEvent<object> $beforeEntityUpdatedEvent
+     */
     public function beforeUpdated(BeforeEntityUpdatedEvent $beforeEntityUpdatedEvent): void
     {
         $instance = $beforeEntityUpdatedEvent->getEntityInstance();
-        $this->updateEntityRedirection($instance, $this->entityManager);
+        $this->updateEntityRedirection($instance);
     }
 
     public static function getSubscribedEvents(): array

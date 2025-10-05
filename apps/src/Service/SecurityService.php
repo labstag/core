@@ -93,10 +93,6 @@ final class SecurityService
 
         $server = $request->server;
 
-        if (!is_object($server)) {
-            return '0.0.0.0';
-        }
-
         $headers = [
             'HTTP_CLIENT_IP',
             'HTTP_X_FORWARDED_FOR',
@@ -128,7 +124,7 @@ final class SecurityService
         return '0.0.0.0';
     }
 
-    public function set($httpCode = 404): void
+    public function set(int $httpCode = 404): void
     {
         $request = $this->requestStack->getCurrentRequest();
         if (is_null($request)) {
@@ -171,7 +167,7 @@ final class SecurityService
         $httpErrorLogs->setDomain($domain);
         $httpErrorLogs->setUrl($url);
         $httpErrorLogs->setAgent($agent);
-        $httpErrorLogs->setHttpCode($httpCode);
+        $httpErrorLogs->setHttpCode((string) $httpCode);
         $httpErrorLogs->setInternetProtocol($this->getCurrentClientIp());
         if (!is_null($referer)) {
             $httpErrorLogs->setReferer($referer);
@@ -188,6 +184,9 @@ final class SecurityService
         $this->httpErrorLogsRepository->save($httpErrorLogs);
     }
 
+    /**
+     * @return Redirection[]
+     */
     private function getRedirections(bool $regex): array
     {
         return $this->redirectionRepository->findBy(
@@ -199,7 +198,7 @@ final class SecurityService
         );
     }
 
-    private function isDisableUrl($url): bool
+    private function isDisableUrl(string $url): bool
     {
         $file    = $this->fileService->getFileInAdapter('private', 'disable.txt');
         $disable = explode("\n", file_get_contents($file));
@@ -207,7 +206,7 @@ final class SecurityService
         return array_any($disable, fn ($type): bool => str_contains((string) $url, $type));
     }
 
-    private function isForbiddenUrl($url): bool
+    private function isForbiddenUrl(string $url): bool
     {
         $file      = $this->fileService->getFileInAdapter('private', 'forbidden.txt');
         $forbidden = explode("\n", file_get_contents($file));
@@ -221,7 +220,7 @@ final class SecurityService
         );
     }
 
-    private function setBan(string $agent, $url): ?bool
+    private function setBan(string $agent, string $url): ?bool
     {
         if ('' === $agent || '0' === $agent) {
             $this->addBan($this->getCurrentClientIp());
@@ -248,6 +247,9 @@ final class SecurityService
         return new RedirectResponse($redirection->getDestination(), $redirection->getActionCode());
     }
 
+    /**
+     * @param Redirection[] $redirections
+     */
     private function testRedirect(string $pathinfo, array $redirections): ?RedirectResponse
     {
         $redirect = null;
@@ -262,6 +264,9 @@ final class SecurityService
         return $redirect;
     }
 
+    /**
+     * @param Redirection[] $redirections
+     */
     private function testRedirectRegex(string $pathinfo, array $redirections): ?RedirectResponse
     {
         $redirect = null;

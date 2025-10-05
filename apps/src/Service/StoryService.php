@@ -12,6 +12,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class StoryService
 {
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $stories = [];
 
     public function __construct(
@@ -32,6 +35,9 @@ final class StoryService
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getUpdates(): array
     {
         return $this->stories;
@@ -93,6 +99,9 @@ final class StoryService
         $mpdf->AddPage();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function getChapters(Story $story): array
     {
         return $this->cacheService->getOrSet(

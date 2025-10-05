@@ -23,6 +23,9 @@ class Redirection
     #[ORM\Column(type: Types::TEXT)]
     private ?string $actionType = null;
 
+    /**
+     * @var array<string, mixed>
+     */
     #[ORM\Column(type: Types::JSON)]
     private array $data = [];
 
@@ -63,6 +66,9 @@ class Redirection
         return $this->actionType;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
         return $this->data;
@@ -129,6 +135,9 @@ class Redirection
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function setData(array $data): static
     {
         $this->data = $data;

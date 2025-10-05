@@ -39,6 +39,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[AutoconfigureTag('labstag.admincontroller')]
+/**
+ * @template TEntity of object
+ * @extends AbstractCrudController<TEntity>
+ */
 abstract class AbstractCrudControllerLib extends AbstractCrudController
 {
     use ParagraphAdminTrait;
@@ -107,6 +111,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     /**
      * Backward compatibility helper - new code should call getRepository() or inject repositories directly.
+     * @return ServiceEntityRepositoryLib<object>
      */
     protected function getRepository(?string $entity = null): ServiceEntityRepositoryLib
     {
@@ -117,13 +122,16 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function getRepositoryParagraph(): ParagraphRepository
     {
-        return $this->getDoctrineRepository(Paragraph::class);
+        $repository = $this->getDoctrineRepository(Paragraph::class);
+        assert($repository instanceof ParagraphRepository);
+        
+        return $repository;
     }
 
     protected function isSuperAdmin(): bool
     {
         $user = $this->getUser();
-        if (!is_object($user) || !method_exists($user, 'getRoles')) {
+        if (!is_object($user)) {
             return false;
         }
 
@@ -187,9 +195,13 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     /**
      * Internal helper to fetch a Doctrine repository with generics-like safety.
      */
+    /**
+     * @return ServiceEntityRepositoryLib<object>
+     */
     private function getDoctrineRepository(string $entity): ServiceEntityRepositoryLib
     {
-        $objectManager    = $this->managerRegistry->getManagerForClass($entity);
+        $objectManager = $this->managerRegistry->getManagerForClass($entity);
+        /** @var ServiceEntityRepositoryLib<object> $objectRepository */
         $objectRepository = $objectManager->getRepository($entity);
         assert($objectRepository instanceof ServiceEntityRepositoryLib);
 

@@ -158,6 +158,9 @@ class Block implements Stringable
         return $this->region;
     }
 
+    /**
+     * @return string[]|null
+     */
     public function getRoles(): ?array
     {
         return $this->roles;
@@ -257,6 +260,9 @@ class Block implements Stringable
         return $this;
     }
 
+    /**
+     * @param string[]|null $roles
+     */
     public function setRoles(?array $roles): static
     {
         $this->roles = $roles;

@@ -13,7 +13,7 @@ use Symfony\Component\Yaml\Yaml;
 abstract class FileStorageLib implements FileStorageInterface
 {
 
-    protected $adapter;
+    protected mixed $adapter = null;
 
     protected string $type;
 
@@ -43,6 +43,7 @@ abstract class FileStorageLib implements FileStorageInterface
     }
 
     /**
+     * @param mixed $filesystem
      * @return mixed[]
      */
     public function getFilesByDirectory($filesystem, string $directory): array
@@ -67,7 +68,7 @@ abstract class FileStorageLib implements FileStorageInterface
         return $files;
     }
 
-    public function getFilesystem()
+    public function getFilesystem(): mixed
     {
         return new Filesystem(
             $this->adapter,
@@ -77,19 +78,23 @@ abstract class FileStorageLib implements FileStorageInterface
         );
     }
 
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    protected function setAdapter($adapter)
+    public function setAdapter(mixed $adapter): self
     {
         $this->adapter = $adapter;
+
+        return $this;
     }
 
-    protected function setType(string $type)
+    protected function setType(string $type): self
     {
         $this->type = $type;
+
+        return $this;
     }
 
     private function getFolder(): mixed

@@ -69,6 +69,9 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     {
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getData(Block $block): ?array
     {
         $blockId = $block->getId();
@@ -83,13 +86,19 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         return [];
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getFooter(Block $block): ?array
     {
-        $blockId = $block->getId();
+        unset($block);
 
-        return $this->footer[$blockId] ?? null;
+        return null;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getHeader(Block $block): ?array
     {
         $blockId = $block->getId();
@@ -127,6 +136,9 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         return [];
     }
 
+    /**
+     * @return ServiceEntityRepositoryLib<object>
+     */
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
@@ -223,5 +235,10 @@ abstract class BlockLib extends AbstractController implements BlockInterface
         }
 
         $this->show[$block->getId()] = $show;
+    }
+
+    public function isEnable(): bool
+    {
+        return true;
     }
 }

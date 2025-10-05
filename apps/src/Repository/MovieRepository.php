@@ -9,6 +9,9 @@ use Labstag\Entity\Movie;
 use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Symfony\Component\Intl\Countries;
 
+/**
+ * @extends ServiceEntityRepositoryLib<Movie>
+ */
 class MovieRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -16,6 +19,9 @@ class MovieRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, Movie::class);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function findAllUniqueCountries(): array
     {
         $queryBuilder = $this->createQueryBuilder('m');
@@ -46,6 +52,9 @@ class MovieRepository extends ServiceEntityRepositoryLib
         return $country;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function findAllUniqueYear(): array
     {
         $queryBuilder = $this->createQueryBuilder('m');
@@ -85,7 +94,11 @@ class MovieRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
-    public function findMoviesNotInImdbList(array $excludedImdbIds): array
+    /**
+     * @param array<string> $excludedImdbIds
+     * @return list<Movie>
+     */
+    public function findMoviesNotInImdbList(array $excludedImdbIds = []): array
     {
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->where('m.imdb NOT IN (:imdbIds)');
@@ -97,6 +110,9 @@ class MovieRepository extends ServiceEntityRepositoryLib
         return $query->getResult();
     }
 
+    /**
+     * @param array<string, mixed> $query
+     */
     public function getQueryBuilder(array $query): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('m');
@@ -113,6 +129,10 @@ class MovieRepository extends ServiceEntityRepositoryLib
         return $queryBuilder->orderBy('m.' . $query['order'], $query['orderby']);
     }
 
+    /**
+     * @param array<string, mixed> $query
+     * @return Query<mixed, mixed>
+     */
     public function getQueryPaginator(array $query): Query
     {
         $queryBuilder = $this->getQueryBuilder($query);
@@ -123,6 +143,9 @@ class MovieRepository extends ServiceEntityRepositoryLib
         return $query;
     }
 
+    /**
+     * @param array<string, mixed> $query
+     */
     private function getQueryBuilderCategories(QueryBuilder $queryBuilder, array $query): void
     {
         if (empty($query['categories'])) {
@@ -133,9 +156,11 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('categories', $query['categories']);
     }
 
+    /**
+     * @param array<string, mixed> $query
+     */
     private function getQueryBuilderCountry(QueryBuilder $queryBuilder, array $query): void
     {
-        array_flip($this->findAllUniqueCountries());
         if (empty($query['country'])) {
             return;
         }
@@ -144,6 +169,9 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('country', json_encode($query['country']));
     }
 
+    /**
+     * @param array<string, mixed> $query
+     */
     private function getQueryBuilderSaga(QueryBuilder $queryBuilder, array $query): void
     {
         if (empty($query['sagas'])) {
@@ -154,6 +182,9 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('sagas', $query['sagas']);
     }
 
+    /**
+     * @param array<string, mixed> $query
+     */
     private function getQueryBuilderTitle(QueryBuilder $queryBuilder, array $query): void
     {
         if (empty($query['title'])) {
@@ -164,6 +195,9 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('title', '%' . $query['title'] . '%');
     }
 
+    /**
+     * @param array<string, mixed> $query
+     */
     private function getQueryBuilderYear(QueryBuilder $queryBuilder, array $query): void
     {
         if (!isset($query['year']) || !is_numeric($query['year'])) {

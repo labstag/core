@@ -5,6 +5,7 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Submission;
@@ -46,6 +47,9 @@ class SubmissionCrudController extends AbstractCrudControllerLib
         return Submission::class;
     }
 
+    /**
+     * @return iterable<FieldInterface>
+     */
     private function addFieldsSubmission(Submission $submission): iterable
     {
         $data = $submission->getData();

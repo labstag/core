@@ -38,6 +38,9 @@ class Movie implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $citation = null;
 
+    /**
+     * @var string[]|null
+     */
     #[ORM\Column(nullable: true)]
     private ?array $countries = null;
 
@@ -160,6 +163,9 @@ class Movie implements Stringable
         return $this->citation;
     }
 
+    /**
+     * @return string[]|null
+     */
     public function getCountries(): ?array
     {
         return $this->countries;
@@ -303,6 +309,9 @@ class Movie implements Stringable
         return $this;
     }
 
+    /**
+     * @param string[]|null $countries
+     */
     public function setCountries(?array $countries): static
     {
         $this->countries = $countries;
@@ -355,6 +364,11 @@ class Movie implements Stringable
     public function setImg(?string $img): void
     {
         $this->img = $img;
+        
+        // Si l'image est supprimée (img devient null), on force la mise à jour
+        if (null === $img) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setImgFile(?File $imgFile = null): void

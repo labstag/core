@@ -150,6 +150,9 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $serviceEntityRepositoryLib->findAllOrderedByRegion();
     }
 
+    /**
+     * @return FormBuilderInterface<mixed>
+     */
     #[\Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
