@@ -17,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
+use Labstag\Repository\MovieRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Routing\Attribute\Route;
@@ -108,8 +109,8 @@ class MovieCrudController extends AbstractCrudControllerLib
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $certifications = $serviceEntityRepositoryLib->getCertifications();
+        $movieRepository = $this->getMovieRepository();
+        $certifications = $movieRepository->getCertifications();
 
         $filters->add('releaseDate');
         $filters->add('countries');
@@ -125,6 +126,17 @@ class MovieCrudController extends AbstractCrudControllerLib
     public static function getEntityFqcn(): string
     {
         return Movie::class;
+    }
+
+    /**
+     * Get the MovieRepository with proper typing for PHPStan.
+     */
+    private function getMovieRepository(): MovieRepository
+    {
+        $repository = $this->getRepository();
+        assert($repository instanceof MovieRepository);
+
+        return $repository;
     }
 
     #[Route('/admin/movie/{entity}/imdb', name: 'admin_movie_imdb')]
