@@ -6,6 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Redirection;
 use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<Redirection>
+ */
 class RedirectionRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)

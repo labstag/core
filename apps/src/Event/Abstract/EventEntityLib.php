@@ -41,7 +41,7 @@ abstract class EventEntityLib
     {
     }
 
-    protected function initEntityMeta($instance): void
+    protected function initEntityMeta(object $instance): void
     {
         $tab = [
             Page::class,
@@ -75,7 +75,7 @@ abstract class EventEntityLib
         $workflow->apply($object, 'submit');
     }
 
-    protected function updateEntityBanIp($instance, EntityManagerInterface $entityManager): void
+    protected function updateEntityBanIp(object $instance, EntityManagerInterface $entityManager): void
     {
         if (!$instance instanceof BanIp) {
             return;
@@ -91,7 +91,7 @@ abstract class EventEntityLib
         }
     }
 
-    protected function updateEntityBlock($instance): void
+    protected function updateEntityBlock(object $instance): void
     {
         if (!$instance instanceof Block) {
             return;
@@ -100,7 +100,7 @@ abstract class EventEntityLib
         $this->blockService->update($instance);
     }
 
-    protected function updateEntityChapter($instance): void
+    protected function updateEntityChapter(object $instance): void
     {
         if (!$instance instanceof Chapter) {
             return;
@@ -118,7 +118,7 @@ abstract class EventEntityLib
         $this->storyService->generateFlashBag();
     }
 
-    protected function updateEntityMovie($instance): void
+    protected function updateEntityMovie(object $instance): void
     {
         if (!$instance instanceof Movie) {
             return;
@@ -127,7 +127,7 @@ abstract class EventEntityLib
         $this->movieService->update($instance);
     }
 
-    protected function updateEntityPage($instance): void
+    protected function updateEntityPage(object $instance): void
     {
         if (!$instance instanceof Page) {
             return;
@@ -154,7 +154,7 @@ abstract class EventEntityLib
         $instance->setSlug('');
     }
 
-    protected function updateEntityParagraph($instance): void
+    protected function updateEntityParagraph(object $instance): void
     {
         if (!$instance instanceof Paragraph) {
             return;
@@ -163,23 +163,16 @@ abstract class EventEntityLib
         $this->paragraphService->update($instance);
     }
 
-    protected function updateEntityRedirection($instance, EntityManagerInterface $entityManager): void
+    protected function updateEntityRedirection(object $instance): void
     {
         if (!$instance instanceof Redirection) {
             return;
         }
 
-        $httpsLogs = $this->httpErrorLogsRepository->findBy(
-            [
-                'url' => $instance->getSource(),
-            ]
-        );
-        foreach ($httpsLogs as $httpLog) {
-            $entityManager->remove($httpLog);
-        }
+        $instance->incrementLastCount();
     }
 
-    protected function updateEntityStory($instance): void
+    protected function updateEntityStory(object $instance): void
     {
         if (!$instance instanceof Story) {
             return;

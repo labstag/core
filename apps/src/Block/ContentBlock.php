@@ -4,6 +4,7 @@ namespace Labstag\Block;
 
 use Labstag\Block\Abstract\BlockLib;
 use Labstag\Block\Traits\ParagraphProcessingTrait;
+use Labstag\Block\Traits;
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Override;
@@ -69,10 +70,9 @@ class ContentBlock extends BlockLib
 
         // Configure aside - implemented the TODO
         if (!($data['entity'] instanceof Page && 'home' == $data['entity']->getType())) {
-            $aside = $this->getAside($data);
-            if (!is_null($aside)) {
-                $tab['aside'] = $aside;
-            }
+            $this->getAside($data);
+            // Note: getAside currently always returns null, so this block is effectively unused
+            // TODO: Implement actual aside content logic when needed
         }
 
         $this->setData($block, $tab);
@@ -95,9 +95,9 @@ class ContentBlock extends BlockLib
      *
      * @param mixed[] $data
      *
-     * @return mixed[]|null
+     * @return null
      */
-    private function getAside(array $data): ?array
+    private function getAside(array $data): null
     {
         // Implementation for aside content
         // This could include related posts, tags, categories, etc.

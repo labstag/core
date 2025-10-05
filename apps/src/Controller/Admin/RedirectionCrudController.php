@@ -162,6 +162,10 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $this->redirect($generator->generateUrl());
     }
 
+    /**
+     * @param array<int, string> $header
+     * @param list<array<int, string|null>> $rows
+     */
     protected function sendToExport(array $header, array $rows): Response
     {
         $tempZip    = tmpfile();
@@ -242,7 +246,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         $actions->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function getFilename(string $filename, string $extension = 'xlsx')
+    private function getFilename(string $filename, string $extension = 'xlsx'): string
     {
         $originalExtension = pathinfo($filename, PATHINFO_EXTENSION);
 
@@ -263,7 +267,10 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $tempFolder;
     }
 
-    private function importCsv($file, RedirectionRepository $redirectionRepository): array
+    /**
+     * @return Redirection[]
+     */
+    private function importCsv(\Symfony\Component\HttpFoundation\File\UploadedFile $file, RedirectionRepository $redirectionRepository): array
     {
         $data        = [];
         $csv         = new Csv();
@@ -303,7 +310,10 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $data;
     }
 
-    private function setFind($head): int
+    /**
+     * @param array<string, mixed> $head
+     */
+    private function setFind(array $head): int
     {
         $find = 0;
         foreach ($head as $key => $value) {

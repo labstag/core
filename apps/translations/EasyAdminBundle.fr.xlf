@@ -383,7 +383,7 @@
       </trans-unit>
       <trans-unit id="3Mq5DeM" resname="files">
         <source>files</source>
-        <target>Fichiers</target>
+        <target>fichiers</target>
       </trans-unit>
     </body>
   </file>

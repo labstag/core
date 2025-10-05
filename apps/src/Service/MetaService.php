@@ -50,7 +50,10 @@ final class MetaService
         return $return;
     }
 
-    public function getImageForMetatags(mixed $entity): ?array
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getImageForMetatags(object $entity): ?array
     {
         $file = $this->fileService->asset($entity, 'img');
         if ('' === $file) {

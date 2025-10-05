@@ -13,6 +13,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class MovieType extends AbstractType
 {
     public function __construct(
@@ -69,9 +72,9 @@ class MovieType extends AbstractType
                 'required' => false,
                 'label'    => new TranslatableMessage('Order'),
                 'choices'  => [
-                    'Titre'        => 'title',
-                    'Année'        => 'releaseDate',
-                    "Date d'ajout" => 'createdAt',
+                    (new TranslatableMessage('Title'))->__toString()        => 'title',
+                    (new TranslatableMessage('Release date'))->__toString()        => 'releaseDate',
+                    (new TranslatableMessage('Date added'))->__toString() => 'createdAt',
                 ],
             ]
         );
@@ -82,8 +85,8 @@ class MovieType extends AbstractType
                 'required' => false,
                 'label'    => new TranslatableMessage('Sort'),
                 'choices'  => [
-                    'Croissant'   => 'ASC',
-                    'Décroissant' => 'DESC',
+                    (new TranslatableMessage('Ascending'))->__toString()   => 'ASC',
+                    (new TranslatableMessage('Descending'))->__toString() => 'DESC',
                 ],
             ]
         );

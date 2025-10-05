@@ -15,6 +15,9 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getContextMenu(Paragraph $paragraph): array
     {
         $urlAdmin = $this->paragraphService->getUrlAdmin($paragraph);

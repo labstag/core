@@ -9,7 +9,8 @@ use Symfony\Component\Form\FormInterface;
 final class FormService
 {
     public function __construct(
-        #[AutowireIterator('labstag.forms')]
+        /** @var iterable<\Labstag\FrontForm\Abstract\FrontFormLib> $forms */
+        #[AutowireIterator('labstag.frontforms')]
         private readonly iterable $forms,
     )
     {
@@ -32,14 +33,17 @@ final class FormService
         return $data;
     }
 
-    public function execute(bool $save, string $code, FormInterface $form, bool $disable): bool
+    /**
+     * @param FormInterface<mixed> $form
+     */
+    public function execute(FormInterface $form, string $code, bool $disable = false, bool $save = true): bool
     {
         $frontform = $this->get($code);
         if (!$frontform instanceof FrontFormLib) {
             return false;
         }
 
-        return $frontform->execute($save, $form, $disable);
+        return $frontform->execute($form, $disable, $save);
     }
 
     public function get(string $code): ?FrontFormLib

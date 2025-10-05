@@ -28,7 +28,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         ];
     }
 
-    public function getParent($idParent): ?object
+    public function getParent(mixed $idParent): ?object
     {
         $parent = null;
         $pages  = $this->getIdentitiesByClass(Page::class);

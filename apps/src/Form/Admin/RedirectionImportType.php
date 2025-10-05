@@ -7,6 +7,9 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class RedirectionImportType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void

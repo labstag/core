@@ -12,6 +12,9 @@ use Labstag\Repository\HttpErrorLogsRepository;
 final class SameConfigurator implements FieldConfiguratorInterface
 {
 
+    /**
+     * @var array<mixed>
+     */
     private array $logs = [];
 
     public function __construct(

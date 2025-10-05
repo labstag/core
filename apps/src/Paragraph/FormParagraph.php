@@ -39,7 +39,7 @@ class FormParagraph extends ParagraphLib
 
         $form = $this->createForm($formClass->getForm());
 
-        $execute = $this->formService->execute($save, $formCode, $form, $disable);
+        $execute = $this->formService->execute($form, $formCode, $disable, $save);
         $this->setData(
             $paragraph,
             [

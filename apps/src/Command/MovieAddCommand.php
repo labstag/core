@@ -33,6 +33,9 @@ class MovieAddCommand extends Command
      */
     private array $categories = [];
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $imdbs = [];
 
     /**
@@ -280,7 +283,7 @@ class MovieAddCommand extends Command
         return $movie;
     }
 
-    private function setSaga(Movie $movie, $saga): void
+    private function setSaga(Movie $movie, mixed $saga): void
     {
         if (is_null($saga) || '' === $saga) {
             return;
@@ -293,7 +296,7 @@ class MovieAddCommand extends Command
         $movie->setSaga($saga);
     }
 
-    private function setTags(Movie $movie, $tags): void
+    private function setTags(Movie $movie, mixed $tags): void
     {
         $oldTags = $movie->getTags();
         foreach ($oldTags as $oldTag) {

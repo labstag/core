@@ -119,6 +119,9 @@ class StarAddCommand extends Command
         $this->starRepository->flush();
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function setImage(Star $star, array $data): void
     {
         if (!isset($data['owner']['avatar_url'])) {

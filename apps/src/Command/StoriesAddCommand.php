@@ -37,6 +37,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class StoriesAddCommand extends Command
 {
 
+    /**
+     * @var array<string, mixed>
+     */
     protected array $users = [];
 
     public function __construct(
@@ -114,25 +117,22 @@ class StoriesAddCommand extends Command
             }
 
             $option = $input->getArgument('option');
-            match ($option) {
+            return match ($option) {
                 'delete'     => $this->deleteAll(),
                 'authors'    => $this->addUsers($symfonyStyle, $pdo),
                 'categories' => $this->addCategories($symfonyStyle, $pdo),
                 'stories'    => $this->addStoryByUsers($symfonyStyle, $pdo),
                 'tags'       => $this->addTags($symfonyStyle, $pdo),
-                default      => $symfonyStyle->error(
-                    'Option invalide. Utilisez "authors", "categories", "stories", "tags" ou "delete".'
-                ),
+                default      => (function() use ($symfonyStyle) {
+                    $symfonyStyle->error('Option invalide. Utilisez "authors", "categories", "stories", "tags" ou "delete".');
+                    return Command::FAILURE;
+                })(),
             };
-
-            return Command::SUCCESS;
         } catch (PDOException $pdoException) {
             $symfonyStyle->error("Erreur lors de l'ouverture du fichier SQLite : " . $pdoException->getMessage());
 
             return Command::FAILURE;
         }
-
-        return Command::SUCCESS;
     }
 
     private function addCategories(SymfonyStyle $symfonyStyle, PDO $pdo): void
@@ -162,6 +162,9 @@ class StoriesAddCommand extends Command
         $this->categoryRepository->flush();
     }
 
+    /**
+     * @param array<mixed> $chapters
+     */
     private function addCategoryTagStory(Story $story, array $chapters): void
     {
         foreach ($chapters as $chapter) {
@@ -179,6 +182,9 @@ class StoriesAddCommand extends Command
         }
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function addChapter(Story $story, array $data, string $chapitre): void
     {
         $chapter = $this->chapterRepository->findOneBy(
@@ -398,6 +404,9 @@ class StoriesAddCommand extends Command
         return $user;
     }
 
+    /**
+     * @param array<string, mixed> $chapters
+     */
     private function createStory(string $title, array $chapters, User $user): void
     {
         $story = $this->storyRepository->findOneBy(
@@ -468,7 +477,7 @@ class StoriesAddCommand extends Command
         return $email;
     }
 
-    private function getParagraphTextChapter(Chapter $chapter)
+    private function getParagraphTextChapter(Chapter $chapter): ?\Labstag\Entity\Paragraph
     {
         foreach ($chapter->getParagraphs() as $paragraph) {
             if ('text' == $paragraph->getType()) {
@@ -480,6 +489,7 @@ class StoriesAddCommand extends Command
     }
 
     /**
+     * @param array<string, mixed> $chapters
      * @return array<string, non-empty-array<(int | non-falsy-string | numeric-string), mixed>>
      */
     private function groupByStory(array $chapters): array
@@ -504,7 +514,7 @@ class StoriesAddCommand extends Command
             foreach ($patterns as $pattern) {
                 if (preg_match($pattern, $titre, $matches)) {
                     $titre                       = trim($matches[1]);
-                    $idChapter                   = isset($matches[3]) ? (isset($matches[4]) ? $matches[3] . '/' . $matches[4] : $matches[3]) : $matches[2];
+                    $idChapter                   = isset($matches[3]) ? (count($matches) > 4 ? $matches[3] . '/' . $matches[4] : $matches[3]) : $matches[2];
                     $stories[$titre][$idChapter] = $chapter;
                     $matched                     = true;
                     break;

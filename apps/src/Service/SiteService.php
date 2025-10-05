@@ -41,6 +41,9 @@ final class SiteService
         return 'https://picsum.photos/1200/1200?md5=' . md5((string) $entity->getId());
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getFileFavicon(): ?array
     {
         $favicon = $this->getFavicon('favicon.ico');
@@ -75,6 +78,9 @@ final class SiteService
         return '';
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     private function getFavicon(string $type): ?array
     {
         $info = null;

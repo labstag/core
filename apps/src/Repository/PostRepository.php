@@ -9,6 +9,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Post;
 use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<Post>
+ */
 class PostRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -54,6 +57,9 @@ class PostRepository extends ServiceEntityRepositoryLib
         return $queryBuilder->orderBy('p.createdAt', 'DESC');
     }
 
+    /**
+     * @return Query<mixed, mixed>
+     */
     public function getQueryPaginator(): Query
     {
         $queryBuilder = $this->getOptimizedBaseQB();
@@ -61,6 +67,10 @@ class PostRepository extends ServiceEntityRepositoryLib
         return $this->cacheQuery($queryBuilder->getQuery(), 'query-paginator', 300);
     }
 
+    /**
+     * @param Query<mixed, mixed> $query
+     * @return Query<mixed, mixed>
+     */
     private function cacheQuery(Query $query, string $suffix, int $ttl = 600): Query
     {
         // TTL réduit pour contenu récent ; ajustable selon stratégie

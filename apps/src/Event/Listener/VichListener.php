@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Vich\UploaderBundle\Event\Event;
 use Vich\UploaderBundle\Event\Events;
@@ -14,6 +15,7 @@ final class VichListener
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private RequestStack $requestStack,
     )
     {
     }
@@ -23,14 +25,37 @@ final class VichListener
     {
         $filterCollection = $this->entityManager->getFilters();
         $object           = $event->getObject();
-        $enable           = $this->isDeletedFileNotEntity($object);
-        if ($filterCollection->isEnabled('deletedfile') || $enable) {
+        
+        // Si le filtre deletedfile est activé, on autorise toujours la suppression
+        if ($filterCollection->isEnabled('deletedfile')) {
+            return;
+        }
+        
+        // Si c'est un nouveau fichier uploadé, on autorise la suppression
+        if ($this->isDeletedFileNotEntity($object)) {
+            return;
+        }
+        
+        // Si c'est une requête admin, on autorise la suppression (simplifié)
+        if ($this->isAdminRequest()) {
             return;
         }
 
+        // Sinon, on annule la suppression pour préserver les fichiers existants
         $event->cancel();
     }
 
+    private function isAdminRequest(): bool
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return false;
+        }
+        
+        // Vérifier si c'est une requête admin
+        $pathInfo = $request->getPathInfo();
+        return str_contains($pathInfo, '/admin/');
+    }
     private function isDeletedFileNotEntity(object $entity): bool
     {
         $delete           = false;

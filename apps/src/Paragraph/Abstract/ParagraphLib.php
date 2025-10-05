@@ -39,6 +39,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 use Twig\Environment;
+use Symfony\Component\Validator\Constraints\File;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 #[AutoconfigureTag('labstag.paragraphs')]
@@ -94,6 +95,23 @@ abstract class ParagraphLib extends AbstractController
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
             $textField = TextField::new($type . 'File', new TranslatableMessage('Image'));
             $textField->setFormType(VichImageType::class);
+            $textField->setFormTypeOptions([
+                'required' => false,
+                'allow_delete' => true,
+                'delete_label' => (new TranslatableMessage('Delete image'))->__toString(),
+                'download_label' => (new TranslatableMessage('Download'))->__toString(),
+                'download_uri' => true,
+                'image_uri' => true,
+                'asset_helper' => true,
+                'constraints' => [
+                    new File([
+                        'maxSize' => ini_get('upload_max_filesize'),
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+                        'mimeTypesMessage' => (new TranslatableMessage('Please upload a valid image (JPEG, PNG, GIF, WebP).'))->__toString(),
+                        'maxSizeMessage' => (new TranslatableMessage('The file is too large. Its size should not exceed {{ limit }}.'))->__toString(),
+                    ])
+                ],
+            ]);
 
             return $textField;
         }
@@ -133,6 +151,9 @@ abstract class ParagraphLib extends AbstractController
         unset($paragraph, $data, $disable);
     }
 
+    /**
+     * @return array<string>
+     */
     public function getClasses(Paragraph $paragraph): array
     {
         return explode(' ', (string) $paragraph->getClasses());
@@ -229,6 +250,9 @@ abstract class ParagraphLib extends AbstractController
         return $iframe->getAttribute('src');
     }
 
+    /**
+     * @return PaginationInterface<int, mixed>
+     */
     protected function getPaginator(mixed $query, ?int $limit): PaginationInterface
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -236,6 +260,9 @@ abstract class ParagraphLib extends AbstractController
         return $this->paginator->paginate($query, $request->attributes->getInt('page', 1), $limit);
     }
 
+    /**
+     * @return ServiceEntityRepositoryLib<object>
+     */
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);

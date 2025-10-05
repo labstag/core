@@ -401,6 +401,7 @@ tasks:
 
   phpstan:
     desc: "Analyse le code avec PHPStan"
+    internal: true
     silent: true
     vars:
       LEVEL: '{{.LEVEL | default "0"}}'

@@ -45,7 +45,7 @@ class SiteSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $statusCode = (string) $throwable->getStatusCode();
+        $statusCode = $throwable->getStatusCode();
 
         $this->securityService->set($statusCode);
     }

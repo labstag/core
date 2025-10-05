@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 
@@ -16,6 +17,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
  */
 abstract class AbstractTypedCrudControllerLib extends AbstractCrudControllerLib
 {
+    /**
+     * Get the child type for this controller.
+     */
+    abstract protected function getChildType(): string;
+
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -64,13 +70,18 @@ abstract class AbstractTypedCrudControllerLib extends AbstractCrudControllerLib
 
     /**
      * Configure base fields with child count.
+     * @return FieldInterface[]
      */
-    protected function configureBaseFields(string $pageName): array
+    public function configureBaseFields(): array
     {
-        $fields   = iterator_to_array(parent::configureFields($pageName));
-        $fields[] = $this->crudFieldFactory->totalChildField($this->getChildRelationshipProperty());
-
-        return $fields;
+        return $this->crudFieldFactory->baseIdentitySet(
+            $this->getChildType(),
+            '',
+            static::getEntityFqcn(),
+            withSlug: true,
+            withImage: true,
+            withEnable: true
+        );
     }
 
     /**

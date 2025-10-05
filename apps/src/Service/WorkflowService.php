@@ -14,6 +14,9 @@ use Symfony\Component\Workflow\WorkflowInterface;
 final class WorkflowService
 {
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $objects = [];
 
     public function __construct(
@@ -76,7 +79,7 @@ final class WorkflowService
         $markingStore->setMarking($entity, $initialMarking);
     }
 
-    private function getEntity(string $entity, mixed $uid)
+    private function getEntity(string $entity, mixed $uid): ?object
     {
         $entityRepository = $this->entityManager->getRepository($entity);
 

@@ -85,7 +85,10 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         );
     }
 
-    public function oembed($url): array
+    /**
+     * @return array<string, mixed>
+     */
+    public function oembed(string $url): array
     {
         $essence = new Essence();
 

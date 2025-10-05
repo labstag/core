@@ -142,6 +142,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return (string) $this->getUsername();
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
+    /**
+     * @param array{0: mixed, 1: mixed, 2: mixed} $data
+     */
     public function __unserialize(array $data): void
     {
         if (self::DATAUNSERIALIZE === count($data)) {
@@ -404,6 +410,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function setAvatar(?string $avatar): void
     {
         $this->avatar = $avatar;
+        
+        // Si l'image est supprimée (img devient null), on force la mise à jour
+        if (null === $avatar) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setAvatarFile(?File $avatarFile = null): void

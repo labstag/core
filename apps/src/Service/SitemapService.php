@@ -127,7 +127,10 @@ final class SitemapService
         return $this->getDataFromRepository(Story::class);
     }
 
-    private function getRepository(string $entity): ServiceEntityRepositoryLib
+        /**
+     * @return ServiceEntityRepositoryLib<object>
+     */
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {

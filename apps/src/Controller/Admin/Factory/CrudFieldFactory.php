@@ -19,6 +19,7 @@ use Labstag\Field\ParagraphsField;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\TagRepository;
 use Labstag\Service\FileService;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Translation\TranslatableMessage;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
@@ -185,7 +186,23 @@ final class CrudFieldFactory
         if ('edit' === $pageName || 'new' === $pageName) {
             return TextField::new($type . 'File', $label ?? new TranslatableMessage('Image'))->setFormType(
                 VichImageType::class
-            );
+            )->setFormTypeOptions([
+                'required' => false,
+                'allow_delete' => true,
+                'delete_label' => (new TranslatableMessage('Delete image'))->__toString(),
+                'download_label' => (new TranslatableMessage('Download'))->__toString(),
+                'download_uri' => true,
+                'image_uri' => true,
+                'asset_helper' => true,
+                'constraints' => [
+                    new File([
+                        'maxSize' => ini_get('upload_max_filesize'),
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+                        'mimeTypesMessage' => (new TranslatableMessage('Please upload a valid image (JPEG, PNG, GIF, WebP).'))->__toString(),
+                        'maxSizeMessage' => (new TranslatableMessage('The file is too large. Its size should not exceed {{ limit }}.'))->__toString(),
+                    ])
+                ],
+            ]);
         }
 
         $basePath = $this->fileService->getBasePath($entityFqcn, $type . 'File');

@@ -16,6 +16,9 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getContextMenu(Block $block): array
     {
         $urlAdmin = $this->blockService->getUrlAdmin($block);

@@ -49,6 +49,11 @@ final class MenuItemFactory
         return $this->createMenuItems($categoryControllers, 'Category', 'fas fa-hashtag');
     }
 
+    /**
+     * @param array<string, mixed>|null $categories
+     * @param array<string, mixed>|null $tags
+     * @param array<string, mixed> $additionalItems
+     */
     public function createContentSubMenu(
         string $type,
         string $label,

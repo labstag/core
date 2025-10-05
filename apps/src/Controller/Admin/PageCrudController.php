@@ -160,7 +160,7 @@ class PageCrudController extends AbstractCrudControllerLib
     /**
      * @return mixed[]
      */
-    private function getIdEntity(string $pageName, $currentEntity): array
+    private function getIdEntity(string $pageName, mixed $currentEntity): array
     {
         $identity = $this->crudFieldFactory->baseIdentitySet('page', $pageName, self::getEntityFqcn());
         if ($currentEntity instanceof Page && PageEnum::HOME->value == $currentEntity->getType()) {

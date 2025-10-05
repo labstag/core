@@ -6,6 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\HttpErrorLogs;
 use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<HttpErrorLogs>
+ */
 class HttpErrorLogsRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -13,6 +16,9 @@ class HttpErrorLogsRepository extends ServiceEntityRepositoryLib
         parent::__construct($managerRegistry, HttpErrorLogs::class);
     }
 
+    /**
+     * @return list<array<string, int<0, max>|string>>
+     */
     public function getAllinternetProtocolWithNbr(int $nbr): array
     {
         $queryBuilder = $this->createQueryBuilder('hel');

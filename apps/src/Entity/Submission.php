@@ -13,6 +13,9 @@ class Submission
 {
     use TimestampableTrait;
 
+    /**
+     * @var array<string, mixed>
+     */
     #[ORM\Column(type: Types::JSON)]
     private array $data = [];
 
@@ -25,6 +28,9 @@ class Submission
     #[ORM\Column(length: 255)]
     private string $type;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
         return $this->data;
@@ -40,6 +46,9 @@ class Submission
         return $this->type;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function setData(array $data): static
     {
         $this->data = $data;

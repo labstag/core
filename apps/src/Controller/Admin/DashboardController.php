@@ -5,6 +5,7 @@ namespace Labstag\Controller\Admin;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
@@ -51,6 +52,13 @@ class DashboardController extends AbstractDashboardController
         $dashboard->setLocales($this->userService->getLanguages());
 
         return $dashboard;
+    }
+
+    #[\Override]
+    public function configureCrud(): Crud
+    {
+        return Crud::new()
+            ->setFormThemes(['admin/form.html.twig', '@EasyAdmin/crud/form_theme.html.twig']);
     }
 
     #[\Override]
@@ -162,6 +170,9 @@ class DashboardController extends AbstractDashboardController
         }
     }
 
+    /**
+     * @return ServiceEntityRepositoryLib<object>
+     */
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
@@ -197,6 +208,10 @@ class DashboardController extends AbstractDashboardController
 
     /**
      * Build content (sub) menus that share a common pattern.
+     * 
+     * @param array<string, mixed> $categories
+     * @param array<string, mixed> $tags
+     * @return iterable<MenuItem>
      */
     private function buildContentMenus(array $categories, array $tags): iterable
     {
@@ -263,13 +278,16 @@ class DashboardController extends AbstractDashboardController
                 $controller,
                 $cats,
                 $tgs,
-                $children ?? []
+                $children
             );
         }
     }
 
     /**
      * Simple CRUD links sharing the same creation pattern.
+     */
+    /**
+     * @return iterable<MenuItem>
      */
     private function buildSimpleCrudMenus(): iterable
     {
@@ -343,6 +361,7 @@ class DashboardController extends AbstractDashboardController
 
     /**
      * Utility / maintenance links.
+     * @return iterable<MenuItem>
      */
     private function buildUtilityMenus(): iterable
     {

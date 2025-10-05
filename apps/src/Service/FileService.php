@@ -13,8 +13,9 @@ use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 final class FileService
 {
     public function __construct(
-        #[AutowireIterator(tag: 'labstag.filestorage')]
-        private iterable $fileStorages,
+        /** @var iterable<\Labstag\FileStorage\Abstract\FileStorageLib> $fileStorages */
+        #[AutowireIterator('labstag.filestorage')]
+        private readonly iterable $fileStorages,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag,
         private PropertyMappingFactory $propertyMappingFactory,
@@ -146,6 +147,9 @@ final class FileService
         return $files;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getFilesByAdapter(string $type): array
     {
         foreach ($this->fileStorages as $fileStorage) {
@@ -164,6 +168,9 @@ final class FileService
         return $this->parameterBag->get('kernel.project_dir') . '/public' . $basePath;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getInfoImage(string $file): array
     {
         $size = getimagesize($file);
@@ -197,6 +204,9 @@ final class FileService
         return $this->propertyMappingFactory->fromObject($entity);
     }
 
+    /**
+     * @return ServiceEntityRepositoryLib<object>
+     */
     private function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);

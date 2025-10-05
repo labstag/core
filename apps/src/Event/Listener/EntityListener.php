@@ -24,7 +24,7 @@ final class EntityListener extends EventEntityLib
         $this->updateEntityMovie($object);
         $this->updateEntityChapter($object);
         $this->updateEntityPage($object);
-        $this->updateEntityRedirection($object, $entityManager);
+        $this->updateEntityRedirection($object);
 
         $entityManager->flush();
     }

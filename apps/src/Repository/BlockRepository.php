@@ -7,6 +7,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Block;
 use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<Block>
+ */
 class BlockRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)

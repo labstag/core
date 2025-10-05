@@ -51,15 +51,14 @@ class FrontController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        [
-            $data,
-            $view,
-        ] = $viewResolverService->getDataViewByEntity($entity);
+        $result = $viewResolverService->getDataViewByEntity($entity);
+        $view = $result['view'];
+        $templateData = $result['data'];
 
         // ETag & Last-Modified basés sur l'entité (si méthodes dispo)
         $cacheData = $etagCacheService->getCacheHeaders($entity);
 
-        $response = $this->render($view, $data);
+        $response = $this->render($view, $templateData);
         $response->setEtag($cacheData['etag']);
         if ($cacheData['lastModified']) {
             $response->setLastModified($cacheData['lastModified']);

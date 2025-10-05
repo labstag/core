@@ -2,6 +2,9 @@
 <nav aria-label="breadcrumb"{% with {attr: block_contextmenu(block)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
         <ul>
+            <li>
+                <a href="{{ path('front') }}">{{ 'Home'|trans }}</a>
+            </li>
             {% for row in urls %}
                 <li{% if loop.last %} aria-current="page"{% endif %}>
                     {% if loop.last == false %}
