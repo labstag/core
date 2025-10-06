@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SecurityController extends AbstractController
 {
@@ -70,17 +71,17 @@ class SecurityController extends AbstractController
             'page_title'              => $data->getName(),
             'csrf_token_intention'    => 'authenticate',
             'target_path'             => $this->generateUrl('admin'),
-            'username_label'          => 'Your username',
-            'password_label'          => 'Your password',
+            'username_label'          => new TranslatableMessage('Your username'),
+            'password_label'          => new TranslatableMessage('Your password'),
             'sign_in_label'           => 'Log in',
             'username_parameter'      => 'username',
             'password_parameter'      => 'password',
             'forgot_password_enabled' => false,
-            'forgot_password_label'   => 'Forgot your password?',
+            'forgot_password_label'   => new TranslatableMessage('Forgot your password?'),
             'remember_me_enabled'     => true,
-            'remember_me_parameter'   => 'custom_remember_me_param',
+            'remember_me_parameter'   => 'remember_me',
             'remember_me_checked'     => true,
-            'remember_me_label'       => 'Remember me',
+            'remember_me_label'       => new TranslatableMessage('Remember me'),
         ];
 
         if (!is_null($favicon)) {

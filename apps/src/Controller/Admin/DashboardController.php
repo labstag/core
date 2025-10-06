@@ -86,7 +86,7 @@ class DashboardController extends AbstractDashboardController
         // Template management (kept separate for clarity)
         yield $this->menuItemFactory->createContentSubMenu(
             'template',
-            'Templates',
+            new TranslatableMessage('Templates'),
             'fas fa-code',
             TemplateCrudController::class
         );

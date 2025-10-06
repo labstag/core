@@ -1,6 +1,11 @@
 {% set instance = entity.instance %}
-{% for transition in workflow_transitions(instance) %}
+{% set transitions = workflow_transitions(instance) %}
+<ul>
+{% for transition in transitions %}
     {% if workflow_can(instance, transition.name) %}
-        <a href="{{ path('admin_workflow', {'uid': instance.id, 'transition': transition.name, 'entity': entity.fqcn}) }}">{{ transition.name }}</a>
+        <li>
+            <a href="{{ path('admin_workflow', {'uid': instance.id, 'transition': transition.name, 'entity': entity.fqcn}) }}">{{ transition.name }}</a>
+        </li>
     {% endif %}
 {% endfor %}
+</ul>

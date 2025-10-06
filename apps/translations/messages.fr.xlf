@@ -1053,6 +1053,50 @@
         <source>Submission</source>
         <target>Soumission</target>
       </trans-unit>
+      <trans-unit id="ZA5P5D7" resname="HTTP Error Log">
+        <source>HTTP Error Log</source>
+        <target>Journal d'erreurs HTTP</target>
+      </trans-unit>
+      <trans-unit id="KOzju8m" resname="HTTP Error Logs">
+        <source>HTTP Error Logs</source>
+        <target>Journaux d'erreurs HTTP</target>
+      </trans-unit>
+      <trans-unit id="BCGjfox" resname="Users">
+        <source>Users</source>
+        <target>Utilisateurs</target>
+      </trans-unit>
+      <trans-unit id="UAJHZoi" resname="Blocks">
+        <source>Blocks</source>
+        <target>Blocs</target>
+      </trans-unit>
+      <trans-unit id="QCTz9cx" resname="Stories">
+        <source>Stories</source>
+        <target>Histoires</target>
+      </trans-unit>
+      <trans-unit id="H72iH01" resname="Geo Code">
+        <source>Geo Code</source>
+        <target>Code géographique</target>
+      </trans-unit>
+      <trans-unit id="pk.aMeY" resname="Geo Codes">
+        <source>Geo Codes</source>
+        <target>Codes géographiques</target>
+      </trans-unit>
+      <trans-unit id="mRBu7fA" resname="Your username">
+        <source>Your username</source>
+        <target>Votre nom d'utilisateur</target>
+      </trans-unit>
+      <trans-unit id="emNzEru" resname="Your password">
+        <source>Your password</source>
+        <target>Votre mot de passe</target>
+      </trans-unit>
+      <trans-unit id="Fztxgjr" resname="Forgot your password?">
+        <source>Forgot your password?</source>
+        <target>Mot de passe oublié ?</target>
+      </trans-unit>
+      <trans-unit id="WevL4T_" resname="Remember me">
+        <source>Remember me</source>
+        <target>Se souvenir de moi</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
