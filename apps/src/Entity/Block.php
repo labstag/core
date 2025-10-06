@@ -13,7 +13,8 @@ use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
-#[ORM\Table(indexes: [new ORM\Index(name: 'IDX_BLOCK_SLUG', columns: ['slug'])])]
+#[ORM\Table]
+#[ORM\Index(name: 'IDX_BLOCK_SLUG', columns: ['slug'])]
 class Block implements Stringable
 {
 
