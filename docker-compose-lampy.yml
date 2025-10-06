@@ -17,6 +17,7 @@ services:
       - redis
     volumes:
       - ${PWD}/apps:/var/www/:rw
+      - ${PWD}/conf/apache2:/etc/apache2
       - ${PWD}/conf/php.ini-development://usr/local/etc/php/conf.d/php.ini
     environment:
       APP_SECRET: "CHANGEME"

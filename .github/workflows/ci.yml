@@ -86,6 +86,7 @@ jobs:
       
       - name: Deploy containers
         run: |
+          task labstag:getapacheconf
           task labstag:getpull-image
           task labstag:install-first
           task labstag:deploy
