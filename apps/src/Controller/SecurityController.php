@@ -73,7 +73,7 @@ class SecurityController extends AbstractController
             'target_path'             => $this->generateUrl('admin'),
             'username_label'          => new TranslatableMessage('Your username'),
             'password_label'          => new TranslatableMessage('Your password'),
-            'sign_in_label'           => 'Log in',
+            'sign_in_label'           => new TranslatableMessage('Log in'),
             'username_parameter'      => 'username',
             'password_parameter'      => 'password',
             'forgot_password_enabled' => false,
