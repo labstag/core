@@ -16,12 +16,10 @@ vars:
   PROJECT_NAME: '{{.PROJECT_NAME | default "labstag"}}'
   PROJECT_VERSION: '1.0.0'
   ENVIRONMENT: '{{.ENVIRONMENT | default "development"}}'
-  SWARM_DEFAULT_ADDR_POOL: '{{.IPSWARM | default "10.20.0.0/16"}}'
-  SWARM_ADVERTISE_ADDR: '{{.ADVERTISEADDR | default "192.168.1.46"}}'
   STACK_NAME: '{{.STACK | default "labstag"}}'
   FOLDERSQL: '{{.FOLDERSQL | default "database_init"}}'
   FILESQL: '{{.FILESQL | default "dump.sql"}}'
-  FOLDERLAMPY: '{{.FOLDERLAMPY | default "labstag"}}'
+  FOLDERLAMPY: '{{.FOLDERLAMPY | default "lampy"}}'
   SERVERNAME: '{{.SERVERNAME | default "labstag.traefik.me"}}'
   DOCKERCOMPOSEFILE: '{{.DOCKERCOMPOSEFILE | default "docker-compose.yml"}}'
 
