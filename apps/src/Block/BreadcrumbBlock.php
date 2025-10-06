@@ -8,6 +8,7 @@ use Labstag\Entity\Block;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Override;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class BreadcrumbBlock extends BlockLib
@@ -40,6 +41,7 @@ class BreadcrumbBlock extends BlockLib
         $request = $this->requestStack->getCurrentRequest();
         $slug    = $request->attributes->get('slug');
         $urls    = $this->setBreadcrumb($slug);
+        $params = $this->getParamsAttributes($request);
 
         if (0 == count($urls)) {
             $this->setShow($block, false);
@@ -50,11 +52,26 @@ class BreadcrumbBlock extends BlockLib
         $this->setData(
             $block,
             [
+                'params' => $params,
                 'urls'  => $urls,
                 'block' => $block,
                 'data'  => $data,
             ]
         );
+    }
+
+    private function getParamsAttributes(Request $request): array
+    {
+        $params = $request->attributes->get('_route_params', []);
+        if (isset($params['slug'])) {
+            unset($params['slug']);
+        }
+
+        if (isset($params['page']) && 1 == $params['page']) {
+            unset($params['page']);
+        }
+
+        return $params;
     }
 
     #[Override]

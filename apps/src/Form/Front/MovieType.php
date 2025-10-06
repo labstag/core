@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -20,6 +21,7 @@ class MovieType extends AbstractType
 {
     public function __construct(
         protected MovieService $movieService,
+        protected RequestStack $requestStack,
     )
     {
     }
@@ -113,10 +115,11 @@ class MovieType extends AbstractType
 
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
+
         $optionsResolver->setDefaults(
             [
                 'csrf_protection' => false,
-                'action'          => '/mes-derniers-films-vus',
+                'action'          => $this->requestStack->getCurrentRequest()?->getPathInfo(),
                 'method'          => 'GET',
                 'data_class'      => null,
             ]

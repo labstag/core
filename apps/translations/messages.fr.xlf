@@ -1097,6 +1097,10 @@
         <source>Remember me</source>
         <target>Se souvenir de moi</target>
       </trans-unit>
+      <trans-unit id="RxIIlzy" resname="Log in">
+        <source>Log in</source>
+        <target>Se connecter</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
