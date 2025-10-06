@@ -100,7 +100,7 @@ tasks:
     cmds:
     - task: docker:stack:check:containers:ready
       vars:
-        CONTAINERS: "phpfpm"
+        CONTAINERS: "www"
         STACK_NAME: "{{.STACK_NAME}}"
 
   labstag:ls:
@@ -129,12 +129,12 @@ tasks:
         TOOLS_DIR: ./../apps
 
   labstag:bash:
-    desc: "Ouvre un shell bash dans le conteneur phpfpm"
+    desc: "Ouvre un shell bash dans le conteneur www"
     cmds:
     - task: docker:stack:shell
       vars:
         STACK_NAME: "labstag"
-        SERVICE_NAME: "phpfpm"
+        SERVICE_NAME: "www"
 
   labstag:cmd-exec:
     desc: "Affiche les informations Symfony"
@@ -145,7 +145,7 @@ tasks:
     - task: docker:stack:exec
       vars:
         STACK_NAME: "labstag"
-        SERVICE_NAME: "phpfpm"
+        SERVICE_NAME: "www"
         COMMAND: "{{.COMMAND}}"
         INTERACTIVE: "{{.INTERACTIVE}}"
 
