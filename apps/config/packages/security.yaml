@@ -28,10 +28,11 @@ security:
       remember_me:
         secret: '%kernel.secret%'
         lifetime: 604800 # 1 week in seconds
-        remember_me_parameter: "login[remember_me]"
+        remember_me_parameter: "remember_me"
         path: /
-        samesite: 'strict'
+        samesite: 'lax'
         domain: ~
+        secure: auto
         token_provider:
           doctrine: true
       logout:

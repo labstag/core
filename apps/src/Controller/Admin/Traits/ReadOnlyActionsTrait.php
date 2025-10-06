@@ -15,8 +15,6 @@ trait ReadOnlyActionsTrait
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
         $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
-        $actions->remove(Crud::PAGE_INDEX, Action::DELETE);
-        $actions->remove(Crud::PAGE_DETAIL, Action::DELETE);
         $actions->remove(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE);
         $actions->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN);
     }
