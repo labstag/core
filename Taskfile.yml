@@ -126,8 +126,8 @@ tasks:
     desc: "Exécute une commande dans un conteneur en cours d'exécution"
     cmds:
     - task: labstag:copysql
-    - task: labstag:getapacheconf
     - task: labstag:getpull-image
+    - task: labstag:getapacheconf
     - task: labstag:deploy
     - task: labstag:waiting
     - task: labstag:ls

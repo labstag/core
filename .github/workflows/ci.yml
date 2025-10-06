@@ -173,17 +173,7 @@ jobs:
           browser: chrome
           record: false
           parallel: false
-          config: |
-            screenshotOnRunFailure=true,
-            video=true,
-            videoCompression=32,
-            defaultCommandTimeout=10000,
-            requestTimeout=10000,
-            responseTimeout=10000,
-            retries={
-              "runMode": 2,
-              "openMode": 0
-            }
+          config: screenshotOnRunFailure=true,video=true,videoCompression=32,defaultCommandTimeout=10000,requestTimeout=10000,responseTimeout=10000,retries={"runMode":2,"openMode":0}
         env:
           CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
