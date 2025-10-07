@@ -30,6 +30,7 @@ services:
       DATABASE_USER: labstag
       DATABASE_PASSWORD: password
       DATABASE_URL: "mysqli://labstag:password@mariadb:3306/labstag_bdd"
+      HOME: "/var/www"
     networks:
       - net
       - serverlampy
