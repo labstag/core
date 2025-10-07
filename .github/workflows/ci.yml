@@ -12,7 +12,6 @@ on:
       - '.gitignore'
 
 env:
-  NODE_VERSION: '22'
   DOCKER_COMPOSE_VERSION: '2.29.7'
   PHP_VERSION: '8.3'
 
@@ -43,7 +42,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'npm'
           cache-dependency-path: 'package-lock.json'
       
