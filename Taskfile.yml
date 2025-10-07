@@ -48,6 +48,14 @@ tasks:
     cmds:
     - task: default
 
+  labstag:fix-permissions:
+    desc: "Corrige les permissions des fichiers Labstag (utilisation manuelle si nécessaire)"
+    silent: true
+    cmds:
+    - chmod -R 755 ./apps
+    - chmod -R 777 ./apps/var
+    - chmod -R 777 ./apps/public/uploads
+
   labstag:getapacheconf:
     desc: "Récupère la configuration Apache depuis l'image Docker"
     silent: true
@@ -79,6 +87,7 @@ tasks:
       vars:
         SOURCE_FILE: ./{{.FOLDERSQL}}/{{.FILESQL}}
         DEST_DIR: "{{.FOLDERLAMPY}}/mariadb_init/"
+        FORCE: true
 
   labstag:getpull-image:
     desc: "Télécharge les images Docker définies dans le docker-compose.yml"
@@ -123,6 +132,7 @@ tasks:
   labstag:exec:
     desc: "Exécute une commande dans un conteneur en cours d'exécution"
     cmds:
+    - task: labstag:set-env-ids
     - task: labstag:copysql
     - task: labstag:getpull-image
     - task: labstag:getapacheconf
@@ -795,3 +805,21 @@ tasks:
     - task: labstag:delete-oldfiles
     - task: star
     - task: labstag:movies-add
+
+  labstag:set-env-ids:
+    desc: "Met à jour les UID/GID dans le fichier .env"
+    silent: true
+    cmds:
+    - |
+      if ! grep -q "UID=" .env; then
+        echo "UID=$(id -u)" >> .env
+      else
+        sed -i "s/UID=.*/UID=$(id -u)/" .env
+      fi
+    - |
+      if ! grep -q "GID=" .env; then
+        echo "GID=$(id -g)" >> .env
+      else
+        sed -i "s/GID=.*/GID=$(id -g)/" .env
+      fi
+
