@@ -1,19 +1,13 @@
 name: CI Pipeline
 on: 
   push:
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.gitignore'
+    branches: [main, develop]
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.gitignore'
+    branches: [main, develop]
+
 
 env:
   DOCKER_COMPOSE_VERSION: '2.29.7'
-  PHP_VERSION: '8.3'
 
 jobs:
   ci:
