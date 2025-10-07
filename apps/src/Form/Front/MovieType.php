@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 /**
@@ -21,6 +22,7 @@ class MovieType extends AbstractType
 {
     public function __construct(
         protected MovieService $movieService,
+        protected RouterInterface $router,
         protected RequestStack $requestStack,
     )
     {
@@ -115,11 +117,13 @@ class MovieType extends AbstractType
 
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
+        $request = $this->requestStack->getCurrentRequest();
+        $slug = $request->attributes->get('slug');
 
         $optionsResolver->setDefaults(
             [
                 'csrf_protection' => false,
-                'action'          => $this->requestStack->getCurrentRequest()?->getPathInfo(),
+                'action'          => $this->router->generate('front', ['slug' => $slug]),
                 'method'          => 'GET',
                 'data_class'      => null,
             ]
