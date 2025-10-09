@@ -1,6 +1,8 @@
 /node_modules
 /apps/vendor
 /apps/bin/
+/apps/.symfony5
+/apps/.bash_history
 !/apps/bin/console
 /apps/public/assets
 !/apps/private
