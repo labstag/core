@@ -1,0 +1,14 @@
+[
+    {
+        "version": "8.4.3",
+        "path": "/usr/local",
+        "php_path": "/usr/local/bin/php",
+        "fpm_path": "",
+        "cgi_path": "",
+        "php_config_path": "/usr/local/bin/php-config",
+        "phpize_path": "/usr/local/bin/phpize",
+        "phpdbg_path": "",
+        "is_system": true,
+        "frankenphp": false
+    }
+]

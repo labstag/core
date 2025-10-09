@@ -5,6 +5,7 @@ namespace Labstag\Twig\Runtime;
 use Labstag\Entity\Block;
 use Labstag\Service\BlockService;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class BlockExtensionRuntime implements RuntimeExtensionInterface
@@ -31,7 +32,8 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         }
 
         $data['data-context_url']  = $urlAdmin;
-        $data['data-context_text'] = 'Créer block (' . $block->getType() . ')';
+        $translate = new TranslatableMessage('Update block (%type%)', ['%type%' => $block->getType()], 'messages');
+        $data['data-context_text'] = $translate->__toString();
 
         return $data;
     }
