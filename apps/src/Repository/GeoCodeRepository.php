@@ -4,8 +4,11 @@ namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\GeoCode;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<GeoCode>
+ */
 class GeoCodeRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -17,9 +20,12 @@ class GeoCodeRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->createQueryBuilder('g');
 
-        $query = $queryBuilder->select('g.' . $type . ', count(g.id) as count');
-        $query->groupBy('g.' . $type);
+        $queryBuilder->select('g.' . $type . ', count(g.id) as count');
+        $queryBuilder->groupBy('g.' . $type);
 
-        return $query->getQuery()->getResult();
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'geocode-' . md5($type));
+
+        return $query->getResult();
     }
 }

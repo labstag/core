@@ -3,16 +3,18 @@
 namespace Labstag\Service;
 
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Meta;
 use ReflectionClass;
 use stdClass;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Twig\Environment;
 
-class MetaService
+final class MetaService
 {
     public function __construct(
-        protected EntityManagerInterface $entityManager,
+        private Environment $twigEnvironment,
+        private ViewResolverService $viewResolverService,
+        private FileService $fileService,
     )
     {
     }
@@ -46,5 +48,45 @@ class MetaService
         }
 
         return $return;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getImageForMetatags(object $entity): ?array
+    {
+        $file = $this->fileService->asset($entity, 'img');
+        if ('' === $file) {
+            return null;
+        }
+
+        $file = str_replace('/uploads/', '', $file);
+        $file = $this->fileService->getFileInAdapter('public', $file);
+
+        return $this->fileService->getInfoImage($file);
+    }
+
+    public function getMetatags(object $entity): Meta
+    {
+        $meta = $entity->getMeta();
+        if (!$meta instanceof Meta) {
+            $meta = new Meta();
+        }
+
+        if (!is_null($meta->getDescription()) && '' !== $meta->getDescription()) {
+            return $meta;
+        }
+
+        $html = $this->twigEnvironment->render(
+            'metagenerate.html.twig',
+            $this->viewResolverService->getDataByEntity($entity, true)
+        );
+
+        $text = trim((string) preg_replace('/\s+/', ' ', strip_tags($html)));
+        $text = mb_substr($text, 0, 256);
+
+        $meta->setDescription($text);
+
+        return $meta;
     }
 }

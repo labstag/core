@@ -2,7 +2,7 @@
 
 namespace Labstag\Email;
 
-use Labstag\Lib\EmailLib;
+use Labstag\Email\Abstract\EmailLib;
 use Labstag\Replace\LinkApprovalReplace;
 use Override;
 
@@ -34,7 +34,7 @@ class UserSubmitEmail extends EmailLib
     #[Override]
     public function init(): void
     {
-        $configuration = $this->siteService->getConfiguration();
+        $configuration = $this->configurationService->getConfiguration();
         parent::init();
         $this->to($configuration->getEmail());
     }

@@ -4,8 +4,8 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
+use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Category;
-use Labstag\Lib\FixtureLib;
 use Override;
 
 class CategoryFixtures extends FixtureLib
@@ -56,7 +56,7 @@ class CategoryFixtures extends FixtureLib
     {
         $tab = [];
         foreach ($this->categories as $key => $value) {
-            if (0 != substr_count($key, $code)) {
+            if (0 != substr_count((string) $key, $code)) {
                 $tab[$key] = $value;
             }
         }

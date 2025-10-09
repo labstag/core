@@ -7,16 +7,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Redirection;
 use Labstag\Form\Admin\RedirectionImportType;
-use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\RedirectionRepository;
-use Override;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -24,6 +22,7 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 use ZipArchive;
 
@@ -31,7 +30,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
 {
     private const FIELDCSV = 2;
 
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
@@ -42,34 +41,41 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
         yield $this->addTabPrincipal();
-        yield $this->addFieldID();
-        yield TextField::new('source', new TranslatableMessage('Source'));
+        yield $this->crudFieldFactory->idField();
+        $textField = TextField::new('source', new TranslatableMessage('Source'));
+        if (Action::NEW === $pageName) {
+            $request       = $this->requestStack->getCurrentRequest();
+            $defaultSource = $request->query->get('source', '');
+            $textField->setFormTypeOptions(
+                ['data' => $defaultSource]
+            );
+        }
+
+        yield $textField;
         yield TextField::new('destination', new TranslatableMessage('Destination'));
         yield IntegerField::new('action_code', new TranslatableMessage('Action code'));
-        yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->renderAsSwitch(false)->hideOnForm();
-        yield $this->addFieldBoolean('regex', new TranslatableMessage('Regex'))->hideOnIndex();
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
+        yield $this->crudFieldFactory->booleanField('regex', (string) new TranslatableMessage('Regex'), false)->hideOnForm();
+        yield $this->crudFieldFactory->booleanField('regex', (string) new TranslatableMessage('Regex'), false)->hideOnIndex();
+        yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
         yield IntegerField::new('last_count', new TranslatableMessage('Last count'))->hideonForm();
-        $date = $this->addTabDate();
-        foreach ($date as $field) {
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
             yield $field;
         }
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->addFilterEnable($filters);
+        $this->crudFieldFactory->addFilterEnable($filters);
 
         return $filters;
     }
 
-    #[Override]
+    #[\Override]
     public function createEntity(string $entityFqcn): Redirection
     {
         $redirection = new $entityFqcn();
@@ -138,9 +144,11 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         );
     }
 
-    public function testSource(AdminContext $adminContext): RedirectResponse
+    #[Route('/admin/redirection/{entity}/test', name: 'admin_redirection_test')]
+    public function testSource(string $entity): RedirectResponse
     {
-        $redirection = $adminContext->getEntity()->getInstance();
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $redirection                = $serviceEntityRepositoryLib->find($entity);
 
         return $this->redirect($redirection->getSource());
     }
@@ -154,6 +162,10 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $this->redirect($generator->generateUrl());
     }
 
+    /**
+     * @param array<int, string>            $header
+     * @param list<array<int, string|null>> $rows
+     */
     protected function sendToExport(array $header, array $rows): Response
     {
         $tempZip    = tmpfile();
@@ -172,7 +184,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
                 $path   = $this->getFilename($now->format('Ymd') . '-export.', mb_strtolower($writerType));
                 $writer = IOFactory::createWriter($spreadsheet, $writerType);
                 $writer->save($path);
-                $zipArchive->addFile($path, basename((string) $path));
+                $zipArchive->addFile($path, basename($path));
             }
         } catch (Exception $exception) {
             throw new Exception($exception->getMessage(), $exception->getCode(), $exception);
@@ -220,14 +232,21 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
-        $action->linkToCrudAction('testSource');
+        $action->linkToUrl(
+            fn ($entity): string => $this->generateUrl(
+                'admin_redirection_test',
+                [
+                    'entity' => $entity->getId(),
+                ]
+            )
+        );
 
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function getFilename(string $filename, string $extension = 'xlsx')
+    private function getFilename(string $filename, string $extension = 'xlsx'): string
     {
         $originalExtension = pathinfo($filename, PATHINFO_EXTENSION);
 
@@ -248,14 +267,20 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $tempFolder;
     }
 
-    private function importCsv($file, RedirectionRepository $redirectionRepository): array
+    /**
+     * @return Redirection[]
+     */
+    private function importCsv(
+        \Symfony\Component\HttpFoundation\File\UploadedFile $uploadedFile,
+        RedirectionRepository $redirectionRepository,
+    ): array
     {
         $data        = [];
         $csv         = new Csv();
-        $spreadsheet = $csv->load($file->getPathname());
+        $spreadsheet = $csv->load($uploadedFile->getPathname());
         $sheetData   = $spreadsheet->getActiveSheet()->toArray();
-        $head = $sheetData[0];
-        $find = $this->setFind($head);
+        $head        = $sheetData[0];
+        $find        = $this->setFind($head);
         if (self::FIELDCSV != $find) {
             $this->addFlash('danger', 'Le fichier n\'est pas correctement formaté');
 
@@ -288,7 +313,10 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         return $data;
     }
 
-    private function setFind($head): int
+    /**
+     * @param array<string, mixed> $head
+     */
+    private function setFind(array $head): int
     {
         $find = 0;
         foreach ($head as $key => $value) {

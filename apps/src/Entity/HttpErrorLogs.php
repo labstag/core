@@ -4,12 +4,14 @@ namespace Labstag\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\HttpErrorLogsRepository;
-use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: HttpErrorLogsRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 class HttpErrorLogs
 {
     use SoftDeleteableEntity;
@@ -39,6 +41,9 @@ class HttpErrorLogs
     #[ORM\ManyToOne(inversedBy: 'httpErrorLogs')]
     private ?User $refuser = null;
 
+    /**
+     * @var array<string, mixed>
+     */
     #[ORM\Column(type: Types::JSON)]
     private array $requestData = [];
 
@@ -83,6 +88,9 @@ class HttpErrorLogs
         return $this->refuser;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getRequestData(): array
     {
         return $this->requestData;
@@ -140,6 +148,9 @@ class HttpErrorLogs
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $requestData
+     */
     public function setRequestData(array $requestData): static
     {
         $this->requestData = $requestData;

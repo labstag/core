@@ -6,8 +6,11 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Star;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<Star>
+ */
 class StarRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -19,10 +22,24 @@ class StarRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->createQueryBuilder('s');
 
-        $query = $queryBuilder->select('s.' . $type . ', count(s.id) as count');
-        $query->groupBy('s.' . $type);
+        $queryBuilder = $queryBuilder->select('s.' . $type . ', count(s.id) as count');
+        $queryBuilder->groupBy('s.' . $type);
 
-        return $query->getQuery()->getResult();
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'star-' . md5($type));
+
+        return $query->getResult();
+    }
+
+    public function findTotalEnable(): mixed
+    {
+        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder->select('count(s.id)');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'star-total-enable');
+
+        return $query->getSingleScalarResult();
     }
 
     public function getQueryBuilder(): QueryBuilder
@@ -34,10 +51,16 @@ class StarRepository extends ServiceEntityRepositoryLib
         return $queryBuilder->orderBy('s.title', 'ASC');
     }
 
+    /**
+     * @return Query<mixed, mixed>
+     */
     public function getQueryPaginator(): Query
     {
         $queryBuilder = $this->getQueryBuilder();
 
-        return $queryBuilder->getQuery();
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'star-query-paginator');
+
+        return $query;
     }
 }

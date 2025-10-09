@@ -8,20 +8,22 @@ use Labstag\Entity\Chapter;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Enum\PageEnum;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Repository\ChapterRepository;
 
-class SitemapService
+final class SitemapService
 {
 
     /**
      * @var string[]
      */
-    protected array $parent = [];
+    private array $parent = [];
 
     public function __construct(
-        protected EntityManagerInterface $entityManager,
-        protected SiteService $siteService,
+        private ConfigurationService $configurationService,
+        private SlugService $slugService,
+        private EntityManagerInterface $entityManager,
     )
     {
     }
@@ -31,7 +33,7 @@ class SitemapService
      */
     public function getData(bool $all = false): array
     {
-        $configuration = $this->siteService->getConfiguration();
+        $configuration = $this->configurationService->getConfiguration();
 
         $tabs = $this->getDataPages();
         if ($configuration->isSitemapPosts() || true == $all) {
@@ -49,51 +51,11 @@ class SitemapService
     }
 
     /**
-     * @param mixed[] $urls
-     *
-     * @return mixed[]
-     */
-    public function setTabsByParent(array $urls, string $parent): array
-    {
-        $tabs = [];
-        foreach ($urls as $url => $data) {
-            $result = str_replace($parent, '', (string) $url);
-            if (str_starts_with((string) $url, $parent) && !isset($this->parent[$url]) && $this->verifFirstChar(
-                $result
-            )
-            ) {
-                $this->parent[$url] = true;
-                $data['parent']     = $this->setTabsByParent($urls, $url);
-                $tabs[$url]         = $data;
-            }
-        }
-
-        return $tabs;
-    }
-
-    protected function getRepository(string $entity): ServiceEntityRepositoryLib
-    {
-        $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
-            throw new Exception('Repository not found');
-        }
-
-        return $entityRepository;
-    }
-
-    protected function verifFirstChar(string $url): bool
-    {
-        $result = substr($url, 0, 1);
-
-        return '-' !== $result;
-    }
-
-    /**
      * @return mixed[]
      */
     private function formatData(object $entity): array
     {
-        $url = $this->siteService->getSlugByEntity($entity);
+        $url = $this->slugService->forEntity($entity);
 
         return [
             '/' . $url => ['entity' => $entity],
@@ -144,6 +106,11 @@ class SitemapService
      */
     private function getDataPosts(): array
     {
+        $listing = $this->slugService->getPageByType(PageEnum::POSTS->value);
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
+
         return $this->getDataFromRepository(Post::class);
     }
 
@@ -152,7 +119,25 @@ class SitemapService
      */
     private function getDataStory(): array
     {
+        $listing = $this->slugService->getPageByType(PageEnum::STORIES->value);
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
+
         return $this->getDataFromRepository(Story::class);
+    }
+
+    /**
+     * @return ServiceEntityRepositoryLib<object>
+     */
+    private function getRepository(string $entity): ServiceEntityRepositoryLib
+    {
+        $entityRepository = $this->entityManager->getRepository($entity);
+        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+            throw new Exception('Repository not found');
+        }
+
+        return $entityRepository;
     }
 
     /**
@@ -168,5 +153,35 @@ class SitemapService
         }
 
         return $tabs;
+    }
+
+    /**
+     * @param mixed[] $urls
+     *
+     * @return mixed[]
+     */
+    private function setTabsByParent(array $urls, string $parent): array
+    {
+        $tabs = [];
+        foreach ($urls as $url => $data) {
+            $result = str_replace($parent, '', (string) $url);
+            if (str_starts_with((string) $url, $parent) && !isset($this->parent[$url]) && $this->verifFirstChar(
+                $result
+            )
+            ) {
+                $this->parent[$url] = true;
+                $data['parent']     = $this->setTabsByParent($urls, $url);
+                $tabs[$url]         = $data;
+            }
+        }
+
+        return $tabs;
+    }
+
+    private function verifFirstChar(string $url): bool
+    {
+        $result = substr($url, 0, 1);
+
+        return '-' !== $result;
     }
 }

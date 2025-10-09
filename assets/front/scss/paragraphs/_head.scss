@@ -1,5 +1,0 @@
-@use './../mixins' as mixins;
-.paragraph_head{
-  @include mixins.background-head();
-  margin-bottom: 20rem;
-}

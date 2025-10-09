@@ -5,7 +5,11 @@ namespace Labstag\Form\Type;
 use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class ParagraphType extends AbstractType
 {
     #[Override]
@@ -13,7 +17,7 @@ class ParagraphType extends AbstractType
     {
         $optionsResolver->setDefaults(
             [
-                'placeholder'   => 'Choisir le paragraphe',
+                'placeholder'   => new TranslatableMessage('Choose paragraph'),
                 'choices'       => [],
                 'urlparagraphs' => null,
                 'list'          => null,

@@ -5,16 +5,16 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Submission;
-use Labstag\Lib\AbstractCrudControllerLib;
-use Labstag\Lib\FrontFormLib;
-use Override;
+use Labstag\FrontForm\Abstract\FrontFormLib;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SubmissionCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
@@ -24,11 +24,11 @@ class SubmissionCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        yield $this->addFieldID();
+        yield $this->crudFieldFactory->idField();
         yield TextField::new('type', new TranslatableMessage('Type'));
         if (Action::DETAIL === $pageName) {
             $fields = $this->addFieldsSubmission($currentEntity);
@@ -37,8 +37,7 @@ class SubmissionCrudController extends AbstractCrudControllerLib
             }
         }
 
-        $date = $this->addTabDate();
-        foreach ($date as $field) {
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
             yield $field;
         }
     }
@@ -48,6 +47,9 @@ class SubmissionCrudController extends AbstractCrudControllerLib
         return Submission::class;
     }
 
+    /**
+     * @return iterable<FieldInterface>
+     */
     private function addFieldsSubmission(Submission $submission): iterable
     {
         $data = $submission->getData();

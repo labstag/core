@@ -2,7 +2,7 @@
 
 namespace Labstag\Replace;
 
-use Labstag\Lib\ReplaceLib;
+use Labstag\Replace\Abstract\ReplaceLib;
 
 class LinkApprovalReplace extends ReplaceLib
 {
@@ -12,7 +12,7 @@ class LinkApprovalReplace extends ReplaceLib
             return '';
         }
 
-        $configuration = $this->siteService->getConfiguration();
+        $configuration = $this->configurationService->getConfiguration();
         $entity        = $this->data['user'];
 
         return $configuration->getUrl() . $this->router->generate(

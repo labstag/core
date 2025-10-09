@@ -4,9 +4,14 @@ namespace Labstag\Command;
 
 use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
+use Labstag\Entity\Saga;
+use Labstag\Entity\Tag;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
+use Labstag\Repository\SagaRepository;
+use Labstag\Repository\TagRepository;
 use Labstag\Service\FileService;
+use Labstag\Service\MovieService;
 use NumberFormatter;
 use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -28,12 +33,30 @@ class MovieAddCommand extends Command
      */
     private array $categories = [];
 
+    /**
+     * @var array<string, mixed>
+     */
+    private array $imdbs = [];
+
+    /**
+     * @var Saga[]
+     */
+    private array $sagas = [];
+
+    /**
+     * @var Tag[]
+     */
+    private array $tags = [];
+
     private int $update = 0;
 
     public function __construct(
         protected MovieRepository $movieRepository,
+        protected MovieService $movieService,
         protected FileService $fileService,
         protected CategoryRepository $categoryRepository,
+        protected TagRepository $tagRepository,
+        protected SagaRepository $sagaRepository,
     )
     {
         parent::__construct();
@@ -52,6 +75,8 @@ class MovieAddCommand extends Command
             ]
         );
         if ($category instanceof Category) {
+            $this->categories[$value] = $category;
+
             return $category;
         }
 
@@ -63,6 +88,34 @@ class MovieAddCommand extends Command
         $this->categories[$value] = $category;
 
         return $category;
+    }
+
+    public function getTag(string $value): Tag
+    {
+        if (isset($this->tags[$value])) {
+            return $this->tags[$value];
+        }
+
+        $tag = $this->tagRepository->findOneBy(
+            [
+                'type'  => 'movie',
+                'title' => $value,
+            ]
+        );
+        if ($tag instanceof Tag) {
+            $this->tags[$value] = $tag;
+
+            return $tag;
+        }
+
+        $tag = new Tag();
+        $tag->setType('movie');
+        $tag->setTitle($value);
+
+        $this->tagRepository->save($tag);
+        $this->tags[$value] = $tag;
+
+        return $tag;
     }
 
     protected function addOrUpdate(Movie $movie): void
@@ -88,7 +141,6 @@ class MovieAddCommand extends Command
             return Command::FAILURE;
         }
 
-        $this->disableAll();
         $csv = new Csv();
         $csv->setDelimiter(';');
         $csv->setSheetIndex(0);
@@ -121,7 +173,9 @@ class MovieAddCommand extends Command
         $progressBar->start();
         foreach ($dataJson as $data) {
             $movie = $this->setMovie($data);
+            $this->movieService->update($movie);
             $this->addOrUpdate($movie);
+
             ++$counter;
 
             $this->movieRepository->persist($movie);
@@ -132,11 +186,20 @@ class MovieAddCommand extends Command
         $this->movieRepository->flush();
         $progressBar->finish();
 
+        $oldsMovies = $this->movieRepository->findMoviesNotInImdbList($this->imdbs);
+        foreach ($oldsMovies as $oldMovie) {
+            if ($oldMovie->isFile()) {
+                $symfonyStyle->warning(
+                    sprintf('Movie %s (%s) not in list', $oldMovie->getTitle(), $oldMovie->getImdb())
+                );
+            }
+        }
+
         $symfonyStyle->success('All movie added');
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
         $symfonyStyle->success(
             sprintf(
-                'Added: %d, Updated: %d',
+                'Added: %s, Updated: %s',
                 $numberFormatter->format($this->add),
                 $numberFormatter->format($this->update)
             )
@@ -145,31 +208,102 @@ class MovieAddCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function disableAll(): void
+    private function getMovieByImdb(string $imdb): ?Movie
     {
-        $movies = $this->movieRepository->findBy(
-            ['enable' => true]
-        );
-        $counter = 0;
-        foreach ($movies as $movie) {
-            $movie->setEnable(false);
-            ++$counter;
-
-            $this->movieRepository->persist($movie);
-            $this->movieRepository->flush($counter);
+        $searchs[]['imdb'] = $imdb;
+        if (str_starts_with($imdb, 'tt')) {
+            $this->imdbs[]     = $imdb;
+            $searchs[]['imdb'] = str_pad(substr($imdb, 2), 7, '0', STR_PAD_LEFT);
         }
 
-        $this->movieRepository->flush();
+        if (!str_starts_with($imdb, 'tt')) {
+            $this->imdbs[] = 'tt' . str_pad($imdb, 7, '0', STR_PAD_LEFT);
+        }
+
+        foreach ($searchs as $search) {
+            $movie = $this->movieRepository->findOneBy($search);
+            if ($movie instanceof Movie) {
+                return $movie;
+            }
+        }
+
+        return null;
     }
 
-    private function setCategories(Movie $movie, $categories): void
+    private function getSaga(string $value): Saga
     {
-        $oldCategories = $movie->getCategories();
-        foreach ($oldCategories as $oldCategory) {
-            $movie->removeCategory($oldCategory);
+        if (isset($this->sagas[$value])) {
+            return $this->sagas[$value];
         }
 
-        foreach ($categories as $value) {
+        $saga = $this->sagaRepository->findOneBy(
+            ['title' => $value]
+        );
+        if ($saga instanceof Saga) {
+            $this->sagas[$value] = $saga;
+
+            return $saga;
+        }
+
+        $saga = new Saga();
+        $saga->setTitle($value);
+
+        $this->sagaRepository->save($saga);
+        $this->sagas[$value] = $saga;
+
+        return $saga;
+    }
+
+    /**
+     * @param mixed[] $data
+     */
+    private function setMovie(array $data): Movie
+    {
+        $imdb  = (string) $data['ID IMDb'];
+        $movie = $this->getMovieByImdb($imdb);
+        if (!$movie instanceof Movie) {
+            $movie = new Movie();
+            $movie->setFile(true);
+            $movie->setEnable(true);
+            $movie->setAdult(false);
+            $movie->setImdb($imdb);
+        }
+
+        $tags       = explode(',', (string) $data['Tags']);
+        $tmdb       = (string) $data['ID TMDB'];
+        $duration   = empty($data['Durée']) ? null : (int) $data['Durée'];
+        $saga       = empty($data['Saga']) ? null : $data['Saga'];
+        $title      = trim((string) $data['Titre']);
+        $movie->setTmdb($tmdb);
+        $movie->setDuration($duration);
+        $movie->setTitle($title);
+        $this->setSaga($movie, $saga);
+        $this->setTags($movie, $tags);
+
+        return $movie;
+    }
+
+    private function setSaga(Movie $movie, mixed $saga): void
+    {
+        if (is_null($saga) || '' === $saga) {
+            return;
+        }
+
+        $saga = trim(str_replace('- Saga', '', $saga));
+
+        $saga = $this->getSaga($saga);
+
+        $movie->setSaga($saga);
+    }
+
+    private function setTags(Movie $movie, mixed $tags): void
+    {
+        $oldTags = $movie->getTags();
+        foreach ($oldTags as $oldTag) {
+            $movie->removeTag($oldTag);
+        }
+
+        foreach ($tags as $value) {
             $value = trim((string) $value);
             if ('' === $value) {
                 continue;
@@ -179,75 +313,8 @@ class MovieAddCommand extends Command
                 continue;
             }
 
-            $category = $this->getCategory($value);
-            $movie->addCategory($category);
+            $tag = $this->getTag($value);
+            $movie->addTag($tag);
         }
-    }
-
-    private function setEvaluation(array $matches)
-    {
-        return 0.0 !== (float) isset($matches['1']) ? $matches['1'] : null;
-    }
-
-    /**
-     * @param mixed[] $data
-     */
-    private function setMovie(array $data): Movie
-    {
-        $imdb  = str_pad((string) $data['ID IMDb'], 7, '0', STR_PAD_LEFT);
-        $movie = $this->movieRepository->findOneBy(
-            ['imdb' => $imdb]
-        );
-
-        $pattern = '/(\d+\.\d+)\s+\(([\d.]+)([KMB]?) votes\)/';
-        preg_match($pattern, (string) $data['Evaluation IMDb'], $matches);
-        $evaluation = $this->setEvaluation($matches);
-        $suffix     = $this->setSuffix($matches);
-        $votes      = $this->setVotes($suffix, $matches);
-
-        if (!$movie instanceof Movie) {
-            $movie = new Movie();
-            $movie->setEnable(true);
-            $movie->setImdb($imdb);
-        }
-
-        $year     = (int) $data['Année'];
-        $type     = $data['Genre(s)'];
-        $country  = $data['Pays'];
-        $color    = ('<<Inconnu>>' == $data['Couleur']) ? null : $data['Couleur'];
-        $trailer  = empty($data['Bande-annonce']) ? null : $data['Bande-annonce'];
-        $duration = empty($data['Durée']) ? null : $data['Durée'];
-        $title    = trim((string) $data['Titre']);
-        $movie->setEvaluation($evaluation);
-        $movie->setVotes($votes);
-        $movie->setDuration($duration);
-        $movie->setTrailer($trailer);
-        $movie->setColor($color);
-        $movie->setTitle($title);
-        $movie->setYear((0 != $year) ? $year : null);
-        $movie->setCountry(('' != $country) ? $country : null);
-
-        $categories = explode(',', (string) $type);
-        $this->setCategories($movie, $categories);
-
-        return $movie;
-    }
-
-    private function setSuffix(array $matches)
-    {
-        return $matches['3'] ?? null;
-    }
-
-    private function setVotes($suffix, array $matches)
-    {
-        $votes = 0.0 !== (float) isset($matches['2']) ? $matches['1'] : null;
-        match ($suffix) {
-            'K'     => $votes *= 1000,
-            'M'     => $votes *= 1000000,
-            'B'     => $votes *= 1000000000,
-            default => $votes,
-        };
-
-        return $votes;
     }
 }

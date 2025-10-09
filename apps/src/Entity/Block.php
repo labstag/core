@@ -13,8 +13,13 @@ use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
+#[ORM\Table]
+#[ORM\Index(name: 'IDX_BLOCK_SLUG', columns: ['slug'])]
 class Block implements Stringable
 {
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $classes = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
@@ -108,6 +113,11 @@ class Block implements Stringable
         return $this;
     }
 
+    public function getClasses(): ?string
+    {
+        return $this->classes;
+    }
+
     public function getContent(): ?string
     {
         return $this->content;
@@ -149,6 +159,9 @@ class Block implements Stringable
         return $this->region;
     }
 
+    /**
+     * @return string[]|null
+     */
     public function getRoles(): ?array
     {
         return $this->roles;
@@ -199,6 +212,13 @@ class Block implements Stringable
         return $this;
     }
 
+    public function setClasses(?string $classes): static
+    {
+        $this->classes = $classes;
+
+        return $this;
+    }
+
     public function setContent(?string $content): static
     {
         $this->content = $content;
@@ -241,6 +261,9 @@ class Block implements Stringable
         return $this;
     }
 
+    /**
+     * @param string[]|null $roles
+     */
     public function setRoles(?array $roles): static
     {
         $this->roles = $roles;

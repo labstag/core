@@ -10,9 +10,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Labstag\Entity\Traits\TimestampableTrait;
+use Labstag\Entity\Traits\WorkflowTrait;
 use Labstag\Repository\UserRepository;
-use Labstag\Traits\Entity\TimestampableTrait;
-use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -34,7 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @var int
      */
-    protected const DATAUNSERIALIZE = 4;
+    protected const DATAUNSERIALIZE = 3;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
@@ -133,7 +133,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
             $this->id,
             $this->username,
             $this->email,
-            $this->password,
         ];
     }
 
@@ -143,6 +142,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return (string) $this->getUsername();
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
+    /**
+     * @param array{0: mixed, 1: mixed, 2: mixed} $data
+     */
     public function __unserialize(array $data): void
     {
         if (self::DATAUNSERIALIZE === count($data)) {
@@ -150,7 +155,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
                 $this->id,
                 $this->username,
                 $this->email,
-                $this->password,
             ] = $data;
         }
     }
@@ -294,7 +298,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
      * @see PasswordAuthenticatedUserInterface
      */
     #[Override]
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -406,6 +410,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function setAvatar(?string $avatar): void
     {
         $this->avatar = $avatar;
+
+        // Si l'image est supprimée (img devient null), on force la mise à jour
+        if (null === $avatar) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setAvatarFile(?File $avatarFile = null): void

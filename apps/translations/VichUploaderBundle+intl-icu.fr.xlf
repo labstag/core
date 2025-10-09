@@ -7,7 +7,7 @@
     <body>
       <trans-unit id="EgM1sAf" resname="download">
         <source>download</source>
-        <target>Télécharger</target>
+        <target>télécharger</target>
       </trans-unit>
     </body>
   </file>

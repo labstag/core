@@ -6,12 +6,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\User;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Override;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
+/**
+ * @extends ServiceEntityRepositoryLib<User>
+ */
 class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgraderInterface
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -28,6 +31,7 @@ class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgra
         $queryBuilder->setParameters($data);
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'user-by-username-' . md5($field));
 
         return $query->getOneOrNullResult();
     }

@@ -5,9 +5,9 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
+use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Edito;
 use Labstag\Entity\User;
-use Labstag\Lib\FixtureLib;
 use Override;
 
 class EditoFixtures extends FixtureLib implements DependentFixtureInterface

@@ -37,7 +37,6 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
     ) {
     }
 
-    #[Override]
     public function configure(FieldDto $fieldDto, EntityDto $entityDto, AdminContext $adminContext): void
     {
         $instance = $entityDto->getInstance();
@@ -82,6 +81,20 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         $this->configureLast($fieldDto);
     }
 
+    public function generateLinkToAssociatedEntity(?string $crudController, EntityDto $entityDto): ?string
+    {
+        if (is_null($crudController)) {
+            return null;
+        }
+
+        $url = $this->adminUrlGenerator;
+        $url->setController($crudController);
+        $url->setAction(Action::DETAIL);
+        $url->setEntityId($entityDto->getPrimaryKeyValue());
+
+        return $url->generateUrl();
+    }
+
     #[Override]
     public function supports(FieldDto $fieldDto, EntityDto $entityDto): bool
     {
@@ -122,9 +135,12 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->setFormTypeOption('attr.data-ea-autocomplete-endpoint-url', $adminUrlGenerator);
     }
 
+    /**
+     * @param array<string> $propertyNameParts
+     */
     private function configureFirst(
         EntityDto &$entityDto,
-        &$propertyNameParts,
+        array &$propertyNameParts,
         FieldDto &$fieldDto,
         string &$propertyName,
     ): void {
@@ -178,9 +194,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
                 MetaParentField::OPTION_RELATED_URL,
                 $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $relatedEntityDto)
             );
-            $fieldDto->setFormattedValue(
-                $this->formatAsString($relatedEntityDto->getInstance(), $relatedEntityDto)
-            );
+            $fieldDto->setFormattedValue($this->formatAsString($relatedEntityDto->getInstance()));
         } catch (UnexpectedTypeException) {
             throw new RuntimeException(sprintf(
                 'The property "%s" is not accessible in the entity "%s"',
@@ -254,10 +268,10 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
             $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto)
         );
 
-        $fieldDto->setFormattedValue($this->formatAsString($fieldToValue, $targetEntityDto));
+        $fieldDto->setFormattedValue($this->formatAsString($fieldToValue));
     }
 
-    private function countNumElements($collection): int
+    private function countNumElements(mixed $collection): int
     {
         if (is_null($collection)) {
             return 0;
@@ -274,34 +288,12 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         return 0;
     }
 
-    private function formatAsString($entityInstance, EntityDto $entityDto): ?string
+    private function formatAsString(mixed $entityInstance): string
     {
         if (is_null($entityInstance)) {
-            return null;
+            return '';
         }
 
-        if (method_exists($entityInstance, '__toString')) {
-            return (string) $entityInstance;
-        }
-
-        return is_null($primaryKeyValue = $entityDto->getPrimaryKeyValue()) ? $entityDto->getName() : sprintf(
-            '%s #%s',
-            $entityDto->getName(),
-            $primaryKeyValue
-        );
-    }
-
-    private function generateLinkToAssociatedEntity(?string $crudController, EntityDto $entityDto): ?string
-    {
-        if (is_null($crudController)) {
-            return null;
-        }
-
-        $url = $this->adminUrlGenerator;
-        $url->setController($crudController);
-        $url->setAction(Action::DETAIL);
-        $url->setEntityId($entityDto->getPrimaryKeyValue());
-
-        return $url->generateUrl();
+        return (string) $entityInstance;
     }
 }

@@ -1,12 +1,16 @@
-<a href="{{ star.url }}" target="_blank" title="{{ star.title|e('html_attr') }}" area-label="{{ star.title|e('html_attr') }}">
-    <div class="title">{{ star.title }}</div>
+<a href="{{ star.url }}" target="_blank" title="{{ star.title|e('html_attr') }}">
+    <div class="background spoiler" data-bg="{{ site_asset(star, 'img') }}"></div>
+    <h2 class="title">{{ star.title }}</h2>
     <div class="description">{{ star.description|raw }}</div>
     <div>
         <b>{{ 'Informations'|trans }}</b>
         <ul>
-            <li>{{ 'Repository'|trans }}</b> : {{ star.repository }}</li>
-            <li>{{ 'License'|trans }}</b> : {{ star.license }}</li>
-            <li>{{ 'Language'|trans }}</b> : {{ star.language }}</li>
+            {% if star.license != '' %}
+                <li>{{ 'License'|trans }}</b> : {{ star.license }}</li>
+            {% endif %}
+            {% if star.language != '' %}
+                <li>{{ 'Language'|trans }}</b> : {{ star.language }}</li>
+            {% endif %}
             <li>{{ 'Forks'|trans }}</b> : {{ star.forks }}</li>
             <li>{{ 'Stars'|trans }}</b> : {{ star.stargazers }}</li>
             <li>{{ 'Watchers'|trans }}</b> : {{ star.watchers }}</li>

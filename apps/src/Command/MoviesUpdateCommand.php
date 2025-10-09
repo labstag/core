@@ -2,7 +2,6 @@
 
 namespace Labstag\Command;
 
-use Labstag\Entity\Movie;
 use Labstag\Repository\MovieRepository;
 use Labstag\Service\MovieService;
 use NumberFormatter;
@@ -27,67 +26,34 @@ class MoviesUpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $this->updateImage($output, $symfonyStyle);
-        $this->updateDescription($output, $symfonyStyle);
+        $movies       = $this->movieRepository->findAllUpdate();
+
+        $progressBar = new ProgressBar($output, count($movies));
+        $progressBar->start();
+
+        $update  = 0;
+        $counter = 0;
+        $this->movieService->deleteOldCategory();
+        $this->movieService->deleteOldSaga();
+        foreach ($movies as $movie) {
+            $status = $this->movieService->update($movie);
+            $update = $status ? ++$update : $update;
+            ++$counter;
+
+            $this->movieRepository->persist($movie);
+            $this->movieRepository->flush($counter);
+            $progressBar->advance();
+        }
+
+        $this->movieRepository->flush();
+        $this->movieService->deleteOldCategory();
+        $this->movieService->deleteOldSaga();
+
+        $progressBar->finish();
+
+        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
+        $symfonyStyle->success(sprintf('Movie updated: %s', $numberFormatter->format($update)));
 
         return Command::SUCCESS;
-    }
-
-    private function updateImage(OutputInterface $output, SymfonyStyle $symfonyStyle): void
-    {
-        // Movie without img
-        $movies = $this->movieRepository->findBy(
-            ['img' => null]
-        );
-
-        $progressBar = new ProgressBar($output, count($movies));
-        $progressBar->start();
-
-        $update  = 0;
-        $counter = 0;
-        foreach ($movies as $movie) {
-            $status = $this->movieService->updateImage($movie);
-            $update = $status ? ++$update : $update;
-            ++$counter;
-
-            $this->movieRepository->persist($movie);
-            $this->movieRepository->flush($counter);
-            $progressBar->advance();
-        }
-
-        $this->movieRepository->flush();
-        $progressBar->finish();
-
-        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
-        $symfonyStyle->success(sprintf('Images updated: %d', $numberFormatter->format($update)));
-    }
-
-    private function updateDescription(OutputInterface $output, SymfonyStyle $symfonyStyle): void
-    {
-        // Movie without img
-        $movies = $this->movieRepository->findBy(
-            ['description' => null]
-        );
-
-        $progressBar = new ProgressBar($output, count($movies));
-        $progressBar->start();
-
-        $update  = 0;
-        $counter = 0;
-        foreach ($movies as $movie) {
-            $status = $this->movieService->updateDescription($movie);
-            $update = $status ? ++$update : $update;
-            ++$counter;
-
-            $this->movieRepository->persist($movie);
-            $this->movieRepository->flush($counter);
-            $progressBar->advance();
-        }
-
-        $this->movieRepository->flush();
-        $progressBar->finish();
-
-        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
-        $symfonyStyle->success(sprintf('Descriptions updated: %d', $numberFormatter->format($update)));
     }
 }

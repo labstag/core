@@ -4,6 +4,7 @@ namespace Labstag\Twig\Runtime;
 
 use Labstag\Entity\Paragraph;
 use Labstag\Service\ParagraphService;
+use Symfony\Component\Translation\TranslatableMessage;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class ParagraphExtensionRuntime implements RuntimeExtensionInterface
@@ -15,19 +16,31 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
-    public function getClass(Paragraph $paragraph): string
+    /**
+     * @return array<string, mixed>
+     */
+    public function getContextMenu(Paragraph $paragraph): array
     {
-        return 'paragraph_' . $paragraph->getType();
+        $urlAdmin = $this->paragraphService->getUrlAdmin($paragraph);
+        $data     = [
+            'id'    => $this->getId($paragraph),
+            'class' => $this->getClass($paragraph),
+        ];
+
+        if (is_null($urlAdmin)) {
+            return $data;
+        }
+
+        $data['data-context_url']  = $urlAdmin;
+        $translate = new TranslatableMessage('Update paragraph (%type%)', ['%type%' => $paragraph->getType()], 'messages');
+        $data['data-context_text'] = $translate->__toString();
+
+        return $data;
     }
 
     public function getFond(?string $code): ?string
     {
         return $this->paragraphService->getFond($code);
-    }
-
-    public function getId(Paragraph $paragraph): string
-    {
-        return 'paragraph_' . $paragraph->getType() . '-' . $paragraph->getId();
     }
 
     public function getName(string $code): string
@@ -51,5 +64,22 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         }
 
         return $content->getContent();
+    }
+
+    private function getClass(Paragraph $paragraph): string
+    {
+        $tab = [
+            'paragraph',
+            'paragraph_' . $paragraph->getType(),
+        ];
+
+        $tab = array_merge($tab, $this->paragraphService->getClasses($paragraph));
+
+        return trim(implode(' ', $tab));
+    }
+
+    private function getId(Paragraph $paragraph): string
+    {
+        return 'paragraph_' . $paragraph->getType() . '-' . $paragraph->getId();
     }
 }

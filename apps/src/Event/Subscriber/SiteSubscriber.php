@@ -45,7 +45,7 @@ class SiteSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $statusCode = (string) $throwable->getStatusCode();
+        $statusCode = $throwable->getStatusCode();
 
         $this->securityService->set($statusCode);
     }
@@ -62,7 +62,13 @@ class SiteSubscriber implements EventSubscriberInterface
         $banIp = $this->securityService->getBanIp();
         if ($banIp instanceof BanIp) {
             $requestEvent->setResponse(
-                new Response('Your IP is banned<br />' . $banIp->getReason(), Response::HTTP_FORBIDDEN)
+                new Response(
+                    sprintf(
+                        'Your IP "%s" is banned<br />',
+                        $this->securityService->getCurrentClientIp()
+                    ) . $banIp->getReason(),
+                    Response::HTTP_FORBIDDEN
+                )
             );
 
             return;

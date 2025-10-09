@@ -11,15 +11,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\GeoCode;
-use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\GeoCodeRepository;
-use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class GeoCodeCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
@@ -32,10 +31,12 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Geo Code'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Geo Codes'));
         $crud->setDefaultSort(
             ['stateName' => 'ASC']
         );
@@ -43,7 +44,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
@@ -61,7 +62,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         yield NumberField::new('accuracy', new TranslatableMessage('Accuracy'));
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $filterFields = [
@@ -85,7 +86,6 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return GeoCode::class;

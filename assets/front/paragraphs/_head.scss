@@ -1,0 +1,12 @@
+@use "../placeholders" as *;
+.paragraph_head{
+  @extend %head;
+  .content{
+    
+  }
+  .background {
+  }
+  h1{
+    
+  }
+}

@@ -3,6 +3,7 @@ import Sortable from 'sortablejs';
 export class Paragraphs {
   constructor()
   {
+    this.disableBeforeUnload();
     this.actionDelete();
     this.actionModal();
     this.actionEdit();
@@ -10,6 +11,13 @@ export class Paragraphs {
     this.actionRefresh();
     this.actionSort()
   }
+
+  disableBeforeUnload()
+  {
+    window.onbeforeunload = null;
+
+  }
+
   actionSort()
   {
     document.querySelectorAll(".paragraphs-list").forEach(
@@ -105,6 +113,7 @@ export class Paragraphs {
               body: new URLSearchParams({ paragraph: document.querySelector('#paragraph-select').value })
             })
               .then(response => response.text());
+            document.querySelector('#paragraph-select').tomselect.clear();
             this.list(data);
           }
         );
@@ -146,6 +155,7 @@ export class Paragraphs {
         element.addEventListener(
           'click',
           async (event) => {
+            document.querySelector('#paragraph-select').tomselect.clear();
             event.preventDefault();
             var dataParagraph = document.querySelector('.paragraphs-list').closest('.paragraph-data');
             const data = await fetch(dataParagraph.dataset.urlList).then(response => response.text());

@@ -2,46 +2,17 @@
 
 namespace Labstag\Controller\Admin;
 
-use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
-use Labstag\Entity\Category;
-use Override;
+use Labstag\Controller\Admin\Abstract\CategoryCrudControllerLib;
 
-class StoryCategoryCrudController extends CategoryCrudController
+class StoryCategoryCrudController extends CategoryCrudControllerLib
 {
-    #[Override]
-    public function configureFields(string $pageName): iterable
+    protected function getChildRelationshipProperty(): string
     {
-        $data   = parent::configureFields($pageName);
-        $data[] = $this->addFieldTotalChild('stories');
-
-        return $data;
+        return 'stories';
     }
 
-    #[Override]
-    public function createEntity(string $entityFqcn): Category
+    protected function getEntityType(): string
     {
-        $category = new $entityFqcn();
-        $category->setType('story');
-
-        return $category;
-    }
-
-    #[Override]
-    public function createIndexQueryBuilder(
-        SearchDto $searchDto,
-        EntityDto $entityDto,
-        FieldCollection $fieldCollection,
-        FilterCollection $filterCollection,
-    ): QueryBuilder
-    {
-        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
-        $queryBuilder->andWhere('entity.type = :type');
-        $queryBuilder->setParameter('type', 'story');
-
-        return $queryBuilder;
+        return 'story';
     }
 }

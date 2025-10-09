@@ -1,0 +1,41 @@
+{% use "elements.html.twig" %}
+{% set movie = paragraph.refmovie %}
+{% if movie.duration < 60 %}
+    {% set duration = movie.duration ~ " min" %}
+{% else %}
+    {% set hours = (movie.duration // 60) %}
+    {% set minutes = (movie.duration % 60) %}
+    {% set duration = hours ~ 'h ' ~ minutes ~ " min" %}
+{% endif %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
+    <div class="wrapper">
+        <div class="title">{{ movie.title }}</div>
+        <div>
+            {% if movie.trailer != '' %}
+                {% set oembed = oembed(movie.trailer) %}
+                {% if oembed.oembed == '' %}
+                    <div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}"></div>
+                {% else %}
+                    {% include "embed/video.html.twig" with {
+                        'btntitle': 'Watch the trailer'|trans,
+                        'image': site_asset(movie, 'img'),
+                        'provider': oembed.provider,
+                        'trailer': oembed.oembed
+                    } %}
+                {% endif %}
+            {% else %}
+                <div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}"></div>
+            {% endif %}
+            <div class="info">
+                <div class="description">{{ movie.description|raw }}</div>
+            </div>
+            {% if movie.imdb != '' %}
+                <div class="imdb">
+                    <a href="https://www.imdb.com/title/{{ movie.imdb }}" target="_blank" title="{{ 'IMDB page for the movie'|trans|e('html_attr') }}">
+                        {{ 'IMDB page for the movie'|trans }}
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

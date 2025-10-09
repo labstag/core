@@ -17,4 +17,6 @@ interface BlockInterface
     public function getName(): string;
 
     public function getType(): string;
+
+    public function isEnable(): bool;
 }

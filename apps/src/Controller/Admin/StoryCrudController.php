@@ -9,13 +9,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Field\FileField;
-use Labstag\Lib\AbstractCrudControllerLib;
+use Labstag\Field\WysiwygField;
 use Labstag\Service\StoryService;
-use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -23,22 +23,25 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setActionPublic($actions);
+        $this->setActionPublic($actions, 'admin_story_w3c', 'admin_story_public');
         $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
         $this->setActionMoveChapter($actions);
+        $this->setActionNewChapter($actions);
         $this->configureActionsUpdatePdf($actions);
 
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Story'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Stories'));
         $crud->setDefaultSort(
             ['createdAt' => 'DESC']
         );
@@ -46,18 +49,22 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
+        // Principal tab + standard full content set
         yield $this->addTabPrincipal();
-        yield $this->addFieldID();
-        yield $this->addFieldIDShortcode('story');
-        yield $this->addFieldSlug();
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
-        yield $this->addFieldTitle();
-        yield $this->addFieldImageUpload('img', $pageName);
-        yield $this->addFieldTags('story');
-        yield $this->addFieldCategories('story');
+        $isSuperAdmin = $this->isSuperAdmin();
+        foreach ($this->crudFieldFactory->fullContentSet(
+            'story',
+            $pageName,
+            self::getEntityFqcn(),
+            $isSuperAdmin
+        ) as $field) {
+            yield $field;
+        }
+
+        // Extra specific field not part of the generic bundle
         yield FileField::new('pdf', new TranslatableMessage('pdf'));
         $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
         $collectionField->onlyOnIndex();
@@ -67,35 +74,28 @@ class StoryCrudController extends AbstractCrudControllerLib
         $collectionField->setTemplatePath('admin/field/chapters.html.twig');
         $collectionField->onlyOnDetail();
         yield $collectionField;
-        $fields = array_merge(
-            $this->addFieldParagraphs($pageName),
-            $this->addFieldMetas(),
-            $this->addFieldRefUser()
-        );
-        foreach ($fields as $field) {
-            yield $field;
-        }
-
-        yield $this->addFieldWorkflow();
-        yield $this->addFieldState();
-        $date = $this->addTabDate();
-        foreach ($date as $field) {
+        yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
+        // Workflow + state
+        yield $this->crudFieldFactory->workflowField();
+        yield $this->crudFieldFactory->stateField();
+        // Dates
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
             yield $field;
         }
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->addFilterRefUser($filters);
-        $this->addFilterEnable($filters);
-        $this->addFilterTags($filters, 'story');
-        $this->addFilterCategories($filters, 'story');
+        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterEnable($filters);
+        $this->crudFieldFactory->addFilterTags($filters, 'story');
+        $this->crudFieldFactory->addFilterCategories($filters, 'story');
 
         return $filters;
     }
 
-    #[Override]
+    #[\Override]
     public function createEntity(string $entityFqcn): Story
     {
         $story = new $entityFqcn();
@@ -107,10 +107,18 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $story;
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return Story::class;
+    }
+
+    #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
+    public function linkPublic(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $story                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->publicLink($story);
     }
 
     public function moveChapter(AdminContext $adminContext): RedirectResponse|Response
@@ -149,7 +157,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         );
     }
 
-    #[Route('/admin/story/updatepdf', name: 'admin_story_updatepdf')]
+    #[Route('/admin/updatepdf', name: 'admin_story_updatepdf')]
     public function updatepdf(StoryService $storyService): RedirectResponse
     {
         $serviceEntityRepositoryLib = $this->getRepository();
@@ -166,29 +174,31 @@ class StoryCrudController extends AbstractCrudControllerLib
             $serviceEntityRepositoryLib->flush($counter);
         }
 
+        $this->addFlash('success', $storyService->generateFlashBag());
         $serviceEntityRepositoryLib->flush();
 
-        $this->addFlash(
-            'success',
-            new TranslatableMessage(
-                'Update %update% storie(s)',
-                ['%update%' => $update]
-            )
-        );
-
         return $this->redirectToRoute('admin_story_index');
+    }
+
+    #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
+    public function w3c(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $story                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->linkw3CValidator($story);
     }
 
     private function configureActionsUpdatePdf(Actions $actions): void
     {
         $request = $this->container->get('request_stack')->getCurrentRequest();
-        $action = $request->query->get('action', null);
+        $action  = $request->query->get('action', null);
         if ('trash' == $action) {
             return;
         }
 
         $action = Action::new('updatepdf', new TranslatableMessage('Update PDF'), 'fas fa-wrench');
-        $action->linkToRoute('admin_story_updatepdf');
+        $action->linkToUrl(fn (): string => $this->generateUrl('admin_story_updatepdf'));
         $action->createAsGlobalAction();
 
         $actions->add(Crud::PAGE_INDEX, $action);
@@ -198,6 +208,24 @@ class StoryCrudController extends AbstractCrudControllerLib
     {
         $action = Action::new('moveChapter', new TranslatableMessage('Move a chapter'));
         $action->linkToCrudAction('moveChapter');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function setActionNewChapter(Actions $actions): void
+    {
+        $action = Action::new('newChapter', new TranslatableMessage('New chapter'));
+        $action->linkToUrl(
+            fn (Story $story): string => $this->generateUrl(
+                'admin_chapter_new',
+                [
+                    'story' => $story->getId(),
+                ]
+            )
+        );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $actions->add(Crud::PAGE_DETAIL, $action);

@@ -1,0 +1,10 @@
+@use "../placeholders" as *;
+.paragraph_video{
+  .wrapper{
+
+  }
+  .video{
+    margin-bottom: 11px;
+    @extend %video;
+  }
+}

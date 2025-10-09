@@ -2,7 +2,7 @@
 
 namespace Labstag\Email;
 
-use Labstag\Lib\EmailLib;
+use Labstag\Email\Abstract\EmailLib;
 use Override;
 
 class UserActivateEmail extends EmailLib

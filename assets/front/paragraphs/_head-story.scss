@@ -1,0 +1,32 @@
+@use "../placeholders" as *;
+.paragraph_head-story{
+  @extend %head;
+  .content{
+    
+  }
+  .background{
+
+  }
+  .wrapper{
+
+  }
+  .title{
+    
+  }
+  .author{
+
+  }
+  .chapters{
+
+  }
+  .date{
+
+  }
+  .pdf{
+    a{
+      i{
+        
+      }
+    }
+  }
+}

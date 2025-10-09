@@ -1,0 +1,22 @@
+@use "../mixins";
+
+.paragraph_sibling{
+  .wrapper{
+
+  }
+  .content {
+    
+  }
+  ul {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 12px;
+    @include mixins.respond-to(md) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  li {
+    
+  }
+}

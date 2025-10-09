@@ -2,7 +2,7 @@
 
 namespace Labstag\Email;
 
-use Labstag\Lib\EmailLib;
+use Labstag\Email\Abstract\EmailLib;
 use Override;
 
 class SendContactEmail extends EmailLib
@@ -22,7 +22,7 @@ class SendContactEmail extends EmailLib
     #[Override]
     public function init(): void
     {
-        $configuration = $this->siteService->getConfiguration();
+        $configuration = $this->configurationService->getConfiguration();
         parent::init();
         $this->to($configuration->getEmail());
     }

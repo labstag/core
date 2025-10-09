@@ -3,45 +3,54 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\SubMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
+use Labstag\Controller\Admin\Factory\MenuItemFactory;
 use Labstag\Entity\User;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Repository\ConfigurationRepository;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
-use Override;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
+#[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
+        protected ConfigurationService $configurationService,
         protected ConfigurationRepository $configurationRepository,
         protected UserService $userService,
         protected FileService $fileService,
         protected WorkflowService $workflowService,
         protected SiteService $siteService,
+        protected MenuItemFactory $menuItemFactory,
     )
     {
     }
 
-    #[Override]
+    #[\Override]
+    public function configureCrud(): Crud
+    {
+        return Crud::new()->setFormThemes(['admin/form.html.twig', '@EasyAdmin/crud/form_theme.html.twig']);
+    }
+
+    #[\Override]
     public function configureDashboard(): Dashboard
     {
-        $data      = $this->siteService->getConfiguration();
+        $data      = $this->configurationService->getConfiguration();
         $dashboard = Dashboard::new();
         $dashboard->setTitle($data->getName());
         $dashboard->setTranslationDomain('admin');
@@ -51,103 +60,42 @@ class DashboardController extends AbstractDashboardController
         return $dashboard;
     }
 
-    #[Override]
+    #[\Override]
     public function configureMenuItems(): iterable
     {
+        $categories = $this->menuItemFactory->createCategoryMenuItems();
+        $tags       = $this->menuItemFactory->createTagMenuItems();
+        // Dashboard home
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
-        $categories = $this->setCategories();
-        $tags       = $this->setTags();
 
-        yield $this->configureMenuItemsStory($categories, $tags);
-        yield $this->configureMenuItemsChapter($tags);
-        yield $this->configureMenuItemsMovie($categories);
-
-        yield MenuItem::linkToCrud(
-            new TranslatableMessage('Edito'),
-            'fas fa-info',
-            EditoCrudController::getEntityFqcn()
-        );
-
-        yield MenuItem::linkToCrud(
-            new TranslatableMessage('Memo'),
-            'fas fa-memory',
-            MemoCrudController::getEntityFqcn()
-        );
-
-        yield $this->configureMenuItemsPage($categories, $tags);
-
-        yield $this->configureMenuItemsPost($categories, $tags);
-
-        yield MenuItem::linkToCrud(
-            new TranslatableMessage('Meta'),
-            'fa fa-file-alt',
-            MetaCrudController::getEntityFqcn()
-        );
-        yield MenuItem::linkToCrud(
-            new TranslatableMessage('Paragraph'),
-            'fa fa-paragraph',
-            ParagraphCrudController::getEntityFqcn()
-        );
-        yield MenuItem::linkToCrud(
-            new TranslatableMessage('Block'),
-            'fa fa-cubes',
-            BlockCrudController::getEntityFqcn()
-        );
-        yield MenuItem::linkToCrud(
-            new TranslatableMessage('Geocode'),
-            'fas fa-map-signs',
-            GeoCodeCrudController::getEntityFqcn()
-        );
-        yield MenuItem::linkToCrud(new TranslatableMessage('Star'), 'fas fa-star', StarCrudController::getEntityFqcn());
-        yield MenuItem::linkToCrud(new TranslatableMessage('User'), 'fa fa-user', UserCrudController::getEntityFqcn());
-        yield MenuItem::linkToCrud(
-            new TranslatableMessage('Ban IP'),
-            'fas fa-ban',
-            BanIpCrudController::getEntityFqcn()
-        );
-        yield MenuItem::linkToCrud(
-            new TranslatableMessage('Redirection'),
-            'fas fa-directions',
-            RedirectionCrudController::getEntityFqcn()
-        );
-        yield MenuItem::linkToCrud(
-            new TranslatableMessage('Http error Logs'),
-            'fas fa-clipboard-list',
-            HttpErrorLogsCrudController::getEntityFqcn()
-        );
-        yield MenuItem::linkToCrud(
-            new TranslatableMessage('Submission'),
-            'fas fa-clipboard-list',
-            SubmissionCrudController::getEntityFqcn()
-        );
-
-        $configuration  = null;
-        $configurations = $this->configurationRepository->findAll();
-        $generator      = $this->container->get(AdminUrlGenerator::class);
-        $configuration  = (0 != count($configurations)) ? $configurations[0] : null;
-        if (is_null($configuration)) {
-            return $this->redirectToRoute('admin');
+        // Shared taxonomy items (categories / tags) used in several content sub-menus
+        $fieldsTAbs = [
+            $this->buildContentMenus($categories, $tags),
+            $this->buildSimpleCrudMenus(),
+        ];
+        foreach ($fieldsTAbs as $fieldTAb) {
+            yield from $fieldTAb;
         }
 
-        $generator->setAction(Action::EDIT);
-        $generator->setController(ConfigurationCrudController::class);
-        $generator->setEntityId($configuration->getId());
-        yield MenuItem::linkToUrl(new TranslatableMessage('Options'), 'fas fa-cog', $generator->generateUrl());
+        // Configuration (single editable entity)
+        $configMenu = $this->buildConfigurationMenuItem();
+        if (null !== $configMenu) {
+            yield $configMenu;
+        }
 
-        yield $this->configureMenuItemsTemplate();
-        yield MenuItem::linkToUrl(
-            new TranslatableMessage('Clear Cache'),
-            'fas fa-trash',
-            $this->generateUrl('admin_cacheclear')
+        // Template management (kept separate for clarity)
+        yield $this->menuItemFactory->createContentSubMenu(
+            'template',
+            new TranslatableMessage('Templates'),
+            'fas fa-code',
+            TemplateCrudController::class
         );
-        yield MenuItem::linkToUrl(
-            new TranslatableMessage('View Site'),
-            'fas fa-laptop-house',
-            $this->generateUrl('front')
-        )->setLinkTarget('_blank');
+
+        // Utility links
+        yield from $this->buildUtilityMenus();
     }
 
-    #[Override]
+    #[\Override]
     public function configureUserMenu(UserInterface $user): UserMenu
     {
         $userMenu = parent::configureUserMenu($user);
@@ -185,12 +133,7 @@ class DashboardController extends AbstractDashboardController
         return $userMenu;
     }
 
-    #[Route(
-        '/admin/{_locale}',
-        name: 'admin',
-        defaults: ['_locale' => 'fr']
-    )]
-    #[Override]
+    #[\Override]
     public function index(): Response
     {
         return $this->render('admin/dashboard.html.twig', []);
@@ -226,6 +169,9 @@ class DashboardController extends AbstractDashboardController
         }
     }
 
+    /**
+     * @return ServiceEntityRepositoryLib<object>
+     */
     protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
@@ -237,204 +183,199 @@ class DashboardController extends AbstractDashboardController
     }
 
     /**
-     * @param CrudMenuItem[] $tags
+     * Create configuration edit menu item if the configuration entity exists.
      */
-    private function configureMenuItemsChapter(array $tags): SubMenuItem
+    /**
+     * Returns the configuration edit menu item when configuration exists.
+     * Using object|null to support EasyAdmin specific UrlMenuItem implementation.
+     */
+    private function buildConfigurationMenuItem(): ?object
     {
-        return MenuItem::subMenu(new TranslatableMessage('Chapter'))->setSubItems(
-            [
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('List'),
-                    'fa fa-list',
-                    ChapterCrudController::getEntityFqcn()
-                ),
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('New'),
-                    'fas fa-plus',
-                    ChapterCrudController::getEntityFqcn()
-                )->setAction(Action::NEW),
-                $tags['chapter'],
-            ]
-        );
+        $configurations = $this->configurationRepository->findAll();
+        $configuration  = $configurations[0] ?? null;
+        if (!$configuration) {
+            return null;
+        }
+
+        $generator = $this->container->get(AdminUrlGenerator::class);
+        $generator->setAction(Action::EDIT);
+        $generator->setController(ConfigurationCrudController::class);
+        $generator->setEntityId($configuration->getId());
+
+        return MenuItem::linkToUrl(new TranslatableMessage('Options'), 'fas fa-cog', $generator->generateUrl());
     }
 
     /**
-     * @param CrudMenuItem[] $categories
+     * Build content (sub) menus that share a common pattern.
+     *
+     * @param array<string, mixed> $categories
+     * @param array<string, mixed> $tags
+     *
+     * @return iterable<MenuItem>
      */
-    private function configureMenuItemsMovie(array $categories): SubMenuItem
+    private function buildContentMenus(array $categories, array $tags): iterable
     {
-        return MenuItem::subMenu(new TranslatableMessage('Movie'))->setSubItems(
+        // Definition: identifier, label, icon, controller, categories?, tags?, extra children
+        $definitions = [
             [
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('List'),
-                    'fa fa-list',
-                    MovieCrudController::getEntityFqcn()
-                ),
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('New'),
-                    'fas fa-plus',
-                    MovieCrudController::getEntityFqcn()
-                )->setAction(Action::NEW),
-                $categories['movie'],
-            ]
-        );
-    }
-
-    /**
-     * @param CrudMenuItem[] $categories
-     * @param CrudMenuItem[] $tags
-     */
-    private function configureMenuItemsPage(array $categories, array $tags): SubMenuItem
-    {
-        return MenuItem::subMenu(new TranslatableMessage('Page'), 'fas fa-columns')->setSubItems(
-            [
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('List'),
-                    'fa fa-list',
-                    PageCrudController::getEntityFqcn()
-                ),
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('New'),
-                    'fas fa-plus',
-                    PageCrudController::getEntityFqcn()
-                )->setAction(Action::NEW),
-                $categories['page'],
-                $tags['page'],
-            ]
-        );
-    }
-
-    /**
-     * @param CrudMenuItem[] $categories
-     * @param CrudMenuItem[] $tags
-     */
-    private function configureMenuItemsPost(array $categories, array $tags): SubMenuItem
-    {
-        return MenuItem::subMenu(new TranslatableMessage('Post'), 'fas fa-newspaper')->setSubItems(
-            [
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('List'),
-                    'fa fa-list',
-                    PostCrudController::getEntityFqcn()
-                ),
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('New'),
-                    'fas fa-plus',
-                    PostCrudController::getEntityFqcn()
-                )->setAction(Action::NEW),
-                $categories['post'],
-                $tags['post'],
-            ]
-        );
-    }
-
-    /**
-     * @param CrudMenuItem[] $categories
-     * @param CrudMenuItem[] $tags
-     */
-    private function configureMenuItemsStory(array $categories, array $tags): SubMenuItem
-    {
-        return MenuItem::subMenu(new TranslatableMessage('Story'))->setSubItems(
-            [
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('List'),
-                    'fa fa-list',
-                    StoryCrudController::getEntityFqcn()
-                ),
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('New'),
-                    'fas fa-plus',
-                    StoryCrudController::getEntityFqcn()
-                )->setAction(Action::NEW),
-                $categories['story'],
-                $tags['story'],
-            ]
-        );
-    }
-
-    private function configureMenuItemsTemplate(): SubMenuItem
-    {
-        return MenuItem::subMenu(new TranslatableMessage('Templates'), 'fas fa-code')->setSubItems(
-            [
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('List'),
-                    'fa fa-list',
-                    TemplateCrudController::getEntityFqcn()
-                ),
-                MenuItem::linkToCrud(
-                    new TranslatableMessage('New'),
-                    'fas fa-plus',
-                    TemplateCrudController::getEntityFqcn()
-                )->setAction(Action::NEW),
-            ]
-        );
-    }
-
-    /**
-     * @return CrudMenuItem[]
-     */
-    private function setCategories(): array
-    {
-        $tab = [
-            'story' => [
-                'crud'       => StoryCategoryCrudController::getEntityFqcn(),
-                'controller' => StoryCategoryCrudController::class,
+                'story',
+                new TranslatableMessage('Story'),
+                'fas fa-landmark',
+                StoryCrudController::class,
+                $categories,
+                $tags,
+                [],
             ],
-            'page'  => [
-                'crud'       => PageCategoryCrudController::getEntityFqcn(),
-                'controller' => PageCategoryCrudController::class,
+            [
+                'chapter',
+                new TranslatableMessage('Chapter'),
+                'fas fa-landmark',
+                ChapterCrudController::class,
+                null,
+                $tags,
+                [],
             ],
-            'post'  => [
-                'crud'       => PostCategoryCrudController::getEntityFqcn(),
-                'controller' => PostCategoryCrudController::class,
+            [
+                'movie',
+                new TranslatableMessage('Movie'),
+                'fas fa-film',
+                MovieCrudController::class,
+                $categories,
+                $tags,
+                [
+                    MenuItem::linkToCrud(
+                        new TranslatableMessage('Sagas'),
+                        'fas fa-video',
+                        SagaCrudController::getEntityFqcn()
+                    ),
+                ],
             ],
-            'movie' => [
-                'crud'       => MovieCategoryCrudController::getEntityFqcn(),
-                'controller' => MovieCategoryCrudController::class,
+            [
+                'page',
+                new TranslatableMessage('Page'),
+                'fas fa-columns',
+                PageCrudController::class,
+                $categories,
+                $tags,
+                [],
+            ],
+            [
+                'post',
+                new TranslatableMessage('Post'),
+                'fas fa-newspaper',
+                PostCrudController::class,
+                $categories,
+                $tags,
+                [],
             ],
         ];
-        $categories = [];
-        foreach ($tab as $key => $data) {
-            $categories[$key] = MenuItem::linkToCrud(
-                new TranslatableMessage('Category'),
-                'fas fa-hashtag',
-                $data['crud']
+
+        foreach ($definitions as [$code, $label, $icon, $controller, $cats, $tgs, $children]) {
+            yield $this->menuItemFactory->createContentSubMenu(
+                $code,
+                $label,
+                $icon,
+                $controller,
+                $cats,
+                $tgs,
+                $children
             );
-            $categories[$key]->setController($data['controller']);
         }
-
-        return $categories;
     }
 
     /**
-     * @return CrudMenuItem[]
+     * Simple CRUD links sharing the same creation pattern.
      */
-    private function setTags(): array
+    /**
+     * @return iterable<MenuItem>
+     */
+    private function buildSimpleCrudMenus(): iterable
     {
-        $tab = [
-            'story'   => [
-                'crud'       => StoryTagCrudController::getEntityFqcn(),
-                'controller' => StoryTagCrudController::class,
+        $items = [
+            [
+                new TranslatableMessage('Edito'),
+                'fas fa-info',
+                EditoCrudController::getEntityFqcn(),
             ],
-            'chapter' => [
-                'crud'       => ChapterTagCrudController::getEntityFqcn(),
-                'controller' => ChapterTagCrudController::class,
+            [
+                new TranslatableMessage('Memo'),
+                'fas fa-memory',
+                MemoCrudController::getEntityFqcn(),
             ],
-            'page'    => [
-                'crud'       => PageTagCrudController::getEntityFqcn(),
-                'controller' => PageTagCrudController::class,
+            [
+                new TranslatableMessage('Meta'),
+                'fa fa-file-alt',
+                MetaCrudController::getEntityFqcn(),
             ],
-            'post'    => [
-                'crud'       => PostTagCrudController::getEntityFqcn(),
-                'controller' => PostTagCrudController::class,
+            [
+                new TranslatableMessage('Paragraph'),
+                'fa fa-paragraph',
+                ParagraphCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Block'),
+                'fa fa-cubes',
+                BlockCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Geocode'),
+                'fas fa-map-signs',
+                GeoCodeCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Star'),
+                'fas fa-star',
+                StarCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('User'),
+                'fa fa-user',
+                UserCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Ban IP'),
+                'fas fa-ban',
+                BanIpCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Redirection'),
+                'fas fa-directions',
+                RedirectionCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Http error Logs'),
+                'fas fa-clipboard-list',
+                HttpErrorLogsCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Submission'),
+                'fas fa-clipboard-list',
+                SubmissionCrudController::getEntityFqcn(),
             ],
         ];
-        $tags = [];
-        foreach ($tab as $key => $data) {
-            $tags[$key] = MenuItem::linkToCrud(new TranslatableMessage('Tag'), 'fas fa-tags', $data['crud']);
-            $tags[$key]->setController($data['controller']);
-        }
 
-        return $tags;
+        foreach ($items as [$label, $icon, $fqcn]) {
+            yield MenuItem::linkToCrud($label, $icon, $fqcn);
+        }
+    }
+
+    /**
+     * Utility / maintenance links.
+     *
+     * @return iterable<MenuItem>
+     */
+    private function buildUtilityMenus(): iterable
+    {
+        yield MenuItem::linkToUrl(
+            new TranslatableMessage('Clear Cache'),
+            'fas fa-trash',
+            $this->generateUrl('admin_cacheclear')
+        );
+
+        yield MenuItem::linkToUrl(
+            new TranslatableMessage('View Site'),
+            'fas fa-laptop-house',
+            $this->generateUrl('front')
+        )->setLinkTarget('_blank');
     }
 }

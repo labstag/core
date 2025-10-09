@@ -5,7 +5,7 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
 use Labstag\Entity\Paragraph;
-use Labstag\Lib\ParagraphLib;
+use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 
 class ImageParagraph extends ParagraphLib

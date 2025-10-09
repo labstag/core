@@ -5,8 +5,11 @@ namespace Labstag\Repository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Block;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<Block>
+ */
 class BlockRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -39,7 +42,9 @@ class BlockRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('region', $region);
 
         $query = $queryBuilder->getQuery();
-        $data  = $query->getOneOrNullResult();
+        $query->enableResultCache(3600, 'block-maxposition-' . md5($region));
+
+        $data = $query->getOneOrNullResult();
 
         return is_array($data) ? $data['maxposition'] : null;
     }

@@ -23,9 +23,20 @@ class FrontExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
+            new TwigFunction('oembed', [FrontExtensionRuntime::class, 'oembed']),
             new TwigFunction('site_path', [FrontExtensionRuntime::class, 'path']),
             new TwigFunction('site_title', [FrontExtensionRuntime::class, 'title']),
             new TwigFunction('site_asset', [FrontExtensionRuntime::class, 'asset']),
+            new TwigFunction(
+                'site_tarteaucitron',
+                [
+                    FrontExtensionRuntime::class,
+                    'tarteaucitron',
+                ],
+                [
+                    'is_safe' => ['html'],
+                ]
+            ),
             new TwigFunction(
                 'site_metatags',
                 [

@@ -3,15 +3,13 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Star;
-use Labstag\Lib\ParagraphLib;
+use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\StarRepository;
 use Override;
-use Symfony\Component\Translation\TranslatableMessage;
 
 class StarParagraph extends ParagraphLib
 {
@@ -24,6 +22,13 @@ class StarParagraph extends ParagraphLib
         unset($disable);
         /** @var StarRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Star::class);
+
+        $total = $serviceEntityRepositoryLib->findTotalEnable();
+        if (0 == $total) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
 
         $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
 
@@ -53,8 +58,6 @@ class StarParagraph extends ParagraphLib
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-
-        yield TextField::new('title', new TranslatableMessage('Title'));
         yield $this->addFieldIntegerNbr();
     }
 

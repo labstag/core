@@ -5,10 +5,10 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Generator;
+use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Block;
 use Labstag\Entity\Link;
 use Labstag\Entity\Page;
-use Labstag\Lib\FixtureLib;
 use Override;
 
 class BlockFixtures extends FixtureLib implements DependentFixtureInterface
@@ -39,41 +39,6 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         }
 
         $objectManager->flush();
-    }
-
-    private function addLinksHeader(Block $block): void
-    {
-        $page = $this->getPageByTitle('Posts');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-
-        $page = $this->getPageByTitle('Mes étoiles github');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-
-        $page = $this->getPageByTitle('Mes derniers films vus');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-
-        $page = $this->getPageByTitle('Histoires');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
     }
 
     private function addLinksFooter1(Block $block): void
@@ -114,6 +79,41 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         }
     }
 
+    private function addLinksHeader(Block $block): void
+    {
+        $page = $this->getPageByTitle('Posts');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+
+        $page = $this->getPageByTitle('Mes étoiles github');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+
+        $page = $this->getPageByTitle('Mes derniers films vus');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+
+        $page = $this->getPageByTitle('Histoires');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+    }
+
     private function addParagraphsHead(Block $block): void
     {
         $this->paragraphService->addParagraph($block, 'head-story');
@@ -143,6 +143,7 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
         $block->setRegion('header');
         $block->setTitle('Header Link');
         $block->setType('links');
+        $block->setClasses('headerlink_principal');
         $this->addLinksHeader($block);
         yield $block;
 

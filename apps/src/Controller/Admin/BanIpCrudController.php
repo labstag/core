@@ -5,15 +5,14 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\BanIp;
 use Labstag\Field\WysiwygField;
-use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class BanIpCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
@@ -21,10 +20,12 @@ class BanIpCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Ban IP'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Ban IP'));
         $crud->setDefaultSort(
             ['createdAt' => 'DESC']
         );
@@ -32,17 +33,17 @@ class BanIpCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
-        yield $this->addFieldID();
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
+        // Ensure all fields are inside a tab (EasyAdmin requires this once any tab is used elsewhere in the app)
+        yield $this->addTabPrincipal();
+        yield $this->crudFieldFactory->idField();
+        yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
         yield TextField::new('InternetProtocol', new TranslatableMessage('IP'));
-        $wysiwygField = WysiwygField::new('reason', new TranslatableMessage('Raison'));
-        yield $wysiwygField;
-        $date = $this->addTabDate();
-        foreach ($date as $field) {
+        yield WysiwygField::new('reason', new TranslatableMessage('Raison'));
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
             yield $field;
         }
     }

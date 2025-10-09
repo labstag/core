@@ -1,0 +1,41 @@
+@use "../placeholders" as *;
+@use "../variables" as *;
+.paragraph_movie-slider{
+  .wrapper{
+
+  }
+  .background{
+    height: 324px;
+    background-size: contain;
+    &.spoiler{
+      &::before{
+        background: $colorbg;
+      }
+    }
+  }
+  h2{
+
+  }
+  .slider{
+    padding-top: 1rem;
+  }
+  .swiper-movie{
+
+  }
+  .swiper-wrapper{
+
+  }
+  .swiper-movie-button-next{
+
+  }
+  .swiper-movie-button-prev{
+    
+  }
+  .link{
+    text-align: center;
+    padding: 1rem;
+    a{
+      @extend %btn;
+    }
+  }
+}

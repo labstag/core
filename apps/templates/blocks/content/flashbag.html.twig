@@ -1,4 +1,5 @@
-<div id="{{ block_id(block) }}" class="{{ block_class(block) }}">
+{% use "elements.html.twig" %}
+<div{% with {attr: block_contextmenu(block)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
         {% for label, messages in app.flashes %}
             <div class="flash-{{ label }}">

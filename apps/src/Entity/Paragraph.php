@@ -8,8 +8,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\ParagraphRepository;
-use Labstag\Traits\Entity\TimestampableTrait;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -29,6 +29,9 @@ class Paragraph implements Stringable
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Chapter $chapter = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $classes = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
@@ -60,6 +63,9 @@ class Paragraph implements Stringable
     #[Vich\UploadableField(mapping: 'paragraph', fileNameProperty: 'img')]
     private ?File $imgFile = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $leftposition = null;
+
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Memo $memo = null;
 
@@ -74,6 +80,9 @@ class Paragraph implements Stringable
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Post $post = null;
+
+    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    private ?Movie $refmovie = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
@@ -107,6 +116,11 @@ class Paragraph implements Stringable
     public function getChapter(): ?Chapter
     {
         return $this->chapter;
+    }
+
+    public function getClasses(): ?string
+    {
+        return $this->classes;
     }
 
     public function getContent(): ?string
@@ -169,6 +183,11 @@ class Paragraph implements Stringable
         return $this->post;
     }
 
+    public function getRefmovie(): ?Movie
+    {
+        return $this->refmovie;
+    }
+
     public function getStory(): ?Story
     {
         return $this->story;
@@ -194,6 +213,11 @@ class Paragraph implements Stringable
         return $this->enable;
     }
 
+    public function isLeftposition(): ?bool
+    {
+        return $this->leftposition;
+    }
+
     public function isSave(): ?bool
     {
         return $this->save;
@@ -209,6 +233,13 @@ class Paragraph implements Stringable
     public function setChapter(?Chapter $chapter): static
     {
         $this->chapter = $chapter;
+
+        return $this;
+    }
+
+    public function setClasses(?string $classes): static
+    {
+        $this->classes = $classes;
 
         return $this;
     }
@@ -251,6 +282,11 @@ class Paragraph implements Stringable
     public function setImg(?string $img): void
     {
         $this->img = $img;
+
+        // Si l'image est supprimée (img devient null), on force la mise à jour
+        if (null === $img) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setImgFile(?File $imgFile = null): void
@@ -262,6 +298,13 @@ class Paragraph implements Stringable
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setLeftposition(?bool $leftposition): static
+    {
+        $this->leftposition = $leftposition;
+
+        return $this;
     }
 
     public function setMemo(?Memo $memo): static
@@ -295,6 +338,13 @@ class Paragraph implements Stringable
     public function setPost(?Post $post): static
     {
         $this->post = $post;
+
+        return $this;
+    }
+
+    public function setRefmovie(?Movie $movie): static
+    {
+        $this->refmovie = $movie;
 
         return $this;
     }

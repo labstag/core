@@ -37,7 +37,6 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
     ) {
     }
 
-    #[Override]
     public function configure(FieldDto $fieldDto, EntityDto $entityDto, AdminContext $adminContext): void
     {
         $instance = $entityDto->getInstance();
@@ -132,11 +131,14 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->setFormTypeOption('attr.data-ea-autocomplete-endpoint-url', $adminUrlGenerator);
     }
 
+    /**
+     * @param array<string> $propertyNameParts
+     */
     private function configureFirst(
-        FieldDto $fieldDto,
-        EntityDto $entityDto,
-        $propertyNameParts,
-        string $propertyName,
+        EntityDto &$entityDto,
+        array &$propertyNameParts,
+        FieldDto &$fieldDto,
+        string &$propertyName,
     ): void {
         // prepare starting class for association
         $targetEntityFqcn = $entityDto->getPropertyMetadata($propertyNameParts[0])->get('targetEntity');
@@ -175,13 +177,13 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
                 ParagraphParentField::OPTION_RELATED_URL,
                 $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $relatedEntityDto)
             );
-            $fieldDto->setFormattedValue($this->formatAsString($relatedEntityDto->getInstance(), $relatedEntityDto));
+            $fieldDto->setFormattedValue($this->formatAsString($relatedEntityDto->getInstance()));
         } catch (UnexpectedTypeException) {
             // this may crash if something in the tree is null, so just do nothing then
         }
     }
 
-    private function configureSecond(FieldDto $fieldDto, EntityDto $entityDto, $propertyName): void
+    private function configureSecond(FieldDto $fieldDto, EntityDto $entityDto, string $propertyName): void
     {
         if ($entityDto->isToOneAssociation($propertyName)) {
             $this->configureToOneAssociation($fieldDto);
@@ -192,11 +194,11 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         }
     }
 
-    private function configureTest(FieldDto $fieldDto, EntityDto $entityDto, $propertyName): void
+    private function configureTest(FieldDto $fieldDto, EntityDto $entityDto, string $propertyName): void
     {
-        $propertyNameParts = explode('.', (string) $propertyName);
+        $propertyNameParts = explode('.', $propertyName);
         if (1 < \count($propertyNameParts)) {
-            $this->configureFirst($fieldDto, $entityDto, $propertyNameParts, $propertyName);
+            $this->configureFirst($entityDto, $propertyNameParts, $fieldDto, $propertyName);
 
             return;
         }
@@ -248,10 +250,10 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
             $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $targetEntityDto)
         );
 
-        $fieldDto->setFormattedValue($this->formatAsString($fieldDto->getValue(), $targetEntityDto));
+        $fieldDto->setFormattedValue($this->formatAsString($fieldDto->getValue()));
     }
 
-    private function countNumElements($collection): int
+    private function countNumElements(mixed $collection): int
     {
         if (is_null($collection)) {
             return 0;
@@ -268,22 +270,13 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         return 0;
     }
 
-    private function formatAsString($entityInstance, EntityDto $entityDto): ?string
+    private function formatAsString(mixed $entityInstance): string
     {
         if (is_null($entityInstance)) {
-            return null;
+            return '';
         }
 
-        if (method_exists($entityInstance, '__toString')) {
-            return (string) $entityInstance;
-        }
-
-        $primaryKeyValue = $entityDto->getPrimaryKeyValue();
-        if (!is_null($primaryKeyValue)) {
-            return sprintf('%s #%s', $entityDto->getName(), $primaryKeyValue);
-        }
-
-        return $entityDto->getName();
+        return (string) $entityInstance;
     }
 
     private function generateLinkToAssociatedEntity(?string $crudController, EntityDto $entityDto): ?string

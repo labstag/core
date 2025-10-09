@@ -4,10 +4,10 @@
         <title>{% block title %}{{ site_title(data) }}{% endblock %}</title>
         {% block meta %}
             <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
             {% if app.request.attributes.get('_route') != '' %}
-                <meta property="og:url" content="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" />
-                <link rel="canonical" href="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}" />
+                <meta property="og:url" content="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}">
+                <link rel="canonical" href="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}">
             {% endif %}
             {{ site_metatags(data) }}
         {% endblock %}
@@ -16,6 +16,7 @@
         {% endblock %}
         {% block javascripts %}
             {{ encore_entry_script_tags('front') }}
+            {{ site_tarteaucitron() }}
         {% endblock %}
         {% for row in header %}
             {{ site_content(row) }}

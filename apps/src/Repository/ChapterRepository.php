@@ -7,8 +7,11 @@ use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<Chapter>
+ */
 class ChapterRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -20,13 +23,14 @@ class ChapterRepository extends ServiceEntityRepositoryLib
     {
         $data = new ArrayCollection([new Parameter('enable', true), new Parameter('refstory', $story)]);
 
-        $queryBuilder = $this->createQueryBuilder('a');
-        $queryBuilder->where('a.enable = :enable');
-        $queryBuilder->andWhere('a.refstory = :refstory');
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->where('c.enable = :enable');
+        $queryBuilder->andWhere('c.refstory = :refstory');
         $queryBuilder->setParameters($data);
-        $queryBuilder->orderBy('a.position', 'ASC');
+        $queryBuilder->orderBy('c.position', 'ASC');
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'chapter-activate-story-' . $story->getId());
 
         return $query->getResult();
     }

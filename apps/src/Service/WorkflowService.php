@@ -11,22 +11,27 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class WorkflowService
+final class WorkflowService
 {
+
+    /**
+     * @var array<string, mixed>
+     */
+    private array $objects = [];
+
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
-        protected Registry $workflowRegistry,
-        protected RequestStack $requestStack,
-        protected EntityManagerInterface $entityManager,
+        private Registry $workflowRegistry,
+        private RequestStack $requestStack,
+        private EntityManagerInterface $entityManager,
     )
     {
     }
 
     public function change(string $entity, string $transition, mixed $uid): void
     {
-        $entityRepository = $this->entityManager->getRepository($entity);
+        $object = $this->getEntity($entity, $uid);
 
-        $object = $entityRepository->find($uid);
         if (!$this->workflowRegistry->has($object)) {
             return;
         }
@@ -72,5 +77,19 @@ class WorkflowService
 
         $markingStore = $workflow->getMarkingStore();
         $markingStore->setMarking($entity, $initialMarking);
+    }
+
+    private function getEntity(string $entity, mixed $uid): ?object
+    {
+        $entityRepository = $this->entityManager->getRepository($entity);
+
+        if (isset($this->objects[$entity][$uid])) {
+            return $this->objects[$entity][$uid];
+        }
+
+        $object                       = $entityRepository->find($uid);
+        $this->objects[$entity][$uid] = $object;
+
+        return $object;
     }
 }
