@@ -599,7 +599,7 @@ tasks:
     cmds:
     - task: symfony:console
       vars:
-        CMD: "labstag:star-update"
+        CMD: "labstag:star-add"
 
   star:
     desc: "Télécharge et met à jour les données de stars"
