@@ -4,6 +4,7 @@ namespace Labstag\Twig\Runtime;
 
 use Labstag\Entity\Paragraph;
 use Labstag\Service\ParagraphService;
+use Symfony\Component\Translation\TranslatableMessage;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class ParagraphExtensionRuntime implements RuntimeExtensionInterface
@@ -31,7 +32,8 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         }
 
         $data['data-context_url']  = $urlAdmin;
-        $data['data-context_text'] = 'Créer paragraph (' . $paragraph->getType() . ')';
+        $translate = new TranslatableMessage('Update paragraph (%type%)', ['%type%' => $paragraph->getType()], 'messages');
+        $data['data-context_text'] = $translate->__toString();
 
         return $data;
     }

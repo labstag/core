@@ -17,7 +17,7 @@ class ParagraphType extends AbstractType
     {
         $optionsResolver->setDefaults(
             [
-                'placeholder'   => new TranslatableMessage('Choisir le paragraphe'),
+                'placeholder'   => new TranslatableMessage('Choose paragraph'),
                 'choices'       => [],
                 'urlparagraphs' => null,
                 'list'          => null,

@@ -1101,6 +1101,18 @@
         <source>Log in</source>
         <target>Se connecter</target>
       </trans-unit>
+      <trans-unit id="WKutWfy" resname="Update block (%type%)">
+        <source>Update block (%type%)</source>
+        <target>Mettre à jour le bloc (%type%)</target>
+      </trans-unit>
+      <trans-unit id="_60KhVg" resname="Update paragraph (%type%)">
+        <source>Update paragraph (%type%)</source>
+        <target>Mettre à jour le paragraphe (%type%)</target>
+      </trans-unit>
+      <trans-unit id="UP4yleN" resname="Choose paragraph">
+        <source>Choose paragraph</source>
+        <target>Choisir le paragraphe</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

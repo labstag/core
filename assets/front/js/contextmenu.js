@@ -27,6 +27,10 @@ export class ContextMenu {
 
       const blockdiv = event.target.closest('.block');
       let options = [];
+      if (blockdiv.dataset === undefined || blockdiv.dataset.context_url === undefined) {
+        console.error('No context menu data found for this block', blockdiv);
+        return;
+      }
       options.push(
         {
           'url': blockdiv.dataset.context_url,
@@ -35,6 +39,10 @@ export class ContextMenu {
       );
       
       blockdiv.querySelectorAll('.paragraph').forEach((paragraphdiv) => {
+        if (paragraphdiv.dataset === undefined || paragraphdiv.dataset.context_url === undefined) {
+          console.error('No context menu data found for this paragraph', paragraphdiv);
+          return;
+        }
         options.push(
           {
             'url': paragraphdiv.dataset.context_url,
