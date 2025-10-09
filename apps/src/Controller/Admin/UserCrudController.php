@@ -186,6 +186,10 @@ class UserCrudController extends AbstractCrudControllerLib
                 return;
             }
 
+            if (!$form->has('generatepassword')) {
+                return;
+            }
+
             $generatepassword = $form->get('generatepassword')->getData();
             if ($generatepassword) {
                 $password = bin2hex(random_bytes(10));
