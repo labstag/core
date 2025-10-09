@@ -1,23 +1,26 @@
-<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+{% use "elements.html.twig" %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
 	<div class="background" style="--image-url: url('{{ site_asset(chapter, 'img') }}')"></div>
-	<div class="wrapper">
-		{% if chapter.tags|length > 0 %}
-			<div class="tags">
-				{% for tag in chapter.tags %}
-					<span class="tag-{{ tag.slug }}">{{ tag.title }}</span>
-				{% endfor %}
-			</div>
-		{% endif %}
-		<div class="title">
-			{{ chapter.title }}
-		</div>
-        {% if configuration.usershow %}
-            <div class="author">
-                {{ 'Author : %author%'|trans({ '%author%': chapter.refstory.refuser.username }) }}
+	<div class="content">
+        <div class="wrapper">
+            {% if chapter.tags|length > 0 %}
+                <div class="tags">
+                    {% for tag in chapter.tags %}
+                        <span class="tag-{{ tag.slug }}">{{ tag.title }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <h3 class="title">
+                {{ chapter.title }}
+            </h3>
+                {% if configuration.usershow %}
+                    <div class="author">
+                        {{ 'Author : %author%'|trans({ '%author%': chapter.refstory.refuser.username }) }}
+                    </div>
+                {% endif %}
+            <div class="date">
+                    {{ 'Creation date : %date%'|trans({ '%date%': chapter.createdat|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
             </div>
-        {% endif %}
-		<div class="date">
-            {{ 'Creation date : %date%'|trans({ '%date%': chapter.createdat|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
-		</div>
-	</div>
+        </div>
+    </div>
 </section>

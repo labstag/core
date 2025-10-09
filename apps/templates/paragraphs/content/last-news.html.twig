@@ -1,8 +1,9 @@
-<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+{% use "elements.html.twig" %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
-        <div class="title">
-            <h2>{{ paragraph.title }}</h2>
-        </div>
+        <h2 class="title">
+            {{ paragraph.title }}
+        </h2>
         <div class="link">
             <a href="{{ path('front', {'slug': listing.slug}) }}" class="btn">
                 {{ 'See all news'|trans }}
@@ -11,7 +12,7 @@
         <div class="list">
             <ul>
                 {% for row in news %}
-                    <li class="post-teaser">
+                    <li class="teaser-post">
                         {% include  "teasers/post.html.twig"  with {'post': row} %}
                     </li>
                 {% endfor %}

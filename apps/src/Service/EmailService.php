@@ -2,12 +2,15 @@
 
 namespace Labstag\Service;
 
-use Labstag\Lib\EmailLib;
+use Labstag\Email\Abstract\EmailLib;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
-class EmailService
+final class EmailService
 {
     public function __construct(
+        /**
+         * @var iterable<EmailLib>
+         */
         #[AutowireIterator('labstag.emails')]
         private readonly iterable $emails,
     )

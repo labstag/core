@@ -5,11 +5,12 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
+use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Category;
 use Labstag\Entity\Page;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
-use Labstag\Lib\FixtureLib;
+use Labstag\Enum\PageEnum;
 use Override;
 
 class PageFixtures extends FixtureLib implements DependentFixtureInterface
@@ -27,7 +28,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         ];
     }
 
-    public function getParent($idParent): ?object
+    public function getParent(mixed $idParent): ?object
     {
         $parent = null;
         $pages  = $this->getIdentitiesByClass(Page::class);
@@ -66,62 +67,62 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
     {
         $home = new Page();
         $home->setTitle('Accueil');
-        $home->setType('home');
+        $home->setType(PageEnum::HOME->value);
         $this->setParagraphsHome($home);
 
         $movies = new Page();
         $movies->setPage($home);
         $movies->setTitle('Mes derniers films vus');
-        $movies->setType('movie');
+        $movies->setType(PageEnum::MOVIES->value);
         $this->setParagraphsMovie($movies);
 
         $stories = new Page();
         $stories->setPage($home);
         $stories->setTitle('Histoires');
-        $stories->setType('story');
+        $stories->setType(PageEnum::STORIES->value);
         $this->setParagraphsStory($stories);
 
         $post = new Page();
         $post->setPage($home);
         $post->setTitle('Posts');
-        $post->setType('post');
+        $post->setType(PageEnum::POSTS->value);
         $this->setParagraphsPost($post);
 
         $star = new Page();
         $star->setPage($home);
         $star->setTitle('Mes étoiles github');
-        $star->setType('page');
+        $star->setType(PageEnum::PAGE->value);
         $this->setParagraphsStar($star);
 
         $info = new Page();
         $info->setPage($home);
         $info->setTitle('Informations');
-        $info->setType('page');
+        $info->setType(PageEnum::PAGE->value);
         $this->setParagraphsInfo($info);
 
         $contact = new Page();
         $contact->setPage($info);
         $contact->setTitle('Contact');
-        $contact->setType('page');
+        $contact->setType(PageEnum::PAGE->value);
         $this->setParagraphsContact($contact);
 
         $sitemap = new Page();
         $sitemap->setPage($info);
         $sitemap->setTitle('Plan du site');
-        $sitemap->setType('page');
+        $sitemap->setType(PageEnum::PAGE->value);
         $this->setParagraphsSitemap($sitemap);
 
         $mentions = new Page();
         $mentions->setPage($home);
         $mentions->setTitle('Mentions légales');
-        $mentions->setType('page');
+        $mentions->setType(PageEnum::PAGE->value);
         $this->addParagraphHead($mentions);
         $this->addParagraphText($mentions);
 
         $donneespersonnelles = new Page();
         $donneespersonnelles->setPage($home);
         $donneespersonnelles->setTitle('Données personnelles');
-        $donneespersonnelles->setType('page');
+        $donneespersonnelles->setType(PageEnum::PAGE->value);
         $this->addParagraphHead($donneespersonnelles);
         $this->addParagraphText($donneespersonnelles);
 
@@ -137,13 +138,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             $mentions,
             $donneespersonnelles,
         ];
-    }
-
-    private function setParagraphsInfo(Page $page): void
-    {
-        $this->addParagraphHead($page);
-        $this->addParagraphText($page);
-        $this->paragraphService->addParagraph($page, 'sibling');
     }
 
     private function setPage(ObjectManager $objectManager, Generator $generator, Page $page): void
@@ -177,6 +171,17 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph->setSave(true);
         $paragraph->setContent('Formulaire envoyé');
         $paragraph->setForm('contact');
+    }
+
+    private function setParagraphsHome(Page $page): void
+    {
+        $this->setParagraphsHomeHero($page);
+        $this->setParagraphsHomeEdito($page);
+        $this->addParagraphText($page);
+        $this->setParagraphsHomeLastNews($page);
+        $this->setParagraphsHomeLastStory($page);
+        $this->setParagraphsHomeVideo($page);
+        $this->setParagraphsHomeMovieSlider($page);
     }
 
     private function setParagraphsHomeEdito(Page $page): void
@@ -217,6 +222,17 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph->setNbr(4);
     }
 
+    private function setParagraphsHomeMovieSlider(Page $page): void
+    {
+        $paragraph = $this->paragraphService->addParagraph($page, 'movie-slider');
+        if (is_null($paragraph)) {
+            return;
+        }
+
+        $paragraph->setTitle('Mes derniers films vus');
+        $paragraph->setNbr(12);
+    }
+
     private function setParagraphsHomeVideo(Page $page): void
     {
         $generator = $this->setFaker();
@@ -235,26 +251,23 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $paragraph->setUrl($generator->youtubeUri());
     }
 
-    private function setParagraphsHome(Page $page): void
+    private function setParagraphsInfo(Page $page): void
     {
-        $this->setParagraphsHomeHero($page);
-        $this->setParagraphsHomeEdito($page);
+        $this->addParagraphHead($page);
         $this->addParagraphText($page);
-        $this->setParagraphsHomeLastNews($page);
-        $this->setParagraphsHomeLastStory($page);
-        $this->setParagraphsHomeVideo($page);
-        $this->setParagraphsHomeMovieSlider($page);
+        $this->paragraphService->addParagraph($page, 'sibling');
     }
 
-    private function setParagraphsHomeMovieSlider(Page $page): void
+    private function setParagraphsMovie(Page $page): void
     {
-        $paragraph = $this->paragraphService->addParagraph($page, 'movie-slider');
+        $this->addParagraphHead($page);
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'movie');
         if (is_null($paragraph)) {
             return;
         }
 
-        $paragraph->setTitle('Mes derniers films vus');
-        $paragraph->setNbr(12);
+        $paragraph->setNbr(18);
     }
 
     private function setParagraphsPost(Page $page): void
@@ -266,7 +279,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             return;
         }
 
-        $paragraph->setTitle('Derniers posts');
         $paragraph->setNbr(18);
     }
 
@@ -291,20 +303,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             return;
         }
 
-        $paragraph->setTitle('Mes étoiles github');
-        $paragraph->setNbr(18);
-    }
-
-    private function setParagraphsMovie(Page $page): void
-    {
-        $this->addParagraphHead($page);
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'movie');
-        if (is_null($paragraph)) {
-            return;
-        }
-
-        $paragraph->setTitle('Derniers films vus');
         $paragraph->setNbr(18);
     }
 
@@ -317,7 +315,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
             return;
         }
 
-        $paragraph->setTitle('Dernière histoires');
         $paragraph->setNbr(18);
     }
 }

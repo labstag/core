@@ -3,15 +3,14 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Lib\ParagraphLib;
+use Labstag\Form\Front\MovieType;
+use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
-use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieParagraph extends ParagraphLib
 {
@@ -25,7 +24,10 @@ class MovieParagraph extends ParagraphLib
         /** @var MovieRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
 
-        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
+        $request = $this->requestStack->getCurrentRequest();
+        $query   = $this->setQuery($request->query->all());
+
+        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator($query), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
@@ -45,9 +47,12 @@ class MovieParagraph extends ParagraphLib
             )
         );
 
+        $form = $this->createForm(MovieType::class, $query);
+
         $this->setData(
             $paragraph,
             [
+                'form'       => $form,
                 'pagination' => $pagination,
                 'paragraph'  => $paragraph,
                 'data'       => $data,
@@ -62,8 +67,6 @@ class MovieParagraph extends ParagraphLib
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-
-        yield TextField::new('title', new TranslatableMessage('Title'));
         yield $this->addFieldIntegerNbr();
     }
 
@@ -86,5 +89,31 @@ class MovieParagraph extends ParagraphLib
     public function useIn(): array
     {
         return [Page::class];
+    }
+
+    /**
+     * @param array<string, mixed> $query
+     *
+     * @return array<string, mixed>
+     */
+    private function setQuery(array $query): array
+    {
+        if (isset($query['order']) && !in_array($query['order'], ['title', 'releaseDate', 'createdAt'])) {
+            unset($query['order']);
+        }
+
+        if (!isset($query['order'])) {
+            $query['order'] = 'createdAt';
+        }
+
+        if (isset($query['orderby']) && !in_array($query['orderby'], ['ASC', 'DESC'])) {
+            unset($query['orderby']);
+        }
+
+        if (!isset($query['orderby'])) {
+            $query['orderby'] = 'DESC';
+        }
+
+        return $query;
     }
 }

@@ -1,6 +1,8 @@
 /node_modules
 /apps/vendor
 /apps/bin/
+/apps/.symfony5
+/apps/.bash_history
 !/apps/bin/console
 /apps/public/assets
 !/apps/private
@@ -16,4 +18,4 @@ docker-compose-*.yml
 /apps/public/uploads/*
 !/apps/public/uploads/.gitkeep
 .phpcs-cache
-stars.json
+/conf/apache2

@@ -1,68 +1,62 @@
-/* stylelint-disable */
+
 @use "@fortawesome/fontawesome-free/css/all.min";
 @use "flag-icons/css/flag-icons.min";
-@use './scss/reset';
-@use './scss/btn';
-@use './scss/hn';
-@use './scss/pagination';
-@use './../wysiwyg';
-@use './scss/header';
-@use './scss/footer';
-@use './scss/blocks/content' as block-content;
-@use './scss/modal/movie' as modal-movie;
-@use './scss/paragraphs/video' as paragraphs-video;
-@use './scss/paragraphs/sibling' as paragraphs-sibling;
-@use './scss/paragraphs/chapter-list' as paragraphs-chapter-list;
-@use './scss/paragraphs/chapter-lastnext' as paragraphs-chapter-lastnext;
-@use './scss/paragraphs/edito' as paragraphs-edito;
-@use './scss/paragraphs/head' as paragraphs-head;
-@use './scss/paragraphs/head-chapter' as paragraphs-head-chapter;
-@use './scss/paragraphs/head-story' as paragraphs-head-story;
-@use './scss/paragraphs/head-post' as paragraphs-head-post;
-@use './scss/paragraphs/story-list' as paragraphs-story-list;
-@use './scss/paragraphs/last-story' as paragraphs-last-story;
-@use './scss/paragraphs/star' as paragraphs-star;
-@use './scss/paragraphs/movie' as paragraphs-movie;
-@use './scss/paragraphs/movie-slider' as paragraphs-movie-slider;
-@use './scss/paragraphs/last-news' as paragraphs-last-news;
-@use './scss/paragraphs/news-list' as paragraphs-news-list;
-@use './scss/paragraphs/sitemap' as paragraphs-sitemap;
-@use './scss/paragraphs/text' as paragraphs-text;
-@use './scss/paragraphs/img' as paragraphs-img;
-@use './scss/paragraphs/text-img' as paragraphs-text-img;
-@use './scss/paragraphs/text-media' as paragraphs-text-media;
-@use './scss/teasers/movie' as teasers-movie;
-@use './scss/teasers/page' as teasers-page;
-@use './scss/teasers/chapter' as teasers-chapter;
-@use './scss/teasers/story' as teasers-story;
-@use './scss/teasers/star' as teasers-star;
-@use './scss/teasers/post' as teasers-post;
-/* stylelint-enable */
+@use "bootstrap/scss/bootstrap.scss";
 
-body {
-  background-color: #1f1f1f;
-  color: #d1d7e0;
-}
-a[target="_blank"] {
-  cursor: alias;
-}
-section{
-  margin-bottom: 10px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
 
-.wrapper {
-  max-width: 80%;
-  margin: 0 auto;
+@use 'variables';
+@use 'mixins';
+@use 'placeholders';
+@use 'reset';
+@use 'base';
+@use 'layout';
 
-  .wrapper{
-    max-width: 100%;
-  }
-}
 
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
+@use 'blocks/admin' as blockadmin;
+@use 'blocks/breadcrumb' as blockbreadcrumb;
+@use 'blocks/content' as blockcontent;
+@use 'blocks/default' as blockdefault;
+@use 'blocks/flashbag' as blockflashbag;
+@use 'blocks/hero' as blockhero;
+@use 'blocks/html' as blockhtml;
+@use 'blocks/links' as blocklinks;
+@use 'blocks/paragraphs' as blockparagraphs;
+
+
+@use 'paragraphs/video' as paragraphvideo;
+@use 'paragraphs/text' as paragraphtext;
+@use 'paragraphs/text-media' as paragraphtext-media;
+@use 'paragraphs/text-img' as paragraphtext-img;
+@use 'paragraphs/story-list' as paragraphstory-list;
+@use 'paragraphs/star' as paragraphstar;
+@use 'paragraphs/sitemap' as paragraphsitemap;
+@use 'paragraphs/sibling' as paragraphsibling;
+@use 'paragraphs/news-list' as paragraphnews-list;
+@use 'paragraphs/movie-slider' as paragraphmovie-slider;
+@use 'paragraphs/movie' as paragraphmovie;
+@use 'paragraphs/movie_info' as paragraphmovie_info;
+@use 'paragraphs/last-story' as paragraphlast-story;
+@use 'paragraphs/last-news' as paragraphlast-news;
+@use 'paragraphs/img' as paragraphimg;
+@use 'paragraphs/html' as paragraphhtml;
+@use 'paragraphs/hero' as paragraphhero;
+@use 'paragraphs/head' as paragraphhead;
+@use 'paragraphs/head-story' as paragraphhead-story;
+@use 'paragraphs/head-post' as paragraphhead-post;
+@use 'paragraphs/head-chapter' as paragraphhead-chapter;
+@use 'paragraphs/form' as paragraphform;
+@use 'paragraphs/edito' as paragraphedito;
+@use 'paragraphs/default' as paragraphdefault;
+@use 'paragraphs/chapter-list' as paragraphchapter-list;
+@use 'paragraphs/chapter-lastnext' as paragraphchapter-lastnext;
+
+@use 'teasers/chapter' as teaserchapter;
+@use 'teasers/movie' as teasermovie;
+@use 'teasers/page' as teaserpage;
+@use 'teasers/post' as teaserpost;
+@use 'teasers/star' as teaserstar;
+@use 'teasers/story' as teaserstory;
+
+@use 'modal/video' as modalvideo;
+
+@use 'labstag';

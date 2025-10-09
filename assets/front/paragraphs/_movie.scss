@@ -1,0 +1,67 @@
+@use "../mixins";
+@use "../variables";
+
+@use "sass:color";
+.paragraph_movie{
+  .wrapper{
+    .content{
+      display: grid;
+      grid-template-areas:
+        "aside"
+        "list";
+      grid-template-columns: 1fr;
+      gap: 16px;
+      @include mixins.respond-to(md) {
+        grid-template-columns: 4fr 1fr;
+        grid-template-areas:
+          "list aside";
+      }
+    }
+  }
+  .title{
+
+  }
+  aside{
+    grid-area: aside;
+    form{
+      padding: 5px;
+      background-color: #363636;
+    }
+  }
+  ul{
+    grid-area: list;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 12px;
+    @include mixins.respond-to(md) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  li{
+    &.teaser-movie{
+      background-color: color.scale(variables.$colorbg, $lightness: 15%);
+      &:nth-child(even)
+      {
+        background-color: color.scale(variables.$colorbg, $lightness: 10%);
+      }
+
+      .background{
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-color: #000;
+        min-height: 324px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+    .wrapper {
+      padding: 1rem;
+    }
+  }
+  .navigation{
+    
+  }
+}

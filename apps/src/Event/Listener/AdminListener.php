@@ -30,11 +30,10 @@ final class AdminListener
 
     private function enableDeleteFile(RequestEvent $requestEvent): bool
     {
-        $request   = $requestEvent->getRequest();
-        $all       = $request->request->all();
-        $serialize = serialize($all);
+        $request     = $requestEvent->getRequest();
+        $deleteParam = $request->request->get('delete');
 
-        return 1 == substr_count($serialize, '{s:6:"delete";s:1:"1";}');
+        return '1' === $deleteParam;
     }
 
     private function isDelete(RequestEvent $requestEvent): bool

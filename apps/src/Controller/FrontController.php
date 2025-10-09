@@ -3,19 +3,24 @@
 namespace Labstag\Controller;
 
 use Carbon\Carbon;
+use Labstag\Service\ConfigurationService;
+use Labstag\Service\EtagCacheService;
 use Labstag\Service\SitemapService;
 use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
+use Labstag\Service\ViewResolverService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 
-#[Route('/')]
 class FrontController extends AbstractController
 {
     #[Route(
-        '{slug}/{page}',
+        '/{slug}/{page}',
         name: 'front',
         requirements: [
             'slug' => '.+?',
@@ -28,9 +33,16 @@ class FrontController extends AbstractController
         ],
         priority: -1
     )]
-    public function index(SiteService $siteService): Response
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
+    public function index(
+        EtagCacheService $etagCacheService,
+        ViewResolverService $viewResolverService,
+        SlugService $slugService,
+        SiteService $siteService,
+        Request $request,
+    ): Response
     {
-        $entity = $siteService->getEntity();
+        $entity = $slugService->getEntity();
         if (!is_object($entity)) {
             throw $this->createNotFoundException();
         }
@@ -39,10 +51,34 @@ class FrontController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        return $this->render($siteService->getViewByEntity($entity), $siteService->getDataByEntity($entity));
+        $result       = $viewResolverService->getDataViewByEntity($entity);
+        $view         = $result['view'];
+        $templateData = $result['data'];
+
+        // ETag & Last-Modified basés sur l'entité (si méthodes dispo)
+        $cacheData = $etagCacheService->getCacheHeaders($entity);
+
+        $response = $this->render($view, $templateData);
+        $response->setEtag($cacheData['etag']);
+        if ($cacheData['lastModified']) {
+            $response->setLastModified($cacheData['lastModified']);
+        }
+
+        $response->setPublic();
+        $response->setSharedMaxAge(3600);
+        $response->setMaxAge(3600);
+        $response->headers->addCacheControlDirective('must-revalidate', true);
+
+        // 304 Not Modified support
+        if ($response->isNotModified($request)) {
+            return $response;
+            // Symfony ajuste automatiquement le contenu pour 304
+        }
+
+        return $response;
     }
 
-    #[Route('sitemap.css', name: 'sitemap.css', priority: 1)]
+    #[Route('/sitemap.css', name: 'sitemap.css', priority: 1)]
     public function sitemapCss(): Response
     {
         $response = new Response($this->renderView('sitemap/sitemap.css.twig'), Response::HTTP_OK);
@@ -51,7 +87,7 @@ class FrontController extends AbstractController
         return $response;
     }
 
-    #[Route('sitemap.js', name: 'sitemap.js', priority: 1)]
+    #[Route('/sitemap.js', name: 'sitemap.js', priority: 1)]
     public function sitemapJs(): Response
     {
         $response = new Response($this->renderView('sitemap/sitemap.js.twig'), Response::HTTP_OK);
@@ -61,16 +97,16 @@ class FrontController extends AbstractController
     }
 
     #[Route(
-        'sitemap.xml',
+        '/sitemap.xml',
         name: 'sitemap.xml',
         priority: 1,
         defaults: ['_format' => 'xml']
     )]
-    public function sitemapXml(SitemapService $sitemapService): mixed
+    public function sitemapXml(SitemapService $sitemapService, ConfigurationService $configurationService): mixed
     {
         return $this->initCache()->get(
             'sitemap.xml',
-            function (ItemInterface $item) use ($sitemapService): Response
+            function (ItemInterface $item) use ($sitemapService, $configurationService): Response
             {
                 $item->expiresAfter(3600);
 
@@ -79,6 +115,7 @@ class FrontController extends AbstractController
                 return $this->render(
                     'sitemap/sitemap.xml.twig',
                     [
+                        'config'  => $configurationService->getConfiguration(),
                         'date'    => Carbon::now()->format('Y-m-d'),
                         'sitemap' => $sitemap,
                     ]
@@ -87,7 +124,7 @@ class FrontController extends AbstractController
         );
     }
 
-    #[Route('sitemap.xsl', name: 'sitemap.xsl', priority: 1)]
+    #[Route('/sitemap.xsl', name: 'sitemap.xsl', priority: 1)]
     public function sitemapXsl(): Response
     {
         $response = new Response($this->renderView('sitemap/sitemap.xsl.twig'), Response::HTTP_OK);

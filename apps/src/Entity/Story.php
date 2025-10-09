@@ -10,9 +10,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Labstag\Entity\Traits\TimestampableTrait;
+use Labstag\Entity\Traits\WorkflowTrait;
 use Labstag\Repository\StoryRepository;
-use Labstag\Traits\Entity\TimestampableTrait;
-use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -22,6 +22,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: StoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
+#[ORM\Table]
+#[ORM\Index(name: 'IDX_STORY_SLUG', columns: ['slug'])]
 class Story implements Stringable
 {
     use SoftDeleteableEntity;

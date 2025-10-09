@@ -12,6 +12,7 @@ doctrine:
     filters:
       deletedfile: Labstag\Doctrine\Filter\DeleteFileFilter
     auto_generate_proxy_classes: true
+    enable_native_lazy_objects: true
     enable_lazy_ghost_objects: true
     report_fields_where_declared: true
     validate_xml_mapping: true
@@ -44,6 +45,7 @@ when@prod:
       result_cache_driver:
         type: pool
         pool: doctrine.result_cache_pool
+      enable_lazy_ghost_objects: true
 
   framework:
     cache:

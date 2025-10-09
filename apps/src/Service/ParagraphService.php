@@ -3,20 +3,30 @@
 namespace Labstag\Service;
 
 use DateTime;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Gedmo\Tool\ClassUtils;
+use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\Paragraph;
 use Labstag\Interface\ParagraphInterface;
 use ReflectionClass;
 use stdClass;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class ParagraphService
+final class ParagraphService
 {
     public function __construct(
+        /**
+         * @var iterable<\Labstag\Paragraph\Abstract\ParagraphLib>
+         */
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
+        private AdminUrlGenerator $adminUrlGenerator,
+        private Security $security,
     )
     {
     }
@@ -25,6 +35,7 @@ class ParagraphService
     {
         $paragraph = null;
         $all       = $this->getAll($entity::class);
+        $position  = count($entity->getParagraphs());
         foreach ($all as $row) {
             if ($row != $type) {
                 continue;
@@ -32,6 +43,7 @@ class ParagraphService
 
             $paragraph = new Paragraph();
             $paragraph->setType($type);
+            $paragraph->setPosition($position);
             $entity->addParagraph($paragraph);
 
             break;
@@ -99,6 +111,26 @@ class ParagraphService
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function getClasses(Paragraph $paragraph): array
+    {
+        $classes = [];
+
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph->getType() != $row->getType()) {
+                continue;
+            }
+
+            $classes = $row->getClasses($paragraph);
+
+            break;
+        }
+
+        return $classes;
+    }
+
+    /**
      * @param mixed[] $paragraphs
      */
     public function getContents(array $paragraphs): stdClass
@@ -108,13 +140,13 @@ class ParagraphService
         $data->footer = [];
         foreach ($paragraphs as $paragraph) {
             $header = $this->getHeader($paragraph['paragraph']);
-            $footer = $this->getFooter($paragraph['paragraph']);
             if (is_array($header)) {
                 $data->header = array_merge($data->header, $header);
             } elseif ($header instanceof Response) {
                 $data->header[] = $header;
             }
 
+            $footer = $this->getFooter($paragraph['paragraph']);
             if (is_array($footer)) {
                 $data->footer = array_merge($data->footer, $footer);
             } elseif ($footer instanceof Response) {
@@ -123,7 +155,6 @@ class ParagraphService
         }
 
         $data->header = array_filter($data->header, fn ($row): bool => !is_null($row));
-
         $data->footer = array_filter($data->footer, fn ($row): bool => !is_null($row));
 
         return $data;
@@ -211,7 +242,46 @@ class ParagraphService
         return [];
     }
 
-    public function getFooter(Paragraph $paragraph): mixed
+    public function getNameByCode(string $code): string
+    {
+        $name = '';
+        foreach ($this->paragraphs as $paragraph) {
+            if ($paragraph->getType() == $code) {
+                $name = $paragraph->getName();
+
+                break;
+            }
+        }
+
+        return $name;
+    }
+
+    public function getUrlAdmin(Paragraph $paragraph): ?AdminUrlGeneratorInterface
+    {
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
+            return null;
+        }
+
+        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
+        $adminUrlGenerator->setEntityId($paragraph->getId());
+
+        return $adminUrlGenerator->setController(ParagraphCrudController::class);
+    }
+
+    public function update(Paragraph $paragraph): void
+    {
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph->getType() != $row->getType()) {
+                continue;
+            }
+
+            $row->update($paragraph);
+
+            break;
+        }
+    }
+
+    private function getFooter(Paragraph $paragraph): mixed
     {
         $footer = null;
 
@@ -228,7 +298,7 @@ class ParagraphService
         return $footer;
     }
 
-    public function getHeader(Paragraph $paragraph): mixed
+    private function getHeader(Paragraph $paragraph): mixed
     {
         $header = null;
 
@@ -245,24 +315,10 @@ class ParagraphService
         return $header;
     }
 
-    public function getNameByCode(string $code): string
-    {
-        $name = '';
-        foreach ($this->paragraphs as $paragraph) {
-            if ($paragraph->getType() == $code) {
-                $name = $paragraph->getName();
-
-                break;
-            }
-        }
-
-        return $name;
-    }
-
     /**
      * @param mixed[] $data
      */
-    public function setContents(?Paragraph $paragraph, array $data, bool $disable): void
+    private function setContents(?Paragraph $paragraph, array $data, bool $disable): void
     {
         if (!$paragraph instanceof Paragraph) {
             return;

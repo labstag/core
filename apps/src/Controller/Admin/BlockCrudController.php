@@ -20,10 +20,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Block;
-use Labstag\Lib\AbstractCrudControllerLib;
 use Labstag\Repository\BlockRepository;
-use Override;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -39,16 +38,16 @@ class BlockCrudController extends AbstractCrudControllerLib
     {
         if ('edit' === $pageName && $block instanceof Block) {
             if (in_array($block->getType(), ['paragraphs', 'content'])) {
-                return parent::addFieldParagraphs($pageName);
+                return $this->crudFieldFactory->paragraphFields($pageName);
             }
 
             return [];
         }
 
-        return parent::addFieldParagraphs($pageName);
+        return $this->crudFieldFactory->paragraphFields($pageName);
     }
 
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $action = Action::new('positionBlock', new TranslatableMessage('Change Position'), 'fas fa-arrows-alt');
@@ -61,10 +60,12 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Block'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Blocks'));
         $crud->setDefaultSort(
             ['title' => 'ASC']
         );
@@ -72,13 +73,21 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addTabPrincipal();
-        yield $this->addFieldID();
-        yield $this->addFieldTitle();
+        foreach ($this->crudFieldFactory->baseIdentitySet(
+            'block',
+            $pageName,
+            self::getEntityFqcn(),
+            withSlug: false,
+            withImage: false
+        ) as $field) {
+            yield $field;
+        }
+
         yield ChoiceField::new('region', new TranslatableMessage('Region'))->setChoices(
             $this->blockService->getRegions()
         );
@@ -86,7 +95,6 @@ class BlockCrudController extends AbstractCrudControllerLib
         yield $numberField;
         $allTypes = array_flip($this->blockService->getAll(null));
         yield $this->getChoiceType($pageName, $allTypes);
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
         $fields = array_merge(
             $this->addFieldParagraphsForBlock($currentEntity, $pageName),
             $this->blockService->getFields($currentEntity, $pageName)
@@ -116,17 +124,18 @@ class BlockCrudController extends AbstractCrudControllerLib
             ]
         );
         yield $requestPathField;
+        yield TextField::new('classes', new TranslatableMessage('classes'))->hideOnIndex();
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->addFilterEnable($filters);
+        $this->crudFieldFactory->addFilterEnable($filters);
 
         return $filters;
     }
 
-    #[Override]
+    #[\Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
@@ -143,7 +152,10 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $serviceEntityRepositoryLib->findAllOrderedByRegion();
     }
 
-    #[Override]
+    /**
+     * @return FormBuilderInterface<mixed>
+     */
+    #[\Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
@@ -155,7 +167,6 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $formBuilder->addEventListener(FormEvents::SUBMIT, $this->setPosition());
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return Block::class;
@@ -170,7 +181,10 @@ class BlockCrudController extends AbstractCrudControllerLib
         }
 
         $queryBuilder = $serviceEntityRepositoryLib->findAllOrderedByRegion();
-        $blocks       = $queryBuilder->getQuery()->getResult();
+        $query        = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'block-position');
+
+        $blocks    = $query->getResult();
         $generator = $this->container->get(AdminUrlGenerator::class);
 
         if ($request->isMethod('POST')) {

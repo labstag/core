@@ -1,14 +1,15 @@
-<section id="{{ paragraph_id(paragraph) }}" class="{{ paragraph_class(paragraph) }}">
+{% use "elements.html.twig" %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
-        <div class="title">
-            <h2>{{ paragraph.title }}</h2>
-        </div>
+        <h2>
+            {{ paragraph.title }}
+        </h2>
         <div class="slider">
             <div class="swiper swiper-movie">
                 <div class="swiper-wrapper">
                     {% for movie in movies %}
-                        <div class="swiper-slide movie-teaser">
-                            <div class="background" style="--image-url: url('{{ site_asset(movie, 'img') }}')" area-label="{{ movie.title|e('html_attr') }}" title="{{ movie.title|e('html_attr') }}"></div>
+                        <div class="swiper-slide teaser teaser-movie">
+                            <div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}" title="{{ movie.title|e('html_attr') }}"></div>
                         </div>
                     {% endfor %}
                 </div>
@@ -17,7 +18,7 @@
             </div>
         </div>
         <div class="link">
-            <a href="{{ path('front', {'slug': listing.slug}) }}" class="btn" title="{{ "See all movie"|trans|e('html_attr') }}" area-label="{{ 'See all movie'|trans|e('html_attr') }}">
+            <a href="{{ path('front', {'slug': listing.slug}) }}" class="btn" title="{{ "See all movie"|trans|e('html_attr') }}">
                 {{ 'See all movie'|trans }}
             </a>
         </div>

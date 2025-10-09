@@ -10,9 +10,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Labstag\Entity\Traits\TimestampableTrait;
+use Labstag\Entity\Traits\WorkflowTrait;
 use Labstag\Repository\PostRepository;
-use Labstag\Traits\Entity\TimestampableTrait;
-use Labstag\Traits\Entity\WorkflowTrait;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -22,6 +22,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
+#[ORM\Table]
+#[ORM\Index(name: 'IDX_POST_SLUG', columns: ['slug'])]
 class Post implements Stringable
 {
     use SoftDeleteableEntity;
@@ -235,6 +237,11 @@ class Post implements Stringable
     public function setImg(?string $img): void
     {
         $this->img = $img;
+
+        // Si l'image est supprimée (img devient null), on force la mise à jour
+        if (null === $img) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setImgFile(?File $imgFile = null): void

@@ -15,6 +15,8 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
+#[ORM\Table]
+#[ORM\Index(name: 'IDX_CATEGORY_TYPE_SLUG', columns: ['type', 'slug'])]
 class Category implements Stringable
 {
     use SoftDeleteableEntity;

@@ -2,20 +2,28 @@
 
 namespace Labstag\Service;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Labstag\Controller\Admin\BlockCrudController;
 use Labstag\Entity\Block;
 use stdClass;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class BlockService
+final class BlockService
 {
     public function __construct(
+        /**
+         * @var iterable<\Labstag\Block\Abstract\BlockLib>
+         */
         #[AutowireIterator('labstag.blocks')]
         private readonly iterable $blocks,
-        protected AuthorizationCheckerInterface $authorizationChecker,
-        protected TokenStorageInterface $tokenStorage,
+        private AdminUrlGenerator $adminUrlGenerator,
+        private Security $security,
+        private AuthorizationCheckerInterface $authorizationChecker,
     )
     {
     }
@@ -132,7 +140,54 @@ class BlockService
         return $fields;
     }
 
-    public function getFooter(Block $block): mixed
+    /**
+     * @return mixed[]
+     */
+    public function getRegions(): array
+    {
+        return [
+            'header' => 'header',
+            'footer' => 'footer',
+            'main'   => 'main',
+        ];
+    }
+
+    public function getUrlAdmin(Block $block): ?AdminUrlGeneratorInterface
+    {
+        if (!$this->security->isGranted('ROLE_ADMIN')) {
+            return null;
+        }
+
+        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
+        $adminUrlGenerator->setEntityId($block->getId());
+
+        return $adminUrlGenerator->setController(BlockCrudController::class);
+    }
+
+    public function update(Block $block): void
+    {
+        foreach ($this->blocks as $row) {
+            if ($block->getType() != $row->getType()) {
+                continue;
+            }
+
+            $row->update($block);
+
+            break;
+        }
+    }
+
+    private function acces(Block $block): bool
+    {
+        $roles = $block->getRoles();
+        if (is_null($roles) || 0 == count($roles)) {
+            return true;
+        }
+
+        return array_any($roles, fn ($role): bool => $this->isGranted($role));
+    }
+
+    private function getFooter(Block $block): mixed
     {
         $footer = null;
         foreach ($this->blocks as $row) {
@@ -148,7 +203,7 @@ class BlockService
         return $footer;
     }
 
-    public function getHeader(Block $block): mixed
+    private function getHeader(Block $block): mixed
     {
         $header = null;
         foreach ($this->blocks as $row) {
@@ -164,36 +219,15 @@ class BlockService
         return $header;
     }
 
-    public function getNameByCode(string $code): string
+    private function isGranted(mixed $attribute, mixed $subject = null): bool
     {
-        $name = '';
-        foreach ($this->blocks as $block) {
-            if ($block->getType() == $code) {
-                $name = $block->getName();
-
-                break;
-            }
-        }
-
-        return $name;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getRegions(): array
-    {
-        return [
-            'header' => 'header',
-            'footer' => 'footer',
-            'main'   => 'main',
-        ];
+        return $this->authorizationChecker->isGranted($attribute, $subject);
     }
 
     /**
      * @param mixed[] $data
      */
-    public function setContents(?Block $block, array $data, bool $disable): void
+    private function setContents(?Block $block, array $data, bool $disable): void
     {
         if (!$block instanceof Block) {
             return;
@@ -208,27 +242,6 @@ class BlockService
 
             break;
         }
-    }
-
-    protected function acces(Block $block): bool
-    {
-        $roles = $block->getRoles();
-        if (is_null($roles) || 0 == count($roles)) {
-            return true;
-        }
-
-        foreach ($roles as $role) {
-            if ($this->isGranted($role)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected function isGranted(mixed $attribute, mixed $subject = null): bool
-    {
-        return $this->authorizationChecker->isGranted($attribute, $subject);
     }
 
     /**

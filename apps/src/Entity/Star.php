@@ -2,13 +2,18 @@
 
 namespace Labstag\Entity;
 
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\StarRepository;
-use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: StarRepository::class)]
+#[Vich\Uploadable]
 class Star
 {
     use TimestampableTrait;
@@ -32,10 +37,19 @@ class Star
     private ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    private ?string $img = null;
+
+    #[Vich\UploadableField(mapping: 'star', fileNameProperty: 'img')]
+    private ?File $imgFile = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $language = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $license = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $owner = null;
 
     #[ORM\Column(length: 255)]
     private ?string $repository = null;
@@ -67,6 +81,16 @@ class Star
         return $this->id;
     }
 
+    public function getImg(): ?string
+    {
+        return $this->img;
+    }
+
+    public function getImgFile(): ?File
+    {
+        return $this->imgFile;
+    }
+
     public function getLanguage(): ?string
     {
         return $this->language;
@@ -75,6 +99,11 @@ class Star
     public function getLicense(): ?string
     {
         return $this->license;
+    }
+
+    public function getOwner(): ?string
+    {
+        return $this->owner;
     }
 
     public function getRepository(): ?string
@@ -128,6 +157,27 @@ class Star
         return $this;
     }
 
+    public function setImg(?string $img): void
+    {
+        $this->img = $img;
+
+        // Si l'image est supprimée (img devient null), on force la mise à jour
+        if (null === $img) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setImgFile(?File $imgFile = null): void
+    {
+        $this->imgFile = $imgFile;
+
+        if ($imgFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
     public function setLanguage(?string $language): static
     {
         $this->language = $language;
@@ -138,6 +188,13 @@ class Star
     public function setLicense(?string $license): static
     {
         $this->license = $license;
+
+        return $this;
+    }
+
+    public function setOwner(?string $owner): static
+    {
+        $this->owner = $owner;
 
         return $this;
     }

@@ -3,11 +3,13 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
-use Labstag\Lib\ParagraphLib;
+use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class TextImgParagraph extends ParagraphLib
 {
@@ -27,6 +29,17 @@ class TextImgParagraph extends ParagraphLib
         );
     }
 
+    #[Override]
+    public function getClasses(Paragraph $paragraph): array
+    {
+        $tab = parent::getClasses($paragraph);
+        if ($paragraph->isLeftposition()) {
+            $tab[] = 'text-img-left';
+        }
+
+        return $tab;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -35,6 +48,7 @@ class TextImgParagraph extends ParagraphLib
     {
         unset($paragraph);
         yield $this->addFieldImageUpload('img', $pageName);
+        yield BooleanField::new('leftposition', new TranslatableMessage('Image on the left'));
         $wysiwygField = WysiwygField::new('content', 'Texte');
 
         yield $wysiwygField;

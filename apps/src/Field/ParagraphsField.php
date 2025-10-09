@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use InvalidArgumentException;
 use Labstag\Form\Type\ParagraphType;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Uid\Ulid;
 
 final class ParagraphsField implements FieldInterface
@@ -39,6 +40,9 @@ final class ParagraphsField implements FieldInterface
         return $this;
     }
 
+    /**
+     * @param string|TranslatableMessage|false|null $label
+     */
     #[Override]
     public static function new($label = false, ?string $icon = null): self
     {

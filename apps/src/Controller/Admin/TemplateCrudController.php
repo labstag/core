@@ -6,16 +6,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
+use Labstag\Email\Abstract\EmailLib;
 use Labstag\Entity\Template;
 use Labstag\Field\WysiwygField;
-use Labstag\Lib\AbstractCrudControllerLib;
-use Labstag\Lib\EmailLib;
-use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class TemplateCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setEditDetail($actions);
@@ -24,7 +23,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -37,13 +36,22 @@ class TemplateCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        unset($pageName);
-        yield $this->addFieldID();
-        yield $this->addFieldTitle();
+        // Template n'a ni slug ni enable ni image : withSlug: false, withImage: false, withEnable: false
+        foreach ($this->crudFieldFactory->baseIdentitySet(
+            'template',
+            $pageName,
+            self::getEntityFqcn(),
+            withSlug: false,
+            withImage: false,
+            withEnable: false
+        ) as $field) {
+            yield $field;
+        }
+
         $textField = TextField::new('code', new TranslatableMessage('Code'));
         $textField->setDisabled(true);
 
@@ -63,7 +71,6 @@ class TemplateCrudController extends AbstractCrudControllerLib
         yield $textareaField;
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return Template::class;

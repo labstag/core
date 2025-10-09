@@ -8,7 +8,8 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Story;
-use Labstag\Lib\ParagraphLib;
+use Labstag\Enum\PageEnum;
+use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\StoryRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -22,18 +23,18 @@ class LastStoryParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        $listing = $this->siteService->getPageByType('story');
+        $listing = $this->slugService->getPageByType(PageEnum::STORIES->value);
         /** @var StoryRepository $serviceEntityRepositoryLib */
         $serviceEntityRepositoryLib = $this->getRepository(Story::class);
         $total                      = $serviceEntityRepositoryLib->findTotalEnable();
-        if (!$listing->isEnable() || $total == 0) {
+        if (!is_object($listing) || !$listing->isEnable() || 0 == $total) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
-        $nbr                        = $paragraph->getNbr();
-        $stories                    = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        $nbr     = $paragraph->getNbr();
+        $stories = $serviceEntityRepositoryLib->findLastByNbr($nbr);
         $this->setData(
             $paragraph,
             [

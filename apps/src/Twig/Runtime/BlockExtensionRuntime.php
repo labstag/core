@@ -5,6 +5,7 @@ namespace Labstag\Twig\Runtime;
 use Labstag\Entity\Block;
 use Labstag\Service\BlockService;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class BlockExtensionRuntime implements RuntimeExtensionInterface
@@ -16,19 +17,25 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
-    public function getClass(Block $block): string
+    /**
+     * @return array<string, mixed>
+     */
+    public function getContextMenu(Block $block): array
     {
-        return 'block_' . $block->getType();
-    }
+        $urlAdmin = $this->blockService->getUrlAdmin($block);
+        $data     = [
+            'id'    => $this->getId($block),
+            'class' => $this->getClass($block),
+        ];
+        if (is_null($urlAdmin)) {
+            return $data;
+        }
 
-    public function getId(Block $block): string
-    {
-        return 'block_' . $block->getType() . '-' . $block->getId();
-    }
+        $data['data-context_url']  = $urlAdmin;
+        $translate = new TranslatableMessage('Update block (%type%)', ['%type%' => $block->getType()], 'messages');
+        $data['data-context_text'] = $translate->__toString();
 
-    public function getName(string $code): string
-    {
-        return $this->blockService->getNameByCode($code);
+        return $data;
     }
 
     /**
@@ -47,5 +54,24 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         }
 
         return $content->getContent();
+    }
+
+    private function getClass(Block $block): string
+    {
+        $tab = [
+            'block',
+            'block_' . $block->getType(),
+        ];
+
+        $classes = explode(' ', (string) $block->getClasses());
+
+        $tab = array_merge($tab, $classes);
+
+        return trim(implode(' ', $tab));
+    }
+
+    private function getId(Block $block): string
+    {
+        return 'block_' . $block->getType() . '-' . $block->getId();
     }
 }

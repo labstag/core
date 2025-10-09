@@ -1,0 +1,14 @@
+@use "../placeholders" as *;
+.teaser-movie{
+  @extend %teaser;
+  .background{
+    align-items: flex-end !important;
+    justify-content: flex-start !important;
+    .year{
+      background-color: #363636;
+      color: yellow;
+      padding: 5px;
+      margin: 5px;
+    }
+  }
+}

@@ -1,0 +1,61 @@
+
+@use "sass:color";
+
+.paragraph_chapter-lastnext {
+  background-color: #222; // Mode sombre par défaut
+  padding: 2rem 0;
+  text-align: center;
+
+  .wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    flex: 1 1 auto;
+    min-width: 120px; // Empêche les boutons trop petits sur mobile
+  }
+
+  .btn {
+    display: block;
+    padding: 0.8rem 1.5rem;
+    background-color: #444;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+
+    &:hover {
+      background-color: color.scale(#444, $lightness: 10%);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  // 📱 Mobile : tout en colonne
+  @media (max-width: 600px) {
+    ul {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    li {
+      width: 100%;
+    }
+  }
+}

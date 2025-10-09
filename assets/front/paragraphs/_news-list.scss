@@ -1,0 +1,37 @@
+@use "../mixins";
+@use "../variables";
+
+@use "sass:color";
+
+.paragraph_news-list{
+  .wrapper{
+
+  }
+  .title{
+
+  }
+  ul{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    @include mixins.respond-to(md) {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+  li{
+    &.teaser-post{
+      background-color: color.scale(variables.$colorbg, $lightness: 10%);
+      &:nth-child(even)
+      {
+        background-color: color.scale(variables.$colorbg, $lightness: 15%);
+      }
+    }
+
+    .wrapper {
+      padding: 1rem;
+    }
+  }
+  .navigation {
+    
+  }
+}

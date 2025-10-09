@@ -1,3 +1,6 @@
-<div id="{{ block_id(block) }}" class="{{ block_class(block) }}">
-    {{ block.content|raw }}
+{% use "elements.html.twig" %}
+<div{% with {attr: block_contextmenu(block)} %}{{ block('attributes') }}{% endwith %}>
+    <div class="wrapper">
+        {{ block.content|raw }}
+    </div>
 </div>

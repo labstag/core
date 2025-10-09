@@ -4,12 +4,14 @@ namespace Labstag\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\RedirectionRepository;
-use Labstag\Traits\Entity\TimestampableTrait;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: RedirectionRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 class Redirection
 {
     use SoftDeleteableEntity;
@@ -21,6 +23,9 @@ class Redirection
     #[ORM\Column(type: Types::TEXT)]
     private ?string $actionType = null;
 
+    /**
+     * @var array<string, mixed>
+     */
     #[ORM\Column(type: Types::JSON)]
     private array $data = [];
 
@@ -61,6 +66,9 @@ class Redirection
         return $this->actionType;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
         return $this->data;
@@ -127,6 +135,9 @@ class Redirection
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function setData(array $data): static
     {
         $this->data = $data;

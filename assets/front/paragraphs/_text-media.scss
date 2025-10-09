@@ -1,0 +1,31 @@
+@use "../placeholders" as *;
+@use "../mixins";
+.paragraph_text-media{
+  &.text-media-left {
+    .wrapper {
+      @include mixins.respond-to(md) {
+        grid-template-areas:
+          "media text";
+      }
+    }
+  }
+  .wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "media"
+      "text";
+    @include mixins.respond-to(md) {
+      grid-template-areas:
+        "text media";
+    }
+  }
+  .text{
+    grid-area: text;
+  }
+  .video{
+    grid-area: media;
+    margin-bottom: 11px;
+    @extend %video;
+  }
+}

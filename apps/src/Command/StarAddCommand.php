@@ -2,6 +2,7 @@
 
 namespace Labstag\Command;
 
+use Exception;
 use Labstag\Entity\Star;
 use Labstag\Repository\StarRepository;
 use Labstag\Service\FileService;
@@ -13,6 +14,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[AsCommand(name: 'labstag:star-add', description: 'Get all star github with npm run star:get')]
 class StarAddCommand extends Command
@@ -80,6 +82,7 @@ class StarAddCommand extends Command
 
             ++$counter;
             $progressBar->advance();
+            $this->starRepository->flush($counter);
         }
 
         $this->starRepository->flush();
@@ -90,7 +93,7 @@ class StarAddCommand extends Command
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
         $symfonyStyle->success(
             sprintf(
-                'Added: %d, Updated: %d',
+                'Added: %s, Updated: %s',
                 $numberFormatter->format($this->add),
                 $numberFormatter->format($this->update)
             )
@@ -117,6 +120,32 @@ class StarAddCommand extends Command
     }
 
     /**
+     * @param array<string, mixed> $data
+     */
+    private function setImage(Star $star, array $data): void
+    {
+        if (!isset($data['owner']['avatar_url'])) {
+            return;
+        }
+
+        try {
+            $file     = $data['owner']['avatar_url'];
+            $tempPath = tempnam(sys_get_temp_dir(), 'star_');
+            file_put_contents($tempPath, file_get_contents($file));
+            $uploadedFile = new UploadedFile(
+                path: $tempPath,
+                originalName: basename($tempPath),
+                mimeType: mime_content_type($tempPath),
+                test: true
+            );
+
+            $star->setImgFile($uploadedFile);
+        } catch (Exception $exception) {
+            echo $exception->getMessage();
+        }
+    }
+
+    /**
      * @param mixed[] $data
      */
     private function setStar(array $data): Star
@@ -129,9 +158,9 @@ class StarAddCommand extends Command
 
         if (!$star instanceof Star) {
             $star = new Star();
-            $star->setTitle($data['full_name']);
         }
 
+        $star->setTitle($data['name']);
         $star->setLanguage($data['language']);
         $star->setEnable(true);
         $star->setRepository($data['git_url']);
@@ -141,6 +170,8 @@ class StarAddCommand extends Command
         $star->setLicense($data['license']['name'] ?? null);
         $star->setStargazers($data['stargazers_count'] ?? 0);
         $star->setWatchers($data['watchers_count'] ?? 0);
+        $star->setOwner($data['owner']['login']);
+        $this->setImage($star, $data);
 
         return $star;
     }

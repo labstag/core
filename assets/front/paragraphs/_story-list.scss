@@ -1,0 +1,38 @@
+@use "../mixins";
+@use "../variables";
+
+@use "sass:color";
+
+.paragraph_story-list{
+  .wrapper{
+
+  }
+  .title{
+
+  }
+  ul {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: 12px;
+    @include mixins.respond-to(md) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  li {
+    &.teaser-story{
+      background-color: color.scale(variables.$colorbg, $lightness: 15%);
+      &:nth-child(even)
+      {
+        background-color: color.scale(variables.$colorbg, $lightness: 10%);
+      }
+    }
+
+    .wrapper {
+      padding: 1rem;
+    }
+  }
+  .navigation {
+    
+  }
+}

@@ -7,17 +7,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
-use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ParagraphCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         if ($this->isIframeEdit()) {
@@ -31,10 +31,12 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Paragraph'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Paragraphs'));
         if ($this->isIframeEdit()) {
             $crud->renderSidebarMinimized();
             $crud->overrideTemplates(
@@ -49,13 +51,23 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        yield $this->addFieldID();
-        $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'));
+        yield $this->crudFieldFactory->idField();
+        yield ParagraphParentField::new('parent', new TranslatableMessage('Parent'));
+        foreach ($this->paragraphService->getFields($currentEntity, $pageName) as $field) {
+            yield $field;
+        }
+
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
+
+        yield FormField::addTab(new TranslatableMessage('Config'));
+        $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'))->hideOnIndex();
         $choiceField->setChoices($this->paragraphService->getFonds());
         yield $choiceField;
         $allTypes  = array_flip($this->paragraphService->getAll(null));
@@ -63,21 +75,11 @@ class ParagraphCrudController extends AbstractCrudControllerLib
             static fn ($value) => $allTypes[$value] ?? null
         );
         $textField->setDisabled(true);
-
         yield $textField;
-        yield ParagraphParentField::new('parent', new TranslatableMessage('Parent'));
-        $fields = $this->paragraphService->getFields($currentEntity, $pageName);
-        foreach ($fields as $field) {
-            yield $field;
-        }
-
-        $date = $this->addTabDate();
-        foreach ($date as $field) {
-            yield $field;
-        }
+        yield TextField::new('classes', new TranslatableMessage('classes'))->hideOnIndex();
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $filters->add(
@@ -89,7 +91,6 @@ class ParagraphCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return Paragraph::class;

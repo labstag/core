@@ -6,8 +6,11 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Story;
-use Labstag\Lib\ServiceEntityRepositoryLib;
+use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
+/**
+ * @extends ServiceEntityRepositoryLib<Story>
+ */
 class StoryRepository extends ServiceEntityRepositoryLib
 {
     public function __construct(ManagerRegistry $managerRegistry)
@@ -21,6 +24,7 @@ class StoryRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'stories-last-' . $nbr);
 
         return $query->getResult();
     }
@@ -28,9 +32,10 @@ class StoryRepository extends ServiceEntityRepositoryLib
     public function findTotalEnable(): mixed
     {
         $queryBuilder = $this->getQueryBuilder();
-        $queryBuilder->select('count(h.id)');
+        $queryBuilder->select('count(s.id)');
 
         $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'stories-total-enable');
 
         return $query->getSingleScalarResult();
     }
@@ -39,25 +44,32 @@ class StoryRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->getQueryBuilder();
         $query        = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'stories-activate');
 
         return $query->getResult();
     }
 
+    /**
+     * @return Query<mixed, mixed>
+     */
     public function getQueryPaginator(): Query
     {
         $queryBuilder = $this->getQueryBuilder();
 
-        return $queryBuilder->getQuery();
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'stories-query-paginator');
+
+        return $query;
     }
 
     private function getQueryBuilder(): QueryBuilder
     {
-        $queryBuilder = $this->createQueryBuilder('h');
-        $queryBuilder->innerJoin('h.chapters', 'c');
-        $queryBuilder->where('h.enable = :enable');
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->innerJoin('s.chapters', 'c');
+        $queryBuilder->where('s.enable = :enable');
         $queryBuilder->andWhere('c.enable = :enable');
         $queryBuilder->setParameter('enable', true);
 
-        return $queryBuilder->orderBy('h.createdAt', 'DESC');
+        return $queryBuilder->orderBy('s.createdAt', 'DESC');
     }
 }

@@ -1,13 +1,24 @@
-<a href="javascript:void(0);" class="open-modal" data-movie-id="{{ movie.id }}" title="{{ movie.title|e('html_attr') }}" area-label="{{ movie.title|e('html_attr') }}">
-    <div class="background" style="--image-url: url('{{ site_asset(movie, 'img') }}')"></div>
-    {% if movie.categories|length > 0 %}
-        <div class="categories">
-            {% for categorie in movie.categories %}
-                <span class="categorie-{{ categorie.slug }}">{{ categorie.title }}</span>
-            {% endfor %}
+<a href="javascript:void(0);" data-a11y-dialog-show="movie-modal-{{ movie.id }}">
+    <div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}">
+        {% if movie.releaseDate != '' %}
+            <span class="year">
+                {{ movie.releaseDate|date('Y') }}
+            </span>
+        {% endif %}
+    </div>
+    <div class="wrapper">
+        {% if movie.categories|length > 0 %}
+            <div class="categories">
+                {% for categorie in movie.categories %}
+                    <span class="categorie-{{ categorie.slug }}">{{ categorie.title }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <h3 class="title">
+            {{ movie.title }}
+        </h3>
+        <div class="citation">
+            {{ movie.citation|raw }}
         </div>
-    {% endif %}
-    <div class="title">
-        {{ movie.title }}
     </div>
 </a>

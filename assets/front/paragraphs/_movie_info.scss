@@ -1,0 +1,19 @@
+@use "../placeholders";
+@use "../mixins";
+
+.paragraph_movie_info{
+  .title{
+    font-size: xxx-large;
+    text-align: center;
+  }
+  .video {
+    margin-top: 11px;
+    margin-bottom: 11px;
+    @extend %video;
+  }
+  .imdb{
+    text-align: center;
+  }
+  .wrapper{
+  }
+}

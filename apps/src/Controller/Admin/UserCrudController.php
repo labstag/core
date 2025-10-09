@@ -12,9 +12,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\User;
-use Labstag\Lib\AbstractCrudControllerLib;
-use Override;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,7 +22,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class UserCrudController extends AbstractCrudControllerLib
 {
-    #[Override]
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->setEditDetail($actions);
@@ -32,10 +31,12 @@ class UserCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Override]
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('User'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Users'));
         $crud->setDefaultSort(
             ['username' => 'ASC']
         );
@@ -43,12 +44,12 @@ class UserCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[Override]
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('username', new TranslatableMessage('Username'));
         yield EmailField::new('email', new TranslatableMessage('Email'));
-        yield $this->addFieldBoolean('enable', new TranslatableMessage('Enable'));
+        yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
         $choiceField = ChoiceField::new('roles', new TranslatableMessage('Roles'));
         $choiceField->allowMultipleChoices();
         $choiceField->setChoices($this->userService->getRoles());
@@ -69,13 +70,26 @@ class UserCrudController extends AbstractCrudControllerLib
                 'mapped'         => false,
             ]
         );
-        $textField->setRequired(Crud::PAGE_NEW === $pageName);
+        $textField->setRequired(false);
         $textField->onlyOnForms();
         yield $textField;
+        if (Crud::PAGE_NEW === $pageName) {
+            $field = $this->crudFieldFactory->booleanField(
+                'generatepassword',
+                (string) new TranslatableMessage('generate Password')
+            );
+            $field->setFormTypeOptions(
+                ['mapped' => false]
+            );
+
+            yield $field;
+        }
+
         $languageField = ChoiceField::new('language', new TranslatableMessage('Language'));
-        $languageField->setChoices($this->userService->getLanguagesForChoices());
+        $langue        = $this->userService->getLanguagesForChoices();
+        $languageField->setChoices($langue);
         yield $languageField;
-        yield $this->addFieldImageUpload('avatar', $pageName);
+        yield $this->crudFieldFactory->imageField('avatar', $pageName, self::getEntityFqcn());
         yield CollectionField::new('stories', new TranslatableMessage('Histories'))->onlyOnDetail();
         yield CollectionField::new('editos', new TranslatableMessage('Editos'))->onlyOnDetail()->formatValue(
             fn ($entity): int => count($entity)
@@ -94,19 +108,22 @@ class UserCrudController extends AbstractCrudControllerLib
             yield $collectionField;
         }
 
-        yield $this->addFieldWorkflow();
-        yield $this->addFieldState();
+        yield $this->crudFieldFactory->workflowField();
+        yield $this->crudFieldFactory->stateField();
     }
 
-    #[Override]
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->addFilterEnable($filters);
+        $this->crudFieldFactory->addFilterEnable($filters);
 
         return $filters;
     }
 
-    #[Override]
+    /**
+     * @return FormBuilderInterface<mixed>
+     */
+    #[\Override]
     public function createEditFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
@@ -118,16 +135,22 @@ class UserCrudController extends AbstractCrudControllerLib
         return $this->addPasswordEventListener($formBuilder);
     }
 
-    #[Override]
+    #[\Override]
     public function createEntity(string $entityFqcn): User
     {
         $user = new $entityFqcn();
         $this->workflowService->init($user);
+        $langue = $this->userService->getLanguagesForChoices();
+        $key    = array_key_first($langue);
+        $user->setLanguage($langue[$key]);
 
         return $user;
     }
 
-    #[Override]
+    /**
+     * @return FormBuilderInterface<mixed>
+     */
+    #[\Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
@@ -139,13 +162,17 @@ class UserCrudController extends AbstractCrudControllerLib
         return $this->addPasswordEventListener($formBuilder);
     }
 
-    #[Override]
     public static function getEntityFqcn(): string
     {
         return User::class;
     }
 
-    private function addPasswordEventListener(FormBuilderInterface $formBuilder): mixed
+    /**
+     * @param FormBuilderInterface<mixed> $formBuilder
+     *
+     * @return FormBuilderInterface<mixed>
+     */
+    private function addPasswordEventListener(FormBuilderInterface $formBuilder): FormBuilderInterface
     {
         return $formBuilder->addEventListener(FormEvents::POST_SUBMIT, $this->hashPassword());
     }
@@ -156,6 +183,19 @@ class UserCrudController extends AbstractCrudControllerLib
         {
             $form = $event->getForm();
             if (!$form->isValid()) {
+                return;
+            }
+
+            if (!$form->has('generatepassword')) {
+                return;
+            }
+
+            $generatepassword = $form->get('generatepassword')->getData();
+            if ($generatepassword) {
+                $password = bin2hex(random_bytes(10));
+                $hash     = $this->userService->hashPassword($event->getData(), $password);
+                $form->getData()->setPassword($hash);
+
                 return;
             }
 
