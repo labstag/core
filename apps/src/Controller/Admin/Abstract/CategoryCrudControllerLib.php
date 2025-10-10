@@ -13,7 +13,6 @@ abstract class CategoryCrudControllerLib extends AbstractTypedCrudControllerLib
     {
         // Category is not uploadable: no image, and no enable property in the entity -> remove it
         return $this->crudFieldFactory->baseIdentitySet(
-            'category',
             $pageName,
             self::getEntityFqcn(),
             withSlug: true,

@@ -47,7 +47,6 @@ class StarCrudController extends AbstractCrudControllerLib
     {
         yield $this->addTabPrincipal();
         foreach ($this->crudFieldFactory->baseIdentitySet(
-            'star',
             $pageName,
             self::getEntityFqcn(),
             false

@@ -48,7 +48,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
     {
         yield $this->addTabPrincipal();
         $this->isSuperAdmin();
-        foreach ($this->crudFieldFactory->baseIdentitySet('chapter', $pageName, self::getEntityFqcn()) as $field) {
+        foreach ($this->crudFieldFactory->baseIdentitySet($pageName, self::getEntityFqcn()) as $field) {
             yield $field;
         }
 

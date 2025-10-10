@@ -40,7 +40,6 @@ class EditoCrudController extends AbstractCrudControllerLib
         $isSuperAdmin = $this->isSuperAdmin();
         // Edito n'a pas de slug : withSlug: false
         foreach ($this->crudFieldFactory->baseIdentitySet(
-            'edito',
             $pageName,
             self::getEntityFqcn(),
             withSlug: false

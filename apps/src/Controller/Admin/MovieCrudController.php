@@ -69,7 +69,6 @@ class MovieCrudController extends AbstractCrudControllerLib
     {
         yield $this->addTabPrincipal();
         foreach ($this->crudFieldFactory->baseIdentitySet(
-            'movie',
             $pageName,
             self::getEntityFqcn(),
             withSlug: false
