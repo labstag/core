@@ -164,7 +164,7 @@ class PageCrudController extends AbstractCrudControllerLib
      */
     private function getIdEntity(string $pageName, mixed $currentEntity): array
     {
-        $identity = $this->crudFieldFactory->baseIdentitySet('page', $pageName, self::getEntityFqcn());
+        $identity = $this->crudFieldFactory->baseIdentitySet($pageName, self::getEntityFqcn());
         if ($currentEntity instanceof Page && PageEnum::HOME->value == $currentEntity->getType()) {
             // Remove slug field (present at index 2 if withSlug kept)
             unset($identity[2]);

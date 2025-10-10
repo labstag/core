@@ -79,7 +79,6 @@ class BlockCrudController extends AbstractCrudControllerLib
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addTabPrincipal();
         foreach ($this->crudFieldFactory->baseIdentitySet(
-            'block',
             $pageName,
             self::getEntityFqcn(),
             withSlug: false,

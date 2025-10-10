@@ -42,7 +42,6 @@ class TemplateCrudController extends AbstractCrudControllerLib
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         // Template n'a ni slug ni enable ni image : withSlug: false, withImage: false, withEnable: false
         foreach ($this->crudFieldFactory->baseIdentitySet(
-            'template',
             $pageName,
             self::getEntityFqcn(),
             withSlug: false,

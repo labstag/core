@@ -27,7 +27,6 @@ class MetaCrudController extends AbstractCrudControllerLib
     {
         yield $this->addTabPrincipal();
         foreach ($this->crudFieldFactory->baseIdentitySet(
-            'meta',
             $pageName,
             self::getEntityFqcn(),
             withSlug: false,

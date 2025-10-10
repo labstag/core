@@ -74,7 +74,6 @@ final class CrudFieldFactory
      * @return array<int, IdField|TextField|SlugField|BooleanField|ImageField|AssociationField>
      */
     public function baseIdentitySet(
-        string $shortcodeType,
         string $pageName,
         string $entityFqcn,
         bool $withSlug = true,
@@ -84,7 +83,6 @@ final class CrudFieldFactory
     {
         $fields   = [];
         $fields[] = $this->idField();
-        $fields[] = $this->idShortcodeField($shortcodeType);
         if ($withSlug) {
             $fields[] = $this->slugField();
         }
@@ -156,7 +154,7 @@ final class CrudFieldFactory
     public function fullContentSet(string $type, string $pageName, string $entityFqcn, bool $isSuperAdmin): array
     {
         return array_merge(
-            $this->baseIdentitySet($type, $pageName, $entityFqcn),
+            $this->baseIdentitySet($pageName, $entityFqcn),
             $this->taxonomySet($type),
             $this->paragraphFields($pageName),
             $this->metaFields(),
@@ -167,13 +165,6 @@ final class CrudFieldFactory
     public function idField(): IdField
     {
         return IdField::new('id', new TranslatableMessage('ID'))->onlyOnDetail();
-    }
-
-    public function idShortcodeField(string $type): TextField
-    {
-        return TextField::new('id', new TranslatableMessage('Shortcode'))->formatValue(
-            fn ($identity): string => sprintf('[%s:%s]', $type, $identity)
-        )->onlyOnDetail();
     }
 
     public function imageField(

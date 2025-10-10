@@ -49,7 +49,7 @@ class PostCrudController extends AbstractCrudControllerLib
         $isSuperAdmin = $this->isSuperAdmin();
 
         // Base identity fields (id, title, slug, enable, image)
-        foreach ($this->crudFieldFactory->baseIdentitySet('post', $pageName, self::getEntityFqcn()) as $field) {
+        foreach ($this->crudFieldFactory->baseIdentitySet($pageName, self::getEntityFqcn()) as $field) {
             yield $field;
         }
 

@@ -13,7 +13,6 @@ abstract class TagCrudControllerLib extends AbstractTypedCrudControllerLib
     {
         // Tag is not uploadable: no image and no enable field in the entity
         return $this->crudFieldFactory->baseIdentitySet(
-            'tag',
             $pageName,
             self::getEntityFqcn(),
             withSlug: true,
