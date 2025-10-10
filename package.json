@@ -51,7 +51,7 @@
     "jscpd": "^4.0.5",
     "license-checker": "^25.0.1",
     "markdownlint-cli": "^0.45.0",
-    "npm-run-all": "^4.1.5",
+    "npm-run-all2": "^5.0.0",
     "postcss-discard-comments": "7.0.*",
     "postcss-loader": "8.2.*",
     "readme-md-generator": "^1.0.0",
