@@ -71,6 +71,15 @@ class BreadcrumbBlock extends BlockLib
             unset($params['page']);
         }
 
+        $query = $request->query->all();
+        foreach ($query as $key => $value) {
+            if (!in_array($key, ['title', 'categories', 'sagas', 'year', 'order', 'orderby'])) {
+                continue;
+            }
+
+            $params[$key] = $value;
+        }
+
         return $params;
     }
 
