@@ -58,7 +58,7 @@
   li{
     display: flex;
     flex-direction: column;
-    height: 500px;
+    height: 550px;
     &.teaser-movie{
       background-color: color.scale(variables.$colorbg, $lightness: 15%);
       &:nth-child(even)

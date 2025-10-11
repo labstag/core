@@ -19,6 +19,8 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 final class ParagraphService
 {
+    private array $init = [];
+
     public function __construct(
         /**
          * @var iterable<\Labstag\Paragraph\Abstract\ParagraphLib>
@@ -26,6 +28,7 @@ final class ParagraphService
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
         private AdminUrlGenerator $adminUrlGenerator,
+        private CacheService $cacheService,
         private Security $security,
     )
     {
@@ -328,6 +331,12 @@ final class ParagraphService
             if ($paragraph->getType() != $row->getType()) {
                 continue;
             }
+
+            if (isset($this->init[$paragraph->getId()])) {
+                return;
+            }
+
+            $this->init[$paragraph->getId()] = true;
 
             $row->generate($paragraph, $data, $disable);
 

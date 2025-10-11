@@ -15,6 +15,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class BlockService
 {
+    private array $init = [];
+
     public function __construct(
         /**
          * @var iterable<\Labstag\Block\Abstract\BlockLib>
@@ -237,6 +239,12 @@ final class BlockService
             if ($block->getType() != $row->getType()) {
                 continue;
             }
+            
+            if (isset($this->init[$block->getId()])) {
+                return;
+            }
+            
+            $this->init[$block->getId()] = true;
 
             $row->generate($block, $data, $disable);
 
