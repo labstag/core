@@ -135,7 +135,7 @@
         "phpstan/phpstan-mockery": "2.0.*",
         "phpstan/phpstan-phpunit": "2.0.*",
         "phpstan/phpstan-symfony": "2.0.*",
-        "phpunit/phpunit": "12.3.*",
+        "phpunit/phpunit": "12.4.*",
         "povils/phpmnd": "3.6.*",
         "rector/rector": "2.1.*",
         "smknstd/fakerphp-picsum-images": "1.0.*",
