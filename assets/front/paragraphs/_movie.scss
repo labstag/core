@@ -18,6 +18,21 @@
       }
     }
   }
+  .notfound{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #cccccc;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #c0392b22;
+    padding: 1.5em;
+    margin: 2em 0;
+    .text{
+      color: #c0392b;
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+  }
   .title{
 
   }
@@ -31,14 +46,19 @@
   ul{
     grid-area: list;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns:  repeat(auto-fit, minmax(250px, 1fr));
+    align-items: start;
     grid-template-rows: 1fr;
     gap: 12px;
+    height: auto;
     @include mixins.respond-to(md) {
       grid-template-columns: repeat(3, 1fr);
     }
   }
   li{
+    display: flex;
+    flex-direction: column;
+    height: 500px;
     &.teaser-movie{
       background-color: color.scale(variables.$colorbg, $lightness: 15%);
       &:nth-child(even)

@@ -1113,6 +1113,10 @@
         <source>Choose paragraph</source>
         <target>Choisir le paragraphe</target>
       </trans-unit>
+      <trans-unit id="FBQMJKR" resname="No movies match your search.">
+        <source>No movies match your search.</source>
+        <target>Aucun film ne correspond à votre recherche.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

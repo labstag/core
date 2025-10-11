@@ -53,7 +53,7 @@ class DashboardController extends AbstractDashboardController
         $data      = $this->configurationService->getConfiguration();
         $dashboard = Dashboard::new();
         $dashboard->setTitle($data->getName());
-        $dashboard->setTranslationDomain('admin');
+        $dashboard->setTranslationDomain('messages');
         $dashboard->renderContentMaximized();
         $dashboard->setLocales($this->userService->getLanguages());
 

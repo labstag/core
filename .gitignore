@@ -2,6 +2,7 @@
 /apps/vendor
 /apps/bin/
 /apps/.symfony5
+/apps/.composer
 /apps/.bash_history
 !/apps/bin/console
 /apps/public/assets
