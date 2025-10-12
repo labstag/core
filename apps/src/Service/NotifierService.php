@@ -3,17 +3,19 @@
 namespace Labstag\Service;
 
 use Exception;
-use RuntimeException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Notifier\Bridge\Bluesky\BlueskyOptions;
 use Symfony\Component\Notifier\Bridge\Discord\DiscordOptions;
 use Symfony\Component\Notifier\Bridge\Mastodon\MastodonOptions;
+use Symfony\Component\Notifier\Bridge\Telegram\TelegramOptions;
 use Symfony\Component\Notifier\ChatterInterface;
 use Symfony\Component\Notifier\Message\ChatMessage;
 
 final class NotifierService
 {
     public function __construct(
-        private ChatterInterface $chatter
+        private ChatterInterface $chatter,
+        private LoggerInterface $logger
     )
     {
 
@@ -21,47 +23,61 @@ final class NotifierService
 
     public function sendMessage(string $message): void
     {
-        $this->bluesky($message);
-        $this->discord($message);
-        $this->mastodon($message);
+        // $options = new BlueskyOptions();
+        // $this->bluesky($message, $options);
+        // $options = new DiscordOptions();
+        // $this->discord($message, $options);
+        // $options = new MastodonOptions();
+        // $this->mastodon($message, $options);
+        $options = new TelegramOptions();
+        $this->telegram($message, $options);
     }
 
-    private function discord(string $message): void
+    private function telegram(string $message, $options): void
     {
         try{
             $chatMessage = new ChatMessage($message);
-            $options = new DiscordOptions();
             $chatMessage->options($options);
             $this->chatter->send($chatMessage);
         }
         catch (Exception $e) {
-            throw new RuntimeException($e->getMessage());
+            $this->logger->error($e->getMessage());
         }
     }
 
-    private function bluesky(string $message): void
+    private function discord(string $message, $options): void
     {
         try{
             $chatMessage = new ChatMessage($message);
-            $options = new BlueskyOptions();
             $chatMessage->options($options);
             $this->chatter->send($chatMessage);
         }
         catch (Exception $e) {
-            throw new RuntimeException($e->getMessage());
+            $this->logger->error($e->getMessage());
         }
     }
 
-    private function mastodon(string $message): void
+    private function bluesky(string $message, $options): void
     {
         try{
             $chatMessage = new ChatMessage($message);
-            $options = new MastodonOptions();
             $chatMessage->options($options);
             $this->chatter->send($chatMessage);
         }
         catch (Exception $e) {
-            throw new RuntimeException($e->getMessage());
+            $this->logger->error($e->getMessage());
+        }
+    }
+
+    private function mastodon(string $message, $options): void
+    {
+        try{
+            $chatMessage = new ChatMessage($message);
+            $chatMessage->options($options);
+            $this->chatter->send($chatMessage);
+        }
+        catch (Exception $e) {
+            $this->logger->error($e->getMessage());
         }
     }
 }

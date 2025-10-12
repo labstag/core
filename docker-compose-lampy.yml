@@ -22,6 +22,7 @@ services:
       - ${PWD}/conf/apache2/000-default.conf:/etc/apache2/sites-available/000-default.conf:ro
       - ${PWD}/conf/apache2/apache2.conf:/etc/apache2/apache2.conf:ro
     environment:
+      TZ: Europe/Paris
       APP_SECRET: "CHANGEME"
       MAILER_DSN: "smtp://mailtest:1025"
       MESSENGER_TRANSPORT_DSN: "doctrine://default"

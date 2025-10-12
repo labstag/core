@@ -43,6 +43,7 @@
         "symfony/rate-limiter": "7.3.*",
         "symfony/redis-messenger": "7.3.*",
         "symfony/runtime": "7.3.*",
+        "symfony/telegram-notifier": "7.3.*",
         "symfony/twig-bridge": "7.3.*",
         "symfony/twig-bundle": "7.3.*",
         "symfony/webpack-encore-bundle": "2.3.*",
