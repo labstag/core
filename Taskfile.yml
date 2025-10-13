@@ -61,7 +61,7 @@ tasks:
     silent: true
     cmds:
     - rm -rf ./conf/apache2 || true
-    - docker create --name labstag-php koromerzhin/php:8.4.3-apache-symfony 
+    - docker create --name labstag-php koromerzhin/php:8.4.13-apache-symfony 
     - mkdir -p ./conf/apache2
     - docker cp labstag-php:/etc/apache2/sites-available/000-default.conf ./conf/apache2/000-default.conf
     - docker cp labstag-php:/etc/apache2/apache2.conf ./conf/apache2/apache2.conf
