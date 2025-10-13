@@ -3,6 +3,7 @@
 /apps/bin/
 /apps/.symfony5
 /apps/.composer
+/apps/.pdepend
 /apps/.bash_history
 !/apps/bin/console
 /apps/public/assets

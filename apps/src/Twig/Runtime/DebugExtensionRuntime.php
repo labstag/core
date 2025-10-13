@@ -17,13 +17,13 @@ class DebugExtensionRuntime implements RuntimeExtensionInterface
     public function begin(array $data): string
     {
         $templates = $data['templates'];
-        if (is_null($templates) || 0 == (is_countable($templates) ? count($templates) : 0)) {
+        if (is_null($templates) || 0 === is_countable($templates) ? count($templates) : 0 !== 0) {
             return '';
         }
 
         $html = "<!--\nTHEME DEBUG\n";
         $html .= "THEME HOOK : '" . $templates['hook'] . "'\n";
-        if (0 != (is_countable($templates['files']) ? count($templates['files']) : 0)) {
+        if (0 !== is_countable($templates['files']) ? count($templates['files']) : 0 !== 0) {
             $html .= "FILE NAME SUGGESTIONS: \n";
             foreach ($templates['files'] as $file) {
                 $checked = ($templates['view'] == $file) ? 'X' : '*';
@@ -40,7 +40,7 @@ class DebugExtensionRuntime implements RuntimeExtensionInterface
     public function end(array $data): string
     {
         $templates = $data['templates'];
-        if (is_null($templates) || 0 == (is_countable($templates) ? count($templates) : 0)) {
+        if (is_null($templates) || 0 === is_countable($templates) ? count($templates) : 0 !== 0) {
             return '';
         }
 

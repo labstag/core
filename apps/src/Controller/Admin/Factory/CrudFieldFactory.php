@@ -178,7 +178,9 @@ final class CrudFieldFactory
             $deleteLabel      = new TranslatableMessage('Delete image');
             $downloadLabel    = new TranslatableMessage('Download');
             $mimeTypesMessage = new TranslatableMessage('Please upload a valid image (JPEG, PNG, GIF, WebP).');
-            $maxSizeMessage   = new TranslatableMessage('The file is too large. Its size should not exceed {{ limit }}.');
+            $maxSizeMessage   = new TranslatableMessage(
+                'The file is too large. Its size should not exceed {{ limit }}.'
+            );
 
             $imageField = TextField::new($type . 'File', $label ?? new TranslatableMessage('Image'))->setFormType(
                 VichImageType::class

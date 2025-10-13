@@ -103,7 +103,7 @@ final class SiteService
                 continue;
             }
 
-            if (0 == substr_count((string) $info['data']['type'], 'image')) {
+            if (0 === substr_count((string) $info['data']['type'], 'image')) {
                 continue;
             }
 

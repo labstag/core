@@ -170,7 +170,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         $domDocument->loadHTML($html);
 
         $domNodeList = $domDocument->getElementsByTagName('iframe');
-        if (0 == count($domNodeList)) {
+        if (0 === count($domNodeList)) {
             return null;
         }
 

@@ -49,7 +49,7 @@ class ContentBlock extends BlockLib
         }
 
         $paragraphs = $data['paragraphs'];
-        if (0 == count($paragraphs)) {
+        if ([] === $paragraphs) {
             $this->setShow($block, false);
 
             return;

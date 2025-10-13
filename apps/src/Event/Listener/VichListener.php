@@ -7,7 +7,6 @@ use ReflectionClass;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Vich\UploaderBundle\Event\Event;
 use Vich\UploaderBundle\Event\Events;
 
@@ -65,12 +64,16 @@ final class VichListener
         $properties       = $reflectionClass->getProperties();
         foreach ($properties as $property) {
             $name  = $property->getName();
-            $type = $property->getType();
-            if ('lazyObjectState' == $name || is_null($type)) {
+            $type  = $property->getType();
+            if ('lazyObjectState' == $name) {
                 continue;
             }
 
-            if(!$type->getName() instanceof UploadedFile) {
+            if (is_null($type)) {
+                continue;
+            }
+
+            if (!$type->getName() instanceof UploadedFile) {
                 continue;
             }
 

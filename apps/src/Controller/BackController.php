@@ -49,7 +49,7 @@ class BackController extends AbstractController
     public function cacheclear(KernelInterface $kernel): Response
     {
         $total = $this->fileService->deletedFileByEntities();
-        if (0 != $total) {
+        if (0 !== $total) {
             $this->addFlash(
                 'success',
                 new TranslatableMessage(

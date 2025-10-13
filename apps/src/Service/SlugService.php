@@ -135,7 +135,7 @@ final class SlugService
             'chapter' => $this->chapterRepository,
         ];
 
-        if (1 == substr_count($slug, '/')) {
+        if (1 === substr_count($slug, '/')) {
             [
                 $slugstory,
                 $slugchapter,

@@ -50,6 +50,6 @@ final class AdminListener
             return false;
         }
 
-        return 1 == substr_count((string) $referer, 'action=trash');
+        return 1 === substr_count((string) $referer, 'action=trash');
     }
 }

@@ -59,7 +59,7 @@ final class GeocodeService
         $file       = 'http://download.geonames.org/export/zip/' . $country . '.zip';
         $response   = $this->httpClient->request('GET', $file);
         $statusCode = $response->getStatusCode();
-        if (self::HTTP_OK != $statusCode) {
+        if (self::HTTP_OK !== $statusCode) {
             return [];
         }
 

@@ -19,6 +19,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 final class ParagraphService
 {
+
     private array $init = [];
 
     public function __construct(
@@ -28,7 +29,6 @@ final class ParagraphService
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
         private AdminUrlGenerator $adminUrlGenerator,
-        private CacheService $cacheService,
         private Security $security,
     )
     {

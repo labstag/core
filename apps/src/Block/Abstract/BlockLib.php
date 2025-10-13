@@ -219,7 +219,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     protected function setFooter(Block $block, array $data): void
     {
         $blockId = $block->getId();
-        if (0 == count($data)) {
+        if ([] === $data) {
             return;
         }
 
@@ -232,7 +232,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     protected function setHeader(Block $block, array $data): void
     {
         $blockId = $block->getId();
-        if (0 == count($data)) {
+        if ([] === $data) {
             return;
         }
 

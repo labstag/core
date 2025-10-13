@@ -37,7 +37,7 @@ abstract class FrontFormLib implements FrontFormInterface
         $request = $this->requestStack->getCurrentRequest();
         $form->handleRequest($request);
 
-        $state = (false == $disable) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
+        $state = (false === $disable) && $form->isSubmitted() && $form->isValid() && $request->isMethod('POST');
 
         if ($state && $save) {
             $this->saveForm($form);

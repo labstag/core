@@ -15,10 +15,9 @@ final class NotifierService
 {
     public function __construct(
         private ChatterInterface $chatter,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
     )
     {
-
     }
 
     public function sendMessage(string $message): void
@@ -29,55 +28,18 @@ final class NotifierService
         // $this->discord($message, $options);
         // $options = new MastodonOptions();
         // $this->mastodon($message, $options);
-        $options = new TelegramOptions();
-        $this->telegram($message, $options);
+        $telegramOptions = new TelegramOptions();
+        $this->telegram($message, $telegramOptions);
     }
 
-    private function telegram(string $message, $options): void
+    private function telegram(string $message, TelegramOptions $telegramOptions): void
     {
-        try{
+        try {
             $chatMessage = new ChatMessage($message);
-            $chatMessage->options($options);
+            $chatMessage->options($telegramOptions);
             $this->chatter->send($chatMessage);
-        }
-        catch (Exception $e) {
-            $this->logger->error($e->getMessage());
-        }
-    }
-
-    private function discord(string $message, $options): void
-    {
-        try{
-            $chatMessage = new ChatMessage($message);
-            $chatMessage->options($options);
-            $this->chatter->send($chatMessage);
-        }
-        catch (Exception $e) {
-            $this->logger->error($e->getMessage());
-        }
-    }
-
-    private function bluesky(string $message, $options): void
-    {
-        try{
-            $chatMessage = new ChatMessage($message);
-            $chatMessage->options($options);
-            $this->chatter->send($chatMessage);
-        }
-        catch (Exception $e) {
-            $this->logger->error($e->getMessage());
-        }
-    }
-
-    private function mastodon(string $message, $options): void
-    {
-        try{
-            $chatMessage = new ChatMessage($message);
-            $chatMessage->options($options);
-            $this->chatter->send($chatMessage);
-        }
-        catch (Exception $e) {
-            $this->logger->error($e->getMessage());
+        } catch (Exception $exception) {
+            $this->logger->error($exception->getMessage());
         }
     }
 }

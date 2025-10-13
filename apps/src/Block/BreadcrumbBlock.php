@@ -41,9 +41,9 @@ class BreadcrumbBlock extends BlockLib
         $request = $this->requestStack->getCurrentRequest();
         $slug    = $request->attributes->get('slug');
         $urls    = $this->setBreadcrumb($slug);
-        $params = $this->getParamsAttributes($request);
+        $params  = $this->getParamsAttributes($request);
 
-        if (0 == count($urls)) {
+        if ([] === $urls) {
             $this->setShow($block, false);
 
             return;
@@ -53,11 +53,23 @@ class BreadcrumbBlock extends BlockLib
             $block,
             [
                 'params' => $params,
-                'urls'  => $urls,
-                'block' => $block,
-                'data'  => $data,
+                'urls'   => $urls,
+                'block'  => $block,
+                'data'   => $data,
             ]
         );
+    }
+
+    #[Override]
+    public function getName(): string
+    {
+        return 'Breadcrumb';
+    }
+
+    #[Override]
+    public function getType(): string
+    {
+        return 'breadcrumb';
     }
 
     private function getParamsAttributes(Request $request): array
@@ -81,18 +93,6 @@ class BreadcrumbBlock extends BlockLib
         }
 
         return $params;
-    }
-
-    #[Override]
-    public function getName(): string
-    {
-        return 'Breadcrumb';
-    }
-
-    #[Override]
-    public function getType(): string
-    {
-        return 'breadcrumb';
     }
 
     /**

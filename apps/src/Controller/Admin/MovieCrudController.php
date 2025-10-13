@@ -109,11 +109,13 @@ class MovieCrudController extends AbstractCrudControllerLib
     {
         $this->crudFieldFactory->addFilterEnable($filters);
         $movieRepository = $this->getMovieRepository();
-        $certifications = $movieRepository->getCertifications();
+        $certifications  = $movieRepository->getCertifications();
 
         $filters->add('releaseDate');
         $filters->add('countries');
-        $filters->add(ChoiceFilter::new('certification', new TranslatableMessage('Certification'))->setChoices($certifications));
+        $filters->add(
+            ChoiceFilter::new('certification', new TranslatableMessage('Certification'))->setChoices($certifications)
+        );
 
         $this->crudFieldFactory->addFilterTags($filters, 'movie');
         $this->crudFieldFactory->addFilterCategories($filters, 'movie');
@@ -125,17 +127,6 @@ class MovieCrudController extends AbstractCrudControllerLib
     public static function getEntityFqcn(): string
     {
         return Movie::class;
-    }
-
-    /**
-     * Get the MovieRepository with proper typing for PHPStan.
-     */
-    private function getMovieRepository(): MovieRepository
-    {
-        $repository = $this->getRepository();
-        assert($repository instanceof MovieRepository);
-
-        return $repository;
     }
 
     #[Route('/admin/movie/{entity}/imdb', name: 'admin_movie_imdb')]
@@ -186,6 +177,17 @@ class MovieCrudController extends AbstractCrudControllerLib
     {
         $request = $this->container->get('request_stack')->getCurrentRequest();
         $request->query->get('action', null);
+    }
+
+    /**
+     * Get the MovieRepository with proper typing for PHPStan.
+     */
+    private function getMovieRepository(): MovieRepository
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        assert($serviceEntityRepositoryLib instanceof MovieRepository);
+
+        return $serviceEntityRepositoryLib;
     }
 
     private function setLinkImdbAction(): Action

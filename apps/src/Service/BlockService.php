@@ -15,6 +15,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class BlockService
 {
+
     private array $init = [];
 
     public function __construct(
@@ -182,7 +183,7 @@ final class BlockService
     private function acces(Block $block): bool
     {
         $roles = $block->getRoles();
-        if (is_null($roles) || 0 == count($roles)) {
+        if (is_null($roles) || [] === $roles) {
             return true;
         }
 
@@ -239,11 +240,11 @@ final class BlockService
             if ($block->getType() != $row->getType()) {
                 continue;
             }
-            
+
             if (isset($this->init[$block->getId()])) {
                 return;
             }
-            
+
             $this->init[$block->getId()] = true;
 
             $row->generate($block, $data, $disable);

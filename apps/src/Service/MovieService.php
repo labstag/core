@@ -70,7 +70,7 @@ final class MovieService
         $data = $this->categoryRepository->findAllByTypeMovieWithoutMovie();
         foreach ($data as $category) {
             $total = count($category->getMovies());
-            if (0 != $total) {
+            if (0 !== $total) {
                 continue;
             }
 
@@ -83,7 +83,7 @@ final class MovieService
         $data = $this->sagaRepository->findSagaWithoutMovie();
         foreach ($data as $saga) {
             $total = count($saga->getMovies());
-            if (0 != $total) {
+            if (0 !== $total) {
                 continue;
             }
 
@@ -140,7 +140,7 @@ final class MovieService
         $sagas = [];
         foreach ($data as $saga) {
             $movies = $saga->getMovies();
-            if (1 == count($movies)) {
+            if (1 === count($movies)) {
                 continue;
             }
 
@@ -291,7 +291,7 @@ final class MovieService
                 }
 
                 $data = json_decode($response->getContent(), true);
-                if (0 == count($data['movie_results'])) {
+                if (0 === count($data['movie_results'])) {
                     $item->expiresAfter(0);
 
                     return null;
@@ -509,7 +509,7 @@ final class MovieService
      */
     private function setCertification(array $details, Movie $movie): void
     {
-        if (!isset($details['release_dates']['results']) || 0 == count($details['release_dates']['results'])) {
+        if (!isset($details['release_dates']['results']) || 0 === count($details['release_dates']['results'])) {
             return;
         }
 
@@ -535,7 +535,7 @@ final class MovieService
      */
     private function updateCategory(Movie $movie, array $details): bool
     {
-        if (!isset($details['tmdb']['genres']) || 0 == count($details['tmdb']['genres'])) {
+        if (!isset($details['tmdb']['genres']) || 0 === count($details['tmdb']['genres'])) {
             return false;
         }
 

@@ -36,11 +36,11 @@ final class SitemapService
         $configuration = $this->configurationService->getConfiguration();
 
         $tabs = $this->getDataPages();
-        if ($configuration->isSitemapPosts() || true == $all) {
+        if ($configuration->isSitemapPosts() || $all) {
             $tabs = array_merge($tabs, $this->getDataPosts());
         }
 
-        if ($configuration->isSitemapStory() || true == $all) {
+        if ($configuration->isSitemapStory() || $all) {
             $tabs = array_merge($tabs, $this->getDataStory());
         }
 

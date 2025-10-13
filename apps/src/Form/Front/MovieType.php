@@ -118,12 +118,15 @@ class MovieType extends AbstractType
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
         $request = $this->requestStack->getCurrentRequest();
-        $slug = $request->attributes->get('slug');
+        $slug    = $request->attributes->get('slug');
 
         $optionsResolver->setDefaults(
             [
                 'csrf_protection' => false,
-                'action'          => $this->router->generate('front', ['slug' => $slug]),
+                'action'          => $this->router->generate(
+                    'front',
+                    ['slug' => $slug]
+                ),
                 'method'          => 'GET',
                 'data_class'      => null,
             ]

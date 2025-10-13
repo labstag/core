@@ -47,12 +47,12 @@ abstract class FixtureLib extends Fixture
 
     protected function addCategoryToEntity(object $entity): void
     {
-        if (0 == count($this->categories)) {
+        if ([] === $this->categories) {
             return;
         }
 
         $max = random_int(0, count($this->categories));
-        if (0 == $max) {
+        if (0 === $max) {
             return;
         }
 
@@ -83,12 +83,12 @@ abstract class FixtureLib extends Fixture
 
     protected function addTagToEntity(object $entity): void
     {
-        if (0 == count($this->tags)) {
+        if ([] === $this->tags) {
             return;
         }
 
         $max = random_int(0, count($this->tags));
-        if (0 == $max) {
+        if (0 === $max) {
             return;
         }
 

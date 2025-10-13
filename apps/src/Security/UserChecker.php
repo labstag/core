@@ -14,6 +14,7 @@ class UserChecker implements UserCheckerInterface
     #[Override]
     public function checkPostAuth(UserInterface $user, ?TokenInterface $token = null): void
     {
+        unset($token);
         if (!$user instanceof User) {
             return;
         }

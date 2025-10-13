@@ -153,7 +153,7 @@ class MovieAddCommand extends Command
         foreach ($worksheet->getRowIterator() as $i => $row) {
             $cellIterator = $row->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(false);
-            if (1 == $i) {
+            if (1 === $i) {
                 foreach ($cellIterator as $cell) {
                     $headers[] = trim((string) $cell->getValue());
                 }

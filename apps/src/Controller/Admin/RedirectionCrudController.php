@@ -281,7 +281,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         $sheetData   = $spreadsheet->getActiveSheet()->toArray();
         $head        = $sheetData[0];
         $find        = $this->setFind($head);
-        if (self::FIELDCSV != $find) {
+        if (self::FIELDCSV !== $find) {
             $this->addFlash('danger', 'Le fichier n\'est pas correctement formaté');
 
             return $data;

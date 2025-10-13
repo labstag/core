@@ -46,11 +46,7 @@ class StarCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            false
-        ) as $field) {
+        foreach ($this->crudFieldFactory->baseIdentitySet($pageName, self::getEntityFqcn(), false) as $field) {
             yield $field;
         }
 
@@ -71,12 +67,12 @@ class StarCrudController extends AbstractCrudControllerLib
     public function configureFilters(Filters $filters): Filters
     {
         $licences = $this->getallData('license');
-        if (0 != count($licences)) {
+        if ([] !== $licences) {
             $filters->add(ChoiceFilter::new('license', new TranslatableMessage('License'))->setChoices($licences));
         }
 
         $languages = $this->getallData('language');
-        if (0 != count($languages)) {
+        if ([] !== $languages) {
             $filters->add(ChoiceFilter::new('language', new TranslatableMessage('Language'))->setChoices($languages));
         }
 

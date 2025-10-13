@@ -35,9 +35,9 @@ class CategoryFixtures extends FixtureLib
         $category->setType($code);
 
         $parent = random_int(0, 1);
-        if (1 == $parent) {
+        if (1 === $parent) {
             $categories = $this->getParent('category' . $code);
-            if (0 != count($categories)) {
+            if ([] !== $categories) {
                 $parentCategory = $this->getReference(array_rand($categories), Category::class);
                 $category->setParent($parentCategory);
             }
@@ -56,7 +56,7 @@ class CategoryFixtures extends FixtureLib
     {
         $tab = [];
         foreach ($this->categories as $key => $value) {
-            if (0 != substr_count((string) $key, $code)) {
+            if (0 !== substr_count((string) $key, $code)) {
                 $tab[$key] = $value;
             }
         }

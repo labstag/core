@@ -36,7 +36,9 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         $data['data-context_url']  = $urlAdmin;
         $data['data-context_text'] = $this->translator->trans(
             new TranslatableMessage('Update block (%type%)'),
-            ['%type%' => $block->getType()]
+            [
+                '%type%' => $block->getType(),
+            ]
         );
 
         return $data;
