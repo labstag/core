@@ -40,6 +40,7 @@
     "clean-webpack-plugin": "4.0.*",
     "core-js": "3.45.*",
     "cypress": "^15.3.0",
+    "dotenv": "^17.2.3",
     "dotenv-webpack": "8.1.*",
     "eslint": "9.36.*",
     "favicons-webpack-plugin": "6.0.*",
@@ -77,5 +78,8 @@
     "swiper": "11.1.*",
     "tarteaucitronjs": "1.25.*",
     "tom-select": "2.4.*"
+  },
+  "volta": {
+    "node": "22.20.0"
   }
 }

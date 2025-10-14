@@ -21,3 +21,4 @@ docker-compose-*.yml
 !/apps/public/uploads/.gitkeep
 .phpcs-cache
 /conf/apache2
+/cypress/screenshots
