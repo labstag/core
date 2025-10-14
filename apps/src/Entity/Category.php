@@ -39,6 +39,12 @@ class Category implements Stringable
     private Collection $movies;
 
     /**
+     * @var Collection<int, Serie>
+     */
+    #[ORM\ManyToMany(targetEntity: Serie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
+    private Collection $series;
+
+    /**
      * @var Collection<int, Page>
      */
     #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
@@ -75,6 +81,7 @@ class Category implements Stringable
         $this->children = new ArrayCollection();
         $this->stories  = new ArrayCollection();
         $this->movies   = new ArrayCollection();
+        $this->series   = new ArrayCollection();
         $this->pages    = new ArrayCollection();
         $this->posts    = new ArrayCollection();
     }
@@ -99,6 +106,15 @@ class Category implements Stringable
     {
         if (!$this->movies->contains($movie)) {
             $this->movies->add($movie);
+        }
+
+        return $this;
+    }
+
+    public function addSerie(Serie $serie): static
+    {
+        if (!$this->series->contains($serie)) {
+            $this->series->add($serie);
         }
 
         return $this;
@@ -150,6 +166,14 @@ class Category implements Stringable
     public function getMovies(): Collection
     {
         return $this->movies;
+    }
+
+    /**
+     * @return Collection<int, Serie>
+     */
+    public function getSeries(): Collection
+    {
+        return $this->series;
     }
 
     /**
@@ -209,6 +233,13 @@ class Category implements Stringable
     public function removeMovie(Movie $movie): static
     {
         $this->movies->removeElement($movie);
+
+        return $this;
+    }
+
+    public function removeSerie(Serie $serie): static
+    {
+        $this->series->removeElement($serie);
 
         return $this;
     }

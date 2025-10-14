@@ -35,6 +35,24 @@ class CategoryRepository extends ServiceEntityRepositoryLib
     /**
      * @return array<Category>
      */
+    public function findAllByTypeSerieEnable(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->andWhere('c.type = :type');
+        $queryBuilder->setParameter('type', 'serie');
+        $queryBuilder->orderBy('c.title', 'ASC');
+        $queryBuilder->leftJoin('c.series', 's')->addSelect('s');
+        $queryBuilder->andWhere('s.enable = true');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'category-type-serie-enable');
+
+        return $query->getResult();
+    }
+
+    /**
+     * @return array<Category>
+     */
     public function findAllByTypeMovieEnable(): array
     {
         $queryBuilder = $this->createQueryBuilder('c');
@@ -61,6 +79,24 @@ class CategoryRepository extends ServiceEntityRepositoryLib
         $queryBuilder->orderBy('c.title', 'ASC');
         $queryBuilder->leftJoin('c.movies', 'm')->addSelect('m');
         $queryBuilder->andWhere('m.id IS NULL');
+
+        $query = $queryBuilder->getQuery();
+        // Ne pas mettre de cache
+
+        return $query->getResult();
+    }
+
+    /**
+     * @return array<Category>
+     */
+    public function findAllByTypeSerieWithoutSerie(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('c');
+        $queryBuilder->andWhere('c.type = :type');
+        $queryBuilder->setParameter('type', 'serie');
+        $queryBuilder->orderBy('c.title', 'ASC');
+        $queryBuilder->leftJoin('c.series', 's')->addSelect('s');
+        $queryBuilder->andWhere('s.id IS NULL');
 
         $query = $queryBuilder->getQuery();
         // Ne pas mettre de cache

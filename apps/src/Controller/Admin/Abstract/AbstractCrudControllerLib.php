@@ -28,6 +28,7 @@ use Labstag\Service\FormService;
 use Labstag\Service\MovieService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SecurityService;
+use Labstag\Service\SerieService;
 use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
 use Labstag\Service\UserService;
@@ -51,6 +52,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     public function __construct(
         protected EmailService $emailService,
+        protected SerieService $serieService,
         protected FormService $formService,
         protected FileService $fileService,
         protected SiteService $siteService,

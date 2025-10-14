@@ -5,17 +5,17 @@ namespace Labstag\Service;
 use DateTime;
 use Exception;
 use Labstag\Entity\Category;
-use Labstag\Entity\Movie;
+use Labstag\Entity\Serie;
 use Labstag\Entity\Saga;
 use Labstag\Repository\CategoryRepository;
-use Labstag\Repository\MovieRepository;
+use Labstag\Repository\SerieRepository;
 use Labstag\Repository\SagaRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final class MovieService
+final class SerieService
 {
     private const STATUSOK = 200;
 
@@ -57,8 +57,7 @@ final class MovieService
     public function __construct(
         private CacheService $cacheService,
         private HttpClientInterface $httpClient,
-        private MovieRepository $movieRepository,
-        private SagaRepository $sagaRepository,
+        private SerieRepository $serieRepository,
         private CategoryRepository $categoryRepository,
         private string $tmdbapiKey,
     )
@@ -67,7 +66,7 @@ final class MovieService
 
     public function deleteOldCategory(): void
     {
-        $data = $this->categoryRepository->findAllByTypeMovieWithoutMovie();
+        $data = $this->categoryRepository->findAllByTypeSerieWithoutSerie();
         foreach ($data as $category) {
             $total = count($category->getMovies());
             if (0 !== $total) {
@@ -75,19 +74,6 @@ final class MovieService
             }
 
             $this->categoryRepository->delete($category);
-        }
-    }
-
-    public function deleteOldSaga(): void
-    {
-        $data = $this->sagaRepository->findSagaWithoutMovie();
-        foreach ($data as $saga) {
-            $total = count($saga->getMovies());
-            if (0 !== $total) {
-                continue;
-            }
-
-            $this->sagaRepository->delete($saga);
         }
     }
 
@@ -100,7 +86,7 @@ final class MovieService
             return $this->category;
         }
 
-        $data       = $this->categoryRepository->findAllByTypeMovieEnable();
+        $data       = $this->categoryRepository->findAllByTypeSerieEnable();
         $categories = [];
         foreach ($data as $category) {
             $categories[$category->getTitle()] = $category->getSlug();
@@ -120,36 +106,11 @@ final class MovieService
             return $this->country;
         }
 
-        $country    = $this->movieRepository->findAllUniqueCountries();
+        $country    = $this->serieRepository->findAllUniqueCountries();
 
         $this->country = $country;
 
         return $country;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getSagaForForm(): array
-    {
-        if ([] !== $this->saga) {
-            return $this->saga;
-        }
-
-        $data  = $this->sagaRepository->findAllByTypeMovieEnable();
-        $sagas = [];
-        foreach ($data as $saga) {
-            $movies = $saga->getMovies();
-            if (1 === count($movies)) {
-                continue;
-            }
-
-            $sagas[$saga->getTitle()] = $saga->getSlug();
-        }
-
-        $this->saga = $sagas;
-
-        return $sagas;
     }
 
     /**
@@ -161,7 +122,7 @@ final class MovieService
             return $this->year;
         }
 
-        $data = $this->movieRepository->findAllUniqueYear();
+        $data = $this->serieRepository->findAllUniqueYear();
         $year = [];
         foreach ($data as $value) {
             $year[$value] = $value;
@@ -172,15 +133,14 @@ final class MovieService
         return $year;
     }
 
-    public function update(Movie $movie): bool
+    public function update(Serie $serie): bool
     {
-        $this->updateImdb($movie);
-        $details           = $this->getDetails($movie);
+        $this->updateImdb($serie);
+        $details           = $this->getDetails($serie);
         $statuses          = [
-            $this->updateMovie($movie, $details),
-            $this->updateSaga($movie, $details),
-            $this->updateCategory($movie, $details),
-            $this->updateTrailer($movie, $details),
+            $this->updateSerie($serie, $details),
+            $this->updateCategory($serie, $details),
+            $this->updateTrailer($serie, $details),
         ];
 
         return in_array(true, $statuses, true);
@@ -189,13 +149,13 @@ final class MovieService
     /**
      * @return array<string, mixed>
      */
-    private function getDetails(Movie $movie): array
+    private function getDetails(Serie $serie): array
     {
         $details = [];
 
-        $tmdbId = $movie->getTmdb();
+        $tmdbId = $serie->getTmdb();
         if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
-            $data   = $this->getDetailsTmdb($movie->getImdb());
+            $data   = $this->getDetailsTmdb($serie->getImdb());
             if (null !== $data && isset($data['movie_results'][0]['id'])) {
                 $tmdbId = $data['movie_results'][0]['id'];
             }
@@ -206,8 +166,8 @@ final class MovieService
         }
 
         $details = $this->getDetailsReleasesDates($details, $tmdbId);
-        $details = $this->getDetailsTmdbMovie($details, $tmdbId);
-        $details = $this->getTrailersTmdbMovie($details, $tmdbId);
+        $details = $this->getDetailsTmdbSerie($details, $tmdbId);
+        $details = $this->getTrailersTmdbSerie($details, $tmdbId);
 
         return $this->getDetailsTmdbCollection($details);
     }
@@ -223,7 +183,7 @@ final class MovieService
             return $details;
         }
 
-        $cacheKey = 'tmdb_movie-release_dates_' . $tmdbId;
+        $cacheKey = 'tmdb_serie-release_dates_' . $tmdbId;
 
         $data = $this->cacheService->get(
             $cacheKey,
@@ -364,13 +324,13 @@ final class MovieService
      *
      * @return array<string, mixed>
      */
-    private function getDetailsTmdbMovie(array $details, string $tmdbId): array
+    private function getDetailsTmdbSerie(array $details, string $tmdbId): array
     {
         if ('' === $this->tmdbapiKey) {
             return $details;
         }
 
-        $cacheKey = 'tmdb_movie_' . $tmdbId;
+        $cacheKey = 'tmdb_serie_' . $tmdbId;
 
         $data = $this->cacheService->get(
             $cacheKey,
@@ -440,13 +400,13 @@ final class MovieService
      *
      * @return array<string, mixed>
      */
-    private function getTrailersTmdbMovie(array $details, string $tmdbId): array
+    private function getTrailersTmdbSerie(array $details, string $tmdbId): array
     {
         if ('' === $this->tmdbapiKey) {
             return $details;
         }
 
-        $cacheKey = 'tmdb_movie-trailers_' . $tmdbId;
+        $cacheKey = 'tmdb_serie-trailers_' . $tmdbId;
 
         $data = $this->cacheService->get(
             $cacheKey,
@@ -507,7 +467,7 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function setCertification(array $details, Movie $movie): void
+    private function setCertification(array $details, Serie $serie): void
     {
         if (!isset($details['release_dates']['results']) || 0 === count($details['release_dates']['results'])) {
             return;
@@ -533,7 +493,7 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateCategory(Movie $movie, array $details): bool
+    private function updateCategory(Serie $serie, array $details): bool
     {
         if (!isset($details['tmdb']['genres']) || 0 === count($details['tmdb']['genres'])) {
             return false;
@@ -568,7 +528,7 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateImageMovie(Movie $movie, array $details): bool
+    private function updateImageMovie(Serie $serie, array $details): bool
     {
         $poster = $this->getImgMovie($details);
         if ('' === $poster) {
@@ -596,38 +556,7 @@ final class MovieService
         }
     }
 
-    /**
-     * @param array<string, mixed> $details
-     */
-    private function updateImageSaga(Saga $saga, array $details): bool
-    {
-        $poster = $this->getImgSaga($details);
-        if ('' === $poster) {
-            return false;
-        }
-
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
-
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $saga->setImgFile($uploadedFile);
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
-    }
-
-    private function updateImdb(Movie $movie): void
+    private function updateImdb(Serie $serie): void
     {
         if (!str_starts_with((string) $movie->getImdb(), 'tt')) {
             $movie->setImdb('tt' . str_pad((string) $movie->getImdb(), 7, '0', STR_PAD_LEFT));
@@ -637,7 +566,7 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateMovie(Movie $movie, array $details): bool
+    private function updateSerie(Serie $serie, array $details): bool
     {
         if (!isset($details['tmdb'])) {
             return false;
@@ -680,36 +609,7 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateSaga(Movie $movie, array $details): bool
-    {
-        if (!isset($details['collection'])) {
-            return false;
-        }
-
-        $saga = $movie->getSaga();
-        if (!$saga instanceof Saga) {
-            return false;
-        }
-
-        if (isset($this->updatesaga[$saga->getId()])) {
-            return false;
-        }
-
-        $saga->setTmdb($details['collection']['id']);
-        $saga->setDescription($details['collection']['overview'] ?? '');
-
-        $this->updateImageSaga($saga, $details);
-        $this->sagaRepository->save($saga);
-
-        $this->updatesaga[$saga->getId()] = true;
-
-        return true;
-    }
-
-    /**
-     * @param array<string, mixed> $details
-     */
-    private function updateTrailer(Movie $movie, array $details): bool
+    private function updateTrailer(Serie $serie, array $details): bool
     {
         if (!isset($details['trailers'])) {
             return false;

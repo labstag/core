@@ -23,5 +23,8 @@ services:
   Labstag\Service\MovieService:
     arguments:
       $tmdbapiKey: '%env(TMDB_API_KEY)%'
+  Labstag\Service\SerieService:
+    arguments:
+      $tmdbapiKey: '%env(TMDB_API_KEY)%'
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones

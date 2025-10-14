@@ -251,6 +251,15 @@ class DashboardController extends AbstractDashboardController
                 ],
             ],
             [
+                'serie',
+                new TranslatableMessage('Serie'),
+                'fas fa-film',
+                SerieCrudController::class,
+                $categories,
+                null,
+                [],
+            ],
+            [
                 'page',
                 new TranslatableMessage('Page'),
                 'fas fa-columns',

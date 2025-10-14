@@ -1,0 +1,219 @@
+<?php
+
+namespace Labstag\Controller\Admin;
+
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
+use Labstag\Entity\Serie;
+use Labstag\Field\WysiwygField;
+use Labstag\Repository\SerieRepository;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Intl\Countries;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
+
+class SerieCrudController extends AbstractCrudControllerLib
+{
+    #[\Override]
+    public function configureActions(Actions $actions): Actions
+    {
+        $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
+
+        $action = $this->setLinkImdbAction();
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+
+        $action = $this->setLinkTmdbAction();
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+
+        $action = $this->setUpdateAction();
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->setEditDetail($actions);
+        $this->configureActionsTrash($actions);
+        $this->configureActionsUpdateImage();
+
+        return $actions;
+    }
+
+    #[\Override]
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Serie'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Series'));
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
+
+        return $crud;
+    }
+
+    #[\Override]
+    public function configureFields(string $pageName): iterable
+    {
+        yield $this->addTabPrincipal();
+        foreach ($this->crudFieldFactory->baseIdentitySet(
+            $pageName,
+            self::getEntityFqcn(),
+            withSlug: false
+        ) as $field) {
+            yield $field;
+        }
+
+        yield TextField::new('imdb', new TranslatableMessage('Imdb'))->hideOnIndex();
+        yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
+        yield TextField::new('certification', new TranslatableMessage('Certification'))->hideOnIndex();
+        yield DateField::new('releaseDate', new TranslatableMessage('Release date'));
+        $choiceField = ChoiceField::new('countries', new TranslatableMessage('Countries'));
+        $choiceField->setChoices(array_flip(Countries::getNames()));
+        $choiceField->allowMultipleChoices();
+        $choiceField->renderExpanded(false);
+        yield $choiceField;
+        yield from [
+            IntegerField::new('duration', new TranslatableMessage('Duration')),
+            NumberField::new('evaluation', new TranslatableMessage('Evaluation')),
+            IntegerField::new('votes', new TranslatableMessage('Votes')),
+            TextField::new('trailer', new TranslatableMessage('Trailer'))->hideOnIndex(),
+            WysiwygField::new('citation', new TranslatableMessage('Citation'))->hideOnIndex(),
+            WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex(),
+            $this->crudFieldFactory->categoriesField('serie'),
+            // image field déjà incluse dans baseIdentitySet
+            $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'))->hideOnIndex(),
+            $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
+        ];
+        foreach ($this->crudFieldFactory->dateSet() as $field) {
+            yield $field;
+        }
+    }
+
+    #[\Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->crudFieldFactory->addFilterEnable($filters);
+
+        $filters->add('releaseDate');
+        $filters->add('countries');
+
+        $this->crudFieldFactory->addFilterCategories($filters, 'serie');
+
+        return $filters;
+    }
+
+    public static function getEntityFqcn(): string
+    {
+        return Serie::class;
+    }
+
+    #[Route('/admin/serie/{entity}/imdb', name: 'admin_serie_imdb')]
+    public function imdb(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $serie                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->redirect('https://www.imdb.com/title/' . $serie->getImdb() . '/');
+    }
+
+    #[Route('/admin/serie/{entity}/tmdb', name: 'admin_serie_tmdb')]
+    public function tmdb(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $serie                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->redirect('https://www.themoviedb.org/movie/' . $serie->getTmdb());
+    }
+
+    #[Route('/admin/serie/{entity}/update', name: 'admin_serie_update')]
+    public function update(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $serie                      = $serviceEntityRepositoryLib->find($entity);
+        $this->serieService->update($serie);
+        $serviceEntityRepositoryLib->save($serie);
+
+        return $this->redirectToRoute('admin_serie_index');
+    }
+
+    private function configureActionsUpdateImage(): void
+    {
+        $request = $this->container->get('request_stack')->getCurrentRequest();
+        $request->query->get('action', null);
+    }
+
+    /**
+     * Get the MovieRepository with proper typing for PHPStan.
+     */
+    private function getSerieRepository(): SerieRepository
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        assert($serviceEntityRepositoryLib instanceof SerieRepository);
+
+        return $serviceEntityRepositoryLib;
+    }
+
+    private function setLinkImdbAction(): Action
+    {
+        $action = Action::new('imdb', new TranslatableMessage('IMDB Page'));
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToUrl(
+            fn (Serie $serie): string => $this->generateUrl(
+                'admin_serie_imdb',
+                [
+                    'entity' => $serie->getId(),
+                ]
+            )
+        );
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        return $action;
+    }
+
+    private function setLinkTmdbAction(): Action
+    {
+        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToUrl(
+            fn (Serie $serie): string => $this->generateUrl(
+                'admin_serie_tmdb',
+                [
+                    'entity' => $serie->getId(),
+                ]
+            )
+        );
+
+        return $action;
+    }
+
+    private function setUpdateAction(): Action
+    {
+        $action = Action::new('update', new TranslatableMessage('Update'));
+        $action->linkToUrl(
+            fn (Serie $serie): string => $this->generateUrl(
+                'admin_serie_update',
+                [
+                    'entity' => $serie->getId(),
+                ]
+            )
+        );
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        return $action;
+    }
+}

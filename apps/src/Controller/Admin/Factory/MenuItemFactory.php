@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\SubMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use Labstag\Controller\Admin\ChapterTagCrudController;
 use Labstag\Controller\Admin\MovieCategoryCrudController;
+use Labstag\Controller\Admin\SerieCategoryCrudController;
 use Labstag\Controller\Admin\MovieTagCrudController;
 use Labstag\Controller\Admin\PageCategoryCrudController;
 use Labstag\Controller\Admin\PageTagCrudController;
@@ -43,6 +44,10 @@ final class MenuItemFactory
             'movie' => [
                 'crud'       => MovieCategoryCrudController::getEntityFqcn(),
                 'controller' => MovieCategoryCrudController::class,
+            ],
+            'serie' => [
+                'crud'       => SerieCategoryCrudController::getEntityFqcn(),
+                'controller' => SerieCategoryCrudController::class,
             ],
         ];
 

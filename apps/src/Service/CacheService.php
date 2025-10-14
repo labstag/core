@@ -15,7 +15,7 @@ final class CacheService
     {
     }
 
-    public function getOrSet(string $key, callable $callback, int $ttl = 3600): mixed
+    public function get(string $key, callable $callback, int $ttl = 3600): mixed
     {
         try {
             return $this->cache->get($key, $callback, $ttl);
