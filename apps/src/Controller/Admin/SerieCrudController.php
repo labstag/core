@@ -133,7 +133,7 @@ class SerieCrudController extends AbstractCrudControllerLib
         $serviceEntityRepositoryLib = $this->getRepository();
         $serie                      = $serviceEntityRepositoryLib->find($entity);
 
-        return $this->redirect('https://www.themoviedb.org/movie/' . $serie->getTmdb());
+        return $this->redirect('https://www.themoviedb.org/tv/' . $serie->getTmdb());
     }
 
     #[Route('/admin/serie/{entity}/update', name: 'admin_serie_update')]
@@ -151,17 +151,6 @@ class SerieCrudController extends AbstractCrudControllerLib
     {
         $request = $this->container->get('request_stack')->getCurrentRequest();
         $request->query->get('action', null);
-    }
-
-    /**
-     * Get the MovieRepository with proper typing for PHPStan.
-     */
-    private function getSerieRepository(): SerieRepository
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        assert($serviceEntityRepositoryLib instanceof SerieRepository);
-
-        return $serviceEntityRepositoryLib;
     }
 
     private function setLinkImdbAction(): Action

@@ -19,6 +19,7 @@ use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
 use Labstag\Repository\MovieRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -148,12 +149,18 @@ class MovieCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/movie/{entity}/update', name: 'admin_movie_update')]
-    public function update(string $entity): RedirectResponse
+    public function update(string $entity, Request $request): RedirectResponse
     {
         $serviceEntityRepositoryLib = $this->getRepository();
         $movie                      = $serviceEntityRepositoryLib->find($entity);
         $this->movieService->update($movie);
         $serviceEntityRepositoryLib->save($movie);
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                return $this->redirect($url);
+            }
+        }
 
         return $this->redirectToRoute('admin_movie_index');
     }
