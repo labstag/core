@@ -50,9 +50,6 @@ class Serie implements Stringable
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $duration = null;
-
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
@@ -80,6 +77,9 @@ class Serie implements Stringable
     #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'img')]
     private ?File $imgFile = null;
 
+    #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]
+    private ?DateTime $lastreleaseDate = null;
+
     /**
      * @var Collection<int, Paragraph>
      */
@@ -90,10 +90,10 @@ class Serie implements Stringable
     private ?DateTime $releaseDate = null;
 
     /**
-     * @var Collection<int, Tag>
+     * @var Collection<int, Season>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
-    private Collection $tags;
+    #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'refserie')]
+    private Collection $seasons;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
@@ -110,8 +110,8 @@ class Serie implements Stringable
     public function __construct()
     {
         $this->categories = new ArrayCollection();
-        $this->tags       = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
+        $this->seasons    = new ArrayCollection();
     }
 
     #[Override]
@@ -124,7 +124,7 @@ class Serie implements Stringable
     {
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
-            $category->addMovie($this);
+            $category->addSerie($this);
         }
 
         return $this;
@@ -134,17 +134,17 @@ class Serie implements Stringable
     {
         if (!$this->paragraphs->contains($paragraph)) {
             $this->paragraphs->add($paragraph);
-            $paragraph->setRefmovie($this);
+            $paragraph->setRefserie($this);
         }
 
         return $this;
     }
 
-    public function addTag(Tag $tag): static
+    public function addSeason(Season $season): static
     {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addMovie($this);
+        if (!$this->seasons->contains($season)) {
+            $this->seasons->add($season);
+            $season->setRefserie($this);
         }
 
         return $this;
@@ -181,11 +181,6 @@ class Serie implements Stringable
         return $this->description;
     }
 
-    public function getDuration(): ?int
-    {
-        return $this->duration;
-    }
-
     public function getEvaluation(): ?float
     {
         return $this->evaluation;
@@ -211,6 +206,11 @@ class Serie implements Stringable
         return $this->imgFile;
     }
 
+    public function getLastreleaseDate(): ?DateTime
+    {
+        return $this->lastreleaseDate;
+    }
+
     /**
      * @return Collection<int, Paragraph>
      */
@@ -225,11 +225,11 @@ class Serie implements Stringable
     }
 
     /**
-     * @return Collection<int, Tag>
+     * @return Collection<int, Season>
      */
-    public function getTags(): Collection
+    public function getSeasons(): Collection
     {
-        return $this->tags;
+        return $this->seasons;
     }
 
     public function getTitle(): ?string
@@ -270,7 +270,7 @@ class Serie implements Stringable
     public function removeCategory(Category $category): static
     {
         if ($this->categories->removeElement($category)) {
-            $category->removeMovie($this);
+            $category->removeSerie($this);
         }
 
         return $this;
@@ -279,17 +279,18 @@ class Serie implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getRefmovie() === $this) {
-            $paragraph->setRefmovie(null);
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getRefserie() === $this) {
+            $paragraph->setRefserie(null);
         }
 
         return $this;
     }
 
-    public function removeTag(Tag $tag): static
+    public function removeSeason(Season $season): static
     {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removeMovie($this);
+        // set the owning side to null (unless already changed)
+        if ($this->seasons->removeElement($season) && $season->getRefserie() === $this) {
+            $season->setRefserie(null);
         }
 
         return $this;
@@ -329,13 +330,6 @@ class Serie implements Stringable
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function setDuration(?int $duration): static
-    {
-        $this->duration = $duration;
 
         return $this;
     }
@@ -387,6 +381,13 @@ class Serie implements Stringable
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setLastreleaseDate(?DateTime $lastreleaseDate): static
+    {
+        $this->lastreleaseDate = $lastreleaseDate;
+
+        return $this;
     }
 
     public function setReleaseDate(?DateTime $releaseDate): static

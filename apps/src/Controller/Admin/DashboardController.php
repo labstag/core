@@ -241,7 +241,7 @@ class DashboardController extends AbstractDashboardController
                 'fas fa-film',
                 MovieCrudController::class,
                 $categories,
-                $tags,
+                null,
                 [
                     MenuItem::linkToCrud(
                         new TranslatableMessage('Sagas'),
@@ -257,7 +257,13 @@ class DashboardController extends AbstractDashboardController
                 SerieCrudController::class,
                 $categories,
                 null,
-                [],
+                [
+                    MenuItem::linkToCrud(
+                        new TranslatableMessage('Season'),
+                        'fas fa-video',
+                        SeasonCrudController::getEntityFqcn()
+                    ),
+                ],
             ],
             [
                 'page',

@@ -11,7 +11,6 @@ use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -174,9 +173,8 @@ final class MovieService
 
     public function update(Movie $movie): bool
     {
-        $this->updateImdb($movie);
-        $details           = $this->getDetails($movie);
-        $statuses          = [
+        $details  = $this->getDetails($movie);
+        $statuses = [
             $this->updateMovie($movie, $details),
             $this->updateSaga($movie, $details),
             $this->updateCategory($movie, $details),
@@ -268,7 +266,7 @@ final class MovieService
             return null;
         }
 
-        $cacheKey = 'tmdb_find_' . $imdbId;
+        $cacheKey = 'tmdb_movie_find_' . $imdbId;
 
         return $this->cacheService->get(
             $cacheKey,
@@ -327,7 +325,7 @@ final class MovieService
             return $details;
         }
 
-        $cacheKey                  = 'tmdb_collection_' . $tmdbId;
+        $cacheKey                  = 'tmdb_movie_collection_' . $tmdbId;
         $this->collection[$tmdbId] = $this->cacheService->get(
             $cacheKey,
             function (ItemInterface $item) use ($tmdbId) {
@@ -624,13 +622,6 @@ final class MovieService
             return true;
         } catch (Exception) {
             return false;
-        }
-    }
-
-    private function updateImdb(Movie $movie): void
-    {
-        if (!str_starts_with((string) $movie->getImdb(), 'tt')) {
-            $movie->setImdb('tt' . str_pad((string) $movie->getImdb(), 7, '0', STR_PAD_LEFT));
         }
     }
 

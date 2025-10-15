@@ -2,10 +2,10 @@
 
 namespace Labstag\Command;
 
-use Labstag\Entity\Movie;
-use Labstag\Repository\MovieRepository;
+use Labstag\Entity\Serie;
+use Labstag\Repository\SerieRepository;
 use Labstag\Service\FileService;
-use Labstag\Service\MovieService;
+use Labstag\Service\SerieService;
 use NumberFormatter;
 use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -16,8 +16,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'labstag:movies:add', description: 'Add movies with movies.csv')]
-class MovieAddCommand extends Command
+#[AsCommand(name: 'labstag:series:add', description: 'Add series with series.csv')]
+class SerieAddCommand extends Command
 {
 
     private int $add = 0;
@@ -30,17 +30,17 @@ class MovieAddCommand extends Command
     private int $update = 0;
 
     public function __construct(
-        protected MovieRepository $movieRepository,
-        protected MovieService $movieService,
+        protected SerieRepository $serieRepository,
+        protected SerieService $serieService,
         protected FileService $fileService,
     )
     {
         parent::__construct();
     }
 
-    protected function addOrUpdate(Movie $movie): void
+    protected function addOrUpdate(Serie $serie): void
     {
-        if (is_null($movie->getId())) {
+        if (is_null($serie->getId())) {
             ++$this->add;
 
             return;
@@ -53,7 +53,7 @@ class MovieAddCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $filename     = 'movies.csv';
+        $filename     = 'series.csv';
         $file         = $this->fileService->getFileInAdapter('private', $filename);
         if (!is_file($file)) {
             $symfonyStyle->error('File not found ' . $filename);
@@ -73,22 +73,26 @@ class MovieAddCommand extends Command
         $progressBar = new ProgressBar($output, count($dataJson));
         $progressBar->start();
         foreach ($dataJson as $data) {
-            $movie = $this->setMovie($data);
-            $this->movieService->update($movie);
-            $this->addOrUpdate($movie);
+            if (empty($data['Imdb'])) {
+                $progressBar->advance();
+                continue;
+            }
+
+            $serie = $this->setSerie($data);
+            $this->serieService->update($serie);
+            $this->addOrUpdate($serie);
 
             ++$counter;
 
-            $this->movieRepository->persist($movie);
-            $this->movieRepository->flush($counter);
+            $this->serieRepository->persist($serie);
+            $this->serieRepository->flush($counter);
             $progressBar->advance();
         }
 
-        $this->movieRepository->flush();
+        $this->serieRepository->flush();
         $progressBar->finish();
-        $this->showoldsMovies($symfonyStyle);
-
-        $symfonyStyle->success('All movie added');
+        $this->showOldsSeries($symfonyStyle);
+        $symfonyStyle->success('All series added');
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
         $symfonyStyle->success(
             sprintf(
@@ -130,9 +134,9 @@ class MovieAddCommand extends Command
         return $dataJson;
     }
 
-    private function getMovieByImdb(string $imdb): ?Movie
+    private function getSerieByImdb(string $imdb): ?Serie
     {
-        return $this->movieRepository->findOneBy(
+        return $this->serieRepository->findOneBy(
             ['imdb' => $imdb]
         );
     }
@@ -140,35 +144,33 @@ class MovieAddCommand extends Command
     /**
      * @param mixed[] $data
      */
-    private function setMovie(array $data): Movie
+    private function setSerie(array $data): Serie
     {
-        $imdb  = (string) $data['ID IMDb'];
-        $movie = $this->getMovieByImdb($imdb);
-        if (!$movie instanceof Movie) {
-            $movie = new Movie();
-            $movie->setEnable(true);
-            $movie->setAdult(false);
-            $movie->setImdb($imdb);
+        $imdb  = (string) $data['Imdb'];
+        $serie = $this->getSerieByImdb($imdb);
+        if (!$serie instanceof Serie) {
+            $serie = new Serie();
+            $serie->setEnable(true);
+            $serie->setAdult(false);
+            $serie->setImdb($imdb);
         }
 
-        $tmdb       = (string) $data['ID TMDB'];
-        $duration   = empty($data['Durée']) ? null : (int) $data['Durée'];
-        $title      = trim((string) $data['Titre']);
-        $movie->setTmdb($tmdb);
-        $movie->setDuration($duration);
-        $movie->setTitle($title);
-        $movie->setFile(true);
+        $tmdb       = (string) $data['tmdbId'];
+        $title      = trim((string) $data['Title']);
+        $serie->setTmdb($tmdb);
+        $serie->setTitle($title);
+        $serie->setFile(true);
 
-        return $movie;
+        return $serie;
     }
 
-    private function showoldsMovies(SymfonyStyle $symfonyStyle): void
+    private function showOldsSeries(SymfonyStyle $symfonyStyle): void
     {
-        $oldsMovies = $this->movieRepository->findMoviesNotInImdbList($this->imdbs);
-        foreach ($oldsMovies as $oldMovie) {
-            if ($oldMovie->isFile()) {
+        $oldsSeries = $this->serieRepository->findSeriesNotInImdbList($this->imdbs);
+        foreach ($oldsSeries as $oldSeries) {
+            if ($oldSeries->isFile()) {
                 $symfonyStyle->warning(
-                    sprintf('Movie %s (%s) not in list', $oldMovie->getTitle(), $oldMovie->getImdb())
+                    sprintf('Serie %s (%s) not in list', $oldSeries->getTitle(), $oldSeries->getImdb())
                 );
             }
         }

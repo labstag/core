@@ -36,10 +36,7 @@ abstract class AbstractTypedCrudControllerLib extends AbstractCrudControllerLib
         return $this->crudFieldFactory->baseIdentitySet(
             $this->getChildType(),
             '',
-            static::getEntityFqcn(),
-            withSlug: true,
-            withImage: true,
-            withEnable: true
+            static::getEntityFqcn()
         );
     }
 

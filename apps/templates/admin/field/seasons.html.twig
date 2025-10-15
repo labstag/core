@@ -1,10 +1,10 @@
 {% set instance = entity.instance %}
 {% if ea.crud.currentAction == 'detail' %}
   <ul>
-    {% for chapters in instance.chapters %}
-        <li>{{ chapters.title }}</li>
+    {% for seasons in instance.seasons %}
+        <li>{{ seasons.number }}</li>
     {% endfor %}
   </ul>
 {% else %}
-  {{ instance.chapters|length }}
+  {{ instance.seasons|length }}
 {% endif %}

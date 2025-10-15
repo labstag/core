@@ -7,16 +7,16 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
-use Labstag\Repository\SerieRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -78,19 +78,23 @@ class SerieCrudController extends AbstractCrudControllerLib
         yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
         yield TextField::new('certification', new TranslatableMessage('Certification'))->hideOnIndex();
         yield DateField::new('releaseDate', new TranslatableMessage('Release date'));
+        yield DateField::new('lastReleaseDate', new TranslatableMessage('Last release date'));
         $choiceField = ChoiceField::new('countries', new TranslatableMessage('Countries'));
         $choiceField->setChoices(array_flip(Countries::getNames()));
         $choiceField->allowMultipleChoices();
         $choiceField->renderExpanded(false);
         yield $choiceField;
+        $serieCollectionField = CollectionField::new('seasons', new TranslatableMessage('Seasons'));
+        $serieCollectionField->setTemplatePath('admin/field/seasons.html.twig');
+        $serieCollectionField->hideOnForm();
         yield from [
-            IntegerField::new('duration', new TranslatableMessage('Duration')),
             NumberField::new('evaluation', new TranslatableMessage('Evaluation')),
             IntegerField::new('votes', new TranslatableMessage('Votes')),
             TextField::new('trailer', new TranslatableMessage('Trailer'))->hideOnIndex(),
             WysiwygField::new('citation', new TranslatableMessage('Citation'))->hideOnIndex(),
             WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex(),
             $this->crudFieldFactory->categoriesField('serie'),
+            $serieCollectionField,
             // image field déjà incluse dans baseIdentitySet
             $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'))->hideOnIndex(),
             $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
@@ -123,6 +127,9 @@ class SerieCrudController extends AbstractCrudControllerLib
     {
         $serviceEntityRepositoryLib = $this->getRepository();
         $serie                      = $serviceEntityRepositoryLib->find($entity);
+        if (empty($serie->getImdb())) {
+            return $this->redirectToRoute('admin_serie_index');
+        }
 
         return $this->redirect('https://www.imdb.com/title/' . $serie->getImdb() . '/');
     }
@@ -137,12 +144,18 @@ class SerieCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/serie/{entity}/update', name: 'admin_serie_update')]
-    public function update(string $entity): RedirectResponse
+    public function update(string $entity, Request $request): RedirectResponse
     {
         $serviceEntityRepositoryLib = $this->getRepository();
         $serie                      = $serviceEntityRepositoryLib->find($entity);
         $this->serieService->update($serie);
         $serviceEntityRepositoryLib->save($serie);
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                return $this->redirect($url);
+            }
+        }
 
         return $this->redirectToRoute('admin_serie_index');
     }

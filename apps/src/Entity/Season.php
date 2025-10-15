@@ -1,0 +1,158 @@
+<?php
+
+namespace Labstag\Entity;
+
+use DateTime;
+use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Labstag\Entity\Traits\TimestampableTrait;
+use Labstag\Repository\SeasonRepository;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+
+#[ORM\Entity(repositoryClass: SeasonRepository::class)]
+#[Vich\Uploadable]
+class Season
+{
+    use TimestampableTrait;
+
+    #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
+    private ?DateTime $airDate = null;
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::GUID, unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $img = null;
+
+    #[Vich\UploadableField(mapping: 'season', fileNameProperty: 'img')]
+    private ?File $imgFile = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $number = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $overview = null;
+
+    #[ORM\ManyToOne(inversedBy: 'seasons')]
+    private ?Serie $refserie = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $tmdb = null;
+
+    #[ORM\Column(name: 'vote_average', nullable: true)]
+    private ?float $voteAverage = null;
+
+    public function getAirDate(): ?DateTime
+    {
+        return $this->airDate;
+    }
+
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    public function getImg(): ?string
+    {
+        return $this->img;
+    }
+
+    public function getImgFile(): ?File
+    {
+        return $this->imgFile;
+    }
+
+    public function getNumber(): ?int
+    {
+        return $this->number;
+    }
+
+    public function getOverview(): ?string
+    {
+        return $this->overview;
+    }
+
+    public function getRefserie(): ?Serie
+    {
+        return $this->refserie;
+    }
+
+    public function getTmdb(): ?string
+    {
+        return $this->tmdb;
+    }
+
+    public function getVoteAverage(): ?float
+    {
+        return $this->voteAverage;
+    }
+
+    public function setAirDate(?DateTime $airDate): static
+    {
+        $this->airDate = $airDate;
+
+        return $this;
+    }
+
+    public function setImg(?string $img): void
+    {
+        $this->img = $img;
+
+        // Si l'image est supprimée (img devient null), on force la mise à jour
+        if (null === $img) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setImgFile(?File $imgFile = null): void
+    {
+        $this->imgFile = $imgFile;
+
+        if ($imgFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setNumber(?int $number): static
+    {
+        $this->number = $number;
+
+        return $this;
+    }
+
+    public function setOverview(?string $overview): static
+    {
+        $this->overview = $overview;
+
+        return $this;
+    }
+
+    public function setRefserie(?Serie $serie): static
+    {
+        $this->refserie = $serie;
+
+        return $this;
+    }
+
+    public function setTmdb(?string $tmdb): static
+    {
+        $this->tmdb = $tmdb;
+
+        return $this;
+    }
+
+    public function setVoteAverage(?float $voteAverage): static
+    {
+        $this->voteAverage = $voteAverage;
+
+        return $this;
+    }
+}

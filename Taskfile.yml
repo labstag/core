@@ -547,21 +547,21 @@ tasks:
       vars:
         CMD: "lint:yaml config"
 
-  labstag:movies-add:
+  labstag:movies:add:
     desc: "Ajoute des films de démonstration"
     silent: true
     cmds:
     - task: symfony:console
       vars:
-        CMD: "labstag:movies-add"
+        CMD: "labstag:movies:add"
 
-  labstag:movies-update:
+  labstag:movies:update:
     desc: "Met à jour les films de démonstration"
     silent: true
     cmds:
     - task: symfony:console
       vars:
-        CMD: "labstag:movies-update"
+        CMD: "labstag:movies:update"
 
   messenger:consume:
     desc: "Démarre le consommateur de messages Messenger"
@@ -733,28 +733,33 @@ tasks:
     - echo "🎉 Génération terminée !"
     ignore_error: true
 
-  lint:all:
+  "lint:all":
     desc: "Vérifie le code avec tous les outils de linting"
     silent: true
     cmds:
-    # - task: cmd:validate_outdated
-    # - task: ecs-fix
-    # - task: lint:phpcbf
-    # - npm run eslint:fix
-    # - npm run lint:stylelint:fix
-    # - task: lint:twig
-    # - task: lint:container
-    # - task: lint:yaml
-    # - task: lint:phpaudit
+    - task: cmd:validate_outdated
+    - npm run eslint:fix
+    - npm run lint:stylelint:fix
+    - task: lint:twig
+    - task: lint:container
+    - task: lint:yaml
+    - task: lint:phpaudit
     - npm run lint:markdown
-    # - task: rector
-    # ignore_error: true
+
+  fix:all:
+    silent: true
+    cmds:
+    - task: ecs-fix
+    - task: lint:phpcbf
+    - task: lint:phpcs
+    - task: rector
+    ignore_error: true
 
   lint:phpaudit:
     desc: "Analyse le code avec PHP Audit"
     silent: true
     cmds:
-    - task: lint:phpcs
+    - task: lint:phpcs:error
     - task: lint:phpmd
     - task: lint:phpmnd
     - task: phpstan:0
@@ -804,7 +809,7 @@ tasks:
     - task: doctrine:fixtures
     - task: labstag:delete-oldfiles
     - task: star
-    - task: labstag:movies-add
+    - task: labstag:movies:add
 
   labstag:set-env-ids:
     desc: "Met à jour les UID/GID dans le fichier .env"

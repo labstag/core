@@ -81,8 +81,11 @@ class Paragraph implements Stringable
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Post $post = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Movie $refmovie = null;
+
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    private ?Serie $refserie = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
@@ -186,6 +189,11 @@ class Paragraph implements Stringable
     public function getRefmovie(): ?Movie
     {
         return $this->refmovie;
+    }
+
+    public function getRefserie(): ?Movie
+    {
+        return $this->refserie;
     }
 
     public function getStory(): ?Story
@@ -345,6 +353,13 @@ class Paragraph implements Stringable
     public function setRefmovie(?Movie $movie): static
     {
         $this->refmovie = $movie;
+
+        return $this;
+    }
+
+    public function setRefserie(?Serie $serie): static
+    {
+        $this->refserie = $serie;
 
         return $this;
     }

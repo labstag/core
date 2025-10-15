@@ -39,12 +39,6 @@ class Category implements Stringable
     private Collection $movies;
 
     /**
-     * @var Collection<int, Serie>
-     */
-    #[ORM\ManyToMany(targetEntity: Serie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
-    private Collection $series;
-
-    /**
      * @var Collection<int, Page>
      */
     #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
@@ -59,6 +53,12 @@ class Category implements Stringable
      */
     #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
     private Collection $posts;
+
+    /**
+     * @var Collection<int, Serie>
+     */
+    #[ORM\ManyToMany(targetEntity: Serie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
+    private Collection $series;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'], unique_base: 'type')]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
@@ -111,15 +111,6 @@ class Category implements Stringable
         return $this;
     }
 
-    public function addSerie(Serie $serie): static
-    {
-        if (!$this->series->contains($serie)) {
-            $this->series->add($serie);
-        }
-
-        return $this;
-    }
-
     public function addPage(Page $page): static
     {
         if (!$this->pages->contains($page)) {
@@ -133,6 +124,15 @@ class Category implements Stringable
     {
         if (!$this->posts->contains($post)) {
             $this->posts->add($post);
+        }
+
+        return $this;
+    }
+
+    public function addSerie(Serie $serie): static
+    {
+        if (!$this->series->contains($serie)) {
+            $this->series->add($serie);
         }
 
         return $this;
@@ -169,14 +169,6 @@ class Category implements Stringable
     }
 
     /**
-     * @return Collection<int, Serie>
-     */
-    public function getSeries(): Collection
-    {
-        return $this->series;
-    }
-
-    /**
      * @return Collection<int, Page>
      */
     public function getPages(): Collection
@@ -195,6 +187,14 @@ class Category implements Stringable
     public function getPosts(): Collection
     {
         return $this->posts;
+    }
+
+    /**
+     * @return Collection<int, Serie>
+     */
+    public function getSeries(): Collection
+    {
+        return $this->series;
     }
 
     public function getSlug(): ?string
@@ -237,13 +237,6 @@ class Category implements Stringable
         return $this;
     }
 
-    public function removeSerie(Serie $serie): static
-    {
-        $this->series->removeElement($serie);
-
-        return $this;
-    }
-
     public function removePage(Page $page): static
     {
         $this->pages->removeElement($page);
@@ -254,6 +247,13 @@ class Category implements Stringable
     public function removePost(Post $post): static
     {
         $this->posts->removeElement($post);
+
+        return $this;
+    }
+
+    public function removeSerie(Serie $serie): static
+    {
+        $this->series->removeElement($serie);
 
         return $this;
     }

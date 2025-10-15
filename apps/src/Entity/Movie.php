@@ -92,12 +92,6 @@ class Movie implements Stringable
     #[ORM\ManyToOne(inversedBy: 'movies')]
     private ?Saga $saga = null;
 
-    /**
-     * @var Collection<int, Tag>
-     */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
-    private Collection $tags;
-
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
@@ -113,7 +107,6 @@ class Movie implements Stringable
     public function __construct()
     {
         $this->categories = new ArrayCollection();
-        $this->tags       = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
     }
 
@@ -138,16 +131,6 @@ class Movie implements Stringable
         if (!$this->paragraphs->contains($paragraph)) {
             $this->paragraphs->add($paragraph);
             $paragraph->setRefmovie($this);
-        }
-
-        return $this;
-    }
-
-    public function addTag(Tag $tag): static
-    {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addMovie($this);
         }
 
         return $this;
@@ -232,14 +215,6 @@ class Movie implements Stringable
         return $this->saga;
     }
 
-    /**
-     * @return Collection<int, Tag>
-     */
-    public function getTags(): Collection
-    {
-        return $this->tags;
-    }
-
     public function getTitle(): ?string
     {
         return $this->title;
@@ -289,15 +264,6 @@ class Movie implements Stringable
         // set the owning side to null (unless already changed)
         if ($this->paragraphs->removeElement($paragraph) && $paragraph->getRefmovie() === $this) {
             $paragraph->setRefmovie(null);
-        }
-
-        return $this;
-    }
-
-    public function removeTag(Tag $tag): static
-    {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removeMovie($this);
         }
 
         return $this;

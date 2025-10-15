@@ -8,12 +8,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\SubMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use Labstag\Controller\Admin\ChapterTagCrudController;
 use Labstag\Controller\Admin\MovieCategoryCrudController;
-use Labstag\Controller\Admin\SerieCategoryCrudController;
-use Labstag\Controller\Admin\MovieTagCrudController;
 use Labstag\Controller\Admin\PageCategoryCrudController;
 use Labstag\Controller\Admin\PageTagCrudController;
 use Labstag\Controller\Admin\PostCategoryCrudController;
 use Labstag\Controller\Admin\PostTagCrudController;
+use Labstag\Controller\Admin\SerieCategoryCrudController;
 use Labstag\Controller\Admin\StoryCategoryCrudController;
 use Labstag\Controller\Admin\StoryTagCrudController;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -117,10 +116,6 @@ final class MenuItemFactory
             'post'    => [
                 'crud'       => PostTagCrudController::getEntityFqcn(),
                 'controller' => PostTagCrudController::class,
-            ],
-            'movie'   => [
-                'crud'       => MovieTagCrudController::getEntityFqcn(),
-                'controller' => MovieTagCrudController::class,
             ],
         ];
 

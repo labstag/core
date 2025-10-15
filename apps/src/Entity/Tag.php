@@ -34,13 +34,6 @@ class Tag implements Stringable
     private ?string $id = null;
 
     /**
-     * @var Collection<int, Movie>
-     */
-    #[ORM\ManyToMany(targetEntity: Movie::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
-    #[ORM\JoinTable(name: 'tag_movie')]
-    private Collection $movies;
-
-    /**
      * @var Collection<int, Page>
      */
     #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
@@ -77,7 +70,6 @@ class Tag implements Stringable
         $this->pages    = new ArrayCollection();
         $this->stories  = new ArrayCollection();
         $this->chapters = new ArrayCollection();
-        $this->movies   = new ArrayCollection();
     }
 
     #[Override]
@@ -90,15 +82,6 @@ class Tag implements Stringable
     {
         if (!$this->chapters->contains($chapter)) {
             $this->chapters->add($chapter);
-        }
-
-        return $this;
-    }
-
-    public function addMovie(Movie $movie): static
-    {
-        if (!$this->movies->contains($movie)) {
-            $this->movies->add($movie);
         }
 
         return $this;
@@ -145,14 +128,6 @@ class Tag implements Stringable
     }
 
     /**
-     * @return Collection<int, Movie>
-     */
-    public function getMovies(): Collection
-    {
-        return $this->movies;
-    }
-
-    /**
      * @return Collection<int, Page>
      */
     public function getPages(): Collection
@@ -194,13 +169,6 @@ class Tag implements Stringable
     public function removeChapter(Chapter $chapter): static
     {
         $this->chapters->removeElement($chapter);
-
-        return $this;
-    }
-
-    public function removeMovie(Movie $movie): static
-    {
-        $this->movies->removeElement($movie);
 
         return $this;
     }
