@@ -80,12 +80,6 @@ class Serie implements Stringable
     #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $lastreleaseDate = null;
 
-    /**
-     * @var Collection<int, Paragraph>
-     */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'refmovie')]
-    private Collection $paragraphs;
-
     #[ORM\Column(name: 'release_date', type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $releaseDate = null;
 
@@ -110,7 +104,6 @@ class Serie implements Stringable
     public function __construct()
     {
         $this->categories = new ArrayCollection();
-        $this->paragraphs = new ArrayCollection();
         $this->seasons    = new ArrayCollection();
     }
 
@@ -125,16 +118,6 @@ class Serie implements Stringable
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
             $category->addSerie($this);
-        }
-
-        return $this;
-    }
-
-    public function addParagraph(Paragraph $paragraph): static
-    {
-        if (!$this->paragraphs->contains($paragraph)) {
-            $this->paragraphs->add($paragraph);
-            $paragraph->setRefserie($this);
         }
 
         return $this;
@@ -211,14 +194,6 @@ class Serie implements Stringable
         return $this->lastreleaseDate;
     }
 
-    /**
-     * @return Collection<int, Paragraph>
-     */
-    public function getParagraphs(): Collection
-    {
-        return $this->paragraphs;
-    }
-
     public function getReleaseDate(): ?DateTime
     {
         return $this->releaseDate;
@@ -271,16 +246,6 @@ class Serie implements Stringable
     {
         if ($this->categories->removeElement($category)) {
             $category->removeSerie($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParagraph(Paragraph $paragraph): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getRefserie() === $this) {
-            $paragraph->setRefserie(null);
         }
 
         return $this;

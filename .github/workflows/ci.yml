@@ -74,6 +74,8 @@ jobs:
           task labstag:getpull-image
           task labstag:getapacheconf
           task labstag:install-first
+          task labstag:deploy
+          task labstag:waiting
       
       - name: lint all
         run: task lint:all
@@ -148,19 +150,6 @@ jobs:
           task labstag:install-first
           task labstag:deploy
           task labstag:waiting
-      # === LINTING PHASE ===
-      - name: Frontend linting
-        run: |
-          # Run markdown linting with warning on failure
-          npm run lint:markdown || echo "::warning::Markdown linting issues found"
-          
-          # Run SCSS linting (will auto-fix issues)
-          npm run lint:stylelint:fix
-          
-          # Check if there are any remaining unfixed issues
-          if ! npm run lint:stylelint; then
-            echo "::warning::Some SCSS issues could not be auto-fixed"
-          fi
       
       - name: Setup PHP tools and permissions
         run: |
