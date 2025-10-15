@@ -1117,6 +1117,38 @@
         <source>No movies match your search.</source>
         <target>Aucun film ne correspond à votre recherche.</target>
       </trans-unit>
+      <trans-unit id="Q7w74bC" resname="Serie">
+  <source>Serie</source>
+  <target>Série</target>
+      </trans-unit>
+      <trans-unit id="iCrhJI7" resname="Series">
+  <source>Series</source>
+  <target>Séries</target>
+      </trans-unit>
+      <trans-unit id="qNCZ32Y" resname="Last release date">
+  <source>Last release date</source>
+  <target>Dernière date de sortie</target>
+      </trans-unit>
+      <trans-unit id="kc_J96C" resname="Seasons">
+  <source>Seasons</source>
+  <target>Saisons</target>
+      </trans-unit>
+      <trans-unit id="yH9A3q0" resname="Season">
+  <source>Season</source>
+  <target>Saison</target>
+      </trans-unit>
+      <trans-unit id="uiDZUoC" resname="Air date">
+  <source>Air date</source>
+  <target>Date de diffusion</target>
+      </trans-unit>
+      <trans-unit id="HmgPmMV" resname="Overview">
+  <source>Overview</source>
+  <target>Résumé</target>
+      </trans-unit>
+      <trans-unit id="sWw5MDD" resname="action.toggle_dropdown">
+  <source>action.toggle_dropdown</source>
+  <target>Ouvrir/fermer le menu déroulant</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
