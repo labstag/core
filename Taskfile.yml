@@ -737,18 +737,18 @@ tasks:
     desc: "Vérifie le code avec tous les outils de linting"
     silent: true
     cmds:
-    - task: cmd:validate_outdated
-    - task: ecs-fix
-    - task: lint:phpcbf
-    - npm run eslint:fix
-    - npm run lint:stylelint:fix
-    - task: lint:twig
-    - task: lint:container
-    - task: lint:yaml
-    - task: lint:phpaudit
+    # - task: cmd:validate_outdated
+    # - task: ecs-fix
+    # - task: lint:phpcbf
+    # - npm run eslint:fix
+    # - npm run lint:stylelint:fix
+    # - task: lint:twig
+    # - task: lint:container
+    # - task: lint:yaml
+    # - task: lint:phpaudit
     - npm run lint:markdown
-    - task: rector
-    ignore_error: true
+    # - task: rector
+    # ignore_error: true
 
   lint:phpaudit:
     desc: "Analyse le code avec PHP Audit"

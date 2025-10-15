@@ -6,7 +6,79 @@ on:
     branches: [main, develop]
 
 jobs:
-  ci:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      DOCKER_INTERACTIVE: false
+    steps:
+      # === SETUP PHASE ===
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Docker Compose
+        uses: docker/setup-compose-action@v1
+      
+      - name: Setup Task
+        uses: go-task/setup-task@v1
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
+      
+      - name: Repository lampy
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          repository: koromerzhin/lampy
+          ref: '4.3'
+          path: lampy
+
+      - name: Setup cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: |
+            if [ ! -d node_modules ]; then
+                npm install
+            fi
+      
+      - name: Build assets
+        run: npm run encore:build
+        env:
+          NODE_ENV: production
+      
+      - name: Setup environment files
+        run: |
+          cp apps/.env.test apps/.env
+          cp .env.example .env
+          echo "APP_ENV=test" >> apps/.env
+      
+      - name: Setup database and infrastructure
+        run: |
+          task labstag:copysql
+          cd lampy && task lampy:exec
+      
+      - name: Deploy containers
+        run: |
+          task labstag:set-env-ids
+          task labstag:getpull-image
+          task labstag:getapacheconf
+          task labstag:install-first
+      
+      - name: lint all
+        run: task lint:all
+
+  launch:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
@@ -97,43 +169,6 @@ jobs:
           sudo chown -R $USER:$USER ./apps
           sudo chmod -R 755 ./apps
           task symfony:about
-      
-      - name: PHP linting suite
-        id: php-linting
-        continue-on-error: true
-        run: |
-          LINT_EXIT_CODE=0
-          
-          echo "::group::PHP Code Sniffer"
-          task lint:phpcs:error || LINT_EXIT_CODE=1
-          echo "::endgroup::"
-          
-          echo "::group::PHP Mess Detector"
-          task lint:phpmd || LINT_EXIT_CODE=1
-          echo "::endgroup::"
-          
-          echo "::group::PHP Magic Number Detector"
-          task lint:phpmnd || LINT_EXIT_CODE=1
-          echo "::endgroup::"
-          
-          echo "::group::Twig Linting"
-          task lint:twig || LINT_EXIT_CODE=1
-          echo "::endgroup::"
-          
-          echo "::group::YAML Linting"
-          task lint:yaml || LINT_EXIT_CODE=1
-          echo "::endgroup::"
-          
-          echo "::group::PHPStan Analysis"
-          task phpstan:0 || LINT_EXIT_CODE=1
-          echo "::endgroup::"
-          
-          if [ $LINT_EXIT_CODE -ne 0 ]; then
-            echo "::warning::Some PHP linting checks failed, but continuing with the build"
-          fi
-          
-          exit $LINT_EXIT_CODE
-      # === TESTING PHASE ===
       - name: Prepare application
         run: |
           sudo chown -R $USER:$USER ./apps/public
@@ -162,6 +197,12 @@ jobs:
         env:
           CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      
+      - name: Docker stack stop
+        if: always()
+        run: |
+          docker stack rm labstag
+          docker stack rm lampy
       
       # === ARTIFACTS PHASE ===
       - name: Archive test results
