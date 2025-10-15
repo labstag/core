@@ -733,7 +733,7 @@ tasks:
     - echo "🎉 Génération terminée !"
     ignore_error: true
 
-  "lint:all":
+  lint:all:
     desc: "Vérifie le code avec tous les outils de linting"
     silent: true
     cmds:
