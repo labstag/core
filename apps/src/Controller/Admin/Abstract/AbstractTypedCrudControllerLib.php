@@ -33,11 +33,7 @@ abstract class AbstractTypedCrudControllerLib extends AbstractCrudControllerLib
      */
     public function configureBaseFields(): array
     {
-        return $this->crudFieldFactory->baseIdentitySet(
-            $this->getChildType(),
-            '',
-            static::getEntityFqcn()
-        );
+        return $this->crudFieldFactory->baseIdentitySet($this->getChildType(), '', static::getEntityFqcn());
     }
 
     #[Override]

@@ -7,7 +7,6 @@ use Exception;
 use Labstag\Entity\Category;
 use Labstag\Entity\Serie;
 use Labstag\Repository\CategoryRepository;
-use Labstag\Repository\SerieRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;

@@ -690,7 +690,9 @@ final class MovieService
         $tmdbId = $details['collection']['id'];
 
         if (!isset($this->sagas[$tmdbId])) {
-            $saga = $this->sagaRepository->findOneBy(['tmdb' => $tmdbId]);
+            $saga = $this->sagaRepository->findOneBy(
+                ['tmdb' => $tmdbId]
+            );
             if (!$saga instanceof Saga) {
                 $saga = new Saga();
                 $saga->setTmdb($tmdbId);
@@ -698,11 +700,9 @@ final class MovieService
             }
 
             $this->sagas[$tmdbId] = $saga;
-        } else {
-            $saga = $this->sagas[$tmdbId];
         }
 
-        
+        $saga = $this->sagas[$tmdbId];
         if (!isset($this->updatesaga[$tmdbId])) {
             $saga->setTitle($details['collection']['name']);
             $saga->setDescription($details['collection']['overview'] ?? '');
