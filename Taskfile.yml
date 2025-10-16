@@ -811,6 +811,7 @@ tasks:
     - task: labstag:delete-oldfiles
     - task: star
     - task: labstag:movies:add
+    - task: labstag:series:add
 
   labstag:set-env-ids:
     desc: "Met à jour les UID/GID dans le fichier .env"
