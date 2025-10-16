@@ -74,7 +74,7 @@ class Serie implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $img = null;
 
-    #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'img')]
+    #[Vich\UploadableField(mapping: 'serie', fileNameProperty: 'img')]
     private ?File $imgFile = null;
 
     #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]

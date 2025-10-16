@@ -89,7 +89,6 @@ class MovieCrudController extends AbstractCrudControllerLib
         yield from [
             IntegerField::new('duration', new TranslatableMessage('Duration')),
             $this->addFieldSaga(),
-            $this->crudFieldFactory->tagsField('movie'),
             NumberField::new('evaluation', new TranslatableMessage('Evaluation')),
             IntegerField::new('votes', new TranslatableMessage('Votes')),
             TextField::new('trailer', new TranslatableMessage('Trailer'))->hideOnIndex(),

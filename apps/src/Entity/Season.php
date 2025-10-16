@@ -6,6 +6,7 @@ use DateTime;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\SeasonRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -16,6 +17,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 class Season
 {
+    use SoftDeleteableEntity;
     use TimestampableTrait;
 
     #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
