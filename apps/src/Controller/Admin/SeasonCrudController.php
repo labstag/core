@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Season;
 use Labstag\Field\WysiwygField;
@@ -48,14 +49,6 @@ class SeasonCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
-        // foreach ($this->crudFieldFactory->baseIdentitySet(
-        //     $pageName,
-        //     self::getEntityFqcn(),
-        //     withSlug: false
-        // ) as $field) {
-        //     yield $field;
-        // }
-
         yield $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn());
         yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
         yield AssociationField::new('refserie', new TranslatableMessage('Serie'));
@@ -71,6 +64,7 @@ class SeasonCrudController extends AbstractCrudControllerLib
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
+        $filters->add(EntityFilter::new('refserie', new TranslatableMessage('Serie')));
 
         return $filters;
     }
