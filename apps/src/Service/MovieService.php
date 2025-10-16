@@ -41,7 +41,12 @@ final class MovieService
     /**
      * @var array<string, mixed>
      */
-    private array $saga = [];
+    private array $sagaForm = [];
+
+    /**
+     * @var array<string, mixed>
+     */
+    private array $sagas = [];
 
     /**
      * @var array<string, mixed>
@@ -131,8 +136,8 @@ final class MovieService
      */
     public function getSagaForForm(): array
     {
-        if ([] !== $this->saga) {
-            return $this->saga;
+        if ([] !== $this->sagaForm) {
+            return $this->sagaForm;
         }
 
         $data  = $this->sagaRepository->findAllByTypeMovieEnable();
@@ -146,7 +151,7 @@ final class MovieService
             $sagas[$saga->getTitle()] = $saga->getSlug();
         }
 
-        $this->saga = $sagas;
+        $this->sagaForm = $sagas;
 
         return $sagas;
     }
@@ -246,7 +251,8 @@ final class MovieService
                 $item->expiresAfter(86400);
 
                 return json_decode($response->getContent(), true);
-            }
+            },
+            60
         );
         if (null == $data) {
             return $details;
@@ -298,7 +304,8 @@ final class MovieService
                 $item->expiresAfter(86400);
 
                 return $data;
-            }
+            },
+            60
         );
     }
 
@@ -313,11 +320,11 @@ final class MovieService
             return $details;
         }
 
-        if (!isset($details['tmdb']['belongs_to_collection']['id'])) {
+        if (!isset($details['tmdb']['belongs_to_collection'])) {
             return $details;
         }
 
-        $tmdbId          = (string) $details['tmdb']['belongs_to_collection']['id'];
+        $tmdbId = $details['tmdb']['belongs_to_collection']['id'];
 
         if (isset($this->collection[$tmdbId])) {
             $details['collection'] = $this->collection[$tmdbId];
@@ -325,7 +332,7 @@ final class MovieService
             return $details;
         }
 
-        $cacheKey                  = 'tmdb_movie_collection_' . $tmdbId;
+        $cacheKey                  = 'tmdb-movie_collection_' . $tmdbId;
         $this->collection[$tmdbId] = $this->cacheService->get(
             $cacheKey,
             function (ItemInterface $item) use ($tmdbId) {
@@ -349,7 +356,8 @@ final class MovieService
                 $item->expiresAfter(86400);
 
                 return json_decode($response->getContent(), true);
-            }
+            },
+            60
         );
 
         $details['collection'] = $this->collection[$tmdbId];
@@ -393,7 +401,8 @@ final class MovieService
                 $item->expiresAfter(86400);
 
                 return json_decode($response->getContent(), true);
-            }
+            },
+            60
         );
         if (null == $data) {
             return $details;
@@ -469,7 +478,8 @@ final class MovieService
                 $item->expiresAfter(86400);
 
                 return json_decode($response->getContent(), true);
-            }
+            },
+            60
         );
 
         if (null == $data) {
@@ -677,22 +687,33 @@ final class MovieService
             return false;
         }
 
-        $saga = $movie->getSaga();
-        if (!$saga instanceof Saga) {
-            return false;
+        $tmdbId = $details['collection']['id'];
+
+        if (!isset($this->sagas[$tmdbId])) {
+            $saga = $this->sagaRepository->findOneBy(['tmdb' => $tmdbId]);
+            if (!$saga instanceof Saga) {
+                $saga = new Saga();
+                $saga->setTmdb($tmdbId);
+                $this->sagaRepository->save($saga);
+            }
+
+            $this->sagas[$tmdbId] = $saga;
+        } else {
+            $saga = $this->sagas[$tmdbId];
         }
 
-        if (isset($this->updatesaga[$saga->getId()])) {
-            return false;
+        
+        if (!isset($this->updatesaga[$tmdbId])) {
+            $saga->setTitle($details['collection']['name']);
+            $saga->setDescription($details['collection']['overview'] ?? '');
+
+            $this->updateImageSaga($saga, $details);
+            $this->sagaRepository->save($saga);
+
+            $this->updatesaga[$saga->getId()] = true;
         }
 
-        $saga->setTmdb($details['collection']['id']);
-        $saga->setDescription($details['collection']['overview'] ?? '');
-
-        $this->updateImageSaga($saga, $details);
-        $this->sagaRepository->save($saga);
-
-        $this->updatesaga[$saga->getId()] = true;
+        $movie->setSaga($saga);
 
         return true;
     }

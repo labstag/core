@@ -152,7 +152,8 @@ final class SerieService
                 $item->expiresAfter(86400);
 
                 return $data;
-            }
+            },
+            60
         );
     }
 
@@ -192,7 +193,8 @@ final class SerieService
                 $item->expiresAfter(86400);
 
                 return json_decode($response->getContent(), true);
-            }
+            },
+            60
         );
         if (null == $data) {
             return $details;
@@ -256,7 +258,8 @@ final class SerieService
                 $item->expiresAfter(86400);
 
                 return json_decode($response->getContent(), true);
-            }
+            },
+            60
         );
 
         if (null == $data) {
