@@ -695,6 +695,7 @@ final class MovieService
             );
             if (!$saga instanceof Saga) {
                 $saga = new Saga();
+                $saga->setTitle($details['collection']['name']);
                 $saga->setTmdb($tmdbId);
                 $this->sagaRepository->save($saga);
             }

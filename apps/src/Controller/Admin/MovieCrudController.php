@@ -113,9 +113,11 @@ class MovieCrudController extends AbstractCrudControllerLib
 
         $filters->add('releaseDate');
         $filters->add('countries');
-        $filters->add(
-            ChoiceFilter::new('certification', new TranslatableMessage('Certification'))->setChoices($certifications)
-        );
+        if (count($certifications) > 0) {
+            $filters->add(
+                ChoiceFilter::new('certification', new TranslatableMessage('Certification'))->setChoices($certifications)
+            );
+        }
 
         $this->crudFieldFactory->addFilterTags($filters, 'movie');
         $this->crudFieldFactory->addFilterCategories($filters, 'movie');

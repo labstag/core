@@ -564,6 +564,22 @@ tasks:
       vars:
         CMD: "labstag:movies:update"
 
+  labstag:series:add:
+    desc: "Ajoute des séries de démonstration"
+    silent: true
+    cmds:
+    - task: symfony:console
+      vars:
+        CMD: "labstag:series:add"
+
+  labstag:series:update:
+    desc: "Met à jour les séries de démonstration"
+    silent: true
+    cmds:
+    - task: symfony:console
+      vars:
+        CMD: "labstag:series:update"
+
   messenger:consume:
     desc: "Démarre le consommateur de messages Messenger"
     silent: true
