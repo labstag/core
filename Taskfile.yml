@@ -594,8 +594,8 @@ tasks:
     cmds:
     - gh api --paginate /user/starred --jq '.' | jq -s > apps/private/stars.json
 
-  star:update:
-    desc: "Met à jour les données de stars"
+  star:add:
+    desc: "Ajoute des données de stars"
     silent: true
     cmds:
     - task: symfony:console
@@ -607,7 +607,7 @@ tasks:
     silent: true
     cmds:
     - task: star:get
-    - task: star:update
+    - task: star:add
 
   test:behat:
     desc: "Exécute les tests Behat"
@@ -809,7 +809,7 @@ tasks:
     cmds:
     - task: doctrine:fixtures
     - task: labstag:delete-oldfiles
-    - task: star
+    - task: star:add
     - task: labstag:movies:add
     - task: labstag:series:add
 
