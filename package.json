@@ -47,7 +47,6 @@
     "file-loader": "6.2.*",
     "globals": "15.13.*",
     "jscpd": "^4.0.5",
-    "markdownlint-cli": "^0.45.0",
     "postcss-discard-comments": "7.0.*",
     "postcss-loader": "8.2.*",
     "regenerator-runtime": "0.14.*",
@@ -59,8 +58,7 @@
     "webfontloader": "1.6.*",
     "webpack": "5.97.*",
     "webpack-cli": "5.1.*",
-    "webpack-notifier": "1.15.*",
-    "yaml-lint": "^1.7.0"
+    "webpack-notifier": "1.15.*"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-theme-lark": "44.1.*",
