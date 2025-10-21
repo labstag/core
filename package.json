@@ -16,7 +16,6 @@
     "eslint:fix": "eslint assets/ --fix",
     "jscpd": "jscpd assets apps/src",
     "jscpd:report": "jscpd assets apps/src -r html -s",
-    "lint:markdown": "markdownlint README.md",
     "lint:stylelint": "stylelint assets/*.scss",
     "lint:stylelint:fix": "stylelint assets/*.scss --fix",
     "release": "release-it"
@@ -61,7 +60,7 @@
     "webpack": "5.97.*",
     "webpack-cli": "5.1.*",
     "webpack-notifier": "1.15.*",
-    "yaml": "^2.8.1"
+    "yaml-lint": "^1.7.0"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-theme-lark": "44.1.*",

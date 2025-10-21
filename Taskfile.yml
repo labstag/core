@@ -11,6 +11,7 @@ includes:
   nodejs: ./taskfiles/nodejs/Taskfile.yml
   download: ./taskfiles/download/Taskfile.yml
   apache: ./taskfiles/apache/Taskfile.yml
+  lint: ./taskfiles/lint/Taskfile.yml
 
 vars:
   # Variables avec valeurs par défaut depuis .env ou valeurs de fallback
@@ -540,14 +541,6 @@ tasks:
       vars:
         CMD: "lint:twig templates"
 
-  lint:yaml:
-    desc: "Vérifie les fichiers YAML"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "lint:yaml config"
-
   labstag:movies:add:
     desc: "Ajoute des films de démonstration"
     silent: true
@@ -751,17 +744,22 @@ tasks:
     ignore_error: true
 
   lint:all:
-    desc: "Vérifie le code avec tous les outils de linting"
-    silent: true
+    desc: "Exécute tous les linters disponibles"
     cmds:
+    - task: lint:yml
+      vars:
+        IGNORE_DIR: "taskfiles,apps/vendor"
+    - task: lint:md
+      vars:
+        IGNORE_DIR: "taskfiles"
+    - task: lint:action
+    - task: lint:docker
     - task: cmd:validate_outdated
     - npm run eslint:fix
     - npm run lint:stylelint:fix
     - task: lint:twig
     - task: lint:container
-    - task: lint:yaml
     - task: lint:phpaudit
-    - npm run lint:markdown
 
   fix:all:
     silent: true
