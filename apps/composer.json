@@ -125,7 +125,7 @@
     "require-dev": {
         "aalaap/faker-youtube": "2.0.*",
         "behat/behat": "3.25.*",
-        "doctrine/doctrine-fixtures-bundle": "4.1.*",
+        "doctrine/doctrine-fixtures-bundle": "4.3.*",
         "fakerphp/faker": "1.24.*",
         "friendsofphp/php-cs-fixer": "3.88.*",
         "mmo/faker-images": "0.9.*",
