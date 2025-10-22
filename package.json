@@ -38,7 +38,7 @@
     "@symfony/webpack-encore": "5.0.*",
     "autoprefixer": "10.4.*",
     "clean-webpack-plugin": "4.0.*",
-    "core-js": "3.45.*",
+    "core-js": "3.46.*",
     "cypress": "^15.3.0",
     "dotenv": "^17.2.3",
     "dotenv-webpack": "8.1.*",
