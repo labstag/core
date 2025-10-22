@@ -187,7 +187,7 @@ final class BlockService
             return true;
         }
 
-        return array_any($roles, fn ($role): bool => $this->isGranted($role));
+        return array_any($roles, $this->isGranted(...));
     }
 
     private function getFooter(Block $block): mixed

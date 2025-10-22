@@ -185,11 +185,11 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
 
     private function configureSecond(FieldDto $fieldDto, EntityDto $entityDto, string $propertyName): void
     {
-        if ($entityDto->isToOneAssociation($propertyName)) {
+        if ($entityDto->getClassMetadata()->isSingleValuedAssociation($propertyName)) {
             $this->configureToOneAssociation($fieldDto);
         }
 
-        if ($entityDto->isToManyAssociation($propertyName)) {
+        if ($entityDto->getClassMetadata()->isSingleValuedAssociation($propertyName)) {
             $this->configureToManyAssociation($fieldDto);
         }
     }

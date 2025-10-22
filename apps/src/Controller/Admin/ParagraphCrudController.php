@@ -83,7 +83,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     public function configureFilters(Filters $filters): Filters
     {
         $types = $this->paragraphService->getAll(null);
-        if (count($types) > 0) {
+        if ([] !== $types) {
             $filters->add(ChoiceFilter::new('type', new TranslatableMessage('Type'))->setChoices($types));
         }
 

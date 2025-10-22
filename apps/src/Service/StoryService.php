@@ -106,7 +106,7 @@ final class StoryService
     {
         return $this->cacheService->get(
             'story_chapters_' . $story->getId(),
-            function () use ($story) {
+            function () use ($story): array {
                 $chapters = [];
                 $data     = $story->getChapters();
                 foreach ($data as $row) {

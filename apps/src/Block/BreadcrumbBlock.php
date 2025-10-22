@@ -104,7 +104,7 @@ class BreadcrumbBlock extends BlockLib
 
         return $this->getCached(
             $cacheKey,
-            function () use ($slug) {
+            function () use ($slug): array {
                 $urls        = [];
                 $currentSlug = $slug;
 

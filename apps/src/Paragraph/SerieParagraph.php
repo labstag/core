@@ -4,9 +4,9 @@ namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
-use Labstag\Entity\Serie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Serie;
 use Labstag\Form\Front\SerieType;
 use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\SerieRepository;

@@ -113,9 +113,11 @@ class MovieCrudController extends AbstractCrudControllerLib
 
         $filters->add('releaseDate');
         $filters->add('countries');
-        if (count($certifications) > 0) {
+        if ([] !== $certifications) {
             $filters->add(
-                ChoiceFilter::new('certification', new TranslatableMessage('Certification'))->setChoices($certifications)
+                ChoiceFilter::new('certification', new TranslatableMessage('Certification'))->setChoices(
+                    $certifications
+                )
             );
         }
 
