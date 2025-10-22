@@ -155,12 +155,12 @@ jobs:
         run: |
           task labstag:download-phar
           task labstag:ls
-          sudo chown -R $USER:$USER ./apps
+          sudo chown -R "$USER:$USER" ./apps
           sudo chmod -R 755 ./apps
           task symfony:about
       - name: Prepare application
         run: |
-          sudo chown -R $USER:$USER ./apps/public
+          sudo chown -R "$USER:$USER" ./apps/public
           sudo chmod -R 755 ./apps/public
           task labstag:assets
       
