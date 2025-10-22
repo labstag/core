@@ -748,10 +748,10 @@ tasks:
     cmds:
     - task: lint:yml
       vars:
-        IGNORE_DIR: "taskfiles,apps/vendor"
+        IGNORE_DIR: "lampy,taskfiles,apps/vendor"
     - task: lint:md
       vars:
-        IGNORE_DIR: "taskfiles"
+        IGNORE_DIR: "lampy,taskfiles"
     - task: lint:action
     - task: lint:docker
     - task: cmd:validate_outdated
