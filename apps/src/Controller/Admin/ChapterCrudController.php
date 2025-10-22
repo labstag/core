@@ -66,7 +66,7 @@ class ChapterCrudController extends AbstractCrudControllerLib
         // Pas de relation refuser sur Chapter -> on n'injecte pas les refUserFields ici
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }
@@ -125,7 +125,8 @@ class ChapterCrudController extends AbstractCrudControllerLib
 
     private function addFieldRefStory(): AssociationField
     {
-        $associationField = AssociationField::new('refstory', new TranslatableMessage('Story'))->autocomplete();
+        $associationField = AssociationField::new('refstory', new TranslatableMessage('Story'));
+        $associationField->autocomplete();
         $user             = $this->getUser();
         $roles            = $user->getRoles();
         if (!in_array('ROLE_SUPER_ADMIN', $roles)) {

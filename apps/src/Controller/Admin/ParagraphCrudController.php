@@ -62,7 +62,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
             yield $field;
         }
 
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
 

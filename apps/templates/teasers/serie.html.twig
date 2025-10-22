@@ -1,0 +1,24 @@
+<a href="javascript:void(0);" data-a11y-dialog-show="serie-modal-{{ serie.id }}">
+    <div class="background spoiler" data-bg="{{ site_asset(serie, 'img') }}">
+        {% if serie.releaseDate != '' %}
+            <span class="year">
+                {{ serie.releaseDate|date('Y') }}
+            </span>
+        {% endif %}
+    </div>
+    <div class="wrapper">
+        {% if serie.categories|length > 0 %}
+            <div class="categories">
+                {% for categorie in serie.categories %}
+                    <span class="categorie-{{ categorie.slug }}">{{ categorie.title }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <h3 class="title">
+            {{ serie.title }}
+        </h3>
+        <div class="citation">
+            {{ serie.citation|raw }}
+        </div>
+    </div>
+</a>

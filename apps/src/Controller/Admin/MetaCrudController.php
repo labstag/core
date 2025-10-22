@@ -39,7 +39,7 @@ class MetaCrudController extends AbstractCrudControllerLib
         yield TextField::new('keywords', new TranslatableMessage('Keywords'));
         yield TextField::new('description', new TranslatableMessage('Description'));
         yield MetaParentField::new('parent', new TranslatableMessage('Parent'));
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }

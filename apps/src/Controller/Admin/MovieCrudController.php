@@ -99,7 +99,7 @@ class MovieCrudController extends AbstractCrudControllerLib
             $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'))->hideOnIndex(),
             $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
         ];
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }

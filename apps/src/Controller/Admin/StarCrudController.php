@@ -58,7 +58,7 @@ class StarCrudController extends AbstractCrudControllerLib
         yield IntegerField::new('stargazers', new TranslatableMessage('Stargazers'));
         yield IntegerField::new('watchers', new TranslatableMessage('Watchers'));
         yield IntegerField::new('forks', new TranslatableMessage('Forks'));
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }

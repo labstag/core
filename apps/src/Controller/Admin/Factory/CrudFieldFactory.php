@@ -111,11 +111,18 @@ final class CrudFieldFactory
 
     public function categoriesField(string $type): AssociationField
     {
-        return AssociationField::new('categories', new TranslatableMessage('Categories'))->autocomplete()->setTemplatePath('admin/field/categories.html.twig')->setFormTypeOption('by_reference', false)->setQueryBuilder(
+        $associationField = AssociationField::new('categories', new TranslatableMessage('Categories'));
+        $associationField->autocomplete();
+        $associationField->setTemplatePath('admin/field/categories.html.twig');
+        $associationField->setFormTypeOption('by_reference', false);
+        $associationField->setQueryBuilder(
             function (QueryBuilder $queryBuilder) use ($type): void {
-                $queryBuilder->andWhere('entity.type = :type')->setParameter('type', $type);
+                $queryBuilder->andWhere('entity.type = :type');
+                $queryBuilder->setParameter('type', $type);
             }
         );
+
+        return $associationField;
     }
 
     public function createdAtField(): DateTimeField
@@ -128,8 +135,12 @@ final class CrudFieldFactory
      *
      * @return array<int, mixed>
      */
-    public function dateSet(): array
+    public function dateSet(string $pageName): array
     {
+        if ('new' === $pageName) {
+            return [];
+        }
+
         return [
             FormField::addTab(new TranslatableMessage('Date')),
             $this->createdAtField(),
@@ -253,7 +264,8 @@ final class CrudFieldFactory
             return [];
         }
 
-        $associationField = AssociationField::new('refuser', new TranslatableMessage('User'))->autocomplete()->setSortProperty('username');
+        $associationField = AssociationField::new('refuser', new TranslatableMessage('User'));
+        $associationField->setSortProperty('username');
 
         return [
             FormField::addTab(new TranslatableMessage('User')),
@@ -294,13 +306,18 @@ final class CrudFieldFactory
 
     public function tagsField(string $type): AssociationField
     {
-        return AssociationField::new('tags', new TranslatableMessage('Tags'))->autocomplete()->setTemplatePath(
-            'admin/field/tags.html.twig'
-        )->setFormTypeOption('by_reference', false)->setQueryBuilder(
+        $associationField = AssociationField::new('tags', new TranslatableMessage('Tags'));
+        $associationField->autocomplete();
+        $associationField->setTemplatePath('admin/field/tags.html.twig');
+        $associationField->setFormTypeOption('by_reference', false);
+        $associationField->setQueryBuilder(
             function (QueryBuilder $queryBuilder) use ($type): void {
-                $queryBuilder->andWhere('entity.type = :type')->setParameter('type', $type);
+                $queryBuilder->andWhere('entity.type = :type');
+                $queryBuilder->setParameter('type', $type);
             }
         );
+
+        return $associationField;
     }
 
     /**

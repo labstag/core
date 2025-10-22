@@ -24,10 +24,11 @@ class SecurityController extends AbstractController
     public function login(
         AuthenticationUtils $authenticationUtils,
         ConfigurationService $configurationService,
-        SiteService $siteService,
+        SiteService $siteService
     ): Response
     {
         if ($this->getUser() instanceof UserInterface) {
+
             return $this->redirectToRoute('admin');
         }
 

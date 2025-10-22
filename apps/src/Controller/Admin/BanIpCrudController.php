@@ -36,14 +36,13 @@ class BanIpCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
         // Ensure all fields are inside a tab (EasyAdmin requires this once any tab is used elsewhere in the app)
         yield $this->addTabPrincipal();
         yield $this->crudFieldFactory->idField();
         yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
         yield TextField::new('InternetProtocol', new TranslatableMessage('IP'));
         yield WysiwygField::new('reason', new TranslatableMessage('Raison'));
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }

@@ -80,7 +80,7 @@ class PostCrudController extends AbstractCrudControllerLib
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();
         // Dates
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }

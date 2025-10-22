@@ -1,0 +1,119 @@
+<?php
+
+namespace Labstag\Paragraph;
+
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
+use Generator;
+use Labstag\Entity\Serie;
+use Labstag\Entity\Page;
+use Labstag\Entity\Paragraph;
+use Labstag\Form\Front\SerieType;
+use Labstag\Paragraph\Abstract\ParagraphLib;
+use Labstag\Repository\SerieRepository;
+use Override;
+
+class SerieParagraph extends ParagraphLib
+{
+    /**
+     * @param mixed[] $data
+     */
+    #[Override]
+    public function generate(Paragraph $paragraph, array $data, bool $disable): void
+    {
+        unset($disable);
+        /** @var SerieRepository $serviceEntityRepositoryLib */
+        $serviceEntityRepositoryLib = $this->getRepository(Serie::class);
+
+        $request = $this->requestStack->getCurrentRequest();
+        $query   = $this->setQuery($request->query->all());
+
+        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator($query), $paragraph->getNbr());
+
+        $templates = $this->templates($paragraph, 'header');
+        $this->setHeader(
+            $paragraph,
+            $this->render(
+                $templates['view'],
+                ['pagination' => $pagination]
+            )
+        );
+
+        $templates = $this->templates($paragraph, 'footer');
+        $this->setFooter(
+            $paragraph,
+            $this->render(
+                $templates['view'],
+                ['pagination' => $pagination]
+            )
+        );
+
+        $form = $this->createForm(SerieType::class, $query);
+
+        $this->setData(
+            $paragraph,
+            [
+                'form'       => $form,
+                'pagination' => $pagination,
+                'paragraph'  => $paragraph,
+                'data'       => $data,
+            ]
+        );
+    }
+
+    /**
+     * @return Generator<FieldInterface>
+     */
+    #[Override]
+    public function getFields(Paragraph $paragraph, string $pageName): mixed
+    {
+        unset($paragraph, $pageName);
+        yield $this->addFieldIntegerNbr();
+    }
+
+    #[Override]
+    public function getName(): string
+    {
+        return 'Serie';
+    }
+
+    #[Override]
+    public function getType(): string
+    {
+        return 'movie';
+    }
+
+    /**
+     * @return mixed[]
+     */
+    #[Override]
+    public function useIn(): array
+    {
+        return [Page::class];
+    }
+
+    /**
+     * @param array<string, mixed> $query
+     *
+     * @return array<string, mixed>
+     */
+    private function setQuery(array $query): array
+    {
+        if (isset($query['order']) && !in_array($query['order'], ['title', 'releaseDate', 'createdAt'])) {
+            unset($query['order']);
+        }
+
+        if (!isset($query['order'])) {
+            $query['order'] = 'createdAt';
+        }
+
+        if (isset($query['orderby']) && !in_array($query['orderby'], ['ASC', 'DESC'])) {
+            unset($query['orderby']);
+        }
+
+        if (!isset($query['orderby'])) {
+            $query['orderby'] = 'DESC';
+        }
+
+        return $query;
+    }
+}

@@ -59,7 +59,7 @@ class PageCrudController extends AbstractCrudControllerLib
             yield $fieldChoice;
         }
 
-        yield AssociationField::new('page', new TranslatableMessage('Page'))->autocomplete();
+        yield AssociationField::new('page', new TranslatableMessage('Page'));
         foreach ($this->crudFieldFactory->taxonomySet('page') as $field) {
             yield $field;
         }
@@ -76,7 +76,7 @@ class PageCrudController extends AbstractCrudControllerLib
 
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }
