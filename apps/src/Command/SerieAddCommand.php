@@ -151,7 +151,7 @@ class SerieAddCommand extends Command
         $serie = $this->getSerieByImdb($imdb);
         if (!$serie instanceof Serie) {
             $serie = new Serie();
-            $meta = new Meta();
+            $meta  = new Meta();
             $serie->setMeta($meta);
             $serie->setEnable(true);
             $serie->setAdult(false);

@@ -2,7 +2,6 @@
 
 namespace Labstag\Service;
 
-use DeviceDetector\Yaml\Symfony;
 use Exception;
 use InvalidArgumentException;
 use Labstag\Entity\Chapter;
@@ -38,7 +37,6 @@ final class SlugService
         private PageRepository $pageRepository,
         private ChapterRepository $chapterRepository,
         private PostRepository $postRepository,
-        private SluggerInterface $slugger,
         private RequestStack $requestStack,
     )
     {

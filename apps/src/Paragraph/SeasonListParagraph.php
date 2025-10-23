@@ -6,12 +6,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Block;
-use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Serie;
-use Labstag\Entity\Story;
 use Labstag\Paragraph\Abstract\ParagraphLib;
-use Labstag\Repository\ChapterRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 

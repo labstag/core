@@ -50,24 +50,6 @@ class SerieCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
-    #[Route('/admin/serie/{entity}/w3c', name: 'admin_serie_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $serie                      = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->linkw3CValidator($serie);
-    }
-
-    #[Route('/admin/serie/{entity}/public', name: 'admin_serie_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $serie                      = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->publicLink($serie);
-    }
-
     #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
@@ -136,6 +118,16 @@ class SerieCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
+    #[\Override]
+    public function createEntity(string $entityFqcn): Serie
+    {
+        $serie = new $entityFqcn();
+        $meta  = new Meta();
+        $serie->setMeta($meta);
+
+        return $serie;
+    }
+
     public static function getEntityFqcn(): string
     {
         return Serie::class;
@@ -151,6 +143,15 @@ class SerieCrudController extends AbstractCrudControllerLib
         }
 
         return $this->redirect('https://www.imdb.com/title/' . $serie->getImdb() . '/');
+    }
+
+    #[Route('/admin/serie/{entity}/public', name: 'admin_serie_public')]
+    public function linkPublic(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $serie                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->publicLink($serie);
     }
 
     #[Route('/admin/serie/{entity}/tmdb', name: 'admin_serie_tmdb')]
@@ -177,6 +178,15 @@ class SerieCrudController extends AbstractCrudControllerLib
         }
 
         return $this->redirectToRoute('admin_serie_index');
+    }
+
+    #[Route('/admin/serie/{entity}/w3c', name: 'admin_serie_w3c')]
+    public function w3c(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $serie                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->linkw3CValidator($serie);
     }
 
     private function configureActionsUpdateImage(): void
@@ -220,16 +230,6 @@ class SerieCrudController extends AbstractCrudControllerLib
         );
 
         return $action;
-    }
-
-    #[\Override]
-    public function createEntity(string $entityFqcn): Serie
-    {
-        $serie = new $entityFqcn();
-        $meta = new Meta();
-        $serie->setMeta($meta);
-
-        return $serie;
     }
 
     private function setUpdateAction(): Action

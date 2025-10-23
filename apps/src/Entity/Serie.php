@@ -27,6 +27,10 @@ class Serie implements Stringable
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
+    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    protected ?string $slug = null;
+
     #[ORM\Column]
     private ?bool $adult = null;
 
@@ -41,10 +45,6 @@ class Serie implements Stringable
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $citation = null;
-
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
-    protected ?string $slug = null;
 
     /**
      * @var string[]|null
@@ -85,6 +85,19 @@ class Serie implements Stringable
     #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $lastreleaseDate = null;
 
+    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Meta $meta = null;
+
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'serie', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    private Collection $paragraphs;
+
     #[ORM\Column(name: 'release_date', type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $releaseDate = null;
 
@@ -109,19 +122,6 @@ class Serie implements Stringable
     #[ORM\Column(nullable: true)]
     private ?int $votes = null;
 
-    /**
-     * @var Collection<int, Paragraph>
-     */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'serie', cascade: ['persist', 'remove'])]
-    #[ORM\OrderBy(
-        ['position' => 'ASC']
-    )]
-    private Collection $paragraphs;
-
-    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Meta $meta = null;
-
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -129,14 +129,18 @@ class Serie implements Stringable
         $this->paragraphs = new ArrayCollection();
     }
 
-    public function getMeta(): ?Meta
+    #[Override]
+    public function __toString(): string
     {
-        return $this->meta;
+        return (string) $this->getTitle();
     }
 
-    public function setMeta(Meta $meta): static
+    public function addCategory(Category $category): static
     {
-        $this->meta = $meta;
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->addSerie($this);
+        }
 
         return $this;
     }
@@ -146,52 +150,6 @@ class Serie implements Stringable
         if (!$this->paragraphs->contains($paragraph)) {
             $this->paragraphs->add($paragraph);
             $paragraph->setSerie($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Paragraph>
-     */
-    public function getParagraphs(): Collection
-    {
-        return $this->paragraphs;
-    }
-
-    public function removeParagraph(Paragraph $paragraph): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this) {
-            $paragraph->setStory(null);
-        }
-
-        return $this;
-    }
-
-    #[Override]
-    public function __toString(): string
-    {
-        return (string) $this->getTitle();
-    }
-
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(?string $slug): static
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    public function addCategory(Category $category): static
-    {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addSerie($this);
         }
 
         return $this;
@@ -268,6 +226,19 @@ class Serie implements Stringable
         return $this->lastreleaseDate;
     }
 
+    public function getMeta(): ?Meta
+    {
+        return $this->meta;
+    }
+
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
     public function getReleaseDate(): ?DateTime
     {
         return $this->releaseDate;
@@ -279,6 +250,11 @@ class Serie implements Stringable
     public function getSeasons(): Collection
     {
         return $this->seasons;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
     }
 
     public function getTitle(): ?string
@@ -320,6 +296,16 @@ class Serie implements Stringable
     {
         if ($this->categories->removeElement($category)) {
             $category->removeSerie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this) {
+            $paragraph->setStory(null);
         }
 
         return $this;
@@ -429,9 +415,23 @@ class Serie implements Stringable
         return $this;
     }
 
+    public function setMeta(Meta $meta): static
+    {
+        $this->meta = $meta;
+
+        return $this;
+    }
+
     public function setReleaseDate(?DateTime $releaseDate): static
     {
         $this->releaseDate = $releaseDate;
+
+        return $this;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

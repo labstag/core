@@ -81,14 +81,14 @@ class Paragraph implements Stringable
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Post $post = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Serie $serie = null;
-
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
     private bool $save = true;
+
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    private ?Serie $serie = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Story $story = null;
@@ -342,16 +342,16 @@ class Paragraph implements Stringable
         return $this;
     }
 
-    public function setSerie(?Serie $serie): static
+    public function setSave(bool $save): static
     {
-        $this->serie = $serie;
+        $this->save = $save;
 
         return $this;
     }
 
-    public function setSave(bool $save): static
+    public function setSerie(?Serie $serie): static
     {
-        $this->save = $save;
+        $this->serie = $serie;
 
         return $this;
     }

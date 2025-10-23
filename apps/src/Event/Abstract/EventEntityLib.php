@@ -130,15 +130,6 @@ abstract class EventEntityLib
         $this->movieService->update($instance);
     }
 
-    protected function updateEntitySerie(object $instance): void
-    {
-        if (!$instance instanceof Serie) {
-            return;
-        }
-
-        $this->serieService->update($instance);
-    }
-
     protected function updateEntityPage(object $instance): void
     {
         if (!$instance instanceof Page) {
@@ -182,6 +173,15 @@ abstract class EventEntityLib
         }
 
         $instance->incrementLastCount();
+    }
+
+    protected function updateEntitySerie(object $instance): void
+    {
+        if (!$instance instanceof Serie) {
+            return;
+        }
+
+        $this->serieService->update($instance);
     }
 
     protected function updateEntityStory(object $instance): void

@@ -132,6 +132,52 @@ final class MovieService
     }
 
     /**
+     * @return array<string, mixed>|null
+     */
+    public function getDetailsTmdb(string $imdbId): ?array
+    {
+        if ('' === $this->tmdbapiKey) {
+            return null;
+        }
+
+        $cacheKey = 'tmdb_movie_find_' . $imdbId;
+
+        return $this->cacheService->get(
+            $cacheKey,
+            function (ItemInterface $item) use ($imdbId) {
+                $url      = 'https://api.themoviedb.org/3/find/' . $imdbId . '?external_source=imdb_id&language=fr-FR';
+                $response = $this->httpClient->request(
+                    'GET',
+                    $url,
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                            'accept'        => 'application/json',
+                        ],
+                    ]
+                );
+                if (self::STATUSOK !== $response->getStatusCode()) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $data = json_decode($response->getContent(), true);
+                if (0 === count($data['movie_results'])) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+
+                return $data;
+            },
+            60
+        );
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function getSagaForForm(): array
@@ -261,52 +307,6 @@ final class MovieService
         $details['release_dates'] = $data;
 
         return $details;
-    }
-
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function getDetailsTmdb(string $imdbId): ?array
-    {
-        if ('' === $this->tmdbapiKey) {
-            return null;
-        }
-
-        $cacheKey = 'tmdb_movie_find_' . $imdbId;
-
-        return $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($imdbId) {
-                $url      = 'https://api.themoviedb.org/3/find/' . $imdbId . '?external_source=imdb_id&language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $data = json_decode($response->getContent(), true);
-                if (0 === count($data['movie_results'])) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return $data;
-            },
-            60
-        );
     }
 
     /**

@@ -35,6 +35,15 @@ final class CrudFieldFactory
     {
     }
 
+    public function addFieldIDShortcode(string $type): TextField
+    {
+        $textField = TextField::new('id', new TranslatableMessage('Shortcode'));
+        $textField->formatValue(fn ($identity): string => sprintf('[%s:%s]', $type . 'url', $identity));
+        $textField->onlyOnDetail();
+
+        return $textField;
+    }
+
     public function addFilterCategories(Filters $filters, string $type): void
     {
         $filters->add(
@@ -236,15 +245,6 @@ final class CrudFieldFactory
         ];
     }
 
-    public function addFieldIDShortcode(string $type): TextField
-    {
-        $textField = TextField::new('id', new TranslatableMessage('Shortcode'));
-        $textField->formatValue(fn ($identity): string => sprintf('[%s:%s]', $type.'url', $identity));
-        $textField->onlyOnDetail();
-
-        return $textField;
-    }
-
     /**
      * @return array<int, FormField|ParagraphsField>
      */
@@ -356,10 +356,7 @@ final class CrudFieldFactory
 
     public function updatedAtField(): DateTimeField
     {
-        return DateTimeField::new(
-            'updatedAt',
-            new TranslatableMessage('updated At')
-        )->hideWhenCreating()->hideOnIndex();
+        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating()->hideOnIndex();
     }
 
     public function workflowField(): TextField

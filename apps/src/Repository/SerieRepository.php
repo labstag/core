@@ -78,34 +78,6 @@ class SerieRepository extends ServiceEntityRepositoryLib
     }
 
     /**
-     * @param array<string, mixed> $query
-     */
-    public function getQueryBuilder(): QueryBuilder
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->where('s.enable = :enable');
-        $queryBuilder->setParameter('enable', true);
-        $queryBuilder->leftJoin('s.categories', 'c')->addSelect('c');
-
-        return $queryBuilder->orderBy('s.title', 'ASC');
-    }
-
-    /**
-     * @param array<string, mixed> $query
-     *
-     * @return Query<mixed, mixed>
-     */
-    public function getQueryPaginator(): Query
-    {
-        $queryBuilder = $this->getQueryBuilder();
-        $query        = $queryBuilder->getQuery();
-        $dql          = $query->getDQL();
-        $query->enableResultCache(3600, 'series-query-paginator-' . md5((string) $dql));
-
-        return $query;
-    }
-
-    /**
      * @param array<string> $excludedImdbIds
      *
      * @return list<Serie>
@@ -120,5 +92,28 @@ class SerieRepository extends ServiceEntityRepositoryLib
         $query->enableResultCache(3600, 'series-not-in-imdb-list');
 
         return $query->getResult();
+    }
+
+    public function getQueryBuilder(): QueryBuilder
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->where('s.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        $queryBuilder->leftJoin('s.categories', 'c')->addSelect('c');
+
+        return $queryBuilder->orderBy('s.title', 'ASC');
+    }
+
+    /**
+     * @return Query<mixed, mixed>
+     */
+    public function getQueryPaginator(): Query
+    {
+        $queryBuilder = $this->getQueryBuilder();
+        $query        = $queryBuilder->getQuery();
+        $dql          = $query->getDQL();
+        $query->enableResultCache(3600, 'series-query-paginator-' . md5((string) $dql));
+
+        return $query;
     }
 }

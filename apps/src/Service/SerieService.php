@@ -24,12 +24,12 @@ final class SerieService
     /**
      * @var array<string, mixed>
      */
-    private array $genres = [];
+    private array $country = [];
 
     /**
      * @var array<string, mixed>
      */
-    private array $country = [];
+    private array $genres = [];
 
     /**
      * @var array<string, mixed>
@@ -45,42 +45,6 @@ final class SerieService
         private string $tmdbapiKey,
     )
     {
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getYearForForm(): array
-    {
-        if ([] !== $this->year) {
-            return $this->year;
-        }
-
-        $data = $this->serieRepository->findAllUniqueYear();
-        $year = [];
-        foreach ($data as $value) {
-            $year[$value] = $value;
-        }
-
-        $this->year = $year;
-
-        return $year;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getCountryForForm(): array
-    {
-        if ([] !== $this->country) {
-            return $this->country;
-        }
-
-        $country    = $this->serieRepository->findAllUniqueCountries();
-
-        $this->country = $country;
-
-        return $country;
     }
 
     public function deleteOldCategory(): void
@@ -116,46 +80,20 @@ final class SerieService
         return $categories;
     }
 
-    public function update(Serie $serie): bool
-    {
-        if (in_array($serie->getImdb(), [null, '', '0'], true)) {
-            return false;
-        }
-
-        $details = $this->getDetails($serie);
-
-        $statuses = [
-            $this->updateSerie($serie, $details),
-            $this->updateCategory($serie, $details),
-            $this->updateTrailer($serie, $details),
-            $this->seasonService->updateSerie($serie, $details),
-        ];
-
-        return in_array(true, $statuses, true);
-    }
-
     /**
      * @return array<string, mixed>
      */
-    private function getDetails(Serie $serie): array
+    public function getCountryForForm(): array
     {
-        $details = [];
-
-        $tmdbId = $serie->getTmdb();
-        if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
-            $data   = $this->getDetailsTmdb($serie->getImdb());
-            if (null !== $data && isset($data['tv_results'][0]['id'])) {
-                $tmdbId = $data['tv_results'][0]['id'];
-            }
+        if ([] !== $this->country) {
+            return $this->country;
         }
 
-        if (empty($tmdbId)) {
-            return [];
-        }
+        $country    = $this->serieRepository->findAllUniqueCountries();
 
-        $details = $this->getDetailsTmdbSerie($details, $tmdbId);
+        $this->country = $country;
 
-        return $this->getTrailersTmdbSerie($details, $tmdbId);
+        return $country;
     }
 
     /**
@@ -202,6 +140,68 @@ final class SerieService
             },
             60
         );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getYearForForm(): array
+    {
+        if ([] !== $this->year) {
+            return $this->year;
+        }
+
+        $data = $this->serieRepository->findAllUniqueYear();
+        $year = [];
+        foreach ($data as $value) {
+            $year[$value] = $value;
+        }
+
+        $this->year = $year;
+
+        return $year;
+    }
+
+    public function update(Serie $serie): bool
+    {
+        if (in_array($serie->getImdb(), [null, '', '0'], true)) {
+            return false;
+        }
+
+        $details = $this->getDetails($serie);
+
+        $statuses = [
+            $this->updateSerie($serie, $details),
+            $this->updateCategory($serie, $details),
+            $this->updateTrailer($serie, $details),
+            $this->seasonService->updateSerie($serie, $details),
+        ];
+
+        return in_array(true, $statuses, true);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getDetails(Serie $serie): array
+    {
+        $details = [];
+
+        $tmdbId = $serie->getTmdb();
+        if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
+            $data   = $this->getDetailsTmdb($serie->getImdb());
+            if (null !== $data && isset($data['tv_results'][0]['id'])) {
+                $tmdbId = $data['tv_results'][0]['id'];
+            }
+        }
+
+        if (empty($tmdbId)) {
+            return [];
+        }
+
+        $details = $this->getDetailsTmdbSerie($details, $tmdbId);
+
+        return $this->getTrailersTmdbSerie($details, $tmdbId);
     }
 
     /**

@@ -265,18 +265,6 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $this->paragraphService->addParagraph($page, 'sibling');
     }
 
-    private function setParagraphsSerie(Page $page): void
-    {
-        $this->addParagraphHead($page);
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'serie');
-        if (is_null($paragraph)) {
-            return;
-        }
-
-        $paragraph->setNbr(18);
-    }
-
     private function setParagraphsMovie(Page $page): void
     {
         $this->addParagraphHead($page);
@@ -294,6 +282,18 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addParagraphHead($page);
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'news-list');
+        if (is_null($paragraph)) {
+            return;
+        }
+
+        $paragraph->setNbr(18);
+    }
+
+    private function setParagraphsSerie(Page $page): void
+    {
+        $this->addParagraphHead($page);
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'serie');
         if (is_null($paragraph)) {
             return;
         }
