@@ -77,8 +77,5 @@
     "swiper": "11.1.*",
     "tarteaucitronjs": "1.25.*",
     "tom-select": "2.4.*"
-  },
-  "volta": {
-    "node": "22.20.0"
   }
 }

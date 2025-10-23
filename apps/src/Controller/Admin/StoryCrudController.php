@@ -54,6 +54,7 @@ class StoryCrudController extends AbstractCrudControllerLib
     {
         // Principal tab + standard full content set
         yield $this->addTabPrincipal();
+        yield $this->crudFieldFactory->addFieldIDShortcode('story');
         $isSuperAdmin = $this->isSuperAdmin();
         foreach ($this->crudFieldFactory->fullContentSet(
             'story',

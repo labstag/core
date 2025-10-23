@@ -2,20 +2,11 @@
 @use "../variables";
 
 @use "sass:color";
-.paragraph_movie{
+.paragraph_serie{
   .wrapper{
     .content{
-      display: grid;
-      grid-template-areas:
-        "aside"
-        "list";
       grid-template-columns: 1fr;
       gap: 16px;
-      @include mixins.respond-to(md) {
-        grid-template-columns: 4fr 1fr;
-        grid-template-areas:
-          "list aside";
-      }
     }
   }
   .notfound{
@@ -36,15 +27,7 @@
   .title{
 
   }
-  aside{
-    grid-area: aside;
-    form{
-      padding: 5px;
-      background-color: #363636;
-    }
-  }
   ul{
-    grid-area: list;
     display: grid;
     grid-template-columns:  repeat(auto-fit, minmax(250px, 1fr));
     align-items: start;
@@ -52,14 +35,14 @@
     gap: 12px;
     height: auto;
     @include mixins.respond-to(md) {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
     }
   }
   li{
     display: flex;
     flex-direction: column;
     height: 550px;
-    &.teaser-movie{
+    &.teaser-serie{
       background-color: color.scale(variables.$colorbg, $lightness: 15%);
       &:nth-child(even)
       {

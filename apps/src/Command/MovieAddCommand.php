@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'labstag:movies:add', description: 'Add movies with movies.csv')]
+#[AsCommand(name: 'labstag:movies:add', description: 'Add movies with movielist.csv')]
 class MovieAddCommand extends Command
 {
 
@@ -53,7 +53,7 @@ class MovieAddCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $filename     = 'movies.csv';
+        $filename     = 'movielist.csv';
         $file         = $this->fileService->getFileInAdapter('private', $filename);
         if (!is_file($file)) {
             $symfonyStyle->error('File not found ' . $filename);

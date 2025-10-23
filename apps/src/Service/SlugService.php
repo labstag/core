@@ -2,18 +2,22 @@
 
 namespace Labstag\Service;
 
+use DeviceDetector\Yaml\Symfony;
 use Exception;
 use InvalidArgumentException;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
+use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\PageRepository;
 use Labstag\Repository\PostRepository;
+use Labstag\Repository\SerieRepository;
 use Labstag\Repository\StoryRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 final class SlugService
 {
@@ -30,9 +34,11 @@ final class SlugService
 
     public function __construct(
         private StoryRepository $storyRepository,
+        private SerieRepository $serieRepository,
         private PageRepository $pageRepository,
         private ChapterRepository $chapterRepository,
         private PostRepository $postRepository,
+        private SluggerInterface $slugger,
         private RequestStack $requestStack,
     )
     {
@@ -43,6 +49,10 @@ final class SlugService
         $types = $this->getPageByTypes();
 
         return match (true) {
+            $entity instanceof Serie   => $this->buildPrefixedSlug(
+                $types[PageEnum::SERIES->value],
+                $entity->getSlug()
+            ),
             $entity instanceof Page    => $entity->getSlug(),
             $entity instanceof Post    => $this->buildPrefixedSlug($types[PageEnum::POSTS->value], $entity->getSlug()),
             $entity instanceof Story   => $this->buildPrefixedSlug(
@@ -131,6 +141,7 @@ final class SlugService
         }
 
         $repos = [
+            'serie'   => $this->serieRepository,
             'story'   => $this->storyRepository,
             'chapter' => $this->chapterRepository,
         ];
@@ -151,9 +162,22 @@ final class SlugService
             }
         }
 
-        return $repos['story']->findOneBy(
-            ['slug' => $slug]
-        );
+        $data = [
+            $repos['story']->findOneBy(
+                ['slug' => $slug]
+            ),
+            $repos['serie']->findOneBy(
+                ['slug' => $slug]
+            ),
+        ];
+
+        foreach ($data as $row) {
+            if (is_object($row)) {
+                return $row;
+            }
+        }
+
+        return null;
     }
 
     private function getPageBySlug(string $slug): ?Page

@@ -1,0 +1,17 @@
+{% use "elements.html.twig" %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
+    <div class="wrapper">
+        {% if paragraph.title|length != 0 %}
+            <h3 class="title">
+                {{ paragraph.title }}
+            </h3>
+        {% endif %}
+        <ul>
+            {% for row in seasons %}
+                <li class="teaser-season">
+                    {% include  "teasers/season.html.twig"  with {'season': row} %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>

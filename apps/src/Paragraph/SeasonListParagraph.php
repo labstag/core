@@ -3,15 +3,19 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
-use Labstag\Entity\Page;
+use Labstag\Entity\Block;
+use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Serie;
+use Labstag\Entity\Story;
 use Labstag\Paragraph\Abstract\ParagraphLib;
-use Labstag\Repository\SerieRepository;
+use Labstag\Repository\ChapterRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class SerieParagraph extends ParagraphLib
+class SeasonListParagraph extends ParagraphLib
 {
     /**
      * @param mixed[] $data
@@ -20,26 +24,18 @@ class SerieParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var SerieRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Serie::class);
+        if (!isset($data['entity']) || !$data['entity'] instanceof Serie) {
+            $this->setShow($paragraph, false);
 
-        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
-
-        $templates = $this->templates($paragraph, 'header');
-        $this->setHeader(
-            $paragraph,
-            $this->render(
-                $templates['view'],
-                ['pagination' => $pagination]
-            )
-        );
+            return;
+        }
 
         $this->setData(
             $paragraph,
             [
-                'pagination' => $pagination,
-                'paragraph'  => $paragraph,
-                'data'       => $data,
+                'seasons'   => $data['entity']->getSeasons(),
+                'paragraph' => $paragraph,
+                'data'      => $data,
             ]
         );
     }
@@ -51,19 +47,20 @@ class SerieParagraph extends ParagraphLib
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-        yield $this->addFieldIntegerNbr();
+
+        yield TextField::new('title', new TranslatableMessage('Title'));
     }
 
     #[Override]
     public function getName(): string
     {
-        return 'Serie';
+        return 'Season list';
     }
 
     #[Override]
     public function getType(): string
     {
-        return 'serie';
+        return 'season-list';
     }
 
     /**
@@ -72,6 +69,6 @@ class SerieParagraph extends ParagraphLib
     #[Override]
     public function useIn(): array
     {
-        return [Page::class];
+        return [Block::class];
     }
 }

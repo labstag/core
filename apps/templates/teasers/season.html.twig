@@ -1,0 +1,9 @@
+<div class="background spoiler" data-bg="{{ site_asset(season, 'img') }}"></div>
+<div class="wrapper">
+    <h3 class="title">
+        {{ 'Season %season%'|trans({ '%season%': season.number }) }}
+    </h3>
+    <div class="resume">
+        {{ season.overview|raw }}
+    </div>
+</div>

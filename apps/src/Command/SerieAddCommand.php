@@ -2,6 +2,7 @@
 
 namespace Labstag\Command;
 
+use Labstag\Entity\Meta;
 use Labstag\Entity\Serie;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\FileService;
@@ -16,7 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'labstag:series:add', description: 'Add series with series.csv')]
+#[AsCommand(name: 'labstag:series:add', description: 'Add series with tvshows.csv')]
 class SerieAddCommand extends Command
 {
 
@@ -53,7 +54,7 @@ class SerieAddCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $filename     = 'series.csv';
+        $filename     = 'tvshows.csv';
         $file         = $this->fileService->getFileInAdapter('private', $filename);
         if (!is_file($file)) {
             $symfonyStyle->error('File not found ' . $filename);
@@ -150,6 +151,8 @@ class SerieAddCommand extends Command
         $serie = $this->getSerieByImdb($imdb);
         if (!$serie instanceof Serie) {
             $serie = new Serie();
+            $meta = new Meta();
+            $serie->setMeta($meta);
             $serie->setEnable(true);
             $serie->setAdult(false);
             $serie->setImdb($imdb);

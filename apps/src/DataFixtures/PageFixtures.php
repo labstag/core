@@ -76,6 +76,12 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $movies->setType(PageEnum::MOVIES->value);
         $this->setParagraphsMovie($movies);
 
+        $series = new Page();
+        $series->setPage($home);
+        $series->setTitle('Mes séries favorites');
+        $series->setType(PageEnum::SERIES->value);
+        $this->setParagraphsSerie($series);
+
         $stories = new Page();
         $stories->setPage($home);
         $stories->setTitle('Histoires');
@@ -128,6 +134,7 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
         return [
             $home,
+            $series,
             $movies,
             $stories,
             $post,
@@ -256,6 +263,18 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $this->addParagraphHead($page);
         $this->addParagraphText($page);
         $this->paragraphService->addParagraph($page, 'sibling');
+    }
+
+    private function setParagraphsSerie(Page $page): void
+    {
+        $this->addParagraphHead($page);
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'serie');
+        if (is_null($paragraph)) {
+            return;
+        }
+
+        $paragraph->setNbr(18);
     }
 
     private function setParagraphsMovie(Page $page): void

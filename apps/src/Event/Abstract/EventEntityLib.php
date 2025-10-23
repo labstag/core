@@ -12,6 +12,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Redirection;
+use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\HttpErrorLogsRepository;
@@ -19,6 +20,7 @@ use Labstag\Repository\PageRepository;
 use Labstag\Service\BlockService;
 use Labstag\Service\MovieService;
 use Labstag\Service\ParagraphService;
+use Labstag\Service\SerieService;
 use Labstag\Service\StoryService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -29,6 +31,7 @@ abstract class EventEntityLib
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
+        protected SerieService $serieService,
         protected WorkflowService $workflowService,
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
@@ -125,6 +128,15 @@ abstract class EventEntityLib
         }
 
         $this->movieService->update($instance);
+    }
+
+    protected function updateEntitySerie(object $instance): void
+    {
+        if (!$instance instanceof Serie) {
+            return;
+        }
+
+        $this->serieService->update($instance);
     }
 
     protected function updateEntityPage(object $instance): void

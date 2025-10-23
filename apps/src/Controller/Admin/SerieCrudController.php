@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
+use Labstag\Entity\Meta;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -26,7 +27,7 @@ class SerieCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
+        $this->setActionPublic($actions, 'admin_serie_w3c', 'admin_serie_public');
 
         $action = $this->setLinkImdbAction();
         $actions->add(Crud::PAGE_DETAIL, $action);
@@ -49,6 +50,24 @@ class SerieCrudController extends AbstractCrudControllerLib
         return $actions;
     }
 
+    #[Route('/admin/serie/{entity}/w3c', name: 'admin_serie_w3c')]
+    public function w3c(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $serie                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->linkw3CValidator($serie);
+    }
+
+    #[Route('/admin/serie/{entity}/public', name: 'admin_serie_public')]
+    public function linkPublic(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib = $this->getRepository();
+        $serie                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->publicLink($serie);
+    }
+
     #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
@@ -69,7 +88,7 @@ class SerieCrudController extends AbstractCrudControllerLib
         foreach ($this->crudFieldFactory->baseIdentitySet(
             $pageName,
             self::getEntityFqcn(),
-            withSlug: false
+            withSlug: true
         ) as $field) {
             yield $field;
         }
@@ -201,6 +220,16 @@ class SerieCrudController extends AbstractCrudControllerLib
         );
 
         return $action;
+    }
+
+    #[\Override]
+    public function createEntity(string $entityFqcn): Serie
+    {
+        $serie = new $entityFqcn();
+        $meta = new Meta();
+        $serie->setMeta($meta);
+
+        return $serie;
     }
 
     private function setUpdateAction(): Action

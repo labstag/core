@@ -266,7 +266,7 @@ final class MovieService
     /**
      * @return array<string, mixed>|null
      */
-    private function getDetailsTmdb(string $imdbId): ?array
+    public function getDetailsTmdb(string $imdbId): ?array
     {
         if ('' === $this->tmdbapiKey) {
             return null;

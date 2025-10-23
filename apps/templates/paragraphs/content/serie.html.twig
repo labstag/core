@@ -10,22 +10,17 @@
                         <circle cx="5" cy="12" r="1" fill="#c0392b"/>
                         <circle cx="19" cy="12" r="1" fill="#c0392b"/>
                     </svg>
-                    <span class="text">{{ 'No movies match your search.'|trans }}</span>
+                    <span class="text">{{ 'No series match your search.'|trans }}</span>
                 </div>
             {% else %}
                 <ul>
                     {% for row in pagination %}
-                        <li class="teaser-movie">
+                        <li class="teaser-serie">
                             {% include  "teasers/serie.html.twig"  with {'serie': row} %}
                         </li>
                     {% endfor %}
                 </ul>
             {% endif %}
-            <aside>
-                {% form_theme form 'bootstrap_5_layout.html.twig' %}
-                {{ form_start(form) }}
-                {{ form_end(form) }}
-            </aside>
         </div>
         <div class="navigation">
             {{ knp_pagination_render(pagination) }}

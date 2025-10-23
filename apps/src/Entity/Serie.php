@@ -21,6 +21,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: SerieRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
+#[ORM\Index(name: 'IDX_SERIE_SLUG', columns: ['slug'])]
 class Serie implements Stringable
 {
     use SoftDeleteableEntity;
@@ -40,6 +41,10 @@ class Serie implements Stringable
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $citation = null;
+
+    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    protected ?string $slug = null;
 
     /**
      * @var string[]|null
@@ -87,6 +92,9 @@ class Serie implements Stringable
      * @var Collection<int, Season>
      */
     #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'refserie')]
+    #[ORM\OrderBy(
+        ['number' => 'ASC']
+    )]
     private Collection $seasons;
 
     #[ORM\Column(length: 255)]
@@ -101,16 +109,82 @@ class Serie implements Stringable
     #[ORM\Column(nullable: true)]
     private ?int $votes = null;
 
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'serie', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    private Collection $paragraphs;
+
+    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Meta $meta = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->seasons    = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
+    }
+
+    public function getMeta(): ?Meta
+    {
+        return $this->meta;
+    }
+
+    public function setMeta(Meta $meta): static
+    {
+        $this->meta = $meta;
+
+        return $this;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setSerie($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this) {
+            $paragraph->setStory(null);
+        }
+
+        return $this;
     }
 
     #[Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+
+        return $this;
     }
 
     public function addCategory(Category $category): static

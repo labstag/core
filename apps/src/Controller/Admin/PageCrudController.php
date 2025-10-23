@@ -47,6 +47,7 @@ class PageCrudController extends AbstractCrudControllerLib
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addTabPrincipal();
+        yield $this->crudFieldFactory->addFieldIDShortcode('page');
         $isSuperAdmin = $this->isSuperAdmin();
         $identity     = $this->getIdEntity($pageName, $currentEntity);
 

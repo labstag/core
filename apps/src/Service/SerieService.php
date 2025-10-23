@@ -7,6 +7,7 @@ use Exception;
 use Labstag\Entity\Category;
 use Labstag\Entity\Serie;
 use Labstag\Repository\CategoryRepository;
+use Labstag\Repository\SerieRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -25,14 +26,61 @@ final class SerieService
      */
     private array $genres = [];
 
+    /**
+     * @var array<string, mixed>
+     */
+    private array $country = [];
+
+    /**
+     * @var array<string, mixed>
+     */
+    private array $year = [];
+
     public function __construct(
         private CacheService $cacheService,
         private SeasonService $seasonService,
         private HttpClientInterface $httpClient,
+        private SerieRepository $serieRepository,
         private CategoryRepository $categoryRepository,
         private string $tmdbapiKey,
     )
     {
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getYearForForm(): array
+    {
+        if ([] !== $this->year) {
+            return $this->year;
+        }
+
+        $data = $this->serieRepository->findAllUniqueYear();
+        $year = [];
+        foreach ($data as $value) {
+            $year[$value] = $value;
+        }
+
+        $this->year = $year;
+
+        return $year;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getCountryForForm(): array
+    {
+        if ([] !== $this->country) {
+            return $this->country;
+        }
+
+        $country    = $this->serieRepository->findAllUniqueCountries();
+
+        $this->country = $country;
+
+        return $country;
     }
 
     public function deleteOldCategory(): void
@@ -113,7 +161,7 @@ final class SerieService
     /**
      * @return array<string, mixed>|null
      */
-    private function getDetailsTmdb(string $imdbId): ?array
+    public function getDetailsTmdb(string $imdbId): ?array
     {
         if ('' === $this->tmdbapiKey) {
             return null;

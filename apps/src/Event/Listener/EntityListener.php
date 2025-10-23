@@ -22,6 +22,7 @@ final class EntityListener extends EventEntityLib
         $this->updateEntityBanIp($object, $entityManager);
         $this->updateEntityStory($object);
         $this->updateEntityMovie($object);
+        $this->updateEntitySerie($object);
         $this->updateEntityChapter($object);
         $this->updateEntityPage($object);
         $this->updateEntityRedirection($object);

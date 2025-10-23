@@ -46,6 +46,7 @@ class PostCrudController extends AbstractCrudControllerLib
     {
         // Principal tab + full content set (identity + taxonomy + paragraphs + meta + ref user)
         yield $this->addTabPrincipal();
+        yield $this->crudFieldFactory->addFieldIDShortcode('post');
         $isSuperAdmin = $this->isSuperAdmin();
 
         // Base identity fields (id, title, slug, enable, image)
