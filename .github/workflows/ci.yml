@@ -6,7 +6,7 @@ on:
     branches: [main, develop]
 
 jobs:
-  ci:
+  lint:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
@@ -36,7 +36,7 @@ jobs:
         with:
           submodules: recursive
           repository: koromerzhin/lampy
-          ref: 'v4.1'
+          ref: '4.3.1'
           path: lampy
 
       - name: Setup cache
@@ -76,67 +76,92 @@ jobs:
           task labstag:install-first
           task labstag:deploy
           task labstag:waiting
-      # === LINTING PHASE ===
-      - name: Frontend linting
+      
+      - name: lint all
+        run: task lint:all
+
+  launch:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    needs: lint
+    env:
+      DOCKER_INTERACTIVE: false
+    steps:
+      # === SETUP PHASE ===
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Docker Compose
+        uses: docker/setup-compose-action@v1
+      
+      - name: Setup Task
+        uses: go-task/setup-task@v1
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
+      
+      - name: Repository lampy
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          repository: koromerzhin/lampy
+          ref: '4.3.1'
+          path: lampy
+
+      - name: Setup cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: Install dependencies
         run: |
-          # Run markdown linting with warning on failure
-          npm run lint:markdown || echo "::warning::Markdown linting issues found"
-          
-          # Run SCSS linting (will auto-fix issues)
-          npm run lint:stylelint:fix
-          
-          # Check if there are any remaining unfixed issues
-          if ! npm run lint:stylelint; then
-            echo "::warning::Some SCSS issues could not be auto-fixed"
-          fi
+            if [ ! -d node_modules ]; then
+                npm install
+            fi
+      
+      - name: Build assets
+        run: npm run encore:build
+        env:
+          NODE_ENV: production
+      
+      - name: Setup environment files
+        run: |
+          cp apps/.env.test apps/.env
+          cp .env.example .env
+          echo "APP_ENV=test" >> apps/.env
+      
+      - name: Setup database and infrastructure
+        run: |
+          task labstag:copysql
+          cd lampy && task lampy:exec
+      
+      - name: Deploy containers
+        run: |
+          task labstag:set-env-ids
+          task labstag:getpull-image
+          task labstag:getapacheconf
+          task labstag:install-first
+          task labstag:deploy
+          task labstag:waiting
       
       - name: Setup PHP tools and permissions
         run: |
           task labstag:download-phar
           task labstag:ls
-          sudo chown -R $USER:$USER ./apps
+          sudo chown -R "$USER:$USER" ./apps
           sudo chmod -R 755 ./apps
           task symfony:about
-      
-      - name: PHP linting suite
-        id: php-linting
-        continue-on-error: true
-        run: |
-          LINT_EXIT_CODE=0
-          
-          echo "::group::PHP Code Sniffer"
-          task lint:phpcs:error || LINT_EXIT_CODE=1
-          echo "::endgroup::"
-          
-          echo "::group::PHP Mess Detector"
-          task lint:phpmd || LINT_EXIT_CODE=1
-          echo "::endgroup::"
-          
-          echo "::group::PHP Magic Number Detector"
-          task lint:phpmnd || LINT_EXIT_CODE=1
-          echo "::endgroup::"
-          
-          echo "::group::Twig Linting"
-          task lint:twig || LINT_EXIT_CODE=1
-          echo "::endgroup::"
-          
-          echo "::group::YAML Linting"
-          task lint:yaml || LINT_EXIT_CODE=1
-          echo "::endgroup::"
-          
-          echo "::group::PHPStan Analysis"
-          task phpstan:0 || LINT_EXIT_CODE=1
-          echo "::endgroup::"
-          
-          if [ $LINT_EXIT_CODE -ne 0 ]; then
-            echo "::warning::Some PHP linting checks failed, but continuing with the build"
-          fi
-          
-          exit $LINT_EXIT_CODE
-      # === TESTING PHASE ===
       - name: Prepare application
         run: |
-          sudo chown -R $USER:$USER ./apps/public
+          sudo chown -R "$USER:$USER" ./apps/public
           sudo chmod -R 755 ./apps/public
           task labstag:assets
       
@@ -162,6 +187,12 @@ jobs:
         env:
           CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      
+      - name: Docker stack stop
+        if: always()
+        run: |
+          docker stack rm labstag
+          docker stack rm lampy
       
       # === ARTIFACTS PHASE ===
       - name: Archive test results

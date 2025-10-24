@@ -2,6 +2,8 @@
 /apps/vendor
 /apps/bin/
 /apps/.symfony5
+/apps/.composer
+/apps/.pdepend
 /apps/.bash_history
 !/apps/bin/console
 /apps/public/assets
@@ -19,3 +21,4 @@ docker-compose-*.yml
 !/apps/public/uploads/.gitkeep
 .phpcs-cache
 /conf/apache2
+/cypress/screenshots
