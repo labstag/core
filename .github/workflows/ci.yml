@@ -14,7 +14,7 @@ jobs:
     steps:
       # === SETUP PHASE ===
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
 
@@ -32,7 +32,7 @@ jobs:
           cache-dependency-path: 'package-lock.json'
       
       - name: Repository lampy
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
           repository: koromerzhin/lampy
@@ -88,7 +88,7 @@ jobs:
     steps:
       # === SETUP PHASE ===
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
 
@@ -106,7 +106,7 @@ jobs:
           cache-dependency-path: 'package-lock.json'
       
       - name: Repository lampy
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
           repository: koromerzhin/lampy
