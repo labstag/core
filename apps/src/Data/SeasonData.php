@@ -4,7 +4,6 @@ namespace Labstag\Data;
 
 use Labstag\Data\Abstract\DataLib;
 use Labstag\Entity\Season;
-use Labstag\Repository\PageRepository;
 use Labstag\Repository\SeasonRepository;
 
 class SeasonData extends DataLib implements DataInterface
@@ -18,7 +17,9 @@ class SeasonData extends DataLib implements DataInterface
 
     public function generateSlug(object $entity): string
     {
-        return $this->serieData->generateSlug($entity->getRefserie()) . '/' . $this->getPrefixSeason() . $entity->getNumber();
+        return $this->serieData->generateSlug(
+            $entity->getRefserie()
+        ) . '/' . $this->getPrefixSeason() . $entity->getNumber();
     }
 
     public function getEntity(string $slug): object
@@ -39,6 +40,7 @@ class SeasonData extends DataLib implements DataInterface
     public function match(string $slug): bool
     {
         $page = $this->getEntityBySlug($slug);
+
         return $page instanceof Season;
     }
 

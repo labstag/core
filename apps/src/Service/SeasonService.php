@@ -25,7 +25,7 @@ final class SeasonService
     {
     }
 
-    public function getSeason(Serie $serie, int $number): \Labstag\Entity\Season
+    public function getSeason(Serie $serie, int $number): Season
     {
         $season = $this->seasonRepository->findOneBy(
             [

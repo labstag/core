@@ -121,7 +121,7 @@ abstract class EventEntityLib
 
         $asciiSlugger  = new AsciiSlugger();
         $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
-        $slug = $unicodeString;
+        $slug      = $unicodeString;
         $number    = 1;
         while ($this->chapterRepository->findOneBy(
             [
@@ -205,7 +205,7 @@ abstract class EventEntityLib
 
         $asciiSlugger  = new AsciiSlugger();
         $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
-        $slug = $unicodeString;
+        $slug      = $unicodeString;
         $number    = 1;
         while ($this->seasonRepository->findOneBy(
             [

@@ -16,6 +16,7 @@ class HomeData extends DataLib implements DataInterface
 
     public function generateSlug(object $entity): string
     {
+        unset($entity);
         $this->getHome();
 
         return '';
@@ -23,6 +24,7 @@ class HomeData extends DataLib implements DataInterface
 
     public function getEntity(string $slug): object
     {
+        unset($slug);
         return $this->getHome();
     }
 

@@ -22,9 +22,11 @@ class SerieEpisodeFilter implements FilterInterface
         EntityDto $entityDto,
     ): void
     {
+        unset($fieldDto, $entityDto);
         if (null === $filterDataDto->getValue()) {
             return;
         }
+
         $alias = $filterDataDto->getEntityAlias();
         if (!$this->hasJoin($queryBuilder, 'season')) {
             $queryBuilder->join($alias . '.refseason', 'season');
@@ -58,11 +60,11 @@ class SerieEpisodeFilter implements FilterInterface
     public static function new(string $propertyName, ?string $label = null): self
     {
         $fileField = (new self());
-        $fileField->setFilterFqcn(__CLASS__);
+        $fileField->setFilterFqcn(self::class);
         $fileField->setProperty($propertyName);
         $fileField->setFormType(ChoiceFilterType::class);
         $fileField->setLabel($label ?? new TranslatableMessage('Season'));
-        
+
         return $fileField;
     }
 

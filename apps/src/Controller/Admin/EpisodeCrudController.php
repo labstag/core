@@ -64,7 +64,7 @@ class EpisodeCrudController extends AbstractCrudControllerLib
         $associationField->setFormTypeOption('choice_label', 'refserie');
         $associationField->setLabel(new TranslatableMessage('Season'));
         $associationField->formatValue(
-            function($value, $entity) {
+            function ($value, $entity) {
                 unset($value);
 
                 return $entity->getRefseason()?->getRefserie();

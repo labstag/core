@@ -43,6 +43,7 @@ class StoryData extends DataLib implements DataInterface
     public function match(string $slug): bool
     {
         $page = $this->getEntityBySlug($slug);
+
         return $page instanceof Story;
     }
 

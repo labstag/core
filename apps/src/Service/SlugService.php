@@ -2,21 +2,10 @@
 
 namespace Labstag\Service;
 
-use Exception;
 use InvalidArgumentException;
-use Labstag\Entity\Chapter;
 use Labstag\Entity\Page;
-use Labstag\Entity\Post;
-use Labstag\Entity\Season;
-use Labstag\Entity\Serie;
-use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
-use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\PageRepository;
-use Labstag\Repository\PostRepository;
-use Labstag\Repository\SeasonRepository;
-use Labstag\Repository\SerieRepository;
-use Labstag\Repository\StoryRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\RequestStack;
 
