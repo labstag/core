@@ -83,6 +83,7 @@ jobs:
   launch:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
+    needs: lint
     env:
       DOCKER_INTERACTIVE: false
     steps:
