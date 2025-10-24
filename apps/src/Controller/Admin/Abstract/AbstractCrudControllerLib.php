@@ -119,7 +119,9 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
      *
      * @return ServiceEntityRepositoryLib<object>
      */
-    protected function getRepository(?string $entity = null): ServiceEntityRepositoryLib
+    protected function getRepository(
+        ?string $entity = null,
+    ): ServiceEntityRepositoryLib
     {
         $entity ??= static::getEntityFqcn();
 
@@ -204,11 +206,15 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     /**
      * @return ServiceEntityRepositoryLib<object>
      */
-    private function getDoctrineRepository(string $entity): ServiceEntityRepositoryLib
+    private function getDoctrineRepository(
+        string $entity,
+    ): ServiceEntityRepositoryLib
     {
         $objectManager = $this->managerRegistry->getManagerForClass($entity);
         /** @var ServiceEntityRepositoryLib<object> $objectRepository */
-        $objectRepository = $objectManager->getRepository($entity);
+        $objectRepository = $objectManager->getRepository(
+            $entity
+        );
         assert($objectRepository instanceof ServiceEntityRepositoryLib);
 
         return $objectRepository;

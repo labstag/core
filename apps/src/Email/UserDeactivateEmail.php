@@ -2,10 +2,9 @@
 
 namespace Labstag\Email;
 
-use Labstag\Email\Abstract\EmailLib;
 use Override;
 
-class UserDeactivateEmail extends EmailLib
+class UserDeactivateEmail extends EmailAbstract
 {
     #[Override]
     public function getName(): string

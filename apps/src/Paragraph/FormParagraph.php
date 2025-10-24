@@ -9,7 +9,7 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
-use Labstag\FrontForm\Abstract\FrontFormLib;
+use Labstag\FrontForm\FrontFormAbstract;
 use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -31,7 +31,7 @@ class FormParagraph extends ParagraphLib
         }
 
         $formClass = $this->formService->get($formCode);
-        if (!$formClass instanceof FrontFormLib) {
+        if (!$formClass instanceof FrontFormAbstract) {
             $this->setShow($paragraph, false);
 
             return;

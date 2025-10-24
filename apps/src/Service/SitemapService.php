@@ -72,7 +72,9 @@ final class SitemapService
         }
 
         /** @var ChapterRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Chapter::class);
+        $serviceEntityRepositoryLib = $this->getRepository(
+            Chapter::class
+        );
         $data                       = $serviceEntityRepositoryLib->getAllActivateByStory($story);
 
         return $this->setTabs($data);
@@ -130,7 +132,9 @@ final class SitemapService
     /**
      * @return ServiceEntityRepositoryLib<object>
      */
-    private function getRepository(string $entity): ServiceEntityRepositoryLib
+    private function getRepository(
+        string $entity,
+    ): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
@@ -160,7 +164,10 @@ final class SitemapService
      *
      * @return mixed[]
      */
-    private function setTabsByParent(array $urls, string $parent): array
+    private function setTabsByParent(
+        array $urls,
+        string $parent,
+    ): array
     {
         $tabs = [];
         foreach ($urls as $url => $data) {

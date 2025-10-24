@@ -21,7 +21,9 @@ class NewsListParagraph extends ParagraphLib
     {
         unset($disable);
         /** @var PostRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Post::class);
+        $serviceEntityRepositoryLib = $this->getRepository(
+            Post::class
+        );
 
         $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
         $this->setData(

@@ -2,11 +2,10 @@
 
 namespace Labstag\Data;
 
-use Labstag\Data\Abstract\DataLib;
 use Labstag\Entity\Season;
 use Labstag\Repository\SeasonRepository;
 
-class SeasonData extends DataLib implements DataInterface
+class SeasonData extends DataAbstract implements DataInterface
 {
     public function __construct(
         private SeasonRepository $seasonRepository,

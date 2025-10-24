@@ -2,14 +2,13 @@
 
 namespace Labstag\Data;
 
-use Labstag\Data\Abstract\DataLib;
 use Labstag\Entity\Page;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\PageRepository;
 use Labstag\Repository\StoryRepository;
 
-class StoryData extends DataLib implements DataInterface
+class StoryData extends DataAbstract implements DataInterface
 {
     public function __construct(
         private PageRepository $pageRepository,

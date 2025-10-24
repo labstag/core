@@ -17,11 +17,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
+use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
-use Labstag\Service\MovieService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Countries;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -97,7 +98,10 @@ class MovieCrudController extends AbstractCrudControllerLib
             WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex(),
             $this->crudFieldFactory->categoriesField('movie'),
             // image field déjà incluse dans baseIdentitySet
-            $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'))->hideOnIndex(),
+            $this->crudFieldFactory->booleanField(
+                'file',
+                (string) new TranslatableMessage('File')
+            )->hideOnIndex(),
             $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
         ];
         foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
@@ -153,12 +157,11 @@ class MovieCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/movie/{entity}/update', name: 'admin_movie_update')]
-    public function update(string $entity, Request $request, MovieService $movieService): RedirectResponse
+    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
         $serviceEntityRepositoryLib = $this->getRepository();
         $movie                      = $serviceEntityRepositoryLib->find($entity);
-        $movieService->update($movie);
-        $serviceEntityRepositoryLib->save($movie);
+        $messageBus->dispatch(new MovieMessage($movie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

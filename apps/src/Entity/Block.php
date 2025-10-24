@@ -38,7 +38,14 @@ class Block implements Stringable
     /**
      * @var Collection<int, Link>
      */
-    #[ORM\OneToMany(targetEntity: Link::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Link::class,
+        mappedBy: 'block',
+        cascade: [
+            'persist',
+            'remove',
+        ]
+    )]
     private Collection $links;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -47,7 +54,14 @@ class Block implements Stringable
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'block',
+        cascade: [
+            'persist',
+            'remove',
+        ]
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -194,7 +208,10 @@ class Block implements Stringable
     public function removeLink(Link $link): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->links->removeElement($link) && $link->getBlock() === $this) {
+        if ($this->links->removeElement(
+            $link
+        ) && $link->getBlock() === $this
+        ) {
             $link->setBlock(null);
         }
 
@@ -204,7 +221,10 @@ class Block implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getBlock() === $this) {
+        if ($this->paragraphs->removeElement(
+            $paragraph
+        ) && $paragraph->getBlock() === $this
+        ) {
             $paragraph->setBlock(null);
         }
 

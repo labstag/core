@@ -247,7 +247,10 @@ final class SecurityService
     /**
      * @param Redirection[] $redirections
      */
-    private function testRedirect(string $pathinfo, array $redirections): ?RedirectResponse
+    private function testRedirect(
+        string $pathinfo,
+        array $redirections,
+    ): ?RedirectResponse
     {
         $redirect = null;
         foreach ($redirections as $redirection) {
@@ -264,7 +267,10 @@ final class SecurityService
     /**
      * @param Redirection[] $redirections
      */
-    private function testRedirectRegex(string $pathinfo, array $redirections): ?RedirectResponse
+    private function testRedirectRegex(
+        string $pathinfo,
+        array $redirections,
+    ): ?RedirectResponse
     {
         $redirect = null;
         foreach ($redirections as $redirection) {

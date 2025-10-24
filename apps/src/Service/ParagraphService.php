@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Gedmo\Tool\ClassUtils;
 use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\Paragraph;
-use Labstag\Interface\ParagraphInterface;
 use ReflectionClass;
 use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -26,7 +25,9 @@ final class ParagraphService
         /**
          * @var iterable<\Labstag\Paragraph\Abstract\ParagraphLib>
          */
-        #[AutowireIterator('labstag.paragraphs')]
+        #[AutowireIterator(
+            'labstag.paragraphs'
+        )]
         private readonly iterable $paragraphs,
         private AdminUrlGenerator $adminUrlGenerator,
         private Security $security,
@@ -78,7 +79,11 @@ final class ParagraphService
      *
      * @return array{templates: mixed, paragraph: mixed}[]
      */
-    public function generate(array $paragraphs, array $data, bool $disable): array
+    public function generate(
+        array $paragraphs,
+        array $data,
+        bool $disable,
+    ): array
     {
         $tab = [];
         foreach ($paragraphs as $paragraph) {
@@ -188,11 +193,6 @@ final class ParagraphService
 
             $class = ClassUtils::getClass($value);
             if (!str_contains($class, 'Labstag\Entity')) {
-                continue;
-            }
-
-            $entity = new $class();
-            if ($entity instanceof ParagraphInterface) {
                 continue;
             }
 
@@ -321,7 +321,11 @@ final class ParagraphService
     /**
      * @param mixed[] $data
      */
-    private function setContents(?Paragraph $paragraph, array $data, bool $disable): void
+    private function setContents(
+        ?Paragraph $paragraph,
+        array $data,
+        bool $disable,
+    ): void
     {
         if (!$paragraph instanceof Paragraph) {
             return;

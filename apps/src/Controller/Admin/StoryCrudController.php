@@ -66,7 +66,10 @@ class StoryCrudController extends AbstractCrudControllerLib
         }
 
         // Extra specific field not part of the generic bundle
-        yield FileField::new('pdf', new TranslatableMessage('pdf'));
+        yield FileField::new(
+            'pdf',
+            new TranslatableMessage('pdf')
+        );
         $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
         $collectionField->onlyOnIndex();
         $collectionField->formatValue(fn ($value): int => count($value));

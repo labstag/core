@@ -19,7 +19,11 @@ use Symfony\Component\Translation\TranslatableMessage;
  */
 trait TrashActionsTrait
 {
-    protected function configureTrashActions(Actions $actions, Request $request, AdminUrlGenerator $urlGenerator): void
+    protected function configureTrashActions(
+        Actions $actions,
+        Request $request,
+        AdminUrlGenerator $urlGenerator,
+    ): void
     {
         $this->addTrashToggleAction($actions, $request, $urlGenerator);
         $this->addTrashModeActions($actions, $request);
@@ -68,7 +72,10 @@ trait TrashActionsTrait
         $actions->add(Crud::PAGE_INDEX, $restore);
 
         // remove New/Edit to avoid direct modifications on deleted elements
-        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+        $actions->remove(
+            Crud::PAGE_INDEX,
+            Action::NEW
+        );
         $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
     }
 

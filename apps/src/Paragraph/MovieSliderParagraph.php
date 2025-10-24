@@ -30,7 +30,9 @@ class MovieSliderParagraph extends ParagraphLib
         }
 
         /** @var MovieRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
+        $serviceEntityRepositoryLib = $this->getRepository(
+            Movie::class
+        );
         $nbr                        = $paragraph->getNbr();
         $title                      = $paragraph->getTitle();
         $movies                     = $serviceEntityRepositoryLib->findLastByNbr($nbr);

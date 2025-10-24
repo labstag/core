@@ -16,7 +16,9 @@ final class FileService
         /**
          * @var iterable<\Labstag\FileStorage\Abstract\FileStorageLib>
          */
-        #[AutowireIterator('labstag.filestorage')]
+        #[AutowireIterator(
+            'labstag.filestorage'
+        )]
         private readonly iterable $fileStorages,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag,
@@ -201,7 +203,9 @@ final class FileService
      *
      * @return mixed[]
      */
-    public function getMappingForEntity(object|array $entity): array
+    public function getMappingForEntity(
+        object|array $entity,
+    ): array
     {
         return $this->propertyMappingFactory->fromObject($entity);
     }
@@ -209,7 +213,9 @@ final class FileService
     /**
      * @return ServiceEntityRepositoryLib<object>
      */
-    private function getRepository(string $entity): ServiceEntityRepositoryLib
+    private function getRepository(
+        string $entity,
+    ): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {

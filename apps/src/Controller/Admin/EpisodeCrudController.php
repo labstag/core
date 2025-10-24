@@ -15,9 +15,10 @@ use Labstag\Entity\Episode;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\SeasonEpisodeFilter;
 use Labstag\Filter\SerieEpisodeFilter;
-use Labstag\Service\EpisodeService;
+use Labstag\Message\EpisodeMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -104,12 +105,11 @@ class EpisodeCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/episode/{entity}/update', name: 'admin_episode_update')]
-    public function update(string $entity, Request $request, EpisodeService $episodeService): RedirectResponse
+    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
         $serviceEntityRepositoryLib   = $this->getRepository();
         $episode                      = $serviceEntityRepositoryLib->find($entity);
-        $episodeService->update($episode);
-        $serviceEntityRepositoryLib->save($episode);
+        $messageBus->dispatch(new EpisodeMessage($episode->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

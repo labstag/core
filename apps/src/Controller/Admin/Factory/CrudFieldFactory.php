@@ -144,7 +144,9 @@ final class CrudFieldFactory
      *
      * @return array<int, mixed>
      */
-    public function dateSet(string $pageName): array
+    public function dateSet(
+        string $pageName,
+    ): array
     {
         if ('new' === $pageName) {
             return [];
@@ -163,7 +165,12 @@ final class CrudFieldFactory
      *
      * @return array<int, mixed>
      */
-    public function fullContentSet(string $type, string $pageName, string $entityFqcn, bool $isSuperAdmin): array
+    public function fullContentSet(
+        string $type,
+        string $pageName,
+        string $entityFqcn,
+        bool $isSuperAdmin,
+    ): array
     {
         return array_merge(
             $this->baseIdentitySet($pageName, $entityFqcn),
@@ -248,7 +255,9 @@ final class CrudFieldFactory
     /**
      * @return array<int, FormField|ParagraphsField>
      */
-    public function paragraphFields(string $pageName): array
+    public function paragraphFields(
+        string $pageName,
+    ): array
     {
         if ('new' === $pageName) {
             return [];
@@ -267,7 +276,9 @@ final class CrudFieldFactory
     /**
      * @return array<int, FormField|AssociationField>
      */
-    public function refUserFields(bool $isSuperAdmin): array
+    public function refUserFields(
+        bool $isSuperAdmin,
+    ): array
     {
         if (!$isSuperAdmin) {
             return [];
@@ -303,7 +314,9 @@ final class CrudFieldFactory
      *
      * @return array<int, BooleanField>
      */
-    public function tacBooleanSet(array $names): array
+    public function tacBooleanSet(
+        array $names,
+    ): array
     {
         $fields = [];
         foreach ($names as $property => $label) {
@@ -334,7 +347,9 @@ final class CrudFieldFactory
      *
      * @return array<int, AssociationField>
      */
-    public function taxonomySet(string $type): array
+    public function taxonomySet(
+        string $type,
+    ): array
     {
         return [
             $this->tagsField($type),
@@ -356,7 +371,10 @@ final class CrudFieldFactory
 
     public function updatedAtField(): DateTimeField
     {
-        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating()->hideOnIndex();
+        return DateTimeField::new(
+            'updatedAt',
+            new TranslatableMessage('updated At')
+        )->hideWhenCreating()->hideOnIndex();
     }
 
     public function workflowField(): TextField

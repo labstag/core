@@ -127,7 +127,11 @@ final class MenuItemFactory
      *
      * @return array<string, CrudMenuItem>
      */
-    private function createMenuItems(array $controllers, string $label, string $icon): array
+    private function createMenuItems(
+        array $controllers,
+        string $label,
+        string $icon,
+    ): array
     {
         $menuItems = [];
         foreach ($controllers as $key => $data) {

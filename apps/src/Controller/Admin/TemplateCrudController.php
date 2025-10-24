@@ -7,7 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
-use Labstag\Email\Abstract\EmailLib;
+use Labstag\Email\EmailAbstract;
 use Labstag\Entity\Template;
 use Labstag\Field\WysiwygField;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -60,7 +60,7 @@ class TemplateCrudController extends AbstractCrudControllerLib
 
         if (!is_null($currentEntity)) {
             $template = $this->emailService->get($currentEntity->getCode());
-            if ($template instanceof EmailLib) {
+            if ($template instanceof EmailAbstract) {
                 $wysiwygField->setHelp($template->getHelp());
                 $textareaField->setHelp($template->getHelp());
             }

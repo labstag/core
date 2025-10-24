@@ -21,7 +21,9 @@ class SerieParagraph extends ParagraphLib
     {
         unset($disable);
         /** @var SerieRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Serie::class);
+        $serviceEntityRepositoryLib = $this->getRepository(
+            Serie::class
+        );
 
         $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
 

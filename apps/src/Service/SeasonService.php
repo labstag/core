@@ -7,8 +7,10 @@ use Exception;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
+use Labstag\Message\EpisodeMessage;
 use Labstag\Repository\SeasonRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -19,6 +21,7 @@ final class SeasonService
     public function __construct(
         private string $tmdbapiKey,
         private CacheService $cacheService,
+        private MessageBusInterface $messageBus,
         private HttpClientInterface $httpClient,
         private SeasonRepository $seasonRepository,
         private EpisodeService $episodeService,
@@ -40,7 +43,7 @@ final class SeasonService
         }
 
         $season = new Season();
-        $meta = new Meta();
+        $meta   = new Meta();
         $season->setMeta($meta);
         $season->setEnable(true);
         $season->setRefserie($serie);
@@ -95,8 +98,8 @@ final class SeasonService
         $episodes = count($details['episodes']);
         for ($number = 1; $number <= $episodes; ++$number) {
             $episode = $this->episodeService->getEpisode($season, $number);
-            $this->episodeService->update($episode);
             $this->episodeService->save($episode);
+            $this->messageBus->dispatch(new EpisodeMessage($episode->getId()));
         }
 
         return true;
@@ -161,7 +164,10 @@ final class SeasonService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateImage(Season $season, array $details): bool
+    private function updateImage(
+        Season $season,
+        array $details,
+    ): bool
     {
         $poster = $this->getImgSeason($details);
         if ('' === $poster) {
@@ -176,7 +182,10 @@ final class SeasonService
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
+            file_put_contents(
+                $tempPath,
+                file_get_contents($poster)
+            );
 
             $uploadedFile = new UploadedFile(
                 path: $tempPath,

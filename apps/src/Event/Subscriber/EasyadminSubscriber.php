@@ -14,7 +14,9 @@ class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInter
     /**
      * @param AfterEntityPersistedEvent<object> $afterEntityPersistedEvent
      */
-    public function afterPersisted(AfterEntityPersistedEvent $afterEntityPersistedEvent): void
+    public function afterPersisted(
+        AfterEntityPersistedEvent $afterEntityPersistedEvent,
+    ): void
     {
         $instance = $afterEntityPersistedEvent->getEntityInstance();
         $this->updateEntityParagraph($instance);
@@ -33,7 +35,9 @@ class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInter
     /**
      * @param AfterEntityUpdatedEvent<object> $afterEntityUpdatedEvent
      */
-    public function afterUpdated(AfterEntityUpdatedEvent $afterEntityUpdatedEvent): void
+    public function afterUpdated(
+        AfterEntityUpdatedEvent $afterEntityUpdatedEvent,
+    ): void
     {
         $instance = $afterEntityUpdatedEvent->getEntityInstance();
         $this->updateEntityParagraph($instance);
@@ -52,7 +56,9 @@ class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInter
     /**
      * @param BeforeEntityPersistedEvent<object> $beforeEntityPersistedEvent
      */
-    public function beforePersisted(BeforeEntityPersistedEvent $beforeEntityPersistedEvent): void
+    public function beforePersisted(
+        BeforeEntityPersistedEvent $beforeEntityPersistedEvent,
+    ): void
     {
         $instance = $beforeEntityPersistedEvent->getEntityInstance();
         $this->initworkflow($instance);
@@ -63,7 +69,9 @@ class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInter
     /**
      * @param BeforeEntityUpdatedEvent<object> $beforeEntityUpdatedEvent
      */
-    public function beforeUpdated(BeforeEntityUpdatedEvent $beforeEntityUpdatedEvent): void
+    public function beforeUpdated(
+        BeforeEntityUpdatedEvent $beforeEntityUpdatedEvent,
+    ): void
     {
         $instance = $beforeEntityUpdatedEvent->getEntityInstance();
         $this->updateEntityRedirection($instance);

@@ -5,12 +5,11 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
 use Override;
 
-class MemoFixtures extends FixtureLib implements DependentFixtureInterface
+class MemoFixtures extends FixtureAbstract implements DependentFixtureInterface
 {
     /**
      * @var int

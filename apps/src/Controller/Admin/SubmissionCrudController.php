@@ -9,7 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Submission;
-use Labstag\FrontForm\Abstract\FrontFormLib;
+use Labstag\FrontForm\FrontFormAbstract;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SubmissionCrudController extends AbstractCrudControllerLib
@@ -50,11 +50,13 @@ class SubmissionCrudController extends AbstractCrudControllerLib
     /**
      * @return iterable<FieldInterface>
      */
-    private function addFieldsSubmission(Submission $submission): iterable
+    private function addFieldsSubmission(
+        Submission $submission,
+    ): iterable
     {
         $data = $submission->getData();
         $form = $this->formService->get($submission->getType());
-        if (!$form instanceof FrontFormLib) {
+        if (!$form instanceof FrontFormAbstract) {
             return [];
         }
 

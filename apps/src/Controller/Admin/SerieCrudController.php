@@ -16,10 +16,11 @@ use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
-use Labstag\Service\SerieService;
+use Labstag\Message\SerieMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Countries;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -98,7 +99,10 @@ class SerieCrudController extends AbstractCrudControllerLib
             $this->crudFieldFactory->categoriesField('serie'),
             $serieCollectionField,
             // image field déjà incluse dans baseIdentitySet
-            $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'))->hideOnIndex(),
+            $this->crudFieldFactory->booleanField(
+                'file',
+                (string) new TranslatableMessage('File')
+            )->hideOnIndex(),
             $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
         ];
         foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
@@ -165,12 +169,11 @@ class SerieCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/serie/{entity}/update', name: 'admin_serie_update')]
-    public function update(string $entity, Request $request, SerieService $serieService): RedirectResponse
+    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
         $serviceEntityRepositoryLib = $this->getRepository();
         $serie                      = $serviceEntityRepositoryLib->find($entity);
-        $serieService->update($serie);
-        $serviceEntityRepositoryLib->save($serie);
+        $messageBus->dispatch(new SerieMessage($serie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

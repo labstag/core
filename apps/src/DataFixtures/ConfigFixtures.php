@@ -4,11 +4,10 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Configuration;
 use Override;
 
-class ConfigFixtures extends FixtureLib implements DependentFixtureInterface
+class ConfigFixtures extends FixtureAbstract implements DependentFixtureInterface
 {
     /**
      * @return string[]

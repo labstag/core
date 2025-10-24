@@ -4,14 +4,13 @@ namespace Labstag\FrontForm;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Email\Abstract\EmailLib;
+use Labstag\Email\EmailAbstract;
 use Labstag\Form\Front\ContactType;
-use Labstag\FrontForm\Abstract\FrontFormLib;
 use Override;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class ContactFrontForm extends FrontFormLib
+class ContactFrontForm extends FrontFormAbstract
 {
     /**
      * @param FormInterface<mixed> $form
@@ -30,7 +29,7 @@ class ContactFrontForm extends FrontFormLib
                 'form' => $form->all(),
             ]
         );
-        if (!$email instanceof EmailLib) {
+        if (!$email instanceof EmailAbstract) {
             return false;
         }
 

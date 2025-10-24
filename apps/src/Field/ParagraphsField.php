@@ -83,7 +83,9 @@ final class ParagraphsField implements FieldInterface
     private function hasLabelOrIcon(): bool
     {
         // don't use empty() because the label can contain only white spaces (it's a valid edge-case)
-        if (!is_null($this->dto->getLabel()) && '' !== $this->dto->getLabel()) {
+        if (!is_null(
+            $this->dto->getLabel()
+        ) && '' !== $this->dto->getLabel()) {
             return true;
         }
 

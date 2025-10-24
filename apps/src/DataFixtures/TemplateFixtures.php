@@ -3,11 +3,10 @@
 namespace Labstag\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Template;
 use Override;
 
-class TemplateFixtures extends FixtureLib
+class TemplateFixtures extends FixtureAbstract
 {
     #[Override]
     public function load(ObjectManager $objectManager): void

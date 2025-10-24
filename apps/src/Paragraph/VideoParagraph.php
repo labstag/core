@@ -119,7 +119,10 @@ class VideoParagraph extends ParagraphLib
         $tempPath     = tempnam(sys_get_temp_dir(), 'poster_');
 
         // Télécharger l'image et l'écrire dans le fichier temporaire
-        file_put_contents($tempPath, file_get_contents($thumbnailUrl));
+        file_put_contents(
+            $tempPath,
+            file_get_contents($thumbnailUrl)
+        );
 
         $uploadedFile = new UploadedFile(
             path: $tempPath,

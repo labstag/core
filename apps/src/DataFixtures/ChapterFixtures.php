@@ -5,13 +5,12 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
 use Labstag\Entity\Tag;
 use Override;
 
-class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
+class ChapterFixtures extends FixtureAbstract implements DependentFixtureInterface
 {
     /**
      * @var int

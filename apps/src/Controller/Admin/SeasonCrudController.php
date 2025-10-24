@@ -16,9 +16,10 @@ use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Season;
 use Labstag\Field\WysiwygField;
-use Labstag\Service\SeasonService;
+use Labstag\Message\SeasonMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -87,6 +88,16 @@ class SeasonCrudController extends AbstractCrudControllerLib
         return $filters;
     }
 
+    #[\Override]
+    public function createEntity(string $entityFqcn): Season
+    {
+        $season = new $entityFqcn();
+        $meta   = new Meta();
+        $season->setMeta($meta);
+
+        return $season;
+    }
+
     public static function getEntityFqcn(): string
     {
         return Season::class;
@@ -102,12 +113,11 @@ class SeasonCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/season/{entity}/update', name: 'admin_season_update')]
-    public function update(string $entity, Request $request, SeasonService $seasonService): RedirectResponse
+    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
         $serviceEntityRepositoryLib  = $this->getRepository();
         $season                      = $serviceEntityRepositoryLib->find($entity);
-        $seasonService->update($season);
-        $serviceEntityRepositoryLib->save($season);
+        $messageBus->dispatch(new SeasonMessage($season->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {
@@ -147,15 +157,5 @@ class SeasonCrudController extends AbstractCrudControllerLib
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         return $action;
-    }
-
-    #[\Override]
-    public function createEntity(string $entityFqcn): Season
-    {
-        $season = new $entityFqcn();
-        $meta  = new Meta();
-        $season->setMeta($meta);
-
-        return $season;
     }
 }

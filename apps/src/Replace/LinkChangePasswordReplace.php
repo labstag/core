@@ -2,9 +2,7 @@
 
 namespace Labstag\Replace;
 
-use Labstag\Replace\Abstract\ReplaceLib;
-
-class LinkChangePasswordReplace extends ReplaceLib
+class LinkChangePasswordReplace extends ReplaceAbstract
 {
     public function exec(): string
     {

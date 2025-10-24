@@ -4,9 +4,9 @@ namespace Labstag\Command;
 
 use Labstag\Entity\Meta;
 use Labstag\Entity\Serie;
+use Labstag\Message\SerieMessage;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\FileService;
-use Labstag\Service\SerieService;
 use NumberFormatter;
 use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -16,6 +16,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(name: 'labstag:series:add', description: 'Add series with tvshows.csv')]
 class SerieAddCommand extends Command
@@ -32,7 +33,7 @@ class SerieAddCommand extends Command
 
     public function __construct(
         protected SerieRepository $serieRepository,
-        protected SerieService $serieService,
+        protected MessageBusInterface $messageBus,
         protected FileService $fileService,
     )
     {
@@ -79,11 +80,11 @@ class SerieAddCommand extends Command
             }
 
             $serie = $this->setSerie($data);
-            $this->serieService->update($serie);
             $this->addOrUpdate($serie);
 
             $this->serieRepository->persist($serie);
             $this->serieRepository->flush();
+            $this->messageBus->dispatch(new SerieMessage($serie->getId()));
             $progressBar->advance();
         }
 
@@ -106,7 +107,9 @@ class SerieAddCommand extends Command
     /**
      * @return list<array>
      */
-    private function generateJson(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet): array
+    private function generateJson(
+        \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet,
+    ): array
     {
         $dataJson    = [];
         $headers     = [];

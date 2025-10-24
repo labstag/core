@@ -56,7 +56,9 @@ class FrontController extends AbstractController
         $templateData = $result['data'];
 
         // ETag & Last-Modified basés sur l'entité (si méthodes dispo)
-        $cacheData = $etagCacheService->getCacheHeaders($entity);
+        $cacheData = $etagCacheService->getCacheHeaders(
+            $entity
+        );
 
         $response = $this->render($view, $templateData);
         $response->setEtag($cacheData['etag']);

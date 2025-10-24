@@ -80,8 +80,12 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
             {
                 // TODO: should this use `createIndexQueryBuilder` instead, so we get the default ordering etc.?
                 // it would then be identical to the one used in autocomplete action, but it is a bit complex getting it in here
-                $queryBuilder         = $entityRepository->createQueryBuilder('entity');
-                $queryBuilderCallable = $fieldDto->getCustomOption(ParagraphParentField::OPTION_QUERY_BUILDER_CALLABLE);
+                $queryBuilder         = $entityRepository->createQueryBuilder(
+                    'entity'
+                );
+                $queryBuilderCallable = $fieldDto->getCustomOption(
+                    ParagraphParentField::OPTION_QUERY_BUILDER_CALLABLE
+                );
                 if ($queryBuilderCallable) {
                     $queryBuilderCallable($queryBuilder);
                 }
@@ -115,7 +119,9 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         $adminUrlGenerator = $this->adminUrlGenerator->unsetAll()
             ->set('page', 1);
         // The autocomplete should always start on the first page
-        $adminUrlGenerator->setController($fieldDto->getCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER));
+        $adminUrlGenerator->setController(
+            $fieldDto->getCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER)
+        );
         $adminUrlGenerator->setAction('autocomplete')
             ->set(
                 ParagraphParentField::PARAM_AUTOCOMPLETE_CONTEXT,
@@ -141,7 +147,11 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         string &$propertyName,
     ): void {
         // prepare starting class for association
-        $targetEntityFqcn = $entityDto->getPropertyMetadata($propertyNameParts[0])->get('targetEntity');
+        $targetEntityFqcn = $entityDto->getPropertyMetadata(
+            $propertyNameParts[0]
+        )->get(
+            'targetEntity'
+        );
         array_shift($propertyNameParts);
         $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
 
@@ -155,7 +165,9 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
             }
 
             // overwrite next class from association
-            $targetEntityFqcn = $metadata->getAssociationTargetClass($propertyNamePart);
+            $targetEntityFqcn = $metadata->getAssociationTargetClass(
+                $propertyNamePart
+            );
 
             // read next association metadata
             $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
@@ -216,7 +228,10 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->setFormTypeOptionIfNotSet('multiple', true);
 
         // @var PersistentCollection $collection
-        $fieldDto->setFormTypeOptionIfNotSet('class', $fieldDto->getDoctrineMetadata()->get('targetEntity'));
+        $fieldDto->setFormTypeOptionIfNotSet(
+            'class',
+            $fieldDto->getDoctrineMetadata()->get('targetEntity')
+        );
 
         if (is_null($fieldDto->getTextAlign())) {
             $fieldDto->setTextAlign(TextAlign::RIGHT);

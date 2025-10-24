@@ -3,9 +3,9 @@
 namespace Labstag\Command;
 
 use Labstag\Entity\Movie;
+use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
 use Labstag\Service\FileService;
-use Labstag\Service\MovieService;
 use NumberFormatter;
 use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -15,6 +15,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(name: 'labstag:movies:add', description: 'Add movies with movielist.csv')]
 class MovieAddCommand extends Command
@@ -31,7 +32,7 @@ class MovieAddCommand extends Command
 
     public function __construct(
         protected MovieRepository $movieRepository,
-        protected MovieService $movieService,
+        protected MessageBusInterface $messageBus,
         protected FileService $fileService,
     )
     {
@@ -74,13 +75,13 @@ class MovieAddCommand extends Command
         $progressBar->start();
         foreach ($dataJson as $data) {
             $movie = $this->setMovie($data);
-            $this->movieService->update($movie);
             $this->addOrUpdate($movie);
 
             ++$counter;
 
             $this->movieRepository->persist($movie);
             $this->movieRepository->flush($counter);
+            $this->messageBus->dispatch(new MovieMessage($movie->getId()));
             $progressBar->advance();
         }
 
@@ -104,7 +105,9 @@ class MovieAddCommand extends Command
     /**
      * @return list<array>
      */
-    private function generateJson(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet): array
+    private function generateJson(
+        \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet,
+    ): array
     {
         $dataJson    = [];
         $headers     = [];

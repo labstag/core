@@ -19,7 +19,9 @@ class HttpErrorLogsRepository extends ServiceEntityRepositoryLib
     /**
      * @return list<array<string, int<0, max>|string>>
      */
-    public function getAllinternetProtocolWithNbr(int $nbr): array
+    public function getAllinternetProtocolWithNbr(
+        int $nbr,
+    ): array
     {
         $queryBuilder = $this->createQueryBuilder('hel');
         $queryBuilder->select('hel.internetProtocol, COUNT(hel.internetProtocol) AS nbr');

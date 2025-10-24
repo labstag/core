@@ -5,6 +5,8 @@ namespace Labstag\Command;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Serie;
+use Labstag\Message\MovieMessage;
+use Labstag\Message\SerieMessage;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\MovieService;
@@ -14,6 +16,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(name: 'labstag:imdb', description: 'Add a short description for your command',)]
 class ImdbCommand extends Command
@@ -21,6 +24,7 @@ class ImdbCommand extends Command
     public function __construct(
         protected SerieService $serieService,
         protected MovieService $movieService,
+        protected MessageBusInterface $messageBus,
         protected SerieRepository $serieRepository,
         protected MovieRepository $movieRepository,
     )
@@ -38,7 +42,9 @@ class ImdbCommand extends Command
         $type         = $symfonyStyle->choice('Voulez-vous traiter un film ou une série ?', ['film', 'série']);
 
         $imdb    = $symfonyStyle->ask('Quel est le code IMDb ?');
-        $details = ('film' == $type) ? $this->movieService->getDetailsTmdb($imdb) : $this->serieService->getDetailsTmdb(
+        $details = ('film' == $type) ? $this->movieService->getDetailsTmdb(
+            $imdb
+        ) : $this->serieService->getDetailsTmdb(
             $imdb
         );
         if (null === $details) {
@@ -63,8 +69,9 @@ class ImdbCommand extends Command
             $movie->setFile(false);
             $movie->setTitle($imdb);
             $movie->setImdb($imdb);
-            $this->movieService->update($movie);
             $this->movieRepository->save($movie);
+
+            $this->messageBus->dispatch(new MovieMessage($movie->getId()));
 
             $symfonyStyle->text(sprintf('Film %s ajouté en base de données.', $movie->getTitle()));
 
@@ -89,8 +96,8 @@ class ImdbCommand extends Command
         $serie->setImdb($imdb);
         $serie->setTitle($imdb);
 
-        $this->serieService->update($serie);
         $this->serieRepository->save($serie);
+        $this->messageBus->dispatch(new SerieMessage($serie->getId()));
 
         $symfonyStyle->text(sprintf('Série %s ajoutée en base de données.', $serie->getTitle()));
 

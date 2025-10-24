@@ -53,7 +53,9 @@ final class OwnerRestrictionExtension
         }
 
         $reflectionClass        = new ReflectionClass($fqcn);
-        $hasRefUser             = $reflectionClass->hasProperty('refuser') || $reflectionClass->hasMethod('getRefuser');
+        $hasRefUser             = $reflectionClass->hasProperty('refuser') || $reflectionClass->hasMethod(
+            'getRefuser'
+        );
         if (!$hasRefUser) {
             return;
         }

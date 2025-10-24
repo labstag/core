@@ -2,11 +2,10 @@
 
 namespace Labstag\Data;
 
-use Labstag\Data\Abstract\DataLib;
 use Labstag\Entity\Page;
 use Labstag\Repository\PageRepository;
 
-class PageData extends DataLib implements DataInterface
+class PageData extends DataAbstract implements DataInterface
 {
     public function __construct(
         private PageRepository $pageRepository,

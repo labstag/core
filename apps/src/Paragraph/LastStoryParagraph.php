@@ -25,7 +25,9 @@ class LastStoryParagraph extends ParagraphLib
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::STORIES->value);
         /** @var StoryRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Story::class);
+        $serviceEntityRepositoryLib = $this->getRepository(
+            Story::class
+        );
         $total                      = $serviceEntityRepositoryLib->findTotalEnable();
         if (!is_object($listing) || !$listing->isEnable() || 0 == $total) {
             $this->setShow($paragraph, false);

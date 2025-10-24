@@ -45,7 +45,14 @@ class Story implements Stringable
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(
+        targetEntity: Category::class,
+        mappedBy: 'stories',
+        cascade: [
+            'persist',
+            'detach',
+        ]
+    )]
     private Collection $categories;
 
     /**
@@ -84,7 +91,14 @@ class Story implements Stringable
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'story', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'story',
+        cascade: [
+            'persist',
+            'remove',
+        ]
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -106,7 +120,14 @@ class Story implements Stringable
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(
+        targetEntity: Tag::class,
+        mappedBy: 'stories',
+        cascade: [
+            'persist',
+            'detach',
+        ]
+    )]
     private Collection $tags;
 
     public function __construct()
@@ -262,7 +283,10 @@ class Story implements Stringable
     public function removeChapter(Chapter $chapter): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->chapters->removeElement($chapter) && $chapter->getRefstory() === $this) {
+        if ($this->chapters->removeElement(
+            $chapter
+        ) && $chapter->getRefstory() === $this
+        ) {
             $chapter->setRefstory(null);
         }
 
@@ -272,7 +296,10 @@ class Story implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this) {
+        if ($this->paragraphs->removeElement(
+            $paragraph
+        ) && $paragraph->getStory() === $this
+        ) {
             $paragraph->setStory(null);
         }
 
@@ -307,7 +334,9 @@ class Story implements Stringable
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+            $this->updatedAt = DateTime::createFromImmutable(
+                new DateTimeImmutable()
+            );
         }
     }
 
@@ -330,7 +359,9 @@ class Story implements Stringable
         if ($pdfFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+            $this->updatedAt = DateTime::createFromImmutable(
+                new DateTimeImmutable()
+            );
         }
     }
 

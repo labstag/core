@@ -2,11 +2,10 @@
 
 namespace Labstag\Data;
 
-use Labstag\Data\Abstract\DataLib;
 use Labstag\Entity\Chapter;
 use Labstag\Repository\ChapterRepository;
 
-class ChapterData extends DataLib implements DataInterface
+class ChapterData extends DataAbstract implements DataInterface
 {
     public function __construct(
         private StoryData $storyData,

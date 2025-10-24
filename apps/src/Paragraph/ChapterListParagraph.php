@@ -30,7 +30,9 @@ class ChapterListParagraph extends ParagraphLib
         }
 
         /** @var ChapterRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Chapter::class);
+        $serviceEntityRepositoryLib = $this->getRepository(
+            Chapter::class
+        );
         $chapters                   = $serviceEntityRepositoryLib->getAllActivateByStory($data['entity']);
         if (0 === count($chapters)) {
             $this->setShow($paragraph, false);

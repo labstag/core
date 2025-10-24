@@ -93,7 +93,9 @@ class ContentBlock extends BlockLib
      *
      * @param mixed[] $data
      */
-    private function getAside(array $data): null
+    private function getAside(
+        array $data,
+    ): null
     {
         // Implementation for aside content
         // This could include related posts, tags, categories, etc.

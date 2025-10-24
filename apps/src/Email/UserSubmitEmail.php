@@ -2,11 +2,10 @@
 
 namespace Labstag\Email;
 
-use Labstag\Email\Abstract\EmailLib;
 use Labstag\Replace\LinkApprovalReplace;
 use Override;
 
-class UserSubmitEmail extends EmailLib
+class UserSubmitEmail extends EmailAbstract
 {
     #[Override]
     public function getName(): string

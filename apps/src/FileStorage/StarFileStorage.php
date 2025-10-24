@@ -3,12 +3,11 @@
 namespace Labstag\FileStorage;
 
 use Labstag\Entity\Star;
-use Labstag\FileStorage\Abstract\FileStorageLib;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class StarFileStorage extends FileStorageLib
+class StarFileStorage extends FileStorageAbstract implements FileStorageInterface
 {
     public function __construct(
         #[Autowire(service: 'flysystem.adapter.star.storage')]

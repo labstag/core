@@ -4,11 +4,10 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\User;
 use Override;
 
-class UserFixtures extends FixtureLib implements DependentFixtureInterface
+class UserFixtures extends FixtureAbstract implements DependentFixtureInterface
 {
     /**
      * @return string[]
@@ -70,7 +69,11 @@ class UserFixtures extends FixtureLib implements DependentFixtureInterface
     /**
      * @param array{entity: User, password: string} $data
      */
-    private function setUser(ObjectManager $objectManager, User $user, array $data): void
+    private function setUser(
+        ObjectManager $objectManager,
+        User $user,
+        array $data,
+    ): void
     {
         $this->workflowService->init($user);
         $hash = $this->userService->hashPassword($user, $data['password']);

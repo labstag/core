@@ -22,12 +22,17 @@ class MovieParagraph extends ParagraphLib
     {
         unset($disable);
         /** @var MovieRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
+        $serviceEntityRepositoryLib = $this->getRepository(
+            Movie::class
+        );
 
         $request = $this->requestStack->getCurrentRequest();
         $query   = $this->setQuery($request->query->all());
 
-        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator($query), $paragraph->getNbr());
+        $pagination = $this->getPaginator(
+            $serviceEntityRepositoryLib->getQueryPaginator($query),
+            $paragraph->getNbr()
+        );
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
@@ -96,7 +101,9 @@ class MovieParagraph extends ParagraphLib
      *
      * @return array<string, mixed>
      */
-    private function setQuery(array $query): array
+    private function setQuery(
+        array $query,
+    ): array
     {
         if (isset($query['order']) && !in_array($query['order'], ['title', 'releaseDate', 'createdAt'])) {
             unset($query['order']);

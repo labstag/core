@@ -5,9 +5,9 @@ namespace Labstag\Block\Abstract;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
+use Labstag\Block\BlockInterface;
 use Labstag\Block\Processors\LinkUrlProcessor;
 use Labstag\Entity\Block;
-use Labstag\Interface\BlockInterface;
 use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\CrudAdminService;
@@ -150,7 +150,9 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     /**
      * @return ServiceEntityRepositoryLib<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryLib
+    protected function getRepository(
+        string $entity,
+    ): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {

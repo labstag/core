@@ -21,7 +21,9 @@ class StarParagraph extends ParagraphLib
     {
         unset($disable);
         /** @var StarRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Star::class);
+        $serviceEntityRepositoryLib = $this->getRepository(
+            Star::class
+        );
 
         $total = $serviceEntityRepositoryLib->findTotalEnable();
         if (0 == $total) {

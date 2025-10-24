@@ -23,7 +23,10 @@ final class FileField implements FieldInterface
     /**
      * @param false|string|TranslatableInterface|null $label
      */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(
+        string $propertyName,
+        $label = null,
+    ): self
     {
         $fileField = (new self());
         $fileField->onlyonDetail();
@@ -50,7 +53,9 @@ final class FileField implements FieldInterface
      * This option is ignored when using 'renderAsHtml()' to avoid
      * truncating contents in the middle of an HTML tag.
      */
-    public function setMaxLength(int $length): self
+    public function setMaxLength(
+        int $length,
+    ): self
     {
         if (1 > $length) {
             throw new InvalidArgumentException(sprintf(

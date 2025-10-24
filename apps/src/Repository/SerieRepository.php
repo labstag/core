@@ -84,7 +84,9 @@ class SerieRepository extends ServiceEntityRepositoryLib
      *
      * @return list<Serie>
      */
-    public function findSeriesNotInImdbList(array $excludedImdbIds = []): array
+    public function findSeriesNotInImdbList(
+        array $excludedImdbIds = [],
+    ): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->where('s.imdb NOT IN (:imdbIds)');

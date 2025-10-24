@@ -20,7 +20,10 @@ final class IsBotField implements FieldInterface
     /**
      * @param false|string|null $label
      */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(
+        string $propertyName,
+        $label = null,
+    ): self
     {
         $isbot = (new self());
         $isbot->setProperty($propertyName);

@@ -123,7 +123,10 @@ class EpisodeService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateImage(Episode $episode, array $details): bool
+    private function updateImage(
+        Episode $episode,
+        array $details,
+    ): bool
     {
         $poster = $this->getImgEpisode($details);
         if ('' === $poster) {
@@ -138,7 +141,10 @@ class EpisodeService
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
+            file_put_contents(
+                $tempPath,
+                file_get_contents($poster)
+            );
 
             $uploadedFile = new UploadedFile(
                 path: $tempPath,
