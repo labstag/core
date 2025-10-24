@@ -32,15 +32,12 @@ class SeriesUpdateCommand extends Command
         $progressBar->start();
 
         $update  = 0;
-        $counter = 0;
         $this->serieService->deleteOldCategory();
         foreach ($series as $serie) {
             $status = $this->serieService->update($serie);
             $update = $status ? ++$update : $update;
-            ++$counter;
-
             $this->serieRepository->persist($serie);
-            $this->serieRepository->flush($counter);
+            $this->serieRepository->flush();
             $progressBar->advance();
         }
 

@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
+use Labstag\Entity\Meta;
 use Labstag\Entity\Season;
 use Labstag\Field\WysiwygField;
 use Labstag\Service\SeasonService;
@@ -146,5 +147,15 @@ class SeasonCrudController extends AbstractCrudControllerLib
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         return $action;
+    }
+
+    #[\Override]
+    public function createEntity(string $entityFqcn): Season
+    {
+        $season = new $entityFqcn();
+        $meta  = new Meta();
+        $season->setMeta($meta);
+
+        return $season;
     }
 }

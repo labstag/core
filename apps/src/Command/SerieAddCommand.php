@@ -69,7 +69,6 @@ class SerieAddCommand extends Command
         $spreadsheet = $csv->load($file);
         $worksheet   = $spreadsheet->getActiveSheet();
         $dataJson    = $this->generateJson($worksheet);
-        $counter     = 0;
 
         $progressBar = new ProgressBar($output, count($dataJson));
         $progressBar->start();
@@ -83,10 +82,8 @@ class SerieAddCommand extends Command
             $this->serieService->update($serie);
             $this->addOrUpdate($serie);
 
-            ++$counter;
-
             $this->serieRepository->persist($serie);
-            $this->serieRepository->flush($counter);
+            $this->serieRepository->flush();
             $progressBar->advance();
         }
 

@@ -1,22 +1,24 @@
 {% set seasons = serie.seasons|length %}
-<div class="background spoiler" data-bg="{{ site_asset(serie, 'img') }}">
-    {% if serie.releaseDate != '' %}
-        <span class="year">
-            {{ serie.releaseDate|date('Y') }}
-        </span>
-    {% endif %}
-    <span class="seasons">
-        {% if seasons == 0 %}
-            {{ 'No season'|trans }}
-        {% elseif seasons == 1 %}
-            {{ '1 season'|trans }}
-        {% else %}
-            {{ '%count% seasons'|trans({'%count%': seasons}) }}
+<a href="{{ site_path(serie) }}">
+    <div class="background spoiler" data-bg="{{ site_asset(serie, 'img') }}">
+        {% if serie.releaseDate != '' %}
+            <span class="year">
+                {{ serie.releaseDate|date('Y') }}
+            </span>
         {% endif %}
-    </span>
-</div>
-<div class="wrapper">
-    <h3 class="title">
-        {{ serie.title }}
-    </h3>
-</div>
+        <span class="seasons">
+            {% if seasons == 0 %}
+                {{ 'No season'|trans }}
+            {% elseif seasons == 1 %}
+                {{ '1 season'|trans }}
+            {% else %}
+                {{ '%count% seasons'|trans({'%count%': seasons}) }}
+            {% endif %}
+        </span>
+    </div>
+    <div class="wrapper">
+        <h3 class="title">
+            {{ serie.title }}
+        </h3>
+    </div>
+</a>
