@@ -33,6 +33,10 @@ flysystem:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/uploads/serie'
+    episode.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/episode'
     saga.storage:
       adapter: 'local'
       options:

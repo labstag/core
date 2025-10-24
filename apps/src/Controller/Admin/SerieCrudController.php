@@ -16,6 +16,7 @@ use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
+use Labstag\Service\SerieService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Countries;
@@ -164,11 +165,11 @@ class SerieCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/serie/{entity}/update', name: 'admin_serie_update')]
-    public function update(string $entity, Request $request): RedirectResponse
+    public function update(string $entity, Request $request, SerieService $serieService): RedirectResponse
     {
         $serviceEntityRepositoryLib = $this->getRepository();
         $serie                      = $serviceEntityRepositoryLib->find($entity);
-        $this->serieService->update($serie);
+        $serieService->update($serie);
         $serviceEntityRepositoryLib->save($serie);
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');

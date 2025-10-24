@@ -44,6 +44,9 @@ class Meta implements Stringable
     private ?Serie $serie = null;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
+    private ?Season $season = null;
+
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
     private ?Story $story = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -88,6 +91,11 @@ class Meta implements Stringable
     public function getSerie(): ?Serie
     {
         return $this->serie;
+    }
+
+    public function getSeason(): ?Season
+    {
+        return $this->season;
     }
 
     public function getStory(): ?Story
@@ -158,6 +166,18 @@ class Meta implements Stringable
         }
 
         $this->serie = $serie;
+
+        return $this;
+    }
+
+    public function setSeason(Season $season): static
+    {
+        // set the owning side of the relation if necessary
+        if ($season->getMeta() !== $this) {
+            $season->setMeta($this);
+        }
+
+        $this->season = $season;
 
         return $this;
     }

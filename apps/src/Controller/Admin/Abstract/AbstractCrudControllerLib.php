@@ -27,6 +27,7 @@ use Labstag\Service\FileService;
 use Labstag\Service\FormService;
 use Labstag\Service\MovieService;
 use Labstag\Service\ParagraphService;
+use Labstag\Service\SeasonService;
 use Labstag\Service\SecurityService;
 use Labstag\Service\SerieService;
 use Labstag\Service\SiteService;
@@ -57,6 +58,7 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
         protected FileService $fileService,
         protected SiteService $siteService,
         protected SlugService $slugService,
+        protected SeasonService $seasonService,
         protected SecurityService $securityService,
         protected BlockService $blockService,
         protected MovieService $movieService,

@@ -91,6 +91,9 @@ class Paragraph implements Stringable
     private ?Serie $serie = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    private ?Season $season = null;
+
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Story $story = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -186,6 +189,11 @@ class Paragraph implements Stringable
     public function getSerie(): ?Serie
     {
         return $this->serie;
+    }
+
+    public function getSeason(): ?Season
+    {
+        return $this->season;
     }
 
     public function getStory(): ?Story
@@ -352,6 +360,13 @@ class Paragraph implements Stringable
     public function setSerie(?Serie $serie): static
     {
         $this->serie = $serie;
+
+        return $this;
+    }
+
+    public function setSeason(?Season $season): static
+    {
+        $this->season = $season;
 
         return $this;
     }

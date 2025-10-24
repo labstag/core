@@ -72,6 +72,7 @@ class SerieRepository extends ServiceEntityRepositoryLib
     public function findAllUpdate(): mixed
     {
         $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->orderBy('s.title', 'ASC');
         $query        = $queryBuilder->getQuery();
 
         return $query->getResult();

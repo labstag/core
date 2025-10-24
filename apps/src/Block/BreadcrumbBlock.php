@@ -109,12 +109,14 @@ class BreadcrumbBlock extends BlockLib
                 $currentSlug = $slug;
 
                 while ('' !== $currentSlug) {
-                    $entity = $this->slugService->getEntityBySlug($currentSlug);
-                    if (is_object($entity)) {
-                        $urls[] = [
-                            'title' => $entity->getTitle(),
-                            'url'   => $currentSlug,
-                        ];
+                    foreach ($this->dataLibs as $row) {
+                        if ($row->match($currentSlug)) {
+                            $entity = $row->getEntity($currentSlug);
+                            $urls[] = [
+                                'title' => $row->getTitle($entity),
+                                'url'   => $currentSlug,
+                            ];
+                        }
                     }
 
                     if ('0' === $currentSlug) {

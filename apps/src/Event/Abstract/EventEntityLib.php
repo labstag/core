@@ -12,11 +12,14 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Redirection;
+use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
+use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\HttpErrorLogsRepository;
 use Labstag\Repository\PageRepository;
+use Labstag\Repository\SeasonRepository;
 use Labstag\Service\BlockService;
 use Labstag\Service\MovieService;
 use Labstag\Service\ParagraphService;
@@ -24,6 +27,7 @@ use Labstag\Service\SerieService;
 use Labstag\Service\StoryService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Workflow\Registry;
 
 abstract class EventEntityLib
@@ -33,6 +37,8 @@ abstract class EventEntityLib
         private Registry $workflowRegistry,
         protected SerieService $serieService,
         protected WorkflowService $workflowService,
+        protected ChapterRepository $chapterRepository,
+        protected SeasonRepository $seasonRepository,
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
         protected BlockService $blockService,
@@ -113,6 +119,22 @@ abstract class EventEntityLib
             return;
         }
 
+        
+        
+        $slugger = new AsciiSlugger();
+        $baseSlug = $slugger->slug((string) $instance->getTitle())->lower();
+        $slug = $baseSlug;
+        $i = 1;
+        while ($this->chapterRepository->findOneBy([
+            'refstory' => $instance->getRefstory(),
+            'slug' => $slug
+        ]) && ($instance->getSlug() !== $slug)) {
+            $slug = $baseSlug.'-'.$i;
+            $i++;
+        }
+        $instance->setSlug($slug);
+
+
         $story    = $instance->getRefstory();
         $chapters = $story->getChapters();
         $instance->setPosition(count($chapters) + 1);
@@ -128,6 +150,26 @@ abstract class EventEntityLib
         }
 
         $this->movieService->update($instance);
+    }
+
+    protected function updateEntitySeason(object $instance): void
+    {
+        if (!$instance instanceof Season) {
+            return;
+        }
+        
+        $slugger = new AsciiSlugger();
+        $baseSlug = $slugger->slug((string) $instance->getTitle())->lower();
+        $slug = $baseSlug;
+        $i = 1;
+        while ($this->seasonRepository->findOneBy([
+            'refserie' => $instance->getRefserie(),
+            'slug' => $slug
+        ]) && ($instance->getSlug() !== $slug)) {
+            $slug = $baseSlug.'-'.$i;
+            $i++;
+        }
+        $instance->setSlug($slug);
     }
 
     protected function updateEntityPage(object $instance): void

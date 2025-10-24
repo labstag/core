@@ -1,0 +1,7 @@
+@use "../placeholders" as *;
+.teaser-episode{
+  @extend %teaser;
+  .background{
+    height: 219px;
+  }
+}

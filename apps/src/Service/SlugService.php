@@ -7,16 +7,18 @@ use InvalidArgumentException;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
+use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\PageRepository;
 use Labstag\Repository\PostRepository;
+use Labstag\Repository\SeasonRepository;
 use Labstag\Repository\SerieRepository;
 use Labstag\Repository\StoryRepository;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 final class SlugService
 {
@@ -32,7 +34,13 @@ final class SlugService
     private array $types = [];
 
     public function __construct(
+        /**
+         * @var iterable<\Labstag\Data\Abstract\DataLib>
+         */
+        #[AutowireIterator('labstag.datas')]
+        private readonly iterable $datalibs,
         private StoryRepository $storyRepository,
+        private SeasonRepository $seasonRepository,
         private SerieRepository $serieRepository,
         private PageRepository $pageRepository,
         private ChapterRepository $chapterRepository,
@@ -44,12 +52,31 @@ final class SlugService
 
     public function forEntity(object $entity): string
     {
+        foreach ($this->datalibs as $row) {
+            if ($row->supports($entity)) {
+                return $row->generateSlug($entity);
+            }
+        }
+
+        throw new InvalidArgumentException(
+            sprintf(
+                'Unsupported entity type: %s',
+                get_debug_type($entity)
+            )
+        );
+
+
         $types = $this->getPageByTypes();
+        
 
         return match (true) {
             $entity instanceof Serie   => $this->buildPrefixedSlug(
                 $types[PageEnum::SERIES->value],
                 $entity->getSlug()
+            ),
+            $entity instanceof Season   => $this->buildPrefixedSlug(
+                $types[PageEnum::SERIES->value],
+                $entity->getRefserie()->getSlug().'/saison-'.$entity->getNumber()
             ),
             $entity instanceof Page    => $entity->getSlug(),
             $entity instanceof Post    => $this->buildPrefixedSlug($types[PageEnum::POSTS->value], $entity->getSlug()),
@@ -80,35 +107,13 @@ final class SlugService
 
     public function getEntityBySlug(?string $slug): ?object
     {
-        $types = $this->getPageByTypes();
-        if ('' === $slug || is_null($slug)) {
-            return $types[PageEnum::HOME->value];
-        }
-
-        $page  = null;
-        $types = array_filter($types, fn ($type): bool => !is_null($type) && PageEnum::HOME->value != $type->getType());
-
-        $page = $this->getPageBySlug($slug);
-        if ($page instanceof Page) {
-            return $page;
-        }
-
-        foreach ($types as $type => $row) {
-            if ($slug == $row->getSlug()) {
-                $page = $row;
-
-                break;
-            }
-
-            if (str_contains($slug, (string) $row->getSlug()) && str_starts_with($slug, (string) $row->getSlug())) {
-                $newslug = substr($slug, strlen((string) $row->getSlug()) + 1);
-                $page    = $this->getContentByType($type, $newslug);
-
-                break;
+        foreach ($this->datalibs as $row) {
+            if ($row->match($slug)) {
+                return $row->getEntity($slug);
             }
         }
 
-        return $page;
+        return null;
     }
 
     public function getPageByType(string $type): ?Page
@@ -141,22 +146,44 @@ final class SlugService
         $repos = [
             'serie'   => $this->serieRepository,
             'story'   => $this->storyRepository,
+            'season'  => $this->seasonRepository,
             'chapter' => $this->chapterRepository,
         ];
 
         if (1 === substr_count($slug, '/')) {
             [
-                $slugstory,
-                $slugchapter,
+                $slugFirst,
+                $slugSecond,
             ]      = explode('/', $slug);
             $story = $repos['story']->findOneBy(
-                ['slug' => $slugstory]
+                ['slug' => $slugFirst]
             );
             $chapter = $repos['chapter']->findOneBy(
-                ['slug' => $slugchapter]
+                ['slug' => $slugSecond]
             );
-            if ($story instanceof Story && $chapter instanceof Chapter && $story->getId() === $chapter->getRefStory()->getId()) {
-                return $chapter;
+            $serie = $repos['serie']->findOneBy(
+                ['slug' => $slugFirst]
+            );
+            $season = $repos['season']->findOneBy(
+                [
+                    'number' => str_replace('saison-', '', $slugSecond)
+                ]
+            );
+
+            $data = [
+                [
+                    'test' => ($story instanceof Story && $chapter instanceof Chapter && $story->getId() === $chapter->getRefStory()->getId()),
+                    'obj'  => $chapter,
+                ],
+                [
+                    'test' => ($serie instanceof Serie && $season instanceof Season && $serie->getId() === $season->getRefserie()->getId()),
+                    'obj'  => $season,
+                ],
+            ];
+            foreach ($data as $row) {
+                if ($row['test']) {
+                    return $row['obj'];
+                }
             }
         }
 

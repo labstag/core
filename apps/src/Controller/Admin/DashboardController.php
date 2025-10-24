@@ -263,6 +263,11 @@ class DashboardController extends AbstractDashboardController
                         'fas fa-video',
                         SeasonCrudController::getEntityFqcn()
                     ),
+                    MenuItem::linkToCrud(
+                        new TranslatableMessage('Episode'),
+                        'fas fa-video',
+                        EpisodeCrudController::getEntityFqcn()
+                    ),
                 ],
             ],
             [

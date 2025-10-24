@@ -4,48 +4,105 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
+use Labstag\Entity\Meta;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Repository\SeasonRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class SeasonService
 {
+    private const STATUSOK = 200;
+
     public function __construct(
+        private string $tmdbapiKey,
+        private CacheService $cacheService,
+        private HttpClientInterface $httpClient,
         private SeasonRepository $seasonRepository,
+        private EpisodeService $episodeService
     )
     {
     }
 
-    public function updateSerie(Serie $serie, array $details): bool
+    public function getSeasonsChoice()
     {
-        $seasons = $details['tmdb']['seasons'] ?? [];
-
-        if (0 === count($seasons)) {
-            foreach ($serie->getSeasons() as $season) {
-                $this->seasonRepository->remove($season);
-            }
-
-            return true;
+        $seasons = $this->seasonRepository->findBy(
+            [],
+            ['number' => 'ASC']
+        );
+        $choices = [];
+        /** @var Season $season */
+        foreach ($seasons as $season) {
+            $label = $season->getNumber();
+            $choices[$label] = $label;
         }
 
-        $counter = 0;
-        foreach ($seasons as $data) {
-            if (0 == $data['season_number']) {
-                continue;
-            }
+        return $choices;
+    }
 
-            $season = $this->setSeason($serie, $data);
+    public function getSeason(Serie $serie, int $number): ?Season
+    {
+        $season = $this->seasonRepository->findOneBy(
+            [
+                'refserie' => $serie,
+                'number'   => $number,
+            ]
+        );
 
-            ++$counter;
-
-            $this->seasonRepository->persist($season);
-            $this->seasonRepository->flush($counter);
+        if ($season instanceof Season) {
+            return $season;
         }
 
-        $this->seasonRepository->flush();
+        $season = new Season();
+        $season->setRefserie($serie);
+        $season->setNumber($number);
 
-        return true;
+        return $season;
+    }
+
+    public function save(Season $season): void
+    {
+        $this->seasonRepository->save($season);
+    }
+
+    private function getDetails(int $tmdb, int $number): ?array
+    {
+        $cacheKey = 'tmdb-serie_find_' . $tmdb.'_season_' . $number;
+        return $this->cacheService->get(
+            $cacheKey,
+            function (ItemInterface $item) use ($tmdb, $number) {
+                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdb . '/season/' . $number . '?language=fr-FR';
+                $response = $this->httpClient->request(
+                    'GET',
+                    $url,
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                            'accept'        => 'application/json',
+                        ],
+                    ]
+                );
+                if (self::STATUSOK !== $response->getStatusCode()) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $data = json_decode($response->getContent(), true);
+                if (0 === count($data['episodes'])) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+
+                return $data;
+            },
+            60
+        );
     }
 
     private function getImgImdb(string $img): string
@@ -56,7 +113,7 @@ final class SeasonService
     /**
      * @param array<string, mixed> $data
      */
-    private function getImgSerie(array $data): string
+    private function getImgSeason(array $data): string
     {
         if (isset($data['poster_path'])) {
             return $this->getImgImdb($data['poster_path']);
@@ -65,38 +122,46 @@ final class SeasonService
         return '';
     }
 
-    private function setSeason(Serie $serie, array $data): Season
+    public function update(Season $season): bool
     {
-        $season = $this->seasonRepository->findOneBy(
-            [
-                'refserie' => $serie,
-                'number'   => $data['season_number'],
-            ]
-        );
-        if (!$season instanceof Season) {
-            $season = new Season();
-            $season->setRefserie($serie);
-            $season->setNumber($data['season_number']);
+        $tmdb = $season->getRefSerie()->getTmdb();
+        $numberSeason = $season->getNumber();
+        $details = $this->getDetails($tmdb, $numberSeason);
+        if (null === $details) {
+            return false;
         }
 
-        $season->setAirDate(new DateTime($data['air_date']));
-        $season->setTmdb($data['id']);
-        if (isset($data['overview']) && '' != $data['overview']) {
-            $season->setOverview($data['overview']);
+        $season->setTitle($details['name']);
+        $season->setAirDate(new DateTime($details['air_date']));
+        $season->setTmdb($details['id']);
+        $season->setOverview($details['overview']);
+        $season->setVoteAverage($details['vote_average']);
+        if (isset($details['overview']) && '' != $details['overview']) {
+            $season->setOverview($details['overview']);
         }
 
-        $this->updateImageSerie($season, $data);
+        $this->updateImage($season, $details);
+        $episodes = count($details['episodes']);
+        for ($number = 1; $number <= $episodes; ++$number) {
+            $episode = $this->episodeService->getEpisode($season, $number);
+            $this->episodeService->update($episode);
+            $this->episodeService->save($episode);
+        }
 
-        return $season;
+        return true;
     }
 
     /**
      * @param array<string, mixed> $details
      */
-    private function updateImageSerie(Season $season, array $details): bool
+    private function updateImage(Season $season, array $details): bool
     {
-        $poster = $this->getImgSerie($details);
+        $poster = $this->getImgSeason($details);
         if ('' === $poster) {
+            return false;
+        }
+
+        if ($season->getImg() != '') {
             return false;
         }
 

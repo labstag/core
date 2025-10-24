@@ -43,6 +43,7 @@
 @use 'paragraphs/hero' as paragraphhero;
 @use 'paragraphs/head' as paragraphhead;
 @use 'paragraphs/head-serie' as paragraphhead-serie;
+@use 'paragraphs/head-season' as paragraphhead-season;
 @use 'paragraphs/head-story' as paragraphhead-story;
 @use 'paragraphs/head-post' as paragraphhead-post;
 @use 'paragraphs/head-chapter' as paragraphhead-chapter;
@@ -51,6 +52,7 @@
 @use 'paragraphs/default' as paragraphdefault;
 @use 'paragraphs/chapter-list' as paragraphchapter-list;
 @use 'paragraphs/season-list' as paragraphseason-list;
+@use 'paragraphs/episode-list' as paragraphepisode-list;
 @use 'paragraphs/chapter-lastnext' as paragraphchapter-lastnext;
 
 @use 'teasers/chapter' as teaserchapter;
@@ -60,6 +62,7 @@
 @use 'teasers/post' as teaserpost;
 @use 'teasers/star' as teaserstar;
 @use 'teasers/season' as teaserseason;
+@use 'teasers/episode' as teaserepisode;
 @use 'teasers/story' as teaserstory;
 
 @use 'modal/movie' as modalmovie;

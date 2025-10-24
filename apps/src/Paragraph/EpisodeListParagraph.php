@@ -6,14 +6,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Block;
+use Labstag\Entity\Episode;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Season;
-use Labstag\Entity\Serie;
 use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class SeasonListParagraph extends ParagraphLib
+class EpisodeListParagraph extends ParagraphLib
 {
     /**
      * @param mixed[] $data
@@ -22,15 +22,15 @@ class SeasonListParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        if (!isset($data['entity']) || !$data['entity'] instanceof Serie) {
+        if (!isset($data['entity']) || !$data['entity'] instanceof Season) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
-        $repository = $this->getRepository(Season::class);
-        $seasons = $repository->getAllActivateBySerie($data['entity']);
-        if (0 === count($seasons)) {
+        $repository = $this->getRepository(Episode::class);
+        $episodes = $repository->getAllActivateBySeason($data['entity']);
+        if (0 === count($episodes)) {
             $this->setShow($paragraph, false);
 
             return;
@@ -39,7 +39,7 @@ class SeasonListParagraph extends ParagraphLib
         $this->setData(
             $paragraph,
             [
-                'seasons'   => $seasons,
+                'episodes'  => $episodes,
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]
@@ -60,13 +60,13 @@ class SeasonListParagraph extends ParagraphLib
     #[Override]
     public function getName(): string
     {
-        return 'Season list';
+        return 'Episode list';
     }
 
     #[Override]
     public function getType(): string
     {
-        return 'season-list';
+        return 'episode-list';
     }
 
     /**

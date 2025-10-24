@@ -583,6 +583,10 @@ final class MovieService
             return false;
         }
 
+        if ($movie->getImg() != '') {
+            return false;
+        }
+
         try {
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 
