@@ -5,7 +5,6 @@ namespace Labstag\Paragraph;
 use Labstag\Entity\Block;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Season;
-use Labstag\Entity\Serie;
 use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 

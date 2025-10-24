@@ -18,8 +18,8 @@ use Labstag\Field\WysiwygField;
 use Labstag\Service\SeasonService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SeasonCrudController extends AbstractCrudControllerLib
 {
@@ -37,57 +37,6 @@ class SeasonCrudController extends AbstractCrudControllerLib
         $this->configureActionsUpdateImage();
 
         return $actions;
-    }
-
-    private function setUpdateAction(): Action
-    {
-        $action = Action::new('update', new TranslatableMessage('Update'));
-        $action->linkToUrl(
-            fn (Season $season): string => $this->generateUrl(
-                'admin_season_update',
-                [
-                    'entity' => $season->getId(),
-                ]
-            )
-        );
-        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
-
-        return $action;
-    }
-
-    #[Route('/admin/season/{entity}/update', name: 'admin_season_update')]
-    public function update(string $entity, Request $request, SeasonService $seasonService): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $season                      = $serviceEntityRepositoryLib->find($entity);
-        $seasonService->update($season);
-        $serviceEntityRepositoryLib->save($season);
-        if ($request->headers->has('referer')) {
-            $url = $request->headers->get('referer');
-            if (is_string($url) && '' !== $url) {
-                return $this->redirect($url);
-            }
-        }
-
-        return $this->redirectToRoute('admin_season_index');
-    }
-
-    #[Route('/admin/season/{entity}/w3c', name: 'admin_season_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $season                      = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->linkw3CValidator($season);
-    }
-
-    #[Route('/admin/season/{entity}/public', name: 'admin_season_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $season                      = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->publicLink($season);
     }
 
     #[\Override]
@@ -142,9 +91,60 @@ class SeasonCrudController extends AbstractCrudControllerLib
         return Season::class;
     }
 
+    #[Route('/admin/season/{entity}/public', name: 'admin_season_public')]
+    public function linkPublic(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib  = $this->getRepository();
+        $season                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->publicLink($season);
+    }
+
+    #[Route('/admin/season/{entity}/update', name: 'admin_season_update')]
+    public function update(string $entity, Request $request, SeasonService $seasonService): RedirectResponse
+    {
+        $serviceEntityRepositoryLib  = $this->getRepository();
+        $season                      = $serviceEntityRepositoryLib->find($entity);
+        $seasonService->update($season);
+        $serviceEntityRepositoryLib->save($season);
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                return $this->redirect($url);
+            }
+        }
+
+        return $this->redirectToRoute('admin_season_index');
+    }
+
+    #[Route('/admin/season/{entity}/w3c', name: 'admin_season_w3c')]
+    public function w3c(string $entity): RedirectResponse
+    {
+        $serviceEntityRepositoryLib  = $this->getRepository();
+        $season                      = $serviceEntityRepositoryLib->find($entity);
+
+        return $this->linkw3CValidator($season);
+    }
+
     private function configureActionsUpdateImage(): void
     {
         $request = $this->container->get('request_stack')->getCurrentRequest();
         $request->query->get('action', null);
+    }
+
+    private function setUpdateAction(): Action
+    {
+        $action = Action::new('update', new TranslatableMessage('Update'));
+        $action->linkToUrl(
+            fn (Season $season): string => $this->generateUrl(
+                'admin_season_update',
+                [
+                    'entity' => $season->getId(),
+                ]
+            )
+        );
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        return $action;
     }
 }

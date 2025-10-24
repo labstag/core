@@ -2,17 +2,28 @@
 
 namespace Labstag\Data;
 
+use Labstag\Data\Abstract\DataLib;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\PageRepository;
-use Labstag\Data\DataInterface;
-use Labstag\Data\Abstract\DataLib;
 
 class HomeData extends DataLib implements DataInterface
 {
     public function __construct(
-        private PageRepository $pageRepository
+        private PageRepository $pageRepository,
     )
     {
+    }
+
+    public function generateSlug(object $entity): string
+    {
+        $this->getHome();
+
+        return '';
+    }
+
+    public function getEntity(string $slug): object
+    {
+        return $this->getHome();
     }
 
     public function getTitle(object $entity): string
@@ -20,11 +31,9 @@ class HomeData extends DataLib implements DataInterface
         return $entity->getTitle();
     }
 
-    public function generateSlug(object $entity): string
+    public function match(string $slug): bool
     {
-        $home = $this->getHome();
-
-        return '';
+        return '' === $slug || is_null($slug);
     }
 
     public function supports(object $entity): bool
@@ -32,22 +41,8 @@ class HomeData extends DataLib implements DataInterface
         return false;
     }
 
-    public function match(string $slug): bool
-    {
-        if ('' === $slug || is_null($slug)) {
-            return true;
-        }
-
-        return false;
-    }
-
     private function getHome(): ?object
     {
         return $this->pageRepository->getOneByType(PageEnum::HOME->value);
-    }
-
-    public function getEntity(string $slug): object
-    {
-        return $this->getHome();
     }
 }

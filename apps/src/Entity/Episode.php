@@ -6,11 +6,11 @@ use DateTime;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\EpisodeRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
-use Labstag\Entity\Traits\TimestampableTrait;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: EpisodeRepository::class)]
@@ -19,36 +19,6 @@ class Episode
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: Types::GUID, unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
-
-    #[ORM\Column]
-    private ?int $number = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
-
-    #[Vich\UploadableField(mapping: 'episode', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $overview = null;
-
-    #[ORM\ManyToOne(inversedBy: 'episodes')]
-    private ?Season $refseason = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $title = null;
-
-    #[ORM\Column(name: 'vote_count', nullable: true)]
-    private ?int $voteCount = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tmdb = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
@@ -59,48 +29,42 @@ class Episode
     #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $airDate = null;
 
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::GUID, unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?string $id = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $img = null;
+
+    #[Vich\UploadableField(mapping: 'episode', fileNameProperty: 'img')]
+    private ?File $imgFile = null;
+
+    #[ORM\Column]
+    private ?int $number = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $overview = null;
+
+    #[ORM\ManyToOne(inversedBy: 'episodes')]
+    private ?Season $refseason = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $title = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $tmdb = null;
+
     #[ORM\Column(name: 'vote_average', nullable: true)]
     private ?float $voteAverage = null;
 
-    public function getTmdb(): ?string
-    {
-        return $this->tmdb;
-    }
-
-    public function getOverview(): ?string
-    {
-        return $this->overview;
-    }
-
-    public function setOverview(?string $overview): static
-    {
-        $this->overview = $overview;
-
-        return $this;
-    }
+    #[ORM\Column(name: 'vote_count', nullable: true)]
+    private ?int $voteCount = null;
 
     public function getAirDate(): ?DateTime
     {
         return $this->airDate;
-    }
-
-    public function setAirDate(?DateTime $airDate): static
-    {
-        $this->airDate = $airDate;
-
-        return $this;
-    }
-
-    public function isEnable(): ?bool
-    {
-        return $this->enable;
-    }
-
-    public function setEnable(bool $enable): static
-    {
-        $this->enable = $enable;
-
-        return $this;
     }
 
     public function getId(): ?string
@@ -113,6 +77,65 @@ class Episode
         return $this->img;
     }
 
+    public function getImgFile(): ?File
+    {
+        return $this->imgFile;
+    }
+
+    public function getNumber(): ?int
+    {
+        return $this->number;
+    }
+
+    public function getOverview(): ?string
+    {
+        return $this->overview;
+    }
+
+    public function getRefseason(): ?Season
+    {
+        return $this->refseason;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function getTmdb(): ?string
+    {
+        return $this->tmdb;
+    }
+
+    public function getVoteAverage(): ?float
+    {
+        return $this->voteAverage;
+    }
+
+    public function getVoteCount(): ?int
+    {
+        return $this->voteCount;
+    }
+
+    public function isEnable(): ?bool
+    {
+        return $this->enable;
+    }
+
+    public function setAirDate(?DateTime $airDate): static
+    {
+        $this->airDate = $airDate;
+
+        return $this;
+    }
+
+    public function setEnable(bool $enable): static
+    {
+        $this->enable = $enable;
+
+        return $this;
+    }
+
     public function setImg(?string $img): void
     {
         $this->img = $img;
@@ -121,13 +144,6 @@ class Episode
         if (null === $img) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
-    }
-
-    public function setTmdb(?string $tmdb): static
-    {
-        $this->tmdb = $tmdb;
-
-        return $this;
     }
 
     public function setImgFile(?File $imgFile = null): void
@@ -141,36 +157,6 @@ class Episode
         }
     }
 
-    public function getImgFile(): ?File
-    {
-        return $this->imgFile;
-    }
-
-    public function getNumber(): ?int
-    {
-        return $this->number;
-    }
-
-    public function getRefseason(): ?Season
-    {
-        return $this->refseason;
-    }
-
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function getVoteAverage(): ?float
-    {
-        return $this->voteAverage;
-    }
-
-    public function getVoteCount(): ?int
-    {
-        return $this->voteCount;
-    }
-
     public function setNumber(int $number): static
     {
         $this->number = $number;
@@ -178,9 +164,16 @@ class Episode
         return $this;
     }
 
-    public function setRefseason(?Season $refseason): static
+    public function setOverview(?string $overview): static
     {
-        $this->refseason = $refseason;
+        $this->overview = $overview;
+
+        return $this;
+    }
+
+    public function setRefseason(?Season $season): static
+    {
+        $this->refseason = $season;
 
         return $this;
     }
@@ -188,6 +181,13 @@ class Episode
     public function setTitle(?string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function setTmdb(?string $tmdb): static
+    {
+        $this->tmdb = $tmdb;
 
         return $this;
     }

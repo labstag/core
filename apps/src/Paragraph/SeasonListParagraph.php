@@ -28,8 +28,8 @@ class SeasonListParagraph extends ParagraphLib
             return;
         }
 
-        $repository = $this->getRepository(Season::class);
-        $seasons = $repository->getAllActivateBySerie($data['entity']);
+        $serviceEntityRepositoryLib = $this->getRepository(Season::class);
+        $seasons    = $serviceEntityRepositoryLib->getAllActivateBySerie($data['entity']);
         if (0 === count($seasons)) {
             $this->setShow($paragraph, false);
 

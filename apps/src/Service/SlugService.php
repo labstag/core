@@ -26,11 +26,6 @@ final class SlugService
     /**
      * @var array<string, mixed>
      */
-    private array $pages = [];
-
-    /**
-     * @var array<string, mixed>
-     */
     private array $types = [];
 
     public function __construct(
@@ -39,12 +34,7 @@ final class SlugService
          */
         #[AutowireIterator('labstag.datas')]
         private readonly iterable $datalibs,
-        private StoryRepository $storyRepository,
-        private SeasonRepository $seasonRepository,
-        private SerieRepository $serieRepository,
         private PageRepository $pageRepository,
-        private ChapterRepository $chapterRepository,
-        private PostRepository $postRepository,
         private RequestStack $requestStack,
     )
     {
@@ -52,49 +42,13 @@ final class SlugService
 
     public function forEntity(object $entity): string
     {
-        foreach ($this->datalibs as $row) {
-            if ($row->supports($entity)) {
-                return $row->generateSlug($entity);
+        foreach ($this->datalibs as $datalib) {
+            if ($datalib->supports($entity)) {
+                return $datalib->generateSlug($entity);
             }
         }
 
-        throw new InvalidArgumentException(
-            sprintf(
-                'Unsupported entity type: %s',
-                get_debug_type($entity)
-            )
-        );
-
-
-        $types = $this->getPageByTypes();
-        
-
-        return match (true) {
-            $entity instanceof Serie   => $this->buildPrefixedSlug(
-                $types[PageEnum::SERIES->value],
-                $entity->getSlug()
-            ),
-            $entity instanceof Season   => $this->buildPrefixedSlug(
-                $types[PageEnum::SERIES->value],
-                $entity->getRefserie()->getSlug().'/saison-'.$entity->getNumber()
-            ),
-            $entity instanceof Page    => $entity->getSlug(),
-            $entity instanceof Post    => $this->buildPrefixedSlug($types[PageEnum::POSTS->value], $entity->getSlug()),
-            $entity instanceof Story   => $this->buildPrefixedSlug(
-                $types[PageEnum::STORIES->value],
-                $entity->getSlug()
-            ),
-            $entity instanceof Chapter => $this->buildPrefixedSlug(
-                $types[PageEnum::STORIES->value],
-                $entity->getRefStory()->getSlug() . '/' . $entity->getSlug()
-            ),
-            default => throw new InvalidArgumentException(
-                sprintf(
-                    'Unsupported entity type: %s',
-                    get_debug_type($entity)
-                )
-            ),
-        };
+        throw new InvalidArgumentException(sprintf('Unsupported entity type: %s', get_debug_type($entity)));
     }
 
     public function getEntity(): ?object
@@ -107,9 +61,9 @@ final class SlugService
 
     public function getEntityBySlug(?string $slug): ?object
     {
-        foreach ($this->datalibs as $row) {
-            if ($row->match($slug)) {
-                return $row->getEntity($slug);
+        foreach ($this->datalibs as $datalib) {
+            if ($datalib->match($slug)) {
+                return $datalib->getEntity($slug);
             }
         }
 
@@ -121,100 +75,6 @@ final class SlugService
         $types = $this->getPageByTypes();
 
         return $types[$type] ?? null;
-    }
-
-    /**
-     * Construit un slug préfixé avec validation de l'existence de la page type.
-     */
-    private function buildPrefixedSlug(object $page, string $suffix): string
-    {
-        if (!$page instanceof Page) {
-            throw new Exception('No page found for this type');
-        }
-
-        return $page->getSlug() . '/' . $suffix;
-    }
-
-    private function getContentByType(string $type, string $slug): ?object
-    {
-        if ('post' === $type) {
-            return $this->postRepository->findOneBy(
-                ['slug' => $slug]
-            );
-        }
-
-        $repos = [
-            'serie'   => $this->serieRepository,
-            'story'   => $this->storyRepository,
-            'season'  => $this->seasonRepository,
-            'chapter' => $this->chapterRepository,
-        ];
-
-        if (1 === substr_count($slug, '/')) {
-            [
-                $slugFirst,
-                $slugSecond,
-            ]      = explode('/', $slug);
-            $story = $repos['story']->findOneBy(
-                ['slug' => $slugFirst]
-            );
-            $chapter = $repos['chapter']->findOneBy(
-                ['slug' => $slugSecond]
-            );
-            $serie = $repos['serie']->findOneBy(
-                ['slug' => $slugFirst]
-            );
-            $season = $repos['season']->findOneBy(
-                [
-                    'number' => str_replace('saison-', '', $slugSecond)
-                ]
-            );
-
-            $data = [
-                [
-                    'test' => ($story instanceof Story && $chapter instanceof Chapter && $story->getId() === $chapter->getRefStory()->getId()),
-                    'obj'  => $chapter,
-                ],
-                [
-                    'test' => ($serie instanceof Serie && $season instanceof Season && $serie->getId() === $season->getRefserie()->getId()),
-                    'obj'  => $season,
-                ],
-            ];
-            foreach ($data as $row) {
-                if ($row['test']) {
-                    return $row['obj'];
-                }
-            }
-        }
-
-        $data = [
-            $repos['story']->findOneBy(
-                ['slug' => $slug]
-            ),
-            $repos['serie']->findOneBy(
-                ['slug' => $slug]
-            ),
-        ];
-
-        foreach ($data as $row) {
-            if (is_object($row)) {
-                return $row;
-            }
-        }
-
-        return null;
-    }
-
-    private function getPageBySlug(string $slug): ?Page
-    {
-        if (array_key_exists($slug, $this->pages)) {
-            return $this->pages[$slug];
-        }
-
-        $page               = $this->pageRepository->getOneBySlug($slug);
-        $this->pages[$slug] = $page;
-
-        return $page;
     }
 
     /**

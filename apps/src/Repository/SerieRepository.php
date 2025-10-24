@@ -73,6 +73,7 @@ class SerieRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->orderBy('s.title', 'ASC');
+
         $query        = $queryBuilder->getQuery();
 
         return $query->getResult();

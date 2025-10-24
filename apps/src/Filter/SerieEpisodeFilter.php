@@ -4,8 +4,8 @@ namespace Labstag\Filter;
 
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Filter\FilterInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FilterDataDto;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\FilterTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Filter\Type\ChoiceFilterType;
@@ -14,14 +14,63 @@ use Symfony\Component\Translation\TranslatableMessage;
 class SerieEpisodeFilter implements FilterInterface
 {
     use FilterTrait;
-    
+
+    public function apply(
+        QueryBuilder $queryBuilder,
+        FilterDataDto $filterDataDto,
+        ?FieldDto $fieldDto,
+        EntityDto $entityDto,
+    ): void
+    {
+        if (null === $filterDataDto->getValue()) {
+            return;
+        }
+        $alias = $filterDataDto->getEntityAlias();
+        if (!$this->hasJoin($queryBuilder, 'season')) {
+            $queryBuilder->join($alias . '.refseason', 'season');
+        }
+
+        $queryBuilder->andWhere('season.number = :number');
+        $queryBuilder->setParameter('number', $filterDataDto->getValue());
+    }
+
+    public function canSelectMultiple(bool $selectMultiple = true): self
+    {
+        $this->dto->setFormTypeOption('value_type_options.multiple', $selectMultiple);
+
+        return $this;
+    }
+
+    public function hasJoin($queryBuilder, $text): bool
+    {
+        $dql = $queryBuilder->getDQLParts();
+        foreach ($dql['join'] as $joins) {
+            foreach ($joins as $join) {
+                if ($join->getAlias() === $text) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public static function new(string $propertyName, ?string $label = null): self
     {
-        return (new self())
-            ->setFilterFqcn(__CLASS__)
-            ->setProperty($propertyName)
-            ->setFormType(ChoiceFilterType::class)
-            ->setLabel($label ?? new TranslatableMessage('Season'));
+        $fileField = (new self());
+        $fileField->setFilterFqcn(__CLASS__);
+        $fileField->setProperty($propertyName);
+        $fileField->setFormType(ChoiceFilterType::class);
+        $fileField->setLabel($label ?? new TranslatableMessage('Season'));
+        
+        return $fileField;
+    }
+
+    public function renderExpanded(bool $isExpanded = true): self
+    {
+        $this->dto->setFormTypeOption('value_type_options.expanded', $isExpanded);
+
+        return $this;
     }
 
     /**
@@ -43,47 +92,5 @@ class SerieEpisodeFilter implements FilterInterface
         $this->dto->setFormTypeOption('value_type_options.choice_label', fn ($value) => $choiceGenerator[$value]);
 
         return $this;
-    }
-
-    public function renderExpanded(bool $isExpanded = true): self
-    {
-        $this->dto->setFormTypeOption('value_type_options.expanded', $isExpanded);
-
-        return $this;
-    }
-
-    public function canSelectMultiple(bool $selectMultiple = true): self
-    {
-        $this->dto->setFormTypeOption('value_type_options.multiple', $selectMultiple);
-
-        return $this;
-    }
-
-    public function apply(QueryBuilder $queryBuilder, FilterDataDto $filterDataDto, ?FieldDto $fieldDto, EntityDto $entityDto): void
-    {
-        if (null === $filterDataDto->getValue()) {
-            return;
-        }
-        $alias = $filterDataDto->getEntityAlias();
-        if (!$this->hasJoin($queryBuilder, 'season')) {
-            $queryBuilder->join($alias.'.refseason', 'season');
-        }
-
-        $queryBuilder->andWhere('season.number = :number');
-        $queryBuilder->setParameter('number', $filterDataDto->getValue());
-    }
-
-    public function hasJoin($queryBuilder, $text): bool
-    {
-        $dql = $queryBuilder->getDQLParts();
-        foreach ($dql['join'] as $joins) {
-            foreach ($joins as $join) {
-                if ($join->getAlias() === $text) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }

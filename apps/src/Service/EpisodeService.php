@@ -2,6 +2,7 @@
 
 namespace Labstag\Service;
 
+use DateTime;
 use Exception;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
@@ -18,7 +19,7 @@ class EpisodeService
         private string $tmdbapiKey,
         private CacheService $cacheService,
         private HttpClientInterface $httpClient,
-        protected EpisodeRepository $episodeRepository
+        protected EpisodeRepository $episodeRepository,
     )
     {
     }
@@ -53,74 +54,24 @@ class EpisodeService
         $tmdb = $episode->getRefseason()->getRefserie()->getTmdb();
         $seasonNumber = $episode->getRefseason()->getNumber();
         $episodeNumber = $episode->getNumber();
-        $details = $this->getDetails($tmdb, $seasonNumber, $episodeNumber);
+        $details       = $this->getDetails($tmdb, $seasonNumber, $episodeNumber);
         $this->updateImage($episode, $details);
         $episode->setOverview($details['overview']);
         $episode->setTmdb($details['id']);
         $episode->setTitle($details['name']);
         $episode->setVoteAverage($details['vote_average']);
         $episode->setVoteCount($details['vote_count']);
-        $airDate = !empty($details['air_date']) ? new \DateTime($details['air_date']) : null;
+
+        $airDate = empty($details['air_date']) ? null : new DateTime($details['air_date']);
         $episode->setAirDate($airDate);
 
         return true;
     }
 
-    /**
-     * @param array<string, mixed> $details
-     */
-    private function updateImage(Episode $episode, array $details): bool
-    {
-        $poster = $this->getImgEpisode($details);
-        if ('' === $poster) {
-            return false;
-        }
-
-        if ($episode->getImg() != '') {
-            return false;
-        }
-
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
-
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $episode->setImgFile($uploadedFile);
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
-    }
-
-    /**
-     * @param array<string, mixed> $data
-     */
-    private function getImgEpisode(array $data): string
-    {
-        if (isset($data['still_path'])) {
-            return $this->getImgImdb($data['still_path']);
-        }
-
-        return '';
-    }
-
-    private function getImgImdb(string $img): string
-    {
-        return 'https://media.themoviedb.org/t/p/w227_and_h127_bestv2' . $img;
-    }
-
     private function getDetails(int $tmdb, int $seasonNumber, int $episodeNumber): ?array
     {
-        $cacheKey = 'tmdb-serie_find_' . $tmdb.'_season_' . $seasonNumber.'_episode_'.$episodeNumber;
+        $cacheKey = 'tmdb-serie_find_' . $tmdb . '_season_' . $seasonNumber . '_episode_' . $episodeNumber;
+
         return $this->cacheService->get(
             $cacheKey,
             function (ItemInterface $item) use ($tmdb, $seasonNumber, $episodeNumber): ?array {
@@ -149,5 +100,57 @@ class EpisodeService
             },
             60
         );
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function getImgEpisode(array $data): string
+    {
+        if (isset($data['still_path'])) {
+            return $this->getImgImdb($data['still_path']);
+        }
+
+        return '';
+    }
+
+    private function getImgImdb(string $img): string
+    {
+        return 'https://media.themoviedb.org/t/p/w227_and_h127_bestv2' . $img;
+    }
+
+    /**
+     * @param array<string, mixed> $details
+     */
+    private function updateImage(Episode $episode, array $details): bool
+    {
+        $poster = $this->getImgEpisode($details);
+        if ('' === $poster) {
+            return false;
+        }
+
+        if ('' != $episode->getImg()) {
+            return false;
+        }
+
+        try {
+            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+
+            // Télécharger l'image et l'écrire dans le fichier temporaire
+            file_put_contents($tempPath, file_get_contents($poster));
+
+            $uploadedFile = new UploadedFile(
+                path: $tempPath,
+                originalName: basename($tempPath),
+                mimeType: mime_content_type($tempPath),
+                test: true
+            );
+
+            $episode->setImgFile($uploadedFile);
+
+            return true;
+        } catch (Exception) {
+            return false;
+        }
     }
 }

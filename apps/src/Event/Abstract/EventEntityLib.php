@@ -119,21 +119,21 @@ abstract class EventEntityLib
             return;
         }
 
-        
-        
-        $slugger = new AsciiSlugger();
-        $baseSlug = $slugger->slug((string) $instance->getTitle())->lower();
-        $slug = $baseSlug;
-        $i = 1;
-        while ($this->chapterRepository->findOneBy([
-            'refstory' => $instance->getRefstory(),
-            'slug' => $slug
-        ]) && ($instance->getSlug() !== $slug)) {
-            $slug = $baseSlug.'-'.$i;
-            $i++;
+        $asciiSlugger  = new AsciiSlugger();
+        $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
+        $slug = $unicodeString;
+        $number    = 1;
+        while ($this->chapterRepository->findOneBy(
+            [
+                'refstory' => $instance->getRefstory(),
+                'slug'     => $slug,
+            ]
+        ) && ($instance->getSlug() !== $slug)) {
+            $slug = $unicodeString . '-' . $number;
+            ++$number;
         }
-        $instance->setSlug($slug);
 
+        $instance->setSlug($slug);
 
         $story    = $instance->getRefstory();
         $chapters = $story->getChapters();
@@ -150,26 +150,6 @@ abstract class EventEntityLib
         }
 
         $this->movieService->update($instance);
-    }
-
-    protected function updateEntitySeason(object $instance): void
-    {
-        if (!$instance instanceof Season) {
-            return;
-        }
-        
-        $slugger = new AsciiSlugger();
-        $baseSlug = $slugger->slug((string) $instance->getTitle())->lower();
-        $slug = $baseSlug;
-        $i = 1;
-        while ($this->seasonRepository->findOneBy([
-            'refserie' => $instance->getRefserie(),
-            'slug' => $slug
-        ]) && ($instance->getSlug() !== $slug)) {
-            $slug = $baseSlug.'-'.$i;
-            $i++;
-        }
-        $instance->setSlug($slug);
     }
 
     protected function updateEntityPage(object $instance): void
@@ -215,6 +195,29 @@ abstract class EventEntityLib
         }
 
         $instance->incrementLastCount();
+    }
+
+    protected function updateEntitySeason(object $instance): void
+    {
+        if (!$instance instanceof Season) {
+            return;
+        }
+
+        $asciiSlugger  = new AsciiSlugger();
+        $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
+        $slug = $unicodeString;
+        $number    = 1;
+        while ($this->seasonRepository->findOneBy(
+            [
+                'refserie' => $instance->getRefserie(),
+                'slug'     => $slug,
+            ]
+        ) && ($instance->getSlug() !== $slug)) {
+            $slug = $unicodeString . '-' . $number;
+            ++$number;
+        }
+
+        $instance->setSlug($slug);
     }
 
     protected function updateEntitySerie(object $instance): void

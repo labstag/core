@@ -583,7 +583,7 @@ final class MovieService
             return false;
         }
 
-        if ($movie->getImg() != '') {
+        if ('' != $movie->getImg()) {
             return false;
         }
 

@@ -47,22 +47,6 @@ final class SerieService
     {
     }
 
-    public function getSeriesChoice()
-    {
-        $series = $this->serieRepository->findBy(
-            [],
-            ['title' => 'ASC']
-        );
-        $choices = [];
-        /** @var Serie $serie */
-        foreach ($series as $serie) {
-            $label = $serie->getTitle();
-            $choices[$label] = $label;
-        }
-
-        return $choices;
-    }
-
     public function deleteOldCategory(): void
     {
         $data = $this->categoryRepository->findAllByTypeSerieWithoutSerie();
@@ -159,6 +143,25 @@ final class SerieService
     }
 
     /**
+     * @return mixed[]
+     */
+    public function getSeriesChoice(): array
+    {
+        $series = $this->serieRepository->findBy(
+            [],
+            ['title' => 'ASC']
+        );
+        $choices = [];
+        /** @var Serie $serie */
+        foreach ($series as $serie) {
+            $label           = $serie->getTitle();
+            $choices[$label] = $label;
+        }
+
+        return $choices;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function getYearForForm(): array
@@ -194,21 +197,6 @@ final class SerieService
         ];
 
         return in_array(true, $statuses, true);
-    }
-
-    private function updateSeasons(Serie $serie, array $details): bool
-    {
-        if (!isset($details['tmdb']['number_of_seasons'])) {
-            return false;
-        }
-        
-        for ($number = 1; $number <= (int) $details['tmdb']['number_of_seasons']; ++$number) {
-            $season = $this->seasonService->getSeason($serie, $number);
-            $this->seasonService->update($season);
-            $this->seasonService->save($season);
-        }
-
-        return true;
     }
 
     /**
@@ -441,7 +429,7 @@ final class SerieService
             return false;
         }
 
-        if ($serie->getImg() != '') {
+        if ('' != $serie->getImg()) {
             return false;
         }
 
@@ -464,6 +452,21 @@ final class SerieService
         } catch (Exception) {
             return false;
         }
+    }
+
+    private function updateSeasons(Serie $serie, array $details): bool
+    {
+        if (!isset($details['tmdb']['number_of_seasons'])) {
+            return false;
+        }
+
+        for ($number = 1; $number <= (int) $details['tmdb']['number_of_seasons']; ++$number) {
+            $season = $this->seasonService->getSeason($serie, $number);
+            $this->seasonService->update($season);
+            $this->seasonService->save($season);
+        }
+
+        return true;
     }
 
     /**

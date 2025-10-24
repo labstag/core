@@ -33,14 +33,6 @@ final class EntityListener extends EventEntityLib
         $entityManager->flush();
     }
 
-    public function preUpdate(PreUpdateEventArgs $preupdateEventArgs): void
-    {
-        $object = $preupdateEventArgs->getObject();
-
-        $this->updateEntityChapter($object);
-        $this->updateEntitySeason($object);
-    }
-
     public function prePersist(PrePersistEventArgs $prePersistEventArgs): void
     {
         $object = $prePersistEventArgs->getObject();
@@ -48,5 +40,13 @@ final class EntityListener extends EventEntityLib
         $this->initworkflow($object);
         $this->updateEntityPage($object);
         $this->initEntityMeta($object);
+    }
+
+    public function preUpdate(PreUpdateEventArgs $preupdateEventArgs): void
+    {
+        $object = $preupdateEventArgs->getObject();
+
+        $this->updateEntityChapter($object);
+        $this->updateEntitySeason($object);
     }
 }

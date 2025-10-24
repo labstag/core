@@ -4,7 +4,6 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Repository\SeasonRepository;
@@ -21,28 +20,12 @@ final class SeasonService
         private CacheService $cacheService,
         private HttpClientInterface $httpClient,
         private SeasonRepository $seasonRepository,
-        private EpisodeService $episodeService
+        private EpisodeService $episodeService,
     )
     {
     }
 
-    public function getSeasonsChoice()
-    {
-        $seasons = $this->seasonRepository->findBy(
-            [],
-            ['number' => 'ASC']
-        );
-        $choices = [];
-        /** @var Season $season */
-        foreach ($seasons as $season) {
-            $label = $season->getNumber();
-            $choices[$label] = $label;
-        }
-
-        return $choices;
-    }
-
-    public function getSeason(Serie $serie, int $number): ?Season
+    public function getSeason(Serie $serie, int $number): \Labstag\Entity\Season
     {
         $season = $this->seasonRepository->findOneBy(
             [
@@ -62,14 +45,63 @@ final class SeasonService
         return $season;
     }
 
+    /**
+     * @return mixed[]
+     */
+    public function getSeasonsChoice(): array
+    {
+        $seasons = $this->seasonRepository->findBy(
+            [],
+            ['number' => 'ASC']
+        );
+        $choices = [];
+        /** @var Season $season */
+        foreach ($seasons as $season) {
+            $label           = $season->getNumber();
+            $choices[$label] = $label;
+        }
+
+        return $choices;
+    }
+
     public function save(Season $season): void
     {
         $this->seasonRepository->save($season);
     }
 
+    public function update(Season $season): bool
+    {
+        $tmdb = $season->getRefSerie()->getTmdb();
+        $numberSeason = $season->getNumber();
+        $details      = $this->getDetails($tmdb, $numberSeason);
+        if (null === $details) {
+            return false;
+        }
+
+        $season->setTitle($details['name']);
+        $season->setAirDate(new DateTime($details['air_date']));
+        $season->setTmdb($details['id']);
+        $season->setOverview($details['overview']);
+        $season->setVoteAverage($details['vote_average']);
+        if (isset($details['overview']) && '' != $details['overview']) {
+            $season->setOverview($details['overview']);
+        }
+
+        $this->updateImage($season, $details);
+        $episodes = count($details['episodes']);
+        for ($number = 1; $number <= $episodes; ++$number) {
+            $episode = $this->episodeService->getEpisode($season, $number);
+            $this->episodeService->update($episode);
+            $this->episodeService->save($episode);
+        }
+
+        return true;
+    }
+
     private function getDetails(int $tmdb, int $number): ?array
     {
-        $cacheKey = 'tmdb-serie_find_' . $tmdb.'_season_' . $number;
+        $cacheKey = 'tmdb-serie_find_' . $tmdb . '_season_' . $number;
+
         return $this->cacheService->get(
             $cacheKey,
             function (ItemInterface $item) use ($tmdb, $number) {
@@ -122,35 +154,6 @@ final class SeasonService
         return '';
     }
 
-    public function update(Season $season): bool
-    {
-        $tmdb = $season->getRefSerie()->getTmdb();
-        $numberSeason = $season->getNumber();
-        $details = $this->getDetails($tmdb, $numberSeason);
-        if (null === $details) {
-            return false;
-        }
-
-        $season->setTitle($details['name']);
-        $season->setAirDate(new DateTime($details['air_date']));
-        $season->setTmdb($details['id']);
-        $season->setOverview($details['overview']);
-        $season->setVoteAverage($details['vote_average']);
-        if (isset($details['overview']) && '' != $details['overview']) {
-            $season->setOverview($details['overview']);
-        }
-
-        $this->updateImage($season, $details);
-        $episodes = count($details['episodes']);
-        for ($number = 1; $number <= $episodes; ++$number) {
-            $episode = $this->episodeService->getEpisode($season, $number);
-            $this->episodeService->update($episode);
-            $this->episodeService->save($episode);
-        }
-
-        return true;
-    }
-
     /**
      * @param array<string, mixed> $details
      */
@@ -161,7 +164,7 @@ final class SeasonService
             return false;
         }
 
-        if ($season->getImg() != '') {
+        if ('' != $season->getImg()) {
             return false;
         }
 
