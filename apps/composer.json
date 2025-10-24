@@ -22,7 +22,7 @@
         "liip/imagine-bundle": "2.15.*",
         "matomo/device-detector": "6.4.*",
         "mpdf/mpdf": "8.2.*",
-        "nelmio/cors-bundle": "2.5.*",
+        "nelmio/cors-bundle": "2.6.*",
         "nesbot/carbon": "3.10.*",
         "phpoffice/phpspreadsheet": "5.1.*",
         "symfony/apache-pack": "1.0.*",
