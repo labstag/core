@@ -62,7 +62,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         yield $this->crudFieldFactory->booleanField('regex', (string) new TranslatableMessage('Regex'), false)->hideOnIndex();
         yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
         yield IntegerField::new('last_count', new TranslatableMessage('Last count'))->hideonForm();
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }
@@ -281,7 +281,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
         $sheetData   = $spreadsheet->getActiveSheet()->toArray();
         $head        = $sheetData[0];
         $find        = $this->setFind($head);
-        if (self::FIELDCSV != $find) {
+        if (self::FIELDCSV !== $find) {
             $this->addFlash('danger', 'Le fichier n\'est pas correctement formaté');
 
             return $data;

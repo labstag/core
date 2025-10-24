@@ -2,8 +2,8 @@
 .teaser-movie{
   @extend %teaser;
   .background{
-    align-items: flex-end !important;
-    justify-content: flex-start !important;
+    align-items: flex-end;
+    justify-content: flex-start;
     .year{
       background-color: #363636;
       color: yellow;

@@ -16,7 +16,7 @@ trait ParagraphProcessingTrait
     protected function processParagraphs(Block $block, array $data, bool $disable): ?array
     {
         $paragraphs = $block->getParagraphs()->getValues();
-        if (0 == count($paragraphs)) {
+        if (0 === count($paragraphs)) {
             $this->logger->debug(
                 'No paragraphs found for block',
                 [

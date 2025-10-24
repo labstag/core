@@ -46,10 +46,10 @@ class BackController extends AbstractController
         name: 'admin_cacheclear',
         defaults: ['_locale' => 'fr']
     )]
-    public function cacheclear(KernelInterface $kernel): Response
+    public function cacheclear(KernelInterface $kernel, Request $request): Response
     {
         $total = $this->fileService->deletedFileByEntities();
-        if (0 != $total) {
+        if (0 !== $total) {
             $this->addFlash(
                 'success',
                 new TranslatableMessage(
@@ -69,6 +69,12 @@ class BackController extends AbstractController
         $application->run($arrayInput, $bufferedOutput);
 
         $this->addFlash('success', new TranslatableMessage('Cache cleared'));
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                return $this->redirect($url);
+            }
+        }
 
         return $this->redirectToRoute('admin');
     }

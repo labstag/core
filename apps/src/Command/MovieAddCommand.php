@@ -2,14 +2,8 @@
 
 namespace Labstag\Command;
 
-use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
-use Labstag\Entity\Saga;
-use Labstag\Entity\Tag;
-use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
-use Labstag\Repository\SagaRepository;
-use Labstag\Repository\TagRepository;
 use Labstag\Service\FileService;
 use Labstag\Service\MovieService;
 use NumberFormatter;
@@ -22,31 +16,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'labstag:movies-add', description: 'Add movies with movies.csv')]
+#[AsCommand(name: 'labstag:movies:add', description: 'Add movies with movielist.csv')]
 class MovieAddCommand extends Command
 {
 
     private int $add = 0;
 
     /**
-     * @var Category[]
-     */
-    private array $categories = [];
-
-    /**
      * @var array<string, mixed>
      */
     private array $imdbs = [];
-
-    /**
-     * @var Saga[]
-     */
-    private array $sagas = [];
-
-    /**
-     * @var Tag[]
-     */
-    private array $tags = [];
 
     private int $update = 0;
 
@@ -54,68 +33,9 @@ class MovieAddCommand extends Command
         protected MovieRepository $movieRepository,
         protected MovieService $movieService,
         protected FileService $fileService,
-        protected CategoryRepository $categoryRepository,
-        protected TagRepository $tagRepository,
-        protected SagaRepository $sagaRepository,
     )
     {
         parent::__construct();
-    }
-
-    public function getCategory(string $value): Category
-    {
-        if (isset($this->categories[$value])) {
-            return $this->categories[$value];
-        }
-
-        $category = $this->categoryRepository->findOneBy(
-            [
-                'type'  => 'movie',
-                'title' => $value,
-            ]
-        );
-        if ($category instanceof Category) {
-            $this->categories[$value] = $category;
-
-            return $category;
-        }
-
-        $category = new Category();
-        $category->setType('movie');
-        $category->setTitle($value);
-
-        $this->categoryRepository->save($category);
-        $this->categories[$value] = $category;
-
-        return $category;
-    }
-
-    public function getTag(string $value): Tag
-    {
-        if (isset($this->tags[$value])) {
-            return $this->tags[$value];
-        }
-
-        $tag = $this->tagRepository->findOneBy(
-            [
-                'type'  => 'movie',
-                'title' => $value,
-            ]
-        );
-        if ($tag instanceof Tag) {
-            $this->tags[$value] = $tag;
-
-            return $tag;
-        }
-
-        $tag = new Tag();
-        $tag->setType('movie');
-        $tag->setTitle($value);
-
-        $this->tagRepository->save($tag);
-        $this->tags[$value] = $tag;
-
-        return $tag;
     }
 
     protected function addOrUpdate(Movie $movie): void
@@ -133,7 +53,7 @@ class MovieAddCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $filename     = 'movies.csv';
+        $filename     = 'movielist.csv';
         $file         = $this->fileService->getFileInAdapter('private', $filename);
         if (!is_file($file)) {
             $symfonyStyle->error('File not found ' . $filename);
@@ -147,27 +67,8 @@ class MovieAddCommand extends Command
 
         $spreadsheet = $csv->load($file);
         $worksheet   = $spreadsheet->getActiveSheet();
-        $dataJson    = [];
-        $headers     = [];
+        $dataJson    = $this->generateJson($worksheet);
         $counter     = 0;
-        foreach ($worksheet->getRowIterator() as $i => $row) {
-            $cellIterator = $row->getCellIterator();
-            $cellIterator->setIterateOnlyExistingCells(false);
-            if (1 == $i) {
-                foreach ($cellIterator as $cell) {
-                    $headers[] = trim((string) $cell->getValue());
-                }
-
-                continue;
-            }
-
-            $columns = [];
-            foreach ($cellIterator as $cell) {
-                $columns[] = trim((string) $cell->getValue());
-            }
-
-            $dataJson[] = array_combine($headers, $columns);
-        }
 
         $progressBar = new ProgressBar($output, count($dataJson));
         $progressBar->start();
@@ -185,15 +86,7 @@ class MovieAddCommand extends Command
 
         $this->movieRepository->flush();
         $progressBar->finish();
-
-        $oldsMovies = $this->movieRepository->findMoviesNotInImdbList($this->imdbs);
-        foreach ($oldsMovies as $oldMovie) {
-            if ($oldMovie->isFile()) {
-                $symfonyStyle->warning(
-                    sprintf('Movie %s (%s) not in list', $oldMovie->getTitle(), $oldMovie->getImdb())
-                );
-            }
-        }
+        $this->showoldsMovies($symfonyStyle);
 
         $symfonyStyle->success('All movie added');
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
@@ -208,50 +101,40 @@ class MovieAddCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function getMovieByImdb(string $imdb): ?Movie
+    /**
+     * @return list<array>
+     */
+    private function generateJson(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet): array
     {
-        $searchs[]['imdb'] = $imdb;
-        if (str_starts_with($imdb, 'tt')) {
-            $this->imdbs[]     = $imdb;
-            $searchs[]['imdb'] = str_pad(substr($imdb, 2), 7, '0', STR_PAD_LEFT);
-        }
+        $dataJson    = [];
+        $headers     = [];
+        foreach ($worksheet->getRowIterator() as $i => $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+            if (1 === $i) {
+                foreach ($cellIterator as $cell) {
+                    $headers[] = trim((string) $cell->getValue());
+                }
 
-        if (!str_starts_with($imdb, 'tt')) {
-            $this->imdbs[] = 'tt' . str_pad($imdb, 7, '0', STR_PAD_LEFT);
-        }
-
-        foreach ($searchs as $search) {
-            $movie = $this->movieRepository->findOneBy($search);
-            if ($movie instanceof Movie) {
-                return $movie;
+                continue;
             }
+
+            $columns = [];
+            foreach ($cellIterator as $cell) {
+                $columns[] = trim((string) $cell->getValue());
+            }
+
+            $dataJson[] = array_combine($headers, $columns);
         }
 
-        return null;
+        return $dataJson;
     }
 
-    private function getSaga(string $value): Saga
+    private function getMovieByImdb(string $imdb): ?Movie
     {
-        if (isset($this->sagas[$value])) {
-            return $this->sagas[$value];
-        }
-
-        $saga = $this->sagaRepository->findOneBy(
-            ['title' => $value]
+        return $this->movieRepository->findOneBy(
+            ['imdb' => $imdb]
         );
-        if ($saga instanceof Saga) {
-            $this->sagas[$value] = $saga;
-
-            return $saga;
-        }
-
-        $saga = new Saga();
-        $saga->setTitle($value);
-
-        $this->sagaRepository->save($saga);
-        $this->sagas[$value] = $saga;
-
-        return $saga;
     }
 
     /**
@@ -263,58 +146,31 @@ class MovieAddCommand extends Command
         $movie = $this->getMovieByImdb($imdb);
         if (!$movie instanceof Movie) {
             $movie = new Movie();
-            $movie->setFile(true);
             $movie->setEnable(true);
             $movie->setAdult(false);
             $movie->setImdb($imdb);
         }
 
-        $tags       = explode(',', (string) $data['Tags']);
         $tmdb       = (string) $data['ID TMDB'];
         $duration   = empty($data['Durée']) ? null : (int) $data['Durée'];
-        $saga       = empty($data['Saga']) ? null : $data['Saga'];
         $title      = trim((string) $data['Titre']);
         $movie->setTmdb($tmdb);
         $movie->setDuration($duration);
         $movie->setTitle($title);
-        $this->setSaga($movie, $saga);
-        $this->setTags($movie, $tags);
+        $movie->setFile(true);
 
         return $movie;
     }
 
-    private function setSaga(Movie $movie, mixed $saga): void
+    private function showoldsMovies(SymfonyStyle $symfonyStyle): void
     {
-        if (is_null($saga) || '' === $saga) {
-            return;
-        }
-
-        $saga = trim(str_replace('- Saga', '', $saga));
-
-        $saga = $this->getSaga($saga);
-
-        $movie->setSaga($saga);
-    }
-
-    private function setTags(Movie $movie, mixed $tags): void
-    {
-        $oldTags = $movie->getTags();
-        foreach ($oldTags as $oldTag) {
-            $movie->removeTag($oldTag);
-        }
-
-        foreach ($tags as $value) {
-            $value = trim((string) $value);
-            if ('' === $value) {
-                continue;
+        $oldsMovies = $this->movieRepository->findMoviesNotInImdbList($this->imdbs);
+        foreach ($oldsMovies as $oldMovie) {
+            if ($oldMovie->isFile()) {
+                $symfonyStyle->warning(
+                    sprintf('Movie %s (%s) not in list', $oldMovie->getTitle(), $oldMovie->getImdb())
+                );
             }
-
-            if ('0' === $value) {
-                continue;
-            }
-
-            $tag = $this->getTag($value);
-            $movie->addTag($tag);
         }
     }
 }

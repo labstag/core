@@ -10,11 +10,12 @@ includes:
   env: ./taskfiles/env/Taskfile.yml
   nodejs: ./taskfiles/nodejs/Taskfile.yml
   download: ./taskfiles/download/Taskfile.yml
+  apache: ./taskfiles/apache/Taskfile.yml
+  lint: ./taskfiles/lint/Taskfile.yml
 
 vars:
   # Variables avec valeurs par défaut depuis .env ou valeurs de fallback
   PROJECT_NAME: '{{.PROJECT_NAME | default "labstag"}}'
-  PROJECT_VERSION: '1.0.0'
   ENVIRONMENT: '{{.ENVIRONMENT | default "development"}}'
   STACK_NAME: '{{.STACK | default "labstag"}}'
   FOLDERSQL: '{{.FOLDERSQL | default "database_init"}}'
@@ -39,7 +40,8 @@ tasks:
     silent: true
     cmds:
     - |
-      echo "🛠️  {{.PROJECT_NAME}} v{{.PROJECT_VERSION}} - Collection de Taskfiles"
+      export PROJECT_VERSION=$(jq -r .version package.json)
+      echo "🛠️  {{.PROJECT_NAME}} v$PROJECT_VERSION - Collection de Taskfiles"
       echo "Environnement: {{.ENVIRONMENT}}"
 
   help:
@@ -61,23 +63,23 @@ tasks:
     silent: true
     cmds:
     - rm -rf ./conf/apache2 || true
-    - docker create --name labstag-php koromerzhin/php:8.4.3-apache-symfony 
     - mkdir -p ./conf/apache2
-    - docker cp labstag-php:/etc/apache2/sites-available/000-default.conf ./conf/apache2/000-default.conf
-    - docker cp labstag-php:/etc/apache2/apache2.conf ./conf/apache2/apache2.conf
+    - task docker:create CONTAINER_NAME=labstag-php IMAGE_NAME=$(awk '/www:/ {f=1} f && /image:/ {print $2; exit}' {{.DOCKERCOMPOSEFILE}})
+    - task: docker:getfile
+      vars:
+        CONTAINER_NAME: "labstag-php"
+        FILE_PATH: "/etc/apache2/sites-available/000-default.conf"
+        DEST_PATH: "./conf/apache2/000-default.conf"
+    - task: docker:getfile
+      vars:
+        CONTAINER_NAME: "labstag-php"
+        FILE_PATH: "/etc/apache2/apache2.conf"
+        DEST_PATH: "./conf/apache2/apache2.conf"
     - docker rm -f labstag-php
-
-    - sed -ri -e 's|\$\{APACHE_DOCUMENT_ROOT\}|/var/www/public|g' ./conf/apache2/000-default.conf
-    - sed -ri -e 's|#ServerName www.example.com|ServerName {{.SERVERNAME}}|g' ./conf/apache2/000-default.conf
-    - sed -ri -e 's|\$\{APACHE_DOCUMENT_ROOT\}|/var/www/public|g' ./conf/apache2/apache2.conf
-    - |
-      sed -i '/^# Global configuration/a\
-      #\
-      # ServerName: Set the servers fully qualified domain name globally\
-      # This suppresses the warning about not being able to reliably determine\
-      # the servers fully qualified domain name\
-      #\
-      ServerName {{.SERVERNAME}}' ./conf/apache2/apache2.conf
+    - task: apache:updateconfig
+      vars:
+        SERVERNAME: "{{.SERVERNAME}}"
+        APACHE_DOCUMENT_ROOT: "/var/www/public"
 
   labstag:copysql:
     desc: "Copie le fichier SQL de dump dans le dossier labstag"
@@ -110,7 +112,7 @@ tasks:
     desc: "Installation initiale de Composer et des dépendances"
     silent: true
     cmds:
-    - docker run --rm -v $(pwd)/apps:/var/www -w /var/www koromerzhin/php:8.4.3-apache-symfony symfony composer install
+    - docker run --rm -v $(pwd)/apps:/var/www -w /var/www $(awk '/www:/ {f=1} f && /image:/ {print $2; exit}' {{.DOCKERCOMPOSEFILE}}) symfony composer install
 
   labstag:waiting:
     desc: "Attend que les services soient opérationnels"
@@ -430,7 +432,7 @@ tasks:
     cmds:
     - task: composer:exec
       vars:
-        COMMAND: "run phpmnd"
+        CMD: "run phpmnd"
 
   phpstan:
     desc: "Analyse le code avec PHPStan"
@@ -539,29 +541,37 @@ tasks:
       vars:
         CMD: "lint:twig templates"
 
-  lint:yaml:
-    desc: "Vérifie les fichiers YAML"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "lint:yaml config"
-
-  labstag:movies-add:
+  labstag:movies:add:
     desc: "Ajoute des films de démonstration"
     silent: true
     cmds:
     - task: symfony:console
       vars:
-        CMD: "labstag:movies-add"
+        CMD: "labstag:movies:add"
 
-  labstag:movies-update:
+  labstag:movies:update:
     desc: "Met à jour les films de démonstration"
     silent: true
     cmds:
     - task: symfony:console
       vars:
-        CMD: "labstag:movies-update"
+        CMD: "labstag:movies:update"
+
+  labstag:series:add:
+    desc: "Ajoute des séries de démonstration"
+    silent: true
+    cmds:
+    - task: symfony:console
+      vars:
+        CMD: "labstag:series:add"
+
+  labstag:series:update:
+    desc: "Met à jour les séries de démonstration"
+    silent: true
+    cmds:
+    - task: symfony:console
+      vars:
+        CMD: "labstag:series:update"
 
   messenger:consume:
     desc: "Démarre le consommateur de messages Messenger"
@@ -593,8 +603,8 @@ tasks:
     cmds:
     - gh api --paginate /user/starred --jq '.' | jq -s > apps/private/stars.json
 
-  star:update:
-    desc: "Met à jour les données de stars"
+  star:add:
+    desc: "Ajoute des données de stars"
     silent: true
     cmds:
     - task: symfony:console
@@ -606,7 +616,7 @@ tasks:
     silent: true
     cmds:
     - task: star:get
-    - task: star:update
+    - task: star:add
 
   test:behat:
     desc: "Exécute les tests Behat"
@@ -734,19 +744,29 @@ tasks:
     ignore_error: true
 
   lint:all:
-    desc: "Vérifie le code avec tous les outils de linting"
-    silent: true
+    desc: "Exécute tous les linters disponibles"
     cmds:
+    - task: lint:yml
+      vars:
+        IGNORE_DIR: "lampy,taskfiles,apps/vendor"
+    - task: lint:md
+      vars:
+        IGNORE_DIR: "lampy,taskfiles"
+    - task: lint:action
+    - task: lint:docker
     - task: cmd:validate_outdated
-    - task: ecs-fix
-    - task: lint:phpcbf
     - npm run eslint:fix
     - npm run lint:stylelint:fix
     - task: lint:twig
     - task: lint:container
-    - task: lint:yaml
     - task: lint:phpaudit
-    - npm run lint:markdown
+
+  fix:all:
+    silent: true
+    cmds:
+    - task: ecs-fix
+    - task: lint:phpcbf
+    - task: lint:phpcs
     - task: rector
     ignore_error: true
 
@@ -754,7 +774,7 @@ tasks:
     desc: "Analyse le code avec PHP Audit"
     silent: true
     cmds:
-    - task: lint:phpcs
+    - task: lint:phpcs:error
     - task: lint:phpmd
     - task: lint:phpmnd
     - task: phpstan:0
@@ -803,8 +823,9 @@ tasks:
     cmds:
     - task: doctrine:fixtures
     - task: labstag:delete-oldfiles
-    - task: star
-    - task: labstag:movies-add
+    - task: star:add
+    - task: labstag:movies:add
+    - task: labstag:series:add
 
   labstag:set-env-ids:
     desc: "Met à jour les UID/GID dans le fichier .env"

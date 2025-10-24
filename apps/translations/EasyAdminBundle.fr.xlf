@@ -237,6 +237,10 @@
         <source>filter.label.contains</source>
         <target>contient</target>
       </trans-unit>
+      <trans-unit id="jg7iuXA" resname="filter.label.contains_all">
+        <source>filter.label.contains_all</source>
+        <target>contient tous</target>
+      </trans-unit>
       <trans-unit id="wlQF6T2" resname="filter.label.not_contains">
         <source>filter.label.not_contains</source>
         <target>ne contient pas</target>

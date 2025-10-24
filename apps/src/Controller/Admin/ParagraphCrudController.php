@@ -62,7 +62,7 @@ class ParagraphCrudController extends AbstractCrudControllerLib
             yield $field;
         }
 
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
 
@@ -82,11 +82,10 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $filters->add(
-            ChoiceFilter::new('type', new TranslatableMessage('Type'))->setChoices(
-                $this->paragraphService->getAll(null)
-            )
-        );
+        $types = $this->paragraphService->getAll(null);
+        if ([] !== $types) {
+            $filters->add(ChoiceFilter::new('type', new TranslatableMessage('Type'))->setChoices($types));
+        }
 
         return $filters;
     }

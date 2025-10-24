@@ -56,7 +56,7 @@ final class StoryService
         $mpdf->SetTitle($story->getTitle());
         $this->addCoverPage($mpdf, $story);
         $chapters = $this->getChapters($story);
-        if (0 == count($chapters)) {
+        if ([] === $chapters) {
             return false;
         }
 
@@ -104,9 +104,9 @@ final class StoryService
      */
     private function getChapters(Story $story): array
     {
-        return $this->cacheService->getOrSet(
+        return $this->cacheService->get(
             'story_chapters_' . $story->getId(),
-            function () use ($story) {
+            function () use ($story): array {
                 $chapters = [];
                 $data     = $story->getChapters();
                 foreach ($data as $row) {
@@ -140,7 +140,7 @@ final class StoryService
         $position = 0;
         foreach ($paragraphs as $paragraph) {
             if ('text' == $paragraph->getType()) {
-                if (0 == $position) {
+                if (0 === $position) {
                     $mpdf->WriteHTML('<h2>' . $chapter->getTitle() . '</h2>');
                 }
 

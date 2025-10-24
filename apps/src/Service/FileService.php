@@ -91,7 +91,7 @@ final class FileService
                     break;
                 }
 
-                if (0 == $find) {
+                if (0 === $find) {
                     $deletes[] = $file;
                 }
             }

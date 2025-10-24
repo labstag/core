@@ -46,10 +46,11 @@ class PostCrudController extends AbstractCrudControllerLib
     {
         // Principal tab + full content set (identity + taxonomy + paragraphs + meta + ref user)
         yield $this->addTabPrincipal();
+        yield $this->crudFieldFactory->addFieldIDShortcode('post');
         $isSuperAdmin = $this->isSuperAdmin();
 
         // Base identity fields (id, title, slug, enable, image)
-        foreach ($this->crudFieldFactory->baseIdentitySet('post', $pageName, self::getEntityFqcn()) as $field) {
+        foreach ($this->crudFieldFactory->baseIdentitySet($pageName, self::getEntityFqcn()) as $field) {
             yield $field;
         }
 
@@ -80,7 +81,7 @@ class PostCrudController extends AbstractCrudControllerLib
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();
         // Dates
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }

@@ -1,13 +1,4 @@
 {
-    "doctrine/annotations": {
-        "version": "2.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "1.10",
-            "ref": "64d8583af5ea57b7afa4aba4b159907f3a148b05"
-        }
-    },
     "doctrine/deprecations": {
         "version": "1.1",
         "recipe": {
@@ -171,6 +162,15 @@
             "public/.htaccess"
         ]
     },
+    "symfony/bluesky-notifier": {
+        "version": "7.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "7.1",
+            "ref": "b6fc42cd94764128d6251b9d7b901515999923e9"
+        }
+    },
     "symfony/console": {
         "version": "7.1",
         "recipe": {
@@ -194,6 +194,15 @@
         "files": [
             "config/packages/debug.yaml"
         ]
+    },
+    "symfony/discord-notifier": {
+        "version": "7.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "5.2",
+            "ref": "b97655f9a2fb8fc04d9f4081e0b5599d897b7f6e"
+        }
     },
     "symfony/flex": {
         "version": "2.4",
@@ -257,6 +266,15 @@
             "branch": "main",
             "version": "1.0",
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
+        }
+    },
+    "symfony/mastodon-notifier": {
+        "version": "7.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.3",
+            "ref": "db38fa16d184fb486ee1e6db67fa1286ff00a35d"
         }
     },
     "symfony/messenger": {
@@ -347,6 +365,15 @@
             "config/packages/security.yaml",
             "config/routes/security.yaml"
         ]
+    },
+    "symfony/telegram-notifier": {
+        "version": "7.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "5.0",
+            "ref": "6cecb59a0e96c9e1cee469f2b82fa920101a68e8"
+        }
     },
     "symfony/translation": {
         "version": "7.1",

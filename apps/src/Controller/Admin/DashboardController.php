@@ -53,7 +53,7 @@ class DashboardController extends AbstractDashboardController
         $data      = $this->configurationService->getConfiguration();
         $dashboard = Dashboard::new();
         $dashboard->setTitle($data->getName());
-        $dashboard->setTranslationDomain('admin');
+        $dashboard->setTranslationDomain('messages');
         $dashboard->renderContentMaximized();
         $dashboard->setLocales($this->userService->getLanguages());
 
@@ -241,12 +241,32 @@ class DashboardController extends AbstractDashboardController
                 'fas fa-film',
                 MovieCrudController::class,
                 $categories,
-                $tags,
+                null,
                 [
                     MenuItem::linkToCrud(
                         new TranslatableMessage('Sagas'),
                         'fas fa-video',
                         SagaCrudController::getEntityFqcn()
+                    ),
+                ],
+            ],
+            [
+                'serie',
+                new TranslatableMessage('Serie'),
+                'fas fa-film',
+                SerieCrudController::class,
+                $categories,
+                null,
+                [
+                    MenuItem::linkToCrud(
+                        new TranslatableMessage('Season'),
+                        'fas fa-video',
+                        SeasonCrudController::getEntityFqcn()
+                    ),
+                    MenuItem::linkToCrud(
+                        new TranslatableMessage('Episode'),
+                        'fas fa-video',
+                        EpisodeCrudController::getEntityFqcn()
                     ),
                 ],
             ],

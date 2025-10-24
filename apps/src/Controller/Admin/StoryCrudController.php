@@ -54,6 +54,7 @@ class StoryCrudController extends AbstractCrudControllerLib
     {
         // Principal tab + standard full content set
         yield $this->addTabPrincipal();
+        yield $this->crudFieldFactory->addFieldIDShortcode('story');
         $isSuperAdmin = $this->isSuperAdmin();
         foreach ($this->crudFieldFactory->fullContentSet(
             'story',
@@ -79,7 +80,7 @@ class StoryCrudController extends AbstractCrudControllerLib
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();
         // Dates
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }

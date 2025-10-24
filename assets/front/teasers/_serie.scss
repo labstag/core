@@ -1,0 +1,21 @@
+@use "../placeholders" as *;
+.teaser-serie{
+  @extend %teaser;
+  .background{
+    height: 433px;
+    align-items: flex-end;
+    justify-content: space-between;
+    .year{
+      background-color: #363636;
+      color: yellow;
+      padding: 5px;
+      margin: 5px;
+    }
+    .seasons{
+      background-color: #363636;
+      color: yellow;
+      padding: 5px;
+      margin: 5px;
+    }
+  }
+}

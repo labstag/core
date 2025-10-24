@@ -47,6 +47,7 @@ class PageCrudController extends AbstractCrudControllerLib
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         yield $this->addTabPrincipal();
+        yield $this->crudFieldFactory->addFieldIDShortcode('page');
         $isSuperAdmin = $this->isSuperAdmin();
         $identity     = $this->getIdEntity($pageName, $currentEntity);
 
@@ -59,7 +60,7 @@ class PageCrudController extends AbstractCrudControllerLib
             yield $fieldChoice;
         }
 
-        yield AssociationField::new('page', new TranslatableMessage('Page'))->autocomplete();
+        yield AssociationField::new('page', new TranslatableMessage('Page'));
         foreach ($this->crudFieldFactory->taxonomySet('page') as $field) {
             yield $field;
         }
@@ -76,7 +77,7 @@ class PageCrudController extends AbstractCrudControllerLib
 
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }
@@ -164,7 +165,7 @@ class PageCrudController extends AbstractCrudControllerLib
      */
     private function getIdEntity(string $pageName, mixed $currentEntity): array
     {
-        $identity = $this->crudFieldFactory->baseIdentitySet('page', $pageName, self::getEntityFqcn());
+        $identity = $this->crudFieldFactory->baseIdentitySet($pageName, self::getEntityFqcn());
         if ($currentEntity instanceof Page && PageEnum::HOME->value == $currentEntity->getType()) {
             // Remove slug field (present at index 2 if withSlug kept)
             unset($identity[2]);

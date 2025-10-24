@@ -38,8 +38,11 @@ final class ViewResolverService
             'entity'     => $entity,
             'paragraphs' => $entity->getParagraphs()->getValues(),
             'img'        => $entity->getImg(),
-            'tags'       => $entity->getTags(),
         ];
+
+        if (method_exists($entity, 'getTags')) {
+            $data['tags'] = $entity->getTags();
+        }
 
         if (method_exists($entity, 'getCategories')) {
             $data['categories'] = $entity->getCategories();

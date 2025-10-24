@@ -3,7 +3,15 @@
     <div class="wrapper">
         <div class="content">
             {% if pagination|length == 0 %}
-                <p>{{ 'No movies found'|trans }}</p>
+                <div class="notfound">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="#c0392b" style="margin-right: 1em;">
+                        <rect x="2" y="4" width="20" height="16" rx="2" fill="#c0392b" opacity="0.2"/>
+                        <rect x="6" y="8" width="12" height="8" rx="1" fill="#c0392b"/>
+                        <circle cx="5" cy="12" r="1" fill="#c0392b"/>
+                        <circle cx="19" cy="12" r="1" fill="#c0392b"/>
+                    </svg>
+                    <span class="text">{{ 'No movies match your search.'|trans }}</span>
+                </div>
             {% else %}
                 <ul>
                     {% for row in pagination %}

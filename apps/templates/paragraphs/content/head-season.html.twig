@@ -1,0 +1,22 @@
+{% use "elements.html.twig" %}
+{% set serie = season.refserie %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
+	<div class="background" style="--image-url: url('{{ site_asset(season.img ? season : season.refserie, 'img') }}')"></div>
+	<div class="content">
+        <div class="wrapper">
+            <h3 class="title">
+                {{ serie.title }} - {{ season.title }}
+            </h3>
+            {% if serie.categories|length > 0 %}
+                <div class="categories">
+                    {% for category in serie.categories %}
+                        <span class="category-{{ category.slug }}">{{ category.title }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="resume">
+                {{ season.overview|raw }}
+            </div>
+        </div>
+    </div>
+</section>

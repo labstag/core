@@ -73,7 +73,7 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
         ];
         foreach ($filterFields as $filterField => $label) {
             $data = $this->getAllData($filterField);
-            if (0 == count($data)) {
+            if ([] === $data) {
                 continue;
             }
 

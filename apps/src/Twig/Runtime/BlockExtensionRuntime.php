@@ -6,12 +6,14 @@ use Labstag\Entity\Block;
 use Labstag\Service\BlockService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class BlockExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         protected BlockService $blockService,
+        protected TranslatorInterface $translator,
     )
     {
         // Inject dependencies if needed
@@ -32,8 +34,12 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         }
 
         $data['data-context_url']  = $urlAdmin;
-        $translate = new TranslatableMessage('Update block (%type%)', ['%type%' => $block->getType()], 'messages');
-        $data['data-context_text'] = $translate->__toString();
+        $data['data-context_text'] = $this->translator->trans(
+            new TranslatableMessage('Update block (%type%)'),
+            [
+                '%type%' => $block->getType(),
+            ]
+        );
 
         return $data;
     }

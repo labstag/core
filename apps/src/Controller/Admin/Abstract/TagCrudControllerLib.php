@@ -9,20 +9,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 abstract class TagCrudControllerLib extends AbstractTypedCrudControllerLib
 {
     #[\Override]
-    public function configureFields(string $pageName): iterable
-    {
-        // Tag is not uploadable: no image and no enable field in the entity
-        return $this->crudFieldFactory->baseIdentitySet(
-            'tag',
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: true,
-            withImage: false,
-            withEnable: false
-        );
-    }
-
-    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -30,6 +16,19 @@ abstract class TagCrudControllerLib extends AbstractTypedCrudControllerLib
         $crud->setEntityLabelInPlural(new TranslatableMessage('Tags'));
 
         return $crud;
+    }
+
+    #[\Override]
+    public function configureFields(string $pageName): iterable
+    {
+        // Tag is not uploadable: no image and no enable field in the entity
+        return $this->crudFieldFactory->baseIdentitySet(
+            $pageName,
+            self::getEntityFqcn(),
+            withSlug: true,
+            withImage: false,
+            withEnable: false
+        );
     }
 
     public static function getEntityFqcn(): string

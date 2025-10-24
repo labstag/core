@@ -18,6 +18,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
@@ -52,6 +53,11 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     protected array $templates = [];
 
     public function __construct(
+        /**
+         * @var iterable<\Labstag\Data\Abstract\DataLib>
+         */
+        #[AutowireIterator('labstag.datas')]
+        protected iterable $dataLibs,
         protected LinkUrlProcessor $linkUrlProcessor,
         protected LoggerInterface $logger,
         protected Security $security,
@@ -219,7 +225,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     protected function setFooter(Block $block, array $data): void
     {
         $blockId = $block->getId();
-        if (0 == count($data)) {
+        if ([] === $data) {
             return;
         }
 
@@ -232,7 +238,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     protected function setHeader(Block $block, array $data): void
     {
         $blockId = $block->getId();
-        if (0 == count($data)) {
+        if ([] === $data) {
             return;
         }
 

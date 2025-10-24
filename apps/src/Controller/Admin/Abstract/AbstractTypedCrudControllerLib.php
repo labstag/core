@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use Override;
 
 /**
  * Abstract controller for typed entities (Category, Tag) to reduce code duplication
@@ -17,7 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
  */
 abstract class AbstractTypedCrudControllerLib extends AbstractCrudControllerLib
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->configureActionsTrash($actions);
@@ -32,17 +33,10 @@ abstract class AbstractTypedCrudControllerLib extends AbstractCrudControllerLib
      */
     public function configureBaseFields(): array
     {
-        return $this->crudFieldFactory->baseIdentitySet(
-            $this->getChildType(),
-            '',
-            static::getEntityFqcn(),
-            withSlug: true,
-            withImage: true,
-            withEnable: true
-        );
+        return $this->crudFieldFactory->baseIdentitySet($this->getChildType(), '', static::getEntityFqcn());
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -56,7 +50,7 @@ abstract class AbstractTypedCrudControllerLib extends AbstractCrudControllerLib
     /**
      * Create entity with proper type setting.
      */
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): object
     {
         $entity = new $entityFqcn();
@@ -65,7 +59,7 @@ abstract class AbstractTypedCrudControllerLib extends AbstractCrudControllerLib
         return $entity;
     }
 
-    #[\Override]
+    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,

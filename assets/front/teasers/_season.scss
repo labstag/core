@@ -1,0 +1,7 @@
+@use "../placeholders" as *;
+.teaser-season{
+  @extend %teaser;
+  .background{
+    height: 586px;
+  }
+}

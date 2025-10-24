@@ -80,23 +80,11 @@ class Movie implements Stringable
     #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'img')]
     private ?File $imgFile = null;
 
-    /**
-     * @var Collection<int, Paragraph>
-     */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'refmovie')]
-    private Collection $paragraphs;
-
     #[ORM\Column(name: 'release_date', type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $releaseDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'movies')]
     private ?Saga $saga = null;
-
-    /**
-     * @var Collection<int, Tag>
-     */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
-    private Collection $tags;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
@@ -113,8 +101,6 @@ class Movie implements Stringable
     public function __construct()
     {
         $this->categories = new ArrayCollection();
-        $this->tags       = new ArrayCollection();
-        $this->paragraphs = new ArrayCollection();
     }
 
     #[Override]
@@ -128,26 +114,6 @@ class Movie implements Stringable
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
             $category->addMovie($this);
-        }
-
-        return $this;
-    }
-
-    public function addParagraph(Paragraph $paragraph): static
-    {
-        if (!$this->paragraphs->contains($paragraph)) {
-            $this->paragraphs->add($paragraph);
-            $paragraph->setRefmovie($this);
-        }
-
-        return $this;
-    }
-
-    public function addTag(Tag $tag): static
-    {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addMovie($this);
         }
 
         return $this;
@@ -214,14 +180,6 @@ class Movie implements Stringable
         return $this->imgFile;
     }
 
-    /**
-     * @return Collection<int, Paragraph>
-     */
-    public function getParagraphs(): Collection
-    {
-        return $this->paragraphs;
-    }
-
     public function getReleaseDate(): ?DateTime
     {
         return $this->releaseDate;
@@ -230,14 +188,6 @@ class Movie implements Stringable
     public function getSaga(): ?Saga
     {
         return $this->saga;
-    }
-
-    /**
-     * @return Collection<int, Tag>
-     */
-    public function getTags(): Collection
-    {
-        return $this->tags;
     }
 
     public function getTitle(): ?string
@@ -279,25 +229,6 @@ class Movie implements Stringable
     {
         if ($this->categories->removeElement($category)) {
             $category->removeMovie($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParagraph(Paragraph $paragraph): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getRefmovie() === $this) {
-            $paragraph->setRefmovie(null);
-        }
-
-        return $this;
-    }
-
-    public function removeTag(Tag $tag): static
-    {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removeMovie($this);
         }
 
         return $this;

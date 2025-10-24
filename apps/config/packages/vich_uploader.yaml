@@ -31,6 +31,39 @@ vich_uploader:
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
+    episode:
+      uri_prefix: /uploads/episode
+      upload_destination: episode.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: tmdb
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    serie:
+      uri_prefix: /uploads/serie
+      upload_destination: serie.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: imdb
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    season:
+      uri_prefix: /uploads/season
+      upload_destination: season.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: tmdb
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
     movie:
       uri_prefix: /uploads/movie
       upload_destination: movie.storage

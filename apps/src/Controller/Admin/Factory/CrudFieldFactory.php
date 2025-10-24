@@ -35,6 +35,15 @@ final class CrudFieldFactory
     {
     }
 
+    public function addFieldIDShortcode(string $type): TextField
+    {
+        $textField = TextField::new('id', new TranslatableMessage('Shortcode'));
+        $textField->formatValue(fn ($identity): string => sprintf('[%s:%s]', $type . 'url', $identity));
+        $textField->onlyOnDetail();
+
+        return $textField;
+    }
+
     public function addFilterCategories(Filters $filters, string $type): void
     {
         $filters->add(
@@ -74,7 +83,6 @@ final class CrudFieldFactory
      * @return array<int, IdField|TextField|SlugField|BooleanField|ImageField|AssociationField>
      */
     public function baseIdentitySet(
-        string $shortcodeType,
         string $pageName,
         string $entityFqcn,
         bool $withSlug = true,
@@ -84,7 +92,6 @@ final class CrudFieldFactory
     {
         $fields   = [];
         $fields[] = $this->idField();
-        $fields[] = $this->idShortcodeField($shortcodeType);
         if ($withSlug) {
             $fields[] = $this->slugField();
         }
@@ -113,19 +120,18 @@ final class CrudFieldFactory
 
     public function categoriesField(string $type): AssociationField
     {
-        return AssociationField::new(
-            'categories',
-            new TranslatableMessage('Categories')
-        )->autocomplete()->setTemplatePath(
-            'admin/field/categories.html.twig'
-        )->setFormTypeOption(
-            'by_reference',
-            false
-        )->setQueryBuilder(
+        $associationField = AssociationField::new('categories', new TranslatableMessage('Categories'));
+        $associationField->autocomplete();
+        $associationField->setTemplatePath('admin/field/categories.html.twig');
+        $associationField->setFormTypeOption('by_reference', false);
+        $associationField->setQueryBuilder(
             function (QueryBuilder $queryBuilder) use ($type): void {
-                $queryBuilder->andWhere('entity.type = :type')->setParameter('type', $type);
+                $queryBuilder->andWhere('entity.type = :type');
+                $queryBuilder->setParameter('type', $type);
             }
         );
+
+        return $associationField;
     }
 
     public function createdAtField(): DateTimeField
@@ -138,8 +144,12 @@ final class CrudFieldFactory
      *
      * @return array<int, mixed>
      */
-    public function dateSet(): array
+    public function dateSet(string $pageName): array
     {
+        if ('new' === $pageName) {
+            return [];
+        }
+
         return [
             FormField::addTab(new TranslatableMessage('Date')),
             $this->createdAtField(),
@@ -156,7 +166,7 @@ final class CrudFieldFactory
     public function fullContentSet(string $type, string $pageName, string $entityFqcn, bool $isSuperAdmin): array
     {
         return array_merge(
-            $this->baseIdentitySet($type, $pageName, $entityFqcn),
+            $this->baseIdentitySet($pageName, $entityFqcn),
             $this->taxonomySet($type),
             $this->paragraphFields($pageName),
             $this->metaFields(),
@@ -167,13 +177,6 @@ final class CrudFieldFactory
     public function idField(): IdField
     {
         return IdField::new('id', new TranslatableMessage('ID'))->onlyOnDetail();
-    }
-
-    public function idShortcodeField(string $type): TextField
-    {
-        return TextField::new('id', new TranslatableMessage('Shortcode'))->formatValue(
-            fn ($identity): string => sprintf('[%s:%s]', $type, $identity)
-        )->onlyOnDetail();
     }
 
     public function imageField(
@@ -187,7 +190,9 @@ final class CrudFieldFactory
             $deleteLabel      = new TranslatableMessage('Delete image');
             $downloadLabel    = new TranslatableMessage('Download');
             $mimeTypesMessage = new TranslatableMessage('Please upload a valid image (JPEG, PNG, GIF, WebP).');
-            $maxSizeMessage   = new TranslatableMessage('The file is too large. Its size should not exceed {{ limit }}.');
+            $maxSizeMessage   = new TranslatableMessage(
+                'The file is too large. Its size should not exceed {{ limit }}.'
+            );
 
             $imageField = TextField::new($type . 'File', $label ?? new TranslatableMessage('Image'))->setFormType(
                 VichImageType::class
@@ -268,12 +273,8 @@ final class CrudFieldFactory
             return [];
         }
 
-        $associationField = AssociationField::new(
-            'refuser',
-            new TranslatableMessage('User')
-        )->autocomplete()->setSortProperty(
-            'username'
-        );
+        $associationField = AssociationField::new('refuser', new TranslatableMessage('User'));
+        $associationField->setSortProperty('username');
 
         return [
             FormField::addTab(new TranslatableMessage('User')),
@@ -314,13 +315,18 @@ final class CrudFieldFactory
 
     public function tagsField(string $type): AssociationField
     {
-        return AssociationField::new('tags', new TranslatableMessage('Tags'))->autocomplete()->setTemplatePath(
-            'admin/field/tags.html.twig'
-        )->setFormTypeOption('by_reference', false)->setQueryBuilder(
+        $associationField = AssociationField::new('tags', new TranslatableMessage('Tags'));
+        $associationField->autocomplete();
+        $associationField->setTemplatePath('admin/field/tags.html.twig');
+        $associationField->setFormTypeOption('by_reference', false);
+        $associationField->setQueryBuilder(
             function (QueryBuilder $queryBuilder) use ($type): void {
-                $queryBuilder->andWhere('entity.type = :type')->setParameter('type', $type);
+                $queryBuilder->andWhere('entity.type = :type');
+                $queryBuilder->setParameter('type', $type);
             }
         );
+
+        return $associationField;
     }
 
     /**
@@ -350,10 +356,7 @@ final class CrudFieldFactory
 
     public function updatedAtField(): DateTimeField
     {
-        return DateTimeField::new(
-            'updatedAt',
-            new TranslatableMessage('updated At')
-        )->hideWhenCreating()->hideOnIndex();
+        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating()->hideOnIndex();
     }
 
     public function workflowField(): TextField

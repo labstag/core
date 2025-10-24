@@ -46,7 +46,6 @@ class SagaCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         foreach ($this->crudFieldFactory->baseIdentitySet(
-            'saga',
             $pageName,
             self::getEntityFqcn(),
             withEnable: false

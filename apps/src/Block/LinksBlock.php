@@ -40,7 +40,7 @@ class LinksBlock extends BlockLib
         );
 
         $links = $this->correctionLinks($block);
-        if (0 == count($links)) {
+        if ([] === $links) {
             $this->logger->debug(
                 'No valid links found',
                 [

@@ -56,7 +56,7 @@ final class SecurityService
         }
 
         $redirections = $this->getRedirections(false);
-        if (0 == count($redirections)) {
+        if ([] === $redirections) {
             return null;
         }
 
@@ -156,7 +156,7 @@ final class SecurityService
             ]
         );
 
-        if (0 != count($data)) {
+        if ([] !== $data) {
             return;
         }
 

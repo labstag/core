@@ -65,6 +65,10 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         unset($token);
         $targetPath = $this->getTargetPath($request->getSession(), $firewallName);
 
+        if (!$targetPath && $request->request->has('_target_path')) {
+            $targetPath = $request->request->get('_target_path');
+        }
+
         return new RedirectResponse($targetPath ?: $this->urlGenerator->generate('front'));
     }
 

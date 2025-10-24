@@ -5,11 +5,13 @@ namespace Labstag\Event\Listener;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Labstag\Event\Abstract\EventEntityLib;
 
 #[AsDoctrineListener(event: Events::prePersist)]
 #[AsDoctrineListener(event: Events::postPersist)]
+#[AsDoctrineListener(event: Events::preUpdate)]
 final class EntityListener extends EventEntityLib
 {
     public function postPersist(PostPersistEventArgs $postPersistEventArgs): void
@@ -22,8 +24,10 @@ final class EntityListener extends EventEntityLib
         $this->updateEntityBanIp($object, $entityManager);
         $this->updateEntityStory($object);
         $this->updateEntityMovie($object);
+        $this->updateEntitySerie($object);
         $this->updateEntityChapter($object);
         $this->updateEntityPage($object);
+        $this->updateEntitySeason($object);
         $this->updateEntityRedirection($object);
 
         $entityManager->flush();
@@ -36,5 +40,13 @@ final class EntityListener extends EventEntityLib
         $this->initworkflow($object);
         $this->updateEntityPage($object);
         $this->initEntityMeta($object);
+    }
+
+    public function preUpdate(PreUpdateEventArgs $preupdateEventArgs): void
+    {
+        $object = $preupdateEventArgs->getObject();
+
+        $this->updateEntityChapter($object);
+        $this->updateEntitySeason($object);
     }
 }

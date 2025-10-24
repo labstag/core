@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Rector\CodingStyle\Rector\FunctionLike\FunctionLikeToFirstClassCallableRector;
 use Rector\Config\RectorConfig;
 use Rector\ValueObject\PhpVersion;
 use Rector\Doctrine\Set\DoctrineSetList;
@@ -42,6 +43,7 @@ $configure->withPreparedSets(
 );
 $configure->withSkip(
     [
+        FunctionLikeToFirstClassCallableRector::class,
         ReadOnlyPropertyRector::class,
         AddTypeToConstRector::class,
         ReadOnlyClassRector::class

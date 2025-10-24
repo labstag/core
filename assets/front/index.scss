@@ -34,6 +34,7 @@
 @use 'paragraphs/news-list' as paragraphnews-list;
 @use 'paragraphs/movie-slider' as paragraphmovie-slider;
 @use 'paragraphs/movie' as paragraphmovie;
+@use 'paragraphs/serie' as paragraphserie;
 @use 'paragraphs/movie_info' as paragraphmovie_info;
 @use 'paragraphs/last-story' as paragraphlast-story;
 @use 'paragraphs/last-news' as paragraphlast-news;
@@ -41,6 +42,8 @@
 @use 'paragraphs/html' as paragraphhtml;
 @use 'paragraphs/hero' as paragraphhero;
 @use 'paragraphs/head' as paragraphhead;
+@use 'paragraphs/head-serie' as paragraphhead-serie;
+@use 'paragraphs/head-season' as paragraphhead-season;
 @use 'paragraphs/head-story' as paragraphhead-story;
 @use 'paragraphs/head-post' as paragraphhead-post;
 @use 'paragraphs/head-chapter' as paragraphhead-chapter;
@@ -48,15 +51,21 @@
 @use 'paragraphs/edito' as paragraphedito;
 @use 'paragraphs/default' as paragraphdefault;
 @use 'paragraphs/chapter-list' as paragraphchapter-list;
+@use 'paragraphs/season-list' as paragraphseason-list;
+@use 'paragraphs/episode-list' as paragraphepisode-list;
 @use 'paragraphs/chapter-lastnext' as paragraphchapter-lastnext;
 
 @use 'teasers/chapter' as teaserchapter;
 @use 'teasers/movie' as teasermovie;
+@use 'teasers/serie' as teaserserie;
 @use 'teasers/page' as teaserpage;
 @use 'teasers/post' as teaserpost;
 @use 'teasers/star' as teaserstar;
+@use 'teasers/season' as teaserseason;
+@use 'teasers/episode' as teaserepisode;
 @use 'teasers/story' as teaserstory;
 
-@use 'modal/video' as modalvideo;
+@use 'modal/movie' as modalmovie;
+@use 'modal/serie' as modalserie;
 
 @use 'labstag';

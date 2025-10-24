@@ -15,7 +15,6 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-#[ORM\Table]
 #[ORM\Index(name: 'IDX_CATEGORY_TYPE_SLUG', columns: ['type', 'slug'])]
 class Category implements Stringable
 {
@@ -55,6 +54,12 @@ class Category implements Stringable
     #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
     private Collection $posts;
 
+    /**
+     * @var Collection<int, Serie>
+     */
+    #[ORM\ManyToMany(targetEntity: Serie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
+    private Collection $series;
+
     #[Gedmo\Slug(updatable: true, fields: ['title'], unique_base: 'type')]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     private ?string $slug = null;
@@ -76,6 +81,7 @@ class Category implements Stringable
         $this->children = new ArrayCollection();
         $this->stories  = new ArrayCollection();
         $this->movies   = new ArrayCollection();
+        $this->series   = new ArrayCollection();
         $this->pages    = new ArrayCollection();
         $this->posts    = new ArrayCollection();
     }
@@ -118,6 +124,15 @@ class Category implements Stringable
     {
         if (!$this->posts->contains($post)) {
             $this->posts->add($post);
+        }
+
+        return $this;
+    }
+
+    public function addSerie(Serie $serie): static
+    {
+        if (!$this->series->contains($serie)) {
+            $this->series->add($serie);
         }
 
         return $this;
@@ -174,6 +189,14 @@ class Category implements Stringable
         return $this->posts;
     }
 
+    /**
+     * @return Collection<int, Serie>
+     */
+    public function getSeries(): Collection
+    {
+        return $this->series;
+    }
+
     public function getSlug(): ?string
     {
         return $this->slug;
@@ -224,6 +247,13 @@ class Category implements Stringable
     public function removePost(Post $post): static
     {
         $this->posts->removeElement($post);
+
+        return $this;
+    }
+
+    public function removeSerie(Serie $serie): static
+    {
+        $this->series->removeElement($serie);
 
         return $this;
     }

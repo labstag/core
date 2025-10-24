@@ -40,7 +40,6 @@ class MemoCrudController extends AbstractCrudControllerLib
         $isSuperAdmin = $this->isSuperAdmin();
         // Memo n'a pas de slug : enlever le slug field du set identité
         foreach ($this->crudFieldFactory->baseIdentitySet(
-            'memo',
             $pageName,
             self::getEntityFqcn(),
             withSlug: false
@@ -58,7 +57,7 @@ class MemoCrudController extends AbstractCrudControllerLib
 
         yield $this->crudFieldFactory->workflowField();
         yield $this->crudFieldFactory->stateField();
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }

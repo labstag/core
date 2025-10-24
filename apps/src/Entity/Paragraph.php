@@ -81,14 +81,17 @@ class Paragraph implements Stringable
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Post $post = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
-    private ?Movie $refmovie = null;
-
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
     private bool $save = true;
+
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    private ?Season $season = null;
+
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    private ?Serie $serie = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     private ?Story $story = null;
@@ -183,9 +186,14 @@ class Paragraph implements Stringable
         return $this->post;
     }
 
-    public function getRefmovie(): ?Movie
+    public function getSeason(): ?Season
     {
-        return $this->refmovie;
+        return $this->season;
+    }
+
+    public function getSerie(): ?Serie
+    {
+        return $this->serie;
     }
 
     public function getStory(): ?Story
@@ -342,16 +350,23 @@ class Paragraph implements Stringable
         return $this;
     }
 
-    public function setRefmovie(?Movie $movie): static
+    public function setSave(bool $save): static
     {
-        $this->refmovie = $movie;
+        $this->save = $save;
 
         return $this;
     }
 
-    public function setSave(bool $save): static
+    public function setSeason(?Season $season): static
     {
-        $this->save = $save;
+        $this->season = $season;
+
+        return $this;
+    }
+
+    public function setSerie(?Serie $serie): static
+    {
+        $this->serie = $serie;
 
         return $this;
     }

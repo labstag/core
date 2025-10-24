@@ -145,11 +145,11 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         string &$propertyName,
     ): void {
         if (1 >= count($propertyNameParts)) {
-            if ($entityDto->isToOneAssociation($propertyName)) {
+            if ($entityDto->getClassMetadata()->isSingleValuedAssociation($propertyName)) {
                 $this->configureToOneAssociation($fieldDto);
             }
 
-            if ($entityDto->isToManyAssociation($propertyName)) {
+            if ($entityDto->getClassMetadata()->isSingleValuedAssociation($propertyName)) {
                 $this->configureToManyAssociation($fieldDto);
             }
 

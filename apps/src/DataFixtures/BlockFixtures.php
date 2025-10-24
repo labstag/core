@@ -105,6 +105,14 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
             $block->addLink($link);
         }
 
+        $page = $this->getPageByTitle('Mes séries favorites');
+        if (!is_null($page)) {
+            $link = new Link();
+            $link->setTitle($page->getTitle());
+            $link->setUrl('[pageurl:' . $page->getId() . ']');
+            $block->addLink($link);
+        }
+
         $page = $this->getPageByTitle('Histoires');
         if (!is_null($page)) {
             $link = new Link();
@@ -117,9 +125,13 @@ class BlockFixtures extends FixtureLib implements DependentFixtureInterface
     private function addParagraphsHead(Block $block): void
     {
         $this->paragraphService->addParagraph($block, 'head-story');
+        $this->paragraphService->addParagraph($block, 'head-serie');
         $this->paragraphService->addParagraph($block, 'head-post');
         $this->paragraphService->addParagraph($block, 'head-chapter');
+        $this->paragraphService->addParagraph($block, 'head-season');
         $this->paragraphService->addParagraph($block, 'chapter-list');
+        $this->paragraphService->addParagraph($block, 'season-list');
+        $this->paragraphService->addParagraph($block, 'episode-list');
     }
 
     private function addParagraphsTest(Block $block): void

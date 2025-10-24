@@ -2,7 +2,7 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="fr" target-language="fr" datatype="plaintext" original="file.ext">
     <header>
-      <tool tool-id="symfony" tool-name="Symfony"/>
+      <tool tool-id="symfony" tool-name="Symfony" />
     </header>
     <body>
       <trans-unit id="PJ8dHq_" resname="vich_uploader.form_label.delete_confirm">
@@ -77,7 +77,8 @@
         <source>Please upload a valid image (JPEG, PNG, GIF, WebP).</source>
         <target>Veuillez télécharger une image valide (JPEG, PNG, GIF, WebP).</target>
       </trans-unit>
-      <trans-unit id="dRMAlp9" resname="The file is too large. Its size should not exceed {{ limit }}.">
+      <trans-unit id="dRMAlp9"
+        resname="The file is too large. Its size should not exceed {{ limit }}.">
         <source>The file is too large. Its size should not exceed {{ limit }}.</source>
         <target>Le fichier est trop volumineux. Sa taille ne doit pas dépasser {{ limit }}.</target>
       </trans-unit>
@@ -1112,6 +1113,78 @@
       <trans-unit id="UP4yleN" resname="Choose paragraph">
         <source>Choose paragraph</source>
         <target>Choisir le paragraphe</target>
+      </trans-unit>
+      <trans-unit id="FBQMJKR" resname="No movies match your search.">
+        <source>No movies match your search.</source>
+        <target>Aucun film ne correspond à votre recherche.</target>
+      </trans-unit>
+      <trans-unit id="Q7w74bC" resname="Serie">
+        <source>Serie</source>
+        <target>Série</target>
+      </trans-unit>
+      <trans-unit id="iCrhJI7" resname="Series">
+        <source>Series</source>
+        <target>Séries</target>
+      </trans-unit>
+      <trans-unit id="qNCZ32Y" resname="Last release date">
+        <source>Last release date</source>
+        <target>Dernière date de sortie</target>
+      </trans-unit>
+      <trans-unit id="kc_J96C" resname="Seasons">
+        <source>Seasons</source>
+        <target>Saisons</target>
+      </trans-unit>
+      <trans-unit id="yH9A3q0" resname="Season">
+        <source>Season</source>
+        <target>Saison</target>
+      </trans-unit>
+      <trans-unit id="uiDZUoC" resname="Air date">
+        <source>Air date</source>
+        <target>Date de diffusion</target>
+      </trans-unit>
+      <trans-unit id="HmgPmMV" resname="Overview">
+        <source>Overview</source>
+        <target>Résumé</target>
+      </trans-unit>
+      <trans-unit id="sWw5MDD" resname="action.toggle_dropdown">
+        <source>action.toggle_dropdown</source>
+        <target>Ouvrir/fermer le menu déroulant</target>
+      </trans-unit>
+      <trans-unit id="GljOcGv" resname="Episode">
+        <source>Episode</source>
+        <target>Épisode</target>
+      </trans-unit>
+      <trans-unit id="dj1cU5B" resname="Episodes">
+        <source>Episodes</source>
+        <target>Épisodes</target>
+      </trans-unit>
+      <trans-unit id="BU8.ySp" resname="%number% episodes">
+        <source>%number% episodes</source>
+        <target>%number% épisodes</target>
+      </trans-unit>
+      <trans-unit id="SSQy6rZ" resname="No season">
+        <source>No season</source>
+        <target>Aucune saison</target>
+      </trans-unit>
+      <trans-unit id="NrIMDqi" resname="1 season">
+        <source>1 season</source>
+        <target>1 saison</target>
+      </trans-unit>
+      <trans-unit id="lueun3r" resname="%count% seasons">
+        <source>%count% seasons</source>
+        <target>%count% saisons</target>
+      </trans-unit>
+      <trans-unit id="vnKP8oF" resname="First release date : %date%">
+        <source>First release date : %date%</source>
+        <target>Première diffusion : %date%</target>
+      </trans-unit>
+      <trans-unit id="qg923XL" resname="Last release date : %date%">
+        <source>Last release date : %date%</source>
+        <target>Dernière diffusion : %date%</target>
+      </trans-unit>
+      <trans-unit id="qSk1MBT" resname="No series match your search.">
+        <source>No series match your search.</source>
+        <target>Aucune série ne correspond à votre recherche.</target>
       </trans-unit>
     </body>
   </file>

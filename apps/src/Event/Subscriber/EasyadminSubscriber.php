@@ -22,6 +22,7 @@ class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInter
         $this->updateEntityBanIp($instance, $this->entityManager);
         $this->updateEntityStory($instance);
         $this->updateEntityMovie($instance);
+        $this->updateEntitySerie($instance);
         $this->updateEntityChapter($instance);
         $this->updateEntityPage($instance);
         $this->updateEntityRedirection($instance);
@@ -40,6 +41,7 @@ class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInter
         $this->updateEntityBanIp($instance, $this->entityManager);
         $this->updateEntityStory($instance);
         $this->updateEntityMovie($instance);
+        $this->updateEntitySerie($instance);
         $this->updateEntityChapter($instance);
         $this->updateEntityPage($instance);
         $this->updateEntityRedirection($instance);

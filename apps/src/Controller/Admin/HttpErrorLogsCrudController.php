@@ -16,6 +16,7 @@ use Labstag\Entity\HttpErrorLogs;
 use Labstag\Field\HttpLogs\IsBotField;
 use Labstag\Field\HttpLogs\SameField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -24,13 +25,20 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     use ReadOnlyActionsTrait;
 
     #[Route('/admin/http-error-logs/{entity}/banip', name: 'admin_http_error_logs_banip')]
-    public function banIp(string $entity): RedirectResponse
+    public function banIp(string $entity, Request $request): RedirectResponse
     {
         $serviceEntityRepositoryLib = $this->getRepository();
         $httpErrorLogs              = $serviceEntityRepositoryLib->find($entity);
         $internetProtocol           = $httpErrorLogs->getInternetProtocol();
 
         $redirectToRoute = $this->redirectToRoute('admin_http_error_logs_index');
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                $redirectToRoute = $this->redirect($url);
+            }
+        }
+
         if ($this->securityService->getCurrentClientIp() === $internetProtocol) {
             $this->addFlash('danger', new TranslatableMessage("You can't ban your own IP"));
 
@@ -38,7 +46,6 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
         }
 
         $this->securityService->addBan($internetProtocol);
-
         $this->addFlash(
             'success',
             new TranslatableMessage(
@@ -119,7 +126,7 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
             yield $field;
         }
 
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
+        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;
         }
     }

@@ -19,7 +19,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: SagaRepository::class)]
 #[Vich\Uploadable]
-#[ORM\Table]
 #[ORM\Index(name: 'IDX_SAGA_SLUG', columns: ['slug'])]
 class Saga implements Stringable
 {

@@ -98,7 +98,9 @@ abstract class ParagraphLib extends AbstractController
             $deleteLabel      = new TranslatableMessage('Delete image');
             $downloadLabel    = new TranslatableMessage('Download');
             $mimeTypesMessage = new TranslatableMessage('Please upload a valid image (JPEG, PNG, GIF, WebP).');
-            $maxSizeMessage   = new TranslatableMessage('The file is too large. Its size should not exceed {{ limit }}.');
+            $maxSizeMessage   = new TranslatableMessage(
+                'The file is too large. Its size should not exceed {{ limit }}.'
+            );
             $textField->setFormTypeOptions(
                 [
                     'required'       => false,
@@ -254,7 +256,7 @@ abstract class ParagraphLib extends AbstractController
         $domDocument->loadHTML($html);
 
         $domNodeList = $domDocument->getElementsByTagName('iframe');
-        if (0 == count($domNodeList)) {
+        if (0 === count($domNodeList)) {
             return null;
         }
 

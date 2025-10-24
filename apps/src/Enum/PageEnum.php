@@ -8,5 +8,6 @@ enum PageEnum: string
     case MOVIES    = 'movie';
     case PAGE      = 'page';
     case POSTS     = 'post';
+    case SERIES    = 'series';
     case STORIES   = 'story';
 }

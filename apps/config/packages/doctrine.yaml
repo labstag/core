@@ -9,6 +9,8 @@ doctrine:
     profiling_collect_backtrace: '%kernel.debug%'
     use_savepoints: true
   orm:
+    second_level_cache:
+      enabled: true
     filters:
       deletedfile: Labstag\Doctrine\Filter\DeleteFileFilter
     auto_generate_proxy_classes: true
