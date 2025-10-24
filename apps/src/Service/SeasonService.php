@@ -4,6 +4,7 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
+use Labstag\Entity\Meta;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Repository\SeasonRepository;
@@ -39,6 +40,9 @@ final class SeasonService
         }
 
         $season = new Season();
+        $meta = new Meta();
+        $season->setMeta($meta);
+        $season->setEnable(true);
         $season->setRefserie($serie);
         $season->setNumber($number);
 
@@ -66,7 +70,7 @@ final class SeasonService
 
     public function save(Season $season): void
     {
-        $this->seasonRepository->save($season);
+        $this->seasonRepository->persist($season);
     }
 
     public function update(Season $season): bool

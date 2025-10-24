@@ -38,6 +38,7 @@ class EpisodeService
         }
 
         $episode = new Episode();
+        $episode->setEnable(true);
         $episode->setRefseason($season);
         $episode->setNumber($number);
 
@@ -46,7 +47,7 @@ class EpisodeService
 
     public function save(Episode $episode): void
     {
-        $this->episodeRepository->save($episode);
+        $this->episodeRepository->persist($episode);
     }
 
     public function update(Episode $episode): bool
