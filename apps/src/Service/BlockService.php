@@ -53,11 +53,7 @@ final class BlockService
      *
      * @return array{templates: mixed, block: mixed}[]
      */
-    public function generate(
-        array $blocks,
-        array $data,
-        bool $disable,
-    ): array
+    public function generate(array $blocks, array $data, bool $disable): array
     {
         $tab = [];
         foreach ($blocks as $block) {

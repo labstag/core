@@ -25,9 +25,7 @@ class LastNewsParagraph extends ParagraphLib
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::POSTS->value);
         /** @var PostRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(
-            Post::class
-        );
+        $serviceEntityRepositoryLib = $this->getRepository(Post::class);
         $total                      = $serviceEntityRepositoryLib->findTotalEnable();
         if (!is_object($listing) || !$listing->isEnable() || 0 == $total) {
             $this->setShow($paragraph, false);

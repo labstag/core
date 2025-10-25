@@ -31,9 +31,7 @@ class LinkUrlProcessor
     /**
      * Process URL and return entity or original URL.
      */
-    public function processUrl(
-        string $url,
-    ): string|object
+    public function processUrl(string $url): string|object
     {
         foreach (self::URL_PATTERNS as $pattern => $entityClass) {
             if (preg_match($pattern, $url, $matches)) {
@@ -53,9 +51,7 @@ class LinkUrlProcessor
      *
      * @return mixed[]
      */
-    public function processUrls(
-        array $urls,
-    ): array
+    public function processUrls(array $urls): array
     {
         // Extract all entity IDs by type first
         $entityIds = $this->extractEntityIds($urls);
@@ -75,9 +71,7 @@ class LinkUrlProcessor
     /**
      * @return ServiceEntityRepositoryLib<object>
      */
-    protected function getRepository(
-        string $entity,
-    ): ServiceEntityRepositoryLib
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
 
@@ -93,9 +87,7 @@ class LinkUrlProcessor
      *
      * @param mixed[] $entityIds
      */
-    private function batchLoadEntities(
-        array $entityIds,
-    ): void
+    private function batchLoadEntities(array $entityIds): void
     {
         foreach ($entityIds as $entityClass => $ids) {
             if (empty($ids)) {
@@ -123,9 +115,7 @@ class LinkUrlProcessor
      *
      * @return mixed[]
      */
-    private function extractEntityIds(
-        array $urls,
-    ): array
+    private function extractEntityIds(array $urls): array
     {
         $entityIds = [];
 
@@ -143,10 +133,7 @@ class LinkUrlProcessor
     /**
      * Get entity from cache or database.
      */
-    private function getEntity(
-        string $entityClass,
-        string $id,
-    ): ?object
+    private function getEntity(string $entityClass, string $id): ?object
     {
         $cacheKey = $entityClass . ':' . $id;
 

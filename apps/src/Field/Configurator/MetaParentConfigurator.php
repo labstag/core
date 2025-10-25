@@ -119,9 +119,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         $adminUrlGenerator = $this->adminUrlGenerator->unsetAll()
             ->set('page', 1);
         // The autocomplete should always start on the first page
-        $adminUrlGenerator->setController(
-            $fieldDto->getCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER)
-        );
+        $adminUrlGenerator->setController($fieldDto->getCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER));
         $adminUrlGenerator->setAction('autocomplete')
             ->set(
                 MetaParentField::PARAM_AUTOCOMPLETE_CONTEXT,
@@ -159,9 +157,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         }
 
         // prepare starting class for association
-        $targetEntityFqcn = $entityDto->getPropertyMetadata(
-            $propertyNameParts[0]
-        );
+        $targetEntityFqcn = $entityDto->getPropertyMetadata($propertyNameParts[0]);
         $targetEntityFqcn = $targetEntityFqcn->get('targetEntity');
         array_shift($propertyNameParts);
         $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
@@ -176,9 +172,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
             }
 
             // overwrite next class from association
-            $targetEntityFqcn = $metadata->getAssociationTargetClass(
-                $propertyNamePart
-            );
+            $targetEntityFqcn = $metadata->getAssociationTargetClass($propertyNamePart);
 
             // read next association metadata
             $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
@@ -237,10 +231,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->setFormTypeOptionIfNotSet('multiple', true);
 
         // @var PersistentCollection $collection
-        $fieldDto->setFormTypeOptionIfNotSet(
-            'class',
-            $fieldDto->getDoctrineMetadata()->get('targetEntity')
-        );
+        $fieldDto->setFormTypeOptionIfNotSet('class', $fieldDto->getDoctrineMetadata()->get('targetEntity'));
 
         if (is_null($fieldDto->getTextAlign())) {
             $fieldDto->setTextAlign(TextAlign::RIGHT);

@@ -23,14 +23,7 @@ class Category implements Stringable
     /**
      * @var Collection<int, self>
      */
-    #[ORM\OneToMany(
-        targetEntity: self::class,
-        mappedBy: 'parent',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent', cascade: ['persist', 'detach'])]
     private Collection $children;
 
     #[ORM\Id]
@@ -42,27 +35,13 @@ class Category implements Stringable
     /**
      * @var Collection<int, Movie>
      */
-    #[ORM\ManyToMany(
-        targetEntity: Movie::class,
-        inversedBy: 'categories',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\ManyToMany(targetEntity: Movie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
     private Collection $movies;
 
     /**
      * @var Collection<int, Page>
      */
-    #[ORM\ManyToMany(
-        targetEntity: Page::class,
-        inversedBy: 'categories',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
     private Collection $pages;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist', 'detach'])]
@@ -72,27 +51,13 @@ class Category implements Stringable
     /**
      * @var Collection<int, Post>
      */
-    #[ORM\ManyToMany(
-        targetEntity: Post::class,
-        inversedBy: 'categories',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
     private Collection $posts;
 
     /**
      * @var Collection<int, Serie>
      */
-    #[ORM\ManyToMany(
-        targetEntity: Serie::class,
-        inversedBy: 'categories',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\ManyToMany(targetEntity: Serie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
     private Collection $series;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'], unique_base: 'type')]
@@ -102,14 +67,7 @@ class Category implements Stringable
     /**
      * @var Collection<int, Story>
      */
-    #[ORM\ManyToMany(
-        targetEntity: Story::class,
-        inversedBy: 'categories',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\ManyToMany(targetEntity: Story::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
     private Collection $stories;
 
     #[ORM\Column(length: 255)]
@@ -265,9 +223,7 @@ class Category implements Stringable
     public function removeChild(self $child): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->children->removeElement(
-            $child
-        ) && $child->getParent() === $this
+        if ($this->children->removeElement($child) && $child->getParent() === $this
         ) {
             $child->setParent(null);
         }

@@ -222,10 +222,7 @@ class BlockCrudController extends AbstractCrudControllerLib
     /**
      * @param mixed[] $allTypes
      */
-    private function getChoiceType(
-        string $pageName,
-        array $allTypes,
-    ): ChoiceField|TextField
+    private function getChoiceType(string $pageName, array $allTypes): ChoiceField|TextField
     {
         if ('new' === $pageName) {
             $field = ChoiceField::new('type', new TranslatableMessage('Type'));

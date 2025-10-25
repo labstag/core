@@ -28,9 +28,7 @@ class ChapterLastNextParagraph extends ParagraphLib
         $story   = $chapter->getRefStory();
 
         /** @var ChapterRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(
-            Chapter::class
-        );
+        $serviceEntityRepositoryLib = $this->getRepository(Chapter::class);
 
         $chapters = $serviceEntityRepositoryLib->getAllActivateByStory($story);
 

@@ -21,9 +21,7 @@ class StoryListParagraph extends ParagraphLib
     {
         unset($disable);
         /** @var StoryRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(
-            Story::class
-        );
+        $serviceEntityRepositoryLib = $this->getRepository(Story::class);
 
         $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
 

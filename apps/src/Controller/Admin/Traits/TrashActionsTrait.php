@@ -72,10 +72,7 @@ trait TrashActionsTrait
         $actions->add(Crud::PAGE_INDEX, $restore);
 
         // remove New/Edit to avoid direct modifications on deleted elements
-        $actions->remove(
-            Crud::PAGE_INDEX,
-            Action::NEW
-        );
+        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
         $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
     }
 

@@ -48,9 +48,7 @@ final class EtagCacheService
      *
      * @param object[] $entities
      */
-    public function generateCollectionEtag(
-        array $entities,
-    ): string
+    public function generateCollectionEtag(array $entities): string
     {
         if ([] === $entities) {
             return sha1('empty-collection');
@@ -76,9 +74,7 @@ final class EtagCacheService
      * - The last modification date (if available)
      * - A hash of the entity's critical properties
      */
-    public function generateEtag(
-        object $entity,
-    ): string
+    public function generateEtag(object $entity): string
     {
         $cacheKey = $this->getCacheKey($entity);
 
@@ -99,9 +95,7 @@ final class EtagCacheService
      *
      * @return array{etag: string, lastModified: DateTimeInterface|null, headers: array<string, string>}
      */
-    public function getCacheHeaders(
-        object $entity,
-    ): array
+    public function getCacheHeaders(object $entity): array
     {
         $etag         = $this->generateEtag($entity);
         $lastModified = $this->getLastModified($entity);
@@ -130,9 +124,7 @@ final class EtagCacheService
      * 2. createdAt (if available and not null)
      * 3. null
      */
-    public function getLastModified(
-        object $entity,
-    ): ?DateTimeInterface
+    public function getLastModified(object $entity): ?DateTimeInterface
     {
         $cacheKey = $this->getCacheKey($entity);
 
@@ -151,16 +143,12 @@ final class EtagCacheService
      *
      * @return array{etag: string, lastModified: DateTimeInterface|null, headers: array<string, string>}
      */
-    public function getOptimizedCacheHeaders(
-        object $entity,
-    ): array
+    public function getOptimizedCacheHeaders(object $entity): array
     {
         $baseHeaders = $this->getCacheHeaders($entity);
 
         // Personnaliser la durée de cache selon le type d'entité
-        $maxAge                                  = $this->getOptimalCacheTime(
-            $entity
-        );
+        $maxAge                                  = $this->getOptimalCacheTime($entity);
         $baseHeaders['headers']['Cache-Control'] = sprintf('public, max-age=%d, must-revalidate', $maxAge);
 
         return $baseHeaders;
@@ -180,10 +168,7 @@ final class EtagCacheService
     /**
      * Checks if an entity has been modified since a given ETag.
      */
-    public function isModifiedSince(
-        object $entity,
-        string $clientEtag,
-    ): bool
+    public function isModifiedSince(object $entity, string $clientEtag): bool
     {
         $currentEtag = $this->generateEtag($entity);
 
@@ -197,10 +182,7 @@ final class EtagCacheService
     /**
      * Checks if an entity has been modified since a given date.
      */
-    public function isModifiedSinceDate(
-        object $entity,
-        DateTimeInterface $ifModifiedSince,
-    ): bool
+    public function isModifiedSinceDate(object $entity, DateTimeInterface $ifModifiedSince): bool
     {
         $lastModified = $this->getLastModified($entity);
 
@@ -247,9 +229,7 @@ final class EtagCacheService
      *
      * @return string[]
      */
-    private function buildEtagParts(
-        object $entity,
-    ): array
+    private function buildEtagParts(object $entity): array
     {
         $parts = [$entity::class];
 
@@ -280,9 +260,7 @@ final class EtagCacheService
      *
      * @return array<string, mixed>
      */
-    private function extractCriticalProperties(
-        object $entity,
-    ): array
+    private function extractCriticalProperties(object $entity): array
     {
         $properties = [];
 
@@ -333,9 +311,7 @@ final class EtagCacheService
     /**
      * Extracts the last modification date of an entity.
      */
-    private function extractLastModified(
-        object $entity,
-    ): ?DateTimeInterface
+    private function extractLastModified(object $entity): ?DateTimeInterface
     {
         // Priority to updatedAt
         if (method_exists($entity, 'getUpdatedAt')) {
@@ -370,9 +346,7 @@ final class EtagCacheService
     /**
      * Determines the optimal cache duration according to entity type.
      */
-    private function getOptimalCacheTime(
-        object $entity,
-    ): int
+    private function getOptimalCacheTime(object $entity): int
     {
         // Default configuration according to entity type
         $cacheTimings = [

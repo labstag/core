@@ -31,10 +31,7 @@ trait CacheableTrait
      *
      * @param callable $callback Function to compute the value if not cached
      */
-    protected function getCached(
-        string $key,
-        callable $callback,
-    ): mixed
+    protected function getCached(string $key, callable $callback): mixed
     {
         if (!isset($this->cache[$key])) {
             $this->cache[$key] = $callback();

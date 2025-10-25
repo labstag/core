@@ -138,10 +138,7 @@ abstract class FixtureAbstract extends Fixture
     /**
      * @param mixed[]|object $entity
      */
-    protected function setImage(
-        object|array $entity,
-        string|PropertyPathInterface $type,
-    ): void
+    protected function setImage(object|array $entity, string|PropertyPathInterface $type): void
     {
         try {
             $generator = $this->setFaker();
@@ -169,9 +166,7 @@ abstract class FixtureAbstract extends Fixture
      *
      * @return mixed[]
      */
-    private function correctionArray(
-        array $data,
-    ): array
+    private function correctionArray(array $data): array
     {
         $newData = [];
         foreach (array_keys($data) as $key) {

@@ -26,17 +26,13 @@ final class VichListener
         $object           = $event->getObject();
 
         // Si le filtre deletedfile est activé, on autorise toujours la suppression
-        if ($filterCollection->isEnabled(
-            'deletedfile'
-        )
+        if ($filterCollection->isEnabled('deletedfile')
         ) {
             return;
         }
 
         // Si c'est un nouveau fichier uploadé, on autorise la suppression
-        if ($this->isDeletedFileNotEntity(
-            $object
-        )
+        if ($this->isDeletedFileNotEntity($object)
         ) {
             return;
         }

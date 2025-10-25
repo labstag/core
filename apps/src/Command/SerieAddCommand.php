@@ -107,9 +107,7 @@ class SerieAddCommand extends Command
     /**
      * @return list<array>
      */
-    private function generateJson(
-        \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet,
-    ): array
+    private function generateJson(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet): array
     {
         $dataJson    = [];
         $headers     = [];

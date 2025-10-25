@@ -13,11 +13,7 @@ trait ParagraphProcessingTrait
      *
      * @return mixed[]|null Returns processed paragraphs or null if no paragraphs found
      */
-    protected function processParagraphs(
-        Block $block,
-        array $data,
-        bool $disable,
-    ): ?array
+    protected function processParagraphs(Block $block, array $data, bool $disable): ?array
     {
         $paragraphs = $block->getParagraphs()->getValues();
         if (0 === count($paragraphs)) {
@@ -55,9 +51,7 @@ trait ParagraphProcessingTrait
      *
      * @param mixed[] $data
      */
-    protected function validateParagraphData(
-        array $data,
-    ): bool
+    protected function validateParagraphData(array $data): bool
     {
         unset($data);
 

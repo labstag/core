@@ -21,9 +21,7 @@ class EditoParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         /** @var EditoRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(
-            Edito::class
-        );
+        $serviceEntityRepositoryLib = $this->getRepository(Edito::class);
         $edito                      = $serviceEntityRepositoryLib->findLast();
         if (!$edito instanceof Edito) {
             $this->setShow($paragraph, false);

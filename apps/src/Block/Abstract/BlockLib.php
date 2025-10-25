@@ -150,9 +150,7 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     /**
      * @return ServiceEntityRepositoryLib<object>
      */
-    protected function getRepository(
-        string $entity,
-    ): ServiceEntityRepositoryLib
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {

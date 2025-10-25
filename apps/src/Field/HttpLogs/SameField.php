@@ -15,10 +15,7 @@ final class SameField implements FieldInterface
     /**
      * @param false|string|null $label
      */
-    public static function new(
-        string $propertyName,
-        $label = null,
-    ): self
+    public static function new(string $propertyName, $label = null): self
     {
         $sameField = (new self());
         $sameField->setProperty($propertyName);
@@ -39,9 +36,7 @@ final class SameField implements FieldInterface
     }
 
     // this format is passed directly to the first argument of `sprintf()` to format the integer before displaying it
-    public function setNumberFormat(
-        string $sprintfFormat,
-    ): self
+    public function setNumberFormat(string $sprintfFormat): self
     {
         $this->setCustomOption(self::OPTION_NUMBER_FORMAT, $sprintfFormat);
 

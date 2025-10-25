@@ -89,10 +89,7 @@ final class ViewResolverService
      *
      * @return mixed[]
      */
-    private function getBlocks(
-        array $data,
-        bool $disable,
-    ): array
+    private function getBlocks(array $data, bool $disable): array
     {
         $queryBuilder = $this->blockRepository->findAllOrderedByRegion();
         $query        = $queryBuilder->getQuery();

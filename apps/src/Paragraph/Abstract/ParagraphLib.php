@@ -161,11 +161,7 @@ abstract class ParagraphLib extends AbstractController
     /**
      * @param mixed[] $data
      */
-    public function generate(
-        Paragraph $paragraph,
-        array $data,
-        bool $disable,
-    ): void
+    public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($paragraph, $data, $disable);
     }
@@ -272,10 +268,7 @@ abstract class ParagraphLib extends AbstractController
     /**
      * @return PaginationInterface<int, mixed>
      */
-    protected function getPaginator(
-        mixed $query,
-        ?int $limit,
-    ): PaginationInterface
+    protected function getPaginator(mixed $query, ?int $limit): PaginationInterface
     {
         $request = $this->requestStack->getCurrentRequest();
 
@@ -285,9 +278,7 @@ abstract class ParagraphLib extends AbstractController
     /**
      * @return ServiceEntityRepositoryLib<object>
      */
-    protected function getRepository(
-        string $entity,
-    ): ServiceEntityRepositoryLib
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {

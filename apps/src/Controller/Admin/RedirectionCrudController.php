@@ -166,10 +166,7 @@ class RedirectionCrudController extends AbstractCrudControllerLib
      * @param array<int, string>            $header
      * @param list<array<int, string|null>> $rows
      */
-    protected function sendToExport(
-        array $header,
-        array $rows,
-    ): Response
+    protected function sendToExport(array $header, array $rows): Response
     {
         $tempZip    = tmpfile();
         $now        = new DateTime('now');

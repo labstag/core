@@ -172,9 +172,7 @@ class UserCrudController extends AbstractCrudControllerLib
      *
      * @return FormBuilderInterface<mixed>
      */
-    private function addPasswordEventListener(
-        FormBuilderInterface $formBuilder,
-    ): FormBuilderInterface
+    private function addPasswordEventListener(FormBuilderInterface $formBuilder): FormBuilderInterface
     {
         return $formBuilder->addEventListener(FormEvents::POST_SUBMIT, $this->hashPassword());
     }

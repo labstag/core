@@ -38,12 +38,7 @@ final class FormService
     /**
      * @param FormInterface<mixed> $form
      */
-    public function execute(
-        FormInterface $form,
-        string $code,
-        bool $disable = false,
-        bool $save = true,
-    ): bool
+    public function execute(FormInterface $form, string $code, bool $disable = false, bool $save = true): bool
     {
         $frontform = $this->get($code);
         if (!$frontform instanceof FrontFormAbstract) {

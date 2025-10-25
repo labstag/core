@@ -231,10 +231,7 @@ final class SerieService
      *
      * @return array<string, mixed>
      */
-    private function getDetailsTmdbSerie(
-        array $details,
-        string $tmdbId,
-    ): array
+    private function getDetailsTmdbSerie(array $details, string $tmdbId): array
     {
         if ('' === $this->tmdbapiKey) {
             return $details;
@@ -299,10 +296,7 @@ final class SerieService
      *
      * @return array<string, mixed>
      */
-    private function getTrailersTmdbSerie(
-        array $details,
-        string $tmdbId,
-    ): array
+    private function getTrailersTmdbSerie(array $details, string $tmdbId): array
     {
         if ('' === $this->tmdbapiKey) {
             return $details;
@@ -370,10 +364,7 @@ final class SerieService
     /**
      * @param array<string, mixed> $details
      */
-    private function setCertification(
-        array $details,
-        Serie $serie,
-    ): void
+    private function setCertification(array $details, Serie $serie): void
     {
         if (!isset($details['release_dates']['results']) || 0 === count($details['release_dates']['results'])) {
             return;
@@ -399,10 +390,7 @@ final class SerieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateCategory(
-        Serie $serie,
-        array $details,
-    ): bool
+    private function updateCategory(Serie $serie, array $details): bool
     {
         if (!isset($details['tmdb']['genres']) || 0 === count($details['tmdb']['genres'])) {
             return false;
@@ -437,10 +425,7 @@ final class SerieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateImageMovie(
-        Serie $serie,
-        array $details,
-    ): bool
+    private function updateImageMovie(Serie $serie, array $details): bool
     {
         $poster = $this->getImgMovie($details);
         if ('' === $poster) {
@@ -455,10 +440,7 @@ final class SerieService
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents(
-                $tempPath,
-                file_get_contents($poster)
-            );
+            file_put_contents($tempPath, file_get_contents($poster));
 
             $uploadedFile = new UploadedFile(
                 path: $tempPath,
@@ -478,7 +460,6 @@ final class SerieService
     private function updateSeasons(Serie $serie, array $details): bool
     {
         if (!isset($details['tmdb']['number_of_seasons'])) {
-
             return false;
         }
 
@@ -494,10 +475,7 @@ final class SerieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateSerie(
-        Serie $serie,
-        array $details,
-    ): bool
+    private function updateSerie(Serie $serie, array $details): bool
     {
         if (!isset($details['tmdb'])) {
             return false;
@@ -540,10 +518,7 @@ final class SerieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateTrailer(
-        Serie $serie,
-        array $details,
-    ): bool
+    private function updateTrailer(Serie $serie, array $details): bool
     {
         if (!isset($details['trailers'])) {
             return false;

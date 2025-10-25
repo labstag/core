@@ -50,9 +50,7 @@ class SubmissionCrudController extends AbstractCrudControllerLib
     /**
      * @return iterable<FieldInterface>
      */
-    private function addFieldsSubmission(
-        Submission $submission,
-    ): iterable
+    private function addFieldsSubmission(Submission $submission): iterable
     {
         $data = $submission->getData();
         $form = $this->formService->get($submission->getType());

@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
@@ -88,8 +89,12 @@ class MovieCrudController extends AbstractCrudControllerLib
         $choiceField->allowMultipleChoices();
         $choiceField->renderExpanded(false);
         yield $choiceField;
+        $episodeCollectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
+        $episodeCollectionField->setTemplatePath('admin/field/runtime-movie.html.twig');
+        $episodeCollectionField->hideOnForm();
+        yield $episodeCollectionField;
         yield from [
-            IntegerField::new('duration', new TranslatableMessage('Duration')),
+            IntegerField::new('duration', new TranslatableMessage('Duration'))->hideOnIndex()->hideOnDetail(),
             $this->addFieldSaga(),
             NumberField::new('evaluation', new TranslatableMessage('Evaluation')),
             IntegerField::new('votes', new TranslatableMessage('Votes')),
@@ -98,10 +103,7 @@ class MovieCrudController extends AbstractCrudControllerLib
             WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex(),
             $this->crudFieldFactory->categoriesField('movie'),
             // image field déjà incluse dans baseIdentitySet
-            $this->crudFieldFactory->booleanField(
-                'file',
-                (string) new TranslatableMessage('File')
-            )->hideOnIndex(),
+            $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'))->hideOnIndex(),
             $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
         ];
         foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {

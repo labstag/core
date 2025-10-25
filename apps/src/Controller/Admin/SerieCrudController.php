@@ -90,6 +90,11 @@ class SerieCrudController extends AbstractCrudControllerLib
         $serieCollectionField = CollectionField::new('seasons', new TranslatableMessage('Seasons'));
         $serieCollectionField->setTemplatePath('admin/field/seasons.html.twig');
         $serieCollectionField->hideOnForm();
+
+        $episodeCollectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
+        $episodeCollectionField->setTemplatePath('admin/field/runtime-serie.html.twig');
+        $episodeCollectionField->hideOnForm();
+        yield $episodeCollectionField;
         yield from [
             NumberField::new('evaluation', new TranslatableMessage('Evaluation')),
             IntegerField::new('votes', new TranslatableMessage('Votes')),
@@ -99,10 +104,7 @@ class SerieCrudController extends AbstractCrudControllerLib
             $this->crudFieldFactory->categoriesField('serie'),
             $serieCollectionField,
             // image field déjà incluse dans baseIdentitySet
-            $this->crudFieldFactory->booleanField(
-                'file',
-                (string) new TranslatableMessage('File')
-            )->hideOnIndex(),
+            $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'))->hideOnIndex(),
             $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
         ];
         foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {

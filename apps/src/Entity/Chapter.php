@@ -60,14 +60,7 @@ class Chapter implements Stringable
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(
-        targetEntity: Paragraph::class,
-        mappedBy: 'chapter',
-        cascade: [
-            'persist',
-            'remove',
-        ]
-    )]
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'chapter', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -88,14 +81,7 @@ class Chapter implements Stringable
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\ManyToMany(
-        targetEntity: Tag::class,
-        mappedBy: 'chapters',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'chapters', cascade: ['persist', 'detach'])]
     private Collection $tags;
 
     public function __construct()
@@ -199,9 +185,7 @@ class Chapter implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement(
-            $paragraph
-        ) && $paragraph->getChapter() === $this
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getChapter() === $this
         ) {
             $paragraph->setChapter(null);
         }
@@ -242,9 +226,7 @@ class Chapter implements Stringable
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(
-                new DateTimeImmutable()
-            );
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 

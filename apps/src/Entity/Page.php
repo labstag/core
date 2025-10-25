@@ -53,27 +53,13 @@ class Page implements Stringable
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\ManyToMany(
-        targetEntity: Category::class,
-        mappedBy: 'pages',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
     private Collection $categories;
 
     /**
      * @var Collection<int, Page>
      */
-    #[ORM\OneToMany(
-        targetEntity: self::class,
-        mappedBy: 'page',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'page', cascade: ['persist', 'detach'])]
     private Collection $children;
 
     #[ORM\Id]
@@ -99,14 +85,7 @@ class Page implements Stringable
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(
-        targetEntity: Paragraph::class,
-        mappedBy: 'page',
-        cascade: [
-            'persist',
-            'remove',
-        ]
-    )]
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'page', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -122,14 +101,7 @@ class Page implements Stringable
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\ManyToMany(
-        targetEntity: Tag::class,
-        mappedBy: 'pages',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
     private Collection $tags;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -288,9 +260,7 @@ class Page implements Stringable
     public function removeChild(self $child): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->children->removeElement(
-            $child
-        ) && $child->getPage() === $this
+        if ($this->children->removeElement($child) && $child->getPage() === $this
         ) {
             $child->setPage(null);
         }
@@ -301,9 +271,7 @@ class Page implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement(
-            $paragraph
-        ) && $paragraph->getPage() === $this
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this
         ) {
             $paragraph->setPage(null);
         }
@@ -344,9 +312,7 @@ class Page implements Stringable
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(
-                new DateTimeImmutable()
-            );
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 

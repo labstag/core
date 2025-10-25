@@ -122,9 +122,7 @@ class Saga implements Stringable
     public function removeMovie(Movie $movie): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->movies->removeElement(
-            $movie
-        ) && $movie->getSaga() === $this
+        if ($this->movies->removeElement($movie) && $movie->getSaga() === $this
         ) {
             $movie->setSaga(null);
         }
@@ -156,9 +154,7 @@ class Saga implements Stringable
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(
-                new DateTimeImmutable()
-            );
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 

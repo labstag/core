@@ -23,11 +23,7 @@ class PostCrudController extends AbstractCrudControllerLib
         $this->setEditDetail($actions);
 
         // Actions publiques et W3C via la factory (héritées abstrait)
-        $this->setActionPublic(
-            $actions,
-            'admin_post_w3c',
-            'admin_post_public'
-        );
+        $this->setActionPublic($actions, 'admin_post_w3c', 'admin_post_public');
 
         return $actions;
     }
@@ -54,10 +50,7 @@ class PostCrudController extends AbstractCrudControllerLib
         $isSuperAdmin = $this->isSuperAdmin();
 
         // Base identity fields (id, title, slug, enable, image)
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn()
-        ) as $field) {
+        foreach ($this->crudFieldFactory->baseIdentitySet($pageName, self::getEntityFqcn()) as $field) {
             yield $field;
         }
 
@@ -67,10 +60,7 @@ class PostCrudController extends AbstractCrudControllerLib
         }
 
         // Additional specific field (resume) not yet in factory bundle - placed at end of principal tab
-        yield WysiwygField::new(
-            'resume',
-            new TranslatableMessage('resume')
-        )->hideOnIndex();
+        yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
 
         // Paragraphs fields
         foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) {
@@ -83,9 +73,7 @@ class PostCrudController extends AbstractCrudControllerLib
         }
 
         // Ref user fields (creates User tab if super admin)
-        foreach ($this->crudFieldFactory->refUserFields(
-            $isSuperAdmin
-        ) as $field) {
+        foreach ($this->crudFieldFactory->refUserFields($isSuperAdmin) as $field) {
             yield $field;
         }
 

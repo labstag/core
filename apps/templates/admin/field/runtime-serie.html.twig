@@ -1,0 +1,8 @@
+{% set instance = entity.instance %}
+{% set runtime = 0 %}
+{% for season in instance.seasons %}
+    {% for episode in season.episodes %}
+        {% set runtime = runtime + episode.runtime %}
+    {% endfor %}
+{% endfor %}
+{{ admin_runtime(runtime) }}

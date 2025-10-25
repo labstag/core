@@ -66,11 +66,7 @@ abstract class AbstractParagraphBlock extends BlockLib
      *
      * @return mixed[]
      */
-    protected function buildBlockData(
-        Block $block,
-        array $paragraphs,
-        array $data,
-    ): array
+    protected function buildBlockData(Block $block, array $paragraphs, array $data): array
     {
         unset($data);
 
@@ -85,10 +81,7 @@ abstract class AbstractParagraphBlock extends BlockLib
      *
      * @param mixed[] $data
      */
-    protected function shouldHideBlock(
-        Block $block,
-        array $data,
-    ): bool
+    protected function shouldHideBlock(Block $block, array $data): bool
     {
         unset($block, $data);
 

@@ -37,10 +37,7 @@ trait WorkflowTrait
      * @param mixed[] $state
      * @param mixed[] $context
      */
-    public function setState(
-        array $state,
-        array $context = [],
-    ): void
+    public function setState(array $state, array $context = []): void
     {
         unset($context);
         $this->state = $state;

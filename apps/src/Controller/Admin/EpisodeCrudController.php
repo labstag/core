@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -75,6 +76,11 @@ class EpisodeCrudController extends AbstractCrudControllerLib
         yield AssociationField::new('refseason', new TranslatableMessage('Season'));
         yield IntegerField::new('number', new TranslatableMessage('Number'));
         yield DateField::new('air_date', new TranslatableMessage('Air date'));
+        yield IntegerField::new('runtime', new TranslatableMessage('Runtime'))->hideOnIndex()->hideOnDetail();
+        $episodeCollectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
+        $episodeCollectionField->setTemplatePath('admin/field/runtime-episode.html.twig');
+        $episodeCollectionField->hideOnForm();
+        yield $episodeCollectionField;
         yield WysiwygField::new('overview', new TranslatableMessage('Overview'))->hideOnIndex();
         foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;

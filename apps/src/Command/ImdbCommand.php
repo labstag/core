@@ -44,9 +44,7 @@ class ImdbCommand extends Command
         $imdb    = $symfonyStyle->ask('Quel est le code IMDb ?');
         $details = ('film' == $type) ? $this->movieService->getDetailsTmdb(
             $imdb
-        ) : $this->serieService->getDetailsTmdb(
-            $imdb
-        );
+        ) : $this->serieService->getDetailsTmdb($imdb);
         if (null === $details) {
             $symfonyStyle->error("Le code IMDb n'est pas valide.");
 

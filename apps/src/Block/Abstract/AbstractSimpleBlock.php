@@ -58,10 +58,7 @@ abstract class AbstractSimpleBlock extends BlockLib
      *
      * @return mixed[]
      */
-    protected function buildSimpleBlockData(
-        Block $block,
-        array $data,
-    ): array
+    protected function buildSimpleBlockData(Block $block, array $data): array
     {
         return [
             'block' => $block,
@@ -74,9 +71,7 @@ abstract class AbstractSimpleBlock extends BlockLib
      *
      * @param mixed[] $data
      */
-    protected function validateBlockData(
-        array $data,
-    ): bool
+    protected function validateBlockData(array $data): bool
     {
         unset($data);
 

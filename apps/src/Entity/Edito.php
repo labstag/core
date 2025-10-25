@@ -52,14 +52,7 @@ class Edito implements Stringable
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(
-        targetEntity: Paragraph::class,
-        mappedBy: 'edito',
-        cascade: [
-            'persist',
-            'remove',
-        ]
-    )]
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'edito', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -131,9 +124,7 @@ class Edito implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement(
-            $paragraph
-        ) && $paragraph->getEdito() === $this
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getEdito() === $this
         ) {
             $paragraph->setEdito(null);
         }
@@ -165,9 +156,7 @@ class Edito implements Stringable
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(
-                new DateTimeImmutable()
-            );
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 

@@ -73,6 +73,10 @@ class SeasonCrudController extends AbstractCrudControllerLib
         $episodeCollectionField->setTemplatePath('admin/field/episodes.html.twig');
         $episodeCollectionField->hideOnForm();
         yield $episodeCollectionField;
+        $episodeCollectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
+        $episodeCollectionField->setTemplatePath('admin/field/runtime-season.html.twig');
+        $episodeCollectionField->hideOnForm();
+        yield $episodeCollectionField;
         yield WysiwygField::new('overview', new TranslatableMessage('Overview'))->hideOnIndex();
         foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
             yield $field;

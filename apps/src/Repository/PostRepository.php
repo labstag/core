@@ -72,17 +72,10 @@ class PostRepository extends ServiceEntityRepositoryLib
      *
      * @return Query<mixed, mixed>
      */
-    private function cacheQuery(
-        Query $query,
-        string $suffix,
-        int $ttl = 600,
-    ): Query
+    private function cacheQuery(Query $query, string $suffix, int $ttl = 600): Query
     {
         // TTL réduit pour contenu récent ; ajustable selon stratégie
-        $query->enableResultCache(
-            $ttl,
-            'post-' . $suffix
-        );
+        $query->enableResultCache($ttl, 'post-' . $suffix);
 
         return $query;
     }
@@ -94,10 +87,7 @@ class PostRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->getQueryBuilder();
         // Relations hypothétiques : tags, categories, meta (ajuster selon mapping réel)
-        $queryBuilder->leftJoin(
-            'p.tags',
-            't'
-        )->addSelect('t');
+        $queryBuilder->leftJoin('p.tags', 't')->addSelect('t');
         if ($this->getEntityManager()->getClassMetadata(Post::class)->hasAssociation('categories')) {
             $queryBuilder->leftJoin('p.categories', 'c')->addSelect('c');
         }

@@ -10,9 +10,7 @@ final class CrudAdminService
         /**
          * @var iterable<\Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib>
          */
-        #[AutowireIterator(
-            'labstag.admincontroller'
-        )]
+        #[AutowireIterator('labstag.admincontroller')]
         private readonly iterable $controllers,
     )
     {

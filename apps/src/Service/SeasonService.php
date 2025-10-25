@@ -164,10 +164,7 @@ final class SeasonService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateImage(
-        Season $season,
-        array $details,
-    ): bool
+    private function updateImage(Season $season, array $details): bool
     {
         $poster = $this->getImgSeason($details);
         if ('' === $poster) {
@@ -182,10 +179,7 @@ final class SeasonService
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents(
-                $tempPath,
-                file_get_contents($poster)
-            );
+            file_put_contents($tempPath, file_get_contents($poster));
 
             $uploadedFile = new UploadedFile(
                 path: $tempPath,

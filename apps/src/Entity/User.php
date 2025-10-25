@@ -45,14 +45,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @var Collection<int, Edito>
      */
-    #[ORM\OneToMany(
-        targetEntity: Edito::class,
-        mappedBy: 'refuser',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\OneToMany(targetEntity: Edito::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
     private Collection $editos;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -67,10 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @var Collection<int, HttpErrorLogs>
      */
-    #[ORM\OneToMany(
-        targetEntity: HttpErrorLogs::class,
-        mappedBy: 'refuser'
-    )]
+    #[ORM\OneToMany(targetEntity: HttpErrorLogs::class, mappedBy: 'refuser')]
     private Collection $httpErrorLogs;
 
     #[ORM\Id]
@@ -88,27 +78,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @var Collection<int, Memo>
      */
-    #[ORM\OneToMany(
-        targetEntity: Memo::class,
-        mappedBy: 'refuser',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\OneToMany(targetEntity: Memo::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
     private Collection $memos;
 
     /**
      * @var Collection<int, Page>
      */
-    #[ORM\OneToMany(
-        targetEntity: Page::class,
-        mappedBy: 'refuser',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\OneToMany(targetEntity: Page::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
     private Collection $pages;
 
     /**
@@ -120,14 +96,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @var Collection<int, Post>
      */
-    #[ORM\OneToMany(
-        targetEntity: Post::class,
-        mappedBy: 'refuser',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
     private Collection $posts;
 
     /**
@@ -139,14 +108,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @var Collection<int, Story>
      */
-    #[ORM\OneToMany(
-        targetEntity: Story::class,
-        mappedBy: 'refuser',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\OneToMany(targetEntity: Story::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
     private Collection $stories;
 
     #[ORM\Column(length: 255, unique: true)]
@@ -388,9 +350,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removeEdito(Edito $edito): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->editos->removeElement(
-            $edito
-        ) && $edito->getRefuser() === $this
+        if ($this->editos->removeElement($edito) && $edito->getRefuser() === $this
         ) {
             $edito->setRefuser(null);
         }
@@ -401,9 +361,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removeHttpErrorLog(HttpErrorLogs $httpErrorLogs): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->httpErrorLogs->removeElement(
-            $httpErrorLogs
-        ) && $httpErrorLogs->getRefUser() === $this
+        if ($this->httpErrorLogs->removeElement($httpErrorLogs) && $httpErrorLogs->getRefUser() === $this
         ) {
             $httpErrorLogs->setRefUser(null);
         }
@@ -414,9 +372,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removeMemo(Memo $memo): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->memos->removeElement(
-            $memo
-        ) && $memo->getRefuser() === $this
+        if ($this->memos->removeElement($memo) && $memo->getRefuser() === $this
         ) {
             $memo->setRefuser(null);
         }
@@ -427,9 +383,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removePage(Page $page): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->pages->removeElement(
-            $page
-        ) && $page->getRefuser() === $this
+        if ($this->pages->removeElement($page) && $page->getRefuser() === $this
         ) {
             $page->setRefuser(null);
         }
@@ -440,9 +394,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removePost(Post $post): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->posts->removeElement(
-            $post
-        ) && $post->getRefuser() === $this
+        if ($this->posts->removeElement($post) && $post->getRefuser() === $this
         ) {
             $post->setRefuser(null);
         }
@@ -453,9 +405,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removeStory(Story $story): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->stories->removeElement(
-            $story
-        ) && $story->getRefuser() === $this
+        if ($this->stories->removeElement($story) && $story->getRefuser() === $this
         ) {
             $story->setRefuser(null);
         }
@@ -480,9 +430,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         if ($avatarFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(
-                new DateTimeImmutable()
-            );
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 

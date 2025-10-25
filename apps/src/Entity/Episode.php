@@ -50,6 +50,9 @@ class Episode
     #[ORM\ManyToOne(inversedBy: 'episodes')]
     private ?Season $refseason = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $runtime = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
@@ -95,6 +98,11 @@ class Episode
     public function getRefseason(): ?Season
     {
         return $this->refseason;
+    }
+
+    public function getRuntime(): ?int
+    {
+        return $this->runtime;
     }
 
     public function getTitle(): ?string
@@ -153,9 +161,7 @@ class Episode
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(
-                new DateTimeImmutable()
-            );
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 
@@ -176,6 +182,13 @@ class Episode
     public function setRefseason(?Season $season): static
     {
         $this->refseason = $season;
+
+        return $this;
+    }
+
+    public function setRuntime(?int $runtime): static
+    {
+        $this->runtime = $runtime;
 
         return $this;
     }

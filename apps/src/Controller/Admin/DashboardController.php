@@ -172,9 +172,7 @@ class DashboardController extends AbstractDashboardController
     /**
      * @return ServiceEntityRepositoryLib<object>
      */
-    protected function getRepository(
-        string $entity,
-    ): ServiceEntityRepositoryLib
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
@@ -215,10 +213,7 @@ class DashboardController extends AbstractDashboardController
      *
      * @return iterable<MenuItem>
      */
-    private function buildContentMenus(
-        array $categories,
-        array $tags,
-    ): iterable
+    private function buildContentMenus(array $categories, array $tags): iterable
     {
         // Definition: identifier, label, icon, controller, categories?, tags?, extra children
         $definitions = [

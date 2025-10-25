@@ -69,11 +69,7 @@ class UserFixtures extends FixtureAbstract implements DependentFixtureInterface
     /**
      * @param array{entity: User, password: string} $data
      */
-    private function setUser(
-        ObjectManager $objectManager,
-        User $user,
-        array $data,
-    ): void
+    private function setUser(ObjectManager $objectManager, User $user, array $data): void
     {
         $this->workflowService->init($user);
         $hash = $this->userService->hashPassword($user, $data['password']);

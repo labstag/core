@@ -31,11 +31,7 @@ abstract class FrontFormAbstract implements FrontFormInterface
     /**
      * @param FormInterface<mixed> $form
      */
-    public function execute(
-        FormInterface $form,
-        bool $disable = false,
-        bool $save = true,
-    ): bool
+    public function execute(FormInterface $form, bool $disable = false, bool $save = true): bool
     {
         $request = $this->requestStack->getCurrentRequest();
         $form->handleRequest($request);
@@ -62,9 +58,7 @@ abstract class FrontFormAbstract implements FrontFormInterface
     /**
      * @return ServiceEntityRepositoryLib<object>
      */
-    protected function getRepository(
-        string $entity,
-    ): ServiceEntityRepositoryLib
+    protected function getRepository(string $entity): ServiceEntityRepositoryLib
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (!$entityRepository instanceof ServiceEntityRepositoryLib) {

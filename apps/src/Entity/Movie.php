@@ -32,14 +32,7 @@ class Movie implements Stringable
     /**
      * @var Collection<int, Category>
      */
-    #[ORM\ManyToMany(
-        targetEntity: Category::class,
-        mappedBy: 'movies',
-        cascade: [
-            'persist',
-            'detach',
-        ]
-    )]
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
     private Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -331,9 +324,7 @@ class Movie implements Stringable
         if ($imgFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(
-                new DateTimeImmutable()
-            );
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 

@@ -266,10 +266,7 @@ final class MovieService
      *
      * @return array<string, mixed>
      */
-    private function getDetailsReleasesDates(
-        array $details,
-        string $tmdbId,
-    ): array
+    private function getDetailsReleasesDates(array $details, string $tmdbId): array
     {
         if ('' === $this->tmdbapiKey) {
             return $details;
@@ -317,9 +314,7 @@ final class MovieService
      *
      * @return array<string, mixed>
      */
-    private function getDetailsTmdbCollection(
-        array $details,
-    ): array
+    private function getDetailsTmdbCollection(array $details): array
     {
         if ('' === $this->tmdbapiKey) {
             return $details;
@@ -375,10 +370,7 @@ final class MovieService
      *
      * @return array<string, mixed>
      */
-    private function getDetailsTmdbMovie(
-        array $details,
-        string $tmdbId,
-    ): array
+    private function getDetailsTmdbMovie(array $details, string $tmdbId): array
     {
         if ('' === $this->tmdbapiKey) {
             return $details;
@@ -455,10 +447,7 @@ final class MovieService
      *
      * @return array<string, mixed>
      */
-    private function getTrailersTmdbMovie(
-        array $details,
-        string $tmdbId,
-    ): array
+    private function getTrailersTmdbMovie(array $details, string $tmdbId): array
     {
         if ('' === $this->tmdbapiKey) {
             return $details;
@@ -526,10 +515,7 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function setCertification(
-        array $details,
-        Movie $movie,
-    ): void
+    private function setCertification(array $details, Movie $movie): void
     {
         if (!isset($details['release_dates']['results']) || 0 === count($details['release_dates']['results'])) {
             return;
@@ -555,10 +541,7 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateCategory(
-        Movie $movie,
-        array $details,
-    ): bool
+    private function updateCategory(Movie $movie, array $details): bool
     {
         if (!isset($details['tmdb']['genres']) || 0 === count($details['tmdb']['genres'])) {
             return false;
@@ -593,10 +576,7 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateImageMovie(
-        Movie $movie,
-        array $details,
-    ): bool
+    private function updateImageMovie(Movie $movie, array $details): bool
     {
         $poster = $this->getImgMovie($details);
         if ('' === $poster) {
@@ -611,10 +591,7 @@ final class MovieService
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents(
-                $tempPath,
-                file_get_contents($poster)
-            );
+            file_put_contents($tempPath, file_get_contents($poster));
 
             $uploadedFile = new UploadedFile(
                 path: $tempPath,
@@ -634,10 +611,7 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateImageSaga(
-        Saga $saga,
-        array $details,
-    ): bool
+    private function updateImageSaga(Saga $saga, array $details): bool
     {
         $poster = $this->getImgSaga($details);
         if ('' === $poster) {
@@ -648,10 +622,7 @@ final class MovieService
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents(
-                $tempPath,
-                file_get_contents($poster)
-            );
+            file_put_contents($tempPath, file_get_contents($poster));
 
             $uploadedFile = new UploadedFile(
                 path: $tempPath,
@@ -671,10 +642,7 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateMovie(
-        Movie $movie,
-        array $details,
-    ): bool
+    private function updateMovie(Movie $movie, array $details): bool
     {
         if (!isset($details['tmdb'])) {
             return false;
@@ -717,10 +685,7 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateSaga(
-        Movie $movie,
-        array $details,
-    ): bool
+    private function updateSaga(Movie $movie, array $details): bool
     {
         if (!isset($details['collection'])) {
             return false;
@@ -761,10 +726,7 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateTrailer(
-        Movie $movie,
-        array $details,
-    ): bool
+    private function updateTrailer(Movie $movie, array $details): bool
     {
         if (!isset($details['trailers'])) {
             return false;
