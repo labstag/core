@@ -35,6 +35,8 @@ class SeasonCrudController extends AbstractCrudControllerLib
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+        $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
+        $actions->remove(Crud::PAGE_DETAIL, Action::EDIT);
         $this->configureActionsTrash($actions);
         $this->configureActionsUpdateImage();
 
@@ -49,8 +51,7 @@ class SeasonCrudController extends AbstractCrudControllerLib
         $crud->setEntityLabelInPlural(new TranslatableMessage('Seasons'));
         $crud->setDefaultSort(
             [
-                'refserie' => 'ASC',
-                'number'   => 'ASC',
+                'number' => 'ASC',
             ]
         );
 

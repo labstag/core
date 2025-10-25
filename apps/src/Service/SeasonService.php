@@ -9,6 +9,7 @@ use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Message\EpisodeMessage;
 use Labstag\Repository\SeasonRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -20,6 +21,7 @@ final class SeasonService
 
     public function __construct(
         private string $tmdbapiKey,
+        private LoggerInterface $logger,
         private CacheService $cacheService,
         private MessageBusInterface $messageBus,
         private HttpClientInterface $httpClient,
@@ -82,6 +84,13 @@ final class SeasonService
         $numberSeason = $season->getNumber();
         $details      = $this->getDetails($tmdb, $numberSeason);
         if (null === $details) {
+            $this->logger->error(
+                'Season not found TMDB',
+                [
+                    'tmdb'          => $tmdb,
+                    'season_number' => $numberSeason,
+                ]
+            );
             return false;
         }
 

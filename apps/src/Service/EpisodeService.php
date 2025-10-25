@@ -7,6 +7,7 @@ use Exception;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Repository\EpisodeRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -17,6 +18,7 @@ class EpisodeService
 
     public function __construct(
         private string $tmdbapiKey,
+        private LoggerInterface $logger,
         private CacheService $cacheService,
         private HttpClientInterface $httpClient,
         protected EpisodeRepository $episodeRepository,
@@ -55,7 +57,23 @@ class EpisodeService
         $tmdb = $episode->getRefseason()->getRefserie()->getTmdb();
         $seasonNumber = $episode->getRefseason()->getNumber();
         $episodeNumber = $episode->getNumber();
-        $details       = $this->getDetails($tmdb, $seasonNumber, $episodeNumber);
+        $details       = $this->getDetailsInitial($tmdb, $seasonNumber, $episodeNumber);
+        if (!is_array($details)) {
+            $details = $this->getDetailsOther($tmdb, $seasonNumber, $episodeNumber);
+            if (!is_array($details)) {
+                $this->logger->error(
+                    'Episode not found TMDB',
+                    [
+                        'tmdb'          => $tmdb,
+                        'season_number' => $seasonNumber,
+                        'episode_number'=> $episodeNumber,
+                    ]
+                );
+
+                return false;
+            }
+        }
+
         $this->updateImage($episode, $details);
         $episode->setOverview($details['overview']);
         $episode->setTmdb($details['id']);
@@ -70,7 +88,61 @@ class EpisodeService
         return true;
     }
 
-    private function getDetails(int $tmdb, int $seasonNumber, int $episodeNumber): ?array
+    
+
+    private function getDetailsOther(int $tmdb, $seasonNumber, $episodeNumber): ?array
+    {
+        $cacheKey = 'tmdb-serie_find_' . $tmdb . '_season_' . $seasonNumber;
+
+        $data = $this->cacheService->get(
+            $cacheKey,
+            function (ItemInterface $item) use ($tmdb, $seasonNumber) {
+                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdb . '/season/' . $seasonNumber . '?language=fr-FR';
+                $response = $this->httpClient->request(
+                    'GET',
+                    $url,
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                            'accept'        => 'application/json',
+                        ],
+                    ]
+                );
+                if (self::STATUSOK !== $response->getStatusCode()) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $data = json_decode($response->getContent(), true);
+                if (0 === count($data['episodes'])) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+
+                return $data;
+            },
+            60
+        );
+
+        if (is_null($data)) {
+            return null;
+        }
+
+        $episodes = $data['episodes'];
+        foreach ($episodes as $episode) {
+            if ($episode['episode_number'] == $episodeNumber) {
+                return $episode;
+            }
+        }
+
+        return null;
+    }
+
+    private function getDetailsInitial(int $tmdb, int $seasonNumber, int $episodeNumber): ?array
     {
         $cacheKey = 'tmdb-serie_find_' . $tmdb . '_season_' . $seasonNumber . '_episode_' . $episodeNumber;
 

@@ -112,23 +112,18 @@ final class FileService
 
     public function getFileInAdapter(string $type, string $fileName): ?string
     {
-        $files = $this->getFilesByAdapter($type);
-        $data  = null;
-        foreach ($files as $file) {
-            if ($file['content']->path() != $fileName) {
-                continue;
+        $fileSystem = null;
+        foreach ($this->fileStorages as $fileStorage) {
+            if ($fileStorage->getType() == $type) {
+                $fileSystem = $fileStorage->getFilesystem();
             }
-
-            $data = $file['folder'] . '/' . $file['path'];
-
-            break;
         }
 
-        if (is_null($data)) {
-            return $data;
+        if (is_null($fileSystem) || !$fileSystem->has($fileName)) {
+            return null;
         }
 
-        return str_replace('%kernel.project_dir%', $this->parameterBag->get('kernel.project_dir'), $data);
+        return str_replace('%kernel.project_dir%', $this->parameterBag->get('kernel.project_dir'), $fileSystem->publicUrl($fileName));
     }
 
     /**
@@ -152,11 +147,11 @@ final class FileService
     /**
      * @return array<string, mixed>
      */
-    public function getFilesByAdapter(string $type): array
+    public function getFilesByAdapter(string $type, string $file = ''): array
     {
         foreach ($this->fileStorages as $fileStorage) {
             if ($fileStorage->getType() == $type) {
-                return $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), '');
+                return $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), $file);
             }
         }
 

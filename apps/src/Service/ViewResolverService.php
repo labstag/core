@@ -56,13 +56,22 @@ final class ViewResolverService
         $blocks   = array_merge($header, $main, $footer);
         $contents = $this->blockService->getContents($blocks);
 
+        $blocks = [
+            'header' => $header,
+            'main'   => $main,
+            'footer' => $footer,
+        ];
+        foreach ($blocks as $key => $value) {
+            if (count($value) != 0) {
+                continue;
+            }
+
+            unset($blocks[$key]);
+        }
+
         return $this->requestCache[$cacheKey] = [
             'meta'   => $this->getMetaByEntity($entity->getMeta()),
-            'blocks' => [
-                'header' => $header,
-                'main'   => $main,
-                'footer' => $footer,
-            ],
+            'blocks' => $blocks,
             'header' => $contents->header,
             'footer' => $contents->footer,
             'config' => $this->configurationService->getConfiguration(),
@@ -132,12 +141,11 @@ final class ViewResolverService
         $reflectionClass = new ReflectionClass($entity);
         $entityName      = ucfirst($reflectionClass->getShortName());
 
-        return $this->requestCache[$cacheKey] = $this->getViewByEntityName($entity, $entityName);
+        return $this->requestCache[$cacheKey] = $this->getViewByEntityName($entityName);
     }
 
-    private function getViewByEntityName(object $entity, string $entityName): string
+    private function getViewByEntityName(string $entityName): string
     {
-        unset($entity);
         $loader = $this->twigEnvironment->getLoader();
         $files  = [
             'views/' . $entityName . '.html.twig',

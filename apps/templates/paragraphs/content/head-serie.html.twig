@@ -1,29 +1,38 @@
 {% use "elements.html.twig" %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
-	<div class="background" style="--image-url: url('{{ site_asset(serie, 'img') }}')"></div>
-	<div class="content">
-        <div class="wrapper">
-            <h3 class="title">
-                {{ serie.title }}
-            </h3>
-            {% if serie.categories|length > 0 %}
-                <div class="categories">
-                    {% for category in serie.categories %}
-                        <span class="category-{{ category.slug }}">{{ category.title }}</span>
-                    {% endfor %}
+    <div class="first">
+        <div class="background" style="--image-url: url('{{ site_asset(serie, 'img') }}')"></div>
+        <div class="content">
+            <div class="wrapper">
+                <h3 class="title">
+                    {{ serie.title }}
+                </h3>
+                {% if serie.categories|length > 0 %}
+                    <div class="categories">
+                        {% for category in serie.categories %}
+                            <span class="category-{{ category.slug }}">{{ category.title }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="citation">
+                    {{ serie.citation|raw }}
                 </div>
-            {% endif %}
-            <div class="citation">
-                {{ serie.citation|raw }}
+                <div class="date">
+                    {{ 'First release date : %date%'|trans({ '%date%': serie.releaseDate|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
+                    <br />
+                    {{ 'Last release date : %date%'|trans({ '%date%': serie.lastreleaseDate|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
+                </div>
+                <div class="links">
+                    <a href="https://www.imdb.com/title/{{ serie.imdb }}" target="_blank" title="{{ 'IMDB page for the serie'|trans|e('html_attr') }}">
+                        {{ 'IMDB page for the serie'|trans }}
+                    </a>
+                </div>
             </div>
-            <div class="date">
-                {{ 'First release date : %date%'|trans({ '%date%': serie.releaseDate|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
-                <br />
-                {{ 'Last release date : %date%'|trans({ '%date%': serie.lastreleaseDate|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
-            </div>
-            <div class="description">
-                {{ serie.description|raw }}
-            </div>
+        </div>
+    </div>
+    <div class="description">
+        <div class="wrapper">
+            {{ serie.description|raw }}
         </div>
     </div>
 </section>

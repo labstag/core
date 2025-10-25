@@ -27,7 +27,9 @@ class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgra
         $queryBuilder = $this->createQueryBuilder('u');
         $queryBuilder->where('u.username = :username OR u.email = :email');
 
-        $data = new ArrayCollection([new Parameter('username', $field), new Parameter('email', $field)]);
+        $data = new ArrayCollection();
+        $data->add(new Parameter('username', $field));
+        $data->add(new Parameter('email', $field));
         $queryBuilder->setParameters($data);
 
         $query = $queryBuilder->getQuery();

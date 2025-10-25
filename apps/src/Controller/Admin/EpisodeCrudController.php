@@ -34,6 +34,8 @@ class EpisodeCrudController extends AbstractCrudControllerLib
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+        $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
+        $actions->remove(Crud::PAGE_DETAIL, Action::EDIT);
         $this->configureActionsTrash($actions);
         $this->configureActionsUpdateImage();
 
@@ -47,7 +49,9 @@ class EpisodeCrudController extends AbstractCrudControllerLib
         $crud->setEntityLabelInSingular(new TranslatableMessage('Episode'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Episodes'));
         $crud->setDefaultSort(
-            ['number' => 'ASC']
+            [
+                'number' => 'ASC'
+            ]
         );
 
         return $crud;
@@ -57,14 +61,12 @@ class EpisodeCrudController extends AbstractCrudControllerLib
     public function configureFields(string $pageName): iterable
     {
         yield $this->addTabPrincipal();
-        yield $this->crudFieldFactory->slugField();
         yield $this->crudFieldFactory->titleField();
         yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
         yield $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn());
         yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
-        $associationField = AssociationField::new('refseason');
+        $associationField = TextField::new('refseason', new TranslatableMessage('Serie'));
         $associationField->setFormTypeOption('choice_label', 'refserie');
-        $associationField->setLabel(new TranslatableMessage('Season'));
         $associationField->formatValue(
             function ($value, $entity) {
                 unset($value);

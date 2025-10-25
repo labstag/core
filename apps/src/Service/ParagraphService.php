@@ -171,7 +171,6 @@ final class ParagraphService
         $object        = new stdClass();
         $object->name  = null;
         $object->value = null;
-
         $reflectionClass  = new ReflectionClass($paragraph);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
