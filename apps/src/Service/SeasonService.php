@@ -91,6 +91,7 @@ final class SeasonService
                     'season_number' => $numberSeason,
                 ]
             );
+
             return false;
         }
 

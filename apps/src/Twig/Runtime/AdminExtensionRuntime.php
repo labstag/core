@@ -27,23 +27,23 @@ class AdminExtensionRuntime implements RuntimeExtensionInterface
         $mins  = $minutes % 60;
 
         $parts = [];
-        if ($years !== 0) {
+        if (0 !== $years) {
             $parts[] = $years . 'a';
         }
 
-        if ($months !== 0) {
+        if (0 !== $months) {
             $parts[] = $months . 'm';
         }
 
-        if ($days !== 0) {
+        if (0 !== $days) {
             $parts[] = $days . 'j';
         }
 
-        if ($hours !== 0) {
+        if (0 !== $hours) {
             $parts[] = $hours . 'h';
         }
 
-        if ($mins !== 0) {
+        if (0 !== $mins) {
             $parts[] = $mins . 'min';
         }
 

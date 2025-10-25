@@ -50,9 +50,7 @@ class SeasonCrudController extends AbstractCrudControllerLib
         $crud->setEntityLabelInSingular(new TranslatableMessage('Season'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Seasons'));
         $crud->setDefaultSort(
-            [
-                'number' => 'ASC',
-            ]
+            ['number' => 'ASC']
         );
 
         return $crud;

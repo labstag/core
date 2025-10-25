@@ -123,7 +123,11 @@ final class FileService
             return null;
         }
 
-        return str_replace('%kernel.project_dir%', $this->parameterBag->get('kernel.project_dir'), $fileSystem->publicUrl($fileName));
+        return str_replace(
+            '%kernel.project_dir%',
+            $this->parameterBag->get('kernel.project_dir'),
+            $fileSystem->publicUrl($fileName)
+        );
     }
 
     /**

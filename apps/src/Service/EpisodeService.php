@@ -64,9 +64,9 @@ class EpisodeService
                 $this->logger->error(
                     'Episode not found TMDB',
                     [
-                        'tmdb'          => $tmdb,
-                        'season_number' => $seasonNumber,
-                        'episode_number'=> $episodeNumber,
+                        'tmdb'           => $tmdb,
+                        'season_number'  => $seasonNumber,
+                        'episode_number' => $episodeNumber,
                     ]
                 );
 
@@ -88,9 +88,41 @@ class EpisodeService
         return true;
     }
 
-    
+    private function getDetailsInitial(int $tmdb, int $seasonNumber, int $episodeNumber): ?array
+    {
+        $cacheKey = 'tmdb-serie_find_' . $tmdb . '_season_' . $seasonNumber . '_episode_' . $episodeNumber;
 
-    private function getDetailsOther(int $tmdb, $seasonNumber, $episodeNumber): ?array
+        return $this->cacheService->get(
+            $cacheKey,
+            function (ItemInterface $item) use ($tmdb, $seasonNumber, $episodeNumber): ?array {
+                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdb . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '?language=fr-FR';
+                $response = $this->httpClient->request(
+                    'GET',
+                    $url,
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                            'accept'        => 'application/json',
+                        ],
+                    ]
+                );
+                if (self::STATUSOK !== $response->getStatusCode()) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $data = json_decode($response->getContent(), true);
+
+                $item->expiresAfter(60);
+
+                return $data;
+            },
+            60
+        );
+    }
+
+    private function getDetailsOther(int $tmdb, ?int $seasonNumber, ?int $episodeNumber): ?array
     {
         $cacheKey = 'tmdb-serie_find_' . $tmdb . '_season_' . $seasonNumber;
 
@@ -140,40 +172,6 @@ class EpisodeService
         }
 
         return null;
-    }
-
-    private function getDetailsInitial(int $tmdb, int $seasonNumber, int $episodeNumber): ?array
-    {
-        $cacheKey = 'tmdb-serie_find_' . $tmdb . '_season_' . $seasonNumber . '_episode_' . $episodeNumber;
-
-        return $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdb, $seasonNumber, $episodeNumber): ?array {
-                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdb . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '?language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $data = json_decode($response->getContent(), true);
-
-                $item->expiresAfter(60);
-
-                return $data;
-            },
-            60
-        );
     }
 
     /**

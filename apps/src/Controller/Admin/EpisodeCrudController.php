@@ -49,9 +49,7 @@ class EpisodeCrudController extends AbstractCrudControllerLib
         $crud->setEntityLabelInSingular(new TranslatableMessage('Episode'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Episodes'));
         $crud->setDefaultSort(
-            [
-                'number' => 'ASC'
-            ]
+            ['number' => 'ASC']
         );
 
         return $crud;
@@ -65,16 +63,16 @@ class EpisodeCrudController extends AbstractCrudControllerLib
         yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
         yield $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn());
         yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
-        $associationField = TextField::new('refseason', new TranslatableMessage('Serie'));
-        $associationField->setFormTypeOption('choice_label', 'refserie');
-        $associationField->formatValue(
+        $textField = TextField::new('refseason', new TranslatableMessage('Serie'));
+        $textField->setFormTypeOption('choice_label', 'refserie');
+        $textField->formatValue(
             function ($value, $entity) {
                 unset($value);
 
                 return $entity->getRefseason()?->getRefserie();
             }
         );
-        yield $associationField;
+        yield $textField;
         yield AssociationField::new('refseason', new TranslatableMessage('Season'));
         yield IntegerField::new('number', new TranslatableMessage('Number'));
         yield DateField::new('air_date', new TranslatableMessage('Air date'));

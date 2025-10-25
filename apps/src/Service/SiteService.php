@@ -2,10 +2,10 @@
 
 namespace Labstag\Service;
 
-use Labstag\Entity\Chapter;
 use Labstag\Entity\Configuration;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -13,6 +13,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class SiteService
 {
     public function __construct(
+        #[AutowireIterator('labstag.datas')]
+        private iterable $dataLibs,
         private ConfigurationService $configurationService,
         private FileService $fileService,
         private TokenStorageInterface $tokenStorage,
@@ -51,6 +53,17 @@ final class SiteService
         return is_null($favicon) ? $this->getFavicon('favicon') : $favicon;
     }
 
+    public function getTitleMeta(object $entity): ?string
+    {
+        foreach ($this->dataLibs as $datalib) {
+            if ($datalib->supports($entity)) {
+                return $datalib->getTitleMeta($entity);
+            }
+        }
+
+        return '';
+    }
+
     public function isEnable(object $entity): bool
     {
         return !(!$entity->isEnable() && !$this->getUser() instanceof UserInterface);
@@ -63,19 +76,6 @@ final class SiteService
     public function isHome(array $data): bool
     {
         return isset($data['entity']) && $data['entity'] instanceof Page && PageEnum::HOME->value == $data['entity']->getType();
-    }
-
-    public function setTitle(object $entity): ?string
-    {
-        if ($entity instanceof Chapter) {
-            return $this->setTitle($entity->getRefStory()) . ' - ' . $entity->getTitle();
-        }
-
-        if (method_exists($entity, 'getTitle')) {
-            return $entity->getTitle();
-        }
-
-        return '';
     }
 
     /**

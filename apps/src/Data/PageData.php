@@ -29,6 +29,11 @@ class PageData extends DataAbstract implements DataInterface
         return $entity->getTitle();
     }
 
+    public function getTitleMeta(object $entity): string
+    {
+        return $this->getTitle($entity);
+    }
+
     public function match(string $slug): bool
     {
         $page = $this->getEntityBySlug($slug);

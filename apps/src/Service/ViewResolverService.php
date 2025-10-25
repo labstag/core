@@ -62,7 +62,7 @@ final class ViewResolverService
             'footer' => $footer,
         ];
         foreach ($blocks as $key => $value) {
-            if (count($value) != 0) {
+            if (0 !== count($value)) {
                 continue;
             }
 
