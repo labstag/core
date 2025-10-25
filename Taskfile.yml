@@ -64,18 +64,18 @@ tasks:
     cmds:
     - rm -rf ./conf/apache2 || true
     - mkdir -p ./conf/apache2
-    - task docker:create CONTAINER_NAME=labstag-php IMAGE_NAME=$(awk '/www:/ {f=1} f && /image:/ {print $2; exit}' {{.DOCKERCOMPOSEFILE}})
+    - task docker:create CONTAINER_NAME=labstagphp IMAGE_NAME=$(awk '/www:/ {f=1} f && /image:/ {print $2; exit}' {{.DOCKERCOMPOSEFILE}})
     - task: docker:getfile
       vars:
-        CONTAINER_NAME: "labstag-php"
+        CONTAINER_NAME: "labstagphp"
         FILE_PATH: "/etc/apache2/sites-available/000-default.conf"
         DEST_PATH: "./conf/apache2/000-default.conf"
     - task: docker:getfile
       vars:
-        CONTAINER_NAME: "labstag-php"
+        CONTAINER_NAME: "labstagphp"
         FILE_PATH: "/etc/apache2/apache2.conf"
         DEST_PATH: "./conf/apache2/apache2.conf"
-    - docker rm -f labstag-php
+    - docker rm -f labstagphp
     - task: apache:updateconfig
       vars:
         SERVERNAME: "{{.SERVERNAME}}"
