@@ -2,6 +2,7 @@
 
 namespace Labstag\Command;
 
+use Labstag\Api\TmdbApi;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Serie;
@@ -23,6 +24,7 @@ class ImdbCommand extends Command
 {
     public function __construct(
         protected SerieService $serieService,
+        protected TmdbApi $tmdbApi,
         protected MovieService $movieService,
         protected MessageBusInterface $messageBus,
         protected SerieRepository $serieRepository,
@@ -39,28 +41,24 @@ class ImdbCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
-        $type         = $symfonyStyle->choice('Voulez-vous traiter un film ou une série ?', ['film', 'série']);
+        $imdb         = $symfonyStyle->ask('Quel est le code IMDb ?');
+        $data         = $this->tmdbApi->findByImdb($imdb);
+        dump($data);
+        if (is_null($data)) {
+            $symfonyStyle->error("Le code IMDB n'est pas valide");
 
-        $imdb    = $symfonyStyle->ask('Quel est le code IMDb ?');
-        $details = ('film' == $type) ? $this->movieService->getDetailsTmdb(
-            $imdb
-        ) : $this->serieService->getDetailsTmdb($imdb);
-        if (null === $details) {
-            $symfonyStyle->error("Le code IMDb n'est pas valide.");
-
-            return Command::SUCCESS;
+            return Command::INVALID;
         }
-
-        if ('film' === $type) {
+        if (isset($data['movie_results'][0]['id'])) {
+            $imdb  = $data['movie_results'][0]['id'];
             $movie = $this->movieRepository->findOneBy(
                 ['imdb' => $imdb]
             );
             if ($movie instanceof Movie) {
                 $symfonyStyle->error('Le film existe déjà en base de données.');
 
-                return Command::SUCCESS;
+                return Command::INVALID;
             }
-
             $movie = new Movie();
             $movie->setEnable(true);
             $movie->setAdult(false);
@@ -68,37 +66,36 @@ class ImdbCommand extends Command
             $movie->setTitle($imdb);
             $movie->setImdb($imdb);
             $this->movieRepository->save($movie);
-
             $this->messageBus->dispatch(new MovieMessage($movie->getId()));
-
             $symfonyStyle->text(sprintf('Film %s ajouté en base de données.', $movie->getTitle()));
-
             return Command::SUCCESS;
         }
 
-        $serie = $this->serieRepository->findOneBy(
-            ['imdb' => $imdb]
-        );
-        if ($serie instanceof Serie) {
-            $symfonyStyle->error('La série existe déjà en base de données.');
+        if (isset($data['tv_results'][0]['id'])) {
+            $serie = $this->serieRepository->findOneBy(
+                ['imdb' => $imdb]
+            );
+            if ($serie instanceof Serie) {
+                $symfonyStyle->error('La série existe déjà en base de données.');
 
+                return Command::SUCCESS;
+            }
+            $serie = new Serie();
+            $meta  = new Meta();
+            $serie->setFile(false);
+            $serie->setMeta($meta);
+            $serie->setEnable(true);
+            $serie->setAdult(false);
+            $serie->setImdb($imdb);
+            $serie->setTitle($imdb);
+            $this->serieRepository->save($serie);
+            $this->messageBus->dispatch(new SerieMessage($serie->getId()));
+            $symfonyStyle->text(sprintf('Série %s ajoutée en base de données.', $serie->getTitle()));
             return Command::SUCCESS;
         }
 
-        $serie = new Serie();
-        $meta  = new Meta();
-        $serie->setFile(false);
-        $serie->setMeta($meta);
-        $serie->setEnable(true);
-        $serie->setAdult(false);
-        $serie->setImdb($imdb);
-        $serie->setTitle($imdb);
+        $symfonyStyle->error('Problème dans le retour API');
 
-        $this->serieRepository->save($serie);
-        $this->messageBus->dispatch(new SerieMessage($serie->getId()));
-
-        $symfonyStyle->text(sprintf('Série %s ajoutée en base de données.', $serie->getTitle()));
-
-        return Command::SUCCESS;
+        return Command::FAILURE;
     }
 }

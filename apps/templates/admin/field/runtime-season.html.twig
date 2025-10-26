@@ -3,4 +3,4 @@
 {% for episode in instance.episodes %}
     {% set runtime = runtime + episode.runtime %}
 {% endfor %}
-{{ admin_runtime(runtime) }}
+{{ time_runtime(runtime) }}

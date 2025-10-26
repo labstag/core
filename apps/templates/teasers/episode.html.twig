@@ -1,8 +1,14 @@
 <div class="background spoiler" data-bg="{{ site_asset(episode, 'img') }}"></div>
 <div class="content">
     <h3 class="title">
-        {{ episode.title }}
+        #{{ index }} {{ episode.title }}
     </h3>
+    <div>
+        {{ "Air date : %air_date%"|trans({'%air_date%': episode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
+    </div>
+    <div class="duration">
+        {{ time_runtime(episode.runtime) }}
+    </div>
     <div class="overview">
         {{ episode.overview|raw }}
     </div>

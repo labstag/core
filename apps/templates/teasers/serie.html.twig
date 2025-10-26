@@ -1,4 +1,10 @@
 {% set seasons = serie.seasons|length %}
+{% set runtime = 0 %}
+{% for season in serie.seasons %}
+    {% for episode in season.episodes %}
+        {% set runtime = runtime + episode.runtime %}
+    {% endfor %}
+{% endfor %}
 <a href="{{ site_path(serie) }}">
     <div class="background spoiler" data-bg="{{ site_asset(serie, 'img') }}">
         {% if serie.releaseDate != '' %}
@@ -20,5 +26,8 @@
         <h3 class="title">
             {{ serie.title }}
         </h3>
+        <div class="duration">
+            {{ time_runtime(runtime) }}
+        </div>
     </div>
 </a>

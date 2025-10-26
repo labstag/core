@@ -30,7 +30,7 @@ class TmdbApi
         }
 
         $locale   = $this->configurationService->getLocaleTmdb();
-        $cacheKey = 'tmdb-serie_find_' . $imdbId . '_lang_' . $locale;
+        $cacheKey = 'tmdb_find_' . $imdbId . '_lang_' . $locale;
 
         return $this->cacheService->get(
             $cacheKey,

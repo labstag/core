@@ -4,7 +4,7 @@ namespace Labstag\Twig\Runtime;
 
 use Twig\Extension\RuntimeExtensionInterface;
 
-class AdminExtensionRuntime implements RuntimeExtensionInterface
+class TimeExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct()
     {

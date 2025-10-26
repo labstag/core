@@ -1,4 +1,10 @@
 {% use "elements.html.twig" %}
+{% set runtime = 0 %}
+{% for season in serie.seasons %}
+    {% for episode in season.episodes %}
+        {% set runtime = runtime + episode.runtime %}
+    {% endfor %}
+{% endfor %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
     <div class="first">
         <div class="background" style="--image-url: url('{{ site_asset(serie, 'img') }}')"></div>
@@ -18,9 +24,10 @@
                     {{ serie.citation|raw }}
                 </div>
                 <div class="date">
-                    {{ 'First release date : %date%'|trans({ '%date%': serie.releaseDate|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
-                    <br />
-                    {{ 'Last release date : %date%'|trans({ '%date%': serie.lastreleaseDate|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
+                    {{ "From %start% to %end%"|trans({'%start%': serie.releaseDate|format_date(locale: 'fr_FR', dateFormat: 'full'),'%end%': serie.lastreleaseDate|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
+                </div>
+                <div class="duration">
+                    {{ time_runtime(runtime) }}
                 </div>
                 <div class="links">
                     <a href="https://www.imdb.com/title/{{ serie.imdb }}" target="_blank" title="{{ 'IMDB page for the serie'|trans|e('html_attr') }}">

@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -72,8 +73,13 @@ trait TrashActionsTrait
         $actions->add(Crud::PAGE_INDEX, $restore);
 
         // remove New/Edit to avoid direct modifications on deleted elements
-        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
-        $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
+        try {
+            $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+            $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
+        } catch (Exception $exception) {
+            unset($exception);
+            // Handle exception if needed
+        }
     }
 
     private function addTrashToggleAction(Actions $actions, Request $request, AdminUrlGenerator $urlGenerator): void

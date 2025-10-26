@@ -101,6 +101,12 @@ final class SeasonService
 
         $this->updateImage($season, $details);
         $episodes = count($details['episodes']);
+        if (0 === $episodes && 0 == $season->getEpisodes()) {
+            $this->seasonRepository->remove($season);
+
+            return true;
+        }
+
         for ($number = 1; $number <= $episodes; ++$number) {
             $episode = $this->episodeService->getEpisode($season, $number);
             $this->episodeService->save($episode);

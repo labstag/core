@@ -1193,6 +1193,22 @@
         <source>IMDB page for the serie</source>
         <target>Page IMDB de la série</target>
       </trans-unit>
+      <trans-unit id="myYc.Sq" resname="Language Tmdb">
+        <source>Language Tmdb</source>
+        <target>Langue TMDB</target>
+      </trans-unit>
+      <trans-unit id="NmBEAyy" resname="Placeholders">
+        <source>Placeholders</source>
+        <target>Espaces réservés</target>
+      </trans-unit>
+      <trans-unit id="diM8L12" resname="Air date : %air_date%">
+        <source>Air date : %air_date%</source>
+        <target>Date de diffusion : %air_date%</target>
+      </trans-unit>
+      <trans-unit id="Nh7o8Vr" resname="From %start% to %end%">
+        <source>From %start% to %end%</source>
+        <target>Du %start% au %end%</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
