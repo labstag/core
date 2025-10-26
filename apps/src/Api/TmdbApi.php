@@ -53,11 +53,6 @@ class TmdbApi
                 }
 
                 $data = json_decode($response->getContent(), true);
-                if (0 === count($data['tv_results'])) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
 
                 $item->expiresAfter(86400);
 
