@@ -1209,6 +1209,10 @@
         <source>From %start% to %end%</source>
         <target>Du %start% au %end%</target>
       </trans-unit>
+      <trans-unit id="CXCdT.D" resname="in Production">
+        <source>in Production</source>
+        <target>En production</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

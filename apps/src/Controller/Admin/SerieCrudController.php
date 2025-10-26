@@ -77,6 +77,7 @@ class SerieCrudController extends CrudControllerAbstract
             yield $field;
         }
 
+        yield $this->crudFieldFactory->booleanField('inProduction', (string) new TranslatableMessage('in Production'));
         yield TextField::new('imdb', new TranslatableMessage('Imdb'))->hideOnIndex();
         yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
         yield TextField::new('certification', new TranslatableMessage('Certification'))->hideOnIndex();
