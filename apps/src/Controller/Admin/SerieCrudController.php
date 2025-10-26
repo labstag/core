@@ -16,6 +16,7 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\SerieMessage;
+use Labstag\Service\SerieService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Countries;

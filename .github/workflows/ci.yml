@@ -52,11 +52,6 @@ jobs:
                 npm install
             fi
       
-      - name: Build assets
-        run: npm run encore:build
-        env:
-          NODE_ENV: production
-      
       - name: Setup environment files
         run: |
           cp apps/.env.test apps/.env

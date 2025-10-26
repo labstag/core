@@ -122,6 +122,9 @@ class Serie implements Stringable
     #[ORM\Column(nullable: true)]
     private ?int $votes = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $inProduction = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -462,6 +465,18 @@ class Serie implements Stringable
     public function setVotes(?int $votes): static
     {
         $this->votes = $votes;
+
+        return $this;
+    }
+
+    public function isInProduction(): ?bool
+    {
+        return $this->inProduction;
+    }
+
+    public function setInProduction(?bool $inProduction): static
+    {
+        $this->inProduction = $inProduction;
 
         return $this;
     }

@@ -38,6 +38,9 @@ final class Version20251023223008 extends AbstractMigration
         $this->addSql('ALTER TABLE paragraph ADD CONSTRAINT FK_7DD398624EC001D1 FOREIGN KEY (season_id) REFERENCES season (id)');
         $this->addSql('CREATE INDEX IDX_7DD39862D94388BD ON paragraph (serie_id)');
         $this->addSql('CREATE INDEX IDX_7DD398624EC001D1 ON paragraph (season_id)');
+        $this->addSql('CREATE TABLE messenger_messages (id BIGINT AUTO_INCREMENT NOT NULL, body LONGTEXT NOT NULL, headers LONGTEXT NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at DATETIME NOT NULL, available_at DATETIME NOT NULL, delivered_at DATETIME DEFAULT NULL, INDEX IDX_75EA56E0FB7336F0 (queue_name), INDEX IDX_75EA56E0E3BD61CE (available_at), INDEX IDX_75EA56E016BA31DB (delivered_at), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
+        $this->addSql('ALTER TABLE configuration ADD chapter_placeholder VARCHAR(255) DEFAULT NULL, ADD edito_placeholder VARCHAR(255) DEFAULT NULL, ADD episode_placeholder VARCHAR(255) DEFAULT NULL, ADD language_tmdb VARCHAR(255) DEFAULT NULL, ADD memo_placeholder VARCHAR(255) DEFAULT NULL, ADD movie_placeholder VARCHAR(255) DEFAULT NULL, ADD page_placeholder VARCHAR(255) DEFAULT NULL, ADD post_placeholder VARCHAR(255) DEFAULT NULL, ADD saga_placeholder VARCHAR(255) DEFAULT NULL, ADD season_placeholder VARCHAR(255) DEFAULT NULL, ADD serie_placeholder VARCHAR(255) DEFAULT NULL, ADD star_placeholder VARCHAR(255) DEFAULT NULL, ADD story_placeholder VARCHAR(255) DEFAULT NULL, ADD user_placeholder VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE serie ADD in_production TINYINT(1) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
@@ -61,5 +64,8 @@ final class Version20251023223008 extends AbstractMigration
         $this->addSql('DROP INDEX IDX_7DD39862D94388BD ON paragraph');
         $this->addSql('DROP INDEX IDX_7DD398624EC001D1 ON paragraph');
         $this->addSql('ALTER TABLE paragraph DROP serie_id, DROP season_id');
+        $this->addSql('DROP TABLE messenger_messages');
+        $this->addSql('ALTER TABLE configuration DROP chapter_placeholder, DROP edito_placeholder, DROP episode_placeholder, DROP language_tmdb, DROP memo_placeholder, DROP movie_placeholder, DROP page_placeholder, DROP post_placeholder, DROP saga_placeholder, DROP season_placeholder, DROP serie_placeholder, DROP star_placeholder, DROP story_placeholder, DROP user_placeholder');
+        $this->addSql('ALTER TABLE serie DROP in_production');
     }
 }

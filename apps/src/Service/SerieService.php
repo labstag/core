@@ -283,6 +283,7 @@ final class SerieService
             return false;
         }
 
+        $serie->setInProduction((bool) $details['tmdb']['in_production']);
         $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
         $serie->setAdult($adult);
         $serie->setTitle((string) $details['tmdb']['name']);
