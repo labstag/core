@@ -57,8 +57,6 @@ class ConfigurationCrudController extends CrudControllerAbstract
             $languages[$value] = $locale;
         }
 
-        dump($languages);
-
         $choiceField->setChoices($languages);
         yield $choiceField;
         yield FormField::addTab(new TranslatableMessage('Security'));
