@@ -2,10 +2,8 @@
 
 namespace Labstag\Command;
 
-use Labstag\Entity\Meta;
 use Labstag\Entity\Serie;
-use Labstag\Message\SerieMessage;
-use Labstag\Repository\SerieRepository;
+use Labstag\Message\AddSerieMessage;
 use Labstag\Service\FileService;
 use NumberFormatter;
 use Override;
@@ -24,15 +22,9 @@ class SerieAddCommand extends Command
 
     private int $add = 0;
 
-    /**
-     * @var array<string, mixed>
-     */
-    private array $imdbs = [];
-
     private int $update = 0;
 
     public function __construct(
-        protected SerieRepository $serieRepository,
         protected MessageBusInterface $messageBus,
         protected FileService $fileService,
     )
@@ -79,18 +71,11 @@ class SerieAddCommand extends Command
                 continue;
             }
 
-            $serie = $this->setSerie($data);
-            $this->addOrUpdate($serie);
-
-            $this->serieRepository->persist($serie);
-            $this->serieRepository->flush();
-            $this->messageBus->dispatch(new SerieMessage($serie->getId()));
+            $this->messageBus->dispatch(new AddSerieMessage($data));
             $progressBar->advance();
         }
 
-        $this->serieRepository->flush();
         $progressBar->finish();
-        $this->showOldsSeries($symfonyStyle);
         $symfonyStyle->success('All series added');
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
         $symfonyStyle->success(
@@ -131,49 +116,5 @@ class SerieAddCommand extends Command
         }
 
         return $dataJson;
-    }
-
-    private function getSerieByImdb(string $imdb): ?Serie
-    {
-        return $this->serieRepository->findOneBy(
-            ['imdb' => $imdb]
-        );
-    }
-
-    /**
-     * @param mixed[] $data
-     */
-    private function setSerie(array $data): Serie
-    {
-        $imdb  = (string) $data['Imdb'];
-        $serie = $this->getSerieByImdb($imdb);
-        if (!$serie instanceof Serie) {
-            $serie = new Serie();
-            $meta  = new Meta();
-            $serie->setMeta($meta);
-            $serie->setEnable(true);
-            $serie->setAdult(false);
-            $serie->setImdb($imdb);
-        }
-
-        $tmdb       = (string) $data['tmdbId'];
-        $title      = trim((string) $data['Title']);
-        $serie->setTmdb($tmdb);
-        $serie->setTitle($title);
-        $serie->setFile(true);
-
-        return $serie;
-    }
-
-    private function showOldsSeries(SymfonyStyle $symfonyStyle): void
-    {
-        $oldsSeries = $this->serieRepository->findSeriesNotInImdbList($this->imdbs);
-        foreach ($oldsSeries as $oldSeries) {
-            if ($oldSeries->isFile()) {
-                $symfonyStyle->warning(
-                    sprintf('Serie %s (%s) not in list', $oldSeries->getTitle(), $oldSeries->getImdb())
-                );
-            }
-        }
     }
 }

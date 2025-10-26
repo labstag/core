@@ -5,13 +5,11 @@ namespace Labstag\Service;
 use DateTime;
 use Exception;
 use Labstag\Api\TmdbApi;
-use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Saga;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 final class MovieService
 {
@@ -25,11 +23,6 @@ final class MovieService
      * @var array<string, mixed>
      */
     private array $country = [];
-
-    /**
-     * @var array<string, mixed>
-     */
-    private array $genres = [];
 
     /**
      * @var array<string, mixed>
@@ -53,8 +46,10 @@ final class MovieService
 
     public function __construct(
         private MovieRepository $movieRepository,
+        private FileService $fileService,
         private SagaRepository $sagaRepository,
         private CategoryRepository $categoryRepository,
+        private CategoryService $categoryService,
         private TmdbApi $tmdbApi,
     )
     {
@@ -207,18 +202,20 @@ final class MovieService
         $tmdb = $this->tmdbApi->getMovieDetails($tmdbId);
         if (null !== $tmdb) {
             $details['tmdb'] = $tmdb;
+            if (isset($details['tmdb']['belongs_to_collection']['id']) && !is_null(
+                $details['tmdb']['belongs_to_collection']['id']
+            )
+            ) {
+                $collection = $this->tmdbApi->getMovieCollection($details['tmdb']['belongs_to_collection']['id']);
+                if (null !== $collection) {
+                    $details['collection'] = $collection;
+                }
+            }
         }
 
         $trailers = $this->tmdbApi->getTrailerMovie($tmdbId);
         if (null !== $trailers) {
             $details['trailers'] = $trailers;
-        }
-
-        if (!isset($details['tmdb']['belongs_to_collection'])) {
-            $collection = $this->tmdbApi->getMovieCollection($details['tmdb']['belongs_to_collection']['id']);
-            if (null !== $collection) {
-                $details['collection'] = $collection;
-            }
         }
 
         return $details;
@@ -246,27 +243,6 @@ final class MovieService
         }
 
         return '';
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function initGenres(): array
-    {
-        if ([] !== $this->genres) {
-            return $this->genres;
-        }
-
-        $data       = $this->categoryRepository->findAllByTypeMovie();
-        $categories = [];
-        foreach ($data as $category) {
-            $title              = trim((string) $category->getTitle());
-            $categories[$title] = $category;
-        }
-
-        $this->genres = $categories;
-
-        return $categories;
     }
 
     /**
@@ -304,26 +280,13 @@ final class MovieService
             return false;
         }
 
-        $this->initGenres();
-
         foreach ($movie->getCategories() as $category) {
             $movie->removeCategory($category);
         }
 
         foreach ($details['tmdb']['genres'] as $genre) {
-            $title = trim((string) $genre['name']);
-            if (isset($this->genres[$title])) {
-                $category = $this->genres[$title];
-                $movie->addCategory($category);
-                continue;
-            }
-
-            $category = new Category();
-            $category->setTitle($title);
-            $category->setType('movie');
-            $this->categoryRepository->save($category);
-            $this->genres[$title] = $category;
-
+            $title    = trim((string) $genre['name']);
+            $category = $this->categoryService->getType('movie', $title);
             $movie->addCategory($category);
         }
 
@@ -349,15 +312,7 @@ final class MovieService
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($poster));
-
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $movie->setImgFile($uploadedFile);
+            $this->fileService->setUploadedFile($tempPath, $movie, 'imgFile');
 
             return true;
         } catch (Exception) {
@@ -380,15 +335,7 @@ final class MovieService
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($poster));
-
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $saga->setImgFile($uploadedFile);
+            $this->fileService->setUploadedFile($tempPath, $saga, 'imgFile');
 
             return true;
         } catch (Exception) {

@@ -11,13 +11,13 @@ use Labstag\Entity\Serie;
 use Labstag\Message\EpisodeMessage;
 use Labstag\Repository\SeasonRepository;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SeasonService
 {
     public function __construct(
         private LoggerInterface $logger,
+        private FileService $fileService,
         private MessageBusInterface $messageBus,
         private SeasonRepository $seasonRepository,
         private EpisodeService $episodeService,
@@ -148,14 +148,7 @@ final class SeasonService
             // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($poster));
 
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $season->setImgFile($uploadedFile);
+            $this->fileService->setUploadedFile($tempPath, $season, 'imgFile');
 
             return true;
         } catch (Exception) {

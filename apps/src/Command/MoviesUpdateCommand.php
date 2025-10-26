@@ -36,8 +36,6 @@ class MoviesUpdateCommand extends Command
             $progressBar->advance();
         }
 
-        $this->movieRepository->flush();
-
         $progressBar->finish();
 
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);

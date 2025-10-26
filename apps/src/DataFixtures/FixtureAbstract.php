@@ -4,7 +4,6 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Exception;
 use Faker\Factory;
 use Faker\Generator;
 use Faker\Provider\Youtube;
@@ -16,8 +15,6 @@ use Labstag\Service\ParagraphService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 abstract class FixtureAbstract extends Fixture
@@ -140,25 +137,13 @@ abstract class FixtureAbstract extends Fixture
      */
     protected function setImage(object|array $entity, string|PropertyPathInterface $type): void
     {
-        try {
-            $generator = $this->setFaker();
-            $filePath  = $generator->image(width: 800, height: 600);
-            if (is_bool($filePath)) {
-                return;
-            }
-
-            $uploadedFile = new UploadedFile(
-                path: $filePath,
-                originalName: basename($filePath),
-                mimeType: mime_content_type($filePath),
-                test: true
-            );
-
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
-            $propertyAccessor->setValue($entity, $type, $uploadedFile);
-        } catch (Exception $exception) {
-            echo $exception->getMessage();
+        $generator = $this->setFaker();
+        $filePath  = $generator->image(width: 800, height: 600);
+        if (is_bool($filePath)) {
+            return;
         }
+
+        $this->fileService->setUploadedFile($filePath, $entity, $type);
     }
 
     /**

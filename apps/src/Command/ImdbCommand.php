@@ -43,15 +43,15 @@ class ImdbCommand extends Command
         $symfonyStyle = new SymfonyStyle($input, $output);
         $imdb         = $symfonyStyle->ask('Quel est le code IMDb ?');
         $data         = $this->tmdbApi->findByImdb($imdb);
-        dump($data);
         if (is_null($data)) {
             $symfonyStyle->error("Le code IMDB n'est pas valide");
 
             return Command::INVALID;
         }
+
         if (isset($data['movie_results'][0]['id'])) {
-            $imdb  = $data['movie_results'][0]['id'];
-            $movie = $this->movieRepository->findOneBy(
+            $tmdbId = $data['movie_results'][0]['id'];
+            $movie  = $this->movieRepository->findOneBy(
                 ['imdb' => $imdb]
             );
             if ($movie instanceof Movie) {
@@ -59,20 +59,24 @@ class ImdbCommand extends Command
 
                 return Command::INVALID;
             }
+
             $movie = new Movie();
             $movie->setEnable(true);
             $movie->setAdult(false);
             $movie->setFile(false);
             $movie->setTitle($imdb);
             $movie->setImdb($imdb);
+            $movie->setTmdb($tmdbId);
             $this->movieRepository->save($movie);
             $this->messageBus->dispatch(new MovieMessage($movie->getId()));
             $symfonyStyle->text(sprintf('Film %s ajouté en base de données.', $movie->getTitle()));
+
             return Command::SUCCESS;
         }
 
         if (isset($data['tv_results'][0]['id'])) {
-            $serie = $this->serieRepository->findOneBy(
+            $tmdbId = $data['tv_results'][0]['id'];
+            $serie  = $this->serieRepository->findOneBy(
                 ['imdb' => $imdb]
             );
             if ($serie instanceof Serie) {
@@ -80,6 +84,7 @@ class ImdbCommand extends Command
 
                 return Command::SUCCESS;
             }
+
             $serie = new Serie();
             $meta  = new Meta();
             $serie->setFile(false);
@@ -88,9 +93,11 @@ class ImdbCommand extends Command
             $serie->setAdult(false);
             $serie->setImdb($imdb);
             $serie->setTitle($imdb);
+            $serie->setTmdb($tmdbId);
             $this->serieRepository->save($serie);
             $this->messageBus->dispatch(new SerieMessage($serie->getId()));
             $symfonyStyle->text(sprintf('Série %s ajoutée en base de données.', $serie->getTitle()));
+
             return Command::SUCCESS;
         }
 

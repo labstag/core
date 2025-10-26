@@ -4,18 +4,17 @@ namespace Labstag\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Labstag\Message\ClearCacheMessage;
+use Labstag\Message\DeleteOldFileMessage;
 use Labstag\Repository\ServiceEntityRepositoryAbstract;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -46,28 +45,10 @@ class BackController extends AbstractController
         name: 'admin_cacheclear',
         defaults: ['_locale' => 'fr']
     )]
-    public function cacheclear(KernelInterface $kernel, Request $request): Response
+    public function cacheclear(MessageBusInterface $messageBus, Request $request): Response
     {
-        $total = $this->fileService->deletedFileByEntities();
-        if (0 !== $total) {
-            $this->addFlash(
-                'success',
-                new TranslatableMessage(
-                    '%total% file(s) deleted',
-                    ['%total%' => $total]
-                )
-            );
-        }
-
-        // execution de la commande en console
-        $application = new Application($kernel);
-        $application->setAutoExit(false);
-
-        $arrayInput = new ArrayInput(['cache:clear']);
-
-        $bufferedOutput = new BufferedOutput();
-        $application->run($arrayInput, $bufferedOutput);
-
+        $messageBus->dispatch(new ClearCacheMessage());
+        $messageBus->dispatch(new DeleteOldFileMessage());
         $this->addFlash('success', new TranslatableMessage('Cache cleared'));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');

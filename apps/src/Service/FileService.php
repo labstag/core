@@ -7,7 +7,9 @@ use Exception;
 use Labstag\Repository\ServiceEntityRepositoryAbstract;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyPathInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 final class FileService
@@ -203,6 +205,23 @@ final class FileService
     public function getMappingForEntity(object|array $entity): array
     {
         return $this->propertyMappingFactory->fromObject($entity);
+    }
+
+    public function setUploadedFile(string $filePath, object $entity, string|PropertyPathInterface $type): void
+    {
+        try {
+            $uploadedFile = new UploadedFile(
+                path: $filePath,
+                originalName: basename($filePath),
+                mimeType: mime_content_type($filePath),
+                test: true
+            );
+
+            $propertyAccessor = PropertyAccess::createPropertyAccessor();
+            $propertyAccessor->setValue($entity, $type, $uploadedFile);
+        } catch (Exception $exception) {
+            echo $exception->getMessage();
+        }
     }
 
     /**

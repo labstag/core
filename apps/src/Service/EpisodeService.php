@@ -9,12 +9,12 @@ use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Repository\EpisodeRepository;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class EpisodeService
 {
     public function __construct(
         private LoggerInterface $logger,
+        private FileService $fileService,
         protected EpisodeRepository $episodeRepository,
         private TmdbApi $tmdbApi,
     )
@@ -111,15 +111,7 @@ class EpisodeService
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($poster));
-
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $episode->setImgFile($uploadedFile);
+            $this->fileService->setUploadedFile($tempPath, $episode, 'imgFile');
 
             return true;
         } catch (Exception) {

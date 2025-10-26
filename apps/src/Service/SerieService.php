@@ -5,12 +5,10 @@ namespace Labstag\Service;
 use DateTime;
 use Exception;
 use Labstag\Api\TmdbApi;
-use Labstag\Entity\Category;
 use Labstag\Entity\Serie;
 use Labstag\Message\SeasonMessage;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\SerieRepository;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SerieService
@@ -29,18 +27,15 @@ final class SerieService
     /**
      * @var array<string, mixed>
      */
-    private array $genres = [];
-
-    /**
-     * @var array<string, mixed>
-     */
     private array $year = [];
 
     public function __construct(
         private MessageBusInterface $messageBus,
+        private FileService $fileService,
         private SeasonService $seasonService,
         private SerieRepository $serieRepository,
         private CategoryRepository $categoryRepository,
+        private CategoryService $categoryService,
         private TmdbApi $tmdbApi,
     )
     {
@@ -189,27 +184,6 @@ final class SerieService
     }
 
     /**
-     * @return array<string, mixed>
-     */
-    private function initGenres(): array
-    {
-        if ([] !== $this->genres) {
-            return $this->genres;
-        }
-
-        $data       = $this->categoryRepository->findAllByTypeSerie();
-        $categories = [];
-        foreach ($data as $category) {
-            $title              = trim((string) $category->getTitle());
-            $categories[$title] = $category;
-        }
-
-        $this->genres = $categories;
-
-        return $categories;
-    }
-
-    /**
      * @param array<string, mixed> $details
      */
     private function setCertification(array $details, Serie $serie): void
@@ -244,25 +218,13 @@ final class SerieService
             return false;
         }
 
-        $this->initGenres();
-
         foreach ($serie->getCategories() as $category) {
             $serie->removeCategory($category);
         }
 
         foreach ($details['tmdb']['genres'] as $genre) {
-            $title = trim((string) $genre['name']);
-            if (isset($this->genres[$title])) {
-                $category = $this->genres[$title];
-                $serie->addCategory($category);
-                continue;
-            }
-
-            $category = new Category();
-            $category->setTitle($title);
-            $category->setType('serie');
-            $this->categoryRepository->save($category);
-            $this->genres[$title] = $category;
+            $title    = trim((string) $genre['name']);
+            $category = $this->categoryService->getType('serie', $title);
 
             $serie->addCategory($category);
         }
@@ -289,15 +251,7 @@ final class SerieService
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($poster));
-
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $serie->setImgFile($uploadedFile);
+            $this->fileService->setUploadedFile($tempPath, $serie, 'imgFile');
 
             return true;
         } catch (Exception) {
