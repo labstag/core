@@ -8,12 +8,11 @@ use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<Season>
+ * @extends ServiceEntityRepositoryAbstract<Season>
  */
-class SeasonRepository extends ServiceEntityRepositoryLib
+class SeasonRepository extends ServiceEntityRepositoryAbstract
 {
     public function __construct(ManagerRegistry $registry)
     {

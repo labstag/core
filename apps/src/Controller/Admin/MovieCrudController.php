@@ -15,7 +15,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\MovieMessage;
@@ -27,7 +26,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class MovieCrudController extends AbstractCrudControllerLib
+class MovieCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -143,8 +142,8 @@ class MovieCrudController extends AbstractCrudControllerLib
     #[Route('/admin/movie/{entity}/imdb', name: 'admin_movie_imdb')]
     public function imdb(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $movie                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $movie                           = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
     }
@@ -152,8 +151,8 @@ class MovieCrudController extends AbstractCrudControllerLib
     #[Route('/admin/movie/{entity}/tmdb', name: 'admin_movie_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $movie                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $movie                           = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->redirect('https://www.themoviedb.org/movie/' . $movie->getTmdb());
     }
@@ -161,8 +160,8 @@ class MovieCrudController extends AbstractCrudControllerLib
     #[Route('/admin/movie/{entity}/update', name: 'admin_movie_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $movie                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $movie                           = $ServiceEntityRepositoryAbstract->find($entity);
         $messageBus->dispatch(new MovieMessage($movie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -200,10 +199,10 @@ class MovieCrudController extends AbstractCrudControllerLib
      */
     private function getMovieRepository(): MovieRepository
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        assert($serviceEntityRepositoryLib instanceof MovieRepository);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        assert($ServiceEntityRepositoryAbstract instanceof MovieRepository);
 
-        return $serviceEntityRepositoryLib;
+        return $ServiceEntityRepositoryAbstract;
     }
 
     private function setLinkImdbAction(): Action

@@ -10,11 +10,10 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
 use Labstag\FrontForm\FrontFormAbstract;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class FormParagraph extends ParagraphLib
+class FormParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data

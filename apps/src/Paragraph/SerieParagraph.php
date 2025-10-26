@@ -7,11 +7,10 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Serie;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\SerieRepository;
 use Override;
 
-class SerieParagraph extends ParagraphLib
+class SerieParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data
@@ -20,10 +19,10 @@ class SerieParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var SerieRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Serie::class);
+        /** @var SerieRepository $ServiceEntityRepositoryAbstract */
+        $ServiceEntityRepositoryAbstract = $this->getRepository(Serie::class);
 
-        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
+        $pagination = $this->getPaginator($ServiceEntityRepositoryAbstract->getQueryPaginator(), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(

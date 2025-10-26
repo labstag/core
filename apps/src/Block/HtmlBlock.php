@@ -4,13 +4,12 @@ namespace Labstag\Block;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
-use Labstag\Block\Abstract\AbstractSimpleBlock;
 use Labstag\Entity\Block;
 use Labstag\Field\WysiwygField;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class HtmlBlock extends AbstractSimpleBlock
+class HtmlBlock extends SimpleBlockAbstract
 {
     /**
      * @return Generator<FieldInterface>

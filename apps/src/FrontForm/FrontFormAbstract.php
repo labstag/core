@@ -5,7 +5,7 @@ namespace Labstag\FrontForm;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Labstag\Entity\Submission;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
+use Labstag\Repository\ServiceEntityRepositoryAbstract;
 use Labstag\Repository\SubmissionRepository;
 use Labstag\Service\EmailService;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -56,12 +56,12 @@ abstract class FrontFormAbstract implements FrontFormInterface
     }
 
     /**
-     * @return ServiceEntityRepositoryLib<object>
+     * @return ServiceEntityRepositoryAbstract<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryLib
+    protected function getRepository(string $entity): ServiceEntityRepositoryAbstract
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
             throw new Exception('Repository not found');
         }
 

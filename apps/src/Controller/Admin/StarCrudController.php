@@ -12,12 +12,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Star;
 use Labstag\Repository\StarRepository;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class StarCrudController extends AbstractCrudControllerLib
+class StarCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -95,12 +94,12 @@ class StarCrudController extends AbstractCrudControllerLib
      */
     private function getAllData(string $type): array
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        if (!$serviceEntityRepositoryLib instanceof StarRepository) {
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        if (!$ServiceEntityRepositoryAbstract instanceof StarRepository) {
             return [];
         }
 
-        $all = $serviceEntityRepositoryLib->findAllData($type);
+        $all = $ServiceEntityRepositoryAbstract->findAllData($type);
 
         $data = [];
         foreach ($all as $row) {

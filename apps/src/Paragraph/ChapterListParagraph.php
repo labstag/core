@@ -9,12 +9,11 @@ use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Story;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\ChapterRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class ChapterListParagraph extends ParagraphLib
+class ChapterListParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data
@@ -29,9 +28,9 @@ class ChapterListParagraph extends ParagraphLib
             return;
         }
 
-        /** @var ChapterRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Chapter::class);
-        $chapters                   = $serviceEntityRepositoryLib->getAllActivateByStory($data['entity']);
+        /** @var ChapterRepository $ServiceEntityRepositoryAbstract */
+        $ServiceEntityRepositoryAbstract = $this->getRepository(Chapter::class);
+        $chapters                        = $ServiceEntityRepositoryAbstract->getAllActivateByStory($data['entity']);
         if (0 === count($chapters)) {
             $this->setShow($paragraph, false);
 

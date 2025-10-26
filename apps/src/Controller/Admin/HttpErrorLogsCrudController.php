@@ -10,7 +10,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Controller\Admin\Traits\ReadOnlyActionsTrait;
 use Labstag\Entity\HttpErrorLogs;
 use Labstag\Field\HttpLogs\IsBotField;
@@ -20,16 +19,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class HttpErrorLogsCrudController extends AbstractCrudControllerLib
+class HttpErrorLogsCrudController extends CrudControllerAbstract
 {
     use ReadOnlyActionsTrait;
 
     #[Route('/admin/http-error-logs/{entity}/banip', name: 'admin_http_error_logs_banip')]
     public function banIp(string $entity, Request $request): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $httpErrorLogs              = $serviceEntityRepositoryLib->find($entity);
-        $internetProtocol           = $httpErrorLogs->getInternetProtocol();
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $httpErrorLogs                   = $ServiceEntityRepositoryAbstract->find($entity);
+        $internetProtocol                = $httpErrorLogs->getInternetProtocol();
 
         $redirectToRoute = $this->redirectToRoute('admin_http_error_logs_index');
         if ($request->headers->has('referer')) {

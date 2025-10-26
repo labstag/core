@@ -3,10 +3,9 @@
 namespace Labstag\Paragraph;
 
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 
-class MapParagraph extends ParagraphLib
+class MapParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data

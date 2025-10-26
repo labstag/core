@@ -33,9 +33,7 @@ final class Version20251023223008 extends AbstractMigration
         $this->addSql('ALTER TABLE tag_movie DROP FOREIGN KEY `FK_3FB2EB698F93B6FC`');
         $this->addSql('ALTER TABLE tag_movie DROP FOREIGN KEY `FK_3FB2EB69BAD26311`');
         $this->addSql('DROP TABLE tag_movie');
-        $this->addSql('ALTER TABLE paragraph DROP FOREIGN KEY `FK_7DD398623FCF0451`');
-        $this->addSql('DROP INDEX IDX_7DD398623FCF0451 ON paragraph');
-        $this->addSql('ALTER TABLE paragraph ADD season_id CHAR(36) DEFAULT NULL, CHANGE refmovie_id serie_id CHAR(36) DEFAULT NULL');
+        $this->addSql('ALTER TABLE paragraph ADD season_id CHAR(36) DEFAULT NULL, ADD serie_id CHAR(36) DEFAULT NULL');
         $this->addSql('ALTER TABLE paragraph ADD CONSTRAINT FK_7DD39862D94388BD FOREIGN KEY (serie_id) REFERENCES serie (id)');
         $this->addSql('ALTER TABLE paragraph ADD CONSTRAINT FK_7DD398624EC001D1 FOREIGN KEY (season_id) REFERENCES season (id)');
         $this->addSql('CREATE INDEX IDX_7DD39862D94388BD ON paragraph (serie_id)');
@@ -62,8 +60,6 @@ final class Version20251023223008 extends AbstractMigration
         $this->addSql('ALTER TABLE paragraph DROP FOREIGN KEY FK_7DD398624EC001D1');
         $this->addSql('DROP INDEX IDX_7DD39862D94388BD ON paragraph');
         $this->addSql('DROP INDEX IDX_7DD398624EC001D1 ON paragraph');
-        $this->addSql('ALTER TABLE paragraph ADD refmovie_id CHAR(36) DEFAULT NULL, DROP serie_id, DROP season_id');
-        $this->addSql('ALTER TABLE paragraph ADD CONSTRAINT `FK_7DD398623FCF0451` FOREIGN KEY (refmovie_id) REFERENCES movie (id)');
-        $this->addSql('CREATE INDEX IDX_7DD398623FCF0451 ON paragraph (refmovie_id)');
+        $this->addSql('ALTER TABLE paragraph DROP serie_id, DROP season_id');
     }
 }

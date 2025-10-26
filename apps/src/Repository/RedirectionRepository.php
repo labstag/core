@@ -4,12 +4,11 @@ namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Redirection;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<Redirection>
+ * @extends ServiceEntityRepositoryAbstract<Redirection>
  */
-class RedirectionRepository extends ServiceEntityRepositoryLib
+class RedirectionRepository extends ServiceEntityRepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

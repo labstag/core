@@ -4,7 +4,7 @@ namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
+use Labstag\Repository\ServiceEntityRepositoryAbstract;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -206,12 +206,12 @@ final class FileService
     }
 
     /**
-     * @return ServiceEntityRepositoryLib<object>
+     * @return ServiceEntityRepositoryAbstract<object>
      */
-    private function getRepository(string $entity): ServiceEntityRepositoryLib
+    private function getRepository(string $entity): ServiceEntityRepositoryAbstract
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
             throw new Exception('Repository not found');
         }
 

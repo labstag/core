@@ -5,10 +5,9 @@ namespace Labstag\Paragraph;
 use Labstag\Entity\Block;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Season;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 
-class HeadSeasonParagraph extends ParagraphLib
+class HeadSeasonParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data

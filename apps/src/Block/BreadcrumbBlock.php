@@ -2,7 +2,6 @@
 
 namespace Labstag\Block;
 
-use Labstag\Block\Abstract\BlockLib;
 use Labstag\Block\Traits\CacheableTrait;
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
@@ -11,7 +10,7 @@ use Override;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class BreadcrumbBlock extends BlockLib
+class BreadcrumbBlock extends BlockAbstract
 {
     use CacheableTrait;
 

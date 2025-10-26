@@ -2,11 +2,10 @@
 
 namespace Labstag\Block;
 
-use Labstag\Block\Abstract\AbstractParagraphBlock;
 use Labstag\Entity\Block;
 use Override;
 
-class HeroBlock extends AbstractParagraphBlock
+class HeroBlock extends ParagraphBlockAbstract
 {
     #[Override]
     public function getName(): string

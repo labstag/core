@@ -1,13 +1,13 @@
 <?php
 
-namespace Labstag\Block\Abstract;
+namespace Labstag\Block;
 
 use Labstag\Block\Traits\ParagraphProcessingTrait;
 use Labstag\Entity\Block;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class AbstractParagraphBlock extends BlockLib
+abstract class ParagraphBlockAbstract extends BlockAbstract
 {
     use ParagraphProcessingTrait;
 

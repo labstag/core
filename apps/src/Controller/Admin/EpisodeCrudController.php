@@ -11,7 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Episode;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\SeasonEpisodeFilter;
@@ -23,7 +22,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class EpisodeCrudController extends AbstractCrudControllerLib
+class EpisodeCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -113,8 +112,8 @@ class EpisodeCrudController extends AbstractCrudControllerLib
     #[Route('/admin/episode/{entity}/update', name: 'admin_episode_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryLib   = $this->getRepository();
-        $episode                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract   = $this->getRepository();
+        $episode                           = $ServiceEntityRepositoryAbstract->find($entity);
         $messageBus->dispatch(new EpisodeMessage($episode->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');

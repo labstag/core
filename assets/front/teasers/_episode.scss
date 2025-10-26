@@ -1,7 +1,24 @@
 @use "../placeholders" as *;
+@use "../mixins";
 .teaser-episode{
   @extend %teaser;
+  display: grid;
+  grid-template-areas:
+      "img"
+      "content";
+  grid-template-columns: 1fr;
+  @include mixins.respond-to(md) {
+    grid-template-areas:
+        "img content";
+    grid-template-columns: 2fr 3fr;
+    gap: 16px;
+  }
   .background{
+    grid-area: img;
     height: 219px;
+  }
+  .content{
+    grid-area: content;
+    padding: 1rem;
   }
 }

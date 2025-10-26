@@ -2,7 +2,7 @@
 {% set serie = season.refserie %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
 	<div class="first">
-        <div class="background" style="--image-url: url('{{ site_asset(season.img ? season : season.refserie, 'img') }}')"></div>
+        <div class="background" style="--image-url: url('{{ site_asset(season, 'img') }}')"></div>
         <div class="content">
                 <div class="wrapper">
                     <h3 class="title">

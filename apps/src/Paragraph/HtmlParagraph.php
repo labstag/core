@@ -7,11 +7,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class HtmlParagraph extends ParagraphLib
+class HtmlParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data

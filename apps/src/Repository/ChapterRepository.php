@@ -7,12 +7,11 @@ use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<Chapter>
+ * @extends ServiceEntityRepositoryAbstract<Chapter>
  */
-class ChapterRepository extends ServiceEntityRepositoryLib
+class ChapterRepository extends ServiceEntityRepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

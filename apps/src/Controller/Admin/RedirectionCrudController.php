@@ -11,7 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Redirection;
 use Labstag\Form\Admin\RedirectionImportType;
 use Labstag\Repository\RedirectionRepository;
@@ -26,7 +25,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 use ZipArchive;
 
-class RedirectionCrudController extends AbstractCrudControllerLib
+class RedirectionCrudController extends CrudControllerAbstract
 {
     private const FIELDCSV = 2;
 
@@ -147,8 +146,8 @@ class RedirectionCrudController extends AbstractCrudControllerLib
     #[Route('/admin/redirection/{entity}/test', name: 'admin_redirection_test')]
     public function testSource(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $redirection                = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $redirection                     = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->redirect($redirection->getSource());
     }

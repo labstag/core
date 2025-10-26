@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Repository\Abstract;
+namespace Labstag\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
@@ -9,7 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  *
  * @extends ServiceEntityRepository<TEntityClass>
  */
-abstract class ServiceEntityRepositoryLib extends ServiceEntityRepository
+abstract class ServiceEntityRepositoryAbstract extends ServiceEntityRepository
 {
     public function delete(object $entity): void
     {

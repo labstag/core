@@ -20,7 +20,7 @@ final class BlockService
 
     public function __construct(
         /**
-         * @var iterable<\Labstag\Block\Abstract\BlockLib>
+         * @var iterable<\Labstag\Block\BlockAbstract>
          */
         #[AutowireIterator('labstag.blocks')]
         private readonly iterable $blocks,

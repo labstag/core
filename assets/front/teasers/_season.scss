@@ -1,7 +1,28 @@
 @use "../placeholders" as *;
+@use "../mixins";
 .teaser-season{
   @extend %teaser;
-  .background{
-    height: 586px;
+  a{
+    display: grid;
+    grid-template-areas:
+        "img"
+        "content";
+    grid-template-columns: 1fr;
+      @include mixins.respond-to(md) {
+      grid-template-areas:
+          "img content";
+      grid-template-columns: 1fr 4fr;
+      gap: 16px;
+    }
+    .img{
+      grid-area: img;
+    }
+    .background{
+      height: 300px;
+      width: 200px;
+    }
+    .content{
+      grid-area: content;
+    }
   }
 }

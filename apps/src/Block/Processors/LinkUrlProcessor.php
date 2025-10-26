@@ -7,7 +7,7 @@ use Exception;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
+use Labstag\Repository\ServiceEntityRepositoryAbstract;
 
 class LinkUrlProcessor
 {
@@ -69,13 +69,13 @@ class LinkUrlProcessor
     }
 
     /**
-     * @return ServiceEntityRepositoryLib<object>
+     * @return ServiceEntityRepositoryAbstract<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryLib
+    protected function getRepository(string $entity): ServiceEntityRepositoryAbstract
     {
         $entityRepository = $this->entityManager->getRepository($entity);
 
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
             throw new Exception('Repository not found for entity: ' . $entity);
         }
 
@@ -141,8 +141,8 @@ class LinkUrlProcessor
             return $this->entityCache[$cacheKey];
         }
 
-        $serviceEntityRepositoryLib = $this->getRepository($entityClass);
-        $entity                     = $serviceEntityRepositoryLib->find($id);
+        $ServiceEntityRepositoryAbstract = $this->getRepository($entityClass);
+        $entity                          = $ServiceEntityRepositoryAbstract->find($id);
 
         $this->entityCache[$cacheKey] = $entity;
 

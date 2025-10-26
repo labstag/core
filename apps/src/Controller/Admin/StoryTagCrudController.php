@@ -2,9 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Controller\Admin\Abstract\TagCrudControllerLib;
-
-class StoryTagCrudController extends TagCrudControllerLib
+class StoryTagCrudController extends TagCrudControllerAbstract
 {
     protected function getChildRelationshipProperty(): string
     {

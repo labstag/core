@@ -5,14 +5,13 @@ namespace Labstag\Block;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use Generator;
-use Labstag\Block\Abstract\BlockLib;
 use Labstag\Entity\Block;
 use Labstag\Form\LinkType;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class LinksBlock extends BlockLib
+class LinksBlock extends BlockAbstract
 {
     #[Override]
     public function content(string $view, Block $block): ?Response

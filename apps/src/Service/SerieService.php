@@ -4,6 +4,7 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
+use Labstag\Api\TmdbApi;
 use Labstag\Entity\Category;
 use Labstag\Entity\Serie;
 use Labstag\Message\SeasonMessage;
@@ -11,12 +12,9 @@ use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\SerieRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class SerieService
 {
-    private const STATUSOK = 200;
 
     /**
      * @var array<string, mixed>
@@ -39,13 +37,11 @@ final class SerieService
     private array $year = [];
 
     public function __construct(
-        private CacheService $cacheService,
         private MessageBusInterface $messageBus,
         private SeasonService $seasonService,
-        private HttpClientInterface $httpClient,
         private SerieRepository $serieRepository,
         private CategoryRepository $categoryRepository,
-        private string $tmdbapiKey,
+        private TmdbApi $tmdbApi,
     )
     {
     }
@@ -97,52 +93,6 @@ final class SerieService
         $this->country = $country;
 
         return $country;
-    }
-
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function getDetailsTmdb(string $imdbId): ?array
-    {
-        if ('' === $this->tmdbapiKey) {
-            return null;
-        }
-
-        $cacheKey = 'tmdb-serie_find_' . $imdbId;
-
-        return $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($imdbId) {
-                $url      = 'https://api.themoviedb.org/3/find/' . $imdbId . '?external_source=imdb_id&language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $data = json_decode($response->getContent(), true);
-                if (0 === count($data['tv_results'])) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return $data;
-            },
-            60
-        );
     }
 
     /**
@@ -211,7 +161,7 @@ final class SerieService
 
         $tmdbId = $serie->getTmdb();
         if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
-            $data   = $this->getDetailsTmdb($serie->getImdb());
+            $data   = $this->tmdbApi->findByImdb($serie->getImdb());
             if (null !== $data && isset($data['tv_results'][0]['id'])) {
                 $tmdbId = $data['tv_results'][0]['id'];
             }
@@ -221,62 +171,9 @@ final class SerieService
             return [];
         }
 
-        $details = $this->getDetailsTmdbSerie($details, $tmdbId);
+        $details = $this->tmdbApi->getDetailsSerie($details, $tmdbId);
 
-        return $this->getTrailersTmdbSerie($details, $tmdbId);
-    }
-
-    /**
-     * @param array<string, mixed> $details
-     *
-     * @return array<string, mixed>
-     */
-    private function getDetailsTmdbSerie(array $details, string $tmdbId): array
-    {
-        if ('' === $this->tmdbapiKey) {
-            return $details;
-        }
-
-        $cacheKey = 'tmdb-serie_' . $tmdbId;
-
-        $data = $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdbId) {
-                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdbId . '?language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return json_decode($response->getContent(), true);
-            },
-            60
-        );
-        if (null == $data) {
-            return $details;
-        }
-
-        $details['tmdb'] = $data;
-
-        return $details;
-    }
-
-    private function getImgImdb(string $img): string
-    {
-        return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' . $img;
+        return $this->tmdbApi->getTrailersSerie($details, $tmdbId);
     }
 
     /**
@@ -285,59 +182,10 @@ final class SerieService
     private function getImgMovie(array $data): string
     {
         if (isset($data['tmdb']['poster_path'])) {
-            return $this->getImgImdb($data['tmdb']['poster_path']);
+            return $this->tmdbApi->getImgw300h450($data['tmdb']['poster_path']);
         }
 
         return '';
-    }
-
-    /**
-     * @param array<string, mixed> $details
-     *
-     * @return array<string, mixed>
-     */
-    private function getTrailersTmdbSerie(array $details, string $tmdbId): array
-    {
-        if ('' === $this->tmdbapiKey) {
-            return $details;
-        }
-
-        $cacheKey = 'tmdb-serie-trailers_' . $tmdbId;
-
-        $data = $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdbId) {
-                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdbId . '/videos?language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return json_decode($response->getContent(), true);
-            },
-            60
-        );
-
-        if (null == $data) {
-            return $details;
-        }
-
-        $details['trailers'] = $data;
-
-        return $details;
     }
 
     /**

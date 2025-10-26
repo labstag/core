@@ -1,19 +1,19 @@
 <?php
 
-namespace Labstag\Controller\Admin\Abstract;
+namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use Labstag\Entity\Category;
+use Labstag\Entity\Tag;
 use Symfony\Component\Translation\TranslatableMessage;
 
-abstract class CategoryCrudControllerLib extends AbstractTypedCrudControllerLib
+abstract class TagCrudControllerAbstract extends TypedCrudControllerAbstract
 {
     #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setEntityLabelInSingular(new TranslatableMessage('Category'));
-        $crud->setEntityLabelInPlural(new TranslatableMessage('Categories'));
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Tag'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Tags'));
 
         return $crud;
     }
@@ -21,7 +21,7 @@ abstract class CategoryCrudControllerLib extends AbstractTypedCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        // Category is not uploadable: no image, and no enable property in the entity -> remove it
+        // Tag is not uploadable: no image and no enable field in the entity
         return $this->crudFieldFactory->baseIdentitySet(
             $pageName,
             self::getEntityFqcn(),
@@ -33,12 +33,12 @@ abstract class CategoryCrudControllerLib extends AbstractTypedCrudControllerLib
 
     public static function getEntityFqcn(): string
     {
-        return Category::class;
+        return Tag::class;
     }
 
     #[\Override]
     protected function getChildType(): string
     {
-        return 'category';
+        return 'tag';
     }
 }

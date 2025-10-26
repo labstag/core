@@ -5,7 +5,6 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
 use Labstag\Field\WysiwygField;
@@ -13,7 +12,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class PostCrudController extends AbstractCrudControllerLib
+class PostCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -117,8 +116,8 @@ class PostCrudController extends AbstractCrudControllerLib
     #[Route('/admin/post/{entity}/public', name: 'admin_post_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $post                       = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $post                            = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->publicLink($post);
     }
@@ -126,8 +125,8 @@ class PostCrudController extends AbstractCrudControllerLib
     #[Route('/admin/post/{entity}/w3c', name: 'admin_post_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $post                       = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $post                            = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($post);
     }

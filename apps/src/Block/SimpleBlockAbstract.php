@@ -1,12 +1,12 @@
 <?php
 
-namespace Labstag\Block\Abstract;
+namespace Labstag\Block;
 
 use Labstag\Entity\Block;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class AbstractSimpleBlock extends BlockLib
+abstract class SimpleBlockAbstract extends BlockAbstract
 {
     #[Override]
     public function content(string $view, Block $block): ?Response

@@ -7,12 +7,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Submission;
 use Labstag\FrontForm\FrontFormAbstract;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class SubmissionCrudController extends AbstractCrudControllerLib
+class SubmissionCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions

@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
@@ -21,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class StoryCrudController extends AbstractCrudControllerLib
+class StoryCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -116,8 +115,8 @@ class StoryCrudController extends AbstractCrudControllerLib
     #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $story                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $story                           = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->publicLink($story);
     }
@@ -161,8 +160,8 @@ class StoryCrudController extends AbstractCrudControllerLib
     #[Route('/admin/updatepdf', name: 'admin_story_updatepdf')]
     public function updatepdf(StoryService $storyService): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $stories                    = $serviceEntityRepositoryLib->findAll();
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $stories                         = $ServiceEntityRepositoryAbstract->findAll();
 
         $counter = 0;
         $update  = 0;
@@ -171,12 +170,12 @@ class StoryCrudController extends AbstractCrudControllerLib
             $update = $status ? ++$update : $update;
             ++$counter;
 
-            $serviceEntityRepositoryLib->persist($story);
-            $serviceEntityRepositoryLib->flush($counter);
+            $ServiceEntityRepositoryAbstract->persist($story);
+            $ServiceEntityRepositoryAbstract->flush($counter);
         }
 
         $this->addFlash('success', $storyService->generateFlashBag());
-        $serviceEntityRepositoryLib->flush();
+        $ServiceEntityRepositoryAbstract->flush();
 
         return $this->redirectToRoute('admin_story_index');
     }
@@ -184,8 +183,8 @@ class StoryCrudController extends AbstractCrudControllerLib
     #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $story                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $story                           = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($story);
     }

@@ -1,14 +1,13 @@
 <?php
 
-namespace Labstag\Block\Abstract;
+namespace Labstag\Block;
 
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
-use Labstag\Block\BlockInterface;
 use Labstag\Block\Processors\LinkUrlProcessor;
 use Labstag\Entity\Block;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
+use Labstag\Repository\ServiceEntityRepositoryAbstract;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\CrudAdminService;
 use Labstag\Service\ParagraphService;
@@ -24,7 +23,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 
 #[AutoconfigureTag('labstag.blocks')]
-abstract class BlockLib extends AbstractController implements BlockInterface
+abstract class BlockAbstract extends AbstractController implements BlockInterface
 {
 
     /**
@@ -148,12 +147,12 @@ abstract class BlockLib extends AbstractController implements BlockInterface
     }
 
     /**
-     * @return ServiceEntityRepositoryLib<object>
+     * @return ServiceEntityRepositoryAbstract<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryLib
+    protected function getRepository(string $entity): ServiceEntityRepositoryAbstract
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
             throw new Exception('Repository not found');
         }
 

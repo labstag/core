@@ -30,6 +30,7 @@ class ConfigFixtures extends FixtureAbstract implements DependentFixtureInterfac
         $configuration->setNoreply('no-reply@labstag.traefik.me');
         $configuration->setUserShow(false);
         $configuration->setUserLink(false);
+        $configuration->setLanguageTmdb('fr-FR');
         $configuration->setDisableEmptyAgent(false);
         $this->setImage($configuration, 'logoFile');
         $this->setImage($configuration, 'placeholderFile');

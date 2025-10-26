@@ -7,14 +7,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Saga;
 use Labstag\Field\WysiwygField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class SagaCrudController extends AbstractCrudControllerLib
+class SagaCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -73,8 +72,8 @@ class SagaCrudController extends AbstractCrudControllerLib
     #[Route('/admin/saga/{entity}/imdb', name: 'admin_saga_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $saga                       = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $saga                            = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->redirect('https://www.themoviedb.org/collection/' . $saga->getTmdb());
     }

@@ -18,6 +18,12 @@ class Configuration
 {
     use TimestampableTrait;
 
+    #[ORM\Column(name: 'chapter_placeholder', length: 255, nullable: true)]
+    private ?string $chapterPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'chapterPlaceholder')]
+    private ?File $chapterPlaceholderFile = null;
+
     #[ORM\Column(length: 255)]
     private ?string $copyright = null;
 
@@ -27,8 +33,20 @@ class Configuration
     )]
     private bool $disableEmptyAgent = false;
 
+    #[ORM\Column(name: 'edito_placeholder', length: 255, nullable: true)]
+    private ?string $editoPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'editoPlaceholder')]
+    private ?File $editoPlaceholderFile = null;
+
     #[ORM\Column(length: 255)]
     private ?string $email = null;
+
+    #[ORM\Column(name: 'episode_placeholder', length: 255, nullable: true)]
+    private ?string $episodePlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'episodePlaceholder')]
+    private ?File $episodePlaceholderFile = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -36,11 +54,26 @@ class Configuration
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
+    #[ORM\Column(name: 'language_tmdb', length: 255, nullable: true)]
+    private ?string $languageTmdb = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $logo = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'logo')]
     private ?File $logoFile = null;
+
+    #[ORM\Column(name: 'memo_placeholder', length: 255, nullable: true)]
+    private ?string $memoPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'memoPlaceholder')]
+    private ?File $memoPlaceholderFile = null;
+
+    #[ORM\Column(name: 'movie_placeholder', length: 255, nullable: true)]
+    private ?string $moviePlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'moviePlaceholder')]
+    private ?File $moviePlaceholderFile = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -48,11 +81,41 @@ class Configuration
     #[ORM\Column(length: 255)]
     private ?string $noreply = null;
 
+    #[ORM\Column(name: 'page_placeholder', length: 255, nullable: true)]
+    private ?string $pagePlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'pagePlaceholder')]
+    private ?File $pagePlaceholderFile = null;
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $placeholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'placeholder')]
     private ?File $placeholderFile = null;
+
+    #[ORM\Column(name: 'post_placeholder', length: 255, nullable: true)]
+    private ?string $postPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'postPlaceholder')]
+    private ?File $postPlaceholderFile = null;
+
+    #[ORM\Column(name: 'saga_placeholder', length: 255, nullable: true)]
+    private ?string $sagaPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'sagaPlaceholder')]
+    private ?File $sagaPlaceholderFile = null;
+
+    #[ORM\Column(name: 'season_placeholder', length: 255, nullable: true)]
+    private ?string $seasonPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'seasonPlaceholder')]
+    private ?File $seasonPlaceholderFile = null;
+
+    #[ORM\Column(name: 'serie_placeholder', length: 255, nullable: true)]
+    private ?string $seriePlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'seriePlaceholder')]
+    private ?File $seriePlaceholderFile = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
@@ -65,6 +128,18 @@ class Configuration
         options: ['default' => 1]
     )]
     private bool $sitemapStory = true;
+
+    #[ORM\Column(name: 'star_placeholder', length: 255, nullable: true)]
+    private ?string $starPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'starPlaceholder')]
+    private ?File $starPlaceholderFile = null;
+
+    #[ORM\Column(name: 'story_placeholder', length: 255, nullable: true)]
+    private ?string $storyPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'storyPlaceholder')]
+    private ?File $storyPlaceholderFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tabIconSrc = null;
@@ -254,15 +329,41 @@ class Configuration
     )]
     private bool $userLink = false;
 
+    #[ORM\Column(name: 'user_placeholder', length: 255, nullable: true)]
+    private ?string $userPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'userPlaceholder')]
+    private ?File $userPlaceholderFile = null;
+
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
     private bool $userShow = false;
 
+    public function getChapterPlaceholder(): ?string
+    {
+        return $this->chapterPlaceholder;
+    }
+
+    public function getChapterPlaceholderFile(): ?File
+    {
+        return $this->chapterPlaceholderFile;
+    }
+
     public function getCopyright(): ?string
     {
         return $this->copyright;
+    }
+
+    public function getEditoPlaceholder(): ?string
+    {
+        return $this->editoPlaceholder;
+    }
+
+    public function getEditoPlaceholderFile(): ?File
+    {
+        return $this->editoPlaceholderFile;
     }
 
     public function getEmail(): ?string
@@ -270,9 +371,24 @@ class Configuration
         return $this->email;
     }
 
+    public function getEpisodePlaceholder(): ?string
+    {
+        return $this->episodePlaceholder;
+    }
+
+    public function getEpisodePlaceholderFile(): ?File
+    {
+        return $this->episodePlaceholderFile;
+    }
+
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    public function getLanguageTmdb(): ?string
+    {
+        return $this->languageTmdb;
     }
 
     public function getLogo(): ?string
@@ -285,6 +401,26 @@ class Configuration
         return $this->logoFile;
     }
 
+    public function getMemoPlaceholder(): ?string
+    {
+        return $this->memoPlaceholder;
+    }
+
+    public function getMemoPlaceholderFile(): ?File
+    {
+        return $this->memoPlaceholderFile;
+    }
+
+    public function getMoviePlaceholder(): ?string
+    {
+        return $this->moviePlaceholder;
+    }
+
+    public function getMoviePlaceholderFile(): ?File
+    {
+        return $this->moviePlaceholderFile;
+    }
+
     public function getName(): ?string
     {
         return $this->name;
@@ -295,6 +431,16 @@ class Configuration
         return $this->noreply;
     }
 
+    public function getPagePlaceholder(): ?string
+    {
+        return $this->pagePlaceholder;
+    }
+
+    public function getPagePlaceholderFile(): ?File
+    {
+        return $this->pagePlaceholderFile;
+    }
+
     public function getPlaceholder(): ?string
     {
         return $this->placeholder;
@@ -303,6 +449,66 @@ class Configuration
     public function getPlaceholderFile(): ?File
     {
         return $this->placeholderFile;
+    }
+
+    public function getPostPlaceholder(): ?string
+    {
+        return $this->postPlaceholder;
+    }
+
+    public function getPostPlaceholderFile(): ?File
+    {
+        return $this->postPlaceholderFile;
+    }
+
+    public function getSagaPlaceholder(): ?string
+    {
+        return $this->sagaPlaceholder;
+    }
+
+    public function getSagaPlaceholderFile(): ?File
+    {
+        return $this->sagaPlaceholderFile;
+    }
+
+    public function getSeasonPlaceholder(): ?string
+    {
+        return $this->seasonPlaceholder;
+    }
+
+    public function getSeasonPlaceholderFile(): ?File
+    {
+        return $this->seasonPlaceholderFile;
+    }
+
+    public function getSeriePlaceholder(): ?string
+    {
+        return $this->seriePlaceholder;
+    }
+
+    public function getSeriePlaceholderFile(): ?File
+    {
+        return $this->seriePlaceholderFile;
+    }
+
+    public function getStarPlaceholder(): ?string
+    {
+        return $this->starPlaceholder;
+    }
+
+    public function getStarPlaceholderFile(): ?File
+    {
+        return $this->starPlaceholderFile;
+    }
+
+    public function getStoryPlaceholder(): ?string
+    {
+        return $this->storyPlaceholder;
+    }
+
+    public function getStoryPlaceholderFile(): ?File
+    {
+        return $this->storyPlaceholderFile;
     }
 
     public function getTabIconSrc(): string
@@ -408,6 +614,16 @@ class Configuration
     public function getUrl(): ?string
     {
         return $this->url;
+    }
+
+    public function getUserPlaceholder(): ?string
+    {
+        return $this->userPlaceholder;
+    }
+
+    public function getUserPlaceholderFile(): ?File
+    {
+        return $this->userPlaceholderFile;
     }
 
     public function isDisableEmptyAgent(): bool
@@ -530,6 +746,22 @@ class Configuration
         return $this->userShow;
     }
 
+    public function setChapterPlaceholder(?string $chapterPlaceholder): void
+    {
+        $this->chapterPlaceholder = $chapterPlaceholder;
+    }
+
+    public function setChapterPlaceholderFile(?File $chapterPlaceholderFile = null): void
+    {
+        $this->chapterPlaceholderFile = $chapterPlaceholderFile;
+
+        if ($chapterPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
     public function setCopyright(string $copyright): static
     {
         $this->copyright = $copyright;
@@ -544,9 +776,48 @@ class Configuration
         return $this;
     }
 
+    public function setEditoPlaceholder(?string $editoPlaceholder): void
+    {
+        $this->editoPlaceholder = $editoPlaceholder;
+    }
+
+    public function setEditoPlaceholderFile(?File $editoPlaceholderFile = null): void
+    {
+        $this->editoPlaceholderFile = $editoPlaceholderFile;
+
+        if ($editoPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function setEpisodePlaceholder(?string $episodePlaceholder): void
+    {
+        $this->episodePlaceholder = $episodePlaceholder;
+    }
+
+    public function setEpisodePlaceholderFile(?File $episodePlaceholderFile = null): void
+    {
+        $this->episodePlaceholderFile = $episodePlaceholderFile;
+
+        if ($episodePlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setLanguageTmdb(?string $languageTmdb): static
+    {
+        $this->languageTmdb = $languageTmdb;
 
         return $this;
     }
@@ -567,6 +838,38 @@ class Configuration
         }
     }
 
+    public function setMemoPlaceholder(?string $memoPlaceholder): void
+    {
+        $this->memoPlaceholder = $memoPlaceholder;
+    }
+
+    public function setMemoPlaceholderFile(?File $memoPlaceholderFile = null): void
+    {
+        $this->memoPlaceholderFile = $memoPlaceholderFile;
+
+        if ($memoPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setMoviePlaceholder(?string $moviePlaceholder): void
+    {
+        $this->moviePlaceholder = $moviePlaceholder;
+    }
+
+    public function setMoviePlaceholderFile(?File $moviePlaceholderFile = null): void
+    {
+        $this->moviePlaceholderFile = $moviePlaceholderFile;
+
+        if ($moviePlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -579,6 +882,22 @@ class Configuration
         $this->noreply = $noreply;
 
         return $this;
+    }
+
+    public function setPagePlaceholder(?string $pagePlaceholder): void
+    {
+        $this->pagePlaceholder = $pagePlaceholder;
+    }
+
+    public function setPagePlaceholderFile(?File $pagePlaceholderFile = null): void
+    {
+        $this->pagePlaceholderFile = $pagePlaceholderFile;
+
+        if ($pagePlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setPlaceholder(?string $placeholder): void
@@ -597,6 +916,70 @@ class Configuration
         }
     }
 
+    public function setPostPlaceholder(?string $postPlaceholder): void
+    {
+        $this->postPlaceholder = $postPlaceholder;
+    }
+
+    public function setPostPlaceholderFile(?File $postPlaceholderFile = null): void
+    {
+        $this->postPlaceholderFile = $postPlaceholderFile;
+
+        if ($postPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setSagaPlaceholder(?string $sagaPlaceholder): void
+    {
+        $this->sagaPlaceholder = $sagaPlaceholder;
+    }
+
+    public function setSagaPlaceholderFile(?File $sagaPlaceholderFile = null): void
+    {
+        $this->sagaPlaceholderFile = $sagaPlaceholderFile;
+
+        if ($sagaPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setSeasonPlaceholder(?string $seasonPlaceholder): void
+    {
+        $this->seasonPlaceholder = $seasonPlaceholder;
+    }
+
+    public function setSeasonPlaceholderFile(?File $seasonPlaceholderFile = null): void
+    {
+        $this->seasonPlaceholderFile = $seasonPlaceholderFile;
+
+        if ($seasonPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setSeriePlaceholder(?string $seriePlaceholder): void
+    {
+        $this->seriePlaceholder = $seriePlaceholder;
+    }
+
+    public function setSeriePlaceholderFile(?File $seriePlaceholderFile = null): void
+    {
+        $this->seriePlaceholderFile = $seriePlaceholderFile;
+
+        if ($seriePlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
     public function setSitemapPosts(bool $sitemapPosts): static
     {
         $this->sitemapPosts = $sitemapPosts;
@@ -609,6 +992,38 @@ class Configuration
         $this->sitemapStory = $sitemapStory;
 
         return $this;
+    }
+
+    public function setStarPlaceholder(?string $starPlaceholder): void
+    {
+        $this->starPlaceholder = $starPlaceholder;
+    }
+
+    public function setStarPlaceholderFile(?File $starPlaceholderFile = null): void
+    {
+        $this->starPlaceholderFile = $starPlaceholderFile;
+
+        if ($starPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setStoryPlaceholder(?string $storyPlaceholder): void
+    {
+        $this->storyPlaceholder = $storyPlaceholder;
+    }
+
+    public function setStoryPlaceholderFile(?File $storyPlaceholderFile = null): void
+    {
+        $this->storyPlaceholderFile = $storyPlaceholderFile;
+
+        if ($storyPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setTabIconSrc(?string $tabIconSrc): static
@@ -854,6 +1269,22 @@ class Configuration
         $this->userLink = $userLink;
 
         return $this;
+    }
+
+    public function setUserPlaceholder(?string $userPlaceholder): void
+    {
+        $this->userPlaceholder = $userPlaceholder;
+    }
+
+    public function setUserPlaceholderFile(?File $userPlaceholderFile = null): void
+    {
+        $this->userPlaceholderFile = $userPlaceholderFile;
+
+        if ($userPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setUserShow(bool $userShow): static

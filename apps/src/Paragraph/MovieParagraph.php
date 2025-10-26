@@ -8,11 +8,10 @@ use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Form\Front\MovieType;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
 
-class MovieParagraph extends ParagraphLib
+class MovieParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data
@@ -21,14 +20,14 @@ class MovieParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var MovieRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
+        /** @var MovieRepository $ServiceEntityRepositoryAbstract */
+        $ServiceEntityRepositoryAbstract = $this->getRepository(Movie::class);
 
         $request = $this->requestStack->getCurrentRequest();
         $query   = $this->setQuery($request->query->all());
 
         $pagination = $this->getPaginator(
-            $serviceEntityRepositoryLib->getQueryPaginator($query),
+            $ServiceEntityRepositoryAbstract->getQueryPaginator($query),
             $paragraph->getNbr()
         );
 

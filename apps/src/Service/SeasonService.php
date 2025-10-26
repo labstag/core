@@ -4,6 +4,7 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
+use Labstag\Api\TmdbApi;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
@@ -12,21 +13,15 @@ use Labstag\Repository\SeasonRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class SeasonService
 {
-    private const STATUSOK = 200;
-
     public function __construct(
-        private string $tmdbapiKey,
         private LoggerInterface $logger,
-        private CacheService $cacheService,
         private MessageBusInterface $messageBus,
-        private HttpClientInterface $httpClient,
         private SeasonRepository $seasonRepository,
         private EpisodeService $episodeService,
+        private TmdbApi $tmdbApi,
     )
     {
     }
@@ -82,7 +77,7 @@ final class SeasonService
     {
         $tmdb = $season->getRefSerie()->getTmdb();
         $numberSeason = $season->getNumber();
-        $details      = $this->getDetails($tmdb, $numberSeason);
+        $details      = $this->tmdbApi->getDetailsSerieBySeason($tmdb, $numberSeason);
         if (null === $details) {
             $this->logger->error(
                 'Season not found TMDB',
@@ -115,57 +110,13 @@ final class SeasonService
         return true;
     }
 
-    private function getDetails(int $tmdb, int $number): ?array
-    {
-        $cacheKey = 'tmdb-serie_find_' . $tmdb . '_season_' . $number;
-
-        return $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdb, $number) {
-                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdb . '/season/' . $number . '?language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $data = json_decode($response->getContent(), true);
-                if (0 === count($data['episodes'])) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return $data;
-            },
-            60
-        );
-    }
-
-    private function getImgImdb(string $img): string
-    {
-        return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' . $img;
-    }
-
     /**
      * @param array<string, mixed> $data
      */
     private function getImgSeason(array $data): string
     {
         if (isset($data['poster_path'])) {
-            return $this->getImgImdb($data['poster_path']);
+            return $this->tmdbApi->getImgw300h450($data['poster_path']);
         }
 
         return '';

@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Season;
 use Labstag\Field\WysiwygField;
@@ -23,7 +22,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class SeasonCrudController extends AbstractCrudControllerLib
+class SeasonCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -109,8 +108,8 @@ class SeasonCrudController extends AbstractCrudControllerLib
     #[Route('/admin/season/{entity}/public', name: 'admin_season_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib  = $this->getRepository();
-        $season                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract  = $this->getRepository();
+        $season                           = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->publicLink($season);
     }
@@ -118,8 +117,8 @@ class SeasonCrudController extends AbstractCrudControllerLib
     #[Route('/admin/season/{entity}/update', name: 'admin_season_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryLib  = $this->getRepository();
-        $season                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract  = $this->getRepository();
+        $season                           = $ServiceEntityRepositoryAbstract->find($entity);
         $messageBus->dispatch(new SeasonMessage($season->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -134,8 +133,8 @@ class SeasonCrudController extends AbstractCrudControllerLib
     #[Route('/admin/season/{entity}/w3c', name: 'admin_season_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib  = $this->getRepository();
-        $season                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract  = $this->getRepository();
+        $season                           = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($season);
     }

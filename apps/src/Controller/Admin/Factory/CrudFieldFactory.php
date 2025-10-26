@@ -25,7 +25,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 /**
  * Centralized factory for fields (EasyAdmin Fields) to reduce
- * duplication in AbstractCrudControllerLib.
+ * duplication in CrudControllerAbstract.
  */
 final class CrudFieldFactory
 {
@@ -356,10 +356,7 @@ final class CrudFieldFactory
 
     public function updatedAtField(): DateTimeField
     {
-        return DateTimeField::new(
-            'updatedAt',
-            new TranslatableMessage('updated At')
-        )->hideWhenCreating()->hideOnIndex();
+        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating()->hideOnIndex();
     }
 
     public function workflowField(): TextField

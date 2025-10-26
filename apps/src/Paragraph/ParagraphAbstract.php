@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Paragraph\Abstract;
+namespace Labstag\Paragraph;
 
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
@@ -23,7 +23,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
+use Labstag\Repository\ServiceEntityRepositoryAbstract;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\FormService;
@@ -43,7 +43,7 @@ use Twig\Environment;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 #[AutoconfigureTag('labstag.paragraphs')]
-abstract class ParagraphLib extends AbstractController
+abstract class ParagraphAbstract extends AbstractController
 {
 
     /**
@@ -276,12 +276,12 @@ abstract class ParagraphLib extends AbstractController
     }
 
     /**
-     * @return ServiceEntityRepositoryLib<object>
+     * @return ServiceEntityRepositoryAbstract<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryLib
+    protected function getRepository(string $entity): ServiceEntityRepositoryAbstract
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
             throw new Exception('Repository not found');
         }
 

@@ -8,7 +8,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
@@ -17,7 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class PageCrudController extends AbstractCrudControllerLib
+class PageCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -125,8 +124,8 @@ class PageCrudController extends AbstractCrudControllerLib
     #[Route('/admin/page/{entity}/public', name: 'admin_page_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $page                       = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $page                            = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->publicLink($page);
     }
@@ -134,8 +133,8 @@ class PageCrudController extends AbstractCrudControllerLib
     #[Route('/admin/page/{entity}/w3c', name: 'admin_page_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $page                       = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $page                            = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($page);
     }

@@ -5,10 +5,9 @@ namespace Labstag\Paragraph;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 
-class HeadChapterParagraph extends ParagraphLib
+class HeadChapterParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data

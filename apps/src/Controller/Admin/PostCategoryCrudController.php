@@ -2,9 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Controller\Admin\Abstract\CategoryCrudControllerLib;
-
-class PostCategoryCrudController extends CategoryCrudControllerLib
+class PostCategoryCrudController extends CategoryCrudControllerAbstract
 {
     protected function getChildRelationshipProperty(): string
     {

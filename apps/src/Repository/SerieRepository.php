@@ -6,13 +6,12 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Serie;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Symfony\Component\Intl\Countries;
 
 /**
- * @extends ServiceEntityRepositoryLib<Serie>
+ * @extends ServiceEntityRepositoryAbstract<Serie>
  */
-class SerieRepository extends ServiceEntityRepositoryLib
+class SerieRepository extends ServiceEntityRepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

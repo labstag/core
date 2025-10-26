@@ -7,11 +7,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class TextImgParagraph extends ParagraphLib
+class TextImgParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data

@@ -2,12 +2,11 @@
 
 namespace Labstag\Block;
 
-use Labstag\Block\Abstract\AbstractSimpleBlock;
 use Override;
 
-class FlashbagBlock extends AbstractSimpleBlock
+class FlashbagBlock extends SimpleBlockAbstract
 {
-    // Utilise l'implémentation par défaut d'AbstractSimpleBlock
+    // Utilise l'implémentation par défaut d'SimpleBlockAbstract
 
     #[Override]
     public function getName(): string

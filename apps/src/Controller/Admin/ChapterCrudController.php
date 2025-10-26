@@ -8,7 +8,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
@@ -18,7 +17,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class ChapterCrudController extends AbstractCrudControllerLib
+class ChapterCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -108,8 +107,8 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[Route('/admin/chapter/{entity}/public', name: 'admin_chapter_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $chapter                    = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $chapter                         = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->publicLink($chapter);
     }
@@ -117,8 +116,8 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[Route('/admin/chapter/{entity}/w3c', name: 'admin_chapter_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $chapter                    = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $chapter                         = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($chapter);
     }

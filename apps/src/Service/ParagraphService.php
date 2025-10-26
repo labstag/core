@@ -23,7 +23,7 @@ final class ParagraphService
 
     public function __construct(
         /**
-         * @var iterable<\Labstag\Paragraph\Abstract\ParagraphLib>
+         * @var iterable<\Labstag\Paragraph\ParagraphAbstract>
          */
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,

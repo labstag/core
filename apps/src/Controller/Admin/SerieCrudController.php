@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
@@ -24,7 +23,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class SerieCrudController extends AbstractCrudControllerLib
+class SerieCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -143,8 +142,8 @@ class SerieCrudController extends AbstractCrudControllerLib
     #[Route('/admin/serie/{entity}/imdb', name: 'admin_serie_imdb')]
     public function imdb(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $serie                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $serie                           = $ServiceEntityRepositoryAbstract->find($entity);
         if (empty($serie->getImdb())) {
             return $this->redirectToRoute('admin_serie_index');
         }
@@ -155,8 +154,8 @@ class SerieCrudController extends AbstractCrudControllerLib
     #[Route('/admin/serie/{entity}/public', name: 'admin_serie_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $serie                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $serie                           = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->publicLink($serie);
     }
@@ -164,8 +163,8 @@ class SerieCrudController extends AbstractCrudControllerLib
     #[Route('/admin/serie/{entity}/tmdb', name: 'admin_serie_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $serie                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $serie                           = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->redirect('https://www.themoviedb.org/tv/' . $serie->getTmdb());
     }
@@ -173,8 +172,8 @@ class SerieCrudController extends AbstractCrudControllerLib
     #[Route('/admin/serie/{entity}/update', name: 'admin_serie_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $serie                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $serie                           = $ServiceEntityRepositoryAbstract->find($entity);
         $messageBus->dispatch(new SerieMessage($serie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -189,8 +188,8 @@ class SerieCrudController extends AbstractCrudControllerLib
     #[Route('/admin/serie/{entity}/w3c', name: 'admin_serie_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $serie                      = $serviceEntityRepositoryLib->find($entity);
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        $serie                           = $ServiceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($serie);
     }

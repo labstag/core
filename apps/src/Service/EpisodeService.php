@@ -4,24 +4,19 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
+use Labstag\Api\TmdbApi;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Repository\EpisodeRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class EpisodeService
 {
-    private const STATUSOK = 200;
-
     public function __construct(
-        private string $tmdbapiKey,
         private LoggerInterface $logger,
-        private CacheService $cacheService,
-        private HttpClientInterface $httpClient,
         protected EpisodeRepository $episodeRepository,
+        private TmdbApi $tmdbApi,
     )
     {
     }
@@ -57,21 +52,18 @@ class EpisodeService
         $tmdb = $episode->getRefseason()->getRefserie()->getTmdb();
         $seasonNumber = $episode->getRefseason()->getNumber();
         $episodeNumber = $episode->getNumber();
-        $details       = $this->getDetailsInitial($tmdb, $seasonNumber, $episodeNumber);
+        $details       = $this->tmdbApi->getEpisode($tmdb, $seasonNumber, $episodeNumber);
         if (!is_array($details)) {
-            $details = $this->getDetailsOther($tmdb, $seasonNumber, $episodeNumber);
-            if (!is_array($details)) {
-                $this->logger->error(
-                    'Episode not found TMDB',
-                    [
-                        'tmdb'           => $tmdb,
-                        'season_number'  => $seasonNumber,
-                        'episode_number' => $episodeNumber,
-                    ]
-                );
+            $this->logger->error(
+                'Episode not found TMDB',
+                [
+                    'tmdb'           => $tmdb,
+                    'season_number'  => $seasonNumber,
+                    'episode_number' => $episodeNumber,
+                ]
+            );
 
-                return false;
-            }
+            return false;
         }
 
         $this->updateImage($episode, $details);
@@ -88,107 +80,16 @@ class EpisodeService
         return true;
     }
 
-    private function getDetailsInitial(int $tmdb, int $seasonNumber, int $episodeNumber): ?array
-    {
-        $cacheKey = 'tmdb-serie_find_' . $tmdb . '_season_' . $seasonNumber . '_episode_' . $episodeNumber;
-
-        return $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdb, $seasonNumber, $episodeNumber): ?array {
-                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdb . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '?language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $data = json_decode($response->getContent(), true);
-
-                $item->expiresAfter(60);
-
-                return $data;
-            },
-            60
-        );
-    }
-
-    private function getDetailsOther(int $tmdb, ?int $seasonNumber, ?int $episodeNumber): ?array
-    {
-        $cacheKey = 'tmdb-serie_find_' . $tmdb . '_season_' . $seasonNumber;
-
-        $data = $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdb, $seasonNumber) {
-                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdb . '/season/' . $seasonNumber . '?language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $data = json_decode($response->getContent(), true);
-                if (0 === count($data['episodes'])) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return $data;
-            },
-            60
-        );
-
-        if (is_null($data)) {
-            return null;
-        }
-
-        $episodes = $data['episodes'];
-        foreach ($episodes as $episode) {
-            if ($episode['episode_number'] == $episodeNumber) {
-                return $episode;
-            }
-        }
-
-        return null;
-    }
-
     /**
      * @param array<string, mixed> $data
      */
     private function getImgEpisode(array $data): string
     {
         if (isset($data['still_path'])) {
-            return $this->getImgImdb($data['still_path']);
+            return $this->tmdbApi->getImgw227h127($data['still_path']);
         }
 
         return '';
-    }
-
-    private function getImgImdb(string $img): string
-    {
-        return 'https://media.themoviedb.org/t/p/w227_and_h127_bestv2' . $img;
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Controller\Admin\Abstract;
+namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -16,7 +16,7 @@ use Override;
  * Abstract controller for typed entities (Category, Tag) to reduce code duplication
  * across specific type controllers.
  */
-abstract class AbstractTypedCrudControllerLib extends AbstractCrudControllerLib
+abstract class TypedCrudControllerAbstract extends CrudControllerAbstract
 {
     #[Override]
     public function configureActions(Actions $actions): Actions

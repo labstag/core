@@ -11,12 +11,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\GeoCode;
 use Labstag\Repository\GeoCodeRepository;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class GeoCodeCrudController extends AbstractCrudControllerLib
+class GeoCodeCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -96,12 +95,12 @@ class GeoCodeCrudController extends AbstractCrudControllerLib
      */
     private function getAllData(string $type): array
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        if (!$serviceEntityRepositoryLib instanceof GeoCodeRepository) {
+        $ServiceEntityRepositoryAbstract = $this->getRepository();
+        if (!$ServiceEntityRepositoryAbstract instanceof GeoCodeRepository) {
             return [];
         }
 
-        $all = $serviceEntityRepositoryLib->findAllData($type);
+        $all = $ServiceEntityRepositoryAbstract->findAllData($type);
 
         $data = [];
         foreach ($all as $row) {

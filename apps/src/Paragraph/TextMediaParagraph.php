@@ -10,12 +10,11 @@ use Essence\Media;
 use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class TextMediaParagraph extends ParagraphLib
+class TextMediaParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data

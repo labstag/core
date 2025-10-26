@@ -2,7 +2,6 @@
 
 namespace Labstag\Service;
 
-use Labstag\Entity\Configuration;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -14,8 +13,9 @@ final class SiteService
 {
     public function __construct(
         #[AutowireIterator('labstag.datas')]
-        private iterable $dataLibs,
-        private ConfigurationService $configurationService,
+        private iterable $datas,
+        #[AutowireIterator('labstag.assets')]
+        private readonly iterable $assets,
         private FileService $fileService,
         private TokenStorageInterface $tokenStorage,
     )
@@ -24,7 +24,16 @@ final class SiteService
 
     public function asset(mixed $entity, string $field, bool $placeholder = true): string
     {
-        $file = $this->fileService->asset($entity, $field);
+        $asset = null;
+        foreach ($this->assets as $row) {
+            if (!$row->supports($entity)) {
+                continue;
+            }
+
+            $file  = $row->asset($entity, $field);
+            $asset = $row;
+            break;
+        }
 
         if ('' !== $file) {
             return $file;
@@ -34,10 +43,14 @@ final class SiteService
             return '';
         }
 
-        if (!$entity instanceof Configuration) {
-            $config = $this->configurationService->getConfiguration();
+        $placeholder = $asset->placeholder();
+        if ('' !== $placeholder) {
+            return $placeholder;
+        }
 
-            return $this->asset($config, 'placeholder');
+        $placeholder = $asset->configPlaceholder();
+        if ('' !== $placeholder) {
+            return $placeholder;
         }
 
         return 'https://picsum.photos/1200/1200?md5=' . md5((string) $entity->getId());
@@ -55,9 +68,9 @@ final class SiteService
 
     public function getTitleMeta(object $entity): ?string
     {
-        foreach ($this->dataLibs as $datalib) {
-            if ($datalib->supports($entity)) {
-                return $datalib->getTitleMeta($entity);
+        foreach ($this->datas as $data) {
+            if ($data->supports($entity)) {
+                return $data->getTitleMeta($entity);
             }
         }
 

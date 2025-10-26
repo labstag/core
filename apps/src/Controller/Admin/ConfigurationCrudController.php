@@ -13,12 +13,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Configuration;
 use Labstag\Field\WysiwygField;
+use Symfony\Component\Intl\Locales;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class ConfigurationCrudController extends AbstractCrudControllerLib
+class ConfigurationCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -44,6 +44,23 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
             BooleanField::new('userShow', new TranslatableMessage('Show user')),
             BooleanField::new('userLink', new TranslatableMessage('Link user')),
         ];
+        yield FormField::addTab(new TranslatableMessage('Tmdb'));
+        $choiceField = ChoiceField::new('languageTmdb', new TranslatableMessage('Language Tmdb'));
+        $locales     = Locales::getNames();
+        $languages   = [];
+        foreach ($locales as $key => $value) {
+            if (0 === substr_count((string) $key, '_')) {
+                continue;
+            }
+
+            $locale            = str_replace('_', '-', $key);
+            $languages[$value] = $locale;
+        }
+
+        dump($languages);
+
+        $choiceField->setChoices($languages);
+        yield $choiceField;
         yield FormField::addTab(new TranslatableMessage('Security'));
         yield BooleanField::new('disableEmptyAgent', new TranslatableMessage('Disable empty agent'));
         yield FormField::addTab(new TranslatableMessage('Sitemap'));
@@ -67,6 +84,86 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
         foreach ($fields as $field) {
             yield $field;
         }
+
+        yield FormField::addTab(new TranslatableMessage('Placeholders'));
+        yield $this->crudFieldFactory->imageField(
+            'chapterPlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Chapter')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'editoPlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Edito')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'episodePlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Episode')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'memoPlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Memo')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'moviePlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Movie')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'pagePlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Page')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'postPlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Post')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'sagaPlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Saga')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'seasonPlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Season')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'seriePlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Serie')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'starPlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Star')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'storyPlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('Story')
+        );
+        yield $this->crudFieldFactory->imageField(
+            'userPlaceholder',
+            $pageName,
+            self::getEntityFqcn(),
+            (string) new TranslatableMessage('User')
+        );
     }
 
     public static function getEntityFqcn(): string

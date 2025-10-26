@@ -4,6 +4,7 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
+use Labstag\Api\TmdbApi;
 use Labstag\Entity\Category;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Saga;
@@ -11,22 +12,14 @@ use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class MovieService
 {
-    private const STATUSOK = 200;
 
     /**
      * @var array<string, mixed>
      */
     private array $category = [];
-
-    /**
-     * @var array<string, mixed>
-     */
-    private array $collection = [];
 
     /**
      * @var array<string, mixed>
@@ -59,12 +52,10 @@ final class MovieService
     private array $year = [];
 
     public function __construct(
-        private CacheService $cacheService,
-        private HttpClientInterface $httpClient,
         private MovieRepository $movieRepository,
         private SagaRepository $sagaRepository,
         private CategoryRepository $categoryRepository,
-        private string $tmdbapiKey,
+        private TmdbApi $tmdbApi,
     )
     {
     }
@@ -129,52 +120,6 @@ final class MovieService
         $this->country = $country;
 
         return $country;
-    }
-
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function getDetailsTmdb(string $imdbId): ?array
-    {
-        if ('' === $this->tmdbapiKey) {
-            return null;
-        }
-
-        $cacheKey = 'tmdb_movie_find_' . $imdbId;
-
-        return $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($imdbId) {
-                $url      = 'https://api.themoviedb.org/3/find/' . $imdbId . '?external_source=imdb_id&language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $data = json_decode($response->getContent(), true);
-                if (0 === count($data['movie_results'])) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return $data;
-            },
-            60
-        );
     }
 
     /**
@@ -244,7 +189,7 @@ final class MovieService
 
         $tmdbId = $movie->getTmdb();
         if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
-            $data   = $this->getDetailsTmdb($movie->getImdb());
+            $data   = $this->tmdbApi->findByImdb($movie->getImdb());
             if (null !== $data && isset($data['movie_results'][0]['id'])) {
                 $tmdbId = $data['movie_results'][0]['id'];
             }
@@ -254,168 +199,29 @@ final class MovieService
             return [];
         }
 
-        $details = $this->getDetailsReleasesDates($details, $tmdbId);
-        $details = $this->getDetailsTmdbMovie($details, $tmdbId);
-        $details = $this->getTrailersTmdbMovie($details, $tmdbId);
-
-        return $this->getDetailsTmdbCollection($details);
-    }
-
-    /**
-     * @param array<string, mixed> $details
-     *
-     * @return array<string, mixed>
-     */
-    private function getDetailsReleasesDates(array $details, string $tmdbId): array
-    {
-        if ('' === $this->tmdbapiKey) {
-            return $details;
+        $releases = $this->tmdbApi->getMovieReleasesDates($tmdbId);
+        if (null !== $releases) {
+            $details['release_dates'] = $releases;
         }
 
-        $cacheKey = 'tmdb_movie-release_dates_' . $tmdbId;
-
-        $data = $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdbId) {
-                $url      = 'https://api.themoviedb.org/3/movie/' . $tmdbId . '/release_dates';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return json_decode($response->getContent(), true);
-            },
-            60
-        );
-        if (null == $data) {
-            return $details;
+        $tmdb = $this->tmdbApi->getMovieDetails($tmdbId);
+        if (null !== $tmdb) {
+            $details['tmdb'] = $tmdb;
         }
 
-        $details['release_dates'] = $data;
-
-        return $details;
-    }
-
-    /**
-     * @param array<string, mixed> $details
-     *
-     * @return array<string, mixed>
-     */
-    private function getDetailsTmdbCollection(array $details): array
-    {
-        if ('' === $this->tmdbapiKey) {
-            return $details;
+        $trailers = $this->tmdbApi->getTrailerMovie($tmdbId);
+        if (null !== $trailers) {
+            $details['trailers'] = $trailers;
         }
 
         if (!isset($details['tmdb']['belongs_to_collection'])) {
-            return $details;
+            $collection = $this->tmdbApi->getMovieCollection($details['tmdb']['belongs_to_collection']['id']);
+            if (null !== $collection) {
+                $details['collection'] = $collection;
+            }
         }
-
-        $tmdbId = $details['tmdb']['belongs_to_collection']['id'];
-
-        if (isset($this->collection[$tmdbId])) {
-            $details['collection'] = $this->collection[$tmdbId];
-
-            return $details;
-        }
-
-        $cacheKey                  = 'tmdb-movie_collection_' . $tmdbId;
-        $this->collection[$tmdbId] = $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdbId) {
-                $url      = 'https://api.themoviedb.org/3/collection/' . $tmdbId . '?language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return json_decode($response->getContent(), true);
-            },
-            60
-        );
-
-        $details['collection'] = $this->collection[$tmdbId];
 
         return $details;
-    }
-
-    /**
-     * @param array<string, mixed> $details
-     *
-     * @return array<string, mixed>
-     */
-    private function getDetailsTmdbMovie(array $details, string $tmdbId): array
-    {
-        if ('' === $this->tmdbapiKey) {
-            return $details;
-        }
-
-        $cacheKey = 'tmdb_movie_' . $tmdbId;
-
-        $data = $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdbId) {
-                $url      = 'https://api.themoviedb.org/3/movie/' . $tmdbId . '?language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return json_decode($response->getContent(), true);
-            },
-            60
-        );
-        if (null == $data) {
-            return $details;
-        }
-
-        $details['tmdb'] = $data;
-
-        return $details;
-    }
-
-    private function getImgImdb(string $img): string
-    {
-        return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' . $img;
     }
 
     /**
@@ -424,7 +230,7 @@ final class MovieService
     private function getImgMovie(array $data): string
     {
         if (isset($data['tmdb']['poster_path'])) {
-            return $this->getImgImdb($data['tmdb']['poster_path']);
+            return $this->tmdbApi->getImgw300h450($data['tmdb']['poster_path']);
         }
 
         return '';
@@ -436,59 +242,10 @@ final class MovieService
     private function getImgSaga(array $data): string
     {
         if (isset($data['collection']['poster_path'])) {
-            return $this->getImgImdb($data['collection']['poster_path']);
+            return $this->tmdbApi->getImgw300h450($data['collection']['poster_path']);
         }
 
         return '';
-    }
-
-    /**
-     * @param array<string, mixed> $details
-     *
-     * @return array<string, mixed>
-     */
-    private function getTrailersTmdbMovie(array $details, string $tmdbId): array
-    {
-        if ('' === $this->tmdbapiKey) {
-            return $details;
-        }
-
-        $cacheKey = 'tmdb_movie-trailers_' . $tmdbId;
-
-        $data = $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdbId) {
-                $url      = 'https://api.themoviedb.org/3/movie/' . $tmdbId . '/videos?language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return json_decode($response->getContent(), true);
-            },
-            60
-        );
-
-        if (null == $data) {
-            return $details;
-        }
-
-        $details['trailers'] = $data;
-
-        return $details;
     }
 
     /**

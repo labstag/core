@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Controller\Admin\Abstract;
+namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,8 +19,8 @@ use Labstag\Controller\Admin\Factory\LinkActionFactory;
 use Labstag\Controller\Admin\Traits\ParagraphAdminTrait;
 use Labstag\Controller\Admin\Traits\TrashActionsTrait;
 use Labstag\Entity\Paragraph;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Repository\ParagraphRepository;
+use Labstag\Repository\ServiceEntityRepositoryAbstract;
 use Labstag\Service\BlockService;
 use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
@@ -46,7 +46,7 @@ use Symfony\Component\Translation\TranslatableMessage;
  *
  * @extends AbstractCrudController<TEntity>
  */
-abstract class AbstractCrudControllerLib extends AbstractCrudController
+abstract class CrudControllerAbstract extends AbstractCrudController
 {
     use ParagraphAdminTrait;
     use TrashActionsTrait;
@@ -117,9 +117,9 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
     /**
      * Backward compatibility helper - new code should call getRepository() or inject repositories directly.
      *
-     * @return ServiceEntityRepositoryLib<object>
+     * @return ServiceEntityRepositoryAbstract<object>
      */
-    protected function getRepository(?string $entity = null): ServiceEntityRepositoryLib
+    protected function getRepository(?string $entity = null): ServiceEntityRepositoryAbstract
     {
         $entity ??= static::getEntityFqcn();
 
@@ -128,10 +128,10 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
 
     protected function getRepositoryParagraph(): ParagraphRepository
     {
-        $serviceEntityRepositoryLib = $this->getDoctrineRepository(Paragraph::class);
-        assert($serviceEntityRepositoryLib instanceof ParagraphRepository);
+        $ServiceEntityRepositoryAbstract = $this->getDoctrineRepository(Paragraph::class);
+        assert($ServiceEntityRepositoryAbstract instanceof ParagraphRepository);
 
-        return $serviceEntityRepositoryLib;
+        return $ServiceEntityRepositoryAbstract;
     }
 
     protected function isSuperAdmin(): bool
@@ -202,14 +202,14 @@ abstract class AbstractCrudControllerLib extends AbstractCrudController
      * Internal helper to fetch a Doctrine repository with generics-like safety.
      */
     /**
-     * @return ServiceEntityRepositoryLib<object>
+     * @return ServiceEntityRepositoryAbstract<object>
      */
-    private function getDoctrineRepository(string $entity): ServiceEntityRepositoryLib
+    private function getDoctrineRepository(string $entity): ServiceEntityRepositoryAbstract
     {
         $objectManager = $this->managerRegistry->getManagerForClass($entity);
-        /** @var ServiceEntityRepositoryLib<object> $objectRepository */
+        /** @var ServiceEntityRepositoryAbstract<object> $objectRepository */
         $objectRepository = $objectManager->getRepository($entity);
-        assert($objectRepository instanceof ServiceEntityRepositoryLib);
+        assert($objectRepository instanceof ServiceEntityRepositoryAbstract);
 
         return $objectRepository;
     }

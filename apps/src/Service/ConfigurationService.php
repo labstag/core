@@ -28,4 +28,11 @@ final class ConfigurationService
 
         return $this->configuration;
     }
+
+    public function getLocaleTmdb(): string
+    {
+        $config = $this->getConfiguration();
+
+        return $config->getLanguageTmdb() ?? 'fr-FR';
+    }
 }

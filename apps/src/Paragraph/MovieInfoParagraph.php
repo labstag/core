@@ -6,11 +6,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Generator;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class MovieInfoParagraph extends ParagraphLib
+class MovieInfoParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data
