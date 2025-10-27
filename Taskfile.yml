@@ -579,7 +579,7 @@ tasks:
     cmds:
     - task: symfony:console
       vars:
-        CMD: "messenger:consume async -vv"
+        CMD: "messenger:consume async"
 
   rector:
     desc: "Refactorise le code avec Rector"

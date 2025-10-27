@@ -21,13 +21,13 @@ final class GeocodeMessageHandler
         $data    = $geocodeMessage->getData();
         $geocode = $this->geoCodeRepository->findOneBy(
             [
-                'countryCode' => $data[0],
-                'postalCode'  => $data[1],
-                'placeName' => $data[2],
-                'stateName' => $data[3],
-                'stateCode' => $data[4],
-                'provinceName' => $data[5],
-                'provinceCode' => $data[6],
+                'countryCode'   => $data[0],
+                'postalCode'    => $data[1],
+                'placeName'     => $data[2],
+                'stateName'     => $data[3],
+                'stateCode'     => $data[4],
+                'provinceName'  => $data[5],
+                'provinceCode'  => $data[6],
                 'communityName' => $data[7],
                 'communityCode' => $data[8],
             ]

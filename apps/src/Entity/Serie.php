@@ -73,7 +73,7 @@ class Serie implements Stringable
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $imdb = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -81,6 +81,9 @@ class Serie implements Stringable
 
     #[Vich\UploadableField(mapping: 'serie', fileNameProperty: 'img')]
     private ?File $imgFile = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $inProduction = null;
 
     #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $lastreleaseDate = null;
@@ -121,9 +124,6 @@ class Serie implements Stringable
 
     #[ORM\Column(nullable: true)]
     private ?int $votes = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?bool $inProduction = null;
 
     public function __construct()
     {
@@ -295,6 +295,11 @@ class Serie implements Stringable
         return $this->file;
     }
 
+    public function isInProduction(): ?bool
+    {
+        return $this->inProduction;
+    }
+
     public function removeCategory(Category $category): static
     {
         if ($this->categories->removeElement($category)) {
@@ -413,6 +418,13 @@ class Serie implements Stringable
         }
     }
 
+    public function setInProduction(?bool $inProduction): static
+    {
+        $this->inProduction = $inProduction;
+
+        return $this;
+    }
+
     public function setLastreleaseDate(?DateTime $lastreleaseDate): static
     {
         $this->lastreleaseDate = $lastreleaseDate;
@@ -465,18 +477,6 @@ class Serie implements Stringable
     public function setVotes(?int $votes): static
     {
         $this->votes = $votes;
-
-        return $this;
-    }
-
-    public function isInProduction(): ?bool
-    {
-        return $this->inProduction;
-    }
-
-    public function setInProduction(?bool $inProduction): static
-    {
-        $this->inProduction = $inProduction;
 
         return $this;
     }

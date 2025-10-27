@@ -356,10 +356,7 @@ final class CrudFieldFactory
 
     public function updatedAtField(): DateTimeField
     {
-        return DateTimeField::new(
-            'updatedAt',
-            new TranslatableMessage('updated At')
-        )->hideWhenCreating()->hideOnIndex();
+        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating()->hideOnIndex();
     }
 
     public function workflowField(): TextField

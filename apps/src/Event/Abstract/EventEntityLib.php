@@ -16,17 +16,18 @@ use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
+use Labstag\Message\MovieMessage;
+use Labstag\Message\SerieMessage;
 use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\HttpErrorLogsRepository;
 use Labstag\Repository\PageRepository;
 use Labstag\Repository\SeasonRepository;
 use Labstag\Service\BlockService;
-use Labstag\Service\MovieService;
 use Labstag\Service\ParagraphService;
-use Labstag\Service\SerieService;
 use Labstag\Service\StoryService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Workflow\Registry;
 
@@ -35,7 +36,7 @@ abstract class EventEntityLib
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
-        protected SerieService $serieService,
+        protected MessageBusInterface $messageBus,
         protected WorkflowService $workflowService,
         protected ChapterRepository $chapterRepository,
         protected SeasonRepository $seasonRepository,
@@ -43,7 +44,6 @@ abstract class EventEntityLib
         protected ParagraphService $paragraphService,
         protected BlockService $blockService,
         protected StoryService $storyService,
-        protected MovieService $movieService,
         protected PageRepository $pageRepository,
         protected HttpErrorLogsRepository $httpErrorLogsRepository,
     )
@@ -149,7 +149,7 @@ abstract class EventEntityLib
             return;
         }
 
-        $this->movieService->update($instance);
+        $this->messageBus->dispatch(new MovieMessage($instance->getId()));
     }
 
     protected function updateEntityPage(object $instance): void
@@ -226,7 +226,7 @@ abstract class EventEntityLib
             return;
         }
 
-        $this->serieService->update($instance);
+        $this->messageBus->dispatch(new SerieMessage($instance->getId()));
     }
 
     protected function updateEntityStory(object $instance): void
