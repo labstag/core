@@ -15,7 +15,7 @@ class ChapterFixtures extends FixtureAbstract implements DependentFixtureInterfa
     /**
      * @var int
      */
-    protected const NUMBER_CHAPTER = 50;
+    protected const NUMBER_CHAPTER = 20;
 
     /**
      * @var mixed[]

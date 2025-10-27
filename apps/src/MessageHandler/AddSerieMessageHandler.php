@@ -29,6 +29,9 @@ final class AddSerieMessageHandler
             ['imdb' => $imdb]
         );
         if ($serie instanceof Serie) {
+            $serie->setFile(true);
+            $this->serieRepository->save($serie);
+
             return;
         }
 
@@ -46,8 +49,6 @@ final class AddSerieMessageHandler
         $serie->setFile(true);
 
         $this->serieRepository->save($serie);
-
         $this->messageBus->dispatch(new SerieMessage($serie->getId()));
-        // do something with your message
     }
 }

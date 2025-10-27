@@ -25,9 +25,9 @@ class TagFixtures extends FixtureAbstract
     {
         $tab  = [
             'chapter',
-            'story',
             'page',
             'post',
+            'story',
         ];
         $code = $tab[array_rand($tab)];
         $tag  = new Tag();

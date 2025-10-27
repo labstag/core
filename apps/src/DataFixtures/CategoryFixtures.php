@@ -24,9 +24,11 @@ class CategoryFixtures extends FixtureAbstract
     protected function addCategory(Generator $generator, ObjectManager $objectManager): void
     {
         $tab      = [
-            'story',
+            'movie',
             'page',
             'post',
+            'serie',
+            'story',
         ];
         $code     = $tab[array_rand($tab)];
         $category = new Category();

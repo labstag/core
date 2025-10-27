@@ -70,7 +70,7 @@ final class SeasonService
 
     public function save(Season $season): void
     {
-        $this->seasonRepository->persist($season);
+        $this->seasonRepository->save($season);
     }
 
     public function update(Season $season): bool
@@ -91,10 +91,10 @@ final class SeasonService
         }
 
         $season->setTitle($details['name']);
-        if (!is_null($details['air_date'])) {
-            $season->setAirDate(new DateTime($details['air_date']));
-        }
-
+        $airDate = (is_null($details['air_date']) || empty($details['air_date'])) ? null : new DateTime(
+            $details['air_date']
+        );
+        $season->setAirDate($airDate);
         $season->setTmdb($details['id']);
         $season->setOverview($details['overview']);
         $season->setVoteAverage($details['vote_average']);

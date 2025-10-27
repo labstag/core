@@ -44,7 +44,7 @@ class EpisodeService
 
     public function save(Episode $episode): void
     {
-        $this->episodeRepository->persist($episode);
+        $this->episodeRepository->save($episode);
     }
 
     public function update(Episode $episode): bool
@@ -74,7 +74,9 @@ class EpisodeService
         $episode->setVoteCount($details['vote_count']);
         $episode->setRuntime($details['runtime']);
 
-        $airDate = empty($details['air_date']) ? null : new DateTime($details['air_date']);
+        $airDate = (is_null($details['air_date']) || empty($details['air_date'])) ? null : new DateTime(
+            $details['air_date']
+        );
         $episode->setAirDate($airDate);
 
         return true;

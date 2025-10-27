@@ -28,6 +28,9 @@ final class AddMovieMessageHandler
             ['imdb' => $imdb]
         );
         if ($movie instanceof Movie) {
+            $movie->setFile(true);
+            $this->movieRepository->save($movie);
+
             return;
         }
 
@@ -45,7 +48,6 @@ final class AddMovieMessageHandler
         $movie->setFile(true);
 
         $this->movieRepository->save($movie);
-
         $this->messageBus->dispatch(new MovieMessage($movie->getId()));
         // do something with your message
     }

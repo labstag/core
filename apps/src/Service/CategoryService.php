@@ -18,8 +18,10 @@ class CategoryService
 
     public function getType(string $type, string $title): Category
     {
-        $this->setByTypes($type);
-        foreach ($this->categories[$type] as $category) {
+        $categories = $this->categoryRepository->findBy(
+            ['type' => $type]
+        );
+        foreach ($categories as $category) {
             if ($category->getTitle() === $title) {
                 return $category;
             }
@@ -30,19 +32,7 @@ class CategoryService
         $category->setType($type);
 
         $this->categoryRepository->save($category);
-        $this->categories[$type][] = $category;
 
         return $category;
-    }
-
-    private function setByTypes(string $type): void
-    {
-        if (isset($this->categories[$type])) {
-            return;
-        }
-
-        $this->categories[$type] = $this->categoryRepository->findBy(
-            ['type' => $type]
-        );
     }
 }

@@ -17,7 +17,7 @@ class PostFixtures extends FixtureAbstract implements DependentFixtureInterface
     /**
      * @var int
      */
-    protected const NUMBER_POST = 50;
+    protected const NUMBER_POST = 20;
 
     /**
      * @var User[]

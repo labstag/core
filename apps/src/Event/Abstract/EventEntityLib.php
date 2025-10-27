@@ -23,7 +23,9 @@ use Labstag\Repository\HttpErrorLogsRepository;
 use Labstag\Repository\PageRepository;
 use Labstag\Repository\SeasonRepository;
 use Labstag\Service\BlockService;
+use Labstag\Service\MovieService;
 use Labstag\Service\ParagraphService;
+use Labstag\Service\SerieService;
 use Labstag\Service\StoryService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -36,6 +38,8 @@ abstract class EventEntityLib
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
+        protected SerieService $serieService,
+        protected MovieService $movieService,
         protected MessageBusInterface $messageBus,
         protected WorkflowService $workflowService,
         protected ChapterRepository $chapterRepository,

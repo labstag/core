@@ -310,9 +310,14 @@ final class SerieService
 
         $serie->setTmdb($details['tmdb']['id']);
 
-        $serie->setReleaseDate(new DateTime($details['tmdb']['first_air_date']));
-        $serie->setLastreleaseDate(new DateTime($details['tmdb']['last_air_date']));
-
+        $releaseDate = (is_null(
+            $details['tmdb']['first_air_date']
+        ) || empty($details['tmdb']['first_air_date'])) ? null : new DateTime($details['tmdb']['first_air_date']);
+        $serie->setReleaseDate($releaseDate);
+        $lastReleaseDate = (is_null(
+            $details['tmdb']['last_air_date']
+        ) || empty($details['tmdb']['last_air_date'])) ? null : new DateTime($details['tmdb']['last_air_date']);
+        $serie->setLastreleaseDate($lastReleaseDate);
         $this->updateImageMovie($serie, $details);
 
         return true;
