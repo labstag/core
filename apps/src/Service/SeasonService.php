@@ -91,7 +91,10 @@ final class SeasonService
         }
 
         $season->setTitle($details['name']);
-        $season->setAirDate(new DateTime($details['air_date']));
+        if (!is_null($details['air_date'])) {
+            $season->setAirDate(new DateTime($details['air_date']));
+        }
+
         $season->setTmdb($details['id']);
         $season->setOverview($details['overview']);
         $season->setVoteAverage($details['vote_average']);
