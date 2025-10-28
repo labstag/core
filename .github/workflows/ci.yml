@@ -63,28 +63,13 @@ jobs:
           task labstag:copysql
           cd lampy && task lampy:exec
       
-      - name: set ENV IDS
+      - name: Deploy containers
         run: |
           task labstag:set-env-ids
-      
-      - name: get pull image
-        run: |
           task labstag:getpull-image
-      
-      - name: First install
-        run: |
           task labstag:install-first
-      
-      - name: Deploy
-        run: |
           task labstag:deploy
-      
-      - name: waiting
-        run: |
           task labstag:waiting
-      
-      - name: lint all
-        run: task lint:all
 
   launch:
     runs-on: ubuntu-24.04
