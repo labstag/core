@@ -1,6 +1,9 @@
-{% set seasons = serie.seasons|length %}
+{% set seasons = 0 %}
 {% set runtime = 0 %}
 {% for season in serie.seasons %}
+    {% if season.episodes|length > 0 and season.episodes[0].airDate <= date() %}
+        {% set seasons = seasons + 1 %}
+    {% endif %}
     {% for episode in season.episodes %}
         {% set runtime = runtime + episode.runtime %}
     {% endfor %}

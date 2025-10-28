@@ -87,6 +87,9 @@ final class SeasonService
                 ]
             );
 
+            $this->seasonRepository->remove($season);
+            $this->seasonRepository->flush();
+
             return false;
         }
 
