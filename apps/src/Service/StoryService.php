@@ -6,7 +6,6 @@ use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
 use Mpdf\Mpdf;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class StoryService
@@ -19,6 +18,7 @@ final class StoryService
 
     public function __construct(
         private CacheService $cacheService,
+        private FileService $fileService,
         private TranslatorInterface $translator,
     )
     {
@@ -72,14 +72,8 @@ final class StoryService
         }
 
         $mpdf->Output($tempPath, 'F');
-        $uploadedFile = new UploadedFile(
-            path: $tempPath,
-            originalName: basename($tempPath),
-            mimeType: mime_content_type($tempPath),
-            test: true
-        );
 
-        $story->setPdfFile($uploadedFile);
+        $this->fileService->setUploadedFile($tempPath, $story, 'pdfFile');
         $this->stories[] = $story->getTitle();
 
         return true;

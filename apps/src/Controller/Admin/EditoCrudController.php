@@ -5,11 +5,10 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Edito;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class EditoCrudController extends AbstractCrudControllerLib
+class EditoCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -36,30 +35,24 @@ class EditoCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        $isSuperAdmin = $this->isSuperAdmin();
-        // Edito n'a pas de slug : withSlug: false
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: false
-        ) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabPrincipal();
+        $fields   = [
+            $this->crudFieldFactory->idField(),
+            $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+            $this->crudFieldFactory->titleField(),
+            $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+        ];
+        $this->crudFieldFactory->addFieldsToTab('principal', $fields);
 
-        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabParagraphs($pageName);
 
-        foreach ($this->crudFieldFactory->refUserFields($isSuperAdmin) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabUser($this->isSuperAdmin());
 
-        yield $this->crudFieldFactory->workflowField();
-        yield $this->crudFieldFactory->stateField();
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabWorkflow();
+
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]

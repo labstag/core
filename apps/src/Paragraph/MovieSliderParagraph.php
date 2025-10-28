@@ -8,12 +8,11 @@ use Generator;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Paragraph;
 use Labstag\Enum\PageEnum;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class MovieSliderParagraph extends ParagraphLib
+class MovieSliderParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data
@@ -29,11 +28,11 @@ class MovieSliderParagraph extends ParagraphLib
             return;
         }
 
-        /** @var MovieRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
-        $nbr                        = $paragraph->getNbr();
-        $title                      = $paragraph->getTitle();
-        $movies                     = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        /** @var MovieRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Movie::class);
+        $nbr                             = $paragraph->getNbr();
+        $title                           = $paragraph->getTitle();
+        $movies                          = $serviceEntityRepositoryAbstract->findLastByNbr($nbr);
         if (0 === count($movies)) {
             $this->setShow($paragraph, false);
 

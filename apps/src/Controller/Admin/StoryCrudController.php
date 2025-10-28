@@ -9,19 +9,19 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Field\FileField;
 use Labstag\Field\WysiwygField;
-use Labstag\Service\StoryService;
+use Labstag\Message\StoryPdfMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class StoryCrudController extends AbstractCrudControllerLib
+class StoryCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -52,37 +52,38 @@ class StoryCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        // Principal tab + standard full content set
-        yield $this->addTabPrincipal();
-        yield $this->crudFieldFactory->addFieldIDShortcode('story');
-        $isSuperAdmin = $this->isSuperAdmin();
-        foreach ($this->crudFieldFactory->fullContentSet(
-            'story',
-            $pageName,
-            self::getEntityFqcn(),
-            $isSuperAdmin
-        ) as $field) {
-            yield $field;
-        }
-
-        // Extra specific field not part of the generic bundle
-        yield FileField::new('pdf', new TranslatableMessage('pdf'));
-        $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
-        $collectionField->onlyOnIndex();
-        $collectionField->formatValue(fn ($value): int => count($value));
-        yield $collectionField;
+        $this->crudFieldFactory->setTabPrincipal();
         $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
         $collectionField->setTemplatePath('admin/field/chapters.html.twig');
-        $collectionField->onlyOnDetail();
-        yield $collectionField;
-        yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        // Workflow + state
-        yield $this->crudFieldFactory->workflowField();
-        yield $this->crudFieldFactory->stateField();
-        // Dates
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $collectionField->hideOnForm();
+
+        $wysiwygField = WysiwygField::new('resume', new TranslatableMessage('resume'));
+        $wysiwygField->hideOnIndex();
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->addFieldIDShortcode('story'),
+                $this->crudFieldFactory->idField(),
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $collectionField,
+                $wysiwygField,
+                FileField::new('pdf', new TranslatableMessage('pdf')),
+            ]
+        );
+
+        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet('story'));
+
+        $this->crudFieldFactory->setTabParagraphs($pageName);
+        $this->crudFieldFactory->setTabSEO();
+        $this->crudFieldFactory->setTabUser($this->isSuperAdmin());
+        $this->crudFieldFactory->setTabWorkflow();
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]
@@ -116,8 +117,8 @@ class StoryCrudController extends AbstractCrudControllerLib
     #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $story                      = $serviceEntityRepositoryLib->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $story                           = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->publicLink($story);
     }
@@ -159,24 +160,14 @@ class StoryCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/updatepdf', name: 'admin_story_updatepdf')]
-    public function updatepdf(StoryService $storyService): RedirectResponse
+    public function updatepdf(MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $stories                    = $serviceEntityRepositoryLib->findAll();
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $stories                         = $serviceEntityRepositoryAbstract->findAll();
 
-        $counter = 0;
-        $update  = 0;
         foreach ($stories as $story) {
-            $status = $storyService->setPdf($story);
-            $update = $status ? ++$update : $update;
-            ++$counter;
-
-            $serviceEntityRepositoryLib->persist($story);
-            $serviceEntityRepositoryLib->flush($counter);
+            $messageBus->dispatch(new StoryPdfMessage($story->getId()));
         }
-
-        $this->addFlash('success', $storyService->generateFlashBag());
-        $serviceEntityRepositoryLib->flush();
 
         return $this->redirectToRoute('admin_story_index');
     }
@@ -184,8 +175,8 @@ class StoryCrudController extends AbstractCrudControllerLib
     #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $story                      = $serviceEntityRepositoryLib->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $story                           = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($story);
     }

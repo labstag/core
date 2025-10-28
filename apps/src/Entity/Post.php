@@ -210,7 +210,8 @@ class Post implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPost() === $this) {
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPost() === $this
+        ) {
             $paragraph->setPost(null);
         }
 

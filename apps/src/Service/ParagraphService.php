@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Gedmo\Tool\ClassUtils;
 use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\Paragraph;
-use Labstag\Interface\ParagraphInterface;
 use ReflectionClass;
 use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -24,7 +23,7 @@ final class ParagraphService
 
     public function __construct(
         /**
-         * @var iterable<\Labstag\Paragraph\Abstract\ParagraphLib>
+         * @var iterable<\Labstag\Paragraph\ParagraphAbstract>
          */
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
@@ -169,9 +168,9 @@ final class ParagraphService
             return null;
         }
 
-        $object        = new stdClass();
-        $object->name  = null;
-        $object->value = null;
+        $object           = new stdClass();
+        $object->name     = null;
+        $object->value    = null;
 
         $reflectionClass  = new ReflectionClass($paragraph);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
@@ -188,11 +187,6 @@ final class ParagraphService
 
             $class = ClassUtils::getClass($value);
             if (!str_contains($class, 'Labstag\Entity')) {
-                continue;
-            }
-
-            $entity = new $class();
-            if ($entity instanceof ParagraphInterface) {
                 continue;
             }
 

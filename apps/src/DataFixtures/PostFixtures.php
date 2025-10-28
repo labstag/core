@@ -5,7 +5,6 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Category;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
@@ -13,12 +12,12 @@ use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Override;
 
-class PostFixtures extends FixtureLib implements DependentFixtureInterface
+class PostFixtures extends FixtureAbstract implements DependentFixtureInterface
 {
     /**
      * @var int
      */
-    protected const NUMBER_POST = 50;
+    protected const NUMBER_POST = 20;
 
     /**
      * @var User[]

@@ -7,15 +7,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class ParagraphCrudController extends AbstractCrudControllerLib
+class ParagraphCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -54,29 +52,39 @@ class ParagraphCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal();
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        yield $this->crudFieldFactory->idField();
-        yield ParagraphParentField::new('parent', new TranslatableMessage('Parent'));
-        foreach ($this->paragraphService->getFields($currentEntity, $pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->idField(),
+                ParagraphParentField::new('parent', new TranslatableMessage('Parent')),
+            ]
+        );
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            $this->paragraphService->getFields($currentEntity, $pageName)
+        );
 
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabDate($pageName);
 
-        yield FormField::addTab(new TranslatableMessage('Config'));
+        $this->crudFieldFactory->setTabConfig();
+
         $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'))->hideOnIndex();
         $choiceField->setChoices($this->paragraphService->getFonds());
-        yield $choiceField;
+
         $allTypes  = array_flip($this->paragraphService->getAll(null));
         $textField = TextField::new('type', new TranslatableMessage('Type'))->formatValue(
             static fn ($value) => $allTypes[$value] ?? null
         );
         $textField->setDisabled(true);
-        yield $textField;
-        yield TextField::new('classes', new TranslatableMessage('classes'))->hideOnIndex();
+
+        $classesField = TextField::new('classes', new TranslatableMessage('classes'));
+        $classesField->hideOnIndex();
+
+        $this->crudFieldFactory->addFieldsToTab('config', [$choiceField, $textField, $classesField]);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]

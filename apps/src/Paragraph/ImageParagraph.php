@@ -5,10 +5,9 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 
-class ImageParagraph extends ParagraphLib
+class ImageParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data

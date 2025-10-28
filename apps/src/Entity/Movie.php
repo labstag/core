@@ -80,6 +80,15 @@ class Movie implements Stringable
     #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'img')]
     private ?File $imgFile = null;
 
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'refmovie', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    private Collection $paragraphs;
+
     #[ORM\Column(name: 'release_date', type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $releaseDate = null;
 
@@ -101,6 +110,7 @@ class Movie implements Stringable
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
     }
 
     #[Override]
@@ -114,6 +124,16 @@ class Movie implements Stringable
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
             $category->addMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setRefmovie($this);
         }
 
         return $this;
@@ -180,6 +200,14 @@ class Movie implements Stringable
         return $this->imgFile;
     }
 
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
     public function getReleaseDate(): ?DateTime
     {
         return $this->releaseDate;
@@ -229,6 +257,17 @@ class Movie implements Stringable
     {
         if ($this->categories->removeElement($category)) {
             $category->removeMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this
+        ) {
+            $paragraph->setRefmovie(null);
         }
 
         return $this;

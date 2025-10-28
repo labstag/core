@@ -3,12 +3,11 @@
 namespace Labstag\FileStorage;
 
 use Labstag\Entity\Edito;
-use Labstag\FileStorage\Abstract\FileStorageLib;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class EditoFileStorage extends FileStorageLib
+class EditoFileStorage extends FileStorageAbstract implements FileStorageInterface
 {
     public function __construct(
         #[Autowire(service: 'flysystem.adapter.edito.storage')]

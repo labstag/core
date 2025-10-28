@@ -1,22 +1,41 @@
-{% set seasons = serie.seasons|length %}
-<div class="background spoiler" data-bg="{{ site_asset(serie, 'img') }}">
-    {% if serie.releaseDate != '' %}
-        <span class="year">
-            {{ serie.releaseDate|date('Y') }}
-        </span>
+{% set seasons = 0 %}
+{% set runtime = 0 %}
+{% for season in serie.seasons %}
+    {% if season.episodes|length > 0 and season.episodes[0].airDate <= date() %}
+        {% set seasons = seasons + 1 %}
     {% endif %}
-    <span class="seasons">
-        {% if seasons == 0 %}
-            {{ 'No season'|trans }}
-        {% elseif seasons == 1 %}
-            {{ '1 season'|trans }}
-        {% else %}
-            {{ '%count% seasons'|trans({'%count%': seasons}) }}
+    {% for episode in season.episodes %}
+        {% set runtime = runtime + episode.runtime %}
+    {% endfor %}
+{% endfor %}
+<a href="{{ site_path(serie) }}">
+    <div class="background spoiler" data-bg="{{ site_asset(serie, 'img') }}">
+        {% if serie.releaseDate != '' %}
+            <span class="year">
+                {{ serie.releaseDate|date('Y') }}
+            </span>
         {% endif %}
-    </span>
-</div>
-<div class="wrapper">
-    <h3 class="title">
-        {{ serie.title }}
-    </h3>
-</div>
+        <span class="seasons">
+            {% if seasons == 0 %}
+                {{ 'No season'|trans }}
+            {% elseif seasons == 1 %}
+                {{ '1 season'|trans }}
+            {% else %}
+                {{ '%count% seasons'|trans({'%count%': seasons}) }}
+            {% endif %}
+        </span>
+    </div>
+    <div class="wrapper">
+        <h3 class="title">
+            {% if serie.isinProduction %}
+                <i class="fa fa-play-circle"></i>
+            {% else %}
+                <i class="fa fa-stop-circle"></i>
+            {% endif %}
+            {{ serie.title }}
+        </h3>
+        <div class="duration">
+            {{ time_runtime(runtime) }}
+        </div>
+    </div>
+</a>

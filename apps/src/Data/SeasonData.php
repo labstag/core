@@ -2,11 +2,10 @@
 
 namespace Labstag\Data;
 
-use Labstag\Data\Abstract\DataLib;
 use Labstag\Entity\Season;
 use Labstag\Repository\SeasonRepository;
 
-class SeasonData extends DataLib implements DataInterface
+class SeasonData extends DataAbstract implements DataInterface
 {
     public function __construct(
         private SeasonRepository $seasonRepository,
@@ -35,6 +34,11 @@ class SeasonData extends DataLib implements DataInterface
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
+    }
+
+    public function getTitleMeta(object $entity): string
+    {
+        return $this->serieData->getTitle($entity->getRefserie()) . ' - ' . $this->getTitle($entity);
     }
 
     public function match(string $slug): bool

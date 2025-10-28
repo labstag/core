@@ -262,7 +262,8 @@ class Story implements Stringable
     public function removeChapter(Chapter $chapter): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->chapters->removeElement($chapter) && $chapter->getRefstory() === $this) {
+        if ($this->chapters->removeElement($chapter) && $chapter->getRefstory() === $this
+        ) {
             $chapter->setRefstory(null);
         }
 
@@ -272,7 +273,8 @@ class Story implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this) {
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this
+        ) {
             $paragraph->setStory(null);
         }
 

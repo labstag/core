@@ -4,17 +4,15 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
-use Labstag\Entity\Category;
+use Labstag\Api\TmdbApi;
 use Labstag\Entity\Serie;
+use Labstag\Message\SeasonMessage;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\SerieRepository;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SerieService
 {
-    private const STATUSOK = 200;
 
     /**
      * @var array<string, mixed>
@@ -29,20 +27,16 @@ final class SerieService
     /**
      * @var array<string, mixed>
      */
-    private array $genres = [];
-
-    /**
-     * @var array<string, mixed>
-     */
     private array $year = [];
 
     public function __construct(
-        private CacheService $cacheService,
+        private MessageBusInterface $messageBus,
+        private FileService $fileService,
         private SeasonService $seasonService,
-        private HttpClientInterface $httpClient,
         private SerieRepository $serieRepository,
         private CategoryRepository $categoryRepository,
-        private string $tmdbapiKey,
+        private CategoryService $categoryService,
+        private TmdbApi $tmdbApi,
     )
     {
     }
@@ -94,52 +88,6 @@ final class SerieService
         $this->country = $country;
 
         return $country;
-    }
-
-    /**
-     * @return array<string, mixed>|null
-     */
-    public function getDetailsTmdb(string $imdbId): ?array
-    {
-        if ('' === $this->tmdbapiKey) {
-            return null;
-        }
-
-        $cacheKey = 'tmdb-serie_find_' . $imdbId;
-
-        return $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($imdbId) {
-                $url      = 'https://api.themoviedb.org/3/find/' . $imdbId . '?external_source=imdb_id&language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $data = json_decode($response->getContent(), true);
-                if (0 === count($data['tv_results'])) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return $data;
-            },
-            60
-        );
     }
 
     /**
@@ -208,7 +156,7 @@ final class SerieService
 
         $tmdbId = $serie->getTmdb();
         if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
-            $data   = $this->getDetailsTmdb($serie->getImdb());
+            $data   = $this->tmdbApi->findByImdb($serie->getImdb());
             if (null !== $data && isset($data['tv_results'][0]['id'])) {
                 $tmdbId = $data['tv_results'][0]['id'];
             }
@@ -218,62 +166,9 @@ final class SerieService
             return [];
         }
 
-        $details = $this->getDetailsTmdbSerie($details, $tmdbId);
+        $details = $this->tmdbApi->getDetailsSerie($details, $tmdbId);
 
-        return $this->getTrailersTmdbSerie($details, $tmdbId);
-    }
-
-    /**
-     * @param array<string, mixed> $details
-     *
-     * @return array<string, mixed>
-     */
-    private function getDetailsTmdbSerie(array $details, string $tmdbId): array
-    {
-        if ('' === $this->tmdbapiKey) {
-            return $details;
-        }
-
-        $cacheKey = 'tmdb-serie_' . $tmdbId;
-
-        $data = $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdbId) {
-                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdbId . '?language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return json_decode($response->getContent(), true);
-            },
-            60
-        );
-        if (null == $data) {
-            return $details;
-        }
-
-        $details['tmdb'] = $data;
-
-        return $details;
-    }
-
-    private function getImgImdb(string $img): string
-    {
-        return 'https://image.tmdb.org/t/p/w300_and_h450_bestv2' . $img;
+        return $this->tmdbApi->getTrailersSerie($details, $tmdbId);
     }
 
     /**
@@ -282,80 +177,10 @@ final class SerieService
     private function getImgMovie(array $data): string
     {
         if (isset($data['tmdb']['poster_path'])) {
-            return $this->getImgImdb($data['tmdb']['poster_path']);
+            return $this->tmdbApi->getImgw300h450($data['tmdb']['poster_path']);
         }
 
         return '';
-    }
-
-    /**
-     * @param array<string, mixed> $details
-     *
-     * @return array<string, mixed>
-     */
-    private function getTrailersTmdbSerie(array $details, string $tmdbId): array
-    {
-        if ('' === $this->tmdbapiKey) {
-            return $details;
-        }
-
-        $cacheKey = 'tmdb-serie-trailers_' . $tmdbId;
-
-        $data = $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdbId) {
-                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdbId . '/videos?language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $item->expiresAfter(86400);
-
-                return json_decode($response->getContent(), true);
-            },
-            60
-        );
-
-        if (null == $data) {
-            return $details;
-        }
-
-        $details['trailers'] = $data;
-
-        return $details;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function initGenres(): array
-    {
-        if ([] !== $this->genres) {
-            return $this->genres;
-        }
-
-        $data       = $this->categoryRepository->findAllByTypeSerie();
-        $categories = [];
-        foreach ($data as $category) {
-            $title              = trim((string) $category->getTitle());
-            $categories[$title] = $category;
-        }
-
-        $this->genres = $categories;
-
-        return $categories;
     }
 
     /**
@@ -384,6 +209,38 @@ final class SerieService
         }
     }
 
+    private function setCitation(Serie $serie, array $details): void
+    {
+        $tagline = (string) $details['tmdb']['tagline'];
+        if ('' !== $tagline && '0' !== $tagline) {
+            $serie->setCitation($tagline);
+        }
+    }
+
+    private function setDescription(Serie $serie, array $details): void
+    {
+        $overview = (string) $details['tmdb']['overview'];
+        if ('' !== $overview && '0' !== $overview) {
+            $serie->setDescription($overview);
+        }
+    }
+
+    private function setLastreleaseDate(Serie $serie, array $details): void
+    {
+        $lastReleaseDate = (is_null(
+            $details['tmdb']['last_air_date']
+        ) || empty($details['tmdb']['last_air_date'])) ? null : new DateTime($details['tmdb']['last_air_date']);
+        $serie->setLastreleaseDate($lastReleaseDate);
+    }
+
+    private function setReleaseDate(Serie $serie, array $details): void
+    {
+        $releaseDate = (is_null(
+            $details['tmdb']['first_air_date']
+        ) || empty($details['tmdb']['first_air_date'])) ? null : new DateTime($details['tmdb']['first_air_date']);
+        $serie->setReleaseDate($releaseDate);
+    }
+
     /**
      * @param array<string, mixed> $details
      */
@@ -393,25 +250,13 @@ final class SerieService
             return false;
         }
 
-        $this->initGenres();
-
         foreach ($serie->getCategories() as $category) {
             $serie->removeCategory($category);
         }
 
         foreach ($details['tmdb']['genres'] as $genre) {
-            $title = trim((string) $genre['name']);
-            if (isset($this->genres[$title])) {
-                $category = $this->genres[$title];
-                $serie->addCategory($category);
-                continue;
-            }
-
-            $category = new Category();
-            $category->setTitle($title);
-            $category->setType('serie');
-            $this->categoryRepository->save($category);
-            $this->genres[$title] = $category;
+            $title    = trim((string) $genre['name']);
+            $category = $this->categoryService->getType('serie', $title);
 
             $serie->addCategory($category);
         }
@@ -438,15 +283,7 @@ final class SerieService
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($poster));
-
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $serie->setImgFile($uploadedFile);
+            $this->fileService->setUploadedFile($tempPath, $serie, 'imgFile');
 
             return true;
         } catch (Exception) {
@@ -462,8 +299,8 @@ final class SerieService
 
         for ($number = 1; $number <= (int) $details['tmdb']['number_of_seasons']; ++$number) {
             $season = $this->seasonService->getSeason($serie, $number);
-            $this->seasonService->update($season);
             $this->seasonService->save($season);
+            $this->messageBus->dispatch(new SeasonMessage($season->getId()));
         }
 
         return true;
@@ -478,21 +315,14 @@ final class SerieService
             return false;
         }
 
+        $serie->setInProduction((bool) $details['tmdb']['in_production']);
         $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
         $serie->setAdult($adult);
         $serie->setTitle((string) $details['tmdb']['name']);
 
         $this->setCertification($details, $serie);
-
-        $tagline = (string) $details['tmdb']['tagline'];
-        if ('' !== $tagline && '0' !== $tagline) {
-            $serie->setCitation($tagline);
-        }
-
-        $overview = (string) $details['tmdb']['overview'];
-        if ('' !== $overview && '0' !== $overview) {
-            $serie->setDescription($overview);
-        }
+        $this->setCitation($serie, $details);
+        $this->setDescription($serie, $details);
 
         $voteEverage = (float) ($details['tmdb']['vote_average'] ?? 0);
         $voteCount   = (int) ($details['tmdb']['vote_count'] ?? 0);
@@ -503,10 +333,8 @@ final class SerieService
         $serie->setCountries($details['tmdb']['origin_country']);
 
         $serie->setTmdb($details['tmdb']['id']);
-
-        $serie->setReleaseDate(new DateTime($details['tmdb']['first_air_date']));
-        $serie->setLastreleaseDate(new DateTime($details['tmdb']['last_air_date']));
-
+        $this->setReleaseDate($serie, $details);
+        $this->setLastreleaseDate($serie, $details);
         $this->updateImageMovie($serie, $details);
 
         return true;

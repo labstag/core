@@ -23,6 +23,7 @@ class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInter
         $this->updateEntityStory($instance);
         $this->updateEntityMovie($instance);
         $this->updateEntitySerie($instance);
+        $this->updateEntitySaga($instance);
         $this->updateEntityChapter($instance);
         $this->updateEntityPage($instance);
         $this->updateEntityRedirection($instance);
@@ -42,6 +43,7 @@ class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInter
         $this->updateEntityStory($instance);
         $this->updateEntityMovie($instance);
         $this->updateEntitySerie($instance);
+        $this->updateEntitySaga($instance);
         $this->updateEntityChapter($instance);
         $this->updateEntityPage($instance);
         $this->updateEntityRedirection($instance);

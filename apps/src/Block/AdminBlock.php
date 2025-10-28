@@ -4,12 +4,11 @@ namespace Labstag\Block;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
-use Labstag\Block\Abstract\BlockLib;
 use Labstag\Entity\Block;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminBlock extends BlockLib
+class AdminBlock extends BlockAbstract
 {
     #[Override]
     public function content(string $view, Block $block): ?Response

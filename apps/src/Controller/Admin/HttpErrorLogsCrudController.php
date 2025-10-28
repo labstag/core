@@ -10,7 +10,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Controller\Admin\Traits\ReadOnlyActionsTrait;
 use Labstag\Entity\HttpErrorLogs;
 use Labstag\Field\HttpLogs\IsBotField;
@@ -20,16 +19,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class HttpErrorLogsCrudController extends AbstractCrudControllerLib
+class HttpErrorLogsCrudController extends CrudControllerAbstract
 {
     use ReadOnlyActionsTrait;
 
     #[Route('/admin/http-error-logs/{entity}/banip', name: 'admin_http_error_logs_banip')]
     public function banIp(string $entity, Request $request): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $httpErrorLogs              = $serviceEntityRepositoryLib->find($entity);
-        $internetProtocol           = $httpErrorLogs->getInternetProtocol();
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $httpErrorLogs                   = $serviceEntityRepositoryAbstract->find($entity);
+        $internetProtocol                = $httpErrorLogs->getInternetProtocol();
 
         $redirectToRoute = $this->redirectToRoute('admin_http_error_logs_index');
         if ($request->headers->has('referer')) {
@@ -84,14 +83,19 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
+        $this->crudFieldFactory->setTabPrincipal();
         $maxLength = Crud::PAGE_DETAIL === $pageName ? 1024 : 32;
-        yield $this->addTabPrincipal();
-        yield $this->crudFieldFactory->idField();
-        yield TextField::new('url', new TranslatableMessage('Url'))->setMaxLength($maxLength);
-        yield TextField::new('domain', new TranslatableMessage('Domain'))->hideOnIndex();
-        yield TextField::new('agent', new TranslatableMessage('Agent'))->setMaxLength($maxLength);
-        yield TextField::new('internetProtocol', new TranslatableMessage('IP'));
-        yield IsBotField::new('bot', new TranslatableMessage('Bot'));
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->idField(),
+                TextField::new('url', new TranslatableMessage('Url'))->setMaxLength($maxLength),
+                TextField::new('domain', new TranslatableMessage('Domain'))->hideOnIndex(),
+                TextField::new('agent', new TranslatableMessage('Agent'))->setMaxLength($maxLength),
+                TextField::new('internetProtocol', new TranslatableMessage('IP')),
+                IsBotField::new('bot', new TranslatableMessage('Bot')),
+            ]
+        );
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         if (!is_null($currentEntity)) {
             $deviceDetector = new DeviceDetector($currentEntity->getAgent());
@@ -104,31 +108,33 @@ class HttpErrorLogsCrudController extends AbstractCrudControllerLib
             $info->hideOnIndex();
             $info->setValue($data);
             $info->setTemplatePath('admin/field/httperrorlogs/info.html.twig');
-
-            yield $info;
+            $this->crudFieldFactory->addFieldsToTab('principal', [$info]);
         }
 
-        yield TextField::new('referer', new TranslatableMessage('Referer'))->setMaxLength($maxLength);
-        yield IntegerField::new('httpCode', new TranslatableMessage('HTTP code'));
-        yield TextField::new('requestMethod', new TranslatableMessage('Request method'));
-        yield SameField::new('nbr', new TranslatableMessage('Number'));
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                TextField::new('referer', new TranslatableMessage('Referer'))->setMaxLength($maxLength),
+                IntegerField::new('httpCode', new TranslatableMessage('HTTP code')),
+                TextField::new('requestMethod', new TranslatableMessage('Request method')),
+                SameField::new('nbr', new TranslatableMessage('Number')),
+            ]
+        );
+
         if (!is_null($currentEntity)) {
             $data      = $currentEntity->getRequestData();
             $datafield = ArrayField::new('data', new TranslatableMessage('Request DATA'));
             $datafield->hideOnIndex();
             $datafield->setTemplatePath('admin/field/httperrorlogs/request_data.html.twig');
             $datafield->setValue($data);
-
-            yield $datafield;
+            $this->crudFieldFactory->addFieldsToTab('principal', [$datafield]);
         }
 
-        foreach ($this->crudFieldFactory->refUserFields($this->isSuperAdmin()) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabUser($this->isSuperAdmin());
 
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]

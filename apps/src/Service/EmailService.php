@@ -2,14 +2,14 @@
 
 namespace Labstag\Service;
 
-use Labstag\Email\Abstract\EmailLib;
+use Labstag\Email\EmailAbstract;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 final class EmailService
 {
     public function __construct(
         /**
-         * @var iterable<EmailLib>
+         * @var iterable<EmailAbstract>
          */
         #[AutowireIterator('labstag.emails')]
         private readonly iterable $emails,
@@ -25,7 +25,7 @@ final class EmailService
     /**
      * @param mixed[] $data
      */
-    public function get(string $code, array $data = []): ?EmailLib
+    public function get(string $code, array $data = []): ?EmailAbstract
     {
         $template = null;
         foreach ($this->emails as $email) {

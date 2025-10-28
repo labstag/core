@@ -7,12 +7,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Submission;
-use Labstag\FrontForm\Abstract\FrontFormLib;
+use Labstag\FrontForm\FrontFormAbstract;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class SubmissionCrudController extends AbstractCrudControllerLib
+class SubmissionCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -27,19 +26,22 @@ class SubmissionCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
+        $this->crudFieldFactory->setTabPrincipal();
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        yield $this->crudFieldFactory->idField();
-        yield TextField::new('type', new TranslatableMessage('Type'));
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->idField(),
+                TextField::new('type', new TranslatableMessage('Type')),
+            ]
+        );
         if (Action::DETAIL === $pageName) {
-            $fields = $this->addFieldsSubmission($currentEntity);
-            foreach ($fields as $field) {
-                yield $field;
-            }
+            $this->crudFieldFactory->addFieldsToTab('principal', [$this->addFieldsSubmission($currentEntity)]);
         }
 
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     public static function getEntityFqcn(): string
@@ -54,7 +56,7 @@ class SubmissionCrudController extends AbstractCrudControllerLib
     {
         $data = $submission->getData();
         $form = $this->formService->get($submission->getType());
-        if (!$form instanceof FrontFormLib) {
+        if (!$form instanceof FrontFormAbstract) {
             return [];
         }
 

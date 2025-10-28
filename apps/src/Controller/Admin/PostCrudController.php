@@ -5,7 +5,6 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
 use Labstag\Field\WysiwygField;
@@ -13,7 +12,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class PostCrudController extends AbstractCrudControllerLib
+class PostCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -44,46 +43,35 @@ class PostCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        // Principal tab + full content set (identity + taxonomy + paragraphs + meta + ref user)
-        yield $this->addTabPrincipal();
-        yield $this->crudFieldFactory->addFieldIDShortcode('post');
-        $isSuperAdmin = $this->isSuperAdmin();
+        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->addFieldIDShortcode('post'),
+                $this->crudFieldFactory->idField(),
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+            ]
+        );
 
-        // Base identity fields (id, title, slug, enable, image)
-        foreach ($this->crudFieldFactory->baseIdentitySet($pageName, self::getEntityFqcn()) as $field) {
-            yield $field;
-        }
-
-        // Taxonomy fields (tags, categories)
-        foreach ($this->crudFieldFactory->taxonomySet('post') as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet('post'));
 
         // Additional specific field (resume) not yet in factory bundle - placed at end of principal tab
-        yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
+        $wysiwygField = WysiwygField::new('resume', new TranslatableMessage('resume'));
+        $wysiwygField->hideOnIndex();
 
-        // Paragraphs fields
-        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->addFieldsToTab('principal', [$wysiwygField]);
 
-        // Meta fields (creates SEO tab)
-        foreach ($this->crudFieldFactory->metaFields() as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabParagraphs($pageName);
+        $this->crudFieldFactory->setTabSEO();
+        $this->crudFieldFactory->setTabUser($this->isSuperAdmin());
 
-        // Ref user fields (creates User tab if super admin)
-        foreach ($this->crudFieldFactory->refUserFields($isSuperAdmin) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabWorkflow();
+        $this->crudFieldFactory->setTabDate($pageName);
 
-        // Workflow + states
-        yield $this->crudFieldFactory->workflowField();
-        yield $this->crudFieldFactory->stateField();
-        // Dates
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]
@@ -117,8 +105,8 @@ class PostCrudController extends AbstractCrudControllerLib
     #[Route('/admin/post/{entity}/public', name: 'admin_post_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $post                       = $serviceEntityRepositoryLib->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $post                            = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->publicLink($post);
     }
@@ -126,8 +114,8 @@ class PostCrudController extends AbstractCrudControllerLib
     #[Route('/admin/post/{entity}/w3c', name: 'admin_post_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $post                       = $serviceEntityRepositoryLib->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $post                            = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($post);
     }

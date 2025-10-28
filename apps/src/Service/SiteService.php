@@ -2,10 +2,9 @@
 
 namespace Labstag\Service;
 
-use Labstag\Entity\Chapter;
-use Labstag\Entity\Configuration;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -13,7 +12,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class SiteService
 {
     public function __construct(
-        private ConfigurationService $configurationService,
+        #[AutowireIterator('labstag.datas')]
+        private iterable $datas,
+        #[AutowireIterator('labstag.assets')]
+        private readonly iterable $assets,
         private FileService $fileService,
         private TokenStorageInterface $tokenStorage,
     )
@@ -22,7 +24,16 @@ final class SiteService
 
     public function asset(mixed $entity, string $field, bool $placeholder = true): string
     {
-        $file = $this->fileService->asset($entity, $field);
+        $asset = null;
+        foreach ($this->assets as $row) {
+            if (!$row->supports($entity)) {
+                continue;
+            }
+
+            $file  = $row->asset($entity, $field);
+            $asset = $row;
+            break;
+        }
 
         if ('' !== $file) {
             return $file;
@@ -32,10 +43,14 @@ final class SiteService
             return '';
         }
 
-        if (!$entity instanceof Configuration) {
-            $config = $this->configurationService->getConfiguration();
+        $placeholder = $asset->placeholder();
+        if ('' !== $placeholder) {
+            return $placeholder;
+        }
 
-            return $this->asset($config, 'placeholder');
+        $placeholder = $asset->configPlaceholder();
+        if ('' !== $placeholder) {
+            return $placeholder;
         }
 
         return 'https://picsum.photos/1200/1200?md5=' . md5((string) $entity->getId());
@@ -51,6 +66,17 @@ final class SiteService
         return is_null($favicon) ? $this->getFavicon('favicon') : $favicon;
     }
 
+    public function getTitleMeta(object $entity): ?string
+    {
+        foreach ($this->datas as $data) {
+            if ($data->supports($entity)) {
+                return $data->getTitleMeta($entity);
+            }
+        }
+
+        return '';
+    }
+
     public function isEnable(object $entity): bool
     {
         return !(!$entity->isEnable() && !$this->getUser() instanceof UserInterface);
@@ -63,19 +89,6 @@ final class SiteService
     public function isHome(array $data): bool
     {
         return isset($data['entity']) && $data['entity'] instanceof Page && PageEnum::HOME->value == $data['entity']->getType();
-    }
-
-    public function setTitle(object $entity): ?string
-    {
-        if ($entity instanceof Chapter) {
-            return $this->setTitle($entity->getRefStory()) . ' - ' . $entity->getTitle();
-        }
-
-        if (method_exists($entity, 'getTitle')) {
-            return $entity->getTitle();
-        }
-
-        return '';
     }
 
     /**

@@ -3,9 +3,8 @@
 namespace Labstag\Command;
 
 use Labstag\Entity\Movie;
-use Labstag\Repository\MovieRepository;
+use Labstag\Message\AddMovieMessage;
 use Labstag\Service\FileService;
-use Labstag\Service\MovieService;
 use NumberFormatter;
 use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -15,6 +14,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(name: 'labstag:movies:add', description: 'Add movies with movielist.csv')]
 class MovieAddCommand extends Command
@@ -22,16 +22,10 @@ class MovieAddCommand extends Command
 
     private int $add = 0;
 
-    /**
-     * @var array<string, mixed>
-     */
-    private array $imdbs = [];
-
     private int $update = 0;
 
     public function __construct(
-        protected MovieRepository $movieRepository,
-        protected MovieService $movieService,
+        protected MessageBusInterface $messageBus,
         protected FileService $fileService,
     )
     {
@@ -68,25 +62,14 @@ class MovieAddCommand extends Command
         $spreadsheet = $csv->load($file);
         $worksheet   = $spreadsheet->getActiveSheet();
         $dataJson    = $this->generateJson($worksheet);
-        $counter     = 0;
-
         $progressBar = new ProgressBar($output, count($dataJson));
         $progressBar->start();
         foreach ($dataJson as $data) {
-            $movie = $this->setMovie($data);
-            $this->movieService->update($movie);
-            $this->addOrUpdate($movie);
-
-            ++$counter;
-
-            $this->movieRepository->persist($movie);
-            $this->movieRepository->flush($counter);
+            $this->messageBus->dispatch(new AddMovieMessage($data));
             $progressBar->advance();
         }
 
-        $this->movieRepository->flush();
         $progressBar->finish();
-        $this->showoldsMovies($symfonyStyle);
 
         $symfonyStyle->success('All movie added');
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
@@ -128,49 +111,5 @@ class MovieAddCommand extends Command
         }
 
         return $dataJson;
-    }
-
-    private function getMovieByImdb(string $imdb): ?Movie
-    {
-        return $this->movieRepository->findOneBy(
-            ['imdb' => $imdb]
-        );
-    }
-
-    /**
-     * @param mixed[] $data
-     */
-    private function setMovie(array $data): Movie
-    {
-        $imdb  = (string) $data['ID IMDb'];
-        $movie = $this->getMovieByImdb($imdb);
-        if (!$movie instanceof Movie) {
-            $movie = new Movie();
-            $movie->setEnable(true);
-            $movie->setAdult(false);
-            $movie->setImdb($imdb);
-        }
-
-        $tmdb       = (string) $data['ID TMDB'];
-        $duration   = empty($data['Durée']) ? null : (int) $data['Durée'];
-        $title      = trim((string) $data['Titre']);
-        $movie->setTmdb($tmdb);
-        $movie->setDuration($duration);
-        $movie->setTitle($title);
-        $movie->setFile(true);
-
-        return $movie;
-    }
-
-    private function showoldsMovies(SymfonyStyle $symfonyStyle): void
-    {
-        $oldsMovies = $this->movieRepository->findMoviesNotInImdbList($this->imdbs);
-        foreach ($oldsMovies as $oldMovie) {
-            if ($oldMovie->isFile()) {
-                $symfonyStyle->warning(
-                    sprintf('Movie %s (%s) not in list', $oldMovie->getTitle(), $oldMovie->getImdb())
-                );
-            }
-        }
     }
 }

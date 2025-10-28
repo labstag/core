@@ -2,12 +2,11 @@
 
 namespace Labstag\Block;
 
-use Labstag\Block\Abstract\AbstractParagraphBlock;
 use Override;
 
-class ParagraphsBlock extends AbstractParagraphBlock
+class ParagraphsBlock extends ParagraphBlockAbstract
 {
-    // Utilise l'implémentation par défaut d'AbstractParagraphBlock
+    // Utilise l'implémentation par défaut d'ParagraphBlockAbstract
 
     #[Override]
     public function getName(): string

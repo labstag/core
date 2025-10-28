@@ -13,9 +13,6 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
-    @include mixins.respond-to(md) {
-      grid-template-columns: 1fr 1fr 1fr;
-    }
   }
   li{
     &.teaser-chapter{

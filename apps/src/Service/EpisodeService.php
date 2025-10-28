@@ -4,22 +4,19 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
+use Labstag\Api\TmdbApi;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Repository\EpisodeRepository;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Psr\Log\LoggerInterface;
 
 class EpisodeService
 {
-    private const STATUSOK = 200;
-
     public function __construct(
-        private string $tmdbapiKey,
-        private CacheService $cacheService,
-        private HttpClientInterface $httpClient,
+        private LoggerInterface $logger,
+        private FileService $fileService,
         protected EpisodeRepository $episodeRepository,
+        private TmdbApi $tmdbApi,
     )
     {
     }
@@ -38,6 +35,7 @@ class EpisodeService
         }
 
         $episode = new Episode();
+        $episode->setEnable(true);
         $episode->setRefseason($season);
         $episode->setNumber($number);
 
@@ -54,52 +52,34 @@ class EpisodeService
         $tmdb = $episode->getRefseason()->getRefserie()->getTmdb();
         $seasonNumber = $episode->getRefseason()->getNumber();
         $episodeNumber = $episode->getNumber();
-        $details       = $this->getDetails($tmdb, $seasonNumber, $episodeNumber);
+        $details       = $this->tmdbApi->getEpisode($tmdb, $seasonNumber, $episodeNumber);
+        if (!is_array($details)) {
+            $this->logger->error(
+                'Episode not found TMDB',
+                [
+                    'tmdb'           => $tmdb,
+                    'season_number'  => $seasonNumber,
+                    'episode_number' => $episodeNumber,
+                ]
+            );
+
+            return false;
+        }
+
         $this->updateImage($episode, $details);
         $episode->setOverview($details['overview']);
         $episode->setTmdb($details['id']);
         $episode->setTitle($details['name']);
         $episode->setVoteAverage($details['vote_average']);
         $episode->setVoteCount($details['vote_count']);
+        $episode->setRuntime($details['runtime']);
 
-        $airDate = empty($details['air_date']) ? null : new DateTime($details['air_date']);
+        $airDate = (is_null($details['air_date']) || empty($details['air_date'])) ? null : new DateTime(
+            $details['air_date']
+        );
         $episode->setAirDate($airDate);
 
         return true;
-    }
-
-    private function getDetails(int $tmdb, int $seasonNumber, int $episodeNumber): ?array
-    {
-        $cacheKey = 'tmdb-serie_find_' . $tmdb . '_season_' . $seasonNumber . '_episode_' . $episodeNumber;
-
-        return $this->cacheService->get(
-            $cacheKey,
-            function (ItemInterface $item) use ($tmdb, $seasonNumber, $episodeNumber): ?array {
-                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdb . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '?language=fr-FR';
-                $response = $this->httpClient->request(
-                    'GET',
-                    $url,
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
-                            'accept'        => 'application/json',
-                        ],
-                    ]
-                );
-                if (self::STATUSOK !== $response->getStatusCode()) {
-                    $item->expiresAfter(0);
-
-                    return null;
-                }
-
-                $data = json_decode($response->getContent(), true);
-
-                $item->expiresAfter(60);
-
-                return $data;
-            },
-            60
-        );
     }
 
     /**
@@ -108,15 +88,10 @@ class EpisodeService
     private function getImgEpisode(array $data): string
     {
         if (isset($data['still_path'])) {
-            return $this->getImgImdb($data['still_path']);
+            return $this->tmdbApi->getImgw227h127($data['still_path']);
         }
 
         return '';
-    }
-
-    private function getImgImdb(string $img): string
-    {
-        return 'https://media.themoviedb.org/t/p/w227_and_h127_bestv2' . $img;
     }
 
     /**
@@ -138,15 +113,7 @@ class EpisodeService
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($poster));
-
-            $uploadedFile = new UploadedFile(
-                path: $tempPath,
-                originalName: basename($tempPath),
-                mimeType: mime_content_type($tempPath),
-                test: true
-            );
-
-            $episode->setImgFile($uploadedFile);
+            $this->fileService->setUploadedFile($tempPath, $episode, 'imgFile');
 
             return true;
         } catch (Exception) {

@@ -4,10 +4,12 @@ namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
+use Labstag\Repository\ServiceEntityRepositoryAbstract;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyPathInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 final class FileService
@@ -112,23 +114,22 @@ final class FileService
 
     public function getFileInAdapter(string $type, string $fileName): ?string
     {
-        $files = $this->getFilesByAdapter($type);
-        $data  = null;
-        foreach ($files as $file) {
-            if ($file['content']->path() != $fileName) {
-                continue;
+        $fileSystem = null;
+        foreach ($this->fileStorages as $fileStorage) {
+            if ($fileStorage->getType() == $type) {
+                $fileSystem = $fileStorage->getFilesystem();
             }
-
-            $data = $file['folder'] . '/' . $file['path'];
-
-            break;
         }
 
-        if (is_null($data)) {
-            return $data;
+        if (is_null($fileSystem) || !$fileSystem->has($fileName)) {
+            return null;
         }
 
-        return str_replace('%kernel.project_dir%', $this->parameterBag->get('kernel.project_dir'), $data);
+        return str_replace(
+            '%kernel.project_dir%',
+            $this->parameterBag->get('kernel.project_dir'),
+            $fileSystem->publicUrl($fileName)
+        );
     }
 
     /**
@@ -152,11 +153,11 @@ final class FileService
     /**
      * @return array<string, mixed>
      */
-    public function getFilesByAdapter(string $type): array
+    public function getFilesByAdapter(string $type, string $file = ''): array
     {
         foreach ($this->fileStorages as $fileStorage) {
             if ($fileStorage->getType() == $type) {
-                return $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), '');
+                return $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), $file);
             }
         }
 
@@ -206,13 +207,30 @@ final class FileService
         return $this->propertyMappingFactory->fromObject($entity);
     }
 
+    public function setUploadedFile(string $filePath, object $entity, string|PropertyPathInterface $type): void
+    {
+        try {
+            $uploadedFile = new UploadedFile(
+                path: $filePath,
+                originalName: basename($filePath),
+                mimeType: mime_content_type($filePath),
+                test: true
+            );
+
+            $propertyAccessor = PropertyAccess::createPropertyAccessor();
+            $propertyAccessor->setValue($entity, $type, $uploadedFile);
+        } catch (Exception $exception) {
+            echo $exception->getMessage();
+        }
+    }
+
     /**
-     * @return ServiceEntityRepositoryLib<object>
+     * @return ServiceEntityRepositoryAbstract<object>
      */
-    private function getRepository(string $entity): ServiceEntityRepositoryLib
+    private function getRepository(string $entity): ServiceEntityRepositoryAbstract
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
             throw new Exception('Repository not found');
         }
 

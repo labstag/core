@@ -9,11 +9,10 @@ use Labstag\Entity\Block;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Season;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class EpisodeListParagraph extends ParagraphLib
+class EpisodeListParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data
@@ -28,8 +27,8 @@ class EpisodeListParagraph extends ParagraphLib
             return;
         }
 
-        $serviceEntityRepositoryLib = $this->getRepository(Episode::class);
-        $episodes                   = $serviceEntityRepositoryLib->getAllActivateBySeason($data['entity']);
+        $serviceEntityRepositoryAbstract = $this->getRepository(Episode::class);
+        $episodes                        = $serviceEntityRepositoryAbstract->getAllActivateBySeason($data['entity']);
         if (0 === count($episodes)) {
             $this->setShow($paragraph, false);
 

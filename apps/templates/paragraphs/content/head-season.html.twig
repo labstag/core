@@ -1,22 +1,44 @@
 {% use "elements.html.twig" %}
 {% set serie = season.refserie %}
+{% set episodes = season.episodes %}
+{% set firstEpisode = episodes|first %}
+{% set lastEpisode = episodes|last %}
+{% set runtime = 0 %}
+{% for episode in episodes %}
+    {% set runtime = runtime + episode.runtime %}
+{% endfor %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
-	<div class="background" style="--image-url: url('{{ site_asset(season.img ? season : season.refserie, 'img') }}')"></div>
-	<div class="content">
-        <div class="wrapper">
-            <h3 class="title">
-                {{ serie.title }} - {{ season.title }}
-            </h3>
-            {% if serie.categories|length > 0 %}
-                <div class="categories">
-                    {% for category in serie.categories %}
-                        <span class="category-{{ category.slug }}">{{ category.title }}</span>
-                    {% endfor %}
+	<div class="first">
+        <div class="background" style="--image-url: url('{{ site_asset(season, 'img') }}')"></div>
+        <div class="content">
+                <div class="wrapper">
+                    <h3 class="title">
+                        {{ serie.title }} - {{ season.title }}
+                    </h3>
+                    {% if serie.categories|length > 0 %}
+                        <div class="categories">
+                            {% for category in serie.categories %}
+                                <span class="category-{{ category.slug }}">{{ category.title }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="dates">
+                        {{ "From %start% to %end%"|trans({'%start%': firstEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full'), '%end%' : lastEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
+                    </div>
+                    <div class="duration">
+                        {{ time_runtime(runtime) }}
+                    </div>
+                    <div class="links">
+                        <a href="https://www.imdb.com/title/{{ season.refserie.imdb }}" target="_blank" title="{{ 'IMDB page for the serie'|trans|e('html_attr') }}">
+                            {{ 'IMDB page for the serie'|trans }}
+                        </a>
+                    </div>
                 </div>
-            {% endif %}
-            <div class="resume">
-                {{ season.overview|raw }}
             </div>
+    </div>
+    <div class="resume">
+        <div class="wrapper">
+            {{ season.overview|raw }}
         </div>
     </div>
 </section>

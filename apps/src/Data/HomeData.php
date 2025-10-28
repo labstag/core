@@ -2,11 +2,10 @@
 
 namespace Labstag\Data;
 
-use Labstag\Data\Abstract\DataLib;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\PageRepository;
 
-class HomeData extends DataLib implements DataInterface
+class HomeData extends DataAbstract implements DataInterface
 {
     public function __construct(
         private PageRepository $pageRepository,
@@ -25,6 +24,7 @@ class HomeData extends DataLib implements DataInterface
     public function getEntity(string $slug): object
     {
         unset($slug);
+
         return $this->getHome();
     }
 

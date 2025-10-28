@@ -7,12 +7,11 @@ use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<Chapter>
+ * @extends ServiceEntityRepositoryAbstract<Chapter>
  */
-class ChapterRepository extends ServiceEntityRepositoryLib
+class ChapterRepository extends ServiceEntityRepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
@@ -21,7 +20,9 @@ class ChapterRepository extends ServiceEntityRepositoryLib
 
     public function getAllActivateByStory(Story $story): mixed
     {
-        $data = new ArrayCollection([new Parameter('enable', true), new Parameter('refstory', $story)]);
+        $data = new ArrayCollection();
+        $data->add(new Parameter('enable', true));
+        $data->add(new Parameter('refstory', $story));
 
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->where('c.enable = :enable');

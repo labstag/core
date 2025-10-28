@@ -8,7 +8,7 @@ final class CrudAdminService
 {
     public function __construct(
         /**
-         * @var iterable<\Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib>
+         * @var iterable<\Labstag\Controller\AdminCrudControllerAbstract>
          */
         #[AutowireIterator('labstag.admincontroller')]
         private readonly iterable $controllers,

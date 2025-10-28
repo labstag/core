@@ -7,21 +7,22 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Episode;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\SeasonEpisodeFilter;
 use Labstag\Filter\SerieEpisodeFilter;
-use Labstag\Service\EpisodeService;
+use Labstag\Message\EpisodeMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class EpisodeCrudController extends AbstractCrudControllerLib
+class EpisodeCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -32,6 +33,8 @@ class EpisodeCrudController extends AbstractCrudControllerLib
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
         $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+        $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
+        $actions->remove(Crud::PAGE_DETAIL, Action::EDIT);
         $this->configureActionsTrash($actions);
         $this->configureActionsUpdateImage();
 
@@ -54,30 +57,51 @@ class EpisodeCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        yield $this->crudFieldFactory->slugField();
-        yield $this->crudFieldFactory->titleField();
-        yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
-        yield $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn());
-        yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
-        $associationField = AssociationField::new('refseason');
-        $associationField->setFormTypeOption('choice_label', 'refserie');
-        $associationField->setLabel(new TranslatableMessage('Season'));
-        $associationField->formatValue(
+        $this->crudFieldFactory->setTabPrincipal();
+
+        $textField = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
+        $textField->hideOnIndex();
+
+        $reasonField = TextField::new('refseason', new TranslatableMessage('Serie'));
+        $reasonField->setFormTypeOption('choice_label', 'refserie');
+        $reasonField->formatValue(
             function ($value, $entity) {
                 unset($value);
 
                 return $entity->getRefseason()?->getRefserie();
             }
         );
-        yield $associationField;
-        yield AssociationField::new('refseason', new TranslatableMessage('Season'));
-        yield IntegerField::new('number', new TranslatableMessage('Number'));
-        yield DateField::new('air_date', new TranslatableMessage('Air date'));
-        yield WysiwygField::new('overview', new TranslatableMessage('Overview'))->hideOnIndex();
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $integerField = IntegerField::new('runtime', new TranslatableMessage('Runtime'));
+        $integerField->hideOnIndex();
+        $integerField->hideOnDetail();
+
+        $collectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
+        $collectionField->setTemplatePath('admin/field/runtime-episode.html.twig');
+        $collectionField->hideOnForm();
+
+        $wysiwygField = WysiwygField::new('overview', new TranslatableMessage('Overview'));
+        $wysiwygField->hideOnIndex();
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $textField,
+                $reasonField,
+                AssociationField::new('refseason', new TranslatableMessage('Season')),
+                IntegerField::new('number', new TranslatableMessage('Number')),
+                DateField::new('air_date', new TranslatableMessage('Air date')),
+                $integerField,
+                $collectionField,
+                $wysiwygField,
+            ]
+        );
+
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]
@@ -104,12 +128,11 @@ class EpisodeCrudController extends AbstractCrudControllerLib
     }
 
     #[Route('/admin/episode/{entity}/update', name: 'admin_episode_update')]
-    public function update(string $entity, Request $request, EpisodeService $episodeService): RedirectResponse
+    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryLib   = $this->getRepository();
-        $episode                      = $serviceEntityRepositoryLib->find($entity);
-        $episodeService->update($episode);
-        $serviceEntityRepositoryLib->save($episode);
+        $serviceEntityRepositoryAbstract   = $this->getRepository();
+        $episode                           = $serviceEntityRepositoryAbstract->find($entity);
+        $messageBus->dispatch(new EpisodeMessage($episode->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

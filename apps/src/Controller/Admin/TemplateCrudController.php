@@ -6,13 +6,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
-use Labstag\Email\Abstract\EmailLib;
+use Labstag\Email\EmailAbstract;
 use Labstag\Entity\Template;
 use Labstag\Field\WysiwygField;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class TemplateCrudController extends AbstractCrudControllerLib
+class TemplateCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -39,35 +38,38 @@ class TemplateCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
+        unset($pageName);
+        $this->crudFieldFactory->setTabPrincipal();
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        // Template n'a ni slug ni enable ni image : withSlug: false, withImage: false, withEnable: false
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: false,
-            withImage: false,
-            withEnable: false
-        ) as $field) {
-            yield $field;
-        }
-
         $textField = TextField::new('code', new TranslatableMessage('Code'));
         $textField->setDisabled(true);
 
-        yield $textField;
-        $wysiwygField  = WysiwygField::new('html', new TranslatableMessage('HTML'))->onlyOnForms();
-        $textareaField = TextareaField::new('text', new TranslatableMessage('Texte brut'))->onlyOnForms();
+        $wysiwygField  = WysiwygField::new('html', new TranslatableMessage('HTML'));
+        $wysiwygField->onlyOnForms();
+
+        $textareaField = TextareaField::new('text', new TranslatableMessage('Texte brut'));
+        $textareaField->onlyOnForms();
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->idField(),
+                $textField,
+                $this->crudFieldFactory->titleField(),
+            ]
+        );
 
         if (!is_null($currentEntity)) {
             $template = $this->emailService->get($currentEntity->getCode());
-            if ($template instanceof EmailLib) {
+            if ($template instanceof EmailAbstract) {
                 $wysiwygField->setHelp($template->getHelp());
                 $textareaField->setHelp($template->getHelp());
             }
         }
 
-        yield $wysiwygField;
-        yield $textareaField;
+        $this->crudFieldFactory->addFieldsToTab('principal', [$wysiwygField, $textareaField]);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     public static function getEntityFqcn(): string

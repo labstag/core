@@ -14,8 +14,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Controller\Admin\Factory\MenuItemFactory;
 use Labstag\Entity\User;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Repository\ConfigurationRepository;
+use Labstag\Repository\ServiceEntityRepositoryAbstract;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
@@ -141,19 +141,19 @@ class DashboardController extends AbstractDashboardController
 
     protected function adminEmpty(string $entity): void
     {
-        $serviceEntityRepositoryLib = $this->getRepository($entity);
-        $all                        = $serviceEntityRepositoryLib->findDeleted();
+        $serviceEntityRepositoryAbstract = $this->getRepository($entity);
+        $all                             = $serviceEntityRepositoryAbstract->findDeleted();
         foreach ($all as $row) {
-            $serviceEntityRepositoryLib->remove($row);
+            $serviceEntityRepositoryAbstract->remove($row);
         }
 
-        $serviceEntityRepositoryLib->flush();
+        $serviceEntityRepositoryAbstract->flush();
     }
 
     protected function adminRestore(string $entity, mixed $uuid): void
     {
-        $serviceEntityRepositoryLib = $this->getRepository($entity);
-        $data                       = $serviceEntityRepositoryLib->find($uuid);
+        $serviceEntityRepositoryAbstract = $this->getRepository($entity);
+        $data                            = $serviceEntityRepositoryAbstract->find($uuid);
         if (is_null($data)) {
             throw new Exception(new TranslatableMessage('Data not found'));
         }
@@ -170,12 +170,12 @@ class DashboardController extends AbstractDashboardController
     }
 
     /**
-     * @return ServiceEntityRepositoryLib<object>
+     * @return ServiceEntityRepositoryAbstract<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryLib
+    protected function getRepository(string $entity): ServiceEntityRepositoryAbstract
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
             throw new Exception('Repository not found');
         }
 

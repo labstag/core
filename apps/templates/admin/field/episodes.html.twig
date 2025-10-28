@@ -2,7 +2,11 @@
 {% if ea.crud.currentAction == 'detail' %}
   <ul>
     {% for episode in instance.episodes %}
-        <li>{{ episode.title }}</li>
+        <li>
+          <a href="{{ admin_url('detail', episode) }}">
+            #{{ loop.index }}
+          </a>: {{ episode.title }}
+        </li>
     {% endfor %}
   </ul>
 {% else %}

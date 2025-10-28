@@ -8,7 +8,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
@@ -18,7 +17,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class ChapterCrudController extends AbstractCrudControllerLib
+class ChapterCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -46,29 +45,28 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        $this->isSuperAdmin();
-        foreach ($this->crudFieldFactory->baseIdentitySet($pageName, self::getEntityFqcn()) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabPrincipal();
+        $fields = [
+            $this->crudFieldFactory->idField(),
+            $this->crudFieldFactory->slugField(),
+            $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+            $this->crudFieldFactory->titleField(),
+            $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+            $this->addFieldRefStory(),
+            $this->crudFieldFactory->tagsField('chapter'),
+            WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex(),
+        ];
 
-        yield $this->addFieldRefStory();
-        yield $this->crudFieldFactory->tagsField('chapter');
-        yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->addFieldsToTab('principal', $fields);
 
-        foreach ($this->crudFieldFactory->metaFields() as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabParagraphs($pageName);
 
-        // Pas de relation refuser sur Chapter -> on n'injecte pas les refUserFields ici
-        yield $this->crudFieldFactory->workflowField();
-        yield $this->crudFieldFactory->stateField();
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabSEO();
+
+        $this->crudFieldFactory->setTabWorkflow();
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]
@@ -108,8 +106,8 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[Route('/admin/chapter/{entity}/public', name: 'admin_chapter_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $chapter                    = $serviceEntityRepositoryLib->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $chapter                         = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->publicLink($chapter);
     }
@@ -117,8 +115,8 @@ class ChapterCrudController extends AbstractCrudControllerLib
     #[Route('/admin/chapter/{entity}/w3c', name: 'admin_chapter_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $chapter                    = $serviceEntityRepositoryLib->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $chapter                         = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($chapter);
     }

@@ -7,14 +7,16 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Saga;
 use Labstag\Field\WysiwygField;
+use Labstag\Message\SagaMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class SagaCrudController extends AbstractCrudControllerLib
+class SagaCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -22,6 +24,11 @@ class SagaCrudController extends AbstractCrudControllerLib
         $this->setEditDetail($actions);
         $this->configureActionsBtn($actions);
         $action = $this->setLinkTmdbAction();
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+
+        $action = $this->setUpdateAction();
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
@@ -45,24 +52,34 @@ class SagaCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withEnable: false
-        ) as $field) {
-            yield $field;
-        }
-
-        yield TextField::new('tmdb', new TranslatableMessage('Tmdb'));
+        $this->crudFieldFactory->setTabPrincipal();
+        $textField       = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
         $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
         $collectionField->onlyOnIndex();
         $collectionField->formatValue(fn ($value): int => count($value));
-        yield $collectionField;
-        yield WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex();
-        $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
-        $collectionField->setTemplatePath('admin/field/movies.html.twig');
-        $collectionField->onlyOnDetail();
-        yield $collectionField;
+
+        $wysiwygField = WysiwygField::new('description', new TranslatableMessage('Description'));
+        $wysiwygField->hideOnIndex();
+
+        $movieField2 = CollectionField::new('movies', new TranslatableMessage('Movies'));
+        $movieField2->setTemplatePath('admin/field/movies.html.twig');
+        $movieField2->onlyOnDetail();
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->idField(),
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $textField,
+                $collectionField,
+                $wysiwygField,
+                $movieField2,
+            ]
+        );
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     public static function getEntityFqcn(): string
@@ -73,10 +90,26 @@ class SagaCrudController extends AbstractCrudControllerLib
     #[Route('/admin/saga/{entity}/imdb', name: 'admin_saga_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $saga                       = $serviceEntityRepositoryLib->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $saga                            = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->redirect('https://www.themoviedb.org/collection/' . $saga->getTmdb());
+    }
+
+    #[Route('/admin/saga/{entity}/update', name: 'admin_saga_update')]
+    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
+    {
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $saga                            = $serviceEntityRepositoryAbstract->find($entity);
+        $messageBus->dispatch(new SagaMessage($saga->getId()));
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                return $this->redirect($url);
+            }
+        }
+
+        return $this->redirectToRoute('admin_saga_index');
     }
 
     private function setLinkTmdbAction(): Action
@@ -93,6 +126,22 @@ class SagaCrudController extends AbstractCrudControllerLib
                 ]
             )
         );
+
+        return $action;
+    }
+
+    private function setUpdateAction(): Action
+    {
+        $action = Action::new('update', new TranslatableMessage('Update'));
+        $action->linkToUrl(
+            fn (Saga $saga): string => $this->generateUrl(
+                'admin_saga_update',
+                [
+                    'entity' => $saga->getId(),
+                ]
+            )
+        );
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         return $action;
     }

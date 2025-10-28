@@ -4,10 +4,9 @@ namespace Labstag\Paragraph;
 
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 
-class SitemapParagraph extends ParagraphLib
+class SitemapParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data

@@ -9,8 +9,8 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Repository\ChapterRepository;
+use Labstag\Repository\ServiceEntityRepositoryAbstract;
 
 final class SitemapService
 {
@@ -71,9 +71,9 @@ final class SitemapService
             return [];
         }
 
-        /** @var ChapterRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Chapter::class);
-        $data                       = $serviceEntityRepositoryLib->getAllActivateByStory($story);
+        /** @var ChapterRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Chapter::class);
+        $data                            = $serviceEntityRepositoryAbstract->getAllActivateByStory($story);
 
         return $this->setTabs($data);
     }
@@ -83,12 +83,12 @@ final class SitemapService
      */
     private function getDataFromRepository(string $entityClass): array
     {
-        $serviceEntityRepositoryLib = $this->getRepository($entityClass);
-        if (!method_exists($serviceEntityRepositoryLib, 'getAllActivate')) {
+        $serviceEntityRepositoryAbstract = $this->getRepository($entityClass);
+        if (!method_exists($serviceEntityRepositoryAbstract, 'getAllActivate')) {
             return [];
         }
 
-        $data = $serviceEntityRepositoryLib->getAllActivate();
+        $data = $serviceEntityRepositoryAbstract->getAllActivate();
 
         return $this->setTabs($data);
     }
@@ -128,12 +128,12 @@ final class SitemapService
     }
 
     /**
-     * @return ServiceEntityRepositoryLib<object>
+     * @return ServiceEntityRepositoryAbstract<object>
      */
-    private function getRepository(string $entity): ServiceEntityRepositoryLib
+    private function getRepository(string $entity): ServiceEntityRepositoryAbstract
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
             throw new Exception('Repository not found');
         }
 

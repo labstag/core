@@ -8,12 +8,10 @@ use Essence\Essence;
 use Essence\Media;
 use Generator;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class VideoParagraph extends ParagraphLib
+class VideoParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data
@@ -120,15 +118,7 @@ class VideoParagraph extends ParagraphLib
 
         // Télécharger l'image et l'écrire dans le fichier temporaire
         file_put_contents($tempPath, file_get_contents($thumbnailUrl));
-
-        $uploadedFile = new UploadedFile(
-            path: $tempPath,
-            originalName: basename($tempPath),
-            mimeType: mime_content_type($tempPath),
-            test: true
-        );
-
-        $paragraph->setImgFile($uploadedFile);
+        $this->fileService->setUploadedFile($tempPath, $paragraph, 'imgFile');
     }
 
     /**

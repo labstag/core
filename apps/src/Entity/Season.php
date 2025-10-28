@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\SeasonRepository;
@@ -16,6 +17,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: SeasonRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
 class Season implements \Stringable
 {
@@ -37,7 +39,7 @@ class Season implements \Stringable
     /**
      * @var Collection<int, Episode>
      */
-    #[ORM\OneToMany(targetEntity: Episode::class, mappedBy: 'refseason')]
+    #[ORM\OneToMany(targetEntity: Episode::class, mappedBy: 'refseason', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
         ['number' => 'ASC']
     )]
@@ -201,7 +203,8 @@ class Season implements \Stringable
     public function removeEpisode(Episode $episode): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->episodes->removeElement($episode) && $episode->getRefseason() === $this) {
+        if ($this->episodes->removeElement($episode) && $episode->getRefseason() === $this
+        ) {
             $episode->setRefseason(null);
         }
 

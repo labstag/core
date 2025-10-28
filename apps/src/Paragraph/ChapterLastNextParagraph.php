@@ -5,11 +5,10 @@ namespace Labstag\Paragraph;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\ChapterRepository;
 use Override;
 
-class ChapterLastNextParagraph extends ParagraphLib
+class ChapterLastNextParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data
@@ -27,10 +26,10 @@ class ChapterLastNextParagraph extends ParagraphLib
         $chapter = $data['entity'];
         $story   = $chapter->getRefStory();
 
-        /** @var ChapterRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Chapter::class);
+        /** @var ChapterRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Chapter::class);
 
-        $chapters = $serviceEntityRepositoryLib->getAllActivateByStory($story);
+        $chapters = $serviceEntityRepositoryAbstract->getAllActivateByStory($story);
 
         $this->setData(
             $paragraph,

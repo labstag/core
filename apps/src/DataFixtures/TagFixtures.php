@@ -4,11 +4,10 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Tag;
 use Override;
 
-class TagFixtures extends FixtureLib
+class TagFixtures extends FixtureAbstract
 {
     /**
      * @var int
@@ -26,9 +25,9 @@ class TagFixtures extends FixtureLib
     {
         $tab  = [
             'chapter',
-            'story',
             'page',
             'post',
+            'story',
         ];
         $code = $tab[array_rand($tab)];
         $tag  = new Tag();

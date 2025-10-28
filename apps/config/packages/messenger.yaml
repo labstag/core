@@ -4,6 +4,13 @@ framework:
         # failure_transport: failed
 
         transports:
+            async:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                retry_strategy:
+                    max_retries: 0
+                    delay: 5000
+            failed: doctrine://default
+            sync: "sync://"
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             # async: '%env(MESSENGER_TRANSPORT_DSN)%'
             # failed: 'doctrine://default?queue_name=failed'

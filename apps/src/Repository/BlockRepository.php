@@ -5,12 +5,11 @@ namespace Labstag\Repository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Block;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<Block>
+ * @extends ServiceEntityRepositoryAbstract<Block>
  */
-class BlockRepository extends ServiceEntityRepositoryLib
+class BlockRepository extends ServiceEntityRepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

@@ -6,16 +6,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\User;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Override;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
- * @extends ServiceEntityRepositoryLib<User>
+ * @extends ServiceEntityRepositoryAbstract<User>
  */
-class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgraderInterface
+class UserRepository extends ServiceEntityRepositoryAbstract implements PasswordUpgraderInterface
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
@@ -27,7 +26,10 @@ class UserRepository extends ServiceEntityRepositoryLib implements PasswordUpgra
         $queryBuilder = $this->createQueryBuilder('u');
         $queryBuilder->where('u.username = :username OR u.email = :email');
 
-        $data = new ArrayCollection([new Parameter('username', $field), new Parameter('email', $field)]);
+        $data = new ArrayCollection();
+        $data->add(new Parameter('username', $field));
+        $data->add(new Parameter('email', $field));
+
         $queryBuilder->setParameters($data);
 
         $query = $queryBuilder->getQuery();

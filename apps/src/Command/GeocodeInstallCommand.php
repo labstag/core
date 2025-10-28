@@ -4,7 +4,7 @@ namespace Labstag\Command;
 
 use Exception;
 use Labstag\Entity\GeoCode;
-use Labstag\Repository\GeoCodeRepository;
+use Labstag\Message\GeocodeMessage;
 use Labstag\Service\GeocodeService;
 use NumberFormatter;
 use Override;
@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(name: 'labstag:geocode-install', description: 'Retrieve geocodes')]
 class GeocodeInstallCommand extends Command
@@ -26,7 +27,7 @@ class GeocodeInstallCommand extends Command
 
     public function __construct(
         private readonly GeocodeService $geocodeService,
-        private readonly GeoCodeRepository $geoCodeRepository,
+        protected MessageBusInterface $messageBus,
     )
     {
         parent::__construct();
@@ -77,18 +78,10 @@ class GeocodeInstallCommand extends Command
         $progressBar = new ProgressBar($output, count($table));
         $progressBar->start();
 
-        $counter = 0;
         foreach ($table as $row) {
-            $entity = $this->geocodeService->add($row);
-            $this->addOrUpdate($entity);
-
-            $this->geoCodeRepository->persist($entity);
-            ++$counter;
-            $this->geoCodeRepository->flush($counter);
+            $this->messageBus->dispatch(new GeocodeMessage($row));
             $progressBar->advance();
         }
-
-        $this->geoCodeRepository->flush();
 
         $progressBar->finish();
         $symfonyStyle->newLine();

@@ -4,11 +4,10 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Configuration;
 use Override;
 
-class ConfigFixtures extends FixtureLib implements DependentFixtureInterface
+class ConfigFixtures extends FixtureAbstract implements DependentFixtureInterface
 {
     /**
      * @return string[]
@@ -31,6 +30,7 @@ class ConfigFixtures extends FixtureLib implements DependentFixtureInterface
         $configuration->setNoreply('no-reply@labstag.traefik.me');
         $configuration->setUserShow(false);
         $configuration->setUserLink(false);
+        $configuration->setLanguageTmdb('fr-FR');
         $configuration->setDisableEmptyAgent(false);
         $this->setImage($configuration, 'logoFile');
         $this->setImage($configuration, 'placeholderFile');

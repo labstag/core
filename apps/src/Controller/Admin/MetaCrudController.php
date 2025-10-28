@@ -6,12 +6,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Meta;
 use Labstag\Field\MetaParentField;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class MetaCrudController extends AbstractCrudControllerLib
+class MetaCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -25,23 +24,21 @@ class MetaCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: false,
-            withImage: false,
-            withEnable: false
-        ) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->idField(),
+                $this->crudFieldFactory->titleField(),
+                TextField::new('keywords', new TranslatableMessage('Keywords')),
+                TextField::new('description', new TranslatableMessage('Description')),
+                MetaParentField::new('parent', new TranslatableMessage('Parent')),
+            ]
+        );
 
-        yield TextField::new('keywords', new TranslatableMessage('Keywords'));
-        yield TextField::new('description', new TranslatableMessage('Description'));
-        yield MetaParentField::new('parent', new TranslatableMessage('Parent'));
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     public static function getEntityFqcn(): string

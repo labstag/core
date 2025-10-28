@@ -2,17 +2,17 @@
 
 namespace Labstag\Repository;
 
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<Episode>
+ * @extends ServiceEntityRepositoryAbstract<Episode>
  */
-class EpisodeRepository extends ServiceEntityRepositoryLib
+class EpisodeRepository extends ServiceEntityRepositoryAbstract
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -21,10 +21,14 @@ class EpisodeRepository extends ServiceEntityRepositoryLib
 
     public function getAllActivateBySeason(Season $season): mixed
     {
-        $data = new ArrayCollection([new Parameter('enable', true), new Parameter('refseason', $season)]);
+        $data = new ArrayCollection();
+        $data->add(new Parameter('enable', true));
+        $data->add(new Parameter('refseason', $season));
+        $data->add(new Parameter('now', new DateTimeImmutable()));
 
         $queryBuilder = $this->createQueryBuilder('e');
         $queryBuilder->where('e.enable = :enable');
+        $queryBuilder->andWhere('e.airDate <= :now');
         $queryBuilder->andWhere('e.refseason = :refseason');
         $queryBuilder->setParameters($data);
         $queryBuilder->orderBy('e.number', 'ASC');

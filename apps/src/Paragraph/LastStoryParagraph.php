@@ -9,12 +9,11 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\StoryRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class LastStoryParagraph extends ParagraphLib
+class LastStoryParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data
@@ -24,9 +23,9 @@ class LastStoryParagraph extends ParagraphLib
     {
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::STORIES->value);
-        /** @var StoryRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Story::class);
-        $total                      = $serviceEntityRepositoryLib->findTotalEnable();
+        /** @var StoryRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Story::class);
+        $total                           = $serviceEntityRepositoryAbstract->findTotalEnable();
         if (!is_object($listing) || !$listing->isEnable() || 0 == $total) {
             $this->setShow($paragraph, false);
 
@@ -34,7 +33,7 @@ class LastStoryParagraph extends ParagraphLib
         }
 
         $nbr     = $paragraph->getNbr();
-        $stories = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        $stories = $serviceEntityRepositoryAbstract->findLastByNbr($nbr);
         $this->setData(
             $paragraph,
             [

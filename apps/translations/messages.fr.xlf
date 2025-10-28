@@ -2,7 +2,7 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="fr" target-language="fr" datatype="plaintext" original="file.ext">
     <header>
-      <tool tool-id="symfony" tool-name="Symfony" />
+      <tool tool-id="symfony" tool-name="Symfony"/>
     </header>
     <body>
       <trans-unit id="PJ8dHq_" resname="vich_uploader.form_label.delete_confirm">
@@ -77,8 +77,7 @@
         <source>Please upload a valid image (JPEG, PNG, GIF, WebP).</source>
         <target>Veuillez télécharger une image valide (JPEG, PNG, GIF, WebP).</target>
       </trans-unit>
-      <trans-unit id="dRMAlp9"
-        resname="The file is too large. Its size should not exceed {{ limit }}.">
+      <trans-unit id="dRMAlp9" resname="The file is too large. Its size should not exceed {{ limit }}.">
         <source>The file is too large. Its size should not exceed {{ limit }}.</source>
         <target>Le fichier est trop volumineux. Sa taille ne doit pas dépasser {{ limit }}.</target>
       </trans-unit>
@@ -1185,6 +1184,42 @@
       <trans-unit id="qSk1MBT" resname="No series match your search.">
         <source>No series match your search.</source>
         <target>Aucune série ne correspond à votre recherche.</target>
+      </trans-unit>
+      <trans-unit id="6aFmMQl" resname="Runtime">
+        <source>Runtime</source>
+        <target>Durée d'exécution</target>
+      </trans-unit>
+      <trans-unit id="h4SqSS9" resname="IMDB page for the serie">
+        <source>IMDB page for the serie</source>
+        <target>Page IMDB de la série</target>
+      </trans-unit>
+      <trans-unit id="myYc.Sq" resname="Language Tmdb">
+        <source>Language Tmdb</source>
+        <target>Langue TMDB</target>
+      </trans-unit>
+      <trans-unit id="NmBEAyy" resname="Placeholders">
+        <source>Placeholders</source>
+        <target>Espaces réservés</target>
+      </trans-unit>
+      <trans-unit id="diM8L12" resname="Air date : %air_date%">
+        <source>Air date : %air_date%</source>
+        <target>Date de diffusion : %air_date%</target>
+      </trans-unit>
+      <trans-unit id="Nh7o8Vr" resname="From %start% to %end%">
+        <source>From %start% to %end%</source>
+        <target>Du %start% au %end%</target>
+      </trans-unit>
+      <trans-unit id="CXCdT.D" resname="in Production">
+        <source>in Production</source>
+        <target>En production</target>
+      </trans-unit>
+      <trans-unit id="aiFSOsy" resname="Other">
+        <source>Other</source>
+        <target>Autre</target>
+      </trans-unit>
+      <trans-unit id="94n207n" resname="All stories PDF generation messages have been dispatched.">
+        <source>All stories PDF generation messages have been dispatched.</source>
+        <target>Tous les messages de génération de PDF des histoires ont été envoyés.</target>
       </trans-unit>
     </body>
   </file>

@@ -350,7 +350,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removeEdito(Edito $edito): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->editos->removeElement($edito) && $edito->getRefuser() === $this) {
+        if ($this->editos->removeElement($edito) && $edito->getRefuser() === $this
+        ) {
             $edito->setRefuser(null);
         }
 
@@ -360,7 +361,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removeHttpErrorLog(HttpErrorLogs $httpErrorLogs): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->httpErrorLogs->removeElement($httpErrorLogs) && $httpErrorLogs->getRefUser() === $this) {
+        if ($this->httpErrorLogs->removeElement($httpErrorLogs) && $httpErrorLogs->getRefUser() === $this
+        ) {
             $httpErrorLogs->setRefUser(null);
         }
 
@@ -370,7 +372,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removeMemo(Memo $memo): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->memos->removeElement($memo) && $memo->getRefuser() === $this) {
+        if ($this->memos->removeElement($memo) && $memo->getRefuser() === $this
+        ) {
             $memo->setRefuser(null);
         }
 
@@ -380,7 +383,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removePage(Page $page): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->pages->removeElement($page) && $page->getRefuser() === $this) {
+        if ($this->pages->removeElement($page) && $page->getRefuser() === $this
+        ) {
             $page->setRefuser(null);
         }
 
@@ -390,7 +394,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removePost(Post $post): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->posts->removeElement($post) && $post->getRefuser() === $this) {
+        if ($this->posts->removeElement($post) && $post->getRefuser() === $this
+        ) {
             $post->setRefuser(null);
         }
 
@@ -400,7 +405,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removeStory(Story $story): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->stories->removeElement($story) && $story->getRefuser() === $this) {
+        if ($this->stories->removeElement($story) && $story->getRefuser() === $this
+        ) {
             $story->setRefuser(null);
         }
 

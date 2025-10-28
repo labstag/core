@@ -2,11 +2,10 @@
 
 namespace Labstag\Email;
 
-use Labstag\Email\Abstract\EmailLib;
 use Labstag\Replace\LinkChangePasswordReplace;
 use Override;
 
-class UserPasswordLostEmail extends EmailLib
+class UserPasswordLostEmail extends EmailAbstract
 {
     #[Override]
     public function getName(): string

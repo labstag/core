@@ -7,11 +7,10 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\PostRepository;
 use Override;
 
-class NewsListParagraph extends ParagraphLib
+class NewsListParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data
@@ -20,10 +19,10 @@ class NewsListParagraph extends ParagraphLib
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var PostRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Post::class);
+        /** @var PostRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Post::class);
 
-        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
+        $pagination = $this->getPaginator($serviceEntityRepositoryAbstract->getQueryPaginator(), $paragraph->getNbr());
         $this->setData(
             $paragraph,
             [

@@ -6,13 +6,12 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Movie;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Symfony\Component\Intl\Countries;
 
 /**
- * @extends ServiceEntityRepositoryLib<Movie>
+ * @extends ServiceEntityRepositoryAbstract<Movie>
  */
-class MovieRepository extends ServiceEntityRepositoryLib
+class MovieRepository extends ServiceEntityRepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

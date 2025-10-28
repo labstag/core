@@ -4,11 +4,10 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Category;
 use Override;
 
-class CategoryFixtures extends FixtureLib
+class CategoryFixtures extends FixtureAbstract
 {
     /**
      * @var int
@@ -25,9 +24,11 @@ class CategoryFixtures extends FixtureLib
     protected function addCategory(Generator $generator, ObjectManager $objectManager): void
     {
         $tab      = [
-            'story',
+            'movie',
             'page',
             'post',
+            'serie',
+            'story',
         ];
         $code     = $tab[array_rand($tab)];
         $category = new Category();

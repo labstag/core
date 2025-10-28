@@ -223,7 +223,8 @@ class Category implements Stringable
     public function removeChild(self $child): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->children->removeElement($child) && $child->getParent() === $this) {
+        if ($this->children->removeElement($child) && $child->getParent() === $this
+        ) {
             $child->setParent(null);
         }
 

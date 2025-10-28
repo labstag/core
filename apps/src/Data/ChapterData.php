@@ -2,11 +2,10 @@
 
 namespace Labstag\Data;
 
-use Labstag\Data\Abstract\DataLib;
 use Labstag\Entity\Chapter;
 use Labstag\Repository\ChapterRepository;
 
-class ChapterData extends DataLib implements DataInterface
+class ChapterData extends DataAbstract implements DataInterface
 {
     public function __construct(
         private StoryData $storyData,
@@ -28,6 +27,11 @@ class ChapterData extends DataLib implements DataInterface
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
+    }
+
+    public function getTitleMeta(object $entity): string
+    {
+        return $this->storyData->getTitleMeta($entity->getRefstory()) . ' - ' . $this->getTitle($entity);
     }
 
     public function match(string $slug): bool

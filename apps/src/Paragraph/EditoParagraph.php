@@ -7,12 +7,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Edito;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\EditoRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class EditoParagraph extends ParagraphLib
+class EditoParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data
@@ -20,9 +19,9 @@ class EditoParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        /** @var EditoRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Edito::class);
-        $edito                      = $serviceEntityRepositoryLib->findLast();
+        /** @var EditoRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Edito::class);
+        $edito                           = $serviceEntityRepositoryAbstract->findLast();
         if (!$edito instanceof Edito) {
             $this->setShow($paragraph, false);
 

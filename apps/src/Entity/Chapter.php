@@ -185,7 +185,8 @@ class Chapter implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getChapter() === $this) {
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getChapter() === $this
+        ) {
             $paragraph->setChapter(null);
         }
 

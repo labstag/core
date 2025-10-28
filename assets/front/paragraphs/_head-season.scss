@@ -1,20 +1,22 @@
-@use "../placeholders" as *;
+  @use "../placeholders" as *;
 .paragraph_head-season{
-  @extend %head;
-  height: 300px;
-  .background{
+  .first {
+    @extend %head;
+    height: 300px;
+    .background{
 
-  }
-  .wrapper{
+    }
+    .wrapper{
 
-  }
-  .title{
+    }
+    .title{
 
-  }
-  .author{
+    }
+    .author{
 
-  }
-  .date{
-    
+    }
+    .date{
+      
+    }
   }
 }

@@ -20,16 +20,7 @@ services:
     - '../src/DependencyInjection/'
     - '../src/Entity/'
     - '../src/Kernel.php'
-  Labstag\Service\MovieService:
-    arguments:
-      $tmdbapiKey: '%env(TMDB_API_KEY)%'
-  Labstag\Service\SerieService:
-    arguments:
-      $tmdbapiKey: '%env(TMDB_API_KEY)%'
-  Labstag\Service\SeasonService:
-    arguments:
-      $tmdbapiKey: '%env(TMDB_API_KEY)%'
-  Labstag\Service\EpisodeService:
+  Labstag\Api\TmdbApi:
     arguments:
       $tmdbapiKey: '%env(TMDB_API_KEY)%'
   # add more service definitions when explicit configuration is needed

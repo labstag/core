@@ -15,6 +15,7 @@ final class MetaService
         private Environment $twigEnvironment,
         private ViewResolverService $viewResolverService,
         private FileService $fileService,
+        private SiteService $siteService,
     )
     {
     }
@@ -55,9 +56,18 @@ final class MetaService
      */
     public function getImageForMetatags(object $entity): ?array
     {
-        $file = $this->fileService->asset($entity, 'img');
+        $file = $this->siteService->asset($entity, 'img');
         if ('' === $file) {
             return null;
+        }
+
+        if (0 < substr_count($file, 'https://')) {
+            return [
+                'src'    => $file,
+                'width'  => null,
+                'height' => null,
+                'type'   => null,
+            ];
         }
 
         $file = str_replace('/uploads/', '', $file);

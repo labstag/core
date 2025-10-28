@@ -36,7 +36,7 @@ jobs:
         with:
           submodules: recursive
           repository: koromerzhin/lampy
-          ref: '4.3.1'
+          ref: '4.4.0'
           path: lampy
 
       - name: Setup cache
@@ -51,11 +51,6 @@ jobs:
             if [ ! -d node_modules ]; then
                 npm install
             fi
-      
-      - name: Build assets
-        run: npm run encore:build
-        env:
-          NODE_ENV: production
       
       - name: Setup environment files
         run: |
@@ -72,7 +67,6 @@ jobs:
         run: |
           task labstag:set-env-ids
           task labstag:getpull-image
-          task labstag:getapacheconf
           task labstag:install-first
           task labstag:deploy
           task labstag:waiting
@@ -111,7 +105,7 @@ jobs:
         with:
           submodules: recursive
           repository: koromerzhin/lampy
-          ref: '4.3.1'
+          ref: '4.4.0'
           path: lampy
 
       - name: Setup cache
@@ -147,7 +141,6 @@ jobs:
         run: |
           task labstag:set-env-ids
           task labstag:getpull-image
-          task labstag:getapacheconf
           task labstag:install-first
           task labstag:deploy
           task labstag:waiting

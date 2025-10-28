@@ -12,21 +12,24 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Redirection;
+use Labstag\Entity\Saga;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
+use Labstag\Message\MovieMessage;
+use Labstag\Message\SagaMessage;
+use Labstag\Message\SerieMessage;
+use Labstag\Message\StoryPdfMessage;
 use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\HttpErrorLogsRepository;
 use Labstag\Repository\PageRepository;
 use Labstag\Repository\SeasonRepository;
 use Labstag\Service\BlockService;
-use Labstag\Service\MovieService;
 use Labstag\Service\ParagraphService;
-use Labstag\Service\SerieService;
-use Labstag\Service\StoryService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Workflow\Registry;
 
@@ -35,15 +38,13 @@ abstract class EventEntityLib
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
-        protected SerieService $serieService,
+        protected MessageBusInterface $messageBus,
         protected WorkflowService $workflowService,
         protected ChapterRepository $chapterRepository,
         protected SeasonRepository $seasonRepository,
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
         protected BlockService $blockService,
-        protected StoryService $storyService,
-        protected MovieService $movieService,
         protected PageRepository $pageRepository,
         protected HttpErrorLogsRepository $httpErrorLogsRepository,
     )
@@ -139,8 +140,7 @@ abstract class EventEntityLib
         $chapters = $story->getChapters();
         $instance->setPosition(count($chapters) + 1);
 
-        $this->storyService->setPdf($instance->getRefstory());
-        $this->storyService->generateFlashBag();
+        $this->messageBus->dispatch(new StoryPdfMessage($instance->getRefstory()->getId()));
     }
 
     protected function updateEntityMovie(object $instance): void
@@ -149,7 +149,7 @@ abstract class EventEntityLib
             return;
         }
 
-        $this->movieService->update($instance);
+        $this->messageBus->dispatch(new MovieMessage($instance->getId()));
     }
 
     protected function updateEntityPage(object $instance): void
@@ -197,6 +197,15 @@ abstract class EventEntityLib
         $instance->incrementLastCount();
     }
 
+    protected function updateEntitySaga(object $instance): void
+    {
+        if (!$instance instanceof Saga) {
+            return;
+        }
+
+        $this->messageBus->dispatch(new SagaMessage($instance->getId()));
+    }
+
     protected function updateEntitySeason(object $instance): void
     {
         if (!$instance instanceof Season) {
@@ -226,7 +235,7 @@ abstract class EventEntityLib
             return;
         }
 
-        $this->serieService->update($instance);
+        $this->messageBus->dispatch(new SerieMessage($instance->getId()));
     }
 
     protected function updateEntityStory(object $instance): void
@@ -235,7 +244,6 @@ abstract class EventEntityLib
             return;
         }
 
-        $this->storyService->setPdf($instance);
-        $this->storyService->generateFlashBag();
+        $this->messageBus->dispatch(new StoryPdfMessage($instance->getId()));
     }
 }

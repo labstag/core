@@ -25,6 +25,7 @@ final class EntityListener extends EventEntityLib
         $this->updateEntityStory($object);
         $this->updateEntityMovie($object);
         $this->updateEntitySerie($object);
+        $this->updateEntitySaga($object);
         $this->updateEntityChapter($object);
         $this->updateEntityPage($object);
         $this->updateEntitySeason($object);

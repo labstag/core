@@ -260,7 +260,8 @@ class Page implements Stringable
     public function removeChild(self $child): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->children->removeElement($child) && $child->getPage() === $this) {
+        if ($this->children->removeElement($child) && $child->getPage() === $this
+        ) {
             $child->setPage(null);
         }
 
@@ -270,7 +271,8 @@ class Page implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this) {
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this
+        ) {
             $paragraph->setPage(null);
         }
 

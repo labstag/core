@@ -6,13 +6,12 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Serie;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Symfony\Component\Intl\Countries;
 
 /**
- * @extends ServiceEntityRepositoryLib<Serie>
+ * @extends ServiceEntityRepositoryAbstract<Serie>
  */
-class SerieRepository extends ServiceEntityRepositoryLib
+class SerieRepository extends ServiceEntityRepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
@@ -72,6 +71,7 @@ class SerieRepository extends ServiceEntityRepositoryLib
     public function findAllUpdate(): mixed
     {
         $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->where('s.inProduction != 0 OR s.inProduction IS NULL');
         $queryBuilder->orderBy('s.title', 'ASC');
 
         $query        = $queryBuilder->getQuery();

@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\User;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -20,7 +19,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class UserCrudController extends AbstractCrudControllerLib
+class UserCrudController extends CrudControllerAbstract
 {
     #[\Override]
     public function configureActions(Actions $actions): Actions
@@ -47,13 +46,11 @@ class UserCrudController extends AbstractCrudControllerLib
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('username', new TranslatableMessage('Username'));
-        yield EmailField::new('email', new TranslatableMessage('Email'));
-        yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
+        $this->crudFieldFactory->setTabPrincipal();
         $choiceField = ChoiceField::new('roles', new TranslatableMessage('Roles'));
         $choiceField->allowMultipleChoices();
         $choiceField->setChoices($this->userService->getRoles());
-        yield $choiceField;
+
         $textField = TextField::new('password', new TranslatableMessage('Password'));
         $textField->setFormType(RepeatedType::class);
         $textField->setFormTypeOptions(
@@ -72,44 +69,58 @@ class UserCrudController extends AbstractCrudControllerLib
         );
         $textField->setRequired(false);
         $textField->onlyOnForms();
-        yield $textField;
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                TextField::new('username', new TranslatableMessage('Username')),
+                EmailField::new('email', new TranslatableMessage('Email')),
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $choiceField,
+                $textField,
+            ]
+        );
         if (Crud::PAGE_NEW === $pageName) {
-            $field = $this->crudFieldFactory->booleanField(
+            $generatePasswordField = $this->crudFieldFactory->booleanField(
                 'generatepassword',
                 (string) new TranslatableMessage('generate Password')
             );
-            $field->setFormTypeOptions(
+            $generatePasswordField->setFormTypeOptions(
                 ['mapped' => false]
             );
-
-            yield $field;
+            $this->crudFieldFactory->addFieldsToTab('principal', [$generatePasswordField]);
         }
 
         $languageField = ChoiceField::new('language', new TranslatableMessage('Language'));
         $langue        = $this->userService->getLanguagesForChoices();
         $languageField->setChoices($langue);
-        yield $languageField;
-        yield $this->crudFieldFactory->imageField('avatar', $pageName, self::getEntityFqcn());
-        yield CollectionField::new('stories', new TranslatableMessage('Histories'))->onlyOnDetail();
-        yield CollectionField::new('editos', new TranslatableMessage('Editos'))->onlyOnDetail()->formatValue(
-            fn ($entity): int => count($entity)
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $languageField,
+                $this->crudFieldFactory->imageField('avatar', $pageName, self::getEntityFqcn()),
+            ]
         );
 
         $tab = [
-            'editos' => new TranslatableMessage('Editos'),
-            'memos'  => new TranslatableMessage('Memos'),
-            'pages'  => new TranslatableMessage('Pages'),
-            'posts'  => new TranslatableMessage('Posts'),
+            'stories' => new TranslatableMessage('Stories'),
+            'editos'  => new TranslatableMessage('Editos'),
+            'memos'   => new TranslatableMessage('memos'),
+            'pages'   => new TranslatableMessage('pages'),
+            'posts'   => new TranslatableMessage('posts'),
         ];
+        $fields = [];
         foreach ($tab as $key => $label) {
             $collectionField = CollectionField::new($key, $label);
             $collectionField->onlyOnDetail();
             $collectionField->formatValue(fn ($value): int => count($value));
-            yield $collectionField;
+            $fields[] = $collectionField;
         }
 
-        yield $this->crudFieldFactory->workflowField();
-        yield $this->crudFieldFactory->stateField();
+        $this->crudFieldFactory->addFieldsToTab('principal', $fields);
+
+        $this->crudFieldFactory->setTabWorkflow();
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]

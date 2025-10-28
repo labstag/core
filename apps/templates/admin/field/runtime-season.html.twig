@@ -1,0 +1,6 @@
+{% set instance = entity.instance %}
+{% set runtime = 0 %}
+{% for episode in instance.episodes %}
+    {% set runtime = runtime + episode.runtime %}
+{% endfor %}
+{{ time_runtime(runtime) }}

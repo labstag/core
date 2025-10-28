@@ -73,7 +73,7 @@ class Serie implements Stringable
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?string $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $imdb = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -81,6 +81,9 @@ class Serie implements Stringable
 
     #[Vich\UploadableField(mapping: 'serie', fileNameProperty: 'img')]
     private ?File $imgFile = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $inProduction = null;
 
     #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $lastreleaseDate = null;
@@ -104,7 +107,7 @@ class Serie implements Stringable
     /**
      * @var Collection<int, Season>
      */
-    #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'refserie')]
+    #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'refserie', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
         ['number' => 'ASC']
     )]
@@ -292,6 +295,11 @@ class Serie implements Stringable
         return $this->file;
     }
 
+    public function isInProduction(): ?bool
+    {
+        return $this->inProduction;
+    }
+
     public function removeCategory(Category $category): static
     {
         if ($this->categories->removeElement($category)) {
@@ -304,7 +312,8 @@ class Serie implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this) {
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this
+        ) {
             $paragraph->setStory(null);
         }
 
@@ -314,7 +323,8 @@ class Serie implements Stringable
     public function removeSeason(Season $season): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->seasons->removeElement($season) && $season->getRefserie() === $this) {
+        if ($this->seasons->removeElement($season) && $season->getRefserie() === $this
+        ) {
             $season->setRefserie(null);
         }
 
@@ -406,6 +416,13 @@ class Serie implements Stringable
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setInProduction(?bool $inProduction): static
+    {
+        $this->inProduction = $inProduction;
+
+        return $this;
     }
 
     public function setLastreleaseDate(?DateTime $lastreleaseDate): static

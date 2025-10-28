@@ -19,16 +19,20 @@ use Labstag\Field\ParagraphsField;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\TagRepository;
 use Labstag\Service\FileService;
+use RuntimeException;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\File;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 /**
  * Centralized factory for fields (EasyAdmin Fields) to reduce
- * duplication in AbstractCrudControllerLib.
+ * duplication in CrudControllerAbstract.
  */
 final class CrudFieldFactory
 {
+
+    private array $tabfields = [];
+
     public function __construct(
         private FileService $fileService,
     )
@@ -42,6 +46,22 @@ final class CrudFieldFactory
         $textField->onlyOnDetail();
 
         return $textField;
+    }
+
+    public function addFieldsToTab(string $tabName, $fields): void
+    {
+        if (!isset($this->tabfields[$tabName])) {
+            throw new RuntimeException(
+                sprintf(
+                    'Tab "%s" not found in CrudFieldFactory. Please add it first using addTab().',
+                    $tabName
+                )
+            );
+        }
+
+        foreach ($fields as $field) {
+            $this->tabfields[$tabName]['fields'][] = $field;
+        }
     }
 
     public function addFilterCategories(Filters $filters, string $type): void
@@ -76,36 +96,16 @@ final class CrudFieldFactory
         );
     }
 
-    /**
-     * Helper bundle returning the standard identity fields for most content entities.
-     * Order is important for UI coherence.
-     *
-     * @return array<int, IdField|TextField|SlugField|BooleanField|ImageField|AssociationField>
-     */
-    public function baseIdentitySet(
-        string $pageName,
-        string $entityFqcn,
-        bool $withSlug = true,
-        bool $withImage = true,
-        bool $withEnable = true,
-    ): array
+    public function addTab($tabName, FormField $formField): void
     {
-        $fields   = [];
-        $fields[] = $this->idField();
-        if ($withSlug) {
-            $fields[] = $this->slugField();
+        if (isset($this->tabfields[$tabName])) {
+            return;
         }
 
-        if ($withEnable) {
-            $fields[] = $this->booleanField('enable', (string) new TranslatableMessage('Enable'));
-        }
-
-        $fields[] = $this->titleField();
-        if ($withImage) {
-            $fields[] = $this->imageField('img', $pageName, $entityFqcn);
-        }
-
-        return $fields;
+        $this->tabfields[$tabName] = [
+            'tab'    => $formField,
+            'fields' => [],
+        ];
     }
 
     public function booleanField(string $propertyName, string $label, bool $asSwitch = true): BooleanField
@@ -134,44 +134,19 @@ final class CrudFieldFactory
         return $associationField;
     }
 
-    public function createdAtField(): DateTimeField
+    public function getConfigureFields(): iterable
     {
-        return DateTimeField::new('createdAt', new TranslatableMessage('Created At'))->hideWhenCreating();
-    }
+        foreach ($this->tabfields as $tabfield) {
+            if (0 === count($tabfield['fields'])) {
+                continue;
+            }
 
-    /**
-     * Date tab helper (tab + createdAt + updatedAt).
-     *
-     * @return array<int, mixed>
-     */
-    public function dateSet(string $pageName): array
-    {
-        if ('new' === $pageName) {
-            return [];
+            if (1 !== count($this->tabfields)) {
+                yield $tabfield['tab'];
+            }
+
+            yield from $tabfield['fields'];
         }
-
-        return [
-            FormField::addTab(new TranslatableMessage('Date')),
-            $this->createdAtField(),
-            $this->updatedAtField(),
-        ];
-    }
-
-    /**
-     * Full common content set (identity + taxonomy + optional paragraphs + meta + ref user).
-     * Simplifies controllers migrating away from legacy wrappers.
-     *
-     * @return array<int, mixed>
-     */
-    public function fullContentSet(string $type, string $pageName, string $entityFqcn, bool $isSuperAdmin): array
-    {
-        return array_merge(
-            $this->baseIdentitySet($pageName, $entityFqcn),
-            $this->taxonomySet($type),
-            $this->paragraphFields($pageName),
-            $this->metaFields(),
-            $this->refUserFields($isSuperAdmin)
-        );
     }
 
     public function idField(): IdField
@@ -232,54 +207,94 @@ final class CrudFieldFactory
         return ImageField::new($type, $label ?? new TranslatableMessage('Image'))->setBasePath($basePath);
     }
 
-    /**
-     * @return array<int, FormField|TextField>
-     */
-    public function metaFields(): array
+    public function setTabConfig(): void
     {
-        return [
-            FormField::addTab(new TranslatableMessage('SEO')),
-            TextField::new('meta.title', new TranslatableMessage('Title'))->hideOnIndex(),
-            TextField::new('meta.keywords', new TranslatableMessage('Keywords'))->hideOnIndex(),
-            TextField::new('meta.description', new TranslatableMessage('Description'))->hideOnIndex(),
-        ];
+        $this->addTab('config', FormField::addTab(new TranslatableMessage('Config')));
+    }
+
+    /**
+     * Date tab helper (tab + createdAt + updatedAt).
+     *
+     * @return array<int, mixed>
+     */
+    public function setTabDate(string $pageName): void
+    {
+        if ('new' === $pageName) {
+            return;
+        }
+
+        $this->addTab('date', FormField::addTab(new TranslatableMessage('Date')));
+        $dateTimeField = DateTimeField::new('createdAt', new TranslatableMessage('Created At'));
+        $dateTimeField->hideWhenCreating();
+
+        $updatedAtField = DateTimeField::new('updatedAt', new TranslatableMessage('updated At'));
+        $updatedAtField->hideWhenCreating();
+        $updatedAtField->hideOnIndex();
+        $this->addFieldsToTab('date', [$dateTimeField, $updatedAtField]);
+    }
+
+    public function setTabOther(): void
+    {
+        $this->addTab('other', FormField::addTab(new TranslatableMessage('Other'))->onlyOnIndex());
     }
 
     /**
      * @return array<int, FormField|ParagraphsField>
      */
-    public function paragraphFields(string $pageName): array
+    public function setTabParagraphs(string $pageName): void
     {
         if ('new' === $pageName) {
-            return [];
+            return;
         }
 
-        if ('edit' !== $pageName) {
-            return [ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'))];
-        }
+        $this->addTab('paragraphs', FormField::addTab(new TranslatableMessage('Paragraphs')));
+        $this->addFieldsToTab(
+            'paragraphs',
+            [ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'))->hideWhenCreating()]
+        );
+    }
 
-        return [
-            FormField::addTab(new TranslatableMessage('Paragraphs'))->hideWhenCreating(),
-            ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'))->hideWhenCreating(),
-        ];
+    public function setTabPrincipal(): void
+    {
+        $this->addTab('principal', FormField::addTab(new TranslatableMessage('Principal')));
+    }
+
+    /**
+     * @return array<int, FormField|TextField>
+     */
+    public function setTabSEO(): void
+    {
+        $this->addTab('seo', FormField::addTab(new TranslatableMessage('SEO')));
+        $this->addFieldsToTab(
+            'seo',
+            [
+                TextField::new('meta.title', new TranslatableMessage('Title'))->hideOnIndex(),
+                TextField::new('meta.keywords', new TranslatableMessage('Keywords'))->hideOnIndex(),
+                TextField::new('meta.description', new TranslatableMessage('Description'))->hideOnIndex(),
+            ]
+        );
     }
 
     /**
      * @return array<int, FormField|AssociationField>
      */
-    public function refUserFields(bool $isSuperAdmin): array
+    public function setTabUser(bool $isSuperAdmin): void
     {
         if (!$isSuperAdmin) {
-            return [];
+            return;
         }
 
+        $this->addTab('user', FormField::addTab(new TranslatableMessage('User')));
         $associationField = AssociationField::new('refuser', new TranslatableMessage('User'));
         $associationField->setSortProperty('username');
+        $this->addFieldsToTab('user', [$associationField]);
+    }
 
-        return [
-            FormField::addTab(new TranslatableMessage('User')),
-            $associationField,
-        ];
+    public function setTabWorkflow(): void
+    {
+        $this->addTab('workflows', FormField::addTab(new TranslatableMessage('Workflow'))->onlyOnIndex());
+
+        $this->addFieldsToTab('workflows', [$this->workflowField(), $this->stateField()]);
     }
 
     public function slugField(): SlugField
@@ -352,11 +367,6 @@ final class CrudFieldFactory
         return CollectionField::new($type, new TranslatableMessage('Childs'))->hideOnForm()->formatValue(
             fn ($value): int => is_countable($value) ? count($value) : 0
         );
-    }
-
-    public function updatedAtField(): DateTimeField
-    {
-        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating()->hideOnIndex();
     }
 
     public function workflowField(): TextField

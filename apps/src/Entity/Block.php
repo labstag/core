@@ -194,7 +194,8 @@ class Block implements Stringable
     public function removeLink(Link $link): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->links->removeElement($link) && $link->getBlock() === $this) {
+        if ($this->links->removeElement($link) && $link->getBlock() === $this
+        ) {
             $link->setBlock(null);
         }
 
@@ -204,7 +205,8 @@ class Block implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getBlock() === $this) {
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getBlock() === $this
+        ) {
             $paragraph->setBlock(null);
         }
 

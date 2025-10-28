@@ -9,12 +9,11 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Enum\PageEnum;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\PostRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class LastNewsParagraph extends ParagraphLib
+class LastNewsParagraph extends ParagraphAbstract
 {
     /**
      * @param mixed[] $data
@@ -24,9 +23,9 @@ class LastNewsParagraph extends ParagraphLib
     {
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::POSTS->value);
-        /** @var PostRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Post::class);
-        $total                      = $serviceEntityRepositoryLib->findTotalEnable();
+        /** @var PostRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Post::class);
+        $total                           = $serviceEntityRepositoryAbstract->findTotalEnable();
         if (!is_object($listing) || !$listing->isEnable() || 0 == $total) {
             $this->setShow($paragraph, false);
 
@@ -34,8 +33,8 @@ class LastNewsParagraph extends ParagraphLib
         }
 
         $nbr   = $paragraph->getNbr();
-        $news  = $serviceEntityRepositoryLib->findLastByNbr($nbr);
-        $total = $serviceEntityRepositoryLib->findTotalEnable();
+        $news  = $serviceEntityRepositoryAbstract->findLastByNbr($nbr);
+        $total = $serviceEntityRepositoryAbstract->findTotalEnable();
         $this->setData(
             $paragraph,
             [
