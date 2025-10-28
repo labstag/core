@@ -41,7 +41,7 @@ class SagaParagraph extends ParagraphAbstract
         }
 
         
-        if (count($sagas) == 0) {
+        if (count($sagas) < 3) {
             $this->setShow($paragraph, false);
             return;
         }
