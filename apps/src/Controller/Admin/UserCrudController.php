@@ -113,7 +113,7 @@ class UserCrudController extends CrudControllerAbstract
         foreach ($tab as $key => $label) {
             $collectionField = CollectionField::new($key, $label);
             $collectionField->onlyOnDetail();
-            $collectionField->formatValue(fn ($value): int => count($value));
+            $collectionField->formatValue(fn ($value): int => is_null($value) ? 0 : count($value));
             $fields[] = $collectionField;
         }
 

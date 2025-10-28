@@ -124,8 +124,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
                 [
                     EA::CRUD_CONTROLLER_FQCN => $adminContext->getRequest()->query->get(EA::CRUD_CONTROLLER_FQCN),
                     'propertyName'           => $object->name,
-                    'originatingPage'        => $adminContext->getCrud()
-                        ->getCurrentPage(),
+                    'originatingPage'        => $adminContext->getCrud()->getCurrentPage(),
                 ]
             );
         $adminUrlGenerator->generateUrl();

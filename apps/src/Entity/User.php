@@ -255,7 +255,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     /**
      * @return Collection<int, Story>
      */
-    public function getHistories(): Collection
+    public function getStories(): Collection
     {
         return $this->stories;
     }

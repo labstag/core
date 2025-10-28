@@ -31,6 +31,23 @@ class SagaParagraph extends ParagraphAbstract
             return;
         }
 
+        $types = [
+            'title',
+            'country',
+            'categories',
+            'sagas',
+            'year',
+            'order',
+            'orderby',
+        ];
+        foreach ($types as $type) {
+            if ($request->query->has($type)) {
+                $this->setShow($paragraph, false);
+
+                return;
+            }
+        }
+
         /** @var MovieRepository $serviceEntityRepositoryAbstract */
         $serviceEntityRepositoryAbstract = $this->getRepository(Saga::class);
 
