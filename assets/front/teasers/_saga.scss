@@ -2,9 +2,9 @@
 .teaser-saga{
   @extend %teaser;
   .background{
-    height: 433px;
+    height: 587px;
     align-items: flex-end;
-    justify-content: space-between;
+    justify-content: flex-start;
     .movies{
       background-color: #363636;
       color: yellow;

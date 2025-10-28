@@ -18,21 +18,6 @@ class SagaRepository extends ServiceEntityRepositoryAbstract
     /**
      * @return array<Saga>
      */
-    public function showPublic(): array
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->orderBy('s.title', 'ASC');
-        $queryBuilder->andWhere('s.enable = true');
-
-        $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'saga-public');
-
-        return $query->getResult();
-    }
-
-    /**
-     * @return array<Saga>
-     */
     public function findAllByTypeMovieEnable(): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
@@ -57,6 +42,21 @@ class SagaRepository extends ServiceEntityRepositoryAbstract
         $queryBuilder->orderBy('s.title', 'ASC');
 
         $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
+
+    /**
+     * @return array<Saga>
+     */
+    public function showPublic(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->orderBy('s.title', 'ASC');
+        $queryBuilder->andWhere('s.enable = true');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'saga-public');
 
         return $query->getResult();
     }

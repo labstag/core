@@ -1223,7 +1223,7 @@
       </trans-unit>
       <trans-unit id="58cp6Z0" resname="%count% movies">
         <source>%count% movies</source>
-        <target>__%count% films</target>
+        <target>%count% films</target>
       </trans-unit>
     </body>
   </file>

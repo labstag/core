@@ -16,17 +16,7 @@ final class MovieService
     /**
      * @var array<string, mixed>
      */
-    private array $category = [];
-
-    /**
-     * @var array<string, mixed>
-     */
     private array $country = [];
-
-    /**
-     * @var array<string, mixed>
-     */
-    private array $sagaForm = [];
 
     /**
      * @var array<string, mixed>

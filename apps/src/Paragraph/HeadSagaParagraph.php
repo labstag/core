@@ -5,7 +5,6 @@ namespace Labstag\Paragraph;
 use Labstag\Entity\Block;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Saga;
-use Labstag\Entity\Season;
 use Override;
 
 class HeadSagaParagraph extends ParagraphAbstract

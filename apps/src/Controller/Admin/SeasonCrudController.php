@@ -89,6 +89,7 @@ class SeasonCrudController extends CrudControllerAbstract
                 $wysiwygField,
             ]
         );
+        $this->crudFieldFactory->setTabSEO();
         $this->crudFieldFactory->setTabDate($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields();

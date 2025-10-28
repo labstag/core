@@ -3,16 +3,12 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Saga;
-use Labstag\Entity\Season;
-use Labstag\Entity\Serie;
 use Override;
-use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaListParagraph extends ParagraphAbstract
 {
@@ -30,7 +26,7 @@ class SagaListParagraph extends ParagraphAbstract
         }
 
         $serviceEntityRepositoryAbstract = $this->getRepository(Movie::class);
-        $movies                         = $serviceEntityRepositoryAbstract->getAllActivateBySaga($data['entity']);
+        $movies                          = $serviceEntityRepositoryAbstract->getAllActivateBySaga($data['entity']);
         if (0 === count($movies)) {
             $this->setShow($paragraph, false);
 
@@ -42,9 +38,7 @@ class SagaListParagraph extends ParagraphAbstract
             $paragraph,
             $this->render(
                 $templates['view'],
-                [
-                    'movies' => $movies
-                ]
+                ['movies' => $movies]
             )
         );
 

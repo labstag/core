@@ -52,21 +52,6 @@ class MovieRepository extends ServiceEntityRepositoryAbstract
         return $country;
     }
 
-    public function getAllActivateBySaga(Saga $saga): array
-    {
-        $queryBuilder = $this->createQueryBuilder('m');
-        $queryBuilder->where('m.enable = :enable');
-        $queryBuilder->setParameter('enable', true);
-        $queryBuilder->andWhere('m.saga = :saga');
-        $queryBuilder->setParameter('saga', $saga);
-        $queryBuilder->orderBy('m.title', 'ASC');
-
-        $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'movies-activate-by-saga-' . $saga->getId());
-
-        return $query->getResult();
-    }
-
     /**
      * @return array<string, mixed>
      */
@@ -122,6 +107,21 @@ class MovieRepository extends ServiceEntityRepositoryAbstract
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'movies-not-in-imdb-list');
+
+        return $query->getResult();
+    }
+
+    public function getAllActivateBySaga(Saga $saga): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->where('m.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        $queryBuilder->andWhere('m.saga = :saga');
+        $queryBuilder->setParameter('saga', $saga);
+        $queryBuilder->orderBy('m.title', 'ASC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-activate-by-saga-' . $saga->getId());
 
         return $query->getResult();
     }

@@ -17,7 +17,7 @@ final class ViewResolverService
     private array $requestCache = [];
 
     public function __construct(
-        protected EntityManagerInterface $entityManager,
+        private EntityManagerInterface $entityManager,
         private ConfigurationService $configurationService,
         private BlockService $blockService,
         private BlockRepository $blockRepository,
@@ -75,7 +75,7 @@ final class ViewResolverService
         if (!$meta instanceof Meta) {
             $meta = new Meta();
             $entity->setMeta($meta);
-            $this->entityManager->getRepository(get_class($entity))->save($entity);
+            $this->entityManager->getRepository($entity::class)->save($entity);
         }
 
         return $this->requestCache[$cacheKey] = [

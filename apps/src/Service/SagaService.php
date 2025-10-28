@@ -22,6 +22,22 @@ class SagaService
     {
     }
 
+    public function getSagaByTmdbId(string $tmdbId): Saga
+    {
+        $saga = $this->sagaRepository->findOneBy(
+            ['tmdb' => $tmdbId]
+        );
+        if (!$saga instanceof Saga) {
+            $saga = new Saga();
+            $saga->setTitle($tmdbId);
+            $saga->setTmdb($tmdbId);
+            $this->sagaRepository->save($saga);
+            $this->messageBus->dispatch(new SagaMessage($saga->getId()));
+        }
+
+        return $saga;
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -39,22 +55,6 @@ class SagaService
         }
 
         return $sagas;
-    }
-
-    public function getSagaByTmdbId(string $tmdbId): Saga
-    {
-        $saga = $this->sagaRepository->findOneBy(
-            ['tmdb' => $tmdbId]
-        );
-        if (!$saga instanceof Saga) {
-            $saga = new Saga();
-            $saga->setTitle($tmdbId);
-            $saga->setTmdb($tmdbId);
-            $this->sagaRepository->save($saga);
-            $this->messageBus->dispatch(new SagaMessage($saga->getId()));
-        }
-
-        return $saga;
     }
 
     public function update(Saga $saga): bool

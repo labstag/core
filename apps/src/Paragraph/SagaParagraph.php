@@ -4,14 +4,16 @@ namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
-use Labstag\Entity\Saga;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Saga;
 use Labstag\Repository\MovieRepository;
 use Override;
 
 class SagaParagraph extends ParagraphAbstract
 {
+    private const MINISAGA = 3;
+
     /**
      * @param mixed[] $data
      */
@@ -21,8 +23,9 @@ class SagaParagraph extends ParagraphAbstract
         unset($disable);
 
         $request = $this->requestStack->getCurrentRequest();
-        if ($request->attributes->get('page') != 1) {
+        if (1 != $request->attributes->get('page')) {
             $this->setShow($paragraph, false);
+
             return;
         }
 
@@ -31,27 +34,24 @@ class SagaParagraph extends ParagraphAbstract
 
         $sagas = $serviceEntityRepositoryAbstract->showPublic();
         foreach ($sagas as $key => $saga) {
-            if (count($saga->getMovies()->filter(
-                function ($movie) {
-                    return $movie->isEnable();
-                }
-            )) < 2) {
+            $total = $saga->getMovies()->filter(fn ($movie) => $movie->isEnable());
+            if (2 > count($total)) {
                 unset($sagas[$key]);
             }
         }
 
-        
-        if (count($sagas) < 3) {
+        if (self::MINISAGA > count($sagas)) {
             $this->setShow($paragraph, false);
+
             return;
         }
 
         $this->setData(
             $paragraph,
             [
-                'sagas'      => $sagas,
-                'paragraph'  => $paragraph,
-                'data'       => $data,
+                'sagas'     => $sagas,
+                'paragraph' => $paragraph,
+                'data'      => $data,
             ]
         );
     }
