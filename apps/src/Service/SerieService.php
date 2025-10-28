@@ -209,6 +209,38 @@ final class SerieService
         }
     }
 
+    private function setCitation(Serie $serie, array $details): void
+    {
+        $tagline = (string) $details['tmdb']['tagline'];
+        if ('' !== $tagline && '0' !== $tagline) {
+            $serie->setCitation($tagline);
+        }
+    }
+
+    private function setDescription(Serie $serie, array $details): void
+    {
+        $overview = (string) $details['tmdb']['overview'];
+        if ('' !== $overview && '0' !== $overview) {
+            $serie->setDescription($overview);
+        }
+    }
+
+    private function setLastreleaseDate(Serie $serie, array $details): void
+    {
+        $lastReleaseDate = (is_null(
+            $details['tmdb']['last_air_date']
+        ) || empty($details['tmdb']['last_air_date'])) ? null : new DateTime($details['tmdb']['last_air_date']);
+        $serie->setLastreleaseDate($lastReleaseDate);
+    }
+
+    private function setReleaseDate(Serie $serie, array $details): void
+    {
+        $releaseDate = (is_null(
+            $details['tmdb']['first_air_date']
+        ) || empty($details['tmdb']['first_air_date'])) ? null : new DateTime($details['tmdb']['first_air_date']);
+        $serie->setReleaseDate($releaseDate);
+    }
+
     /**
      * @param array<string, mixed> $details
      */
@@ -289,16 +321,8 @@ final class SerieService
         $serie->setTitle((string) $details['tmdb']['name']);
 
         $this->setCertification($details, $serie);
-
-        $tagline = (string) $details['tmdb']['tagline'];
-        if ('' !== $tagline && '0' !== $tagline) {
-            $serie->setCitation($tagline);
-        }
-
-        $overview = (string) $details['tmdb']['overview'];
-        if ('' !== $overview && '0' !== $overview) {
-            $serie->setDescription($overview);
-        }
+        $this->setCitation($serie, $details);
+        $this->setDescription($serie, $details);
 
         $voteEverage = (float) ($details['tmdb']['vote_average'] ?? 0);
         $voteCount   = (int) ($details['tmdb']['vote_count'] ?? 0);
@@ -309,15 +333,8 @@ final class SerieService
         $serie->setCountries($details['tmdb']['origin_country']);
 
         $serie->setTmdb($details['tmdb']['id']);
-
-        $releaseDate = (is_null(
-            $details['tmdb']['first_air_date']
-        ) || empty($details['tmdb']['first_air_date'])) ? null : new DateTime($details['tmdb']['first_air_date']);
-        $serie->setReleaseDate($releaseDate);
-        $lastReleaseDate = (is_null(
-            $details['tmdb']['last_air_date']
-        ) || empty($details['tmdb']['last_air_date'])) ? null : new DateTime($details['tmdb']['last_air_date']);
-        $serie->setLastreleaseDate($lastReleaseDate);
+        $this->setReleaseDate($serie, $details);
+        $this->setLastreleaseDate($serie, $details);
         $this->updateImageMovie($serie, $details);
 
         return true;

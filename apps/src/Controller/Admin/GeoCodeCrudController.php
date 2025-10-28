@@ -46,19 +46,27 @@ class GeoCodeCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
+        $this->crudFieldFactory->setTabPrincipal();
         unset($pageName);
-        yield CountryField::new('countryCode', new TranslatableMessage('Country'));
-        yield TextField::new('stateCode', new TranslatableMessage('State code'))->hideOnIndex();
-        yield TextField::new('stateName', new TranslatableMessage('State name'));
-        yield TextField::new('provinceCode', new TranslatableMessage('Province code'))->hideOnIndex();
-        yield TextField::new('provinceName', new TranslatableMessage('Province name'));
-        yield TextField::new('communityCode', new TranslatableMessage('Community code'))->hideOnIndex();
-        yield TextField::new('communityName', new TranslatableMessage('Community name'));
-        yield TextField::new('latitude', new TranslatableMessage('Latitude'));
-        yield TextField::new('longitude', new TranslatableMessage('Longitude'));
-        yield TextField::new('placeName', new TranslatableMessage('Place'));
-        yield TextField::new('postalCode', new TranslatableMessage('Postal code'))->hideOnIndex();
-        yield NumberField::new('accuracy', new TranslatableMessage('Accuracy'));
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                CountryField::new('countryCode', new TranslatableMessage('Country')),
+                TextField::new('stateCode', new TranslatableMessage('State code'))->hideOnIndex(),
+                TextField::new('stateName', new TranslatableMessage('State name')),
+                TextField::new('provinceCode', new TranslatableMessage('Province code'))->hideOnIndex(),
+                TextField::new('provinceName', new TranslatableMessage('Province name')),
+                TextField::new('communityCode', new TranslatableMessage('Community code'))->hideOnIndex(),
+                TextField::new('communityName', new TranslatableMessage('Community name')),
+                TextField::new('latitude', new TranslatableMessage('Latitude')),
+                TextField::new('longitude', new TranslatableMessage('Longitude')),
+                TextField::new('placeName', new TranslatableMessage('Place')),
+                TextField::new('postalCode', new TranslatableMessage('Postal code'))->hideOnIndex(),
+                NumberField::new('accuracy', new TranslatableMessage('Accuracy')),
+            ]
+        );
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]
@@ -95,12 +103,12 @@ class GeoCodeCrudController extends CrudControllerAbstract
      */
     private function getAllData(string $type): array
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        if (!$ServiceEntityRepositoryAbstract instanceof GeoCodeRepository) {
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        if (!$serviceEntityRepositoryAbstract instanceof GeoCodeRepository) {
             return [];
         }
 
-        $all = $ServiceEntityRepositoryAbstract->findAllData($type);
+        $all = $serviceEntityRepositoryAbstract->findAllData($type);
 
         $data = [];
         foreach ($all as $row) {

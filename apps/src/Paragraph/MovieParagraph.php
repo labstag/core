@@ -20,14 +20,14 @@ class MovieParagraph extends ParagraphAbstract
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var MovieRepository $ServiceEntityRepositoryAbstract */
-        $ServiceEntityRepositoryAbstract = $this->getRepository(Movie::class);
+        /** @var MovieRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Movie::class);
 
         $request = $this->requestStack->getCurrentRequest();
         $query   = $this->setQuery($request->query->all());
 
         $pagination = $this->getPaginator(
-            $ServiceEntityRepositoryAbstract->getQueryPaginator($query),
+            $serviceEntityRepositoryAbstract->getQueryPaginator($query),
             $paragraph->getNbr()
         );
 

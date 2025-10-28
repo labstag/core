@@ -18,16 +18,15 @@ abstract class TagCrudControllerAbstract extends TypedCrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
-    public function configureFields(string $pageName): iterable
+    public function configureFieldsDefault(): void
     {
-        // Tag is not uploadable: no image and no enable field in the entity
-        return $this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: true,
-            withImage: false,
-            withEnable: false
+        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->idField(),
+                $this->crudFieldFactory->titleField(),
+            ]
         );
     }
 

@@ -35,30 +35,25 @@ class MemoCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        $isSuperAdmin = $this->isSuperAdmin();
+        $this->crudFieldFactory->setTabPrincipal();
         // Memo n'a pas de slug : enlever le slug field du set identité
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: false
-        ) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->idField(),
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+            ]
+        );
 
-        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabParagraphs($pageName);
+        $this->crudFieldFactory->setTabUser($this->isSuperAdmin());
 
-        foreach ($this->crudFieldFactory->refUserFields($isSuperAdmin) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabWorkflow();
+        $this->crudFieldFactory->setTabDate($pageName);
 
-        yield $this->crudFieldFactory->workflowField();
-        yield $this->crudFieldFactory->stateField();
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]

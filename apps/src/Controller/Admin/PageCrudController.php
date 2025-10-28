@@ -45,40 +45,34 @@ class PageCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        yield $this->addTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal();
         yield $this->crudFieldFactory->addFieldIDShortcode('page');
-        $isSuperAdmin = $this->isSuperAdmin();
-        $identity     = $this->getIdEntity($pageName, $currentEntity);
+        $this->crudFieldFactory->addFieldsToTab('principal', $this->getIdEntity($pageName, $currentEntity));
 
-        foreach ($identity as $field) {
-            yield $field;
-        }
-
-        $fieldChoice = $this->addFieldIsHome($currentEntity, $pageName);
+        $fieldChoice  = $this->addFieldIsHome($currentEntity, $pageName);
+        $wysiwygField = WysiwygField::new('resume', new TranslatableMessage('resume'));
+        $wysiwygField->hideOnIndex();
         if ($fieldChoice instanceof ChoiceField) {
-            yield $fieldChoice;
+            $this->crudFieldFactory->addFieldsToTab('principal', [$fieldChoice, $wysiwygField]);
         }
 
-        yield AssociationField::new('page', new TranslatableMessage('Page'));
-        foreach ($this->crudFieldFactory->taxonomySet('page') as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [AssociationField::new('page', new TranslatableMessage('Page'))]
+        );
+        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet('page'));
 
-        yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        $fieldsTabs = [
-            $this->crudFieldFactory->paragraphFields($pageName),
-            $this->crudFieldFactory->metaFields(),
-            $this->crudFieldFactory->refUserFields($isSuperAdmin),
-        ];
-        foreach ($fieldsTabs as $fieldTab) {
-            yield from $fieldTab;
-        }
+        $this->crudFieldFactory->setTabParagraphs($pageName);
 
-        yield $this->crudFieldFactory->workflowField();
-        yield $this->crudFieldFactory->stateField();
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabSEO();
+
+        $this->crudFieldFactory->setTabUser($this->isSuperAdmin());
+
+        $this->crudFieldFactory->setTabWorkflow();
+
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]
@@ -124,8 +118,8 @@ class PageCrudController extends CrudControllerAbstract
     #[Route('/admin/page/{entity}/public', name: 'admin_page_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        $page                            = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $page                            = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->publicLink($page);
     }
@@ -133,8 +127,8 @@ class PageCrudController extends CrudControllerAbstract
     #[Route('/admin/page/{entity}/w3c', name: 'admin_page_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        $page                            = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $page                            = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($page);
     }
@@ -164,12 +158,18 @@ class PageCrudController extends CrudControllerAbstract
      */
     private function getIdEntity(string $pageName, mixed $currentEntity): array
     {
-        $identity = $this->crudFieldFactory->baseIdentitySet($pageName, self::getEntityFqcn());
+        $fields   = [
+            $this->crudFieldFactory->idField(),
+            $this->crudFieldFactory->slugField(),
+            $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+            $this->crudFieldFactory->titleField(),
+            $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+        ];
         if ($currentEntity instanceof Page && PageEnum::HOME->value == $currentEntity->getType()) {
             // Remove slug field (present at index 2 if withSlug kept)
-            unset($identity[2]);
+            unset($fields[2]);
         }
 
-        return $identity;
+        return $fields;
     }
 }

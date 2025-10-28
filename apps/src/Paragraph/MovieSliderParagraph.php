@@ -28,11 +28,11 @@ class MovieSliderParagraph extends ParagraphAbstract
             return;
         }
 
-        /** @var MovieRepository $ServiceEntityRepositoryAbstract */
-        $ServiceEntityRepositoryAbstract = $this->getRepository(Movie::class);
+        /** @var MovieRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Movie::class);
         $nbr                             = $paragraph->getNbr();
         $title                           = $paragraph->getTitle();
-        $movies                          = $ServiceEntityRepositoryAbstract->findLastByNbr($nbr);
+        $movies                          = $serviceEntityRepositoryAbstract->findLastByNbr($nbr);
         if (0 === count($movies)) {
             $this->setShow($paragraph, false);
 

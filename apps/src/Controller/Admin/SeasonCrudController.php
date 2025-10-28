@@ -58,27 +58,40 @@ class SeasonCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        yield $this->crudFieldFactory->slugField();
-        yield $this->crudFieldFactory->titleField();
-        yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
-        yield $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn());
-        yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
-        yield AssociationField::new('refserie', new TranslatableMessage('Serie'));
-        yield IntegerField::new('number', new TranslatableMessage('Number'));
-        yield DateField::new('air_date', new TranslatableMessage('Air date'));
-        $episodeCollectionField = CollectionField::new('episodes', new TranslatableMessage('Episodes'));
-        $episodeCollectionField->setTemplatePath('admin/field/episodes.html.twig');
-        $episodeCollectionField->hideOnForm();
-        yield $episodeCollectionField;
-        $episodeCollectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
-        $episodeCollectionField->setTemplatePath('admin/field/runtime-season.html.twig');
-        $episodeCollectionField->hideOnForm();
-        yield $episodeCollectionField;
-        yield WysiwygField::new('overview', new TranslatableMessage('Overview'))->hideOnIndex();
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabPrincipal();
+        $textField = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
+        $textField->hideOnIndex();
+
+        $collectionField = CollectionField::new('episodes', new TranslatableMessage('Episodes'));
+        $collectionField->setTemplatePath('admin/field/episodes.html.twig');
+        $collectionField->hideOnForm();
+
+        $runtimeField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
+        $runtimeField->setTemplatePath('admin/field/runtime-season.html.twig');
+        $runtimeField->hideOnForm();
+
+        $wysiwygField = WysiwygField::new('overview', new TranslatableMessage('Overview'));
+        $wysiwygField->hideOnIndex();
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $textField,
+                AssociationField::new('refserie', new TranslatableMessage('Serie')),
+                IntegerField::new('number', new TranslatableMessage('Number')),
+                DateField::new('air_date', new TranslatableMessage('Air date')),
+                $collectionField,
+                $runtimeField,
+                $wysiwygField,
+            ]
+        );
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]
@@ -108,8 +121,8 @@ class SeasonCrudController extends CrudControllerAbstract
     #[Route('/admin/season/{entity}/public', name: 'admin_season_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract  = $this->getRepository();
-        $season                           = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract  = $this->getRepository();
+        $season                           = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->publicLink($season);
     }
@@ -117,8 +130,8 @@ class SeasonCrudController extends CrudControllerAbstract
     #[Route('/admin/season/{entity}/update', name: 'admin_season_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract  = $this->getRepository();
-        $season                           = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract  = $this->getRepository();
+        $season                           = $serviceEntityRepositoryAbstract->find($entity);
         $messageBus->dispatch(new SeasonMessage($season->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -133,8 +146,8 @@ class SeasonCrudController extends CrudControllerAbstract
     #[Route('/admin/season/{entity}/w3c', name: 'admin_season_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract  = $this->getRepository();
-        $season                           = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract  = $this->getRepository();
+        $season                           = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($season);
     }

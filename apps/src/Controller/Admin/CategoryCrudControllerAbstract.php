@@ -18,16 +18,16 @@ abstract class CategoryCrudControllerAbstract extends TypedCrudControllerAbstrac
         return $crud;
     }
 
-    #[\Override]
-    public function configureFields(string $pageName): iterable
+    public function configureFieldsDefault(): void
     {
-        // Category is not uploadable: no image, and no enable property in the entity -> remove it
-        return $this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: true,
-            withImage: false,
-            withEnable: false
+        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->idField(),
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->titleField(),
+            ]
         );
     }
 

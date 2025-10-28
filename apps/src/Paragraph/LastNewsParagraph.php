@@ -23,9 +23,9 @@ class LastNewsParagraph extends ParagraphAbstract
     {
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::POSTS->value);
-        /** @var PostRepository $ServiceEntityRepositoryAbstract */
-        $ServiceEntityRepositoryAbstract = $this->getRepository(Post::class);
-        $total                           = $ServiceEntityRepositoryAbstract->findTotalEnable();
+        /** @var PostRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Post::class);
+        $total                           = $serviceEntityRepositoryAbstract->findTotalEnable();
         if (!is_object($listing) || !$listing->isEnable() || 0 == $total) {
             $this->setShow($paragraph, false);
 
@@ -33,8 +33,8 @@ class LastNewsParagraph extends ParagraphAbstract
         }
 
         $nbr   = $paragraph->getNbr();
-        $news  = $ServiceEntityRepositoryAbstract->findLastByNbr($nbr);
-        $total = $ServiceEntityRepositoryAbstract->findTotalEnable();
+        $news  = $serviceEntityRepositoryAbstract->findLastByNbr($nbr);
+        $total = $serviceEntityRepositoryAbstract->findTotalEnable();
         $this->setData(
             $paragraph,
             [

@@ -27,8 +27,8 @@ class EpisodeListParagraph extends ParagraphAbstract
             return;
         }
 
-        $ServiceEntityRepositoryAbstract = $this->getRepository(Episode::class);
-        $episodes                        = $ServiceEntityRepositoryAbstract->getAllActivateBySeason($data['entity']);
+        $serviceEntityRepositoryAbstract = $this->getRepository(Episode::class);
+        $episodes                        = $serviceEntityRepositoryAbstract->getAllActivateBySeason($data['entity']);
         if (0 === count($episodes)) {
             $this->setShow($paragraph, false);
 

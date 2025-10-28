@@ -71,9 +71,9 @@ final class SitemapService
             return [];
         }
 
-        /** @var ChapterRepository $ServiceEntityRepositoryAbstract */
-        $ServiceEntityRepositoryAbstract = $this->getRepository(Chapter::class);
-        $data                            = $ServiceEntityRepositoryAbstract->getAllActivateByStory($story);
+        /** @var ChapterRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Chapter::class);
+        $data                            = $serviceEntityRepositoryAbstract->getAllActivateByStory($story);
 
         return $this->setTabs($data);
     }
@@ -83,12 +83,12 @@ final class SitemapService
      */
     private function getDataFromRepository(string $entityClass): array
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository($entityClass);
-        if (!method_exists($ServiceEntityRepositoryAbstract, 'getAllActivate')) {
+        $serviceEntityRepositoryAbstract = $this->getRepository($entityClass);
+        if (!method_exists($serviceEntityRepositoryAbstract, 'getAllActivate')) {
             return [];
         }
 
-        $data = $ServiceEntityRepositoryAbstract->getAllActivate();
+        $data = $serviceEntityRepositoryAbstract->getAllActivate();
 
         return $this->setTabs($data);
     }

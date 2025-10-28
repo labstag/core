@@ -44,22 +44,34 @@ class StarCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        foreach ($this->crudFieldFactory->baseIdentitySet($pageName, self::getEntityFqcn(), false) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabPrincipal();
+        $textField = TextField::new('repository', new TranslatableMessage('Repository'));
+        $textField->hideOnIndex();
 
-        yield TextField::new('language', new TranslatableMessage('Language'));
-        yield TextField::new('repository', new TranslatableMessage('Repository'))->hideOnIndex();
-        yield UrlField::new('url', new TranslatableMessage('Url'));
-        yield TextEditorField::new('description', new TranslatableMessage('Description'))->hideOnIndex();
-        yield TextField::new('license', new TranslatableMessage('License'));
-        yield IntegerField::new('stargazers', new TranslatableMessage('Stargazers'));
-        yield IntegerField::new('watchers', new TranslatableMessage('Watchers'));
-        yield IntegerField::new('forks', new TranslatableMessage('Forks'));
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $textEditorField = TextEditorField::new('description', new TranslatableMessage('Description'));
+        $textEditorField->hideOnIndex();
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->idField(),
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                TextField::new('language', new TranslatableMessage('Language')),
+                $textField,
+                UrlField::new('url', new TranslatableMessage('Url')),
+                $textEditorField,
+                TextField::new('license', new TranslatableMessage('License')),
+                IntegerField::new('stargazers', new TranslatableMessage('Stargazers')),
+                IntegerField::new('watchers', new TranslatableMessage('Watchers')),
+                IntegerField::new('forks', new TranslatableMessage('Forks')),
+            ]
+        );
+
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]
@@ -94,12 +106,12 @@ class StarCrudController extends CrudControllerAbstract
      */
     private function getAllData(string $type): array
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        if (!$ServiceEntityRepositoryAbstract instanceof StarRepository) {
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        if (!$serviceEntityRepositoryAbstract instanceof StarRepository) {
             return [];
         }
 
-        $all = $ServiceEntityRepositoryAbstract->findAllData($type);
+        $all = $serviceEntityRepositoryAbstract->findAllData($type);
 
         $data = [];
         foreach ($all as $row) {

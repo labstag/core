@@ -1,8 +1,12 @@
 {% set instance = entity.instance %}
 {% if ea.crud.currentAction == 'detail' %}
   <ul>
-    {% for seasons in instance.seasons %}
-        <li>{{ seasons.title }}</li>
+    {% for season in instance.seasons %}
+        <li>
+          <a href="{{ admin_url('detail', season) }}">
+            #{{ loop.index }}
+          </a>: {{ season.title }}
+        </li>
     {% endfor %}
   </ul>
 {% else %}

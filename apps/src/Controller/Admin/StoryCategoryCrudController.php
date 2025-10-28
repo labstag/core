@@ -10,10 +10,15 @@ class StoryCategoryCrudController extends CategoryCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield from parent::configureFields($pageName);
-        yield CollectionField::new('stories', new TranslatableMessage('Stories'))->formatValue(
-            fn ($entity): int => count($entity)
-        )->hideOnForm();
+        unset($pageName);
+        $this->configureFieldsDefault();
+        $collectionField = CollectionField::new('stories', new TranslatableMessage('Stories'));
+        $collectionField->formatValue(fn ($entity): int => count($entity));
+        $collectionField->hideOnForm();
+
+        $this->crudFieldFactory->addFieldsToTab('principal', [$collectionField]);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     protected function getChildRelationshipProperty(): string

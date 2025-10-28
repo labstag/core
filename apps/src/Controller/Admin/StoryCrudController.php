@@ -51,37 +51,34 @@ class StoryCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        // Principal tab + standard full content set
-        yield $this->addTabPrincipal();
-        yield $this->crudFieldFactory->addFieldIDShortcode('story');
-        $isSuperAdmin = $this->isSuperAdmin();
-        foreach ($this->crudFieldFactory->fullContentSet(
-            'story',
-            $pageName,
-            self::getEntityFqcn(),
-            $isSuperAdmin
-        ) as $field) {
-            yield $field;
-        }
-
-        // Extra specific field not part of the generic bundle
-        yield FileField::new('pdf', new TranslatableMessage('pdf'));
-        $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
-        $collectionField->onlyOnIndex();
-        $collectionField->formatValue(fn ($value): int => count($value));
-        yield $collectionField;
+        $this->crudFieldFactory->setTabPrincipal();
         $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
         $collectionField->setTemplatePath('admin/field/chapters.html.twig');
-        $collectionField->onlyOnDetail();
-        yield $collectionField;
+        $collectionField->hideOnForm();
         yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        // Workflow + state
-        yield $this->crudFieldFactory->workflowField();
-        yield $this->crudFieldFactory->stateField();
-        // Dates
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->addFieldIDShortcode('story'),
+                $this->crudFieldFactory->idField(),
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $collectionField,
+                FileField::new('pdf', new TranslatableMessage('pdf')),
+            ]
+        );
+
+        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet('story'));
+
+        $this->crudFieldFactory->setTabParagraphs($pageName);
+        $this->crudFieldFactory->setTabSEO();
+        $this->crudFieldFactory->setTabUser($this->isSuperAdmin());
+        $this->crudFieldFactory->setTabWorkflow();
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]
@@ -115,8 +112,8 @@ class StoryCrudController extends CrudControllerAbstract
     #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        $story                           = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $story                           = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->publicLink($story);
     }
@@ -160,8 +157,8 @@ class StoryCrudController extends CrudControllerAbstract
     #[Route('/admin/updatepdf', name: 'admin_story_updatepdf')]
     public function updatepdf(StoryService $storyService): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        $stories                         = $ServiceEntityRepositoryAbstract->findAll();
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $stories                         = $serviceEntityRepositoryAbstract->findAll();
 
         $counter = 0;
         $update  = 0;
@@ -170,12 +167,12 @@ class StoryCrudController extends CrudControllerAbstract
             $update = $status ? ++$update : $update;
             ++$counter;
 
-            $ServiceEntityRepositoryAbstract->persist($story);
-            $ServiceEntityRepositoryAbstract->flush($counter);
+            $serviceEntityRepositoryAbstract->persist($story);
+            $serviceEntityRepositoryAbstract->flush($counter);
         }
 
         $this->addFlash('success', $storyService->generateFlashBag());
-        $ServiceEntityRepositoryAbstract->flush();
+        $serviceEntityRepositoryAbstract->flush();
 
         return $this->redirectToRoute('admin_story_index');
     }
@@ -183,8 +180,8 @@ class StoryCrudController extends CrudControllerAbstract
     #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        $story                           = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $story                           = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($story);
     }

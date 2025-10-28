@@ -19,10 +19,10 @@ class NewsListParagraph extends ParagraphAbstract
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var PostRepository $ServiceEntityRepositoryAbstract */
-        $ServiceEntityRepositoryAbstract = $this->getRepository(Post::class);
+        /** @var PostRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Post::class);
 
-        $pagination = $this->getPaginator($ServiceEntityRepositoryAbstract->getQueryPaginator(), $paragraph->getNbr());
+        $pagination = $this->getPaginator($serviceEntityRepositoryAbstract->getQueryPaginator(), $paragraph->getNbr());
         $this->setData(
             $paragraph,
             [

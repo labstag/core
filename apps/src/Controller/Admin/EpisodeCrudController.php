@@ -57,33 +57,51 @@ class EpisodeCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        yield $this->crudFieldFactory->titleField();
-        yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
-        yield $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn());
-        yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
-        $textField = TextField::new('refseason', new TranslatableMessage('Serie'));
-        $textField->setFormTypeOption('choice_label', 'refserie');
-        $textField->formatValue(
+        $this->crudFieldFactory->setTabPrincipal();
+
+        $textField = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
+        $textField->hideOnIndex();
+
+        $reasonField = TextField::new('refseason', new TranslatableMessage('Serie'));
+        $reasonField->setFormTypeOption('choice_label', 'refserie');
+        $reasonField->formatValue(
             function ($value, $entity) {
                 unset($value);
 
                 return $entity->getRefseason()?->getRefserie();
             }
         );
-        yield $textField;
-        yield AssociationField::new('refseason', new TranslatableMessage('Season'));
-        yield IntegerField::new('number', new TranslatableMessage('Number'));
-        yield DateField::new('air_date', new TranslatableMessage('Air date'));
-        yield IntegerField::new('runtime', new TranslatableMessage('Runtime'))->hideOnIndex()->hideOnDetail();
-        $episodeCollectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
-        $episodeCollectionField->setTemplatePath('admin/field/runtime-episode.html.twig');
-        $episodeCollectionField->hideOnForm();
-        yield $episodeCollectionField;
-        yield WysiwygField::new('overview', new TranslatableMessage('Overview'))->hideOnIndex();
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $integerField = IntegerField::new('runtime', new TranslatableMessage('Runtime'));
+        $integerField->hideOnIndex();
+        $integerField->hideOnDetail();
+
+        $collectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
+        $collectionField->setTemplatePath('admin/field/runtime-episode.html.twig');
+        $collectionField->hideOnForm();
+
+        $wysiwygField = WysiwygField::new('overview', new TranslatableMessage('Overview'));
+        $wysiwygField->hideOnIndex();
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $textField,
+                $reasonField,
+                AssociationField::new('refseason', new TranslatableMessage('Season')),
+                IntegerField::new('number', new TranslatableMessage('Number')),
+                DateField::new('air_date', new TranslatableMessage('Air date')),
+                $integerField,
+                $collectionField,
+                $wysiwygField,
+            ]
+        );
+
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]
@@ -112,8 +130,8 @@ class EpisodeCrudController extends CrudControllerAbstract
     #[Route('/admin/episode/{entity}/update', name: 'admin_episode_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract   = $this->getRepository();
-        $episode                           = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract   = $this->getRepository();
+        $episode                           = $serviceEntityRepositoryAbstract->find($entity);
         $messageBus->dispatch(new EpisodeMessage($episode->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');

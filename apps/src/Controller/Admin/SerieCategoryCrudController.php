@@ -10,10 +10,15 @@ class SerieCategoryCrudController extends CategoryCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield from parent::configureFields($pageName);
-        yield CollectionField::new('series', new TranslatableMessage('Series'))->formatValue(
-            fn ($entity): int => count($entity)
-        )->hideOnForm();
+        unset($pageName);
+        $this->configureFieldsDefault();
+        $collectionField = CollectionField::new('series', new TranslatableMessage('Series'));
+        $collectionField->formatValue(fn ($entity): int => count($entity));
+        $collectionField->hideOnForm();
+
+        $this->crudFieldFactory->addFieldsToTab('principal', [$collectionField]);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     protected function getChildRelationshipProperty(): string

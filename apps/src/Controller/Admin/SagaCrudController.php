@@ -44,24 +44,34 @@ class SagaCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withEnable: false
-        ) as $field) {
-            yield $field;
-        }
-
-        yield TextField::new('tmdb', new TranslatableMessage('Tmdb'));
+        $this->crudFieldFactory->setTabPrincipal();
+        $textField       = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
         $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
         $collectionField->onlyOnIndex();
         $collectionField->formatValue(fn ($value): int => count($value));
-        yield $collectionField;
-        yield WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex();
-        $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
-        $collectionField->setTemplatePath('admin/field/movies.html.twig');
-        $collectionField->onlyOnDetail();
-        yield $collectionField;
+
+        $wysiwygField = WysiwygField::new('description', new TranslatableMessage('Description'));
+        $wysiwygField->hideOnIndex();
+
+        $movieField2 = CollectionField::new('movies', new TranslatableMessage('Movies'));
+        $movieField2->setTemplatePath('admin/field/movies.html.twig');
+        $movieField2->onlyOnDetail();
+        yield $movieField2;
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->idField(),
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $textField,
+                $collectionField,
+                $wysiwygField,
+                $movieField2,
+            ]
+        );
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     public static function getEntityFqcn(): string
@@ -72,8 +82,8 @@ class SagaCrudController extends CrudControllerAbstract
     #[Route('/admin/saga/{entity}/imdb', name: 'admin_saga_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        $saga                            = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $saga                            = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->redirect('https://www.themoviedb.org/collection/' . $saga->getTmdb());
     }

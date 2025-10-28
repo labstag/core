@@ -2,51 +2,33 @@
 
 namespace Labstag\Twig\Runtime;
 
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class AdminExtensionRuntime implements RuntimeExtensionInterface
 {
-    public function __construct()
+    public function __construct(
+        #[AutowireIterator('labstag.admincontroller')]
+        private readonly iterable $controllers,
+        private AdminUrlGenerator $adminUrlGenerator,
+    )
     {
-        // Inject dependencies if needed
     }
 
-    public function runtime($minutes): string
+    public function url(string $type, object $entity): string
     {
-        $minutes = (int) $minutes;
-        $years   = intdiv($minutes, 525600);
-        // 365*24*60
-        $minutes -= $years * 525600;
-        $months = intdiv($minutes, 43200);
-        // 30*24*60
-        $minutes -= $months * 43200;
-        $days = intdiv($minutes, 1440);
-        // 24*60
-        $minutes -= $days * 1440;
-        $hours = intdiv($minutes, 60);
-        $mins  = $minutes % 60;
+        foreach ($this->controllers as $controller) {
+            $entityClass = $controller->getEntityFqcn();
+            if ($entityClass == $entity::class) {
+                $url = $this->adminUrlGenerator->setController($controller::class);
+                $url->setAction($type);
+                $url->setEntityId($entity->getId());
 
-        $parts = [];
-        if (0 !== $years) {
-            $parts[] = $years . 'a';
+                return $url->generateUrl();
+            }
         }
 
-        if (0 !== $months) {
-            $parts[] = $months . 'm';
-        }
-
-        if (0 !== $days) {
-            $parts[] = $days . 'j';
-        }
-
-        if (0 !== $hours) {
-            $parts[] = $hours . 'h';
-        }
-
-        if (0 !== $mins) {
-            $parts[] = $mins . 'min';
-        }
-
-        return implode(' ', $parts);
+        return '';
     }
 }

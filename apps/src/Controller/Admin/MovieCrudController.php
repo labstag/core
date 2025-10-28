@@ -70,44 +70,71 @@ class MovieCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: false
-        ) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabPrincipal();
 
-        yield TextField::new('imdb', new TranslatableMessage('Imdb'))->hideOnIndex();
-        yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
-        yield TextField::new('certification', new TranslatableMessage('Certification'))->hideOnIndex();
-        yield DateField::new('releaseDate', new TranslatableMessage('Release date'));
+        $textField = TextField::new('imdb', new TranslatableMessage('Imdb'));
+        $textField->hideOnIndex();
+
+        $tmdbField = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
+        $tmdbField->hideOnIndex();
+
+        $certificationField = TextField::new('certification', new TranslatableMessage('Certification'));
+        $certificationField->hideOnIndex();
+
         $choiceField = ChoiceField::new('countries', new TranslatableMessage('Countries'));
         $choiceField->setChoices(array_flip(Countries::getNames()));
         $choiceField->allowMultipleChoices();
         $choiceField->renderExpanded(false);
-        yield $choiceField;
+
         $episodeCollectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
         $episodeCollectionField->setTemplatePath('admin/field/runtime-movie.html.twig');
         $episodeCollectionField->hideOnForm();
-        yield $episodeCollectionField;
-        yield from [
-            IntegerField::new('duration', new TranslatableMessage('Duration'))->hideOnIndex()->hideOnDetail(),
-            $this->addFieldSaga(),
-            NumberField::new('evaluation', new TranslatableMessage('Evaluation')),
-            IntegerField::new('votes', new TranslatableMessage('Votes')),
-            TextField::new('trailer', new TranslatableMessage('Trailer'))->hideOnIndex(),
-            WysiwygField::new('citation', new TranslatableMessage('Citation'))->hideOnIndex(),
-            WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex(),
-            $this->crudFieldFactory->categoriesField('movie'),
-            // image field déjà incluse dans baseIdentitySet
-            $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'))->hideOnIndex(),
-            $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
-        ];
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+
+        $integerField = IntegerField::new('duration', new TranslatableMessage('Duration'));
+        $integerField->hideOnIndex();
+        $integerField->hideOnDetail();
+
+        $trailerField = TextField::new('trailer', new TranslatableMessage('Trailer'));
+        $trailerField->hideOnIndex();
+
+        $wysiwygField = WysiwygField::new('citation', new TranslatableMessage('Citation'));
+        $wysiwygField->hideOnIndex();
+
+        $descriptionField = WysiwygField::new('description', new TranslatableMessage('Description'));
+        $descriptionField->hideOnIndex();
+
+        $booleanField = $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'));
+        $booleanField->hideOnIndex();
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->idField(),
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $textField,
+                $tmdbField,
+                $certificationField,
+                DateField::new('releaseDate', new TranslatableMessage('Release date')),
+                $choiceField,
+                $episodeCollectionField,
+                $integerField,
+                $this->addFieldSaga(),
+                NumberField::new('evaluation', new TranslatableMessage('Evaluation')),
+                IntegerField::new('votes', new TranslatableMessage('Votes')),
+                $trailerField,
+                $wysiwygField,
+                $descriptionField,
+                $this->crudFieldFactory->categoriesField('movie'),
+                // image field déjà incluse dans baseIdentitySet
+                $booleanField,
+                $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
+            ]
+        );
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]
@@ -142,8 +169,8 @@ class MovieCrudController extends CrudControllerAbstract
     #[Route('/admin/movie/{entity}/imdb', name: 'admin_movie_imdb')]
     public function imdb(string $entity): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        $movie                           = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $movie                           = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
     }
@@ -151,8 +178,8 @@ class MovieCrudController extends CrudControllerAbstract
     #[Route('/admin/movie/{entity}/tmdb', name: 'admin_movie_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        $movie                           = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $movie                           = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->redirect('https://www.themoviedb.org/movie/' . $movie->getTmdb());
     }
@@ -160,8 +187,8 @@ class MovieCrudController extends CrudControllerAbstract
     #[Route('/admin/movie/{entity}/update', name: 'admin_movie_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        $movie                           = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $movie                           = $serviceEntityRepositoryAbstract->find($entity);
         $messageBus->dispatch(new MovieMessage($movie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -199,10 +226,10 @@ class MovieCrudController extends CrudControllerAbstract
      */
     private function getMovieRepository(): MovieRepository
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        assert($ServiceEntityRepositoryAbstract instanceof MovieRepository);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        assert($serviceEntityRepositoryAbstract instanceof MovieRepository);
 
-        return $ServiceEntityRepositoryAbstract;
+        return $serviceEntityRepositoryAbstract;
     }
 
     private function setLinkImdbAction(): Action

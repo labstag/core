@@ -194,31 +194,14 @@ final class MovieService
             return [];
         }
 
-        $releases = $this->tmdbApi->getMovieReleasesDates($tmdbId);
-        if (null !== $releases) {
-            $details['release_dates'] = $releases;
-        }
-
-        $tmdb = $this->tmdbApi->getMovieDetails($tmdbId);
+        $details = $this->setReleaseDates($details, $tmdbId);
+        $tmdb    = $this->tmdbApi->getMovieDetails($tmdbId);
         if (null !== $tmdb) {
             $details['tmdb'] = $tmdb;
-            if (isset($details['tmdb']['belongs_to_collection']['id']) && !is_null(
-                $details['tmdb']['belongs_to_collection']['id']
-            )
-            ) {
-                $collection = $this->tmdbApi->getMovieCollection($details['tmdb']['belongs_to_collection']['id']);
-                if (null !== $collection) {
-                    $details['collection'] = $collection;
-                }
-            }
+            $details         = $this->setCollection($details);
         }
 
-        $trailers = $this->tmdbApi->getTrailerMovie($tmdbId);
-        if (null !== $trailers) {
-            $details['trailers'] = $trailers;
-        }
-
-        return $details;
+        return $this->setTrailer($details, $tmdbId);
     }
 
     /**
@@ -269,6 +252,41 @@ final class MovieService
                 return;
             }
         }
+    }
+
+    private function setCollection(array $details): array
+    {
+        if (isset($details['tmdb']['belongs_to_collection']['id']) && !is_null(
+            $details['tmdb']['belongs_to_collection']['id']
+        )
+        ) {
+            $collection = $this->tmdbApi->getMovieCollection($details['tmdb']['belongs_to_collection']['id']);
+            if (null !== $collection) {
+                $details['collection'] = $collection;
+            }
+        }
+
+        return $details;
+    }
+
+    private function setReleaseDates(array $details, string $tmdbId): array
+    {
+        $releases = $this->tmdbApi->getMovieReleasesDates($tmdbId);
+        if (null !== $releases) {
+            $details['release_dates'] = $releases;
+        }
+
+        return $details;
+    }
+
+    private function setTrailer(array $details, string $tmdbId): array
+    {
+        $trailers = $this->tmdbApi->getTrailerMovie($tmdbId);
+        if (null !== $trailers) {
+            $details['trailers'] = $trailers;
+        }
+
+        return $details;
     }
 
     /**

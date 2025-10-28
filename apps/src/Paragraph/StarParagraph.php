@@ -19,17 +19,17 @@ class StarParagraph extends ParagraphAbstract
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var StarRepository $ServiceEntityRepositoryAbstract */
-        $ServiceEntityRepositoryAbstract = $this->getRepository(Star::class);
+        /** @var StarRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Star::class);
 
-        $total = $ServiceEntityRepositoryAbstract->findTotalEnable();
+        $total = $serviceEntityRepositoryAbstract->findTotalEnable();
         if (0 == $total) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
-        $pagination = $this->getPaginator($ServiceEntityRepositoryAbstract->getQueryPaginator(), $paragraph->getNbr());
+        $pagination = $this->getPaginator($serviceEntityRepositoryAbstract->getQueryPaginator(), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(

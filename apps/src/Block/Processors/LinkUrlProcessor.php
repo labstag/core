@@ -141,8 +141,8 @@ class LinkUrlProcessor
             return $this->entityCache[$cacheKey];
         }
 
-        $ServiceEntityRepositoryAbstract = $this->getRepository($entityClass);
-        $entity                          = $ServiceEntityRepositoryAbstract->find($id);
+        $serviceEntityRepositoryAbstract = $this->getRepository($entityClass);
+        $entity                          = $serviceEntityRepositoryAbstract->find($id);
 
         $this->entityCache[$cacheKey] = $entity;
 

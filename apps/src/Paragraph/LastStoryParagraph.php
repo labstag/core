@@ -23,9 +23,9 @@ class LastStoryParagraph extends ParagraphAbstract
     {
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::STORIES->value);
-        /** @var StoryRepository $ServiceEntityRepositoryAbstract */
-        $ServiceEntityRepositoryAbstract = $this->getRepository(Story::class);
-        $total                           = $ServiceEntityRepositoryAbstract->findTotalEnable();
+        /** @var StoryRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Story::class);
+        $total                           = $serviceEntityRepositoryAbstract->findTotalEnable();
         if (!is_object($listing) || !$listing->isEnable() || 0 == $total) {
             $this->setShow($paragraph, false);
 
@@ -33,7 +33,7 @@ class LastStoryParagraph extends ParagraphAbstract
         }
 
         $nbr     = $paragraph->getNbr();
-        $stories = $ServiceEntityRepositoryAbstract->findLastByNbr($nbr);
+        $stories = $serviceEntityRepositoryAbstract->findLastByNbr($nbr);
         $this->setData(
             $paragraph,
             [

@@ -28,9 +28,9 @@ class ChapterListParagraph extends ParagraphAbstract
             return;
         }
 
-        /** @var ChapterRepository $ServiceEntityRepositoryAbstract */
-        $ServiceEntityRepositoryAbstract = $this->getRepository(Chapter::class);
-        $chapters                        = $ServiceEntityRepositoryAbstract->getAllActivateByStory($data['entity']);
+        /** @var ChapterRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Chapter::class);
+        $chapters                        = $serviceEntityRepositoryAbstract->getAllActivateByStory($data['entity']);
         if (0 === count($chapters)) {
             $this->setShow($paragraph, false);
 

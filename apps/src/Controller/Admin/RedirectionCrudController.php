@@ -43,8 +43,9 @@ class RedirectionCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        yield $this->crudFieldFactory->idField();
+        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->addFieldsToTab('principal', [$this->crudFieldFactory->idField()]);
+
         $textField = TextField::new('source', new TranslatableMessage('Source'));
         if (Action::NEW === $pageName) {
             $request       = $this->requestStack->getCurrentRequest();
@@ -54,16 +55,36 @@ class RedirectionCrudController extends CrudControllerAbstract
             );
         }
 
-        yield $textField;
-        yield TextField::new('destination', new TranslatableMessage('Destination'));
-        yield IntegerField::new('action_code', new TranslatableMessage('Action code'));
-        yield $this->crudFieldFactory->booleanField('regex', (string) new TranslatableMessage('Regex'), false)->hideOnForm();
-        yield $this->crudFieldFactory->booleanField('regex', (string) new TranslatableMessage('Regex'), false)->hideOnIndex();
-        yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
-        yield IntegerField::new('last_count', new TranslatableMessage('Last count'))->hideonForm();
-        foreach ($this->crudFieldFactory->dateSet($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->addFieldsToTab('principal', [$textField]);
+
+        $booleanField = $this->crudFieldFactory->booleanField(
+            'regex',
+            (string) new TranslatableMessage('Regex'),
+            false
+        );
+        $booleanField->hideOnForm();
+
+        $regexField2 = $this->crudFieldFactory->booleanField('regex', (string) new TranslatableMessage('Regex'), false);
+        $regexField2->hideOnIndex();
+
+        $integerField = IntegerField::new('last_count', new TranslatableMessage('Last count'));
+        $integerField->hideonForm();
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                TextField::new('destination', new TranslatableMessage('Destination')),
+                IntegerField::new('action_code', new TranslatableMessage('Action code')),
+                $booleanField,
+                $regexField2,
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $integerField,
+            ]
+        );
+
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]
@@ -146,8 +167,8 @@ class RedirectionCrudController extends CrudControllerAbstract
     #[Route('/admin/redirection/{entity}/test', name: 'admin_redirection_test')]
     public function testSource(string $entity): RedirectResponse
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository();
-        $redirection                     = $ServiceEntityRepositoryAbstract->find($entity);
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $redirection                     = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->redirect($redirection->getSource());
     }

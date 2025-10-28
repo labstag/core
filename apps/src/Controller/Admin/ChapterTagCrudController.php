@@ -10,10 +10,15 @@ class ChapterTagCrudController extends TagCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield from parent::configureFields($pageName);
-        yield CollectionField::new('chapters', new TranslatableMessage('Chapters'))->formatValue(
-            fn ($entity): int => count($entity)
-        )->hideOnForm();
+        unset($pageName);
+        $this->configureFieldsDefault();
+        $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
+        $collectionField->formatValue(fn ($entity): int => count($entity));
+        $collectionField->hideOnForm();
+
+        $this->crudFieldFactory->addFieldsToTab('principal', [$collectionField]);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     protected function getChildRelationshipProperty(): string

@@ -19,10 +19,10 @@ class StoryListParagraph extends ParagraphAbstract
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var StoryRepository $ServiceEntityRepositoryAbstract */
-        $ServiceEntityRepositoryAbstract = $this->getRepository(Story::class);
+        /** @var StoryRepository $serviceEntityRepositoryAbstract */
+        $serviceEntityRepositoryAbstract = $this->getRepository(Story::class);
 
-        $pagination = $this->getPaginator($ServiceEntityRepositoryAbstract->getQueryPaginator(), $paragraph->getNbr());
+        $pagination = $this->getPaginator($serviceEntityRepositoryAbstract->getQueryPaginator(), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(

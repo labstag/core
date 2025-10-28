@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Controller\Admin\Factory\CrudFieldFactory;
 use Labstag\Controller\Admin\Factory\LinkActionFactory;
@@ -38,7 +37,6 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Translation\TranslatableMessage;
 
 #[AutoconfigureTag('labstag.admincontroller')]
 /**
@@ -96,12 +94,6 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return $this->filterListRefUser($queryBuilder);
     }
 
-    // Tabs helpers retained (principal) for consistent UI; dateSet now provided by CrudFieldFactory.
-    protected function addTabPrincipal(): FormField
-    {
-        return FormField::addTab(new TranslatableMessage('Principal'));
-    }
-
     protected function configureActionsBtn(Actions $actions): void
     {
         $actions->add(Crud::PAGE_EDIT, Action::INDEX);
@@ -128,10 +120,10 @@ abstract class CrudControllerAbstract extends AbstractCrudController
 
     protected function getRepositoryParagraph(): ParagraphRepository
     {
-        $ServiceEntityRepositoryAbstract = $this->getDoctrineRepository(Paragraph::class);
-        assert($ServiceEntityRepositoryAbstract instanceof ParagraphRepository);
+        $serviceEntityRepositoryAbstract = $this->getDoctrineRepository(Paragraph::class);
+        assert($serviceEntityRepositoryAbstract instanceof ParagraphRepository);
 
-        return $ServiceEntityRepositoryAbstract;
+        return $serviceEntityRepositoryAbstract;
     }
 
     protected function isSuperAdmin(): bool

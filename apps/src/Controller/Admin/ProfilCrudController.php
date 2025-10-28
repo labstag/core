@@ -45,8 +45,7 @@ class ProfilCrudController extends UserCrudController
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('username', new TranslatableMessage('Username'));
-        yield EmailField::new('email', new TranslatableMessage('Email'));
+        $this->crudFieldFactory->setTabPrincipal();
         $textField = TextField::new('password', new TranslatableMessage('Password'));
         $textField->setFormType(RepeatedType::class);
         $textField->setFormTypeOptions(
@@ -65,28 +64,39 @@ class ProfilCrudController extends UserCrudController
         );
         $textField->setRequired(Crud::PAGE_NEW === $pageName);
         $textField->onlyOnForms();
-        yield $textField;
+
         $choiceField = ChoiceField::new('language', new TranslatableMessage('Language'));
         $choiceField->setChoices($this->userService->getLanguagesForChoices());
-        yield $choiceField;
-        yield $this->crudFieldFactory->imageField('avatar', $pageName, self::getEntityFqcn());
-        yield CollectionField::new('stories', new TranslatableMessage('Histories'))->onlyOnDetail();
-        yield CollectionField::new('editos', new TranslatableMessage('Editos'))->onlyOnDetail()->formatValue(
-            fn ($entity): int => count($entity)
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                TextField::new('username', new TranslatableMessage('Username')),
+                EmailField::new('email', new TranslatableMessage('Email')),
+                $textField,
+                $choiceField,
+                $this->crudFieldFactory->imageField('avatar', $pageName, self::getEntityFqcn()),
+            ]
         );
 
         $tab = [
-            'editos' => new TranslatableMessage('Editos'),
-            'memos'  => new TranslatableMessage('memos'),
-            'pages'  => new TranslatableMessage('pages'),
-            'posts'  => new TranslatableMessage('posts'),
+            'stories' => new TranslatableMessage('Stories'),
+            'editos'  => new TranslatableMessage('Editos'),
+            'memos'   => new TranslatableMessage('memos'),
+            'pages'   => new TranslatableMessage('pages'),
+            'posts'   => new TranslatableMessage('posts'),
         ];
+        $fields = [];
         foreach ($tab as $key => $label) {
             $collectionField = CollectionField::new($key, $label);
             $collectionField->onlyOnDetail();
             $collectionField->formatValue(fn ($value): int => count($value));
-            yield $collectionField;
+            $fields[] = $collectionField;
         }
+
+        $this->crudFieldFactory->addFieldsToTab('principal', $fields);
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     #[\Override]

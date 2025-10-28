@@ -141,19 +141,19 @@ class DashboardController extends AbstractDashboardController
 
     protected function adminEmpty(string $entity): void
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository($entity);
-        $all                             = $ServiceEntityRepositoryAbstract->findDeleted();
+        $serviceEntityRepositoryAbstract = $this->getRepository($entity);
+        $all                             = $serviceEntityRepositoryAbstract->findDeleted();
         foreach ($all as $row) {
-            $ServiceEntityRepositoryAbstract->remove($row);
+            $serviceEntityRepositoryAbstract->remove($row);
         }
 
-        $ServiceEntityRepositoryAbstract->flush();
+        $serviceEntityRepositoryAbstract->flush();
     }
 
     protected function adminRestore(string $entity, mixed $uuid): void
     {
-        $ServiceEntityRepositoryAbstract = $this->getRepository($entity);
-        $data                            = $ServiceEntityRepositoryAbstract->find($uuid);
+        $serviceEntityRepositoryAbstract = $this->getRepository($entity);
+        $data                            = $serviceEntityRepositoryAbstract->find($uuid);
         if (is_null($data)) {
             throw new Exception(new TranslatableMessage('Data not found'));
         }

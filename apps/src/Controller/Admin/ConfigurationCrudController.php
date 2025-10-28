@@ -33,8 +33,8 @@ class ConfigurationCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        yield from [
+        $this->crudFieldFactory->setTabPrincipal();
+        $fields = [
             TextField::new('titleFormat', new TranslatableMessage('Title format')),
             TextField::new('name', new TranslatableMessage('Site name')),
             EmailField::new('email', new TranslatableMessage('Email')),
@@ -44,7 +44,10 @@ class ConfigurationCrudController extends CrudControllerAbstract
             BooleanField::new('userShow', new TranslatableMessage('Show user')),
             BooleanField::new('userLink', new TranslatableMessage('Link user')),
         ];
-        yield FormField::addTab(new TranslatableMessage('Tmdb'));
+        $this->crudFieldFactory->addFieldsToTab('principal', $fields);
+
+        $this->crudFieldFactory->addTab('tmdb', FormField::addTab(new TranslatableMessage('Tmdb')));
+
         $choiceField = ChoiceField::new('languageTmdb', new TranslatableMessage('Language Tmdb'));
         $locales     = Locales::getNames();
         $languages   = [];
@@ -58,115 +61,137 @@ class ConfigurationCrudController extends CrudControllerAbstract
         }
 
         $choiceField->setChoices($languages);
-        yield $choiceField;
-        yield FormField::addTab(new TranslatableMessage('Security'));
-        yield BooleanField::new('disableEmptyAgent', new TranslatableMessage('Disable empty agent'));
-        yield FormField::addTab(new TranslatableMessage('Sitemap'));
-        yield BooleanField::new('sitemapPosts', new TranslatableMessage('Show posts'));
-        yield BooleanField::new('sitemapStory', new TranslatableMessage('Show story'));
-        yield FormField::addTab(new TranslatableMessage('Medias'));
-        yield $this->crudFieldFactory->imageField(
-            'logo',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Logo')
-        );
-        yield $this->crudFieldFactory->imageField(
-            'placeholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Placeholder')
-        );
-        yield FormField::addTab(new TranslatableMessage('TAC'));
-        $fields = array_merge([], $this->addTacFields());
-        foreach ($fields as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->addFieldsToTab('tmdb', [$choiceField]);
 
-        yield FormField::addTab(new TranslatableMessage('Placeholders'));
-        yield $this->crudFieldFactory->imageField(
-            'chapterPlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Chapter')
+        $this->crudFieldFactory->addTab('security', FormField::addTab(new TranslatableMessage('Security')));
+
+        $booleanField = BooleanField::new('disableEmptyAgent', new TranslatableMessage('Disable empty agent'));
+        $this->crudFieldFactory->addFieldsToTab('security', [$booleanField]);
+
+        $this->crudFieldFactory->addTab('sitemap', FormField::addTab(new TranslatableMessage('Sitemap')));
+        $this->crudFieldFactory->addFieldsToTab(
+            'sitemap',
+            [
+                BooleanField::new('sitemapPosts', new TranslatableMessage('Show posts')),
+                BooleanField::new('sitemapStory', new TranslatableMessage('Show story')),
+            ]
         );
-        yield $this->crudFieldFactory->imageField(
-            'editoPlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Edito')
+
+        $this->crudFieldFactory->addTab('medias', FormField::addTab(new TranslatableMessage('Medias')));
+        $this->crudFieldFactory->addFieldsToTab(
+            'medias',
+            [
+                $this->crudFieldFactory->imageField(
+                    'logo',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    (string) new TranslatableMessage('Logo')
+                ),
+                $this->crudFieldFactory->imageField(
+                    'placeholder',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    (string) new TranslatableMessage('Placeholder')
+                ),
+            ]
         );
-        yield $this->crudFieldFactory->imageField(
-            'episodePlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Episode')
-        );
-        yield $this->crudFieldFactory->imageField(
-            'memoPlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Memo')
-        );
-        yield $this->crudFieldFactory->imageField(
-            'moviePlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Movie')
-        );
-        yield $this->crudFieldFactory->imageField(
-            'pagePlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Page')
-        );
-        yield $this->crudFieldFactory->imageField(
-            'postPlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Post')
-        );
-        yield $this->crudFieldFactory->imageField(
-            'sagaPlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Saga')
-        );
-        yield $this->crudFieldFactory->imageField(
-            'seasonPlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Season')
-        );
-        yield $this->crudFieldFactory->imageField(
-            'seriePlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Serie')
-        );
-        yield $this->crudFieldFactory->imageField(
-            'starPlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Star')
-        );
-        yield $this->crudFieldFactory->imageField(
-            'storyPlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Story')
-        );
-        yield $this->crudFieldFactory->imageField(
-            'userPlaceholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('User')
-        );
+
+        $this->crudFieldFactory->addTab('tac', FormField::addTab(new TranslatableMessage('TAC')));
+        $this->crudFieldFactory->addFieldsToTab('tac', $this->addTacFields());
+
+        $this->crudFieldFactory->addTab('placeholders', FormField::addTab(new TranslatableMessage('Placeholders')));
+        $this->crudFieldFactory->addFieldsToTab('placeholders', $this->addConfigureFieldsPlaceHolders($pageName));
+
+        yield from $this->crudFieldFactory->getConfigureFields();
     }
 
     public static function getEntityFqcn(): string
     {
         return Configuration::class;
+    }
+
+    private function addConfigureFieldsPlaceHolders(string $pageName): array
+    {
+        return [
+            $this->crudFieldFactory->imageField(
+                'chapterPlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('Chapter')
+            ),
+            $this->crudFieldFactory->imageField(
+                'editoPlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('Edito')
+            ),
+            $this->crudFieldFactory->imageField(
+                'episodePlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('Episode')
+            ),
+            $this->crudFieldFactory->imageField(
+                'memoPlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('Memo')
+            ),
+            $this->crudFieldFactory->imageField(
+                'moviePlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('Movie')
+            ),
+            $this->crudFieldFactory->imageField(
+                'pagePlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('Page')
+            ),
+            $this->crudFieldFactory->imageField(
+                'postPlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('Post')
+            ),
+            $this->crudFieldFactory->imageField(
+                'sagaPlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('Saga')
+            ),
+            $this->crudFieldFactory->imageField(
+                'seasonPlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('Season')
+            ),
+            $this->crudFieldFactory->imageField(
+                'seriePlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('Serie')
+            ),
+            $this->crudFieldFactory->imageField(
+                'starPlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('Star')
+            ),
+            $this->crudFieldFactory->imageField(
+                'storyPlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('Story')
+            ),
+            $this->crudFieldFactory->imageField(
+                'userPlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                (string) new TranslatableMessage('User')
+            ),
+        ];
     }
 
     /**

@@ -7,7 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use Override;
@@ -24,16 +23,6 @@ abstract class TypedCrudControllerAbstract extends CrudControllerAbstract
         $this->configureActionsTrash($actions);
 
         return $actions;
-    }
-
-    /**
-     * Configure base fields with child count.
-     *
-     * @return FieldInterface[]
-     */
-    public function configureBaseFields(): array
-    {
-        return $this->crudFieldFactory->baseIdentitySet($this->getChildType(), '', static::getEntityFqcn());
     }
 
     #[Override]
