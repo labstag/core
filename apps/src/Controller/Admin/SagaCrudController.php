@@ -9,7 +9,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Saga;
 use Labstag\Field\WysiwygField;
+use Labstag\Message\SagaMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -21,6 +24,11 @@ class SagaCrudController extends CrudControllerAbstract
         $this->setEditDetail($actions);
         $this->configureActionsBtn($actions);
         $action = $this->setLinkTmdbAction();
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+
+        $action = $this->setUpdateAction();
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
@@ -88,6 +96,22 @@ class SagaCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.themoviedb.org/collection/' . $saga->getTmdb());
     }
 
+    #[Route('/admin/saga/{entity}/update', name: 'admin_saga_update')]
+    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
+    {
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $saga                            = $serviceEntityRepositoryAbstract->find($entity);
+        $messageBus->dispatch(new SagaMessage($saga->getId()));
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                return $this->redirect($url);
+            }
+        }
+
+        return $this->redirectToRoute('admin_saga_index');
+    }
+
     private function setLinkTmdbAction(): Action
     {
         $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
@@ -102,6 +126,22 @@ class SagaCrudController extends CrudControllerAbstract
                 ]
             )
         );
+
+        return $action;
+    }
+
+    private function setUpdateAction(): Action
+    {
+        $action = Action::new('update', new TranslatableMessage('Update'));
+        $action->linkToUrl(
+            fn (Saga $saga): string => $this->generateUrl(
+                'admin_saga_update',
+                [
+                    'entity' => $saga->getId(),
+                ]
+            )
+        );
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         return $action;
     }

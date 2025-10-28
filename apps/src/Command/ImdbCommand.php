@@ -50,8 +50,9 @@ class ImdbCommand extends Command
         }
 
         if (isset($data['movie_results'][0]['id'])) {
-            $tmdbId = $data['movie_results'][0]['id'];
-            $movie  = $this->movieRepository->findOneBy(
+            $details = $data['movie_results'][0];
+            $tmdbId  = $details['id'];
+            $movie   = $this->movieRepository->findOneBy(
                 ['imdb' => $imdb]
             );
             if ($movie instanceof Movie) {
@@ -64,7 +65,7 @@ class ImdbCommand extends Command
             $movie->setEnable(true);
             $movie->setAdult(false);
             $movie->setFile(false);
-            $movie->setTitle($imdb);
+            $movie->setTitle($details['title']);
             $movie->setImdb($imdb);
             $movie->setTmdb($tmdbId);
             $this->movieRepository->save($movie);
@@ -75,8 +76,9 @@ class ImdbCommand extends Command
         }
 
         if (isset($data['tv_results'][0]['id'])) {
-            $tmdbId = $data['tv_results'][0]['id'];
-            $serie  = $this->serieRepository->findOneBy(
+            $details = $data['tv_results'][0];
+            $tmdbId  = $details['id'];
+            $serie   = $this->serieRepository->findOneBy(
                 ['imdb' => $imdb]
             );
             if ($serie instanceof Serie) {
@@ -92,7 +94,7 @@ class ImdbCommand extends Command
             $serie->setEnable(true);
             $serie->setAdult(false);
             $serie->setImdb($imdb);
-            $serie->setTitle($imdb);
+            $serie->setTitle($details['title']);
             $serie->setTmdb($tmdbId);
             $this->serieRepository->save($serie);
             $this->messageBus->dispatch(new SerieMessage($serie->getId()));

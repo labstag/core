@@ -333,6 +333,43 @@ class TmdbApi
         );
     }
 
+    public function getSagaDetails(string $tmdbId): ?array
+    {
+        if ('' === $this->tmdbapiKey) {
+            return null;
+        }
+
+        $locale   = $this->configurationService->getLocaleTmdb();
+        $cacheKey = 'tmdb-saga_' . $tmdbId . '_lang_' . $locale;
+
+        return $this->cacheService->get(
+            $cacheKey,
+            function (ItemInterface $item) use ($tmdbId, $locale) {
+                $url      = 'https://api.themoviedb.org/3/collection/' . $tmdbId . '?language=' . $locale;
+                $response = $this->httpClient->request(
+                    'GET',
+                    $url,
+                    [
+                        'headers' => [
+                            'Authorization' => 'Bearer ' . $this->tmdbapiKey,
+                            'accept'        => 'application/json',
+                        ],
+                    ]
+                );
+                if (self::STATUSOK !== $response->getStatusCode()) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+
+                return json_decode($response->getContent(), true);
+            },
+            60
+        );
+    }
+
     /**
      * @return array<string, mixed>
      */

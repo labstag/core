@@ -6,7 +6,6 @@ use DateTime;
 use Exception;
 use Labstag\Api\TmdbApi;
 use Labstag\Entity\Movie;
-use Labstag\Entity\Saga;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
@@ -32,16 +31,6 @@ final class MovieService
     /**
      * @var array<string, mixed>
      */
-    private array $sagas = [];
-
-    /**
-     * @var array<string, mixed>
-     */
-    private array $updatesaga = [];
-
-    /**
-     * @var array<string, mixed>
-     */
     private array $year = [];
 
     public function __construct(
@@ -50,6 +39,7 @@ final class MovieService
         private SagaRepository $sagaRepository,
         private CategoryRepository $categoryRepository,
         private CategoryService $categoryService,
+        private SagaService $sagaService,
         private TmdbApi $tmdbApi,
     )
     {
@@ -217,18 +207,6 @@ final class MovieService
     }
 
     /**
-     * @param array<string, mixed> $data
-     */
-    private function getImgSaga(array $data): string
-    {
-        if (isset($data['collection']['poster_path'])) {
-            return $this->tmdbApi->getImgw300h450($data['collection']['poster_path']);
-        }
-
-        return '';
-    }
-
-    /**
      * @param array<string, mixed> $details
      */
     private function setCertification(array $details, Movie $movie): void
@@ -341,29 +319,6 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateImageSaga(Saga $saga, array $details): bool
-    {
-        $poster = $this->getImgSaga($details);
-        if ('' === $poster) {
-            return false;
-        }
-
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
-
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $saga, 'imgFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
-    }
-
-    /**
-     * @param array<string, mixed> $details
-     */
     private function updateMovie(Movie $movie, array $details): bool
     {
         if (!isset($details['tmdb'])) {
@@ -414,31 +369,7 @@ final class MovieService
         }
 
         $tmdbId = $details['collection']['id'];
-
-        if (!isset($this->sagas[$tmdbId])) {
-            $saga = $this->sagaRepository->findOneBy(
-                ['tmdb' => $tmdbId]
-            );
-            if (!$saga instanceof Saga) {
-                $saga = new Saga();
-                $saga->setTitle($details['collection']['name']);
-                $saga->setTmdb($tmdbId);
-                $this->sagaRepository->save($saga);
-            }
-
-            $this->sagas[$tmdbId] = $saga;
-        }
-
-        $saga = $this->sagas[$tmdbId];
-        if (!isset($this->updatesaga[$tmdbId])) {
-            $saga->setTitle($details['collection']['name']);
-            $saga->setDescription($details['collection']['overview'] ?? '');
-
-            $this->updateImageSaga($saga, $details);
-            $this->sagaRepository->save($saga);
-
-            $this->updatesaga[$saga->getId()] = true;
-        }
+        $saga   = $this->sagaService->getSagaByTmdbId((string) $tmdbId);
 
         $movie->setSaga($saga);
 

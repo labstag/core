@@ -12,11 +12,13 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Redirection;
+use Labstag\Entity\Saga;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
 use Labstag\Message\MovieMessage;
+use Labstag\Message\SagaMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Message\StoryPdfMessage;
 use Labstag\Repository\ChapterRepository;
@@ -193,6 +195,15 @@ abstract class EventEntityLib
         }
 
         $instance->incrementLastCount();
+    }
+
+    protected function updateEntitySaga(object $instance): void
+    {
+        if (!$instance instanceof Saga) {
+            return;
+        }
+
+        $this->messageBus->dispatch(new SagaMessage($instance->getId()));
     }
 
     protected function updateEntitySeason(object $instance): void
