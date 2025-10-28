@@ -1213,6 +1213,14 @@
         <source>in Production</source>
         <target>En production</target>
       </trans-unit>
+      <trans-unit id="aiFSOsy" resname="Other">
+        <source>Other</source>
+        <target>Autre</target>
+      </trans-unit>
+      <trans-unit id="94n207n" resname="All stories PDF generation messages have been dispatched.">
+        <source>All stories PDF generation messages have been dispatched.</source>
+        <target>Tous les messages de génération de PDF des histoires ont été envoyés.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -14,9 +14,10 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Field\FileField;
 use Labstag\Field\WysiwygField;
-use Labstag\Service\StoryService;
+use Labstag\Message\StoryPdfMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -55,8 +56,10 @@ class StoryCrudController extends CrudControllerAbstract
         $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
         $collectionField->setTemplatePath('admin/field/chapters.html.twig');
         $collectionField->hideOnForm();
-        $resumeField = WysiwygField::new('resume', new TranslatableMessage('resume'));
-        $resumeField->hideOnIndex();
+
+        $wysiwygField = WysiwygField::new('resume', new TranslatableMessage('resume'));
+        $wysiwygField->hideOnIndex();
+
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
@@ -67,7 +70,7 @@ class StoryCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $collectionField,
-                $resumeField,
+                $wysiwygField,
                 FileField::new('pdf', new TranslatableMessage('pdf')),
             ]
         );
@@ -157,24 +160,14 @@ class StoryCrudController extends CrudControllerAbstract
     }
 
     #[Route('/admin/updatepdf', name: 'admin_story_updatepdf')]
-    public function updatepdf(StoryService $storyService): RedirectResponse
+    public function updatepdf(MessageBusInterface $messageBus): RedirectResponse
     {
         $serviceEntityRepositoryAbstract = $this->getRepository();
         $stories                         = $serviceEntityRepositoryAbstract->findAll();
 
-        $counter = 0;
-        $update  = 0;
         foreach ($stories as $story) {
-            $status = $storyService->setPdf($story);
-            $update = $status ? ++$update : $update;
-            ++$counter;
-
-            $serviceEntityRepositoryAbstract->persist($story);
-            $serviceEntityRepositoryAbstract->flush($counter);
+            $messageBus->dispatch(new StoryPdfMessage($story->getId()));
         }
-
-        $this->addFlash('success', $storyService->generateFlashBag());
-        $serviceEntityRepositoryAbstract->flush();
 
         return $this->redirectToRoute('admin_story_index');
     }

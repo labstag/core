@@ -24,6 +24,11 @@
     </div>
     <div class="wrapper">
         <h3 class="title">
+            {% if serie.isinProduction %}
+                <i class="fa fa-play-circle"></i>
+            {% else %}
+                <i class="fa fa-stop-circle"></i>
+            {% endif %}
             {{ serie.title }}
         </h3>
         <div class="duration">

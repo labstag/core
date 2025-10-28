@@ -56,6 +56,7 @@ class SagaCrudController extends CrudControllerAbstract
         $movieField2 = CollectionField::new('movies', new TranslatableMessage('Movies'));
         $movieField2->setTemplatePath('admin/field/movies.html.twig');
         $movieField2->onlyOnDetail();
+
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
