@@ -55,7 +55,8 @@ class StoryCrudController extends CrudControllerAbstract
         $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
         $collectionField->setTemplatePath('admin/field/chapters.html.twig');
         $collectionField->hideOnForm();
-        yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
+        $resumeField = WysiwygField::new('resume', new TranslatableMessage('resume'));
+        $resumeField->hideOnIndex();
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
@@ -66,6 +67,7 @@ class StoryCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $collectionField,
+                $resumeField,
                 FileField::new('pdf', new TranslatableMessage('pdf')),
             ]
         );
