@@ -67,6 +67,7 @@ jobs:
         run: |
           task labstag:set-env-ids
           task labstag:getpull-image
+          task labstag:getapacheconf
           task labstag:install-first
           task labstag:deploy
           task labstag:waiting
@@ -138,6 +139,7 @@ jobs:
         run: |
           task labstag:set-env-ids
           task labstag:getpull-image
+          task labstag:getapacheconf
           task labstag:install-first
           task labstag:deploy
           task labstag:waiting
