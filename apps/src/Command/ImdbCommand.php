@@ -94,7 +94,7 @@ class ImdbCommand extends Command
             $serie->setEnable(true);
             $serie->setAdult(false);
             $serie->setImdb($imdb);
-            $serie->setTitle($details['title']);
+            $serie->setTitle($details['name']);
             $serie->setTmdb($tmdbId);
             $this->serieRepository->save($serie);
             $this->messageBus->dispatch(new SerieMessage($serie->getId()));
