@@ -118,7 +118,7 @@ class MovieRepository extends ServiceEntityRepositoryAbstract
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->andWhere('m.saga = :saga');
         $queryBuilder->setParameter('saga', $saga);
-        $queryBuilder->orderBy('m.title', 'ASC');
+        $queryBuilder->orderBy('m.releaseDate', 'ASC');
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'movies-activate-by-saga-' . $saga->getId());
