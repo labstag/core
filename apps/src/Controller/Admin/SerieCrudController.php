@@ -107,7 +107,9 @@ class SerieCrudController extends CrudControllerAbstract
             [
                 $this->crudFieldFactory->idField(),
                 $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $this->crudFieldFactory->booleanField(
                     'inProduction',
                     (string) new TranslatableMessage('in Production')
