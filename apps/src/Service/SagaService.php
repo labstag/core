@@ -22,6 +22,25 @@ class SagaService
     {
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function getSagaForForm(): array
+    {
+        $data  = $this->sagaRepository->findAllByTypeMovieEnable();
+        $sagas = [];
+        foreach ($data as $saga) {
+            $movies = $saga->getMovies();
+            if (1 === count($movies)) {
+                continue;
+            }
+
+            $sagas[$saga->getTitle()] = $saga->getSlug();
+        }
+
+        return $sagas;
+    }
+
     public function getSagaByTmdbId(string $tmdbId): Saga
     {
         $saga = $this->sagaRepository->findOneBy(

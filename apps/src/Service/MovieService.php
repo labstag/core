@@ -74,26 +74,6 @@ final class MovieService
     /**
      * @return array<string, mixed>
      */
-    public function getCategoryForForm(): array
-    {
-        if ([] !== $this->category) {
-            return $this->category;
-        }
-
-        $data       = $this->categoryRepository->findAllByTypeMovieEnable();
-        $categories = [];
-        foreach ($data as $category) {
-            $categories[$category->getTitle()] = $category->getSlug();
-        }
-
-        $this->category = $categories;
-
-        return $categories;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
     public function getCountryForForm(): array
     {
         if ([] !== $this->country) {
@@ -105,31 +85,6 @@ final class MovieService
         $this->country = $country;
 
         return $country;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getSagaForForm(): array
-    {
-        if ([] !== $this->sagaForm) {
-            return $this->sagaForm;
-        }
-
-        $data  = $this->sagaRepository->findAllByTypeMovieEnable();
-        $sagas = [];
-        foreach ($data as $saga) {
-            $movies = $saga->getMovies();
-            if (1 === count($movies)) {
-                continue;
-            }
-
-            $sagas[$saga->getTitle()] = $saga->getSlug();
-        }
-
-        $this->sagaForm = $sagas;
-
-        return $sagas;
     }
 
     /**

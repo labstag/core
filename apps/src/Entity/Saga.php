@@ -41,6 +41,12 @@ class Saga implements Stringable
     #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'img')]
     private ?File $imgFile = null;
 
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    private ?bool $enable = null;
+
     /**
      * @var Collection<int, Movie>
      */
@@ -57,9 +63,76 @@ class Saga implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tmdb = null;
 
+    #[ORM\OneToOne(inversedBy: 'saga', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Meta $meta = null;
+
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'saga', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    private Collection $paragraphs;
+
     public function __construct()
     {
         $this->movies = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setSaga($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getSaga() === $this
+        ) {
+            $paragraph->setStory(null);
+        }
+
+        return $this;
+    }
+
+    public function isEnable(): ?bool
+    {
+        return $this->enable;
+    }
+
+    public function getMeta(): ?Meta
+    {
+        return $this->meta;
+    }
+
+    public function setMeta(Meta $meta): static
+    {
+        $this->meta = $meta;
+
+        return $this;
+    }
+
+    public function setEnable(bool $enable): static
+    {
+        $this->enable = $enable;
+
+        return $this;
     }
 
     #[Override]

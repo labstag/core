@@ -89,7 +89,7 @@ class Serie implements Stringable
     private ?DateTime $lastreleaseDate = null;
 
     #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Meta $meta = null;
 
     /**
@@ -312,7 +312,7 @@ class Serie implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getSerie() === $this
         ) {
             $paragraph->setStory(null);
         }

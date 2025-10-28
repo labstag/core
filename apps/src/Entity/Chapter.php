@@ -54,7 +54,7 @@ class Chapter implements Stringable
     private ?File $imgFile = null;
 
     #[ORM\OneToOne(inversedBy: 'chapter', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Meta $meta = null;
 
     /**

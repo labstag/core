@@ -16,6 +16,20 @@ class CategoryService
     {
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function getCategoryMovieForForm(): array
+    {
+        $data       = $this->categoryRepository->findAllByTypeMovieEnable();
+        $categories = [];
+        foreach ($data as $category) {
+            $categories[$category->getTitle()] = $category->getSlug();
+        }
+
+        return $categories;
+    }
+
     public function getType(string $type, string $title): Category
     {
         $categories = $this->categoryRepository->findBy(

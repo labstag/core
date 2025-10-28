@@ -75,7 +75,7 @@ class Page implements Stringable
     private ?File $imgFile = null;
 
     #[ORM\OneToOne(inversedBy: 'page', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Meta $meta = null;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist', 'detach'])]

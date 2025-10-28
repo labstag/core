@@ -58,7 +58,7 @@ class Season implements \Stringable
     private ?File $imgFile = null;
 
     #[ORM\OneToOne(inversedBy: 'season', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Meta $meta = null;
 
     #[ORM\Column(nullable: true)]

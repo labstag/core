@@ -2,7 +2,7 @@
 @use "../variables";
 
 @use "sass:color";
-.paragraph_season-list{
+.paragraph_saga{
   .wrapper{
 
   }
@@ -13,9 +13,12 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
+    @include mixins.respond-to(md) {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
   li{
-    &.teaser-season{
+    &.teaser-saga{
       background-color: color.scale(variables.$colorbg, $lightness: 15%);
       &:nth-child(even)
       {

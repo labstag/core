@@ -2,6 +2,7 @@
 
 namespace Labstag\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Meta;
 use Labstag\Repository\BlockRepository;
 use ReflectionClass;
@@ -16,6 +17,7 @@ final class ViewResolverService
     private array $requestCache = [];
 
     public function __construct(
+        protected EntityManagerInterface $entityManager,
         private ConfigurationService $configurationService,
         private BlockService $blockService,
         private BlockRepository $blockRepository,
@@ -69,8 +71,15 @@ final class ViewResolverService
             unset($blocks[$key]);
         }
 
+        $meta = $entity->getMeta();
+        if (!$meta instanceof Meta) {
+            $meta = new Meta();
+            $entity->setMeta($meta);
+            $this->entityManager->getRepository(get_class($entity))->save($entity);
+        }
+
         return $this->requestCache[$cacheKey] = [
-            'meta'   => $this->getMetaByEntity($entity->getMeta()),
+            'meta'   => $this->getMetaByEntity($meta),
             'blocks' => $blocks,
             'header' => $contents->header,
             'footer' => $contents->footer,
