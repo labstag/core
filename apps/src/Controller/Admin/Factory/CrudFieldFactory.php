@@ -292,7 +292,7 @@ final class CrudFieldFactory
 
     public function setTabWorkflow(): void
     {
-        $this->addTab('workflow', FormField::addTab(new TranslatableMessage('Workflow'))->onlyOnIndex());
+        $this->addTab('workflows', FormField::addTab(new TranslatableMessage('Workflow'))->onlyOnIndex());
 
         $this->addFieldsToTab('workflows', [$this->workflowField(), $this->stateField()]);
     }
