@@ -110,7 +110,7 @@ tasks:
 
   labstag:install-first:
     desc: "Installation initiale de Composer et des dépendances"
-    silent: true
+    silent: false
     cmds:
     - docker run --rm -v $(pwd)/apps:/var/www -w /var/www $(awk '/www:/ {f=1} f && /image:/ {print $2; exit}' {{.DOCKERCOMPOSEFILE}}) symfony composer install
 
