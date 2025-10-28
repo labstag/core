@@ -12,7 +12,9 @@ use Override;
 
 class SagaParagraph extends ParagraphAbstract
 {
-    private const MINISAGA = 3;
+    private const MINMOVIES = 2;
+
+    private const MINSAGA   = 3;
 
     /**
      * @param mixed[] $data
@@ -35,12 +37,12 @@ class SagaParagraph extends ParagraphAbstract
         $sagas = $serviceEntityRepositoryAbstract->showPublic();
         foreach ($sagas as $key => $saga) {
             $total = $saga->getMovies()->filter(fn ($movie) => $movie->isEnable());
-            if (2 > count($total)) {
+            if (self::MINMOVIES > count($total)) {
                 unset($sagas[$key]);
             }
         }
 
-        if (self::MINISAGA > count($sagas)) {
+        if (self::MINSAGA > count($sagas)) {
             $this->setShow($paragraph, false);
 
             return;

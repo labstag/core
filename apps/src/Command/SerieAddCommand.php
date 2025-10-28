@@ -5,7 +5,6 @@ namespace Labstag\Command;
 use Labstag\Entity\Serie;
 use Labstag\Message\AddSerieMessage;
 use Labstag\Service\FileService;
-use NumberFormatter;
 use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -77,14 +76,6 @@ class SerieAddCommand extends Command
 
         $progressBar->finish();
         $symfonyStyle->success('All series added');
-        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
-        $symfonyStyle->success(
-            sprintf(
-                'Added: %s, Updated: %s',
-                $numberFormatter->format($this->add),
-                $numberFormatter->format($this->update)
-            )
-        );
 
         return Command::SUCCESS;
     }

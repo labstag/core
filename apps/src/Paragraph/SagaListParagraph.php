@@ -52,15 +52,6 @@ class SagaListParagraph extends ParagraphAbstract
         );
     }
 
-    /**
-     * @return Generator<FieldInterface>
-     */
-    #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): mixed
-    {
-        unset($paragraph, $pageName);
-    }
-
     #[Override]
     public function getName(): string
     {

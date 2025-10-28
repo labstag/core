@@ -29,6 +29,7 @@ class SagaService
         );
         if (!$saga instanceof Saga) {
             $saga = new Saga();
+            $saga->setEnable(true);
             $saga->setTitle($tmdbId);
             $saga->setTmdb($tmdbId);
             $this->sagaRepository->save($saga);
