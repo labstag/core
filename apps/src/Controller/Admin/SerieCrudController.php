@@ -132,6 +132,7 @@ class SerieCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
             ]
         );
+        $this->crudFieldFactory->setTabSEO();
         $this->crudFieldFactory->setTabDate($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields();

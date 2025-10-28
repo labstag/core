@@ -265,7 +265,7 @@ class Movie implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getRefmovie() === $this
         ) {
             $paragraph->setRefmovie(null);
         }

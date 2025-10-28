@@ -2,7 +2,9 @@
 
 namespace Labstag\Form\Front;
 
+use Labstag\Service\CategoryService;
 use Labstag\Service\MovieService;
+use Labstag\Service\SagaService;
 use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -22,6 +24,8 @@ class MovieType extends AbstractType
 {
     public function __construct(
         protected MovieService $movieService,
+        protected CategoryService $categoryService,
+        protected SagaService $sagaService,
         protected RouterInterface $router,
         protected RequestStack $requestStack,
     )
@@ -49,7 +53,7 @@ class MovieType extends AbstractType
             ChoiceType::class,
             [
                 'required' => false,
-                'choices'  => $this->movieService->getCategoryForForm(),
+                'choices'  => $this->categoryService->getCategoryMovieForForm(),
             ]
         );
         $formBuilder->add(
@@ -57,7 +61,7 @@ class MovieType extends AbstractType
             ChoiceType::class,
             [
                 'required' => false,
-                'choices'  => $this->movieService->getSagaForForm(),
+                'choices'  => $this->sagaService->getSagaForForm(),
             ]
         );
         $formBuilder->add(

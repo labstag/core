@@ -1,0 +1,14 @@
+{% use "elements.html.twig" %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
+	<div class="background" style="--image-url: url('{{ site_asset(saga, 'img') }}')"></div>
+	<div class="content">
+        <div class="wrapper">
+            <h3 class="title">
+                {{ saga.title }}
+            </h3>
+            <div class="description">
+                {{ saga.description|raw }}
+            </div>
+        </div>
+    </div>
+</section>

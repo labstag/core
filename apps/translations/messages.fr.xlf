@@ -1221,6 +1221,10 @@
         <source>All stories PDF generation messages have been dispatched.</source>
         <target>Tous les messages de génération de PDF des histoires ont été envoyés.</target>
       </trans-unit>
+      <trans-unit id="58cp6Z0" resname="%count% movies">
+        <source>%count% movies</source>
+        <target>%count% films</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

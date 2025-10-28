@@ -61,7 +61,7 @@ class Post implements Stringable
     private ?File $imgFile = null;
 
     #[ORM\OneToOne(inversedBy: 'post', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Meta $meta = null;
 
     /**
