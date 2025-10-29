@@ -39,7 +39,7 @@ class TemplateCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         unset($pageName);
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         $textField = TextField::new('code', new TranslatableMessage('Code'));
         $textField->setDisabled(true);
@@ -53,7 +53,6 @@ class TemplateCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
-                $this->crudFieldFactory->idField(),
                 $textField,
                 $this->crudFieldFactory->titleField(),
             ]

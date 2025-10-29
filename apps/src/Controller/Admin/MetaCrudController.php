@@ -24,11 +24,10 @@ class MetaCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
-                $this->crudFieldFactory->idField(),
                 $this->crudFieldFactory->titleField(),
                 TextField::new('keywords', new TranslatableMessage('Keywords')),
                 TextField::new('description', new TranslatableMessage('Description')),

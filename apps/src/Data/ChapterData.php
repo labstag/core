@@ -2,16 +2,32 @@
 
 namespace Labstag\Data;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Chapter;
-use Labstag\Repository\ChapterRepository;
+use Labstag\Service\ConfigurationService;
+use Labstag\Service\FileService;
 
 class ChapterData extends DataAbstract implements DataInterface
 {
     public function __construct(
-        private StoryData $storyData,
-        private ChapterRepository $chapterRepository,
+        protected StoryData $storyData,
+        protected FileService $fileService,
+        protected ConfigurationService $configurationService,
+        protected EntityManagerInterface $entityManager,
     )
     {
+        parent::__construct($fileService, $configurationService, $entityManager);
+    }
+
+    #[\Override]
+    public function asset(mixed $entity, string $field): string
+    {
+        $asset = parent::asset($entity, $field);
+        if ('' !== $asset) {
+            return $asset;
+        }
+
+        return $this->storyData->asset($entity->getStory(), $field);
     }
 
     public function generateSlug(object $entity): string
@@ -41,12 +57,32 @@ class ChapterData extends DataAbstract implements DataInterface
         return $page instanceof Chapter;
     }
 
-    public function supports(object $entity): bool
+    public function placeholder(): string
+    {
+        $placeholder = $this->globalPlaceholder('chapter');
+        if ('' !== $placeholder) {
+            return $placeholder;
+        }
+
+        return $this->storyData->placeholder();
+    }
+
+    public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Chapter;
     }
 
-    private function getEntityBySlug(string $slug): ?object
+    public function supportsData(object $entity): bool
+    {
+        return $entity instanceof Chapter;
+    }
+
+    public function supportsShortcode(string $className): bool
+    {
+        return false;
+    }
+
+    protected function getEntityBySlug(string $slug): ?object
     {
         if (0 === substr_count($slug, '/')) {
             return null;
@@ -61,7 +97,7 @@ class ChapterData extends DataAbstract implements DataInterface
 
         $story      = $this->storyData->getEntity($slugFirst);
 
-        return $this->chapterRepository->findOneBy(
+        return $this->entityManager->getRepository(Chapter::class)->findOneBy(
             [
                 'refstory' => $story,
                 'slug'     => $slugSecond,

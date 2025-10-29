@@ -2,15 +2,13 @@
 
 namespace Labstag\Data;
 
-use Labstag\Entity\Page;
-use Labstag\Enum\PageEnum;
+use Labstag\Entity\Paragraph;
 
-class HomeData extends DataAbstract implements DataInterface
+class ParagraphData extends DataAbstract implements DataInterface
 {
     public function generateSlug(object $entity): string
     {
         unset($entity);
-        $this->getHome();
 
         return '';
     }
@@ -19,43 +17,42 @@ class HomeData extends DataAbstract implements DataInterface
     {
         unset($slug);
 
-        return $this->getHome();
+        return new Paragraph();
     }
 
     public function getTitle(object $entity): string
     {
-        return $entity->getTitle();
+        unset($entity);
+
+        return '';
     }
 
     public function match(string $slug): bool
     {
-        return '' === $slug || is_null($slug);
+        unset($slug);
+
+        return false;
     }
 
     public function placeholder(): string
     {
-        return '';
+        return $this->configPlaceholder();
     }
 
     public function supportsAsset(object $entity): bool
+    {
+        return $entity instanceof Paragraph;
+    }
+
+    public function supportsData(object $entity): bool
     {
         unset($entity);
 
         return false;
     }
 
-    public function supportsData(object $entity): bool
-    {
-        return false;
-    }
-
     public function supportsShortcode(string $className): bool
     {
         return false;
-    }
-
-    protected function getHome(): ?object
-    {
-        return $this->entityManager->getRepository(Page::class)->getOneByType(PageEnum::HOME->value);
     }
 }

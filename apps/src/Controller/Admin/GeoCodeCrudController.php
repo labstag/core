@@ -46,7 +46,7 @@ class GeoCodeCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         unset($pageName);
         $this->crudFieldFactory->addFieldsToTab(
             'principal',

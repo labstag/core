@@ -96,31 +96,13 @@ class LinksBlock extends BlockAbstract
         $links = $block->getLinks();
         $data  = [];
 
-        foreach ($links as $row) {
-            $link         = clone $row;
-            $processedUrl = $this->linkUrlProcessor->processUrl($link->getUrl());
-
-            // If processedUrl is an object (entity), check if it's enabled
-            if (is_object($processedUrl)) {
-                if (!$processedUrl->isEnable()) {
-                    continue;
-                }
-
-                $link->setUrl(
-                    $this->router->generate(
-                        'front',
-                        [
-                            'slug' => $this->slugService->forEntity($processedUrl),
-                        ]
-                    )
-                );
-                $data[] = $link;
-
+        foreach ($links as $link) {
+            $url = $this->shortCodeService->getContent($link->getUrl());
+            if (null === $url) {
                 continue;
             }
 
-            // It's a regular URL string
-            $link->setUrl($processedUrl);
+            $link->setUrl($url);
 
             $data[] = $link;
         }

@@ -43,7 +43,7 @@ class ImdbCommand extends Command
         $symfonyStyle = new SymfonyStyle($input, $output);
         $imdb         = $symfonyStyle->ask('Quel est le code IMDb ?');
         if (empty($imdb)) {
-            $symfonyStyle->error("Le code IMDB est obligatoire");
+            $symfonyStyle->error('Le code IMDB est obligatoire');
 
             return Command::INVALID;
         }

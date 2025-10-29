@@ -2,25 +2,28 @@
 
 namespace Labstag\Data;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Page;
 use Labstag\Entity\Serie;
 use Labstag\Enum\PageEnum;
-use Labstag\Repository\PageRepository;
-use Labstag\Repository\SerieRepository;
+use Labstag\Service\ConfigurationService;
+use Labstag\Service\FileService;
 
 class SerieData extends DataAbstract implements DataInterface
 {
     public function __construct(
-        private PageRepository $pageRepository,
-        private SerieRepository $serieRepository,
-        private PageData $pageData,
+        protected PageData $pageData,
+        protected FileService $fileService,
+        protected ConfigurationService $configurationService,
+        protected EntityManagerInterface $entityManager,
     )
     {
+        parent::__construct($fileService, $configurationService, $entityManager);
     }
 
     public function generateSlug(object $entity): string
     {
-        $page = $this->pageRepository->findOneBy(
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
             [
                 'type' => PageEnum::SERIES->value,
             ]
@@ -51,12 +54,32 @@ class SerieData extends DataAbstract implements DataInterface
         return $page instanceof Serie;
     }
 
-    public function supports(object $entity): bool
+    public function placeholder(): string
+    {
+        $placeholder = $this->globalPlaceholder('serie');
+        if ('' !== $placeholder) {
+            return $placeholder;
+        }
+
+        return $this->configPlaceholder();
+    }
+
+    public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Serie;
     }
 
-    private function getEntityBySlug(string $slug): ?object
+    public function supportsData(object $entity): bool
+    {
+        return $entity instanceof Serie;
+    }
+
+    public function supportsShortcode(string $className): bool
+    {
+        return false;
+    }
+
+    protected function getEntityBySlug(string $slug): ?object
     {
         if (0 === substr_count($slug, '/')) {
             return null;
@@ -65,7 +88,7 @@ class SerieData extends DataAbstract implements DataInterface
         $slugSecond = basename($slug);
         $slugFirst  = dirname($slug);
 
-        $page = $this->pageRepository->findOneBy(
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
             ['slug' => $slugFirst]
         );
         if (!$page instanceof Page) {
@@ -76,7 +99,7 @@ class SerieData extends DataAbstract implements DataInterface
             return null;
         }
 
-        return $this->serieRepository->findOneBy(
+        return $this->entityManager->getRepository(Serie::class)->findOneBy(
             ['slug' => $slugSecond]
         );
     }

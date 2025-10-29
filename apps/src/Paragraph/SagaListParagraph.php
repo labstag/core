@@ -2,8 +2,6 @@
 
 namespace Labstag\Paragraph;
 
-use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Paragraph;

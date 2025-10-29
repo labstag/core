@@ -20,14 +20,8 @@ abstract class TagCrudControllerAbstract extends TypedCrudControllerAbstract
 
     public function configureFieldsDefault(): void
     {
-        $this->crudFieldFactory->setTabPrincipal();
-        $this->crudFieldFactory->addFieldsToTab(
-            'principal',
-            [
-                $this->crudFieldFactory->idField(),
-                $this->crudFieldFactory->titleField(),
-            ]
-        );
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->addFieldsToTab('principal', [$this->crudFieldFactory->titleField()]);
     }
 
     public static function getEntityFqcn(): string

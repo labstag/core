@@ -45,8 +45,7 @@ class PageCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        $this->crudFieldFactory->setTabPrincipal();
-        yield $this->crudFieldFactory->addFieldIDShortcode('page');
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $this->crudFieldFactory->addFieldsToTab('principal', $this->getIdEntity($pageName, $currentEntity));
 
         $fieldChoice  = $this->addFieldIsHome($currentEntity, $pageName);
@@ -159,7 +158,6 @@ class PageCrudController extends CrudControllerAbstract
     private function getIdEntity(string $pageName, mixed $currentEntity): array
     {
         $fields   = [
-            $this->crudFieldFactory->idField(),
             $this->crudFieldFactory->slugField(),
             $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
@@ -167,7 +165,7 @@ class PageCrudController extends CrudControllerAbstract
         ];
         if ($currentEntity instanceof Page && PageEnum::HOME->value == $currentEntity->getType()) {
             // Remove slug field (present at index 2 if withSlug kept)
-            unset($fields[2]);
+            unset($fields[0]);
         }
 
         return $fields;

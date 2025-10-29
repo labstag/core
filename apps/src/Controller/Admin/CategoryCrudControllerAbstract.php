@@ -20,11 +20,10 @@ abstract class CategoryCrudControllerAbstract extends TypedCrudControllerAbstrac
 
     public function configureFieldsDefault(): void
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
-                $this->crudFieldFactory->idField(),
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->titleField(),
             ]

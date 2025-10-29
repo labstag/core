@@ -14,8 +14,6 @@ final class SiteService
     public function __construct(
         #[AutowireIterator('labstag.datas')]
         private iterable $datas,
-        #[AutowireIterator('labstag.assets')]
-        private readonly iterable $assets,
         private FileService $fileService,
         private TokenStorageInterface $tokenStorage,
     )
@@ -25,13 +23,13 @@ final class SiteService
     public function asset(mixed $entity, string $field, bool $placeholder = true): string
     {
         $asset = null;
-        foreach ($this->assets as $row) {
-            if (!$row->supports($entity)) {
+        foreach ($this->datas as $data) {
+            if (!$data->supportsAsset($entity)) {
                 continue;
             }
 
-            $file  = $row->asset($entity, $field);
-            $asset = $row;
+            $file  = $data->asset($entity, $field);
+            $asset = $data;
             break;
         }
 
@@ -44,11 +42,6 @@ final class SiteService
         }
 
         $placeholder = $asset->placeholder();
-        if ('' !== $placeholder) {
-            return $placeholder;
-        }
-
-        $placeholder = $asset->configPlaceholder();
         if ('' !== $placeholder) {
             return $placeholder;
         }
@@ -69,7 +62,7 @@ final class SiteService
     public function getTitleMeta(object $entity): ?string
     {
         foreach ($this->datas as $data) {
-            if ($data->supports($entity)) {
+            if ($data->supportsData($entity)) {
                 return $data->getTitleMeta($entity);
             }
         }

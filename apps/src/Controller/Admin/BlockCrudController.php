@@ -73,7 +73,7 @@ class BlockCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
 
         $regionField = ChoiceField::new('region', new TranslatableMessage('Region'));
@@ -82,7 +82,6 @@ class BlockCrudController extends CrudControllerAbstract
         $numberField = NumberField::new('position', new TranslatableMessage('Position'))->hideOnForm();
         $allTypes    = array_flip($this->blockService->getAll(null));
         $fields      = [
-            $this->crudFieldFactory->idField(),
             $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
             $regionField,

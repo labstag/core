@@ -253,14 +253,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     }
 
     /**
-     * @return Collection<int, Story>
-     */
-    public function getStories(): Collection
-    {
-        return $this->stories;
-    }
-
-    /**
      * @return Collection<int, HttpErrorLogs>
      */
     public function getHttpErrorLogs(): Collection
@@ -324,6 +316,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
+    }
+
+    /**
+     * @return Collection<int, Story>
+     */
+    public function getStories(): Collection
+    {
+        return $this->stories;
     }
 
     /**

@@ -2,25 +2,28 @@
 
 namespace Labstag\Data;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Page;
 use Labstag\Entity\Saga;
 use Labstag\Enum\PageEnum;
-use Labstag\Repository\PageRepository;
-use Labstag\Repository\SagaRepository;
+use Labstag\Service\ConfigurationService;
+use Labstag\Service\FileService;
 
 class SagaData extends DataAbstract implements DataInterface
 {
     public function __construct(
-        private PageRepository $pageRepository,
-        private SagaRepository $sagaRepository,
-        private PageData $pageData,
+        protected PageData $pageData,
+        protected FileService $fileService,
+        protected ConfigurationService $configurationService,
+        protected EntityManagerInterface $entityManager,
     )
     {
+        parent::__construct($fileService, $configurationService, $entityManager);
     }
 
     public function generateSlug(object $entity): string
     {
-        $page = $this->pageRepository->findOneBy(
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
             [
                 'type' => PageEnum::MOVIES->value,
             ]
@@ -51,12 +54,32 @@ class SagaData extends DataAbstract implements DataInterface
         return $page instanceof Saga;
     }
 
-    public function supports(object $entity): bool
+    public function placeholder(): string
+    {
+        $placeholder = $this->globalPlaceholder('saga');
+        if ('' !== $placeholder) {
+            return $placeholder;
+        }
+
+        return $this->configPlaceholder();
+    }
+
+    public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Saga;
     }
 
-    private function getEntityBySlug(string $slug): ?object
+    public function supportsData(object $entity): bool
+    {
+        return $entity instanceof Saga;
+    }
+
+    public function supportsShortcode(string $className): bool
+    {
+        return false;
+    }
+
+    protected function getEntityBySlug(string $slug): ?object
     {
         if (0 === substr_count($slug, '/')) {
             return null;
@@ -65,7 +88,7 @@ class SagaData extends DataAbstract implements DataInterface
         $slugSecond = basename($slug);
         $slugFirst  = dirname($slug);
 
-        $page = $this->pageRepository->findOneBy(
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
             ['slug' => $slugFirst]
         );
         if (!$page instanceof Page) {
@@ -76,7 +99,7 @@ class SagaData extends DataAbstract implements DataInterface
             return null;
         }
 
-        return $this->sagaRepository->findOneBy(
+        return $this->entityManager->getRepository(Saga::class)->findOneBy(
             ['slug' => $slugSecond]
         );
     }

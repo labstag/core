@@ -2,16 +2,22 @@
 
 namespace Labstag\Data;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Page;
-use Labstag\Repository\PageRepository;
+use Labstag\Service\ConfigurationService;
+use Labstag\Service\FileService;
+use Labstag\Shortcode\PageUrlShortcode;
 
 class PageData extends DataAbstract implements DataInterface
 {
     public function __construct(
-        private PageRepository $pageRepository,
-        private HomeData $homeData,
+        protected HomeData $homeData,
+        protected FileService $fileService,
+        protected ConfigurationService $configurationService,
+        protected EntityManagerInterface $entityManager,
     )
     {
+        parent::__construct($fileService, $configurationService, $entityManager);
     }
 
     public function generateSlug(object $entity): string
@@ -22,6 +28,12 @@ class PageData extends DataAbstract implements DataInterface
     public function getEntity(string $slug): object
     {
         return $this->getEntityBySlug($slug);
+    }
+
+    #[\Override]
+    public function getShortCodes(): array
+    {
+        return [PageUrlShortcode::class];
     }
 
     public function getTitle(object $entity): string
@@ -41,15 +53,45 @@ class PageData extends DataAbstract implements DataInterface
         return $page instanceof Page;
     }
 
-    public function supports(object $entity): bool
+    public function placeholder(): string
+    {
+        $placeholder = $this->globalPlaceholder('page');
+        if ('' !== $placeholder) {
+            return $placeholder;
+        }
+
+        return $this->configPlaceholder();
+    }
+
+    public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Page;
     }
 
-    private function getEntityBySlug(string $slug): ?object
+    public function supportsData(object $entity): bool
     {
-        return $this->pageRepository->findOneBy(
+        return $entity instanceof Page;
+    }
+
+    public function supportsShortcode(string $className): bool
+    {
+        return Page::class === $className;
+    }
+
+    protected function generateShortcode1(string $id): string
+    {
+        return sprintf('[%s:%s]', 'pageurl', $id);
+    }
+
+    protected function getEntityBySlug(string $slug): ?object
+    {
+        return $this->entityManager->getRepository(Page::class)->findOneBy(
             ['slug' => $slug]
         );
+    }
+
+    protected function getShortCode1($matches): string
+    {
+        return '';
     }
 }
