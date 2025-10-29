@@ -3,6 +3,9 @@
 	<div class="background" style="--image-url: url('{{ site_asset(post, 'img') }}')"></div>
 	<div class="content">
         <div class="wrapper">
+            <h3 class="title">
+                {{ post.title }}
+            </h3>
             {% if post.tags|length > 0 %}
                 <div class="tags">
                     {% for tag in post.tags %}
@@ -10,9 +13,6 @@
                     {% endfor %}
                 </div>
             {% endif %}
-            <h3 class="title">
-                {{ post.title }}
-            </h3>
             {% if post.categories|length > 0 %}
                 <div class="categories">
                     {% for category in post.categories %}

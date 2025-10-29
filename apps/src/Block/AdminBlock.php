@@ -2,8 +2,6 @@
 
 namespace Labstag\Block;
 
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Labstag\Entity\Block;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,45 +26,12 @@ class AdminBlock extends BlockAbstract
     {
         unset($disable);
 
-        $this->logger->debug(
-            'Starting admin block generation',
-            [
-                'block_id' => $block->getId(),
-            ]
-        );
-
-        if (!isset($data['entity']) || !is_object($data['entity'])) {
-            $this->logger->warning(
-                'Invalid entity data for admin block',
-                [
-                    'block_id' => $block->getId(),
-                ]
-            );
-            $this->setShow($block, false);
-
-            return;
-        }
-
-        $url = $this->setUrl($data['entity']);
-        if (!$url instanceof AdminUrlGeneratorInterface) {
-            $this->logger->debug(
-                'No admin URL found for entity',
-                [
-                    'block_id'     => $block->getId(),
-                    'entity_class' => $data['entity']::class,
-                ]
-            );
-            $this->setShow($block, false);
-
-            return;
-        }
-
         $this->setData(
             $block,
             [
-                'url'   => $url->generateUrl(),
-                'block' => $block,
-                'data'  => $data,
+                'entity' => $data['entity'],
+                'block'  => $block,
+                'data'   => $data,
             ]
         );
     }
@@ -81,18 +46,5 @@ class AdminBlock extends BlockAbstract
     public function getType(): string
     {
         return 'admin';
-    }
-
-    protected function setUrl(object $entity): ?AdminUrlGeneratorInterface
-    {
-        $controller = $this->crudAdminService->getCrudAdmin($entity::class);
-        if (is_null($controller)) {
-            return null;
-        }
-
-        $adminUrlGenerator = $this->adminUrlGenerator->setAction(Action::EDIT);
-        $adminUrlGenerator->setEntityId($entity->getId());
-
-        return $adminUrlGenerator->setController($controller);
     }
 }

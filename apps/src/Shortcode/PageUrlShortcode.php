@@ -26,7 +26,7 @@ class PageUrlShortcode extends ShortcodeAbstract
             return null;
         }
 
-        return $this->slugService->forEntity($entity);
+        return '/'.$this->slugService->forEntity($entity);
     }
 
     public function generate(string $id): string

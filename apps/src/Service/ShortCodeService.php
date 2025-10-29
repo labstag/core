@@ -16,7 +16,7 @@ class ShortCodeService
     /**
      * Process URL and return entity or original URL.
      */
-    public function getContent(string $url): string|object
+    public function getContent(string $url): ?string
     {
         foreach ($this->shortcodes as $shortcode) {
             $pattern = $shortcode->getPattern();

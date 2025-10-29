@@ -330,11 +330,20 @@ final class CrudFieldFactory
         return [];
     }
 
-    public function slugField(): SlugField
+    public function slugField($readOnly = false): SlugField
     {
-        return SlugField::new('slug', new TranslatableMessage('Slug'))->hideOnIndex()->setFormTypeOptions(
+        $slugField = SlugField::new('slug', new TranslatableMessage('Slug'));
+        $slugField->hideOnIndex();
+        $slugField->setFormTypeOptions(
             ['required' => false]
-        )->setTargetFieldName('title')->setUnlockConfirmationMessage('Attention, si vous changez le titre, le slug sera modifié');
+        );
+        $slugField->setTargetFieldName('title');
+        $slugField->setUnlockConfirmationMessage('Attention, si vous changez le titre, le slug sera modifié');
+        if ($readOnly) {
+            $slugField->hideOnForm();
+        }
+
+        return $slugField;
     }
 
     public function stateField(): TextField

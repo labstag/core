@@ -22,7 +22,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: ChapterRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-#[ORM\Index(name: 'IDX_CHAPTER_SLUG', columns: ['slug'])]
 class Chapter implements Stringable
 {
     use SoftDeleteableEntity;
@@ -35,7 +34,7 @@ class Chapter implements Stringable
     )]
     protected ?bool $enable = null;
 
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]

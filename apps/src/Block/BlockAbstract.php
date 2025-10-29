@@ -8,7 +8,6 @@ use Exception;
 use Labstag\Entity\Block;
 use Labstag\Repository\ServiceEntityRepositoryAbstract;
 use Labstag\Service\ConfigurationService;
-use Labstag\Service\CrudAdminService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\ShortCodeService;
 use Labstag\Service\SiteService;
@@ -64,7 +63,6 @@ abstract class BlockAbstract extends AbstractController implements BlockInterfac
         protected ConfigurationService $configurationService,
         protected AdminUrlGenerator $adminUrlGenerator,
         protected ParagraphService $paragraphService,
-        protected CrudAdminService $crudAdminService,
         protected SiteService $siteService,
         protected SlugService $slugService,
         protected RequestStack $requestStack,
@@ -136,14 +134,6 @@ abstract class BlockAbstract extends AbstractController implements BlockInterfac
     public function update(Block $block): void
     {
         unset($block);
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function useIn(): array
-    {
-        return [];
     }
 
     /**

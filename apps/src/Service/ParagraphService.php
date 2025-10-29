@@ -97,6 +97,7 @@ final class ParagraphService
      */
     public function getAll(?string $entity): array
     {
+        dump($entity);
         $paragraphs = [];
         foreach ($this->paragraphs as $paragraph) {
             $inUse = $paragraph->useIn();

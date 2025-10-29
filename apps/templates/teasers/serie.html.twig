@@ -28,9 +28,9 @@
     <div class="wrapper">
         <h3 class="title">
             {% if serie.isinProduction %}
-                <i class="fa fa-play-circle"></i>
+                <i class="fa fa-play-circle" title="{{ 'In production'|trans|e('html_attr') }}"></i>
             {% else %}
-                <i class="fa fa-stop-circle"></i>
+                <i class="fa fa-stop-circle" title="{{ 'Not in production'|trans|e('html_attr') }}"></i>
             {% endif %}
             {{ serie.title }}
         </h3>

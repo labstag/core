@@ -8,7 +8,7 @@
         "img"
         "content";
     grid-template-columns: 1fr;
-      @include mixins.respond-to(md) {
+    @include mixins.respond-to(md) {
       grid-template-areas:
           "img content";
       grid-template-columns: 1fr 4fr;
@@ -19,10 +19,29 @@
     }
     .background{
       height: 300px;
-      width: 200px;
     }
     .content{
       grid-area: content;
+    }
+  }
+  &:nth-child(odd) {
+    a {
+      @include mixins.respond-to(md) {
+        grid-template-areas:
+          "img content"; // disposition normale
+        grid-template-columns: 1fr 4fr;
+      }
+    }
+  }
+
+  // Quand le <li> est pair
+  &:nth-child(even) {
+    a {
+      @include mixins.respond-to(md) {
+        grid-template-areas:
+          "content img"; // on inverse l'ordre par exemple
+        grid-template-columns: 4fr 1fr;
+      }
     }
   }
 }
