@@ -7,7 +7,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Saga;
 use Override;
 
-class HeadSagaParagraph extends ParagraphAbstract
+class HeadSagaParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -44,12 +44,26 @@ class HeadSagaParagraph extends ParagraphAbstract
         return 'head-saga';
     }
 
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
+    #[\Override]
+    public function supports(?object $object): bool
     {
-        return [Block::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
+        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+            [
+                'type' => $this->getType(),
+            ]
+        );
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Block;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 }

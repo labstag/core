@@ -75,7 +75,7 @@ final class MetaService
         $file = str_replace('/uploads/', '', $file);
         $file = $this->fileService->getFileInAdapter('public', $file);
 
-        if (0 < substr_count($file, 'https://')) {
+        if (0 < substr_count((string) $file, 'https://')) {
             return [
                 'src'    => $file,
                 'width'  => null,
@@ -91,11 +91,12 @@ final class MetaService
     {
         $meta = $entity->getMeta();
         if (!$meta instanceof Meta) {
-            $repository = $this->entityManager->getRepository(get_class($entity));
-            $meta = new Meta();
+            $repository = $this->entityManager->getRepository($entity::class);
+            $meta       = new Meta();
             $entity->setMeta($meta);
             $repository->save($entity);
         }
+
         if (!is_null($meta->getDescription()) && '' !== $meta->getDescription()) {
             return $meta;
         }

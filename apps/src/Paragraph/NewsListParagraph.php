@@ -7,10 +7,11 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
+use Labstag\Enum\PageEnum;
 use Labstag\Repository\PostRepository;
 use Override;
 
-class NewsListParagraph extends ParagraphAbstract
+class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -64,12 +65,26 @@ class NewsListParagraph extends ParagraphAbstract
         return 'news-list';
     }
 
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
+    #[\Override]
+    public function supports(?object $object): bool
     {
-        return [Page::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
+        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+            [
+                'type' => $this->getType(),
+            ]
+        );
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Page && $object->getType() == PageEnum::POSTS->value;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 }

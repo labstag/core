@@ -24,17 +24,14 @@ class Season implements \Stringable
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
+    #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
+    protected ?DateTime $airDate = null;
+
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
     protected ?bool $enable = null;
-
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    protected ?string $slug = null;
-
-    #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
-    protected ?DateTime $airDate = null;
 
     /**
      * @var Collection<int, Episode>
@@ -78,6 +75,9 @@ class Season implements \Stringable
 
     #[ORM\ManyToOne(inversedBy: 'seasons')]
     protected ?Serie $refserie = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $slug = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $title = null;

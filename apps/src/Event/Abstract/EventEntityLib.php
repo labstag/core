@@ -13,7 +13,6 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Redirection;
 use Labstag\Entity\Saga;
-use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;

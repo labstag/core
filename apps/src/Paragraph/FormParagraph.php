@@ -13,7 +13,7 @@ use Labstag\FrontForm\FrontFormAbstract;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class FormParagraph extends ParagraphAbstract
+class FormParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -78,6 +78,16 @@ class FormParagraph extends ParagraphAbstract
         return 'form';
     }
 
+    #[\Override]
+    public function supports(?object $object): bool
+    {
+        if (is_null($object)) {
+            return true;
+        }
+
+        return $object::class == Page::class;
+    }
+
     #[Override]
     public function templates(Paragraph $paragraph, string $type): array
     {
@@ -88,14 +98,5 @@ class FormParagraph extends ParagraphAbstract
         }
 
         return $this->getTemplateContent($type, $this->getType());
-    }
-
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
-    {
-        return [Page::class];
     }
 }

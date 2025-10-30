@@ -34,9 +34,6 @@ class Edito implements Stringable
     )]
     protected ?bool $enable = null;
 
-    #[ORM\Column(length: 255)]
-    protected ?string $title = null;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
@@ -61,6 +58,9 @@ class Edito implements Stringable
     #[ORM\ManyToOne(inversedBy: 'editos', cascade: ['persist', 'detach'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?User $refuser = null;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
 
     public function __construct()
     {

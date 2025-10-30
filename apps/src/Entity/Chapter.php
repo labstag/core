@@ -34,12 +34,6 @@ class Chapter implements Stringable
     )]
     protected ?bool $enable = null;
 
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    protected ?string $slug = null;
-
-    #[ORM\Column(length: 255)]
-    protected ?string $title = null;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
@@ -77,11 +71,17 @@ class Chapter implements Stringable
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $resume = null;
 
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $slug = null;
+
     /**
      * @var Collection<int, Tag>
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'chapters', cascade: ['persist', 'detach'])]
     protected Collection $tags;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
 
     public function __construct()
     {

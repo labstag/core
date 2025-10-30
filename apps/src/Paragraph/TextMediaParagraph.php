@@ -20,7 +20,7 @@ use Labstag\Field\WysiwygField;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class TextMediaParagraph extends ParagraphAbstract
+class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -111,6 +111,27 @@ class TextMediaParagraph extends ParagraphAbstract
         return 'text-media';
     }
 
+    #[\Override]
+    public function supports(?object $object): bool
+    {
+        if (is_null($object)) {
+            return true;
+        }
+
+        return in_array(
+            $object::class,
+            [
+                Block::class,
+                Chapter::class,
+                Edito::class,
+                Story::class,
+                Memo::class,
+                Page::class,
+                Post::class,
+            ]
+        );
+    }
+
     #[Override]
     public function update(Paragraph $paragraph): void
     {
@@ -144,22 +165,5 @@ class TextMediaParagraph extends ParagraphAbstract
         // Télécharger l'image et l'écrire dans le fichier temporaire
         file_put_contents($tempPath, file_get_contents($thumbnailUrl));
         $this->fileService->setUploadedFile($tempPath, $paragraph, 'imgFile');
-    }
-
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
-    {
-        return [
-            Block::class,
-            Chapter::class,
-            Edito::class,
-            Story::class,
-            Memo::class,
-            Page::class,
-            Post::class,
-        ];
     }
 }

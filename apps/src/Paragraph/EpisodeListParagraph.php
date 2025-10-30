@@ -12,7 +12,7 @@ use Labstag\Entity\Season;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class EpisodeListParagraph extends ParagraphAbstract
+class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -68,12 +68,26 @@ class EpisodeListParagraph extends ParagraphAbstract
         return 'episode-list';
     }
 
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
+    #[\Override]
+    public function supports(?object $object): bool
     {
-        return [Block::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
+        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+            [
+                'type' => $this->getType(),
+            ]
+        );
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Block;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 }

@@ -7,10 +7,11 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Saga;
+use Labstag\Enum\PageEnum;
 use Labstag\Repository\MovieRepository;
 use Override;
 
-class SagaParagraph extends ParagraphAbstract
+class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     private const MINMOVIES = 2;
 
@@ -97,12 +98,26 @@ class SagaParagraph extends ParagraphAbstract
         return 'saga';
     }
 
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
+    #[\Override]
+    public function supports(?object $object): bool
     {
-        return [Page::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
+        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+            [
+                'type' => $this->getType(),
+            ]
+        );
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Page && $object->getType() == PageEnum::MOVIES->value;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 }

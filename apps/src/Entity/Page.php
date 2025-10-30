@@ -30,26 +30,6 @@ class Page implements Stringable
     use TimestampableTrait;
     use WorkflowTrait;
 
-    #[ORM\Column(
-        type: Types::BOOLEAN,
-        options: ['default' => 1]
-    )]
-    protected ?bool $enable = null;
-
-    #[Gedmo\Slug(fields: ['title'])]
-    #[Gedmo\SlugHandler(
-        class: TreeSlugHandler::class,
-        options: [
-            'parentRelationField' => 'page',
-            'separator'           => '/',
-        ]
-    )]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
-    protected ?string $slug = null;
-
-    #[ORM\Column(length: 255)]
-    protected ?string $title = null;
-
     /**
      * @var Collection<int, Category>
      */
@@ -61,6 +41,12 @@ class Page implements Stringable
      */
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'page', cascade: ['persist', 'detach'])]
     protected Collection $children;
+
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    protected ?bool $enable = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -98,11 +84,25 @@ class Page implements Stringable
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $resume = null;
 
+    #[Gedmo\Slug(fields: ['title'])]
+    #[Gedmo\SlugHandler(
+        class: TreeSlugHandler::class,
+        options: [
+            'parentRelationField' => 'page',
+            'separator'           => '/',
+        ]
+    )]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    protected ?string $slug = null;
+
     /**
      * @var Collection<int, Tag>
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
     protected Collection $tags;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $type = null;

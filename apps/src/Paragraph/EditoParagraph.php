@@ -5,19 +5,14 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
-use Labstag\Entity\Block;
-use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
-use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Post;
-use Labstag\Entity\Story;
 use Labstag\Repository\EditoRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class EditoParagraph extends ParagraphAbstract
+class EditoParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -71,20 +66,26 @@ class EditoParagraph extends ParagraphAbstract
         return 'edito';
     }
 
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
+    #[\Override]
+    public function supports(?object $object): bool
     {
-        return [
-            Block::class,
-            Chapter::class,
-            Edito::class,
-            Story::class,
-            Memo::class,
-            Page::class,
-            Post::class,
-        ];
+        if (is_null($object)) {
+            return true;
+        }
+
+        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
+        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+            [
+                'type' => $this->getType(),
+            ]
+        );
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Page;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 }

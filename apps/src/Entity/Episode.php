@@ -20,14 +20,14 @@ class Episode
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
+    #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
+    protected ?DateTime $airDate = null;
+
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
     protected ?bool $enable = null;
-
-    #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
-    protected ?DateTime $airDate = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
