@@ -14,11 +14,11 @@ trait WorkflowTrait
      * @var string[]
      */
     #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $state = ['start'];
+    protected ?array $state = ['start'];
 
     #[Gedmo\Timestampable(on: 'change', field: ['state'])]
     #[ORM\Column(name: 'state_changed', type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?DateTime $stateChanged = null;
+    protected ?DateTime $stateChanged = null;
 
     /**
      * @return mixed[]

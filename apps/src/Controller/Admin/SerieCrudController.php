@@ -144,6 +144,7 @@ class SerieCrudController extends CrudControllerAbstract
 
         $filters->add('releaseDate');
         $filters->add('countries');
+        $filters->add('inProduction');
 
         $this->crudFieldFactory->addFilterCategories($filters, 'serie');
 

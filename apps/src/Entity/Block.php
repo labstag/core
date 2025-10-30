@@ -18,31 +18,31 @@ class Block implements Stringable
 {
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $classes = null;
+    protected ?string $classes = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $content = null;
+    protected ?string $content = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private ?bool $enable = null;
+    protected ?bool $enable = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     /**
      * @var Collection<int, Link>
      */
     #[ORM\OneToMany(targetEntity: Link::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
-    private Collection $links;
+    protected Collection $links;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $pages = null;
+    protected ?string $pages = null;
 
     /**
      * @var Collection<int, Paragraph>
@@ -51,34 +51,34 @@ class Block implements Stringable
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
-    private Collection $paragraphs;
+    protected Collection $paragraphs;
 
     #[ORM\Column(
         options: ['default' => 1]
     )]
-    private int $position = 1;
+    protected int $position = 1;
 
     #[ORM\Column(length: 255)]
-    private ?string $region = null;
+    protected ?string $region = null;
 
     #[ORM\Column(type: Types::BOOLEAN)]
-    private bool $requestPath = false;
+    protected bool $requestPath = false;
 
     /**
      * @var string[]
      */
     #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $roles = null;
+    protected ?array $roles = null;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'])]
     #[ORM\Column(length: 255, unique: true)]
-    private string $slug;
+    protected string $slug;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $type = null;
+    protected ?string $type = null;
 
     public function __construct()
     {

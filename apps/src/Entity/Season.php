@@ -34,7 +34,7 @@ class Season implements \Stringable
     protected ?string $slug = null;
 
     #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
-    private ?DateTime $airDate = null;
+    protected ?DateTime $airDate = null;
 
     /**
      * @var Collection<int, Episode>
@@ -43,29 +43,29 @@ class Season implements \Stringable
     #[ORM\OrderBy(
         ['number' => 'ASC']
     )]
-    private Collection $episodes;
+    protected Collection $episodes;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'season', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
 
     #[ORM\OneToOne(inversedBy: 'season', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
-    private ?Meta $meta = null;
+    protected ?Meta $meta = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $number = null;
+    protected ?int $number = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $overview = null;
+    protected ?string $overview = null;
 
     /**
      * @var Collection<int, Paragraph>
@@ -74,19 +74,19 @@ class Season implements \Stringable
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
-    private Collection $paragraphs;
+    protected Collection $paragraphs;
 
     #[ORM\ManyToOne(inversedBy: 'seasons')]
-    private ?Serie $refserie = null;
+    protected ?Serie $refserie = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tmdb = null;
+    protected ?string $tmdb = null;
 
     #[ORM\Column(name: 'vote_average', nullable: true)]
-    private ?float $voteAverage = null;
+    protected ?float $voteAverage = null;
 
     public function __construct()
     {

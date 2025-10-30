@@ -41,13 +41,13 @@ class Memo implements Stringable
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'memo', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
 
     /**
      * @var Collection<int, Paragraph>
@@ -56,11 +56,11 @@ class Memo implements Stringable
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
-    private Collection $paragraphs;
+    protected Collection $paragraphs;
 
     #[ORM\ManyToOne(inversedBy: 'memos', cascade: ['persist', 'detach'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?User $refuser = null;
+    protected ?User $refuser = null;
 
     public function __construct()
     {

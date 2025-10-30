@@ -20,40 +20,40 @@ class Meta implements Stringable
     use TimestampableTrait;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Chapter $chapter = null;
+    protected ?Chapter $chapter = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $description = null;
+    protected ?string $description = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $keywords = null;
+    protected ?string $keywords = null;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Page $page = null;
+    protected ?Page $page = null;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Post $post = null;
+    protected ?Post $post = null;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Saga $saga = null;
+    protected ?Saga $saga = null;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Season $season = null;
+    protected ?Season $season = null;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Serie $serie = null;
+    protected ?Serie $serie = null;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Story $story = null;
+    protected ?Story $story = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[Override]
     public function __toString(): string

@@ -27,29 +27,29 @@ class Saga implements Stringable
     use TimestampableTrait;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    protected ?string $description = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private ?bool $enable = null;
+    protected ?bool $enable = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
 
     #[ORM\OneToOne(inversedBy: 'saga', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
-    private ?Meta $meta = null;
+    protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Movie>
@@ -58,7 +58,7 @@ class Saga implements Stringable
     #[ORM\OrderBy(
         ['releaseDate' => 'ASC']
     )]
-    private Collection $movies;
+    protected Collection $movies;
 
     /**
      * @var Collection<int, Paragraph>
@@ -67,17 +67,17 @@ class Saga implements Stringable
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
-    private Collection $paragraphs;
+    protected Collection $paragraphs;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'])]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
-    private ?string $slug = null;
+    protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tmdb = null;
+    protected ?string $tmdb = null;
 
     public function __construct()
     {

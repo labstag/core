@@ -25,44 +25,44 @@ class Tag implements Stringable
      */
     #[ORM\ManyToMany(targetEntity: Chapter::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
     #[ORM\JoinTable(name: 'tag_chapter')]
-    private Collection $chapters;
+    protected Collection $chapters;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     /**
      * @var Collection<int, Page>
      */
     #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
     #[ORM\JoinTable(name: 'tag_page')]
-    private Collection $pages;
+    protected Collection $pages;
 
     /**
      * @var Collection<int, Post>
      */
     #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
     #[ORM\JoinTable(name: 'tag_post')]
-    private Collection $posts;
+    protected Collection $posts;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'], unique_base: 'type')]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
-    private ?string $slug = null;
+    protected ?string $slug = null;
 
     /**
      * @var Collection<int, Story>
      */
     #[ORM\ManyToMany(targetEntity: Story::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
     #[ORM\JoinTable(name: 'tag_story')]
-    private Collection $stories;
+    protected Collection $stories;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $type = null;
+    protected ?string $type = null;
 
     public function __construct()
     {

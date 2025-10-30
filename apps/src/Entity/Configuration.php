@@ -19,327 +19,327 @@ class Configuration
     use TimestampableTrait;
 
     #[ORM\Column(name: 'chapter_placeholder', length: 255, nullable: true)]
-    private ?string $chapterPlaceholder = null;
+    protected ?string $chapterPlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'chapterPlaceholder')]
-    private ?File $chapterPlaceholderFile = null;
+    protected ?File $chapterPlaceholderFile = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $copyright = null;
+    protected ?string $copyright = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $disableEmptyAgent = false;
+    protected bool $disableEmptyAgent = false;
 
     #[ORM\Column(name: 'edito_placeholder', length: 255, nullable: true)]
-    private ?string $editoPlaceholder = null;
+    protected ?string $editoPlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'editoPlaceholder')]
-    private ?File $editoPlaceholderFile = null;
+    protected ?File $editoPlaceholderFile = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $email = null;
+    protected ?string $email = null;
 
     #[ORM\Column(name: 'episode_placeholder', length: 255, nullable: true)]
-    private ?string $episodePlaceholder = null;
+    protected ?string $episodePlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'episodePlaceholder')]
-    private ?File $episodePlaceholderFile = null;
+    protected ?File $episodePlaceholderFile = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(name: 'language_tmdb', length: 255, nullable: true)]
-    private ?string $languageTmdb = null;
+    protected ?string $languageTmdb = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $logo = null;
+    protected ?string $logo = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'logo')]
-    private ?File $logoFile = null;
+    protected ?File $logoFile = null;
 
     #[ORM\Column(name: 'memo_placeholder', length: 255, nullable: true)]
-    private ?string $memoPlaceholder = null;
+    protected ?string $memoPlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'memoPlaceholder')]
-    private ?File $memoPlaceholderFile = null;
+    protected ?File $memoPlaceholderFile = null;
 
     #[ORM\Column(name: 'movie_placeholder', length: 255, nullable: true)]
-    private ?string $moviePlaceholder = null;
+    protected ?string $moviePlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'moviePlaceholder')]
-    private ?File $moviePlaceholderFile = null;
+    protected ?File $moviePlaceholderFile = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    protected ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $noreply = null;
+    protected ?string $noreply = null;
 
     #[ORM\Column(name: 'page_placeholder', length: 255, nullable: true)]
-    private ?string $pagePlaceholder = null;
+    protected ?string $pagePlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'pagePlaceholder')]
-    private ?File $pagePlaceholderFile = null;
+    protected ?File $pagePlaceholderFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $placeholder = null;
+    protected ?string $placeholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'placeholder')]
-    private ?File $placeholderFile = null;
+    protected ?File $placeholderFile = null;
 
     #[ORM\Column(name: 'post_placeholder', length: 255, nullable: true)]
-    private ?string $postPlaceholder = null;
+    protected ?string $postPlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'postPlaceholder')]
-    private ?File $postPlaceholderFile = null;
+    protected ?File $postPlaceholderFile = null;
 
     #[ORM\Column(name: 'saga_placeholder', length: 255, nullable: true)]
-    private ?string $sagaPlaceholder = null;
+    protected ?string $sagaPlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'sagaPlaceholder')]
-    private ?File $sagaPlaceholderFile = null;
+    protected ?File $sagaPlaceholderFile = null;
 
     #[ORM\Column(name: 'season_placeholder', length: 255, nullable: true)]
-    private ?string $seasonPlaceholder = null;
+    protected ?string $seasonPlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'seasonPlaceholder')]
-    private ?File $seasonPlaceholderFile = null;
+    protected ?File $seasonPlaceholderFile = null;
 
     #[ORM\Column(name: 'serie_placeholder', length: 255, nullable: true)]
-    private ?string $seriePlaceholder = null;
+    protected ?string $seriePlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'seriePlaceholder')]
-    private ?File $seriePlaceholderFile = null;
+    protected ?File $seriePlaceholderFile = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $sitemapPosts = true;
+    protected bool $sitemapPosts = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $sitemapStory = true;
+    protected bool $sitemapStory = true;
 
     #[ORM\Column(name: 'star_placeholder', length: 255, nullable: true)]
-    private ?string $starPlaceholder = null;
+    protected ?string $starPlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'starPlaceholder')]
-    private ?File $starPlaceholderFile = null;
+    protected ?File $starPlaceholderFile = null;
 
     #[ORM\Column(name: 'story_placeholder', length: 255, nullable: true)]
-    private ?string $storyPlaceholder = null;
+    protected ?string $storyPlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'storyPlaceholder')]
-    private ?File $storyPlaceholderFile = null;
+    protected ?File $storyPlaceholderFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tabIconSrc = null;
+    protected ?string $tabIconSrc = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacAcceptAllCta = true;
+    protected bool $tacAcceptAllCta = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacAdblocker = false;
+    protected bool $tacAdblocker = false;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacAlwaysNeedConsent = false;
+    protected bool $tacAlwaysNeedConsent = false;
 
     #[ORM\Column(
         length: 255,
         nullable: true,
         options: ['default' => 'top']
     )]
-    private ?string $tacBodyPosition = 'top';
+    protected ?string $tacBodyPosition = 'top';
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacClosePopup = true;
+    protected bool $tacClosePopup = true;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tacCookieDomain = null;
+    protected ?string $tacCookieDomain = null;
 
     #[ORM\Column(
         length: 255,
         nullable: true,
         options: ['default' => 'rgpd']
     )]
-    private ?string $tacCookieName = 'rgpd';
+    protected ?string $tacCookieName = 'rgpd';
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacCookieslist = false;
+    protected bool $tacCookieslist = false;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tacCustomCloserId = null;
+    protected ?string $tacCustomCloserId = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacDenyAllCta = true;
+    protected bool $tacDenyAllCta = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacGoogleConsentMode = true;
+    protected bool $tacGoogleConsentMode = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacGroupServices = true;
+    protected bool $tacGroupServices = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacHandleBrowserDNTRequest = false;
+    protected bool $tacHandleBrowserDNTRequest = false;
 
     #[ORM\Column(
         length: 255,
         nullable: true,
         options: ['default' => '#rgpd']
     )]
-    private ?string $tacHashtag = '#rgpd';
+    protected ?string $tacHashtag = '#rgpd';
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacHighPrivacy = true;
+    protected bool $tacHighPrivacy = true;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tacIconPosition = null;
+    protected ?string $tacIconPosition = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacMandatory = true;
+    protected bool $tacMandatory = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacMandatoryCta = false;
+    protected bool $tacMandatoryCta = false;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacMoreInfoLink = true;
+    protected bool $tacMoreInfoLink = true;
 
     #[ORM\Column(
         length: 255,
         nullable: true,
         options: ['default' => 'middle']
     )]
-    private ?string $tacOrientation = 'middle';
+    protected ?string $tacOrientation = 'middle';
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacPartnersList = true;
+    protected bool $tacPartnersList = true;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tacPrivacyUrl = null;
+    protected ?string $tacPrivacyUrl = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tacReadmoreLink = null;
+    protected ?string $tacReadmoreLink = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacRemoveCredit = false;
+    protected bool $tacRemoveCredit = false;
 
     #[ORM\Column(
         length: 255,
         nullable: true,
         options: ['default' => 'wait']
     )]
-    private ?string $tacServiceDefaultState = 'wait';
+    protected ?string $tacServiceDefaultState = 'wait';
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tacServices = null;
+    protected ?string $tacServices = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacShowAlertSmall = true;
+    protected bool $tacShowAlertSmall = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacShowDetailsOnClick = true;
+    protected bool $tacShowDetailsOnClick = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacShowIcon = true;
+    protected bool $tacShowIcon = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacUseExternalCss = false;
+    protected bool $tacUseExternalCss = false;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacUseExternalJs = false;
+    protected bool $tacUseExternalJs = false;
 
     #[ORM\Column(length: 255)]
-    private ?string $titleFormat = null;
+    protected ?string $titleFormat = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $url = null;
+    protected ?string $url = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $userLink = false;
+    protected bool $userLink = false;
 
     #[ORM\Column(name: 'user_placeholder', length: 255, nullable: true)]
-    private ?string $userPlaceholder = null;
+    protected ?string $userPlaceholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'userPlaceholder')]
-    private ?File $userPlaceholderFile = null;
+    protected ?File $userPlaceholderFile = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $userShow = false;
+    protected bool $userShow = false;
 
     public function getChapterPlaceholder(): ?string
     {

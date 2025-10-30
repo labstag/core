@@ -3,6 +3,7 @@
 namespace Labstag\Service;
 
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Meta;
 use ReflectionClass;
 use stdClass;
@@ -13,6 +14,7 @@ final class MetaService
 {
     public function __construct(
         private Environment $twigEnvironment,
+        private EntityManagerInterface $entityManager,
         private ViewResolverService $viewResolverService,
         private FileService $fileService,
         private SiteService $siteService,
@@ -73,6 +75,15 @@ final class MetaService
         $file = str_replace('/uploads/', '', $file);
         $file = $this->fileService->getFileInAdapter('public', $file);
 
+        if (0 < substr_count($file, 'https://')) {
+            return [
+                'src'    => $file,
+                'width'  => null,
+                'height' => null,
+                'type'   => null,
+            ];
+        }
+
         return $this->fileService->getInfoImage($file);
     }
 
@@ -80,9 +91,11 @@ final class MetaService
     {
         $meta = $entity->getMeta();
         if (!$meta instanceof Meta) {
+            $repository = $this->entityManager->getRepository(get_class($entity));
             $meta = new Meta();
+            $entity->setMeta($meta);
+            $repository->save($entity);
         }
-
         if (!is_null($meta->getDescription()) && '' !== $meta->getDescription()) {
             return $meta;
         }

@@ -18,43 +18,43 @@ class Redirection
     use TimestampableTrait;
 
     #[ORM\Column]
-    private ?int $actionCode = null;
+    protected ?int $actionCode = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $actionType = null;
+    protected ?string $actionType = null;
 
     /**
      * @var array<string, mixed>
      */
     #[ORM\Column(type: Types::JSON)]
-    private array $data = [];
+    protected array $data = [];
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $destination = null;
+    protected ?string $destination = null;
 
     #[ORM\Column]
-    private ?bool $enable = null;
+    protected ?bool $enable = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column]
-    private ?int $lastCount = 0;
+    protected ?int $lastCount = 0;
 
     #[ORM\Column]
-    private ?int $position = null;
+    protected ?int $position = null;
 
     #[ORM\Column]
-    private ?bool $regex = null;
+    protected ?bool $regex = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $source = null;
+    protected ?string $source = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     public function getActionCode(): ?int
     {

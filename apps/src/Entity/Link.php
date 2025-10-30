@@ -14,25 +14,25 @@ class Link implements Stringable
 {
 
     #[ORM\Column]
-    private bool $blank = false;
+    protected bool $blank = false;
 
     #[ORM\ManyToOne(inversedBy: 'links', cascade: ['persist', 'detach'])]
-    private ?Block $block = null;
+    protected ?Block $block = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $classes = null;
+    protected ?string $classes = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $url = null;
+    protected ?string $url = null;
 
     #[Override]
     public function __toString(): string

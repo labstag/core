@@ -2,6 +2,7 @@
 
 namespace Labstag\MessageHandler;
 
+use Labstag\Entity\Meta;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Message\SerieMessage;
@@ -30,6 +31,13 @@ final class SerieMessageHandler
         if (!$serie instanceof Serie) {
             return;
         }
+
+        $meta = $serie->getMeta();
+        if (null === $meta) {
+            $meta = new Meta();
+            $serie->setMeta($meta);
+        }
+        $this->serieRepository->save($serie);
 
         foreach ($serie->getSeasons() as $season) {
             $this->correctionSlug($season);

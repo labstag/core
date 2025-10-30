@@ -44,17 +44,17 @@ class Chapter implements Stringable
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'chapter', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
 
     #[ORM\OneToOne(inversedBy: 'chapter', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
-    private ?Meta $meta = null;
+    protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
@@ -63,25 +63,25 @@ class Chapter implements Stringable
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
-    private Collection $paragraphs;
+    protected Collection $paragraphs;
 
     #[ORM\Column(
         options: ['default' => 1]
     )]
-    private int $position = 1;
+    protected int $position = 1;
 
     #[ORM\ManyToOne(inversedBy: 'chapters', cascade: ['persist', 'detach'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Story $refstory = null;
+    protected ?Story $refstory = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $resume = null;
+    protected ?string $resume = null;
 
     /**
      * @var Collection<int, Tag>
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'chapters', cascade: ['persist', 'detach'])]
-    private Collection $tags;
+    protected Collection $tags;
 
     public function __construct()
     {
