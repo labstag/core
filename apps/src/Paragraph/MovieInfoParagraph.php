@@ -5,7 +5,14 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Generator;
+use Labstag\Entity\Block;
+use Labstag\Entity\Chapter;
+use Labstag\Entity\Edito;
+use Labstag\Entity\Memo;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Post;
+use Labstag\Entity\Story;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -65,6 +72,14 @@ class MovieInfoParagraph extends ParagraphAbstract
     #[Override]
     public function useIn(): array
     {
-        return $this->useInAll();
+        return [
+            Block::class,
+            Chapter::class,
+            Edito::class,
+            Story::class,
+            Memo::class,
+            Page::class,
+            Post::class,
+        ];
     }
 }

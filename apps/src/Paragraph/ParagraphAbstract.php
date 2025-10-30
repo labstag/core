@@ -383,22 +383,6 @@ abstract class ParagraphAbstract extends AbstractController
         $this->show[$paragraph->getId()] = $show;
     }
 
-    /**
-     * @return mixed[]
-     */
-    protected function useInAll(): array
-    {
-        return [
-            Block::class,
-            Chapter::class,
-            Edito::class,
-            Story::class,
-            Memo::class,
-            Page::class,
-            Post::class,
-        ];
-    }
-
     private function setUrlAdmin(Paragraph $paragraph): string|AdminUrlGeneratorInterface
     {
         if (!$this->security->isGranted('ROLE_ADMIN')) {

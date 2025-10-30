@@ -76,6 +76,13 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         $crud->addFormTheme('admin/form.html.twig');
+        $crud->renderContentMaximized();
+        $crud->renderSidebarMinimized();
+
+        $request = $this->requestStack->getCurrentRequest();
+        $limit = $request->query->get('limit', 20);
+
+        $crud->setPaginatorPageSize($limit);
 
         return $crud;
     }

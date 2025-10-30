@@ -89,6 +89,7 @@ class SerieCrudController extends CrudControllerAbstract
         $runtimeField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
         $runtimeField->setTemplatePath('admin/field/runtime-serie.html.twig');
         $runtimeField->hideOnForm();
+        $runtimeField->hideOnIndex();
 
         $trailerField = TextField::new('trailer', new TranslatableMessage('Trailer'));
         $trailerField->hideOnIndex();
@@ -120,8 +121,8 @@ class SerieCrudController extends CrudControllerAbstract
                 DateField::new('lastReleaseDate', new TranslatableMessage('Last release date')),
                 $choiceField,
                 $runtimeField,
-                NumberField::new('evaluation', new TranslatableMessage('Evaluation')),
-                IntegerField::new('votes', new TranslatableMessage('Votes')),
+                NumberField::new('evaluation', new TranslatableMessage('Evaluation'))->hideOnIndex(),
+                IntegerField::new('votes', new TranslatableMessage('Votes'))->hideOnIndex(),
                 $trailerField,
                 $wysiwygField,
                 $descriptionField,

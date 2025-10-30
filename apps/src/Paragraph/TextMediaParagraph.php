@@ -8,7 +8,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Essence\Essence;
 use Essence\Media;
 use Generator;
+use Labstag\Entity\Block;
+use Labstag\Entity\Chapter;
+use Labstag\Entity\Edito;
+use Labstag\Entity\Memo;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Post;
+use Labstag\Entity\Story;
 use Labstag\Field\WysiwygField;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -145,6 +152,14 @@ class TextMediaParagraph extends ParagraphAbstract
     #[Override]
     public function useIn(): array
     {
-        return $this->useInAll();
+        return [
+            Block::class,
+            Chapter::class,
+            Edito::class,
+            Story::class,
+            Memo::class,
+            Page::class,
+            Post::class,
+        ];
     }
 }
