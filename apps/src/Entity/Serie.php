@@ -27,10 +27,6 @@ class Serie implements Stringable
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
-    protected ?string $slug = null;
-
     #[ORM\Column]
     protected ?bool $adult = null;
 
@@ -112,6 +108,10 @@ class Serie implements Stringable
         ['number' => 'ASC']
     )]
     protected Collection $seasons;
+
+    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
     protected ?string $title = null;

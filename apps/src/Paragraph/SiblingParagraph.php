@@ -10,7 +10,7 @@ use Labstag\Field\WysiwygField;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class SiblingParagraph extends ParagraphAbstract
+class SiblingParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -68,12 +68,13 @@ class SiblingParagraph extends ParagraphAbstract
         return 'sibling';
     }
 
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
+    #[\Override]
+    public function supports(?object $object): bool
     {
-        return [Page::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        return $object::class == Page::class;
     }
 }

@@ -33,10 +33,11 @@ final class SerieMessageHandler
         }
 
         $meta = $serie->getMeta();
-        if (null === $meta) {
+        if (!$meta instanceof \Labstag\Entity\Meta) {
             $meta = new Meta();
             $serie->setMeta($meta);
         }
+
         $this->serieRepository->save($serie);
 
         foreach ($serie->getSeasons() as $season) {

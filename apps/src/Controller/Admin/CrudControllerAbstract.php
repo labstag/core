@@ -80,7 +80,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         $crud->renderSidebarMinimized();
 
         $request = $this->requestStack->getCurrentRequest();
-        $limit = $request->query->get('limit', 20);
+        $limit   = $request->query->get('limit', 20);
 
         $crud->setPaginatorPageSize($limit);
 

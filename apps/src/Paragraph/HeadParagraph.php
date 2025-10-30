@@ -7,7 +7,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Override;
 
-class HeadParagraph extends ParagraphAbstract
+class HeadParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -37,15 +37,13 @@ class HeadParagraph extends ParagraphAbstract
         return 'head';
     }
 
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
+    #[\Override]
+    public function supports(?object $object): bool
     {
-        return [
-            Memo::class,
-            Page::class,
-        ];
+        if (is_null($object)) {
+            return true;
+        }
+        $this->getRepository(Paragraph::class);
+        return false;
     }
 }

@@ -5,21 +5,15 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
-use Labstag\Entity\Block;
-use Labstag\Entity\Chapter;
-use Labstag\Entity\Edito;
-use Labstag\Entity\Memo;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Post;
-use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\MovieRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class MovieSliderParagraph extends ParagraphAbstract
+class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -82,20 +76,26 @@ class MovieSliderParagraph extends ParagraphAbstract
         return 'movie-slider';
     }
 
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
+    #[\Override]
+    public function supports(?object $object): bool
     {
-        return [
-            Block::class,
-            Chapter::class,
-            Edito::class,
-            Story::class,
-            Memo::class,
-            Page::class,
-            Post::class,
-        ];
+        if (is_null($object)) {
+            return true;
+        }
+
+        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
+        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+            [
+                'type' => $this->getType(),
+            ]
+        );
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Page && $object->getType() == PageEnum::HOME->value;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 }

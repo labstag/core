@@ -29,24 +29,17 @@ class Post implements Stringable
     use TimestampableTrait;
     use WorkflowTrait;
 
-    #[ORM\Column(
-        type: Types::BOOLEAN,
-        options: ['default' => 1]
-    )]
-    protected ?bool $enable = null;
-
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
-    protected ?string $slug = null;
-
-    #[ORM\Column(length: 255)]
-    protected ?string $title = null;
-
     /**
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
     protected Collection $categories;
+
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    protected ?bool $enable = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -80,11 +73,18 @@ class Post implements Stringable
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $resume = null;
 
+    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    protected ?string $slug = null;
+
     /**
      * @var Collection<int, Tag>
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
     protected Collection $tags;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
 
     public function __construct()
     {
