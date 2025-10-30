@@ -3,6 +3,8 @@
 namespace Labstag\Data;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Entity\Page;
+use Labstag\Enum\PageEnum;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -16,6 +18,11 @@ abstract class DataAbstract
         protected EntityManagerInterface $entityManager,
     )
     {
+    }
+
+    protected function getHome(): ?object
+    {
+        return $this->entityManager->getRepository(Page::class)->findOneBy(['type' => PageEnum::HOME->value]);
     }
 
     public function asset(mixed $entity, string $field): string

@@ -133,7 +133,6 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($block, 'season-list');
         $this->paragraphService->addParagraph($block, 'episode-list');
         $this->paragraphService->addParagraph($block, 'saga-list');
-        $this->paragraphService->addParagraph($block, 'chapter-lastnext');
     }
 
     /**
@@ -188,6 +187,21 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         yield $block;
 
         $block = new Block();
+        $block->setRegion('main');
+        $block->setTitle('Main Content');
+        $block->setType('content');
+        $this->addParagraphsTest($block);
+        yield $block;
+
+        $block = new Block();
+        $block->setRegion('main');
+        $block->setTitle('Main Paragraphs');
+        $block->setType('paragraphs');
+
+        $this->addParagraphsTest($block);
+        yield $block;
+
+        $block = new Block();
         $block->setRegion('footer');
         $block->setTitle('Footer HTML');
         $block->setType('html');
@@ -206,6 +220,11 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         $block->setType('links');
         $this->addLinksFooter2($block);
         yield $block;
+    }
+
+    private function addParagraphsTest(Block $block): void
+    {
+        $this->paragraphService->addParagraph($block, 'chapter-lastnext');
     }
 
     private function getPageByTitle(string $pageTitle): ?Page

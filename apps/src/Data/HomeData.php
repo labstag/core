@@ -53,9 +53,4 @@ class HomeData extends DataAbstract implements DataInterface
     {
         return false;
     }
-
-    protected function getHome(): ?object
-    {
-        return $this->entityManager->getRepository(Page::class)->getOneByType(PageEnum::HOME->value);
-    }
 }
