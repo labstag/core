@@ -2,17 +2,11 @@
 
 namespace Labstag\Data;
 
+use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
-use Labstag\Repository\PageRepository;
 
 class HomeData extends DataAbstract implements DataInterface
 {
-    public function __construct(
-        private PageRepository $pageRepository,
-    )
-    {
-    }
-
     public function generateSlug(object $entity): string
     {
         unset($entity);
@@ -38,13 +32,30 @@ class HomeData extends DataAbstract implements DataInterface
         return '' === $slug || is_null($slug);
     }
 
-    public function supports(object $entity): bool
+    public function placeholder(): string
+    {
+        return '';
+    }
+
+    public function supportsAsset(object $entity): bool
+    {
+        unset($entity);
+
+        return false;
+    }
+
+    public function supportsData(object $entity): bool
     {
         return false;
     }
 
-    private function getHome(): ?object
+    public function supportsShortcode(string $className): bool
     {
-        return $this->pageRepository->getOneByType(PageEnum::HOME->value);
+        return false;
+    }
+
+    protected function getHome(): ?object
+    {
+        return $this->entityManager->getRepository(Page::class)->getOneByType(PageEnum::HOME->value);
     }
 }

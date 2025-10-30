@@ -30,11 +30,59 @@ class Page implements Stringable
     use TimestampableTrait;
     use WorkflowTrait;
 
+    /**
+     * @var Collection<int, Category>
+     */
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
+    protected Collection $categories;
+
+    /**
+     * @var Collection<int, Page>
+     */
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'page', cascade: ['persist', 'detach'])]
+    protected Collection $children;
+
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
     protected ?bool $enable = null;
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::GUID, unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    protected ?string $id = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $img = null;
+
+    #[Vich\UploadableField(mapping: 'page', fileNameProperty: 'img')]
+    protected ?File $imgFile = null;
+
+    #[ORM\OneToOne(inversedBy: 'page', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?Meta $meta = null;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist', 'detach'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    protected ?self $page = null;
+
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'page', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    protected Collection $paragraphs;
+
+    #[ORM\ManyToOne(inversedBy: 'pages', cascade: ['persist', 'detach'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    protected ?User $refuser = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    protected ?string $resume = null;
 
     #[Gedmo\Slug(fields: ['title'])]
     #[Gedmo\SlugHandler(
@@ -47,65 +95,17 @@ class Page implements Stringable
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
     protected ?string $slug = null;
 
-    #[ORM\Column(length: 255)]
-    protected ?string $title = null;
-
-    /**
-     * @var Collection<int, Category>
-     */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
-    private Collection $categories;
-
-    /**
-     * @var Collection<int, Page>
-     */
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'page', cascade: ['persist', 'detach'])]
-    private Collection $children;
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: Types::GUID, unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
-
-    #[Vich\UploadableField(mapping: 'page', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
-
-    #[ORM\OneToOne(inversedBy: 'page', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Meta $meta = null;
-
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist', 'detach'])]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?self $page = null;
-
-    /**
-     * @var Collection<int, Paragraph>
-     */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'page', cascade: ['persist', 'remove'])]
-    #[ORM\OrderBy(
-        ['position' => 'ASC']
-    )]
-    private Collection $paragraphs;
-
-    #[ORM\ManyToOne(inversedBy: 'pages', cascade: ['persist', 'detach'])]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?User $refuser = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $resume = null;
-
     /**
      * @var Collection<int, Tag>
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
-    private Collection $tags;
+    protected Collection $tags;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $type = null;
+    protected ?string $type = null;
 
     public function __construct()
     {

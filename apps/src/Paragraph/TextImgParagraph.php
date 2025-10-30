@@ -5,12 +5,19 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use Generator;
+use Labstag\Entity\Block;
+use Labstag\Entity\Chapter;
+use Labstag\Entity\Edito;
+use Labstag\Entity\Memo;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Post;
+use Labstag\Entity\Story;
 use Labstag\Field\WysiwygField;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class TextImgParagraph extends ParagraphAbstract
+class TextImgParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -65,12 +72,24 @@ class TextImgParagraph extends ParagraphAbstract
         return 'text-img';
     }
 
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
+    #[\Override]
+    public function supports(?object $object): bool
     {
-        return $this->useInAll();
+        if (is_null($object)) {
+            return true;
+        }
+
+        return in_array(
+            $object::class,
+            [
+                Block::class,
+                Chapter::class,
+                Edito::class,
+                Story::class,
+                Memo::class,
+                Page::class,
+                Post::class,
+            ]
+        );
     }
 }

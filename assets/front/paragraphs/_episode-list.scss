@@ -15,7 +15,7 @@
     gap: 12px;
   }
   li{
-    &.teaser-chapter{
+    &.teaser-episode{
       background-color: color.scale(variables.$colorbg, $lightness: 15%);
       &:nth-child(even)
       {

@@ -41,7 +41,7 @@ final class ParagraphsConfigurator implements FieldConfiguratorInterface
         $classInstance = ClassUtils::getClass($instance);
         $controller    = $crudControllerRegistry->findCrudFqcnByEntityFqcn($classInstance);
         $fieldDto->setCustomOption('controller', $controller);
-        $paragraphs = $this->paragraphService->getAll($classInstance);
+        $paragraphs = $this->paragraphService->getAll($instance);
         $fieldDto->setCustomOption('paragraphs', $paragraphs);
 
         $breakpointName = $fieldDto->getCustomOption(ParagraphsField::OPTION_ROW_BREAKPOINT);

@@ -1,5 +1,0 @@
-services:
-  # Configuration for Block optimizations
-  Labstag\Block\Processors\LinkUrlProcessor:
-    arguments:
-      $entityManager: '@doctrine.orm.entity_manager'

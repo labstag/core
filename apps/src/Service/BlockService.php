@@ -79,10 +79,9 @@ final class BlockService
     {
         $blocks = [];
         foreach ($this->blocks as $block) {
-            $inUse = $block->useIn();
             $type  = $block->getType();
             $name  = $block->getName();
-            if ((in_array($entity, $inUse) && $block->isEnable()) || is_null($entity)) {
+            if ($block->isEnable() || is_null($entity)) {
                 $blocks[$name] = $type;
             }
         }

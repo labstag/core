@@ -13,14 +13,13 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Redirection;
 use Labstag\Entity\Saga;
-use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
 use Labstag\Message\MovieMessage;
 use Labstag\Message\SagaMessage;
 use Labstag\Message\SerieMessage;
-use Labstag\Message\StoryPdfMessage;
+use Labstag\Message\StoryMessage;
 use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\HttpErrorLogsRepository;
 use Labstag\Repository\PageRepository;
@@ -30,7 +29,6 @@ use Labstag\Service\ParagraphService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Workflow\Registry;
 
 abstract class EventEntityLib
@@ -120,27 +118,11 @@ abstract class EventEntityLib
             return;
         }
 
-        $asciiSlugger  = new AsciiSlugger();
-        $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
-        $slug      = $unicodeString;
-        $number    = 1;
-        while ($this->chapterRepository->findOneBy(
-            [
-                'refstory' => $instance->getRefstory(),
-                'slug'     => $slug,
-            ]
-        ) && ($instance->getSlug() !== $slug)) {
-            $slug = $unicodeString . '-' . $number;
-            ++$number;
-        }
-
-        $instance->setSlug($slug);
-
         $story    = $instance->getRefstory();
         $chapters = $story->getChapters();
         $instance->setPosition(count($chapters) + 1);
 
-        $this->messageBus->dispatch(new StoryPdfMessage($instance->getRefstory()->getId()));
+        $this->messageBus->dispatch(new StoryMessage($instance->getRefstory()->getId()));
     }
 
     protected function updateEntityMovie(object $instance): void
@@ -208,25 +190,6 @@ abstract class EventEntityLib
 
     protected function updateEntitySeason(object $instance): void
     {
-        if (!$instance instanceof Season) {
-            return;
-        }
-
-        $asciiSlugger  = new AsciiSlugger();
-        $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
-        $slug      = $unicodeString;
-        $number    = 1;
-        while ($this->seasonRepository->findOneBy(
-            [
-                'refserie' => $instance->getRefserie(),
-                'slug'     => $slug,
-            ]
-        ) && ($instance->getSlug() !== $slug)) {
-            $slug = $unicodeString . '-' . $number;
-            ++$number;
-        }
-
-        $instance->setSlug($slug);
     }
 
     protected function updateEntitySerie(object $instance): void
@@ -244,6 +207,6 @@ abstract class EventEntityLib
             return;
         }
 
-        $this->messageBus->dispatch(new StoryPdfMessage($instance->getId()));
+        $this->messageBus->dispatch(new StoryMessage($instance->getId()));
     }
 }

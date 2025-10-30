@@ -24,57 +24,57 @@ class Category implements Stringable
      * @var Collection<int, self>
      */
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent', cascade: ['persist', 'detach'])]
-    private Collection $children;
+    protected Collection $children;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     /**
      * @var Collection<int, Movie>
      */
     #[ORM\ManyToMany(targetEntity: Movie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
-    private Collection $movies;
+    protected Collection $movies;
 
     /**
      * @var Collection<int, Page>
      */
     #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
-    private Collection $pages;
+    protected Collection $pages;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist', 'detach'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?self $parent = null;
+    protected ?self $parent = null;
 
     /**
      * @var Collection<int, Post>
      */
     #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
-    private Collection $posts;
+    protected Collection $posts;
 
     /**
      * @var Collection<int, Serie>
      */
     #[ORM\ManyToMany(targetEntity: Serie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
-    private Collection $series;
+    protected Collection $series;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'], unique_base: 'type')]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
-    private ?string $slug = null;
+    protected ?string $slug = null;
 
     /**
      * @var Collection<int, Story>
      */
     #[ORM\ManyToMany(targetEntity: Story::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
-    private Collection $stories;
+    protected Collection $stories;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $type = null;
+    protected ?string $type = null;
 
     public function __construct()
     {

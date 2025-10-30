@@ -3,7 +3,9 @@
 namespace Labstag\Command;
 
 use Labstag\Message\MovieMessage;
+use Labstag\Message\SagaMessage;
 use Labstag\Repository\MovieRepository;
+use Labstag\Repository\SagaRepository;
 use NumberFormatter;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -18,6 +20,7 @@ class MoviesUpdateCommand extends Command
 {
     public function __construct(
         protected MovieRepository $movieRepository,
+        protected SagaRepository $sagaRepository,
         protected MessageBusInterface $messageBus,
     )
     {
@@ -28,11 +31,16 @@ class MoviesUpdateCommand extends Command
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
         $movies       = $this->movieRepository->findAllUpdate();
-
-        $progressBar = new ProgressBar($output, count($movies));
+        $sagas        = $this->sagaRepository->findAll();
+        $progressBar  = new ProgressBar($output, count($movies) + count($sagas));
         $progressBar->start();
         foreach ($movies as $movie) {
             $this->messageBus->dispatch(new MovieMessage($movie->getId()));
+            $progressBar->advance();
+        }
+
+        foreach ($sagas as $saga) {
+            $this->messageBus->dispatch(new SagaMessage($saga->getId()));
             $progressBar->advance();
         }
 
@@ -40,6 +48,7 @@ class MoviesUpdateCommand extends Command
 
         $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
         $symfonyStyle->success(sprintf('Movie updated: %s', $numberFormatter->format(count($movies))));
+        $symfonyStyle->success(sprintf('Saga updated: %s', $numberFormatter->format(count($sagas))));
 
         return Command::SUCCESS;
     }

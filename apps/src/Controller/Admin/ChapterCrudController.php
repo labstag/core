@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -13,7 +14,10 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Entity\User;
 use Labstag\Field\WysiwygField;
+use Labstag\Message\StoryMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -25,6 +29,10 @@ class ChapterCrudController extends CrudControllerAbstract
         $this->setActionPublic($actions, 'admin_chapter_w3c', 'admin_chapter_public');
         $this->setEditDetail($actions);
         $this->configureActionsTrash($actions);
+        $action = $this->setUpdateAction();
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
 
         return $actions;
     }
@@ -45,10 +53,9 @@ class ChapterCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $fields = [
-            $this->crudFieldFactory->idField(),
-            $this->crudFieldFactory->slugField(),
+            $this->crudFieldFactory->slugField(readOnly: true),
             $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
             $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
@@ -112,6 +119,22 @@ class ChapterCrudController extends CrudControllerAbstract
         return $this->publicLink($chapter);
     }
 
+    #[Route('/admin/chapter/{entity}/update', name: 'admin_chapter_update')]
+    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
+    {
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $chapter                         = $serviceEntityRepositoryAbstract->find($entity);
+        $messageBus->dispatch(new StoryMessage($chapter->getRefstory()->getId()));
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                return $this->redirect($url);
+            }
+        }
+
+        return $this->redirectToRoute('admin_story_index');
+    }
+
     #[Route('/admin/chapter/{entity}/w3c', name: 'admin_chapter_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
@@ -144,5 +167,21 @@ class ChapterCrudController extends CrudControllerAbstract
         $associationField->setSortProperty('title');
 
         return $associationField;
+    }
+
+    private function setUpdateAction(): Action
+    {
+        $action = Action::new('update', new TranslatableMessage('Update'));
+        $action->linkToUrl(
+            fn (Chapter $chapter): string => $this->generateUrl(
+                'admin_chapter_update',
+                [
+                    'entity' => $chapter->getId(),
+                ]
+            )
+        );
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        return $action;
     }
 }

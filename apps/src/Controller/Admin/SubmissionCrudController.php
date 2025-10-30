@@ -26,14 +26,11 @@ class SubmissionCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
-            [
-                $this->crudFieldFactory->idField(),
-                TextField::new('type', new TranslatableMessage('Type')),
-            ]
+            [TextField::new('type', new TranslatableMessage('Type'))]
         );
         if (Action::DETAIL === $pageName) {
             $this->crudFieldFactory->addFieldsToTab('principal', [$this->addFieldsSubmission($currentEntity)]);

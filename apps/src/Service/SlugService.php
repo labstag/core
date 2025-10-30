@@ -32,7 +32,7 @@ final class SlugService
     public function forEntity(object $entity): string
     {
         foreach ($this->datalibs as $datalib) {
-            if ($datalib->supports($entity)) {
+            if ($datalib->supportsData($entity)) {
                 return $datalib->generateSlug($entity);
             }
         }

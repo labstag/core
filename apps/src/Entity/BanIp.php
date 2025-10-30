@@ -18,19 +18,19 @@ class BanIp
     use TimestampableTrait;
 
     #[ORM\Column]
-    private ?bool $enable = null;
+    protected ?bool $enable = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $internetProtocol = null;
+    protected ?string $internetProtocol = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $reason = null;
+    protected ?string $reason = null;
 
     public function getId(): ?string
     {

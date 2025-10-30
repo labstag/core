@@ -19,52 +19,52 @@ class Star
     use TimestampableTrait;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    protected ?string $description = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private ?bool $enable = null;
+    protected ?bool $enable = null;
 
     #[ORM\Column]
-    private ?int $forks = null;
+    protected ?int $forks = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'star', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $language = null;
+    protected ?string $language = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $license = null;
+    protected ?string $license = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $owner = null;
+    protected ?string $owner = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $repository = null;
+    protected ?string $repository = null;
 
     #[ORM\Column]
-    private ?int $stargazers = null;
+    protected ?int $stargazers = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $url = null;
+    protected ?string $url = null;
 
     #[ORM\Column]
-    private ?int $watchers = null;
+    protected ?int $watchers = null;
 
     public function getDescription(): ?string
     {

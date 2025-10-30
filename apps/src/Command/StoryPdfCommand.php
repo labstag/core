@@ -2,7 +2,7 @@
 
 namespace Labstag\Command;
 
-use Labstag\Message\StoryPdfMessage;
+use Labstag\Message\StoryMessage;
 use Labstag\Repository\StoryRepository;
 use Labstag\Service\StoryService;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -37,7 +37,7 @@ class StoryPdfCommand extends Command
         $progressBar  = new ProgressBar($output, count($stories));
         $progressBar->start();
         foreach ($stories as $story) {
-            $this->messageBus->dispatch(new StoryPdfMessage($story->getId()));
+            $this->messageBus->dispatch(new StoryMessage($story->getId()));
             $progressBar->advance();
         }
 

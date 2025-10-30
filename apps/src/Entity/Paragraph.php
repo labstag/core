@@ -25,88 +25,91 @@ class Paragraph implements Stringable
     use TimestampableTrait;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Block $block = null;
+    protected ?Block $block = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Chapter $chapter = null;
+    protected ?Chapter $chapter = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $classes = null;
+    protected ?string $classes = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $content = null;
+    protected ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Edito $edito = null;
+    protected ?Edito $edito = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $enable = true;
+    protected bool $enable = true;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $fond = null;
+    protected ?string $fond = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $form = null;
+    protected ?string $form = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'paragraph', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $leftposition = null;
+    protected ?bool $leftposition = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Memo $memo = null;
+    protected ?Memo $memo = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $nbr = null;
+    protected ?int $nbr = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Page $page = null;
+    protected ?Page $page = null;
 
     #[ORM\Column]
-    private ?int $position = null;
+    protected ?int $position = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Post $post = null;
+    protected ?Post $post = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs')]
-    private ?Movie $refmovie = null;
+    protected ?Movie $refmovie = null;
+
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    protected ?Saga $saga = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $save = true;
+    protected bool $save = true;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Season $season = null;
+    protected ?Season $season = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Serie $serie = null;
+    protected ?Serie $serie = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Story $story = null;
+    protected ?Story $story = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $type = null;
+    protected ?string $type = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $url = null;
+    protected ?string $url = null;
 
     #[Override]
     public function __toString(): string
@@ -192,6 +195,11 @@ class Paragraph implements Stringable
     public function getRefmovie(): ?Movie
     {
         return $this->refmovie;
+    }
+
+    public function getSaga(): ?Serie
+    {
+        return $this->saga;
     }
 
     public function getSeason(): ?Season
@@ -361,6 +369,13 @@ class Paragraph implements Stringable
     public function setRefmovie(?Movie $movie): static
     {
         $this->refmovie = $movie;
+
+        return $this;
+    }
+
+    public function setSaga(?Saga $saga): static
+    {
+        $this->saga = $saga;
 
         return $this;
     }

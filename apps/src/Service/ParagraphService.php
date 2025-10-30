@@ -36,7 +36,7 @@ final class ParagraphService
     public function addParagraph(object $entity, string $type): ?Paragraph
     {
         $paragraph = null;
-        $all       = $this->getAll($entity::class);
+        $all       = $this->getAll($entity);
         $position  = count($entity->getParagraphs());
         foreach ($all as $row) {
             if ($row != $type) {
@@ -95,15 +95,13 @@ final class ParagraphService
     /**
      * @return mixed[]
      */
-    public function getAll(?string $entity): array
+    public function getAll(?object $entity): array
     {
         $paragraphs = [];
         foreach ($this->paragraphs as $paragraph) {
-            $inUse = $paragraph->useIn();
-            $type  = $paragraph->getType();
             $name  = $paragraph->getName();
-            if ((in_array($entity, $inUse) && $paragraph->isEnable()) || is_null($entity)) {
-                $paragraphs[$name] = $type;
+            if ($paragraph->supports($entity)) {
+                $paragraphs[$name] = $paragraph->getType();
             }
         }
 

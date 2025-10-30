@@ -29,6 +29,7 @@ class SagaService
         );
         if (!$saga instanceof Saga) {
             $saga = new Saga();
+            $saga->setEnable(true);
             $saga->setTitle($tmdbId);
             $saga->setTmdb($tmdbId);
             $this->sagaRepository->save($saga);
@@ -36,6 +37,25 @@ class SagaService
         }
 
         return $saga;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getSagaForForm(): array
+    {
+        $data  = $this->sagaRepository->findAllByTypeMovieEnable();
+        $sagas = [];
+        foreach ($data as $saga) {
+            $movies = $saga->getMovies();
+            if (1 === count($movies)) {
+                continue;
+            }
+
+            $sagas[$saga->getTitle()] = $saga->getSlug();
+        }
+
+        return $sagas;
     }
 
     public function update(Saga $saga): bool

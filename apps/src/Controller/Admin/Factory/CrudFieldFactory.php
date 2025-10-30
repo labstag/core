@@ -20,6 +20,7 @@ use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\TagRepository;
 use Labstag\Service\FileService;
 use RuntimeException;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\File;
 use Vich\UploaderBundle\Form\Type\VichImageType;
@@ -34,18 +35,31 @@ final class CrudFieldFactory
     private array $tabfields = [];
 
     public function __construct(
+        #[AutowireIterator('labstag.datas')]
+        private iterable $datas,
+        #[AutowireIterator('labstag.shortcodes')]
+        private iterable $shortcodes,
         private FileService $fileService,
     )
     {
     }
 
-    public function addFieldIDShortcode(string $type): TextField
+    public function addFieldIDShortcode(string $className): iterable
     {
-        $textField = TextField::new('id', new TranslatableMessage('Shortcode'));
-        $textField->formatValue(fn ($identity): string => sprintf('[%s:%s]', $type . 'url', $identity));
-        $textField->onlyOnDetail();
+        foreach ($this->datas as $data) {
+            $shortcodes = $data->getShortCodes();
+            if (!$data->supportsShortcode($className)) {
+                continue;
+            }
 
-        return $textField;
+            if (0 === count($shortcodes)) {
+                continue;
+            }
+
+            yield from $this->shortcodeField($shortcodes);
+
+            return;
+        }
     }
 
     public function addFieldsToTab(string $tabName, $fields): void
@@ -254,9 +268,11 @@ final class CrudFieldFactory
         );
     }
 
-    public function setTabPrincipal(): void
+    public function setTabPrincipal(string $entity): void
     {
         $this->addTab('principal', FormField::addTab(new TranslatableMessage('Principal')));
+        $this->addFieldsToTab('principal', $this->addFieldIDShortcode($entity));
+        $this->addFieldsToTab('principal', [$this->idField()]);
     }
 
     /**
@@ -297,11 +313,37 @@ final class CrudFieldFactory
         $this->addFieldsToTab('workflows', [$this->workflowField(), $this->stateField()]);
     }
 
-    public function slugField(): SlugField
+    public function shortcodeField(array $shortcodes): iterable
     {
-        return SlugField::new('slug', new TranslatableMessage('Slug'))->hideOnIndex()->setFormTypeOptions(
+        foreach ($this->shortcodes as $shortcode) {
+            if (!in_array($shortcode::class, $shortcodes)) {
+                continue;
+            }
+
+            $textField = TextField::new('id', new TranslatableMessage('Shortcode'));
+            $textField->formatValue(fn ($identity): string => $shortcode->generate($identity));
+            $textField->onlyOnDetail();
+
+            yield $textField;
+        }
+
+        return [];
+    }
+
+    public function slugField($readOnly = false): SlugField
+    {
+        $slugField = SlugField::new('slug', new TranslatableMessage('Slug'));
+        $slugField->hideOnIndex();
+        $slugField->setFormTypeOptions(
             ['required' => false]
-        )->setTargetFieldName('title')->setUnlockConfirmationMessage('Attention, si vous changez le titre, le slug sera modifié');
+        );
+        $slugField->setTargetFieldName('title');
+        $slugField->setUnlockConfirmationMessage('Attention, si vous changez le titre, le slug sera modifié');
+        if ($readOnly) {
+            $slugField->hideOnForm();
+        }
+
+        return $slugField;
     }
 
     public function stateField(): TextField

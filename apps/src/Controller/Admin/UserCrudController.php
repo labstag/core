@@ -46,7 +46,7 @@ class UserCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $choiceField = ChoiceField::new('roles', new TranslatableMessage('Roles'));
         $choiceField->allowMultipleChoices();
         $choiceField->setChoices($this->userService->getRoles());
@@ -113,7 +113,7 @@ class UserCrudController extends CrudControllerAbstract
         foreach ($tab as $key => $label) {
             $collectionField = CollectionField::new($key, $label);
             $collectionField->onlyOnDetail();
-            $collectionField->formatValue(fn ($value): int => count($value));
+            $collectionField->formatValue(fn ($value): int => is_null($value) ? 0 : count($value));
             $fields[] = $collectionField;
         }
 

@@ -37,82 +37,82 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     protected const DATAUNSERIALIZE = 3;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $avatar = null;
+    protected ?string $avatar = null;
 
     #[Vich\UploadableField(mapping: 'avatar', fileNameProperty: 'avatar')]
-    private ?File $avatarFile = null;
+    protected ?File $avatarFile = null;
 
     /**
      * @var Collection<int, Edito>
      */
     #[ORM\OneToMany(targetEntity: Edito::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
-    private Collection $editos;
+    protected Collection $editos;
 
     #[ORM\Column(length: 180, unique: true)]
-    private ?string $email = null;
+    protected ?string $email = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private ?bool $enable = null;
+    protected ?bool $enable = null;
 
     /**
      * @var Collection<int, HttpErrorLogs>
      */
     #[ORM\OneToMany(targetEntity: HttpErrorLogs::class, mappedBy: 'refuser')]
-    private Collection $httpErrorLogs;
+    protected Collection $httpErrorLogs;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(
         length: 2,
         options: ['default' => 'fr']
     )]
-    private ?string $language = null;
+    protected ?string $language = null;
 
     /**
      * @var Collection<int, Memo>
      */
     #[ORM\OneToMany(targetEntity: Memo::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
-    private Collection $memos;
+    protected Collection $memos;
 
     /**
      * @var Collection<int, Page>
      */
     #[ORM\OneToMany(targetEntity: Page::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
-    private Collection $pages;
+    protected Collection $pages;
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
-    private ?string $password = null;
+    protected ?string $password = null;
 
     /**
      * @var Collection<int, Post>
      */
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
-    private Collection $posts;
+    protected Collection $posts;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    private array $roles = ['ROLE_USER'];
+    protected array $roles = ['ROLE_USER'];
 
     /**
      * @var Collection<int, Story>
      */
     #[ORM\OneToMany(targetEntity: Story::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
-    private Collection $stories;
+    protected Collection $stories;
 
     #[ORM\Column(length: 255, unique: true)]
-    private ?string $username = null;
+    protected ?string $username = null;
 
     public function __construct()
     {
@@ -253,14 +253,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     }
 
     /**
-     * @return Collection<int, Story>
-     */
-    public function getHistories(): Collection
-    {
-        return $this->stories;
-    }
-
-    /**
      * @return Collection<int, HttpErrorLogs>
      */
     public function getHttpErrorLogs(): Collection
@@ -324,6 +316,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
+    }
+
+    /**
+     * @return Collection<int, Story>
+     */
+    public function getStories(): Collection
+    {
+        return $this->stories;
     }
 
     /**

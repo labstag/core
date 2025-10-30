@@ -83,12 +83,11 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $maxLength = Crud::PAGE_DETAIL === $pageName ? 1024 : 32;
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
-                $this->crudFieldFactory->idField(),
                 TextField::new('url', new TranslatableMessage('Url'))->setMaxLength($maxLength),
                 TextField::new('domain', new TranslatableMessage('Domain'))->hideOnIndex(),
                 TextField::new('agent', new TranslatableMessage('Agent'))->setMaxLength($maxLength),

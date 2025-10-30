@@ -76,6 +76,13 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         $crud->addFormTheme('admin/form.html.twig');
+        $crud->renderContentMaximized();
+        $crud->renderSidebarMinimized();
+
+        $request = $this->requestStack->getCurrentRequest();
+        $limit   = $request->query->get('limit', 20);
+
+        $crud->setPaginatorPageSize($limit);
 
         return $crud;
     }
@@ -163,12 +170,12 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     {
         $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
 
-        $action = $this->setLinkPublicAction($urlPublic);
+        $action = $this->linkActionFactory->createPublicAction($urlPublic);
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
 
-        $w3cAction = $this->setW3cValidatorAction($urlW3c);
+        $w3cAction = $this->linkActionFactory->createW3cAction($urlW3c);
         $actions->add(Crud::PAGE_EDIT, $w3cAction);
         $actions->add(Crud::PAGE_INDEX, $w3cAction);
         $actions->add(Crud::PAGE_DETAIL, $w3cAction);
@@ -204,15 +211,5 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         assert($objectRepository instanceof ServiceEntityRepositoryAbstract);
 
         return $objectRepository;
-    }
-
-    private function setLinkPublicAction(string $urlPublic): Action
-    {
-        return $this->linkActionFactory->createPublicAction($urlPublic);
-    }
-
-    private function setW3cValidatorAction(string $urlW3c): Action
-    {
-        return $this->linkActionFactory->createW3cAction($urlW3c);
     }
 }

@@ -14,8 +14,9 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Field\FileField;
 use Labstag\Field\WysiwygField;
-use Labstag\Message\StoryPdfMessage;
+use Labstag\Message\StoryMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -31,7 +32,10 @@ class StoryCrudController extends CrudControllerAbstract
         $this->configureActionsTrash($actions);
         $this->setActionMoveChapter($actions);
         $this->setActionNewChapter($actions);
-        $this->configureActionsUpdatePdf($actions);
+        $action = $this->setUpdateAction();
+        $actions->add(Crud::PAGE_DETAIL, $action);
+        $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
 
         return $actions;
     }
@@ -52,7 +56,7 @@ class StoryCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
         $collectionField->setTemplatePath('admin/field/chapters.html.twig');
         $collectionField->hideOnForm();
@@ -63,8 +67,6 @@ class StoryCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
-                $this->crudFieldFactory->addFieldIDShortcode('story'),
-                $this->crudFieldFactory->idField(),
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
@@ -159,14 +161,17 @@ class StoryCrudController extends CrudControllerAbstract
         );
     }
 
-    #[Route('/admin/updatepdf', name: 'admin_story_updatepdf')]
-    public function updatepdf(MessageBusInterface $messageBus): RedirectResponse
+    #[Route('/admin/story/{entity}/update', name: 'admin_story_update')]
+    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
         $serviceEntityRepositoryAbstract = $this->getRepository();
-        $stories                         = $serviceEntityRepositoryAbstract->findAll();
-
-        foreach ($stories as $story) {
-            $messageBus->dispatch(new StoryPdfMessage($story->getId()));
+        $story                           = $serviceEntityRepositoryAbstract->find($entity);
+        $messageBus->dispatch(new StoryMessage($story->getId()));
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                return $this->redirect($url);
+            }
         }
 
         return $this->redirectToRoute('admin_story_index');
@@ -179,21 +184,6 @@ class StoryCrudController extends CrudControllerAbstract
         $story                           = $serviceEntityRepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($story);
-    }
-
-    private function configureActionsUpdatePdf(Actions $actions): void
-    {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $action  = $request->query->get('action', null);
-        if ('trash' == $action) {
-            return;
-        }
-
-        $action = Action::new('updatepdf', new TranslatableMessage('Update PDF'), 'fas fa-wrench');
-        $action->linkToUrl(fn (): string => $this->generateUrl('admin_story_updatepdf'));
-        $action->createAsGlobalAction();
-
-        $actions->add(Crud::PAGE_INDEX, $action);
     }
 
     private function setActionMoveChapter(Actions $actions): void
@@ -223,5 +213,21 @@ class StoryCrudController extends CrudControllerAbstract
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function setUpdateAction(): Action
+    {
+        $action = Action::new('update', new TranslatableMessage('Update'));
+        $action->linkToUrl(
+            fn (Story $story): string => $this->generateUrl(
+                'admin_story_update',
+                [
+                    'entity' => $story->getId(),
+                ]
+            )
+        );
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        return $action;
     }
 }

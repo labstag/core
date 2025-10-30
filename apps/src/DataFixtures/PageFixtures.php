@@ -268,6 +268,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     {
         $this->addParagraphHead($page);
         $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'saga');
         $paragraph = $this->paragraphService->addParagraph($page, 'movie');
         if (is_null($paragraph)) {
             return;

@@ -58,7 +58,7 @@ class SeasonCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $textField = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
         $textField->hideOnIndex();
 
@@ -76,9 +76,9 @@ class SeasonCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->titleField(),
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $textField,
                 AssociationField::new('refserie', new TranslatableMessage('Serie')),
@@ -89,6 +89,7 @@ class SeasonCrudController extends CrudControllerAbstract
                 $wysiwygField,
             ]
         );
+        $this->crudFieldFactory->setTabSEO();
         $this->crudFieldFactory->setTabDate($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields();

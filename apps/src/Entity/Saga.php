@@ -27,39 +27,62 @@ class Saga implements Stringable
     use TimestampableTrait;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    protected ?string $description = null;
+
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    protected ?bool $enable = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
+
+    #[ORM\OneToOne(inversedBy: 'saga', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Movie>
      */
     #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: 'saga')]
-    private Collection $movies;
+    #[ORM\OrderBy(
+        ['releaseDate' => 'ASC']
+    )]
+    protected Collection $movies;
+
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'saga', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    protected Collection $paragraphs;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'])]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
-    private ?string $slug = null;
+    protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tmdb = null;
+    protected ?string $tmdb = null;
 
     public function __construct()
     {
-        $this->movies = new ArrayCollection();
+        $this->movies     = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
     }
 
     #[Override]
@@ -73,6 +96,16 @@ class Saga implements Stringable
         if (!$this->movies->contains($movie)) {
             $this->movies->add($movie);
             $movie->setSaga($this);
+        }
+
+        return $this;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setSaga($this);
         }
 
         return $this;
@@ -98,12 +131,25 @@ class Saga implements Stringable
         return $this->imgFile;
     }
 
+    public function getMeta(): ?Meta
+    {
+        return $this->meta;
+    }
+
     /**
      * @return Collection<int, Movie>
      */
     public function getMovies(): Collection
     {
         return $this->movies;
+    }
+
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
     }
 
     public function getSlug(): ?string
@@ -121,6 +167,11 @@ class Saga implements Stringable
         return $this->tmdb;
     }
 
+    public function isEnable(): ?bool
+    {
+        return $this->enable;
+    }
+
     public function removeMovie(Movie $movie): static
     {
         // set the owning side to null (unless already changed)
@@ -132,9 +183,27 @@ class Saga implements Stringable
         return $this;
     }
 
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getSaga() === $this
+        ) {
+            $paragraph->setStory(null);
+        }
+
+        return $this;
+    }
+
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function setEnable(bool $enable): static
+    {
+        $this->enable = $enable;
 
         return $this;
     }
@@ -158,6 +227,13 @@ class Saga implements Stringable
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setMeta(Meta $meta): static
+    {
+        $this->meta = $meta;
+
+        return $this;
     }
 
     public function setSlug(?string $slug): static

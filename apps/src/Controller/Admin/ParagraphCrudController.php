@@ -52,14 +52,11 @@ class ParagraphCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
-            [
-                $this->crudFieldFactory->idField(),
-                ParagraphParentField::new('parent', new TranslatableMessage('Parent')),
-            ]
+            [ParagraphParentField::new('parent', new TranslatableMessage('Parent'))]
         );
         $this->crudFieldFactory->addFieldsToTab(
             'principal',

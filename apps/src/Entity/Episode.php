@@ -20,50 +20,50 @@ class Episode
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
+    #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
+    protected ?DateTime $airDate = null;
+
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
     protected ?bool $enable = null;
 
-    #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
-    private ?DateTime $airDate = null;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'episode', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
 
     #[ORM\Column]
-    private ?int $number = null;
+    protected ?int $number = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $overview = null;
+    protected ?string $overview = null;
 
     #[ORM\ManyToOne(inversedBy: 'episodes')]
-    private ?Season $refseason = null;
+    protected ?Season $refseason = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $runtime = null;
+    protected ?int $runtime = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tmdb = null;
+    protected ?string $tmdb = null;
 
     #[ORM\Column(name: 'vote_average', nullable: true)]
-    private ?float $voteAverage = null;
+    protected ?float $voteAverage = null;
 
     #[ORM\Column(name: 'vote_count', nullable: true)]
-    private ?int $voteCount = null;
+    protected ?int $voteCount = null;
 
     public function getAirDate(): ?DateTime
     {

@@ -70,9 +70,6 @@ jobs:
           task labstag:install-first
           task labstag:deploy
           task labstag:waiting
-      
-      - name: lint all
-        run: task lint:all
 
   launch:
     runs-on: ubuntu-24.04

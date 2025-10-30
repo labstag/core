@@ -35,9 +35,8 @@ class BanIpCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $fields = [
-            $this->crudFieldFactory->idField(),
             $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
             TextField::new('InternetProtocol', new TranslatableMessage('IP')),
             WysiwygField::new('reason', new TranslatableMessage('Raison')),

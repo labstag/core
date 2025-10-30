@@ -15,14 +15,7 @@ use Exception;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Labstag\Controller\Admin\ParagraphCrudController;
-use Labstag\Entity\Block;
-use Labstag\Entity\Chapter;
-use Labstag\Entity\Edito;
-use Labstag\Entity\Memo;
-use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Post;
-use Labstag\Entity\Story;
 use Labstag\Repository\ServiceEntityRepositoryAbstract;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
@@ -215,16 +208,20 @@ abstract class ParagraphAbstract extends AbstractController
         return '';
     }
 
-    public function isEnable(): bool
-    {
-        return true;
-    }
-
     public function isShow(Paragraph $paragraph): bool
     {
         $paragraphId = $paragraph->getId();
 
         return $this->show[$paragraphId] ?? true;
+    }
+
+    public function supports(?object $object): bool
+    {
+        if (is_null($object)) {
+            return true;
+        }
+
+        return in_array($object::class, $this->useIn());
     }
 
     /**
@@ -240,14 +237,6 @@ abstract class ParagraphAbstract extends AbstractController
     public function update(Paragraph $paragraph): void
     {
         unset($paragraph);
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function useIn(): array
-    {
-        return [];
     }
 
     protected function getOEmbedUrl(string $html): ?string
@@ -381,22 +370,6 @@ abstract class ParagraphAbstract extends AbstractController
         }
 
         $this->show[$paragraph->getId()] = $show;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    protected function useInAll(): array
-    {
-        return [
-            Block::class,
-            Chapter::class,
-            Edito::class,
-            Story::class,
-            Memo::class,
-            Page::class,
-            Post::class,
-        ];
     }
 
     private function setUrlAdmin(Paragraph $paragraph): string|AdminUrlGeneratorInterface

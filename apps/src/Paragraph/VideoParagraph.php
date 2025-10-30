@@ -7,11 +7,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Essence\Essence;
 use Essence\Media;
 use Generator;
+use Labstag\Entity\Block;
+use Labstag\Entity\Chapter;
+use Labstag\Entity\Edito;
+use Labstag\Entity\Memo;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Post;
+use Labstag\Entity\Story;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class VideoParagraph extends ParagraphAbstract
+class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -86,6 +93,27 @@ class VideoParagraph extends ParagraphAbstract
         return 'video';
     }
 
+    #[\Override]
+    public function supports(?object $object): bool
+    {
+        if (is_null($object)) {
+            return true;
+        }
+
+        return in_array(
+            $object::class,
+            [
+                Block::class,
+                Chapter::class,
+                Edito::class,
+                Story::class,
+                Memo::class,
+                Page::class,
+                Post::class,
+            ]
+        );
+    }
+
     #[Override]
     public function update(Paragraph $paragraph): void
     {
@@ -119,14 +147,5 @@ class VideoParagraph extends ParagraphAbstract
         // Télécharger l'image et l'écrire dans le fichier temporaire
         file_put_contents($tempPath, file_get_contents($thumbnailUrl));
         $this->fileService->setUploadedFile($tempPath, $paragraph, 'imgFile');
-    }
-
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
-    {
-        return $this->useInAll();
     }
 }

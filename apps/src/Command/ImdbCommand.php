@@ -42,6 +42,12 @@ class ImdbCommand extends Command
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
         $imdb         = $symfonyStyle->ask('Quel est le code IMDb ?');
+        if (empty($imdb)) {
+            $symfonyStyle->error('Le code IMDB est obligatoire');
+
+            return Command::INVALID;
+        }
+
         $data         = $this->tmdbApi->findByImdb($imdb);
         if (is_null($data)) {
             $symfonyStyle->error("Le code IMDB n'est pas valide");
@@ -94,7 +100,7 @@ class ImdbCommand extends Command
             $serie->setEnable(true);
             $serie->setAdult(false);
             $serie->setImdb($imdb);
-            $serie->setTitle($details['title']);
+            $serie->setTitle($details['name']);
             $serie->setTmdb($tmdbId);
             $this->serieRepository->save($serie);
             $this->messageBus->dispatch(new SerieMessage($serie->getId()));

@@ -67,7 +67,7 @@ class SerieCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $textField = TextField::new('imdb', new TranslatableMessage('Imdb'));
         $textField->hideOnIndex();
 
@@ -89,6 +89,7 @@ class SerieCrudController extends CrudControllerAbstract
         $runtimeField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
         $runtimeField->setTemplatePath('admin/field/runtime-serie.html.twig');
         $runtimeField->hideOnForm();
+        $runtimeField->hideOnIndex();
 
         $trailerField = TextField::new('trailer', new TranslatableMessage('Trailer'));
         $trailerField->hideOnIndex();
@@ -105,7 +106,6 @@ class SerieCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
-                $this->crudFieldFactory->idField(),
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
@@ -121,8 +121,8 @@ class SerieCrudController extends CrudControllerAbstract
                 DateField::new('lastReleaseDate', new TranslatableMessage('Last release date')),
                 $choiceField,
                 $runtimeField,
-                NumberField::new('evaluation', new TranslatableMessage('Evaluation')),
-                IntegerField::new('votes', new TranslatableMessage('Votes')),
+                NumberField::new('evaluation', new TranslatableMessage('Evaluation'))->hideOnIndex(),
+                IntegerField::new('votes', new TranslatableMessage('Votes'))->hideOnIndex(),
                 $trailerField,
                 $wysiwygField,
                 $descriptionField,
@@ -132,6 +132,7 @@ class SerieCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
             ]
         );
+        $this->crudFieldFactory->setTabSEO();
         $this->crudFieldFactory->setTabDate($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields();
@@ -144,6 +145,7 @@ class SerieCrudController extends CrudControllerAbstract
 
         $filters->add('releaseDate');
         $filters->add('countries');
+        $filters->add('inProduction');
 
         $this->crudFieldFactory->addFilterCategories($filters, 'serie');
 

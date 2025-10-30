@@ -5,7 +5,6 @@ namespace Labstag\Command;
 use Labstag\Entity\Movie;
 use Labstag\Message\AddMovieMessage;
 use Labstag\Service\FileService;
-use NumberFormatter;
 use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -72,14 +71,6 @@ class MovieAddCommand extends Command
         $progressBar->finish();
 
         $symfonyStyle->success('All movie added');
-        $numberFormatter = new NumberFormatter('fr_FR', NumberFormatter::DECIMAL);
-        $symfonyStyle->success(
-            sprintf(
-                'Added: %s, Updated: %s',
-                $numberFormatter->format($this->add),
-                $numberFormatter->format($this->update)
-            )
-        );
 
         return Command::SUCCESS;
     }

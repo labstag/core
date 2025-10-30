@@ -5,11 +5,15 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Generator;
+use Labstag\Entity\Edito;
+use Labstag\Entity\Memo;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Post;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class MovieInfoParagraph extends ParagraphAbstract
+class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -59,12 +63,13 @@ class MovieInfoParagraph extends ParagraphAbstract
         return 'movie_info';
     }
 
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
+    #[\Override]
+    public function supports(?object $object): bool
     {
-        return $this->useInAll();
+        if (is_null($object)) {
+            return true;
+        }
+
+        return in_array($object::class, [Edito::class, Memo::class, Page::class, Post::class]);
     }
 }

@@ -27,70 +27,66 @@ class Serie implements Stringable
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
-    protected ?string $slug = null;
-
     #[ORM\Column]
-    private ?bool $adult = null;
+    protected ?bool $adult = null;
 
     /**
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'series', cascade: ['persist', 'detach'])]
-    private Collection $categories;
+    protected Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $certification = null;
+    protected ?string $certification = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $citation = null;
+    protected ?string $citation = null;
 
     /**
      * @var string[]|null
      */
     #[ORM\Column(nullable: true)]
-    private ?array $countries = null;
+    protected ?array $countries = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    protected ?string $description = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private ?bool $enable = null;
+    protected ?bool $enable = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $evaluation = null;
+    protected ?float $evaluation = null;
 
     #[ORM\Column]
-    private ?bool $file = null;
+    protected ?bool $file = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $imdb = null;
+    protected ?string $imdb = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'serie', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $inProduction = null;
+    protected ?bool $inProduction = null;
 
     #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]
-    private ?DateTime $lastreleaseDate = null;
+    protected ?DateTime $lastreleaseDate = null;
 
     #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Meta $meta = null;
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
@@ -99,10 +95,10 @@ class Serie implements Stringable
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
-    private Collection $paragraphs;
+    protected Collection $paragraphs;
 
     #[ORM\Column(name: 'release_date', type: Types::DATE_MUTABLE, nullable: true)]
-    private ?DateTime $releaseDate = null;
+    protected ?DateTime $releaseDate = null;
 
     /**
      * @var Collection<int, Season>
@@ -111,19 +107,23 @@ class Serie implements Stringable
     #[ORM\OrderBy(
         ['number' => 'ASC']
     )]
-    private Collection $seasons;
+    protected Collection $seasons;
+
+    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tmdb = null;
+    protected ?string $tmdb = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $trailer = null;
+    protected ?string $trailer = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $votes = null;
+    protected ?int $votes = null;
 
     public function __construct()
     {
@@ -312,7 +312,7 @@ class Serie implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getSerie() === $this
         ) {
             $paragraph->setStory(null);
         }

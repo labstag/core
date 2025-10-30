@@ -17,16 +17,16 @@ class Submission
      * @var array<string, mixed>
      */
     #[ORM\Column(type: Types::JSON)]
-    private array $data = [];
+    protected array $data = [];
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255)]
-    private string $type;
+    protected string $type;
 
     /**
      * @return array<string, mixed>

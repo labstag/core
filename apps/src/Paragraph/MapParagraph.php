@@ -2,10 +2,17 @@
 
 namespace Labstag\Paragraph;
 
+use Labstag\Entity\Block;
+use Labstag\Entity\Chapter;
+use Labstag\Entity\Edito;
+use Labstag\Entity\Memo;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Post;
+use Labstag\Entity\Story;
 use Override;
 
-class MapParagraph extends ParagraphAbstract
+class MapParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -35,12 +42,24 @@ class MapParagraph extends ParagraphAbstract
         return 'map';
     }
 
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
+    #[\Override]
+    public function supports(?object $object): bool
     {
-        return $this->useInAll();
+        if (is_null($object)) {
+            return true;
+        }
+
+        return in_array(
+            $object::class,
+            [
+                Block::class,
+                Chapter::class,
+                Edito::class,
+                Story::class,
+                Memo::class,
+                Page::class,
+                Post::class,
+            ]
+        );
     }
 }
