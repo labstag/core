@@ -109,9 +109,14 @@ class SerieRepository extends ServiceEntityRepositoryAbstract
     /**
      * @return Query<mixed, mixed>
      */
-    public function getQueryPaginator(): Query
+    public function getQueryPaginator(?string $categorySlug): Query
     {
         $queryBuilder = $this->getQueryBuilder();
+        if (!is_null($categorySlug)) {
+            $queryBuilder->andWhere('c.slug = :categorySlug');
+            $queryBuilder->setParameter('categorySlug', $categorySlug);
+        }
+
         $query        = $queryBuilder->getQuery();
         $dql          = $query->getDQL();
         $query->enableResultCache(3600, 'series-query-paginator-' . md5((string) $dql));

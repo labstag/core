@@ -21,7 +21,11 @@
                 {% if serie.categories|length > 0 %}
                     <div class="categories">
                         {% for category in serie.categories %}
-                            <span class="category-{{ category.slug }}">{{ category.title }}</span>
+                            <span class="category-{{ category.slug }}">
+                                <a href="{{ site_path(category) }}">
+                                    {{ category.title }}
+                                </a>
+                            </span>
                         {% endfor %}
                     </div>
                 {% endif %}
@@ -37,6 +41,9 @@
                 <div class="links">
                     <a href="https://www.imdb.com/title/{{ serie.imdb }}" target="_blank" title="{{ 'IMDB page for the serie'|trans|e('html_attr') }}">
                         {{ 'IMDB page for the serie'|trans }}
+                    </a>
+                    <a href="https://www.themoviedb.org/tv/{{ serie.tmdb }}" target="_blank" title="{{ 'TMDB page for the serie'|trans|e('html_attr') }}">
+                        {{ 'TMDB page for the serie'|trans }}
                     </a>
                 </div>
             </div>

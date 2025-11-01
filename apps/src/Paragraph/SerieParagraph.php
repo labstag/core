@@ -22,9 +22,9 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
         unset($disable);
         /** @var SerieRepository $serviceEntityRepositoryAbstract */
         $serviceEntityRepositoryAbstract = $this->getRepository(Serie::class);
-
-        $pagination = $this->getPaginator(
-            $serviceEntityRepositoryAbstract->getQueryPaginator(),
+        $categorySlug                    = $this->getCategorySlug();
+        $pagination                      = $this->getPaginator(
+            $serviceEntityRepositoryAbstract->getQueryPaginator($categorySlug),
             $paragraph->getNbr()
         );
 

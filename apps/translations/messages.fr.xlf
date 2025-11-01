@@ -1297,6 +1297,18 @@
         <source>Update all</source>
         <target>Tout mettre à jour</target>
       </trans-unit>
+      <trans-unit id="jB3tm.3" resname="Category %category%">
+        <source>Category %category%</source>
+        <target>Catégorie %category%</target>
+      </trans-unit>
+      <trans-unit id="lmCfie2" resname="Tag %tag%">
+        <source>Tag %tag%</source>
+        <target>Tag %tag%</target>
+      </trans-unit>
+      <trans-unit id="E7kO2zE" resname="TMDB page for the serie">
+        <source>TMDB page for the serie</source>
+        <target>Page TMDB de la série</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

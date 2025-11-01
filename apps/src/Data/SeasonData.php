@@ -6,6 +6,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Season;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SeasonData extends DataAbstract implements DataInterface
 {
@@ -14,9 +16,11 @@ class SeasonData extends DataAbstract implements DataInterface
         protected FileService $fileService,
         protected ConfigurationService $configurationService,
         protected EntityManagerInterface $entityManager,
+        protected RequestStack $requestStack,
+        protected TranslatorInterface $translator,
     )
     {
-        parent::__construct($fileService, $configurationService, $entityManager);
+        parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator);
     }
 
     #[\Override]

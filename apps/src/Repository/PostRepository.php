@@ -59,9 +59,18 @@ class PostRepository extends ServiceEntityRepositoryAbstract
     /**
      * @return Query<mixed, mixed>
      */
-    public function getQueryPaginator(): Query
+    public function getQueryPaginator(?string $categorySlug, ?string $tagSlug): Query
     {
         $queryBuilder = $this->getOptimizedBaseQB();
+        if ($categorySlug) {
+            $queryBuilder->andWhere('c.slug = :categorySlug');
+            $queryBuilder->setParameter('categorySlug', $categorySlug);
+        }
+
+        if ($tagSlug) {
+            $queryBuilder->andWhere('t.slug = :tagSlug');
+            $queryBuilder->setParameter('tagSlug', $tagSlug);
+        }
 
         return $this->cacheQuery($queryBuilder->getQuery(), 'query-paginator', 300);
     }
@@ -87,13 +96,8 @@ class PostRepository extends ServiceEntityRepositoryAbstract
         $queryBuilder = $this->getQueryBuilder();
         // Relations hypothétiques : tags, categories, meta (ajuster selon mapping réel)
         $queryBuilder->leftJoin('p.tags', 't')->addSelect('t');
-        if ($this->getEntityManager()->getClassMetadata(Post::class)->hasAssociation('categories')) {
-            $queryBuilder->leftJoin('p.categories', 'c')->addSelect('c');
-        }
-
-        if ($this->getEntityManager()->getClassMetadata(Post::class)->hasAssociation('meta')) {
-            $queryBuilder->leftJoin('p.meta', 'm')->addSelect('m');
-        }
+        $queryBuilder->leftJoin('p.categories', 'c')->addSelect('c');
+        $queryBuilder->leftJoin('p.meta', 'm')->addSelect('m');
 
         return $queryBuilder;
     }

@@ -232,6 +232,24 @@ abstract class ParagraphAbstract extends AbstractController
         unset($paragraph);
     }
 
+    protected function getCategorySlug(): ?string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $slug    = $request->attributes->get('slug');
+
+        if (0 === substr_count((string) $slug, '/')) {
+            return null;
+        }
+
+        $slugSecond = basename((string) $slug);
+
+        if (0 === substr_count($slugSecond, 'category-')) {
+            return null;
+        }
+
+        return str_replace('category-', '', $slugSecond);
+    }
+
     protected function getOEmbedUrl(string $html): ?string
     {
         $domDocument = new DOMDocument();
@@ -268,6 +286,24 @@ abstract class ParagraphAbstract extends AbstractController
         }
 
         return $entityRepository;
+    }
+
+    protected function getTagSlug(): ?string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $slug    = $request->attributes->get('slug');
+
+        if (0 === substr_count((string) $slug, '/')) {
+            return null;
+        }
+
+        $slugSecond = basename((string) $slug);
+
+        if (0 === substr_count($slugSecond, 'tag-')) {
+            return null;
+        }
+
+        return str_replace('tag-', '', $slugSecond);
     }
 
     /**
