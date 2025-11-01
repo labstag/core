@@ -20,9 +20,8 @@ final class UploadFileField implements FieldInterface
      */
     public static function new(string $propertyName, $label = null): self
     {
-        $deleteLabel      = new TranslatableMessage('Delete image');
+        $deleteLabel      = new TranslatableMessage('Delete file');
         $downloadLabel    = new TranslatableMessage('Download');
-        $mimeTypesMessage = new TranslatableMessage('Please upload a valid image (JPEG, PNG, GIF, WebP).');
         $maxSizeMessage   = new TranslatableMessage(
             'The file is too large. Its size should not exceed {{ limit }}.'
         );
@@ -44,7 +43,6 @@ final class UploadFileField implements FieldInterface
                     new File(
                         [
                             'maxSize'          => ini_get('upload_max_filesize'),
-                            'mimeTypesMessage' => $mimeTypesMessage->__toString(),
                             'maxSizeMessage'   => $maxSizeMessage->__toString(),
                         ]
                     ),

@@ -16,6 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Field\ParagraphsField;
+use Labstag\Field\UploadFileField;
 use Labstag\Field\UploadImageField;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\TagRepository;
@@ -145,6 +146,22 @@ final class CrudFieldFactory
         );
 
         return $associationField;
+    }
+
+    public function fileField(
+        string $type,
+        string $pageName,
+        string $entityFqcn,
+        ?string $label = null,
+    ): TextField|UploadFileField
+    {
+        if ('edit' === $pageName || 'new' === $pageName) {
+            return UploadFileField::new($type . 'File', $label ?? new TranslatableMessage('File'));
+        }
+
+        $this->fileService->getBasePath($entityFqcn, $type . 'File');
+
+        return TextField::new($type, $label ?? new TranslatableMessage('File'));
     }
 
     public function getConfigureFields(): iterable
