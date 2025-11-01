@@ -41,7 +41,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function addLinksFooter1(Block $block): void
     {
-        $data = $block->getData();
+        $data          = $block->getData();
         $data['links'] = [];
         $page          = $this->getPageByTitle('Contact');
         $this->setLink($page, $data);
@@ -53,7 +53,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function addLinksFooter2(Block $block): void
     {
-        $data = $block->getData();
+        $data          = $block->getData();
         $data['links'] = [];
         $page          = $this->getPageByTitle('Mentions légales');
         $this->setLink($page, $data);
@@ -64,7 +64,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function addLinksHeader(Block $block): void
     {
-        $data = $block->getData();
+        $data          = $block->getData();
         $data['links'] = [];
         $page          = $this->getPageByTitle('Posts');
         $this->setLink($page, $data);

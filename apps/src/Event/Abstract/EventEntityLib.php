@@ -51,6 +51,18 @@ abstract class EventEntityLib
     {
     }
 
+    protected function addParagraph(object $instance, string $type): void
+    {
+        $paragraphs = $instance->getParagraphs();
+        foreach ($paragraphs as $paragraph) {
+            if ($type == $paragraph->getCode()) {
+                return;
+            }
+        }
+
+        $this->paragraphService->addParagraph($instance, $type);
+    }
+
     protected function initEntityMeta(object $instance): void
     {
         $tab = [
@@ -143,6 +155,8 @@ abstract class EventEntityLib
         }
 
         if (PageEnum::HOME->value != $instance->getType()) {
+            $this->addParagraph($instance, 'head');
+
             return;
         }
 

@@ -43,6 +43,6 @@ class HeadParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        return $object::class == Page::class;
+        return Page::class == $object::class;
     }
 }
