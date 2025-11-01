@@ -68,7 +68,7 @@ class SeasonListParagraph extends ParagraphAbstract implements ParagraphInterfac
         return 'season-list';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {
@@ -76,7 +76,7 @@ class SeasonListParagraph extends ParagraphAbstract implements ParagraphInterfac
         }
 
         $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
             [
                 'type' => $this->getType(),
             ]

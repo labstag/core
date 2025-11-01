@@ -6,7 +6,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Generator;
 use Labstag\Entity\Block;
-use Labstag\Entity\Link;
 use Labstag\Entity\Page;
 use Override;
 
@@ -42,83 +41,44 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function addLinksFooter1(Block $block): void
     {
-        $page = $this->getPageByTitle('Contact');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-
+        $data = $block->getData();
+        $data['links'] = [];
+        $page          = $this->getPageByTitle('Contact');
+        $this->setLink($page, $data);
         $page = $this->getPageByTitle('Plan du site');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
+        $this->setLink($page, $data);
+
+        $block->setData($data);
     }
 
     private function addLinksFooter2(Block $block): void
     {
-        $page = $this->getPageByTitle('Mentions légales');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-
+        $data = $block->getData();
+        $data['links'] = [];
+        $page          = $this->getPageByTitle('Mentions légales');
+        $this->setLink($page, $data);
         $page = $this->getPageByTitle('Données personnelles');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
+        $this->setLink($page, $data);
+        $block->setData($data);
     }
 
     private function addLinksHeader(Block $block): void
     {
-        $page = $this->getPageByTitle('Posts');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-
+        $data = $block->getData();
+        $data['links'] = [];
+        $page          = $this->getPageByTitle('Posts');
+        $this->setLink($page, $data);
         $page = $this->getPageByTitle('Mes étoiles github');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-
+        $this->setLink($page, $data);
         $page = $this->getPageByTitle('Mes derniers films vus');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-
+        $this->setLink($page, $data);
         $page = $this->getPageByTitle('Mes séries favorites');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
-
+        $this->setLink($page, $data);
         $page = $this->getPageByTitle('Histoires');
-        if (!is_null($page)) {
-            $link = new Link();
-            $link->setTitle($page->getTitle());
-            $link->setUrl('[pageurl:' . $page->getId() . ']');
-            $block->addLink($link);
-        }
+        $this->setLink($page, $data);
+        $page = $this->getPageByTitle('Mon parcours pro');
+        $this->setLink($page, $data);
+        $block->setData($data);
     }
 
     private function addParagraphsHead(Block $block): void
@@ -133,6 +93,11 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($block, 'season-list');
         $this->paragraphService->addParagraph($block, 'episode-list');
         $this->paragraphService->addParagraph($block, 'saga-list');
+    }
+
+    private function addParagraphsTest(Block $block): void
+    {
+        $this->paragraphService->addParagraph($block, 'chapter-lastnext');
     }
 
     /**
@@ -222,11 +187,6 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         yield $block;
     }
 
-    private function addParagraphsTest(Block $block): void
-    {
-        $this->paragraphService->addParagraph($block, 'chapter-lastnext');
-    }
-
     private function getPageByTitle(string $pageTitle): ?Page
     {
         $page = null;
@@ -242,5 +202,19 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         }
 
         return $page;
+    }
+
+    private function setLink(?Page $page, array &$data): void
+    {
+        if (!$page instanceof Page) {
+            return;
+        }
+
+        $data['links'][] = [
+            'title'   => $page->getTitle(),
+            'url'     => '[pageurl:' . $page->getId() . ']',
+            'classes' => null,
+            'blank'   => false,
+        ];
     }
 }

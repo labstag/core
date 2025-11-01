@@ -98,7 +98,7 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'saga';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {
@@ -106,7 +106,7 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
         }
 
         $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
             [
                 'type' => $this->getType(),
             ]

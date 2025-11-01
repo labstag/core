@@ -44,7 +44,7 @@ class HeadChapterParagraph extends ParagraphAbstract implements ParagraphInterfa
         return 'head-chapter';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {
@@ -52,7 +52,7 @@ class HeadChapterParagraph extends ParagraphAbstract implements ParagraphInterfa
         }
 
         $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
             [
                 'type' => $this->getType(),
             ]

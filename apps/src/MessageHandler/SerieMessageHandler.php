@@ -33,7 +33,7 @@ final class SerieMessageHandler
         }
 
         $meta = $serie->getMeta();
-        if (!$meta instanceof \Labstag\Entity\Meta) {
+        if (!$meta instanceof Meta) {
             $meta = new Meta();
             $serie->setMeta($meta);
         }

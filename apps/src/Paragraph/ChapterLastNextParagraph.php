@@ -55,7 +55,7 @@ class ChapterLastNextParagraph extends ParagraphAbstract implements ParagraphInt
         return 'chapter-lastnext';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {
@@ -63,7 +63,7 @@ class ChapterLastNextParagraph extends ParagraphAbstract implements ParagraphInt
         }
 
         $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
             [
                 'type' => $this->getType(),
             ]

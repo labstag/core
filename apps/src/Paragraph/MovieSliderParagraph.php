@@ -76,7 +76,7 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
         return 'movie-slider';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {
@@ -84,7 +84,7 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
         }
 
         $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
             [
                 'type' => $this->getType(),
             ]

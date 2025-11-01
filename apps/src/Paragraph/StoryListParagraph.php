@@ -23,7 +23,10 @@ class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
         /** @var StoryRepository $serviceEntityRepositoryAbstract */
         $serviceEntityRepositoryAbstract = $this->getRepository(Story::class);
 
-        $pagination = $this->getPaginator($serviceEntityRepositoryAbstract->getQueryPaginator(), $paragraph->getNbr());
+        $pagination = $this->getPaginator(
+            $serviceEntityRepositoryAbstract->getQueryPaginator(),
+            $paragraph->getNbr()
+        );
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
@@ -66,7 +69,7 @@ class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'story-list';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {
@@ -74,7 +77,7 @@ class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
         }
 
         $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
             [
                 'type' => $this->getType(),
             ]

@@ -58,7 +58,7 @@ class TextParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'text';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {

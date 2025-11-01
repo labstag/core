@@ -111,6 +111,9 @@ class Paragraph implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $url = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $data = null;
+
     #[Override]
     public function __toString(): string
     {
@@ -135,6 +138,11 @@ class Paragraph implements Stringable
     public function getContent(): ?string
     {
         return $this->content;
+    }
+
+    public function getData(): ?array
+    {
+        return $this->data;
     }
 
     public function getEdito(): ?Edito
@@ -271,6 +279,13 @@ class Paragraph implements Stringable
     public function setContent(?string $content): static
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function setData(?array $data): static
+    {
+        $this->data = $data;
 
         return $this;
     }

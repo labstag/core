@@ -3,13 +3,13 @@
 namespace Labstag\Block;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use Generator;
 use Labstag\Entity\Block;
-use Labstag\Form\LinkType;
+use Labstag\Form\Block\DataLinkType;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\TranslatableMessage;
 
 class LinksBlock extends BlockAbstract
 {
@@ -38,8 +38,9 @@ class LinksBlock extends BlockAbstract
             ]
         );
 
-        $links = $this->correctionLinks($block);
-        if ([] === $links) {
+        $data  = $block->getData();
+        $links = $data['links'] ?? [];
+        if (0 === count($links)) {
             $this->logger->debug(
                 'No valid links found',
                 [
@@ -50,6 +51,8 @@ class LinksBlock extends BlockAbstract
 
             return;
         }
+
+        $links = $this->correctionLinks($links);
 
         $this->setData(
             $block,
@@ -69,11 +72,10 @@ class LinksBlock extends BlockAbstract
     {
         unset($block, $pageName);
 
-        $collectionField = CollectionField::new('links', new TranslatableMessage('Links'));
-        $collectionField->allowAdd(true);
-        $collectionField->allowDelete(true);
-        $collectionField->setEntryType(LinkType::class);
-        yield $collectionField;
+        yield FormField::addColumn(12);
+        $fieldData = Field::new('data', 'Bloc de données');
+        $fieldData->setFormType(DataLinkType::class);
+        yield $fieldData;
     }
 
     #[Override]
@@ -91,18 +93,17 @@ class LinksBlock extends BlockAbstract
     /**
      * @return mixed[]
      */
-    private function correctionLinks(Block $block): array
+    private function correctionLinks(array $links): array
     {
-        $links = $block->getLinks();
         $data  = [];
 
         foreach ($links as $link) {
-            $url = $this->shortCodeService->getContent($link->getUrl());
+            $url = $this->shortCodeService->getContent($link['url']);
             if (null === $url) {
                 continue;
             }
 
-            $link->setUrl($url);
+            $link['url'] = $url;
 
             $data[] = $link;
         }

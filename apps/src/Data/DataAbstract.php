@@ -20,11 +20,6 @@ abstract class DataAbstract
     {
     }
 
-    protected function getHome(): ?object
-    {
-        return $this->entityManager->getRepository(Page::class)->findOneBy(['type' => PageEnum::HOME->value]);
-    }
-
     public function asset(mixed $entity, string $field): string
     {
         return $this->fileService->asset($entity, $field);
@@ -38,6 +33,15 @@ abstract class DataAbstract
     protected function configPlaceholder(): string
     {
         return $this->fileService->asset($this->configurationService->getConfiguration(), 'placeholder');
+    }
+
+    protected function getHome(): ?object
+    {
+        return $this->entityManager->getRepository(Page::class)->findOneBy(
+            [
+                'type' => PageEnum::HOME->value,
+            ]
+        );
     }
 
     protected function globalPlaceholder(string $key): string

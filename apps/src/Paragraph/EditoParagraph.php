@@ -66,7 +66,7 @@ class EditoParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'edito';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {
@@ -74,7 +74,7 @@ class EditoParagraph extends ParagraphAbstract implements ParagraphInterface
         }
 
         $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
             [
                 'type' => $this->getType(),
             ]

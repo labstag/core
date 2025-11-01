@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
-use Labstag\Field\FileField;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\StoryMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -73,7 +72,6 @@ class StoryCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $collectionField,
                 $wysiwygField,
-                FileField::new('pdf', new TranslatableMessage('pdf')),
             ]
         );
 

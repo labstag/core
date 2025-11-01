@@ -23,7 +23,10 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
         /** @var SerieRepository $serviceEntityRepositoryAbstract */
         $serviceEntityRepositoryAbstract = $this->getRepository(Serie::class);
 
-        $pagination = $this->getPaginator($serviceEntityRepositoryAbstract->getQueryPaginator(), $paragraph->getNbr());
+        $pagination = $this->getPaginator(
+            $serviceEntityRepositoryAbstract->getQueryPaginator(),
+            $paragraph->getNbr()
+        );
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
@@ -66,7 +69,7 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'serie';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {
@@ -74,7 +77,7 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
         }
 
         $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
             [
                 'type' => $this->getType(),
             ]

@@ -34,10 +34,6 @@ class ImdbCommand extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);

@@ -89,9 +89,4 @@ class PageData extends DataAbstract implements DataInterface
             ['slug' => $slug]
         );
     }
-
-    protected function getShortCode1($matches): string
-    {
-        return '';
-    }
 }

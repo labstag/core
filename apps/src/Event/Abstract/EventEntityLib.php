@@ -13,11 +13,13 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Redirection;
 use Labstag\Entity\Saga;
+use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
 use Labstag\Message\MovieMessage;
 use Labstag\Message\SagaMessage;
+use Labstag\Message\SeasonMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Message\StoryMessage;
 use Labstag\Repository\ChapterRepository;
@@ -190,6 +192,11 @@ abstract class EventEntityLib
 
     protected function updateEntitySeason(object $instance): void
     {
+        if (!$instance instanceof Season) {
+            return;
+        }
+
+        $this->messageBus->dispatch(new SeasonMessage($instance->getId()));
     }
 
     protected function updateEntitySerie(object $instance): void

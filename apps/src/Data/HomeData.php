@@ -2,9 +2,6 @@
 
 namespace Labstag\Data;
 
-use Labstag\Entity\Page;
-use Labstag\Enum\PageEnum;
-
 class HomeData extends DataAbstract implements DataInterface
 {
     public function generateSlug(object $entity): string

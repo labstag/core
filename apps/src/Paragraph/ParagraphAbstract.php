@@ -28,6 +28,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -79,6 +80,7 @@ abstract class ParagraphAbstract extends AbstractController
         protected SlugService $slugService,
         protected ConfigurationService $configurationService,
         protected Environment $twigEnvironment,
+        protected ParameterBagInterface $parameterBag,
     )
     {
     }
@@ -213,15 +215,6 @@ abstract class ParagraphAbstract extends AbstractController
         $paragraphId = $paragraph->getId();
 
         return $this->show[$paragraphId] ?? true;
-    }
-
-    public function supports(?object $object): bool
-    {
-        if (is_null($object)) {
-            return true;
-        }
-
-        return in_array($object::class, $this->useIn());
     }
 
     /**

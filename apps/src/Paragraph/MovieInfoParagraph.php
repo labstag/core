@@ -63,7 +63,7 @@ class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'movie_info';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {
