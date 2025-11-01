@@ -223,7 +223,7 @@ class SerieCrudController extends CrudControllerAbstract
     public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
         $serviceEntityRepositoryAbstract = $this->getRepository();
-        $series                          = $serviceEntityRepositoryAbstract->all();
+        $series                          = $serviceEntityRepositoryAbstract->findAll();
         foreach ($series as $serie) {
             $messageBus->dispatch(new SerieMessage($serie->getId()));
         }
