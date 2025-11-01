@@ -68,7 +68,17 @@ class EpisodeCrudController extends CrudControllerAbstract
             function ($value, $entity) {
                 unset($value);
 
-                return $entity->getRefseason()?->getRefserie();
+                $season = $entity->getRefseason();
+                if (is_null($season)) {
+                    return '';
+                }
+                
+                $serie = $season->getRefserie();
+                if (is_null($serie)) {
+                    return '';
+                }
+
+                return $serie->getTitle();
             }
         );
         $integerField = IntegerField::new('runtime', new TranslatableMessage('Runtime'));
