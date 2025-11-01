@@ -1289,6 +1289,14 @@
         <source>Formations</source>
         <target>Formations</target>
       </trans-unit>
+      <trans-unit id="wEVMxO9" resname="Delete file">
+        <source>Delete file</source>
+        <target>Supprimer le fichier</target>
+      </trans-unit>
+      <trans-unit id="jgCQf56" resname="Update all">
+        <source>Update all</source>
+        <target>Tout mettre à jour</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

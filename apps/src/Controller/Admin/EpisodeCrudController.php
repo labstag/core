@@ -72,7 +72,7 @@ class EpisodeCrudController extends CrudControllerAbstract
                 if (is_null($season)) {
                     return '';
                 }
-                
+
                 $serie = $season->getRefserie();
                 if (is_null($serie)) {
                     return '';

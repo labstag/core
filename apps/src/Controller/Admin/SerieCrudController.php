@@ -48,6 +48,13 @@ class SerieCrudController extends CrudControllerAbstract
         $this->configureActionsTrash($actions);
         $this->configureActionsUpdateImage();
 
+        $action = Action::new('updateAll', new TranslatableMessage('Update all'), 'fas fa-sync-alt');
+        $action->displayAsLink();
+        $action->linkToCrudAction('updateAll');
+        $action->createAsGlobalAction();
+
+        $actions->add(Crud::PAGE_INDEX, $action);
+
         return $actions;
     }
 
@@ -208,6 +215,17 @@ class SerieCrudController extends CrudControllerAbstract
             if (is_string($url) && '' !== $url) {
                 return $this->redirect($url);
             }
+        }
+
+        return $this->redirectToRoute('admin_serie_index');
+    }
+
+    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    {
+        $serviceEntityRepositoryAbstract = $this->getRepository();
+        $series                          = $serviceEntityRepositoryAbstract->all();
+        foreach ($series as $serie) {
+            $messageBus->dispatch(new SerieMessage($serie->getId()));
         }
 
         return $this->redirectToRoute('admin_serie_index');
