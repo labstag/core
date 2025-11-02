@@ -11,7 +11,7 @@ framework:
       policy: 'token_bucket'
       limit: 100
       interval: '1 hour'
-  trusted_proxies: '%env(default::TRUSTED_PROXIES)%'
+  trusted_proxies: '%env(TRUSTED_PROXIES)%'
   secret: '%env(APP_SECRET)%'
   csrf_protection: true
   handle_all_throwables: true
