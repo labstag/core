@@ -100,9 +100,9 @@
         "ecs-fix": "ecs check --fix --ansi",
         "rector": "rector process --clear-cache",
         "rector-dry": "rector process --clear-cache --dry-run",
-        "phpmnd": "phpmnd config features public src tests",
-        "simple-phpunit": "simple-phpunit --verbose",
-        "simple-phpunit-unit-integration": "simple-phpunit --testsuite unit,integration --verbose",
+        "phpmnd": "phpmnd config public src tests",
+        "simple-phpunit": "simple-phpunit",
+        "simple-phpunit-unit-integration": "simple-phpunit --testsuite unit,integration",
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
@@ -119,13 +119,13 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": false,
+            "allow-contrib": true,
             "require": "7.3.*"
         }
     },
     "require-dev": {
         "aalaap/faker-youtube": "2.0.*",
-        "behat/behat": "3.25.*",
+        "dama/doctrine-test-bundle": "*",
         "doctrine/doctrine-fixtures-bundle": "4.3.*",
         "fakerphp/faker": "1.24.*",
         "friendsofphp/php-cs-fixer": "3.89.*",

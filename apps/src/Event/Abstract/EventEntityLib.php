@@ -55,7 +55,7 @@ abstract class EventEntityLib
     {
         $paragraphs = $instance->getParagraphs();
         foreach ($paragraphs as $paragraph) {
-            if ($type == $paragraph->getCode()) {
+            if ($type == $paragraph->getType()) {
                 return;
             }
         }
@@ -68,6 +68,10 @@ abstract class EventEntityLib
         $tab = [
             Page::class,
             Chapter::class,
+            Saga::class,
+            Season::class,
+            Serie::class,
+            Story::class,
             Post::class,
         ];
 

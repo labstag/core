@@ -33,8 +33,11 @@ doctrine:
 when@test:
   doctrine:
     dbal:
+      # Use SQLite file database for tests (more stable than in-memory)
+      url: 'sqlite:///%kernel.project_dir%/var/test.db'
       # "TEST_TOKEN" is typically set by ParaTest
-      dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+      # Only add suffix for non-SQLite databases
+      # dbname_suffix: '_test%env(default::TEST_TOKEN)%'
 
 when@prod:
   doctrine:
