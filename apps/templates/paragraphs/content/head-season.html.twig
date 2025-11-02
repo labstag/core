@@ -18,7 +18,11 @@
                     {% if serie.categories|length > 0 %}
                         <div class="categories">
                             {% for category in serie.categories %}
-                                <span class="category-{{ category.slug }}">{{ category.title }}</span>
+                                <span class="category-{{ category.slug }}">
+                                    <a href="{{ site_path(category) }}">
+                                        {{ category.title }}
+                                    </a>
+                                </span>
                             {% endfor %}
                         </div>
                     {% endif %}
