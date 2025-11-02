@@ -54,7 +54,7 @@ jobs:
       
       - name: Setup environment files
         run: |
-          cp apps/.env.test apps/.env
+          cp apps/.env.example apps/.env
           cp .env.example .env
       
       - name: Setup database and infrastructure
@@ -124,7 +124,7 @@ jobs:
       
       - name: Setup environment files
         run: |
-          cp apps/.env.test apps/.env
+          cp apps/.env.example apps/.env
           cp .env.example .env
       
       - name: Setup database and infrastructure
