@@ -16,8 +16,12 @@ class BlockRepository extends RepositoryAbstract
         parent::__construct($managerRegistry, Block::class);
     }
 
-    public function findAllOrderedByRegion(QueryBuilder $queryBuilder): void
+    public function findAllOrderedByRegion(?QueryBuilder $queryBuilder): void
     {
+        if ($queryBuilder === null) {
+            $queryBuilder = $this->createQueryBuilder('b');
+        }
+
         $alias = $queryBuilder->getRootAliases()[0] ?? 'entity';
         $queryBuilder->resetDQLPart('orderBy');
         $caseExpr = 'CASE '

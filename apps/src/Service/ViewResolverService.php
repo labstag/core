@@ -109,7 +109,8 @@ final class ViewResolverService
      */
     private function getBlocks(array $data, bool $disable): array
     {
-        $queryBuilder = $this->blockRepository->findAllOrderedByRegion();
+        $queryBuilder = $this->blockRepository->createQueryBuilder('b');
+        $this->blockRepository->findAllOrderedByRegion($queryBuilder);
         $query        = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'block-position');
 
