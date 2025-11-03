@@ -8,7 +8,6 @@ includes:
 parameters:
     paths:
         - config
-        - features
         - public
         - src
         - tests

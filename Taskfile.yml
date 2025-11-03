@@ -434,7 +434,7 @@ tasks:
     cmds:
     - task: labstag:cmd-exec
       vars:
-        COMMAND: "php -d memory_limit=-1 -d error_reporting=24575 bin/phpmd config,features,public,src,tests ansi phpmd.xml"
+        COMMAND: "php -d memory_limit=-1 -d error_reporting=24575 bin/phpmd config,public,src,tests ansi phpmd.xml"
 
   lint:phpmnd:
     desc: "Detect magic numbers with PHPMND"
@@ -603,6 +603,9 @@ tasks:
 
   lint:all:
     desc: "Run all available linters"
+    silent: true
+    vars:
+      SKIP_DOCKER: '{{.SKIP_DOCKER | default "false"}}'
     cmds:
     - task: lint:yml
       vars:
@@ -611,7 +614,12 @@ tasks:
       vars:
         IGNORE_DIR: "lampy,taskfiles"
     - task: lint:action
-    - task: lint:docker
+    - |
+      if [ "{{.SKIP_DOCKER}}" = "true" ]; then
+        echo "⏭  Skip lint:docker"
+      else
+        task lint:docker DOCKERCOMPOSEFILE="{{.DOCKERCOMPOSEFILE}}"
+      fi
     - task: cmd:validate_outdated
     - npm run eslint:fix
     - npm run lint:stylelint:fix
