@@ -10,9 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Chapter;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
-use Labstag\Field\FileField;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\StoryMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,6 +33,13 @@ class StoryCrudController extends CrudControllerAbstract
         $action = $this->setUpdateAction();
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
+        $actions->add(Crud::PAGE_INDEX, $action);
+
+        $action = Action::new('updateAll', new TranslatableMessage('Update all'), 'fas fa-sync-alt');
+        $action->displayAsLink();
+        $action->linkToCrudAction('updateAll');
+        $action->createAsGlobalAction();
+
         $actions->add(Crud::PAGE_INDEX, $action);
 
         return $actions;
@@ -73,7 +78,6 @@ class StoryCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $collectionField,
                 $wysiwygField,
-                FileField::new('pdf', new TranslatableMessage('pdf')),
             ]
         );
 
@@ -105,8 +109,6 @@ class StoryCrudController extends CrudControllerAbstract
         $story = new $entityFqcn();
         $this->workflowService->init($story);
         $story->setRefuser($this->getUser());
-        $meta = new Meta();
-        $story->setMeta($meta);
 
         return $story;
     }
@@ -172,6 +174,17 @@ class StoryCrudController extends CrudControllerAbstract
             if (is_string($url) && '' !== $url) {
                 return $this->redirect($url);
             }
+        }
+
+        return $this->redirectToRoute('admin_story_index');
+    }
+
+    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    {
+        $serviceEntityRepositoryAbstract  = $this->getRepository();
+        $stories                          = $serviceEntityRepositoryAbstract->findAll();
+        foreach ($stories as $story) {
+            $messageBus->dispatch(new StoryMessage($story->getId()));
         }
 
         return $this->redirectToRoute('admin_story_index');

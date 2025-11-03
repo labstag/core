@@ -75,6 +75,12 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $movies->setType(PageEnum::MOVIES->value);
         $this->setParagraphsMovie($movies);
 
+        $cvpage = new Page();
+        $cvpage->setPage($home);
+        $cvpage->setTitle('Mon parcours pro');
+        $cvpage->setType(PageEnum::CV->value);
+        $this->setParagraphsCV($cvpage);
+
         $series = new Page();
         $series->setPage($home);
         $series->setTitle('Mes séries favorites');
@@ -121,14 +127,16 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $mentions->setPage($home);
         $mentions->setTitle('Mentions légales');
         $mentions->setType(PageEnum::PAGE->value);
-        $this->addParagraphHead($mentions);
+
+        $this->paragraphService->addParagraph($mentions, 'head');
         $this->addParagraphText($mentions);
 
         $donneespersonnelles = new Page();
         $donneespersonnelles->setPage($home);
         $donneespersonnelles->setTitle('Données personnelles');
         $donneespersonnelles->setType(PageEnum::PAGE->value);
-        $this->addParagraphHead($donneespersonnelles);
+
+        $this->paragraphService->addParagraph($donneespersonnelles, 'head');
         $this->addParagraphText($donneespersonnelles);
 
         return [
@@ -142,6 +150,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $contact,
             $sitemap,
             $mentions,
+            $cvpage,
             $donneespersonnelles,
         ];
     }
@@ -167,7 +176,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsContact(Page $page): void
     {
-        $this->addParagraphHead($page);
+        $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'form');
         if (is_null($paragraph)) {
@@ -177,6 +186,15 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $paragraph->setSave(true);
         $paragraph->setContent('Formulaire envoyé');
         $paragraph->setForm('contact');
+    }
+
+    private function setParagraphsCv(Page $page): void
+    {
+        $this->paragraphService->addParagraph($page, 'head');
+        $this->paragraphService->addParagraph($page, 'presentation-cv');
+        $this->paragraphService->addParagraph($page, 'competences');
+        $this->paragraphService->addParagraph($page, 'experiences');
+        $this->paragraphService->addParagraph($page, 'formations');
     }
 
     private function setParagraphsHome(Page $page): void
@@ -259,14 +277,14 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsInfo(Page $page): void
     {
-        $this->addParagraphHead($page);
+        $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $this->paragraphService->addParagraph($page, 'sibling');
     }
 
     private function setParagraphsMovie(Page $page): void
     {
-        $this->addParagraphHead($page);
+        $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'saga');
         $paragraph = $this->paragraphService->addParagraph($page, 'movie');
@@ -279,7 +297,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsPost(Page $page): void
     {
-        $this->addParagraphHead($page);
+        $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'news-list');
         if (is_null($paragraph)) {
@@ -291,7 +309,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsSerie(Page $page): void
     {
-        $this->addParagraphHead($page);
+        $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'serie');
         if (is_null($paragraph)) {
@@ -303,7 +321,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsSitemap(Page $page): void
     {
-        $this->addParagraphHead($page);
+        $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'sitemap');
         if (is_null($paragraph)) {
@@ -315,7 +333,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsStar(Page $page): void
     {
-        $this->addParagraphHead($page);
+        $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'star');
         if (is_null($paragraph)) {
@@ -327,7 +345,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsStory(Page $page): void
     {
-        $this->addParagraphHead($page);
+        $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'story-list');
         if (is_null($paragraph)) {

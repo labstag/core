@@ -62,11 +62,6 @@ abstract class FixtureAbstract extends Fixture
         }
     }
 
-    protected function addParagraphHead(object $entity): void
-    {
-        $this->paragraphService->addParagraph($entity, 'head');
-    }
-
     protected function addParagraphText(object $entity): void
     {
         $generator = $this->setFaker();

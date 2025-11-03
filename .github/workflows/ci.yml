@@ -54,9 +54,8 @@ jobs:
       
       - name: Setup environment files
         run: |
-          cp apps/.env.test apps/.env
+          cp apps/.env.example apps/.env
           cp .env.example .env
-          echo "APP_ENV=test" >> apps/.env
       
       - name: Setup database and infrastructure
         run: |
@@ -125,9 +124,8 @@ jobs:
       
       - name: Setup environment files
         run: |
-          cp apps/.env.test apps/.env
+          cp apps/.env.example apps/.env
           cp .env.example .env
-          echo "APP_ENV=test" >> apps/.env
       
       - name: Setup database and infrastructure
         run: |

@@ -10,7 +10,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Chapter;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Entity\User;
 use Labstag\Field\WysiwygField;
@@ -99,8 +98,6 @@ class ChapterCrudController extends CrudControllerAbstract
         }
 
         $this->workflowService->init($chapter);
-        $meta = new Meta();
-        $chapter->setMeta($meta);
 
         return $chapter;
     }

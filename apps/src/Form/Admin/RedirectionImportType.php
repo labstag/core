@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * @extends AbstractType<mixed>
@@ -19,7 +20,7 @@ class RedirectionImportType extends AbstractType
             'file',
             FileType::class,
             [
-                'label' => 'Fichier à importer',
+                'label' => new TranslatableMessage('Import file (CSV)'),
                 'attr'  => ['accept' => '.csv'],
             ]
         );

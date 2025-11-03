@@ -42,7 +42,7 @@ class MapParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'map';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {

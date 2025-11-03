@@ -2,9 +2,6 @@
 
 namespace Labstag\Data;
 
-use Labstag\Entity\Page;
-use Labstag\Enum\PageEnum;
-
 class HomeData extends DataAbstract implements DataInterface
 {
     public function generateSlug(object $entity): string
@@ -52,10 +49,5 @@ class HomeData extends DataAbstract implements DataInterface
     public function supportsShortcode(string $className): bool
     {
         return false;
-    }
-
-    protected function getHome(): ?object
-    {
-        return $this->entityManager->getRepository(Page::class)->getOneByType(PageEnum::HOME->value);
     }
 }

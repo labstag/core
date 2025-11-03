@@ -1241,6 +1241,74 @@
         <source>Detail</source>
         <target>Détail</target>
       </trans-unit>
+      <trans-unit id="NvUGFvH" resname="Import file (CSV)">
+        <source>Import file (CSV)</source>
+        <target>Importer le fichier (CSV)</target>
+      </trans-unit>
+      <trans-unit id="_UTW_va" resname="Open link in new window">
+        <source>Open link in new window</source>
+        <target>Ouvrir le lien dans une nouvelle fenêtre</target>
+      </trans-unit>
+      <trans-unit id="REdDMV3" resname="Classes">
+        <source>Classes</source>
+        <target>Classes</target>
+      </trans-unit>
+      <trans-unit id="p9O9x_E" resname="Icon">
+        <source>Icon</source>
+        <target>Icône</target>
+      </trans-unit>
+      <trans-unit id="TeVnxJa" resname="Competences">
+        <source>Competences</source>
+        <target>Compétences</target>
+      </trans-unit>
+      <trans-unit id="hTJSvu8" resname="Company">
+        <source>Company</source>
+        <target>Entreprise</target>
+      </trans-unit>
+      <trans-unit id="Oa0Z5ka" resname="Start Year">
+        <source>Start Year</source>
+        <target>Année de début</target>
+      </trans-unit>
+      <trans-unit id="yEX_lS3" resname="End Year">
+        <source>End Year</source>
+        <target>Année de fin</target>
+      </trans-unit>
+      <trans-unit id="8n2mlHc" resname="In Progress">
+        <source>In Progress</source>
+        <target>En cours</target>
+      </trans-unit>
+      <trans-unit id="OVD5Sw5" resname="Categories of competences">
+        <source>Categories of competences</source>
+        <target>Catégories de compétences</target>
+      </trans-unit>
+      <trans-unit id="E6Zolsj" resname="Experiences">
+        <source>Experiences</source>
+        <target>Expériences</target>
+      </trans-unit>
+      <trans-unit id="CcAzMZ." resname="Formations">
+        <source>Formations</source>
+        <target>Formations</target>
+      </trans-unit>
+      <trans-unit id="wEVMxO9" resname="Delete file">
+        <source>Delete file</source>
+        <target>Supprimer le fichier</target>
+      </trans-unit>
+      <trans-unit id="jgCQf56" resname="Update all">
+        <source>Update all</source>
+        <target>Tout mettre à jour</target>
+      </trans-unit>
+      <trans-unit id="jB3tm.3" resname="Category %category%">
+        <source>Category %category%</source>
+        <target>Catégorie %category%</target>
+      </trans-unit>
+      <trans-unit id="lmCfie2" resname="Tag %tag%">
+        <source>Tag %tag%</source>
+        <target>Tag %tag%</target>
+      </trans-unit>
+      <trans-unit id="E7kO2zE" resname="TMDB page for the serie">
+        <source>TMDB page for the serie</source>
+        <target>Page TMDB de la série</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

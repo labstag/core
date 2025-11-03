@@ -8,7 +8,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Field\WysiwygField;
@@ -92,8 +91,6 @@ class PageCrudController extends CrudControllerAbstract
     {
         $page = new $entityFqcn();
         $this->workflowService->init($page);
-        $meta = new Meta();
-        $page->setMeta($meta);
         $home = $this->getRepository()->findOneBy(
             [
                 'type' => PageEnum::HOME->value,

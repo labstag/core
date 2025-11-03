@@ -2,7 +2,6 @@
 
 namespace Labstag\Paragraph;
 
-use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Override;
@@ -37,13 +36,13 @@ class HeadParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'head';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {
             return true;
         }
-        $this->getRepository(Paragraph::class);
-        return false;
+
+        return Page::class == $object::class;
     }
 }

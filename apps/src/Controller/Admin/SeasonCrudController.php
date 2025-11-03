@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Season;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\SeasonMessage;
@@ -102,16 +101,6 @@ class SeasonCrudController extends CrudControllerAbstract
         $filters->add(EntityFilter::new('refserie', new TranslatableMessage('Serie')));
 
         return $filters;
-    }
-
-    #[\Override]
-    public function createEntity(string $entityFqcn): Season
-    {
-        $season = new $entityFqcn();
-        $meta   = new Meta();
-        $season->setMeta($meta);
-
-        return $season;
     }
 
     public static function getEntityFqcn(): string

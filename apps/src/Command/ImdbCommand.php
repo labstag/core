@@ -3,7 +3,6 @@
 namespace Labstag\Command;
 
 use Labstag\Api\TmdbApi;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Serie;
 use Labstag\Message\MovieMessage;
@@ -32,10 +31,6 @@ class ImdbCommand extends Command
     )
     {
         parent::__construct();
-    }
-
-    protected function configure(): void
-    {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -94,9 +89,7 @@ class ImdbCommand extends Command
             }
 
             $serie = new Serie();
-            $meta  = new Meta();
             $serie->setFile(false);
-            $serie->setMeta($meta);
             $serie->setEnable(true);
             $serie->setAdult(false);
             $serie->setImdb($imdb);

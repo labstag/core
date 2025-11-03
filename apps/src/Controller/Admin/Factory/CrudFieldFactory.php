@@ -16,14 +16,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Field\ParagraphsField;
+use Labstag\Field\UploadFileField;
+use Labstag\Field\UploadImageField;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\TagRepository;
 use Labstag\Service\FileService;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Validator\Constraints\File;
-use Vich\UploaderBundle\Form\Type\VichImageType;
 
 /**
  * Centralized factory for fields (EasyAdmin Fields) to reduce
@@ -148,6 +148,22 @@ final class CrudFieldFactory
         return $associationField;
     }
 
+    public function fileField(
+        string $type,
+        string $pageName,
+        string $entityFqcn,
+        ?string $label = null,
+    ): TextField|UploadFileField
+    {
+        if ('edit' === $pageName || 'new' === $pageName) {
+            return UploadFileField::new($type . 'File', $label ?? new TranslatableMessage('File'));
+        }
+
+        $this->fileService->getBasePath($entityFqcn, $type . 'File');
+
+        return TextField::new($type, $label ?? new TranslatableMessage('File'));
+    }
+
     public function getConfigureFields(): iterable
     {
         foreach ($this->tabfields as $tabfield) {
@@ -173,47 +189,10 @@ final class CrudFieldFactory
         string $pageName,
         string $entityFqcn,
         ?string $label = null,
-    ): ImageField|TextField
+    ): ImageField|UploadImageField
     {
         if ('edit' === $pageName || 'new' === $pageName) {
-            $deleteLabel      = new TranslatableMessage('Delete image');
-            $downloadLabel    = new TranslatableMessage('Download');
-            $mimeTypesMessage = new TranslatableMessage('Please upload a valid image (JPEG, PNG, GIF, WebP).');
-            $maxSizeMessage   = new TranslatableMessage(
-                'The file is too large. Its size should not exceed {{ limit }}.'
-            );
-
-            $imageField = TextField::new($type . 'File', $label ?? new TranslatableMessage('Image'))->setFormType(
-                VichImageType::class
-            );
-            $imageField->setFormTypeOptions(
-                [
-                    'required'       => false,
-                    'allow_delete'   => true,
-                    'delete_label'   => $deleteLabel->__toString(),
-                    'download_label' => $downloadLabel->__toString(),
-                    'download_uri'   => true,
-                    'image_uri'      => true,
-                    'asset_helper'   => true,
-                    'constraints'    => [
-                        new File(
-                            [
-                                'maxSize'          => ini_get('upload_max_filesize'),
-                                'mimeTypes'        => [
-                                    'image/jpeg',
-                                    'image/png',
-                                    'image/gif',
-                                    'image/webp',
-                                ],
-                                'mimeTypesMessage' => $mimeTypesMessage->__toString(),
-                                'maxSizeMessage'   => $maxSizeMessage->__toString(),
-                            ]
-                        ),
-                    ],
-                ]
-            );
-
-            return $imageField;
+            return UploadImageField::new($type . 'File', $label ?? new TranslatableMessage('Image'));
         }
 
         $basePath = $this->fileService->getBasePath($entityFqcn, $type . 'File');

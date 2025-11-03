@@ -6,10 +6,24 @@
 /* stylelint-enable */
 @use './../wysiwyg';
 
+.accordion-item{
+  width: 100%;
+}
+
 .sort-list{
   li{
     cursor: move;
   }
+}
+
+.form-group.field-array {
+	.form-widget {
+		.form-group {
+			label {
+				display: block !important;
+			}
+		}
+	}
 }
 
 .story-sort,

@@ -28,6 +28,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -79,6 +80,7 @@ abstract class ParagraphAbstract extends AbstractController
         protected SlugService $slugService,
         protected ConfigurationService $configurationService,
         protected Environment $twigEnvironment,
+        protected ParameterBagInterface $parameterBag,
     )
     {
     }
@@ -215,15 +217,6 @@ abstract class ParagraphAbstract extends AbstractController
         return $this->show[$paragraphId] ?? true;
     }
 
-    public function supports(?object $object): bool
-    {
-        if (is_null($object)) {
-            return true;
-        }
-
-        return in_array($object::class, $this->useIn());
-    }
-
     /**
      * @return mixed[]
      */
@@ -237,6 +230,24 @@ abstract class ParagraphAbstract extends AbstractController
     public function update(Paragraph $paragraph): void
     {
         unset($paragraph);
+    }
+
+    protected function getCategorySlug(): ?string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $slug    = $request->attributes->get('slug');
+
+        if (0 === substr_count((string) $slug, '/')) {
+            return null;
+        }
+
+        $slugSecond = basename((string) $slug);
+
+        if (0 === substr_count($slugSecond, 'category-')) {
+            return null;
+        }
+
+        return str_replace('category-', '', $slugSecond);
     }
 
     protected function getOEmbedUrl(string $html): ?string
@@ -275,6 +286,24 @@ abstract class ParagraphAbstract extends AbstractController
         }
 
         return $entityRepository;
+    }
+
+    protected function getTagSlug(): ?string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $slug    = $request->attributes->get('slug');
+
+        if (0 === substr_count((string) $slug, '/')) {
+            return null;
+        }
+
+        $slugSecond = basename((string) $slug);
+
+        if (0 === substr_count($slugSecond, 'tag-')) {
+            return null;
+        }
+
+        return str_replace('tag-', '', $slugSecond);
     }
 
     /**

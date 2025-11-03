@@ -5,49 +5,24 @@ namespace Labstag\Event\Listener;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Labstag\Event\Abstract\EventEntityLib;
 
 #[AsDoctrineListener(event: Events::prePersist)]
 #[AsDoctrineListener(event: Events::postPersist)]
-#[AsDoctrineListener(event: Events::preUpdate)]
 final class EntityListener extends EventEntityLib
 {
     public function postPersist(PostPersistEventArgs $postPersistEventArgs): void
     {
         $object        = $postPersistEventArgs->getObject();
         $entityManager = $postPersistEventArgs->getObjectManager();
-
-        $this->updateEntityParagraph($object);
-        $this->updateEntityBlock($object);
-        $this->updateEntityBanIp($object, $entityManager);
-        $this->updateEntityStory($object);
-        $this->updateEntityMovie($object);
-        $this->updateEntitySerie($object);
-        $this->updateEntitySaga($object);
-        $this->updateEntityChapter($object);
-        $this->updateEntityPage($object);
-        $this->updateEntitySeason($object);
-        $this->updateEntityRedirection($object);
-
-        $entityManager->flush();
+        $this->postPersistMethods($object, $entityManager);
     }
 
     public function prePersist(PrePersistEventArgs $prePersistEventArgs): void
     {
-        $object = $prePersistEventArgs->getObject();
-        $prePersistEventArgs->getObjectManager();
-        $this->initworkflow($object);
-        $this->updateEntityPage($object);
-        $this->initEntityMeta($object);
-    }
-
-    public function preUpdate(PreUpdateEventArgs $preupdateEventArgs): void
-    {
-        $object = $preupdateEventArgs->getObject();
-
-        $this->updateEntityChapter($object);
-        $this->updateEntitySeason($object);
+        $object        = $prePersistEventArgs->getObject();
+        $entityManager = $prePersistEventArgs->getObjectManager();
+        $this->prePersistMethods($object, $entityManager);
     }
 }

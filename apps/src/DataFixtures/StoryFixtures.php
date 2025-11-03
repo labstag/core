@@ -6,7 +6,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Category;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
@@ -49,10 +48,8 @@ class StoryFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     protected function addStory(Generator $generator, ObjectManager $objectManager): void
     {
-        $meta  = new Meta();
         $story = new Story();
         $story->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
-        $story->setMeta($meta);
         $story->setResume($generator->unique()->text(200));
         $story->setEnable((bool) random_int(0, 1));
         $story->setRefuser($this->getReference(array_rand($this->users), User::class));

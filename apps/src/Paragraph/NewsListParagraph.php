@@ -22,8 +22,12 @@ class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
         unset($disable);
         /** @var PostRepository $serviceEntityRepositoryAbstract */
         $serviceEntityRepositoryAbstract = $this->getRepository(Post::class);
-
-        $pagination = $this->getPaginator($serviceEntityRepositoryAbstract->getQueryPaginator(), $paragraph->getNbr());
+        $categorySlug                    = $this->getCategorySlug();
+        $tagSlug                         = $this->getTagSlug();
+        $pagination                      = $this->getPaginator(
+            $serviceEntityRepositoryAbstract->getQueryPaginator($categorySlug, $tagSlug),
+            $paragraph->getNbr()
+        );
         $this->setData(
             $paragraph,
             [
@@ -65,7 +69,7 @@ class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'news-list';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {
@@ -73,7 +77,7 @@ class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
         }
 
         $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph  = $serviceEntityRepositoryAbstract->findOneBy(
+        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
             [
                 'type' => $this->getType(),
             ]

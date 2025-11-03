@@ -9,8 +9,10 @@
     <div class="wrapper">
         {% if movie.categories|length > 0 %}
             <div class="categories">
-                {% for categorie in movie.categories %}
-                    <span class="categorie-{{ categorie.slug }}">{{ categorie.title }}</span>
+                {% for category in movie.categories %}
+                    <span class="categorie-{{ category.slug }}">
+                        {{ category.title }}
+                    </span>
                 {% endfor %}
             </div>
         {% endif %}

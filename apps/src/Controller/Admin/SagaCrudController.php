@@ -7,7 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Saga;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\SagaMessage;
@@ -84,16 +83,6 @@ class SagaCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->setTabSEO();
         yield from $this->crudFieldFactory->getConfigureFields();
-    }
-
-    #[\Override]
-    public function createEntity(string $entityFqcn): Saga
-    {
-        $season = new $entityFqcn();
-        $meta   = new Meta();
-        $season->setMeta($meta);
-
-        return $season;
     }
 
     public static function getEntityFqcn(): string

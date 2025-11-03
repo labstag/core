@@ -9,6 +9,8 @@ use Labstag\Enum\PageEnum;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Shortcode\StoryUrlShortcode;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StoryData extends DataAbstract implements DataInterface
 {
@@ -17,9 +19,11 @@ class StoryData extends DataAbstract implements DataInterface
         protected FileService $fileService,
         protected ConfigurationService $configurationService,
         protected EntityManagerInterface $entityManager,
+        protected RequestStack $requestStack,
+        protected TranslatorInterface $translator,
     )
     {
-        parent::__construct($fileService, $configurationService, $entityManager);
+        parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator);
     }
 
     public function generateSlug(object $entity): string

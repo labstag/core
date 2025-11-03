@@ -35,21 +35,24 @@ final class ParagraphService
 
     public function addParagraph(object $entity, string $type): ?Paragraph
     {
-        $paragraph = null;
-        $all       = $this->getAll($entity);
-        $position  = count($entity->getParagraphs());
-        foreach ($all as $row) {
-            if ($row != $type) {
-                continue;
+        $find = false;
+        foreach ($this->paragraphs as $row) {
+            if ($row->supports($entity) && $row->getType() == $type) {
+                $find = true;
+                break;
             }
-
-            $paragraph = new Paragraph();
-            $paragraph->setType($type);
-            $paragraph->setPosition($position);
-            $entity->addParagraph($paragraph);
-
-            break;
         }
+
+        if (!$find) {
+            return null;
+        }
+
+        $position  = count($entity->getParagraphs());
+        $paragraph = new Paragraph();
+        $paragraph->setType($type);
+        $paragraph->setPosition($position);
+
+        $entity->addParagraph($paragraph);
 
         return $paragraph;
     }

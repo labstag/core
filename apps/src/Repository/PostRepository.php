@@ -23,7 +23,11 @@ class PostRepository extends ServiceEntityRepositoryAbstract
         $queryBuilder = $this->getOptimizedBaseQB();
         $queryBuilder->setMaxResults($nbr);
 
-        return $this->cacheQuery($queryBuilder->getQuery(), 'last-' . $nbr)->getResult();
+        $query = $queryBuilder->getQuery();
+
+        $query->enableResultCache(600, 'post-last-' . $nbr);
+
+        return $query->getResult();
     }
 
     public function findTotalEnable(): mixed
@@ -35,14 +39,20 @@ class PostRepository extends ServiceEntityRepositoryAbstract
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->setParameter('now', new DateTime('now'));
 
-        return $this->cacheQuery($queryBuilder->getQuery(), 'total-enable', 900)->getSingleScalarResult();
+        $query = $queryBuilder->getQuery();
+
+        $query->enableResultCache(900, 'post-total-enable');
+
+        return $query->getSingleScalarResult();
     }
 
     public function getAllActivate(): mixed
     {
         $queryBuilder = $this->getOptimizedBaseQB();
+        $query        = $queryBuilder->getQuery();
+        $query->enableResultCache(600, 'post-activate');
 
-        return $this->cacheQuery($queryBuilder->getQuery(), 'activate', 600)->getResult();
+        return $query->getResult();
     }
 
     public function getQueryBuilder(): QueryBuilder
@@ -59,22 +69,21 @@ class PostRepository extends ServiceEntityRepositoryAbstract
     /**
      * @return Query<mixed, mixed>
      */
-    public function getQueryPaginator(): Query
+    public function getQueryPaginator(?string $categorySlug, ?string $tagSlug): Query
     {
         $queryBuilder = $this->getOptimizedBaseQB();
+        if ($categorySlug) {
+            $queryBuilder->andWhere('c.slug = :categorySlug');
+            $queryBuilder->setParameter('categorySlug', $categorySlug);
+        }
 
-        return $this->cacheQuery($queryBuilder->getQuery(), 'query-paginator', 300);
-    }
+        if ($tagSlug) {
+            $queryBuilder->andWhere('t.slug = :tagSlug');
+            $queryBuilder->setParameter('tagSlug', $tagSlug);
+        }
 
-    /**
-     * @param Query<mixed, mixed> $query
-     *
-     * @return Query<mixed, mixed>
-     */
-    private function cacheQuery(Query $query, string $suffix, int $ttl = 600): Query
-    {
-        // TTL réduit pour contenu récent ; ajustable selon stratégie
-        $query->enableResultCache($ttl, 'post-' . $suffix);
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(300, 'post-query-paginator-' . $categorySlug . '-' . $tagSlug);
 
         return $query;
     }
@@ -87,13 +96,8 @@ class PostRepository extends ServiceEntityRepositoryAbstract
         $queryBuilder = $this->getQueryBuilder();
         // Relations hypothétiques : tags, categories, meta (ajuster selon mapping réel)
         $queryBuilder->leftJoin('p.tags', 't')->addSelect('t');
-        if ($this->getEntityManager()->getClassMetadata(Post::class)->hasAssociation('categories')) {
-            $queryBuilder->leftJoin('p.categories', 'c')->addSelect('c');
-        }
-
-        if ($this->getEntityManager()->getClassMetadata(Post::class)->hasAssociation('meta')) {
-            $queryBuilder->leftJoin('p.meta', 'm')->addSelect('m');
-        }
+        $queryBuilder->leftJoin('p.categories', 'c')->addSelect('c');
+        $queryBuilder->leftJoin('p.meta', 'm')->addSelect('m');
 
         return $queryBuilder;
     }

@@ -6,7 +6,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Category;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
@@ -49,11 +48,9 @@ class PostFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     protected function addPost(Generator $generator, ObjectManager $objectManager): void
     {
-        $meta = new Meta();
         $post = new Post();
         $post->setResume($generator->unique()->text(200));
         $post->setCreatedAt($generator->unique()->dateTimeBetween('- 8 month', 'now'));
-        $post->setMeta($meta);
         $this->setImage($post, 'imgFile');
         $post->setEnable((bool) random_int(0, 1));
         $post->setRefuser($this->getReference(array_rand($this->users), User::class));

@@ -6,6 +6,7 @@ use DateTime;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\EpisodeRepository;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: EpisodeRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
 class Episode
 {

@@ -80,6 +80,9 @@ class Block implements Stringable
     #[ORM\Column(length: 255)]
     protected ?string $type = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $data = null;
+
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
@@ -120,6 +123,11 @@ class Block implements Stringable
     public function getContent(): ?string
     {
         return $this->content;
+    }
+
+    public function getData(): ?array
+    {
+        return $this->data;
     }
 
     public function getId(): ?string
@@ -223,6 +231,13 @@ class Block implements Stringable
     public function setContent(?string $content): static
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function setData(?array $data): static
+    {
+        $this->data = $data;
 
         return $this;
     }

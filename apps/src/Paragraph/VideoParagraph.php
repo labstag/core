@@ -93,7 +93,7 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'video';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {

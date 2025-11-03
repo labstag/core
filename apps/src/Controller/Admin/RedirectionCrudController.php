@@ -63,7 +63,11 @@ class RedirectionCrudController extends CrudControllerAbstract
         );
         $booleanField->hideOnForm();
 
-        $regexField2 = $this->crudFieldFactory->booleanField('regex', (string) new TranslatableMessage('Regex'), false);
+        $regexField2 = $this->crudFieldFactory->booleanField(
+            'regex',
+            (string) new TranslatableMessage('Regex'),
+            false
+        );
         $regexField2->hideOnIndex();
 
         $integerField = IntegerField::new('last_count', new TranslatableMessage('Last count'));

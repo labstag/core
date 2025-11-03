@@ -54,7 +54,7 @@ class ImageParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'img';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {

@@ -111,7 +111,7 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'text-media';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {

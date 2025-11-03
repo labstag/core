@@ -68,13 +68,13 @@ class SiblingParagraph extends ParagraphAbstract implements ParagraphInterface
         return 'sibling';
     }
 
-    #[\Override]
+    #[Override]
     public function supports(?object $object): bool
     {
         if (is_null($object)) {
             return true;
         }
 
-        return $object::class == Page::class;
+        return Page::class == $object::class;
     }
 }
