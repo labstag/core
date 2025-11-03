@@ -81,9 +81,9 @@ class Movie implements Stringable
     protected ?File $imgFile = null;
 
     /**
-     * @var Collection<int, Paragraph>
+     * @var Collection<int, MovieInfoParagraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'refmovie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: MovieInfoParagraph::class, mappedBy: 'refmovie', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
