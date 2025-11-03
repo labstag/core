@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\SerieMessage;
@@ -157,16 +156,6 @@ class SerieCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterCategories($filters, 'serie');
 
         return $filters;
-    }
-
-    #[\Override]
-    public function createEntity(string $entityFqcn): Serie
-    {
-        $serie = new $entityFqcn();
-        $meta  = new Meta();
-        $serie->setMeta($meta);
-
-        return $serie;
     }
 
     public static function getEntityFqcn(): string

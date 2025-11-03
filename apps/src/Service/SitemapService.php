@@ -7,9 +7,10 @@ use Exception;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
+use Labstag\Entity\Season;
+use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
-use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\ServiceEntityRepositoryAbstract;
 
 final class SitemapService
@@ -44,7 +45,10 @@ final class SitemapService
             $tabs = array_merge($tabs, $this->getDataStory());
         }
 
-        ksort($tabs);
+        if ($all) {
+            $tabs = array_merge($tabs, $this->getDataSerie());
+        }
+
         $this->parent = [];
 
         return $this->setTabsByParent($tabs, '/');
@@ -65,22 +69,6 @@ final class SitemapService
     /**
      * @return mixed[]
      */
-    private function getDataChaptersByStory(object $story): array
-    {
-        if (!$story instanceof Story) {
-            return [];
-        }
-
-        /** @var ChapterRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Chapter::class);
-        $data                            = $serviceEntityRepositoryAbstract->getAllActivateByStory($story);
-
-        return $this->setTabs($data);
-    }
-
-    /**
-     * @return mixed[]
-     */
     private function getDataFromRepository(string $entityClass): array
     {
         $serviceEntityRepositoryAbstract = $this->getRepository($entityClass);
@@ -88,9 +76,7 @@ final class SitemapService
             return [];
         }
 
-        $data = $serviceEntityRepositoryAbstract->getAllActivate();
-
-        return $this->setTabs($data);
+        return $serviceEntityRepositoryAbstract->getAllActivate();
     }
 
     /**
@@ -98,7 +84,9 @@ final class SitemapService
      */
     private function getDataPages(): array
     {
-        return $this->getDataFromRepository(Page::class);
+        $pages = $this->getDataFromRepository(Page::class);
+
+        return $this->setTabs($pages);
     }
 
     /**
@@ -111,7 +99,34 @@ final class SitemapService
             return [];
         }
 
-        return $this->getDataFromRepository(Post::class);
+        $posts = $this->getDataFromRepository(Post::class);
+
+        return $this->setTabs($posts);
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getDataSerie(): array
+    {
+        $listing = $this->slugService->getPageByType(PageEnum::SERIES->value);
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
+
+        $series           = $this->getDataFromRepository(Serie::class);
+        $entityRepository = $this->entityManager->getRepository(Season::class);
+        $seasons          = [];
+        foreach ($series as &$serie) {
+            $seasonsSerie = $entityRepository->getAllActivateBySerie($serie);
+            if (0 === count($seasonsSerie)) {
+                unset($serie);
+            }
+
+            $seasons = array_merge($seasons, $seasonsSerie);
+        }
+
+        return array_merge($this->setTabs($series), $this->setTabs($seasons));
     }
 
     /**
@@ -124,7 +139,19 @@ final class SitemapService
             return [];
         }
 
-        return $this->getDataFromRepository(Story::class);
+        $stories    = $this->getDataFromRepository(Story::class);
+        $entityRepository = $this->entityManager->getRepository(Chapter::class);
+        $chapters   = [];
+        foreach ($stories as &$story) {
+            $chaptersStory = $entityRepository->getAllActivateByStory($story);
+            if (0 === count($chaptersStory)) {
+                unset($story);
+            }
+
+            $chapters = array_merge($chapters, $chaptersStory);
+        }
+
+        return array_merge($this->setTabs($stories), $this->setTabs($chapters));
     }
 
     /**
@@ -149,7 +176,7 @@ final class SitemapService
     {
         $tabs = [];
         foreach ($data as $row) {
-            $tabs = array_merge($tabs, $this->formatData($row), $this->getDataChaptersByStory($row));
+            $tabs = array_merge($tabs, $this->formatData($row));
         }
 
         return $tabs;
@@ -170,7 +197,7 @@ final class SitemapService
             )
             ) {
                 $this->parent[$url] = true;
-                $data['parent']     = $this->setTabsByParent($urls, $url);
+                $data['parent']     = $this->setTabsByParent($urls, $url . '/');
                 $tabs[$url]         = $data;
             }
         }

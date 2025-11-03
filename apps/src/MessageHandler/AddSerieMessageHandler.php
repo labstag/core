@@ -2,7 +2,6 @@
 
 namespace Labstag\MessageHandler;
 
-use Labstag\Entity\Meta;
 use Labstag\Entity\Serie;
 use Labstag\Message\AddSerieMessage;
 use Labstag\Message\SerieMessage;
@@ -36,8 +35,6 @@ final class AddSerieMessageHandler
         }
 
         $serie = new Serie();
-        $meta  = new Meta();
-        $serie->setMeta($meta);
         $serie->setEnable(true);
         $serie->setAdult(false);
         $serie->setImdb($imdb);

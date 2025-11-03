@@ -14,7 +14,6 @@ $configure = RectorConfig::configure();
 $configure->withPaths(
     [
         __DIR__ . '/config',
-        __DIR__ . '/features',
         __DIR__ . '/public',
         __DIR__ . '/src',
         __DIR__ . '/tests',

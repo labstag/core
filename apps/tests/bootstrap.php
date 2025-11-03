@@ -9,7 +9,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 // Force test env before loading .env chain so that .env.test is used
 if (!isset($_SERVER['APP_ENV']) && !isset($_ENV['APP_ENV'])) {
     $_SERVER['APP_ENV'] = 'test';
-    $_ENV['APP_ENV'] = 'test';
+    $_ENV['APP_ENV']    = 'test';
 }
 
 if (file_exists(dirname(__DIR__) . '/config/bootstrap.php')) {

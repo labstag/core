@@ -5,7 +5,6 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
 use Labstag\Field\WysiwygField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -89,8 +88,6 @@ class PostCrudController extends CrudControllerAbstract
         $post = new $entityFqcn();
         $this->workflowService->init($post);
         $post->setRefuser($this->getUser());
-        $meta = new Meta();
-        $post->setMeta($meta);
 
         return $post;
     }

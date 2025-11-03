@@ -16,20 +16,13 @@ final class EntityListener extends EventEntityLib
     {
         $object        = $postPersistEventArgs->getObject();
         $entityManager = $postPersistEventArgs->getObjectManager();
-        $this->updateEntityPage($object);
-        $this->updateEntityChapter($object);
-        $this->updateEntityBanIp($object, $entityManager);
-        $this->updateEntityRedirection($object);
-
-        $entityManager->flush();
+        $this->postPersistMethods($object, $entityManager);
     }
 
     public function prePersist(PrePersistEventArgs $prePersistEventArgs): void
     {
-        $object = $prePersistEventArgs->getObject();
-        $prePersistEventArgs->getObjectManager();
-        $this->initworkflow($object);
-        $this->updateEntityPage($object);
-        $this->initEntityMeta($object);
+        $object        = $prePersistEventArgs->getObject();
+        $entityManager = $prePersistEventArgs->getObjectManager();
+        $this->prePersistMethods($object, $entityManager);
     }
 }

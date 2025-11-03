@@ -5,7 +5,6 @@ namespace Labstag\Service;
 use DateTime;
 use Exception;
 use Labstag\Api\TmdbApi;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Message\EpisodeMessage;
@@ -40,8 +39,6 @@ final class SeasonService
         }
 
         $season = new Season();
-        $meta   = new Meta();
-        $season->setMeta($meta);
         $season->setEnable(true);
         $season->setRefserie($serie);
         $season->setNumber($number);

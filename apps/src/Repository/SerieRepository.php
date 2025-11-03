@@ -96,6 +96,15 @@ class SerieRepository extends ServiceEntityRepositoryAbstract
         return $query->getResult();
     }
 
+    public function getAllActivate(): mixed
+    {
+        $queryBuilder = $this->getQueryBuilder();
+        $query        = $queryBuilder->getQuery();
+        $query->enableResultCache(600, 'serie_activate');
+
+        return $query->getResult();
+    }
+
     public function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('s');

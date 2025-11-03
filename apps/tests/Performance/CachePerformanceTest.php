@@ -177,15 +177,16 @@ final class CachePerformanceTest extends AbstractTestCase
         $user->setLanguage('fr');
         $this->persistAndFlush($user);
 
-                // Act & Measure - First generation (caching)
+        // Act & Measure - First generation (caching)
         $this->stopwatch->start('first_generation');
-        $firstEtag = $this->etagCacheService->generateETag($user);
-        $firstEvent = $this->stopwatch->stop('first_generation');
+        $firstEtag  = $this->etagCacheService->generateETag($user);
+        $this->stopwatch->stop('first_generation');
 
         // Act & Measure - Second generation (from cache)
         $this->stopwatch->start('second_generation');
-        $secondEtag = $this->etagCacheService->generateETag($user);
-        $secondEvent = $this->stopwatch->stop('second_generation');
+
+        $secondEtag  = $this->etagCacheService->generateETag($user);
+        $this->stopwatch->stop('second_generation');
 
         // Assert
         $this->assertSame($firstEtag, $secondEtag);
