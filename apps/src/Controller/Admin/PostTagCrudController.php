@@ -18,7 +18,7 @@ class PostTagCrudController extends TagCrudControllerAbstract
 
         $this->crudFieldFactory->addFieldsToTab('principal', [$collectionField]);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     protected function getChildRelationshipProperty(): string

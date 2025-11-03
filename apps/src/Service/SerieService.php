@@ -103,7 +103,8 @@ final class SerieService
         /** @var Serie $serie */
         foreach ($series as $serie) {
             $label           = $serie->getTitle();
-            $choices[$label] = $label;
+            $id              = $serie->getId();
+            $choices[$label] = $id;
         }
 
         return $choices;

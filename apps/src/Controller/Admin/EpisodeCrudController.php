@@ -111,7 +111,7 @@ class EpisodeCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
@@ -120,12 +120,18 @@ class EpisodeCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterEnable($filters);
         $filters->add(
             SerieEpisodeFilter::new('number', new TranslatableMessage('Season'))->setChoices(
-                $this->seasonService->getSeasonsChoice()
+                array_merge(
+                    ['' => ''],
+                    $this->seasonService->getSeasonsChoice()
+                )
             )
         );
         $filters->add(
             SeasonEpisodeFilter::new('serie', new TranslatableMessage('Serie'))->setChoices(
-                $this->serieService->getSeriesChoice()
+                array_merge(
+                    ['' => ''],
+                    $this->serieService->getSeriesChoice()
+                )
             )
         );
 

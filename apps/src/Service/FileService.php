@@ -209,6 +209,21 @@ final class FileService
         return $this->propertyMappingFactory->fromObject($entity);
     }
 
+    public function getSizeFormat(int $size): string
+    {
+        if (1073741824 <= $size) {
+            $size = number_format($size / 1073741824, 2) . ' GB';
+        } elseif (1048576 <= $size) {
+            $size = number_format($size / 1048576, 2) . ' MB';
+        } elseif (1024 <= $size) {
+            $size = number_format($size / 1024, 2) . ' KB';
+        } else {
+            $size .= ' B';
+        }
+
+        return $size;
+    }
+
     public function setUploadedFile(string $filePath, object $entity, string|PropertyPathInterface $type): void
     {
         try {

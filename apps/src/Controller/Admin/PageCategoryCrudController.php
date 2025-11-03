@@ -10,7 +10,6 @@ class PageCategoryCrudController extends CategoryCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
         $this->configureFieldsDefault();
         $collectionField = CollectionField::new('pages', new TranslatableMessage('Pages'));
         $collectionField->formatValue(fn ($entity): int => count($entity));
@@ -18,7 +17,7 @@ class PageCategoryCrudController extends CategoryCrudControllerAbstract
 
         $this->crudFieldFactory->addFieldsToTab('principal', [$collectionField]);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     protected function getChildRelationshipProperty(): string

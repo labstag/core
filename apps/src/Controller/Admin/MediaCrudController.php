@@ -4,6 +4,7 @@ namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Media;
 use Labstag\Field\UploadFileField;
@@ -37,17 +38,29 @@ class MediaCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $integerField = IntegerField::new('size', new TranslatableMessage('Size'));
+        $integerField->formatValue(
+            function ($value, Media $media): string {
+                unset($value);
+
+                return $this->fileService->getSizeFormat($media->getSize());
+            }
+        );
+        $integerField->hideOnForm();
+
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
                 $this->crudFieldFactory->slugField(target: 'name'),
                 TextField::new('name', new TranslatableMessage('Name')),
+                TextField::new('mimeType', new TranslatableMessage('Mime type'))->hideOnForm(),
+                $integerField,
                 UploadFileField::new('file', new TranslatableMessage('File'))->onlyOnForms(),
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     public static function getEntityFqcn(): string

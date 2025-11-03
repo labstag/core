@@ -9,11 +9,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FilterDataDto;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\FilterTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Filter\Type\ChoiceFilterType;
+use Labstag\Service\BlockService;
+use Labstag\Service\ParagraphService;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class ParagraphTypeFilter implements FilterInterface
+class DiscriminatorTypeFilter implements FilterInterface
 {
     use FilterTrait;
+
+    protected ?BlockService $blockService = null;
+
+    protected ?ParagraphService $paragraphService = null;
 
     public function apply(
         QueryBuilder $queryBuilder,
@@ -28,16 +34,16 @@ class ParagraphTypeFilter implements FilterInterface
             return;
         }
 
-        $alias = $filterDataDto->getEntityAlias();
+        $service = (is_null($this->paragraphService)) ? $this->blockService : $this->paragraphService;
 
-        if (is_array($value)) {
-            // TYPE(alias) IN (:types)
-            $queryBuilder->andWhere(sprintf('TYPE(%s) IN (:types)', $alias));
-            $queryBuilder->setParameter('types', $value);
-        } else {
-            // TYPE(alias) = :type
-            $queryBuilder->andWhere(sprintf('TYPE(%s) = :type', $alias));
-            $queryBuilder->setParameter('type', $value);
+        if (!is_array($value)) {
+            $paragraph = $service->getByCode($value);
+            if (!is_null($paragraph)) {
+                $class = $paragraph->getClass();
+                $alias = $filterDataDto->getEntityAlias();
+                $queryBuilder->resetDQLPart('from');
+                $queryBuilder->from($class, $alias);
+            }
         }
     }
 
@@ -66,12 +72,26 @@ class ParagraphTypeFilter implements FilterInterface
         return $this;
     }
 
+    public function setBlockService(BlockService $blockService): self
+    {
+        $this->blockService = $blockService;
+
+        return $this;
+    }
+
     /**
      * @param array<mixed> $choices
      */
     public function setChoices(array $choices): self
     {
         $this->dto->setFormTypeOption('value_type_options.choices', $choices);
+
+        return $this;
+    }
+
+    public function setParagraphService(ParagraphService $paragraphService): self
+    {
+        $this->paragraphService = $paragraphService;
 
         return $this;
     }

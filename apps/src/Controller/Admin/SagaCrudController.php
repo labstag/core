@@ -82,7 +82,7 @@ class SagaCrudController extends CrudControllerAbstract
         );
 
         $this->crudFieldFactory->setTabSEO();
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     public static function getEntityFqcn(): string

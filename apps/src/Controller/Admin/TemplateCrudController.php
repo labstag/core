@@ -38,7 +38,6 @@ class TemplateCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         $textField = TextField::new('code', new TranslatableMessage('Code'));
@@ -68,7 +67,7 @@ class TemplateCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->addFieldsToTab('principal', [$wysiwygField, $textareaField]);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     public static function getEntityFqcn(): string

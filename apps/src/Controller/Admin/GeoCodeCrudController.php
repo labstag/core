@@ -47,7 +47,6 @@ class GeoCodeCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
-        unset($pageName);
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
@@ -66,7 +65,7 @@ class GeoCodeCrudController extends CrudControllerAbstract
             ]
         );
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]

@@ -102,7 +102,7 @@ class ConfigurationCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addTab('placeholders', FormField::addTab(new TranslatableMessage('Placeholders')));
         $this->crudFieldFactory->addFieldsToTab('placeholders', $this->addConfigureFieldsPlaceHolders($pageName));
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     public static function getEntityFqcn(): string

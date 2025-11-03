@@ -133,7 +133,7 @@ class MovieCrudController extends CrudControllerAbstract
         );
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
@@ -153,7 +153,6 @@ class MovieCrudController extends CrudControllerAbstract
             );
         }
 
-        $this->crudFieldFactory->addFilterTags($filters, 'movie');
         $this->crudFieldFactory->addFilterCategories($filters, 'movie');
         $this->addFilterSaga($filters);
 

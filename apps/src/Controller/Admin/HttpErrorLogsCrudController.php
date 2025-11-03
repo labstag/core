@@ -133,7 +133,7 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]

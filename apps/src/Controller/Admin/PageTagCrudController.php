@@ -10,15 +10,13 @@ class PageTagCrudController extends TagCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
         $this->configureFieldsDefault();
         $collectionField = CollectionField::new('pages', new TranslatableMessage('Pages'));
         $collectionField->formatValue(fn ($entity): int => count($entity));
         $collectionField->hideOnForm();
 
         $this->crudFieldFactory->addFieldsToTab('principal', [$collectionField]);
-
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     protected function getChildRelationshipProperty(): string

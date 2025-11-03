@@ -50,7 +50,6 @@ final class ParagraphsConfigurator implements FieldConfiguratorInterface
 
         $controller    = $crudControllerRegistry->findCrudFqcnByEntityFqcn($classInstance);
         $fieldDto->setCustomOption('controller', $controller);
-        dump($instance);
         $paragraphs = $this->paragraphService->getAll($instance);
         $fieldDto->setCustomOption('paragraphs', $paragraphs);
 

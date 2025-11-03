@@ -44,7 +44,7 @@ class BanIpCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab('principal', $fields);
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     public static function getEntityFqcn(): string

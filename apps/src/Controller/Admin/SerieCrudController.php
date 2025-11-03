@@ -141,7 +141,7 @@ class SerieCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->setTabSEO();
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]

@@ -120,7 +120,7 @@ class UserCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab('principal', $fields);
 
         $this->crudFieldFactory->setTabWorkflow();
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]

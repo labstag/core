@@ -96,7 +96,7 @@ class ProfilCrudController extends UserCrudController
 
         $this->crudFieldFactory->addFieldsToTab('principal', $fields);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]

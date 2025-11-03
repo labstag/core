@@ -68,7 +68,7 @@ class PostCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->setTabWorkflow();
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]

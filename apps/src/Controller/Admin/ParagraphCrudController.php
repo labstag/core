@@ -5,10 +5,12 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
+use Labstag\Filter\DiscriminatorTypeFilter;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ParagraphCrudController extends CrudControllerAbstract
@@ -85,7 +87,29 @@ class ParagraphCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->addFieldsToTab('config', [$choiceField, $textField, $classesField]);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
+    }
+
+    #[\Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $types = $this->paragraphService->getAll(null);
+        if ([] == $types) {
+            return $filters;
+        }
+
+        $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', new TranslatableMessage('Type'));
+        $discriminatorTypeFilter->setParagraphService($this->paragraphService);
+        $discriminatorTypeFilter->setChoices(
+            array_merge(
+                ['' => ''],
+                $types
+            )
+        );
+
+        $filters->add($discriminatorTypeFilter);
+
+        return $filters;
     }
 
     public static function getEntityFqcn(): string

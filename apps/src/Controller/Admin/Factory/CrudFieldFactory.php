@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin\Factory;
 
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -80,14 +81,18 @@ final class CrudFieldFactory
 
     public function addFilterCategories(Filters $filters, string $type): void
     {
-        $filters->add(
-            EntityFilter::new('categories', new TranslatableMessage('Categories'))->setFormTypeOption(
-                'value_type_options.query_builder',
-                static fn (CategoryRepository $categoryRepository): QueryBuilder => $categoryRepository->createQueryBuilder(
-                    'c'
-                )->andWhere('c.type = :type')->setParameter('type', $type)
-            )
+        $entityFilter = EntityFilter::new('categories', new TranslatableMessage('Categories'));
+        $entityFilter->setFormTypeOption(
+            'value_type_options.query_builder',
+            function (CategoryRepository $categoryRepository) use ($type): QueryBuilder {
+                $queryBuilder = $categoryRepository->createQueryBuilder('c');
+                $queryBuilder->andWhere('c.type = :type');
+                $queryBuilder->setParameter('type', $type);
+
+                return $queryBuilder;
+            }
         );
+        $filters->add($entityFilter);
     }
 
     public function addFilterEnable(Filters $filters): void
@@ -102,12 +107,18 @@ final class CrudFieldFactory
 
     public function addFilterTags(Filters $filters, string $type): void
     {
-        $filters->add(
-            EntityFilter::new('tags', new TranslatableMessage('Tags'))->setFormTypeOption(
-                'value_type_options.query_builder',
-                static fn (TagRepository $tagRepository): QueryBuilder => $tagRepository->createQueryBuilder('t')->andWhere('t.type = :type')->setParameter('type', $type)
-            )
+        $entityFilter = EntityFilter::new('tags', new TranslatableMessage('Tags'));
+        $entityFilter->setFormTypeOption(
+            'value_type_options.query_builder',
+            function (TagRepository $tagRepository) use ($type): QueryBuilder {
+                $queryBuilder = $tagRepository->createQueryBuilder('t');
+                $queryBuilder->andWhere('t.type = :type');
+                $queryBuilder->setParameter('type', $type);
+
+                return $queryBuilder;
+            }
         );
+        $filters->add($entityFilter);
     }
 
     public function addTab($tabName, FormField $formField): void
@@ -148,6 +159,24 @@ final class CrudFieldFactory
         return $associationField;
     }
 
+    public function correctionFieldsTab(array $tabfields, string $pageName): array
+    {
+        $corrected = [];
+        foreach ($tabfields as $key => $tabfield) {
+            $tabfield['fields'] = array_filter(
+                $tabfield['fields'],
+                fn ($field): bool => $this->isFieldVisibleOnPage($field, $pageName)
+            );
+            if ([] === $tabfield['fields']) {
+                continue;
+            }
+
+            $corrected[$key] = $tabfield;
+        }
+
+        return $corrected;
+    }
+
     public function fileField(
         string $type,
         string $pageName,
@@ -164,13 +193,10 @@ final class CrudFieldFactory
         return TextField::new($type, $label ?? new TranslatableMessage('File'));
     }
 
-    public function getConfigureFields(): iterable
+    public function getConfigureFields(string $pageName): iterable
     {
-        foreach ($this->tabfields as $tabfield) {
-            if (0 === count($tabfield['fields'])) {
-                continue;
-            }
-
+        $tabfields = $this->correctionFieldsTab($this->tabfields, $pageName);
+        foreach ($tabfields as $tabfield) {
             if (1 !== count($this->tabfields)) {
                 yield $tabfield['tab'];
             }
@@ -397,5 +423,18 @@ final class CrudFieldFactory
         return TextField::new('workflow', new TranslatableMessage('Workflow'))->setTemplatePath(
             'admin/field/workflow.html.twig'
         )->onlyOnIndex();
+    }
+
+    private function isFieldVisibleOnPage($field, string $pageName): bool
+    {
+        $dto = $field->getAsDto();
+
+        return match ($pageName) {
+            Crud::PAGE_INDEX  => $dto->isDisplayedOn(Crud::PAGE_INDEX),
+            Crud::PAGE_DETAIL => $dto->isDisplayedOn(Crud::PAGE_DETAIL),
+            Crud::PAGE_EDIT   => $dto->isDisplayedOn(Crud::PAGE_EDIT),
+            Crud::PAGE_NEW    => $dto->isDisplayedOn(Crud::PAGE_NEW),
+            default           => true,
+        };
     }
 }

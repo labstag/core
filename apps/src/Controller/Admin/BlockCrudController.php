@@ -20,6 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\Block;
+use Labstag\Filter\DiscriminatorTypeFilter;
 use Labstag\Repository\BlockRepository;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -127,13 +128,28 @@ class BlockCrudController extends CrudControllerAbstract
             ]
         );
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
+        $types = $this->blockService->getAll(null);
+        if ([] == $types) {
+            return $filters;
+        }
+
+        $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', new TranslatableMessage('Type'));
+        $discriminatorTypeFilter->setBlockService($this->blockService);
+        $discriminatorTypeFilter->setChoices(
+            array_merge(
+                ['' => ''],
+                $types
+            )
+        );
+
+        $filters->add($discriminatorTypeFilter);
 
         return $filters;
     }
@@ -146,13 +162,12 @@ class BlockCrudController extends CrudControllerAbstract
         FilterCollection $filterCollection,
     ): QueryBuilder
     {
-        unset($searchDto, $entityDto, $fieldCollection, $filterCollection);
-        $RepositoryAbstract = $this->getRepository();
-        if (!$RepositoryAbstract instanceof BlockRepository) {
-            throw new Exception('findAllOrderedByRegion not found');
-        }
+        // Use the parent query builder so EasyAdmin can apply search and filters (including DiscriminatorTypeFilter)
+        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
 
-        return $RepositoryAbstract->findAllOrderedByRegion();
+        $this->getRepository()->findAllOrderedByRegion($queryBuilder);
+
+        return $queryBuilder;
     }
 
     /**
@@ -183,7 +198,8 @@ class BlockCrudController extends CrudControllerAbstract
             throw new Exception('findAllOrderedByRegion not found');
         }
 
-        $queryBuilder = $RepositoryAbstract->findAllOrderedByRegion();
+        $queryBuilder = $RepositoryAbstract->createQueryBuilder('b');
+        $RepositoryAbstract->findAllOrderedByRegion($queryBuilder);
         $query        = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'block-position');
 

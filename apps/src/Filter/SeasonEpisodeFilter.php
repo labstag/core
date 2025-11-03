@@ -36,7 +36,7 @@ class SeasonEpisodeFilter implements FilterInterface
             $queryBuilder->join('season.refserie', 'serie');
         }
 
-        $queryBuilder->andWhere('serie.title = :serie');
+        $queryBuilder->andWhere('serie.id = :serie');
         $queryBuilder->setParameter('serie', $filterDataDto->getValue());
     }
 

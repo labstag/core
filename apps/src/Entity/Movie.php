@@ -201,7 +201,7 @@ class Movie implements Stringable
     }
 
     /**
-     * @return Collection<int, Paragraph>
+     * @return Collection<int, MovieInfoParagraph>
      */
     public function getParagraphs(): Collection
     {

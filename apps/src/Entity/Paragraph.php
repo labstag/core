@@ -56,7 +56,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
         'text-img'         => TextImgParagraph::class,
         'text-media'       => TextMediaParagraph::class,
         'text'             => TextParagraph::class,
-        'Video'            => VideoParagraph::class,
+        'video'            => VideoParagraph::class,
     ]
 )]
 abstract class Paragraph implements Stringable

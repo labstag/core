@@ -322,9 +322,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     {
         $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'sitemap');
-        if (is_null($paragraph)) {
-        }
+        $this->paragraphService->addParagraph($page, 'sitemap');
     }
 
     private function setParagraphsStar(Page $page): void
