@@ -103,12 +103,12 @@ class GeoCodeCrudController extends CrudControllerAbstract
      */
     private function getAllData(string $type): array
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        if (!$serviceEntityRepositoryAbstract instanceof GeoCodeRepository) {
+        $RepositoryAbstract = $this->getRepository();
+        if (!$RepositoryAbstract instanceof GeoCodeRepository) {
             return [];
         }
 
-        $all = $serviceEntityRepositoryAbstract->findAllData($type);
+        $all = $RepositoryAbstract->findAllData($type);
 
         $data = [];
         foreach ($all as $row) {

@@ -8,6 +8,7 @@ use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
+use Labstag\Entity\HtmlParagraph as EntityHtmlParagraph;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
@@ -33,6 +34,11 @@ class HtmlParagraph extends ParagraphAbstract implements ParagraphInterface
                 'data'      => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityHtmlParagraph::class;
     }
 
     /**
@@ -67,7 +73,7 @@ class HtmlParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        return in_array(
+        $inArray = in_array(
             $object::class,
             [
                 Block::class,
@@ -79,5 +85,7 @@ class HtmlParagraph extends ParagraphAbstract implements ParagraphInterface
                 Post::class,
             ]
         );
+
+        return $inArray || $object instanceof Block;
     }
 }

@@ -3,10 +3,16 @@
 namespace Labstag\Block;
 
 use Labstag\Entity\Block;
+use Labstag\Entity\HeroBlock as EntityHeroBlock;
 use Override;
 
 class HeroBlock extends ParagraphBlockAbstract
 {
+    public function getClass(): string
+    {
+        return EntityHeroBlock::class;
+    }
+
     #[Override]
     public function getName(): string
     {

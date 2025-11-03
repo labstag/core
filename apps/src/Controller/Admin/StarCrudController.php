@@ -105,12 +105,12 @@ class StarCrudController extends CrudControllerAbstract
      */
     private function getAllData(string $type): array
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        if (!$serviceEntityRepositoryAbstract instanceof StarRepository) {
+        $RepositoryAbstract = $this->getRepository();
+        if (!$RepositoryAbstract instanceof StarRepository) {
             return [];
         }
 
-        $all = $serviceEntityRepositoryAbstract->findAllData($type);
+        $all = $RepositoryAbstract->findAllData($type);
 
         $data = [];
         foreach ($all as $row) {

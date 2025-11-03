@@ -12,9 +12,9 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
- * @extends ServiceEntityRepositoryAbstract<User>
+ * @extends RepositoryAbstract<User>
  */
-class UserRepository extends ServiceEntityRepositoryAbstract implements PasswordUpgraderInterface
+class UserRepository extends RepositoryAbstract implements PasswordUpgraderInterface
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

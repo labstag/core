@@ -4,6 +4,7 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
 use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Page;
@@ -105,84 +106,72 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
      */
     private function data(): Generator
     {
-        $block = new Block();
+        $block = $this->newBlock('admin');
         $block->setRegion('header');
         $block->setTitle('Header admin');
         $block->setRoles(['ROLE_ADMIN']);
-        $block->setType('admin');
         yield $block;
 
-        $block = new Block();
-        $block->setRegion('header');
+        $block = $this->newBlock('links');
         $block->setTitle('Header Link');
-        $block->setType('links');
+        $block->setRegion('header');
         $block->setClasses('headerlink_principal');
         $this->addLinksHeader($block);
         yield $block;
 
-        $block = new Block();
+        $block = $this->newBlock('breadcrumb');
         $block->setRegion('header');
         $block->setTitle('Header breadcrumb');
-        $block->setType('breadcrumb');
         yield $block;
 
-        $block = new Block();
+        $block = $this->newBlock('hero');
         $block->setRegion('main');
         $block->setTitle('Main Hero');
-        $block->setType('hero');
         yield $block;
 
-        $block = new Block();
+        $block = $this->newBlock('flashbag');
         $block->setRegion('main');
         $block->setTitle('Main Flashbag');
-        $block->setType('flashbag');
         yield $block;
 
-        $block = new Block();
+        $block = $this->newBlock('paragraphs');
         $block->setRegion('main');
         $block->setTitle('Main Content');
-        $block->setType('paragraphs');
         $this->addParagraphsHead($block);
         yield $block;
 
-        $block = new Block();
+        $block = $this->newBlock('html');
         $block->setRegion('main');
         $block->setTitle('Main HTML');
-        $block->setType('html');
         yield $block;
 
-        $block = new Block();
+        $block = $this->newBlock('content');
         $block->setRegion('main');
         $block->setTitle('Main Content');
-        $block->setType('content');
         $this->addParagraphsTest($block);
         yield $block;
 
-        $block = new Block();
+        $block = $this->newBlock('paragraphs');
         $block->setRegion('main');
         $block->setTitle('Main Paragraphs');
-        $block->setType('paragraphs');
 
         $this->addParagraphsTest($block);
         yield $block;
 
-        $block = new Block();
+        $block = $this->newBlock('html');
         $block->setRegion('footer');
         $block->setTitle('Footer HTML');
-        $block->setType('html');
         yield $block;
 
-        $block = new Block();
+        $block = $this->newBlock('links');
         $block->setRegion('footer');
         $block->setTitle('Footer Link');
-        $block->setType('links');
         $this->addLinksFooter1($block);
         yield $block;
 
-        $block = new Block();
+        $block = $this->newBlock('links');
         $block->setRegion('footer');
         $block->setTitle('Footer Link');
-        $block->setType('links');
         $this->addLinksFooter2($block);
         yield $block;
     }
@@ -202,6 +191,18 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         }
 
         return $page;
+    }
+
+    private function newBlock(?string $code): Block
+    {
+        $block = $this->blockService->getByCode($code);
+        if (is_null($block)) {
+            throw new Exception('Block ' . $code . ' not found');
+        }
+
+        $blockClass = $block->getClass();
+
+        return new $blockClass();
     }
 
     private function setLink(?Page $page, array &$data): void

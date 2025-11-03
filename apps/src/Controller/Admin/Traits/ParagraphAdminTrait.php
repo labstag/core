@@ -5,7 +5,7 @@ namespace Labstag\Controller\Admin\Traits;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Repository\ParagraphRepository;
-use Labstag\Repository\ServiceEntityRepositoryAbstract;
+use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\ParagraphService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Trait isolating paragraph management in admin.
  * It assumes that the consuming class has methods:
- *   - getRepository(): ServiceEntityRepositoryAbstract
+ *   - getRepository(): RepositoryAbstract
  *   - render(string $view, array $params = []): Response
  *   - redirect(string $url): RedirectResponse.
  */

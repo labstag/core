@@ -4,6 +4,7 @@ namespace Labstag\Paragraph;
 
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\ChapterLastNextParagraph as EntityChapterLastNextParagraph;
 use Labstag\Entity\Paragraph;
 use Labstag\Repository\ChapterRepository;
 use Override;
@@ -26,10 +27,10 @@ class ChapterLastNextParagraph extends ParagraphAbstract implements ParagraphInt
         $chapter = $data['entity'];
         $story   = $chapter->getRefStory();
 
-        /** @var ChapterRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Chapter::class);
+        /** @var ChapterRepository $entityRepository */
+        $entityRepository = $this->getRepository(Chapter::class);
 
-        $chapters = $serviceEntityRepositoryAbstract->getAllActivateByStory($story);
+        $chapters = $entityRepository->getAllActivateByStory($story);
 
         $this->setData(
             $paragraph,
@@ -41,6 +42,11 @@ class ChapterLastNextParagraph extends ParagraphAbstract implements ParagraphInt
                 'data'      => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityChapterLastNextParagraph::class;
     }
 
     #[Override]
@@ -62,12 +68,8 @@ class ChapterLastNextParagraph extends ParagraphAbstract implements ParagraphInt
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository(Paragraph::class);
+        $paragraph                       = $entityRepository->findOnByType($this->getType());
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Block;
         }

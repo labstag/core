@@ -111,8 +111,8 @@ class SeasonCrudController extends CrudControllerAbstract
     #[Route('/admin/season/{entity}/public', name: 'admin_season_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract  = $this->getRepository();
-        $season                           = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract               = $this->getRepository();
+        $season                           = $RepositoryAbstract->find($entity);
 
         return $this->publicLink($season);
     }
@@ -120,8 +120,8 @@ class SeasonCrudController extends CrudControllerAbstract
     #[Route('/admin/season/{entity}/update', name: 'admin_season_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract  = $this->getRepository();
-        $season                           = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract               = $this->getRepository();
+        $season                           = $RepositoryAbstract->find($entity);
         $messageBus->dispatch(new SeasonMessage($season->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -136,8 +136,8 @@ class SeasonCrudController extends CrudControllerAbstract
     #[Route('/admin/season/{entity}/w3c', name: 'admin_season_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract  = $this->getRepository();
-        $season                           = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract               = $this->getRepository();
+        $season                           = $RepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($season);
     }

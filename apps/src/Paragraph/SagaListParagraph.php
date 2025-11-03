@@ -6,6 +6,7 @@ use Labstag\Entity\Block;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Saga;
+use Labstag\Entity\SagaListParagraph as EntitySagaListParagraph;
 use Override;
 
 class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
@@ -23,8 +24,8 @@ class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Movie::class);
-        $movies                          = $serviceEntityRepositoryAbstract->getAllActivateBySaga($data['entity']);
+        $entityRepository                = $this->getRepository(Movie::class);
+        $movies                          = $entityRepository->getAllActivateBySaga($data['entity']);
         if (0 === count($movies)) {
             $this->setShow($paragraph, false);
 
@@ -50,6 +51,11 @@ class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntitySagaListParagraph::class;
+    }
+
     #[Override]
     public function getName(): string
     {
@@ -69,12 +75,8 @@ class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Block;

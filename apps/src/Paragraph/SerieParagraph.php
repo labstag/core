@@ -7,6 +7,7 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Serie;
+use Labstag\Entity\SerieParagraph as EntitySerieParagraph;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\SerieRepository;
 use Override;
@@ -20,11 +21,11 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var SerieRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Serie::class);
+        /** @var SerieRepository $entityRepository */
+        $entityRepository                = $this->getRepository(Serie::class);
         $categorySlug                    = $this->getCategorySlug();
         $pagination                      = $this->getPaginator(
-            $serviceEntityRepositoryAbstract->getQueryPaginator($categorySlug),
+            $entityRepository->getQueryPaginator($categorySlug),
             $paragraph->getNbr()
         );
 
@@ -45,6 +46,11 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
                 'data'       => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntitySerieParagraph::class;
     }
 
     /**
@@ -76,12 +82,8 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page && $object->getType() == PageEnum::SERIES->value;

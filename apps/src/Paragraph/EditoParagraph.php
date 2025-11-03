@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Edito;
+use Labstag\Entity\EditoParagraph as EntityEditoParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Repository\EditoRepository;
@@ -20,9 +21,9 @@ class EditoParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        /** @var EditoRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Edito::class);
-        $edito                           = $serviceEntityRepositoryAbstract->findLast();
+        /** @var EditoRepository $entityRepository */
+        $entityRepository                = $this->getRepository(Edito::class);
+        $edito                           = $entityRepository->findLast();
         if (!$edito instanceof Edito) {
             $this->setShow($paragraph, false);
 
@@ -42,6 +43,11 @@ class EditoParagraph extends ParagraphAbstract implements ParagraphInterface
                 'edito'      => $edito,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityEditoParagraph::class;
     }
 
     /**
@@ -73,12 +79,8 @@ class EditoParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page;

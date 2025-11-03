@@ -5,10 +5,8 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -70,9 +68,15 @@ class ParagraphCrudController extends CrudControllerAbstract
         $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'))->hideOnIndex();
         $choiceField->setChoices($this->paragraphService->getFonds());
 
-        $allTypes  = array_flip($this->paragraphService->getAll(null));
-        $textField = TextField::new('type', new TranslatableMessage('Type'))->formatValue(
-            static fn ($value) => $allTypes[$value] ?? null
+        $textField = TextField::new('id', new TranslatableMessage('Type'))->formatValue(
+            function (?string $value) {
+                $paragraph = $this->paragraphService->getParagraph($value);
+                if (is_null($paragraph)) {
+                    return $value;
+                }
+
+                return $paragraph->getName();
+            }
         );
         $textField->setDisabled(true);
 
@@ -82,17 +86,6 @@ class ParagraphCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab('config', [$choiceField, $textField, $classesField]);
 
         yield from $this->crudFieldFactory->getConfigureFields();
-    }
-
-    #[\Override]
-    public function configureFilters(Filters $filters): Filters
-    {
-        $types = $this->paragraphService->getAll(null);
-        if ([] !== $types) {
-            $filters->add(ChoiceFilter::new('type', new TranslatableMessage('Type'))->setChoices($types));
-        }
-
-        return $filters;
     }
 
     public static function getEntityFqcn(): string

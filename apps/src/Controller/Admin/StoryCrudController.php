@@ -103,16 +103,6 @@ class StoryCrudController extends CrudControllerAbstract
         return $filters;
     }
 
-    #[\Override]
-    public function createEntity(string $entityFqcn): Story
-    {
-        $story = new $entityFqcn();
-        $this->workflowService->init($story);
-        $story->setRefuser($this->getUser());
-
-        return $story;
-    }
-
     public static function getEntityFqcn(): string
     {
         return Story::class;
@@ -121,8 +111,8 @@ class StoryCrudController extends CrudControllerAbstract
     #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $story                           = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $story                           = $RepositoryAbstract->find($entity);
 
         return $this->publicLink($story);
     }
@@ -166,8 +156,8 @@ class StoryCrudController extends CrudControllerAbstract
     #[Route('/admin/story/{entity}/update', name: 'admin_story_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $story                           = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $story                           = $RepositoryAbstract->find($entity);
         $messageBus->dispatch(new StoryMessage($story->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -181,8 +171,8 @@ class StoryCrudController extends CrudControllerAbstract
 
     public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract  = $this->getRepository();
-        $stories                          = $serviceEntityRepositoryAbstract->findAll();
+        $RepositoryAbstract               = $this->getRepository();
+        $stories                          = $RepositoryAbstract->findAll();
         foreach ($stories as $story) {
             $messageBus->dispatch(new StoryMessage($story->getId()));
         }
@@ -193,8 +183,8 @@ class StoryCrudController extends CrudControllerAbstract
     #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $story                           = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $story                           = $RepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($story);
     }

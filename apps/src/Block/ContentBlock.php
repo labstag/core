@@ -4,6 +4,7 @@ namespace Labstag\Block;
 
 use Labstag\Block\Traits\ParagraphProcessingTrait;
 use Labstag\Entity\Block;
+use Labstag\Entity\ContentBlock as EntityContentBlock;
 use Labstag\Entity\Page;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
@@ -73,6 +74,11 @@ class ContentBlock extends BlockAbstract
         }
 
         $this->setData($block, $tab);
+    }
+
+    public function getClass(): string
+    {
+        return EntityContentBlock::class;
     }
 
     #[Override]

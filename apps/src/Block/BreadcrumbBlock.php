@@ -4,6 +4,7 @@ namespace Labstag\Block;
 
 use Labstag\Block\Traits\CacheableTrait;
 use Labstag\Entity\Block;
+use Labstag\Entity\BreadcrumbBlock as EntityBreadcrumbBlock;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Override;
@@ -57,6 +58,11 @@ class BreadcrumbBlock extends BlockAbstract
                 'data'   => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityBreadcrumbBlock::class;
     }
 
     #[Override]

@@ -2,6 +2,7 @@
 
 namespace Labstag\Block;
 
+use Labstag\Entity\AdminBlock as EntityAdminBlock;
 use Labstag\Entity\Block;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +35,11 @@ class AdminBlock extends BlockAbstract
                 'data'   => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityAdminBlock::class;
     }
 
     #[Override]

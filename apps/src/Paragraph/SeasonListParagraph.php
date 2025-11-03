@@ -8,6 +8,7 @@ use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Season;
+use Labstag\Entity\SeasonListParagraph as EntitySeasonListParagraph;
 use Labstag\Entity\Serie;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -27,8 +28,8 @@ class SeasonListParagraph extends ParagraphAbstract implements ParagraphInterfac
             return;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Season::class);
-        $seasons                         = $serviceEntityRepositoryAbstract->getAllActivateBySerie($data['entity']);
+        $entityRepository                = $this->getRepository(Season::class);
+        $seasons                         = $entityRepository->getAllActivateBySerie($data['entity']);
         if (0 === count($seasons)) {
             $this->setShow($paragraph, false);
 
@@ -43,6 +44,11 @@ class SeasonListParagraph extends ParagraphAbstract implements ParagraphInterfac
                 'data'      => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntitySeasonListParagraph::class;
     }
 
     /**
@@ -75,12 +81,8 @@ class SeasonListParagraph extends ParagraphAbstract implements ParagraphInterfac
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Block;

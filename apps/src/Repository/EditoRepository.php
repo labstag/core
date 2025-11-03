@@ -6,9 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Edito;
 
 /**
- * @extends ServiceEntityRepositoryAbstract<Edito>
+ * @extends RepositoryAbstract<Edito>
  */
-class EditoRepository extends ServiceEntityRepositoryAbstract
+class EditoRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

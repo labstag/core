@@ -6,9 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Category;
 
 /**
- * @extends ServiceEntityRepositoryAbstract<Category>
+ * @extends RepositoryAbstract<Category>
  */
-class CategoryRepository extends ServiceEntityRepositoryAbstract
+class CategoryRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

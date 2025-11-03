@@ -63,16 +63,6 @@ class EditoCrudController extends CrudControllerAbstract
         return $filters;
     }
 
-    #[\Override]
-    public function createEntity(string $entityFqcn): Edito
-    {
-        $edito = new $entityFqcn();
-        $this->workflowService->init($edito);
-        $edito->setRefuser($this->getUser());
-
-        return $edito;
-    }
-
     public static function getEntityFqcn(): string
     {
         return Edito::class;

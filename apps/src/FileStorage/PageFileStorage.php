@@ -20,8 +20,9 @@ class PageFileStorage extends FileStorageAbstract implements FileStorageInterfac
         $this->setType('page');
     }
 
-    public function getEntity(): ?string
+    #[\Override]
+    public function getEntity(): array
     {
-        return Page::class;
+        return [Page::class];
     }
 }

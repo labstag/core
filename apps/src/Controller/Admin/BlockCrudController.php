@@ -31,8 +31,9 @@ class BlockCrudController extends CrudControllerAbstract
 {
     public function addFieldParagraphsForBlock(?Block $block, string $pageName): void
     {
+        $type = $this->blockService->getType($block);
         if ('edit' === $pageName && $block instanceof Block) {
-            if (in_array($block->getType(), ['paragraphs', 'content'])) {
+            if (in_array($type, ['paragraphs', 'content'])) {
                 $this->crudFieldFactory->setTabParagraphs($pageName);
 
                 return;
@@ -146,12 +147,12 @@ class BlockCrudController extends CrudControllerAbstract
     ): QueryBuilder
     {
         unset($searchDto, $entityDto, $fieldCollection, $filterCollection);
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        if (!$serviceEntityRepositoryAbstract instanceof BlockRepository) {
+        $RepositoryAbstract = $this->getRepository();
+        if (!$RepositoryAbstract instanceof BlockRepository) {
             throw new Exception('findAllOrderedByRegion not found');
         }
 
-        return $serviceEntityRepositoryAbstract->findAllOrderedByRegion();
+        return $RepositoryAbstract->findAllOrderedByRegion();
     }
 
     /**
@@ -177,12 +178,12 @@ class BlockCrudController extends CrudControllerAbstract
     public function positionBlock(AdminContext $adminContext): RedirectResponse|Response
     {
         $request                         = $adminContext->getRequest();
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        if (!$serviceEntityRepositoryAbstract instanceof BlockRepository) {
+        $RepositoryAbstract              = $this->getRepository();
+        if (!$RepositoryAbstract instanceof BlockRepository) {
             throw new Exception('findAllOrderedByRegion not found');
         }
 
-        $queryBuilder = $serviceEntityRepositoryAbstract->findAllOrderedByRegion();
+        $queryBuilder = $RepositoryAbstract->findAllOrderedByRegion();
         $query        = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'block-position');
 
@@ -198,17 +199,17 @@ class BlockCrudController extends CrudControllerAbstract
                 }
 
                 foreach ($data as $id => $position) {
-                    $entity = $serviceEntityRepositoryAbstract->find($id);
+                    $entity = $RepositoryAbstract->find($id);
                     if (!$entity instanceof Block) {
                         continue;
                     }
 
                     $entity->setPosition($position);
-                    $serviceEntityRepositoryAbstract->persist($entity);
+                    $RepositoryAbstract->persist($entity);
                 }
             }
 
-            $serviceEntityRepositoryAbstract->flush();
+            $RepositoryAbstract->flush();
             $this->addFlash('success', new TranslatableMessage('Position updated'));
 
             $url = $generator->setController(static::class)->setAction(Action::INDEX)->generateUrl();
@@ -234,8 +235,17 @@ class BlockCrudController extends CrudControllerAbstract
             return $field;
         }
 
-        $field = TextField::new('type', new TranslatableMessage('Type'));
-        $field->formatValue(static fn ($value) => $allTypes[$value] ?? null);
+        $field = TextField::new('id', new TranslatableMessage('Type'));
+        $field = TextField::new('id', new TranslatableMessage('Type'))->formatValue(
+            function (?string $value) {
+                $block = $this->blockService->getBlock($value);
+                if (is_null($block)) {
+                    return $value;
+                }
+
+                return $block->getName();
+            }
+        );
         $field->setDisabled(true);
 
         return $field;
@@ -251,13 +261,13 @@ class BlockCrudController extends CrudControllerAbstract
             }
 
             $data                            = $event->getData();
-            $serviceEntityRepositoryAbstract = $this->getRepository();
+            $RepositoryAbstract              = $this->getRepository();
             $region                          = $form->get('region')->getData();
-            if (is_null($region) || !$serviceEntityRepositoryAbstract instanceof BlockRepository) {
+            if (is_null($region) || !$RepositoryAbstract instanceof BlockRepository) {
                 return;
             }
 
-            $maxPosition = $serviceEntityRepositoryAbstract->getMaxPositionByRegion($region);
+            $maxPosition = $RepositoryAbstract->getMaxPositionByRegion($region);
             if (is_null($maxPosition)) {
                 $maxPosition = 0;
             }

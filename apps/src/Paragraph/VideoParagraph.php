@@ -15,6 +15,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
+use Labstag\Entity\VideoParagraph as EntityVideoParagraph;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -70,6 +71,11 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityVideoParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -100,7 +106,7 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        return in_array(
+        $inArray = in_array(
             $object::class,
             [
                 Block::class,
@@ -112,6 +118,8 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
                 Post::class,
             ]
         );
+
+        return $inArray || $object instanceof Block;
     }
 
     #[Override]

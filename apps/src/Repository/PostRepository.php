@@ -9,9 +9,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Post;
 
 /**
- * @extends ServiceEntityRepositoryAbstract<Post>
+ * @extends RepositoryAbstract<Post>
  */
-class PostRepository extends ServiceEntityRepositoryAbstract
+class PostRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

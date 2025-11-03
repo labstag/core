@@ -7,6 +7,7 @@ use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
+use Labstag\Entity\ImageParagraph as EntityImageParagraph;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
@@ -30,6 +31,11 @@ class ImageParagraph extends ParagraphAbstract implements ParagraphInterface
                 'data'      => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityImageParagraph::class;
     }
 
     /**
@@ -61,7 +67,7 @@ class ImageParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        return in_array(
+        $inArray = in_array(
             $object::class,
             [
                 Block::class,
@@ -73,5 +79,7 @@ class ImageParagraph extends ParagraphAbstract implements ParagraphInterface
                 Post::class,
             ]
         );
+
+        return $inArray || $object instanceof Block;
     }
 }

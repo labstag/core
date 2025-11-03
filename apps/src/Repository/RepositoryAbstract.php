@@ -9,7 +9,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  *
  * @extends ServiceEntityRepository<TEntityClass>
  */
-abstract class ServiceEntityRepositoryAbstract extends ServiceEntityRepository
+abstract class RepositoryAbstract extends ServiceEntityRepository
 {
     public function delete(object $entity): void
     {

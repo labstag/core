@@ -309,15 +309,17 @@ final class CrudFieldFactory
         return [];
     }
 
-    public function slugField($readOnly = false): SlugField
+    public function slugField($readOnly = false, ?string $target = 'title'): SlugField
     {
         $slugField = SlugField::new('slug', new TranslatableMessage('Slug'));
         $slugField->hideOnIndex();
         $slugField->setFormTypeOptions(
             ['required' => false]
         );
-        $slugField->setTargetFieldName('title');
-        $slugField->setUnlockConfirmationMessage('Attention, si vous changez le titre, le slug sera modifié');
+        $slugField->setTargetFieldName($target);
+        $slugField->setUnlockConfirmationMessage(
+            new TranslatableMessage('Are you sure you want to edit the slug manually?')
+        );
         if ($readOnly) {
             $slugField->hideOnForm();
         }

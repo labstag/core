@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Labstag\Message\ClearCacheMessage;
 use Labstag\Message\DeleteOldFileMessage;
-use Labstag\Repository\ServiceEntityRepositoryAbstract;
+use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
@@ -113,19 +113,19 @@ class BackController extends AbstractController
 
     protected function adminEmpty(string $entity): void
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository($entity);
-        $all                             = $serviceEntityRepositoryAbstract->findDeleted();
+        $RepositoryAbstract              = $this->getRepository($entity);
+        $all                             = $RepositoryAbstract->findDeleted();
         foreach ($all as $row) {
-            $serviceEntityRepositoryAbstract->remove($row);
+            $RepositoryAbstract->remove($row);
         }
 
-        $serviceEntityRepositoryAbstract->flush();
+        $RepositoryAbstract->flush();
     }
 
     protected function adminRestore(string $entity, mixed $uuid): void
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository($entity);
-        $data                            = $serviceEntityRepositoryAbstract->find($uuid);
+        $RepositoryAbstract              = $this->getRepository($entity);
+        $data                            = $RepositoryAbstract->find($uuid);
         if (is_null($data)) {
             throw new Exception(new TranslatableMessage('Data not found'));
         }
@@ -142,12 +142,12 @@ class BackController extends AbstractController
     }
 
     /**
-     * @return ServiceEntityRepositoryAbstract<object>
+     * @return RepositoryAbstract<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryAbstract
+    protected function getRepository(string $entity): object
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
+        if (is_null($entityRepository)) {
             throw new Exception('Repository not found');
         }
 

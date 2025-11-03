@@ -101,7 +101,7 @@ class RedirectionCrudController extends CrudControllerAbstract
     #[\Override]
     public function createEntity(string $entityFqcn): Redirection
     {
-        $redirection = new $entityFqcn();
+        $redirection = parent::createEntity($entityFqcn);
         $redirection->setActionType('url');
         $redirection->setPosition(0);
         $redirection->setActionCode(301);
@@ -170,8 +170,8 @@ class RedirectionCrudController extends CrudControllerAbstract
     #[Route('/admin/redirection/{entity}/test', name: 'admin_redirection_test')]
     public function testSource(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $redirection                     = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $redirection                     = $RepositoryAbstract->find($entity);
 
         return $this->redirect($redirection->getSource());
     }

@@ -42,7 +42,7 @@ abstract class TypedCrudControllerAbstract extends CrudControllerAbstract
     #[Override]
     public function createEntity(string $entityFqcn): object
     {
-        $entity = new $entityFqcn();
+        $entity = parent::createEntity($entityFqcn);
         $entity->setType($this->getEntityType());
 
         return $entity;

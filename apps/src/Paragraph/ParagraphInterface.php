@@ -11,6 +11,8 @@ interface ParagraphInterface
 
     public function generate(Paragraph $paragraph, array $data, bool $disable): void;
 
+    public function getClass(): string;
+
     public function getClasses(Paragraph $paragraph): array;
 
     public function getFields(Paragraph $paragraph, string $pageName): mixed;

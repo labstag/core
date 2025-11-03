@@ -2,12 +2,11 @@
 
 namespace Labstag\Paragraph;
 
-use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\PresentationCvParagraph as EntityPresentationCvParagraph;
 use Labstag\Enum\PageEnum;
-use Labstag\Form\Paragraph\DataPresentationType;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -29,14 +28,16 @@ class PresentationCVParagraph extends ParagraphAbstract implements ParagraphInte
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityPresentationCvParagraph::class;
+    }
+
     #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($pageName, $paragraph);
         yield TextField::new('title', new TranslatableMessage('Title'));
-        $fieldData = Field::new('data', 'Bloc de données');
-        $fieldData->setFormType(DataPresentationType::class);
-        yield $fieldData;
     }
 
     #[Override]
@@ -58,12 +59,8 @@ class PresentationCVParagraph extends ParagraphAbstract implements ParagraphInte
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page && $object->getType() == PageEnum::CV->value;

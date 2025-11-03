@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use Generator;
 use Labstag\Entity\Block;
+use Labstag\Entity\LinksBlock as EntityLinksBlock;
 use Labstag\Form\Block\DataLinkType;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,6 +63,11 @@ class LinksBlock extends BlockAbstract
                 'data'  => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityLinksBlock::class;
     }
 
     /**

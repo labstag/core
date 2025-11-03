@@ -53,9 +53,10 @@ abstract class EventEntityLib
 
     protected function addParagraph(object $instance, string $type): void
     {
+        $classType  = $this->paragraphService->getByCode($type);
         $paragraphs = $instance->getParagraphs();
         foreach ($paragraphs as $paragraph) {
-            if ($type == $paragraph->getType()) {
+            if ($classType->getClass() == $paragraph::class) {
                 return;
             }
         }
@@ -92,7 +93,7 @@ abstract class EventEntityLib
         $workflow->apply($object, 'submit');
     }
 
-    protected function postPersistMethods(object $object, \Doctrine\ORM\EntityManagerInterface $entityManager)
+    protected function postPersistMethods(object $object, EntityManagerInterface $entityManager)
     {
         $this->updateEntityParagraph($object);
         $this->updateEntityBlock($object);

@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Gedmo\Tool\ClassUtils;
 use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\Paragraph;
+use Labstag\Repository\ParagraphRepository;
 use ReflectionClass;
 use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -28,6 +29,7 @@ final class ParagraphService
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
         private AdminUrlGenerator $adminUrlGenerator,
+        private ParagraphRepository $paragraphRepository,
         private Security $security,
     )
     {
@@ -47,9 +49,10 @@ final class ParagraphService
             return null;
         }
 
+        $paragraphClass = $row->getClass();
+        $paragraph      = new $paragraphClass();
+
         $position  = count($entity->getParagraphs());
-        $paragraph = new Paragraph();
-        $paragraph->setType($type);
         $paragraph->setPosition($position);
 
         $entity->addParagraph($paragraph);
@@ -62,7 +65,7 @@ final class ParagraphService
         $content = null;
 
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 
@@ -113,6 +116,17 @@ final class ParagraphService
         return $paragraphs;
     }
 
+    public function getByCode(?string $code): ?object
+    {
+        foreach ($this->paragraphs as $paragraph) {
+            if ($paragraph->getType() == $code) {
+                return $paragraph;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -121,7 +135,7 @@ final class ParagraphService
         $classes = [];
 
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 
@@ -206,10 +220,9 @@ final class ParagraphService
             return [];
         }
 
-        $type   = $paragraph->getType();
         $fields = [];
         foreach ($this->paragraphs as $row) {
-            if ($row->getType() == $type) {
+            if ($row->getClass() == $paragraph::class) {
                 $fields = $row->getFields($paragraph, $pageName);
 
                 break;
@@ -240,18 +253,56 @@ final class ParagraphService
         return [];
     }
 
-    public function getNameByCode(string $code): string
+    public function getName(?Paragraph $paragraph): string
     {
+        if (!$paragraph instanceof Paragraph) {
+            return '';
+        }
+
         $name = '';
-        foreach ($this->paragraphs as $paragraph) {
-            if ($paragraph->getType() == $code) {
-                $name = $paragraph->getName();
+        foreach ($this->paragraphs as $row) {
+            if ($row->getClass() == $paragraph::class) {
+                $name = $row->getName();
 
                 break;
             }
         }
 
         return $name;
+    }
+
+    public function getParagraph(?string $idParagraph): ?object
+    {
+        $paragraph  = $this->paragraphRepository->find($idParagraph);
+        if (!$paragraph instanceof Paragraph) {
+            return null;
+        }
+
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph::class != $row->getClass()) {
+                continue;
+            }
+
+            return $row;
+        }
+
+        return null;
+    }
+
+    public function getType(Paragraph $paragraph): string
+    {
+        $type = '';
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph::class != $row->getClass()) {
+                continue;
+            }
+
+            $type = $row->getType();
+
+            break;
+        }
+
+        return $type;
     }
 
     public function getUrlAdmin(Paragraph $paragraph): ?AdminUrlGeneratorInterface
@@ -269,7 +320,7 @@ final class ParagraphService
     public function update(Paragraph $paragraph): void
     {
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 
@@ -284,7 +335,7 @@ final class ParagraphService
         $footer = null;
 
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 
@@ -301,7 +352,7 @@ final class ParagraphService
         $header = null;
 
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 
@@ -323,7 +374,7 @@ final class ParagraphService
         }
 
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 
@@ -346,7 +397,7 @@ final class ParagraphService
     {
         $template = null;
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 

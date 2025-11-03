@@ -64,16 +64,6 @@ class MemoCrudController extends CrudControllerAbstract
         return $filters;
     }
 
-    #[\Override]
-    public function createEntity(string $entityFqcn): Memo
-    {
-        $memo = new $entityFqcn();
-        $this->workflowService->init($memo);
-        $memo->setRefuser($this->getUser());
-
-        return $memo;
-    }
-
     public static function getEntityFqcn(): string
     {
         return Memo::class;

@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Generator;
 use Labstag\Entity\Edito;
 use Labstag\Entity\Memo;
+use Labstag\Entity\MovieInfoParagraph as EntityMovieInfoParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
@@ -35,6 +36,11 @@ class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
                 'data'      => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityMovieInfoParagraph::class;
     }
 
     /**

@@ -20,8 +20,9 @@ class MovieFileStorage extends FileStorageAbstract implements FileStorageInterfa
         $this->setType('movie');
     }
 
-    public function getEntity(): ?string
+    #[\Override]
+    public function getEntity(): array
     {
-        return Movie::class;
+        return [Movie::class];
     }
 }

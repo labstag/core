@@ -2,7 +2,7 @@
 {% if ea.crud.currentAction == 'detail' %}
   <ul>
     {% for paragraph in instance.paragraphs %}
-      <li>{{ paragraph_name(paragraph.type) }}</li>
+      <li>{{ paragraph_name(paragraph) }}</li>
     {% endfor %}
   </ul>
 {% else %}

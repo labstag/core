@@ -14,6 +14,8 @@ interface BlockInterface
      */
     public function generate(Block $block, array $data, bool $disable): void;
 
+    public function getClass(): string;
+
     public function getName(): string;
 
     public function getType(): string;

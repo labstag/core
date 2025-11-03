@@ -4,6 +4,7 @@ namespace Labstag\Paragraph;
 
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\SitemapParagraph as EntitySitemapParagraph;
 use Override;
 
 class SitemapParagraph extends ParagraphAbstract implements ParagraphInterface
@@ -26,6 +27,11 @@ class SitemapParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntitySitemapParagraph::class;
+    }
+
     #[Override]
     public function getName(): string
     {
@@ -45,12 +51,8 @@ class SitemapParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page;

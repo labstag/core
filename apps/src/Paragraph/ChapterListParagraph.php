@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\ChapterListParagraph as EntityChapterListParagraph;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Story;
 use Labstag\Repository\ChapterRepository;
@@ -28,9 +29,9 @@ class ChapterListParagraph extends ParagraphAbstract implements ParagraphInterfa
             return;
         }
 
-        /** @var ChapterRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Chapter::class);
-        $chapters                        = $serviceEntityRepositoryAbstract->getAllActivateByStory($data['entity']);
+        /** @var ChapterRepository $entityRepository */
+        $entityRepository                = $this->getRepository(Chapter::class);
+        $chapters                        = $entityRepository->getAllActivateByStory($data['entity']);
         if (0 === count($chapters)) {
             $this->setShow($paragraph, false);
 
@@ -45,6 +46,11 @@ class ChapterListParagraph extends ParagraphAbstract implements ParagraphInterfa
                 'data'      => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityChapterListParagraph::class;
     }
 
     /**
@@ -77,12 +83,11 @@ class ChapterListParagraph extends ParagraphAbstract implements ParagraphInterfa
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        // Avec l'héritage en table unique (STI), "type" est la colonne discriminante
+        // et n'est pas un champ mappé. On interroge donc directement la sous-classe
+        // pour bénéficier automatiquement du filtre sur le discriminateur.
+        $entityRepository   = $this->getRepository($this->getClass());
+        $paragraph          = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Block;

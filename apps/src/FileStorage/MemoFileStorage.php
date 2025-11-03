@@ -20,8 +20,9 @@ class MemoFileStorage extends FileStorageAbstract implements FileStorageInterfac
         $this->setType('memo');
     }
 
-    public function getEntity(): ?string
+    #[\Override]
+    public function getEntity(): array
     {
-        return Memo::class;
+        return [Memo::class];
     }
 }

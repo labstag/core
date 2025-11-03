@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\Block;
-use Labstag\Repository\ServiceEntityRepositoryAbstract;
+use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\ShortCodeService;
@@ -137,12 +137,12 @@ abstract class BlockAbstract extends AbstractController implements BlockInterfac
     }
 
     /**
-     * @return ServiceEntityRepositoryAbstract<object>
+     * @return RepositoryAbstract<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryAbstract
+    protected function getRepository(string $entity): object
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
+        if (is_null($entityRepository)) {
             throw new Exception('Repository not found');
         }
 

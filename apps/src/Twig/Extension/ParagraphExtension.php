@@ -16,7 +16,8 @@ class ParagraphExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('paragraph_name', [ParagraphExtensionRuntime::class, 'getName']),
+            new TwigFunction('paragraph_type', [ParagraphExtensionRuntime::class, 'type']),
+            new TwigFunction('paragraph_name', [ParagraphExtensionRuntime::class, 'name']),
             new TwigFunction('paragraph_contextmenu', [ParagraphExtensionRuntime::class, 'getContextMenu']),
             new TwigFunction('paragraph_fond', [ParagraphExtensionRuntime::class, 'getFond']),
             new TwigFunction(

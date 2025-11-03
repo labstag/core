@@ -10,9 +10,9 @@ use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 
 /**
- * @extends ServiceEntityRepositoryAbstract<Episode>
+ * @extends RepositoryAbstract<Episode>
  */
-class EpisodeRepository extends ServiceEntityRepositoryAbstract
+class EpisodeRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $registry)
     {

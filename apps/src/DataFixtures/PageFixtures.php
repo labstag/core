@@ -231,7 +231,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         }
 
         $paragraph->setTitle('Dernières news');
-        $paragraph->setType('last-news');
         $paragraph->setNbr(4);
     }
 
@@ -325,10 +324,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'sitemap');
         if (is_null($paragraph)) {
-            return;
         }
-
-        $paragraph->setTitle('Sitemap');
     }
 
     private function setParagraphsStar(Page $page): void

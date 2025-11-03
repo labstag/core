@@ -89,8 +89,7 @@ class PageCrudController extends CrudControllerAbstract
     #[\Override]
     public function createEntity(string $entityFqcn): Page
     {
-        $page = new $entityFqcn();
-        $this->workflowService->init($page);
+        $page = parent::createEntity($entityFqcn);
         $home = $this->getRepository()->findOneBy(
             [
                 'type' => PageEnum::HOME->value,
@@ -101,7 +100,6 @@ class PageCrudController extends CrudControllerAbstract
         }
 
         $page->setType(($home instanceof Page) ? PageEnum::PAGE->value : PageEnum::HOME->value);
-        $page->setRefuser($this->getUser());
 
         return $page;
     }
@@ -114,8 +112,8 @@ class PageCrudController extends CrudControllerAbstract
     #[Route('/admin/page/{entity}/public', name: 'admin_page_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $page                            = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $page                            = $RepositoryAbstract->find($entity);
 
         return $this->publicLink($page);
     }
@@ -123,8 +121,8 @@ class PageCrudController extends CrudControllerAbstract
     #[Route('/admin/page/{entity}/w3c', name: 'admin_page_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $page                            = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $page                            = $RepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($page);
     }

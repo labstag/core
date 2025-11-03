@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Movie;
+use Labstag\Entity\MovieSliderParagraph as EntityMovieSliderParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Enum\PageEnum;
@@ -29,11 +30,11 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
             return;
         }
 
-        /** @var MovieRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Movie::class);
+        /** @var MovieRepository $entityRepository */
+        $entityRepository                = $this->getRepository(Movie::class);
         $nbr                             = $paragraph->getNbr();
         $title                           = $paragraph->getTitle();
-        $movies                          = $serviceEntityRepositoryAbstract->findLastByNbr($nbr);
+        $movies                          = $entityRepository->findLastByNbr($nbr);
         if (0 === count($movies)) {
             $this->setShow($paragraph, false);
 
@@ -50,6 +51,11 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
                 'data'      => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityMovieSliderParagraph::class;
     }
 
     /**
@@ -83,12 +89,8 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page && $object->getType() == PageEnum::HOME->value;

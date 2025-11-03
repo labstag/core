@@ -6,9 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Link;
 
 /**
- * @extends ServiceEntityRepositoryAbstract<Link>
+ * @extends RepositoryAbstract<Link>
  */
-class LinkRepository extends ServiceEntityRepositoryAbstract
+class LinkRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

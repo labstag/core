@@ -2,10 +2,16 @@
 
 namespace Labstag\Block;
 
+use Labstag\Entity\ParagraphsBlock as EntityParagraphsBlock;
 use Override;
 
 class ParagraphsBlock extends ParagraphBlockAbstract
 {
+    public function getClass(): string
+    {
+        return EntityParagraphsBlock::class;
+    }
+
     // Utilise l'implémentation par défaut d'ParagraphBlockAbstract
 
     #[Override]

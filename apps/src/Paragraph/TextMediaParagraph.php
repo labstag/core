@@ -16,6 +16,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
+use Labstag\Entity\TextMediaParagraph as EntityTextMediaParagraph;
 use Labstag\Field\WysiwygField;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -72,6 +73,11 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityTextMediaParagraph::class;
+    }
+
     #[Override]
     public function getClasses(Paragraph $paragraph): array
     {
@@ -118,7 +124,7 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        return in_array(
+        $inArray = in_array(
             $object::class,
             [
                 Block::class,
@@ -130,6 +136,8 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
                 Post::class,
             ]
         );
+
+        return $inArray || $object instanceof Block;
     }
 
     #[Override]

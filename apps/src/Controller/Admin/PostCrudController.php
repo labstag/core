@@ -82,16 +82,6 @@ class PostCrudController extends CrudControllerAbstract
         return $filters;
     }
 
-    #[\Override]
-    public function createEntity(string $entityFqcn): Post
-    {
-        $post = new $entityFqcn();
-        $this->workflowService->init($post);
-        $post->setRefuser($this->getUser());
-
-        return $post;
-    }
-
     public static function getEntityFqcn(): string
     {
         return Post::class;
@@ -100,8 +90,8 @@ class PostCrudController extends CrudControllerAbstract
     #[Route('/admin/post/{entity}/public', name: 'admin_post_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $post                            = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $post                            = $RepositoryAbstract->find($entity);
 
         return $this->publicLink($post);
     }
@@ -109,8 +99,8 @@ class PostCrudController extends CrudControllerAbstract
     #[Route('/admin/post/{entity}/w3c', name: 'admin_post_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $post                            = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $post                            = $RepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($post);
     }

@@ -20,8 +20,9 @@ class StarFileStorage extends FileStorageAbstract implements FileStorageInterfac
         $this->setType('star');
     }
 
-    public function getEntity(): ?string
+    #[\Override]
+    public function getEntity(): array
     {
-        return Star::class;
+        return [Star::class];
     }
 }

@@ -168,8 +168,8 @@ class MovieCrudController extends CrudControllerAbstract
     #[Route('/admin/movie/{entity}/imdb', name: 'admin_movie_imdb')]
     public function imdb(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $movie                           = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $movie                           = $RepositoryAbstract->find($entity);
 
         return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
     }
@@ -177,8 +177,8 @@ class MovieCrudController extends CrudControllerAbstract
     #[Route('/admin/movie/{entity}/tmdb', name: 'admin_movie_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $movie                           = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $movie                           = $RepositoryAbstract->find($entity);
 
         return $this->redirect('https://www.themoviedb.org/movie/' . $movie->getTmdb());
     }
@@ -186,8 +186,8 @@ class MovieCrudController extends CrudControllerAbstract
     #[Route('/admin/movie/{entity}/update', name: 'admin_movie_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $movie                           = $serviceEntityRepositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $movie                           = $RepositoryAbstract->find($entity);
         $messageBus->dispatch(new MovieMessage($movie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -225,10 +225,10 @@ class MovieCrudController extends CrudControllerAbstract
      */
     private function getMovieRepository(): MovieRepository
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        assert($serviceEntityRepositoryAbstract instanceof MovieRepository);
+        $RepositoryAbstract = $this->getRepository();
+        assert($RepositoryAbstract instanceof MovieRepository);
 
-        return $serviceEntityRepositoryAbstract;
+        return $RepositoryAbstract;
     }
 
     private function setLinkImdbAction(): Action

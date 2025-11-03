@@ -15,7 +15,7 @@ use Exception;
 use Labstag\Controller\Admin\Factory\MenuItemFactory;
 use Labstag\Entity\User;
 use Labstag\Repository\ConfigurationRepository;
-use Labstag\Repository\ServiceEntityRepositoryAbstract;
+use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
@@ -141,19 +141,19 @@ class DashboardController extends AbstractDashboardController
 
     protected function adminEmpty(string $entity): void
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository($entity);
-        $all                             = $serviceEntityRepositoryAbstract->findDeleted();
+        $RepositoryAbstract              = $this->getRepository($entity);
+        $all                             = $RepositoryAbstract->findDeleted();
         foreach ($all as $row) {
-            $serviceEntityRepositoryAbstract->remove($row);
+            $RepositoryAbstract->remove($row);
         }
 
-        $serviceEntityRepositoryAbstract->flush();
+        $RepositoryAbstract->flush();
     }
 
     protected function adminRestore(string $entity, mixed $uuid): void
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository($entity);
-        $data                            = $serviceEntityRepositoryAbstract->find($uuid);
+        $RepositoryAbstract              = $this->getRepository($entity);
+        $data                            = $RepositoryAbstract->find($uuid);
         if (is_null($data)) {
             throw new Exception(new TranslatableMessage('Data not found'));
         }
@@ -170,12 +170,12 @@ class DashboardController extends AbstractDashboardController
     }
 
     /**
-     * @return ServiceEntityRepositoryAbstract<object>
+     * @return RepositoryAbstract<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryAbstract
+    protected function getRepository(string $entity): object
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
+        if (is_null($entityRepository)) {
             throw new Exception('Repository not found');
         }
 
@@ -321,6 +321,11 @@ class DashboardController extends AbstractDashboardController
                 new TranslatableMessage('Memo'),
                 'fas fa-memory',
                 MemoCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Media'),
+                'fas fa-photo-video',
+                MediaCrudController::getEntityFqcn(),
             ],
             [
                 new TranslatableMessage('Meta'),

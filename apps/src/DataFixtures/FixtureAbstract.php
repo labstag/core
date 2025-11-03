@@ -9,6 +9,7 @@ use Faker\Generator;
 use Faker\Provider\Youtube;
 use Labstag\Entity\Category;
 use Labstag\Entity\Tag;
+use Labstag\Service\BlockService;
 use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
@@ -35,6 +36,7 @@ abstract class FixtureAbstract extends Fixture
     public function __construct(
         protected EmailService $emailService,
         protected WorkflowService $workflowService,
+        protected BlockService $blockService,
         protected UserService $userService,
         protected FileService $fileService,
         protected ParagraphService $paragraphService,

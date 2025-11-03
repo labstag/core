@@ -9,9 +9,9 @@ use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
 
 /**
- * @extends ServiceEntityRepositoryAbstract<Chapter>
+ * @extends RepositoryAbstract<Chapter>
  */
-class ChapterRepository extends ServiceEntityRepositoryAbstract
+class ChapterRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

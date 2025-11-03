@@ -17,9 +17,10 @@ use Labstag\Controller\Admin\Factory\CrudFieldFactory;
 use Labstag\Controller\Admin\Factory\LinkActionFactory;
 use Labstag\Controller\Admin\Traits\ParagraphAdminTrait;
 use Labstag\Controller\Admin\Traits\TrashActionsTrait;
+use Labstag\Entity\Meta;
 use Labstag\Entity\Paragraph;
 use Labstag\Repository\ParagraphRepository;
-use Labstag\Repository\ServiceEntityRepositoryAbstract;
+use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\BlockService;
 use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
@@ -33,6 +34,7 @@ use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
+use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -88,6 +90,24 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     }
 
     #[\Override]
+    public function createEntity(string $entityFqcn): object
+    {
+        $entity = new $entityFqcn();
+        $this->workflowService->init($entity);
+        $reflectionClass = new ReflectionClass($entity);
+        if ($reflectionClass->hasMethod('setMeta')) {
+            $meta = new Meta();
+            $entity->setMeta($meta);
+        }
+
+        if ($reflectionClass->hasMethod('setRefuser')) {
+            $entity->setRefuser($this->getUser());
+        }
+
+        return $entity;
+    }
+
+    #[\Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
@@ -116,9 +136,9 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     /**
      * Backward compatibility helper - new code should call getRepository() or inject repositories directly.
      *
-     * @return ServiceEntityRepositoryAbstract<object>
+     * @return RepositoryAbstract<object>
      */
-    protected function getRepository(?string $entity = null): ServiceEntityRepositoryAbstract
+    protected function getRepository(?string $entity = null): object
     {
         $entity ??= static::getEntityFqcn();
 
@@ -127,10 +147,10 @@ abstract class CrudControllerAbstract extends AbstractCrudController
 
     protected function getRepositoryParagraph(): ParagraphRepository
     {
-        $serviceEntityRepositoryAbstract = $this->getDoctrineRepository(Paragraph::class);
-        assert($serviceEntityRepositoryAbstract instanceof ParagraphRepository);
+        $RepositoryAbstract = $this->getDoctrineRepository(Paragraph::class);
+        assert($RepositoryAbstract instanceof ParagraphRepository);
 
-        return $serviceEntityRepositoryAbstract;
+        return $RepositoryAbstract;
     }
 
     protected function isSuperAdmin(): bool
@@ -201,14 +221,14 @@ abstract class CrudControllerAbstract extends AbstractCrudController
      * Internal helper to fetch a Doctrine repository with generics-like safety.
      */
     /**
-     * @return ServiceEntityRepositoryAbstract<object>
+     * @return RepositoryAbstract<object>
      */
-    private function getDoctrineRepository(string $entity): ServiceEntityRepositoryAbstract
+    private function getDoctrineRepository(string $entity): object
     {
         $objectManager = $this->managerRegistry->getManagerForClass($entity);
-        /** @var ServiceEntityRepositoryAbstract<object> $objectRepository */
+        /** @var RepositoryAbstract<object> $objectRepository */
         $objectRepository = $objectManager->getRepository($entity);
-        assert($objectRepository instanceof ServiceEntityRepositoryAbstract);
+        assert(!is_null($objectRepository));
 
         return $objectRepository;
     }

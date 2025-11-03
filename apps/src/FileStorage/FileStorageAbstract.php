@@ -36,9 +36,9 @@ abstract class FileStorageAbstract
         }
     }
 
-    public function getEntity(): ?string
+    public function getEntity(): array
     {
-        return null;
+        return [];
     }
 
     /**

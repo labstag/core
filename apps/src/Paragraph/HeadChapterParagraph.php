@@ -4,6 +4,7 @@ namespace Labstag\Paragraph;
 
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\HeadChapterParagraph as EntityHeadChapterParagraph;
 use Labstag\Entity\Paragraph;
 use Override;
 
@@ -32,6 +33,11 @@ class HeadChapterParagraph extends ParagraphAbstract implements ParagraphInterfa
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityHeadChapterParagraph::class;
+    }
+
     #[Override]
     public function getName(): string
     {
@@ -51,12 +57,8 @@ class HeadChapterParagraph extends ParagraphAbstract implements ParagraphInterfa
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Block;

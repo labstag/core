@@ -7,6 +7,7 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Star;
+use Labstag\Entity\StarParagraph as EntityStarParagraph;
 use Labstag\Repository\StarRepository;
 use Override;
 
@@ -19,20 +20,17 @@ class StarParagraph extends ParagraphAbstract implements ParagraphInterface
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        /** @var StarRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Star::class);
+        /** @var StarRepository $entityRepository */
+        $entityRepository = $this->getRepository(Star::class);
 
-        $total = $serviceEntityRepositoryAbstract->findTotalEnable();
+        $total = $entityRepository->findTotalEnable();
         if (0 == $total) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
-        $pagination = $this->getPaginator(
-            $serviceEntityRepositoryAbstract->getQueryPaginator(),
-            $paragraph->getNbr()
-        );
+        $pagination = $this->getPaginator($entityRepository->getQueryPaginator(), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
@@ -51,6 +49,11 @@ class StarParagraph extends ParagraphAbstract implements ParagraphInterface
                 'data'       => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityStarParagraph::class;
     }
 
     /**
@@ -82,12 +85,8 @@ class StarParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page;

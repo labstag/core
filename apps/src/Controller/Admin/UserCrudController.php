@@ -149,7 +149,7 @@ class UserCrudController extends CrudControllerAbstract
     #[\Override]
     public function createEntity(string $entityFqcn): User
     {
-        $user = new $entityFqcn();
+        $user = parent::createEntity($entityFqcn);
         $this->workflowService->init($user);
         $langue = $this->userService->getLanguagesForChoices();
         $key    = array_key_first($langue);

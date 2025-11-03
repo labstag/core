@@ -20,8 +20,9 @@ class SagaFileStorage extends FileStorageAbstract implements FileStorageInterfac
         $this->setType('saga');
     }
 
-    public function getEntity(): ?string
+    #[\Override]
+    public function getEntity(): array
     {
-        return Saga::class;
+        return [Saga::class];
     }
 }

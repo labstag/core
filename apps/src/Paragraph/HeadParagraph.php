@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use Labstag\Entity\HeadParagraph as EntityHeadParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Override;
@@ -22,6 +23,11 @@ class HeadParagraph extends ParagraphAbstract implements ParagraphInterface
                 'data'      => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityHeadParagraph::class;
     }
 
     #[Override]

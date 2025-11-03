@@ -5,6 +5,7 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
+use Labstag\Entity\LastNewsParagraph as EntityLastNewsParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
@@ -23,9 +24,9 @@ class LastNewsParagraph extends ParagraphAbstract implements ParagraphInterface
     {
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::POSTS->value);
-        /** @var PostRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Post::class);
-        $total                           = $serviceEntityRepositoryAbstract->findTotalEnable();
+        /** @var PostRepository $entityRepository */
+        $entityRepository                = $this->getRepository(Post::class);
+        $total                           = $entityRepository->findTotalEnable();
         if (!is_object($listing) || !$listing->isEnable() || 0 == $total) {
             $this->setShow($paragraph, false);
 
@@ -33,8 +34,8 @@ class LastNewsParagraph extends ParagraphAbstract implements ParagraphInterface
         }
 
         $nbr   = $paragraph->getNbr();
-        $news  = $serviceEntityRepositoryAbstract->findLastByNbr($nbr);
-        $total = $serviceEntityRepositoryAbstract->findTotalEnable();
+        $news  = $entityRepository->findLastByNbr($nbr);
+        $total = $entityRepository->findTotalEnable();
         $this->setData(
             $paragraph,
             [
@@ -45,6 +46,11 @@ class LastNewsParagraph extends ParagraphAbstract implements ParagraphInterface
                 'data'      => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityLastNewsParagraph::class;
     }
 
     /**
@@ -78,12 +84,8 @@ class LastNewsParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page && $object->getType() == PageEnum::HOME->value;

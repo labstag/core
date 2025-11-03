@@ -5,9 +5,11 @@ namespace Labstag\Twig\Runtime;
 use DOMDocument;
 use Essence\Essence;
 use Essence\Media;
+use Labstag\Service\BlockService;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\MetaService;
+use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -28,6 +30,8 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         protected SiteService $siteService,
         protected ParameterBagInterface $parameterBag,
         protected FileService $fileService,
+        protected BlockService $blockService,
+        protected ParagraphService $paragraphService,
         protected Environment $twigEnvironment,
     )
     {
