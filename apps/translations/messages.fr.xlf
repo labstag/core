@@ -1309,6 +1309,18 @@
         <source>TMDB page for the serie</source>
         <target>Page TMDB de la série</target>
       </trans-unit>
+      <trans-unit id="SPuRknZ" resname="Are you sure you want to edit the slug manually?">
+        <source>Are you sure you want to edit the slug manually?</source>
+        <target>Êtes-vous sûr de vouloir modifier le slug manuellement ?</target>
+      </trans-unit>
+      <trans-unit id="wbmyMpt" resname="Media">
+        <source>Media</source>
+        <target>Média</target>
+      </trans-unit>
+      <trans-unit id="wbMeKOh" resname="Name">
+        <source>Name</source>
+        <target>Nom</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
