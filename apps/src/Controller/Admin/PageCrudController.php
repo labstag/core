@@ -58,7 +58,7 @@ class PageCrudController extends CrudControllerAbstract
             'principal',
             [AssociationField::new('page', new TranslatableMessage('Page'))]
         );
-        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet());
+        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet(self::getEntityFqcn()));
 
         $this->crudFieldFactory->setTabParagraphs($pageName);
 

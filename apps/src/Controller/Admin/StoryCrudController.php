@@ -81,7 +81,7 @@ class StoryCrudController extends CrudControllerAbstract
             ]
         );
 
-        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet());
+        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet(self::getEntityFqcn()));
 
         $this->crudFieldFactory->setTabParagraphs($pageName);
         $this->crudFieldFactory->setTabSEO();

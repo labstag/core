@@ -53,7 +53,7 @@ class PostCrudController extends CrudControllerAbstract
             ]
         );
 
-        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet());
+        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet(self::getEntityFqcn()));
 
         // Additional specific field (resume) not yet in factory bundle - placed at end of principal tab
         $wysiwygField = WysiwygField::new('resume', new TranslatableMessage('resume'));

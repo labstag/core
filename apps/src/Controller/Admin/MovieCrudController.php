@@ -125,7 +125,7 @@ class MovieCrudController extends CrudControllerAbstract
                 $trailerField,
                 $wysiwygField,
                 $descriptionField,
-                $this->crudFieldFactory->categoriesField(),
+                $this->crudFieldFactory->categoriesFieldFor(self::getEntityFqcn()),
                 // image field déjà incluse dans baseIdentitySet
                 $booleanField,
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),

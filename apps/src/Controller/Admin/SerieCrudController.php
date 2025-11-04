@@ -132,7 +132,7 @@ class SerieCrudController extends CrudControllerAbstract
                 $trailerField,
                 $wysiwygField,
                 $descriptionField,
-                $this->crudFieldFactory->categoriesField(),
+                $this->crudFieldFactory->categoriesFieldFor(self::getEntityFqcn()),
                 $collectionField,
                 $booleanField,
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),

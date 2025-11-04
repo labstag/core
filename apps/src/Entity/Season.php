@@ -74,6 +74,7 @@ class Season implements \Stringable
     protected Collection $paragraphs;
 
     #[ORM\ManyToOne(inversedBy: 'seasons')]
+    #[ORM\JoinColumn(name: 'refserie_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     protected ?Serie $refserie = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]

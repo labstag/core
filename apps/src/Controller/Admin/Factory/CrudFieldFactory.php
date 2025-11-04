@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller\Admin\Factory;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -38,6 +39,7 @@ final class CrudFieldFactory
         #[AutowireIterator('labstag.shortcodes')]
         private iterable $shortcodes,
         private FileService $fileService,
+        private ManagerRegistry $managerRegistry,
     )
     {
     }
@@ -128,6 +130,50 @@ final class CrudFieldFactory
         $associationField->setFormTypeOption('by_reference', false);
 
         return $associationField;
+    }
+
+    /**
+     * Safer helper: return an AssociationField for 'categories' when the given entity
+     * actually defines a Doctrine association named 'categories'. Otherwise, fall back
+     * to a read-only CollectionField to avoid runtime errors on index/detail pages.
+     */
+    public function tagsFieldFor(string $entityFqcn): AssociationField|CollectionField
+    {
+        $em = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata = null !== $em ? $em->getClassMetadata($entityFqcn) : null;
+
+        if (null !== $metadata && $metadata->hasAssociation('tags')) {
+            return $this->tagsField();
+        }
+
+        // Fallback (non-association): render count/list, hidden on forms to prevent editing issues
+        $collectionField = CollectionField::new('tags', new TranslatableMessage('Categories'));
+        $collectionField->setTemplatePath('admin/field/tags.html.twig');
+        $collectionField->hideOnForm();
+
+        return $collectionField;
+    }
+
+    /**
+     * Safer helper: return an AssociationField for 'categories' when the given entity
+     * actually defines a Doctrine association named 'categories'. Otherwise, fall back
+     * to a read-only CollectionField to avoid runtime errors on index/detail pages.
+     */
+    public function categoriesFieldFor(string $entityFqcn): AssociationField|CollectionField
+    {
+        $em = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata = null !== $em ? $em->getClassMetadata($entityFqcn) : null;
+
+        if (null !== $metadata && $metadata->hasAssociation('categories')) {
+            return $this->categoriesField();
+        }
+
+        // Fallback (non-association): render count/list, hidden on forms to prevent editing issues
+        $collectionField = CollectionField::new('categories', new TranslatableMessage('Categories'));
+        $collectionField->setTemplatePath('admin/field/categories.html.twig');
+        $collectionField->hideOnForm();
+
+        return $collectionField;
     }
 
     public function correctionFieldsTab(array $tabfields, string $pageName): array
@@ -363,11 +409,11 @@ final class CrudFieldFactory
      *
      * @return array<int, AssociationField>
      */
-    public function taxonomySet(): array
+    public function taxonomySet(string $entityFqcn): array
     {
         return [
-            $this->tagsField(),
-            $this->categoriesField(),
+            $this->tagsFieldFor($entityFqcn),
+            $this->categoriesFieldFor($entityFqcn),
         ];
     }
 
