@@ -25,6 +25,5 @@ class TagRepository extends RepositoryAbstract
         $alias = $queryBuilder->getRootAliases()[0] ?? 'entity';
         $queryBuilder->resetDQLPart('from');
         $queryBuilder->from($class, $alias);
-
     }
 }

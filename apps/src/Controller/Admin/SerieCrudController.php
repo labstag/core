@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -88,14 +89,14 @@ class SerieCrudController extends CrudControllerAbstract
         $choiceField->allowMultipleChoices();
         $choiceField->renderExpanded(false);
 
-        $collectionField = CollectionField::new('seasons', new TranslatableMessage('Seasons'));
-        $collectionField->setTemplatePath('admin/field/seasons.html.twig');
-        $collectionField->hideOnForm();
+        $associationField = AssociationField::new('seasons', new TranslatableMessage('Seasons'));
+        $associationField->setTemplatePath('admin/field/seasons.html.twig');
+        $associationField->hideOnForm();
 
-        $runtimeField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
-        $runtimeField->setTemplatePath('admin/field/runtime-serie.html.twig');
-        $runtimeField->hideOnForm();
-        $runtimeField->hideOnIndex();
+        $collectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
+        $collectionField->setTemplatePath('admin/field/runtime-serie.html.twig');
+        $collectionField->hideOnForm();
+        $collectionField->hideOnIndex();
 
         $trailerField = TextField::new('trailer', new TranslatableMessage('Trailer'));
         $trailerField->hideOnIndex();
@@ -124,16 +125,16 @@ class SerieCrudController extends CrudControllerAbstract
                 $tmdField,
                 $certificationField,
                 DateField::new('releaseDate', new TranslatableMessage('Release date')),
-                DateField::new('lastReleaseDate', new TranslatableMessage('Last release date')),
+                DateField::new('lastreleaseDate', new TranslatableMessage('Last release date')),
                 $choiceField,
-                $runtimeField,
+                $collectionField,
                 NumberField::new('evaluation', new TranslatableMessage('Evaluation'))->hideOnIndex(),
                 IntegerField::new('votes', new TranslatableMessage('Votes'))->hideOnIndex(),
                 $trailerField,
                 $wysiwygField,
                 $descriptionField,
                 $this->crudFieldFactory->categoriesFieldForPage(self::getEntityFqcn(), $pageName),
-                $collectionField,
+                $associationField,
                 $booleanField,
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
             ]
@@ -147,7 +148,7 @@ class SerieCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-    $this->crudFieldFactory->addFilterEnable($filters);
+        $this->crudFieldFactory->addFilterEnable($filters);
 
         $filters->add('releaseDate');
         $filters->add('countries');

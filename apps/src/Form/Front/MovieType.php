@@ -2,7 +2,6 @@
 
 namespace Labstag\Form\Front;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Service\CategoryService;
 use Labstag\Service\MovieService;
 use Labstag\Service\SagaService;

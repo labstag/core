@@ -79,8 +79,8 @@ class BackController extends AbstractController
         }
 
         $routeName = $request->query->get('routeName');
-        $entity    = $request->attributes->get('entity', null);
-        $uuid      = $request->attributes->get('uuid', null);
+        $entity    = $request->attributes->get('entity');
+        $uuid      = $request->attributes->get('uuid');
         match ($routeName) {
             'admin_restore' => $this->adminRestore($entity, $uuid),
             'admin_empty'   => $this->adminEmpty($entity),
@@ -102,9 +102,9 @@ class BackController extends AbstractController
             return $this->redirectToRoute('admin');
         }
 
-        $entity     = $request->query->get('entity', null);
-        $transition = $request->query->get('transition', null);
-        $uid        = $request->query->get('uid', null);
+        $entity     = $request->query->get('entity');
+        $transition = $request->query->get('transition');
+        $uid        = $request->query->get('uid');
 
         $this->workflowService->change($entity, $transition, $uid);
 

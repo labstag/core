@@ -2,6 +2,8 @@
 
 namespace Labstag\Controller\Admin;
 
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -61,13 +63,9 @@ class SeasonCrudController extends CrudControllerAbstract
         $textField = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
         $textField->hideOnIndex();
 
-        $collectionField = CollectionField::new('episodes', new TranslatableMessage('Episodes'));
-        $collectionField->setTemplatePath('admin/field/episodes.html.twig');
+        $collectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
+        $collectionField->setTemplatePath('admin/field/runtime-season.html.twig');
         $collectionField->hideOnForm();
-
-        $runtimeField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
-        $runtimeField->setTemplatePath('admin/field/runtime-season.html.twig');
-        $runtimeField->hideOnForm();
 
         $wysiwygField = WysiwygField::new('overview', new TranslatableMessage('Overview'));
         $wysiwygField->hideOnIndex();
@@ -83,8 +81,8 @@ class SeasonCrudController extends CrudControllerAbstract
                 TextField::new('refserie', new TranslatableMessage('Serie')),
                 IntegerField::new('number', new TranslatableMessage('Number')),
                 DateField::new('airDate', new TranslatableMessage('Air date')),
+                $this->episodesFieldForPage(self::getEntityFqcn(), $pageName),
                 $collectionField,
-                $runtimeField,
                 $wysiwygField,
             ]
         );
@@ -101,6 +99,49 @@ class SeasonCrudController extends CrudControllerAbstract
         $filters->add(EntityFilter::new('refserie', new TranslatableMessage('Serie')));
 
         return $filters;
+    }
+
+    public function episodesField(): AssociationField
+    {
+        $associationField = AssociationField::new('episodes', new TranslatableMessage('Episodes'));
+        $associationField->setTemplatePath('admin/field/episodes.html.twig');
+
+        return $associationField;
+    }
+
+    /**
+     * Page-aware variant to avoid AssociationConfigurator errors on index/detail pages.
+     * - On index/detail: always return a read-only CollectionField (count/list via template).
+     * - On edit/new: only return an AssociationField if Doctrine metadata confirms the association,
+     *   otherwise hide the field on forms (no-op for safety).
+     */
+    public function episodesFieldForPage(string $entityFqcn, string $pageName): AssociationField|CollectionField
+    {
+        $associationField = $this->episodesField();
+        // Always safe on listing/detail pages: no AssociationField to configure
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)) {
+            $associationField->hideOnForm();
+
+            return $associationField;
+        }
+
+        // For edit/new pages, check the real Doctrine association
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+
+        if ($metadata instanceof ClassMetadata && $metadata->hasAssociation('episodes')) {
+            $associationField->autocomplete();
+            $associationField->setFormTypeOption('by_reference', false);
+
+            return $associationField;
+        }
+
+        // No association: ensure nothing is rendered on the form
+        $associationField->hideOnForm();
+
+        return $associationField;
     }
 
     public static function getEntityFqcn(): string

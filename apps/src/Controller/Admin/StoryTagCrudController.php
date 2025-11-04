@@ -2,7 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Labstag\Entity\StoryTag;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -12,23 +12,13 @@ class StoryTagCrudController extends TagCrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
-        $titleField = $this->crudFieldFactory->titleField();
-        $titleField->setFormattedValue(
-            function($entity) {
-                return $entity->getTitle() ?? (new TranslatableMessage('Label not found'));
-            }
-        );
-        $this->crudFieldFactory->addFieldsToTab(
-            'principal',
-            [
-                $titleField
-            ]
-        );
-        $collectionField = CollectionField::new('stories', new TranslatableMessage('Stories'));
-        $collectionField->formatValue(fn ($entity): int => count($entity));
-        $collectionField->hideOnForm();
+        $this->crudFieldFactory->addFieldsToTab('principal', [$this->crudFieldFactory->titleField()]);
 
-        $this->crudFieldFactory->addFieldsToTab('principal', [$collectionField]);
+        $associationField = AssociationField::new('stories', new TranslatableMessage('Stories'));
+        $associationField->formatValue(fn ($entity): int => count($entity));
+        $associationField->hideOnForm();
+
+        $this->crudFieldFactory->addFieldsToTab('principal', [$associationField]);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }

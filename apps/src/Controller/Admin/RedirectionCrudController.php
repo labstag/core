@@ -18,6 +18,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -293,10 +294,7 @@ class RedirectionCrudController extends CrudControllerAbstract
     /**
      * @return Redirection[]
      */
-    private function importCsv(
-        \Symfony\Component\HttpFoundation\File\UploadedFile $uploadedFile,
-        RedirectionRepository $redirectionRepository,
-    ): array
+    private function importCsv(UploadedFile $uploadedFile, RedirectionRepository $redirectionRepository): array
     {
         $data        = [];
         $csv         = new Csv();

@@ -3,7 +3,6 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use Labstag\Entity\Tag;
 use Symfony\Component\Translation\TranslatableMessage;
 
 abstract class TagCrudControllerAbstract extends TypedCrudControllerAbstract

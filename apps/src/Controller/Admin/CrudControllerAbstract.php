@@ -118,7 +118,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
         $queryBuilder = $this->filterListeTrash($searchDto, $queryBuilder);
 
-        return $this->filterListRefUser($queryBuilder);
+        return $queryBuilder;
     }
 
     protected function configureActionsBtn(Actions $actions): void
@@ -209,12 +209,6 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     private function filterListeTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
     {
         return $this->filterTrash($searchDto, $queryBuilder);
-    }
-
-    private function filterListRefUser(QueryBuilder $queryBuilder): QueryBuilder
-    {
-        // Ownership filter now handled by dedicated extension (OwnerRestrictionExtension)
-        return $queryBuilder;
     }
 
     /**

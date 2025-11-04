@@ -2,7 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Labstag\Entity\PageCategory;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -12,24 +12,18 @@ class PageCategoryCrudController extends CategoryCrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
-        $titleField = $this->crudFieldFactory->titleField();
-        $titleField->setFormattedValue(
-            function($entity) {
-                return $entity->getTitle() ?? (new TranslatableMessage('Label not found'));
-            }
-        );
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
                 $this->crudFieldFactory->slugField(),
-                $titleField,
+                $this->crudFieldFactory->titleField(),
             ]
         );
-        $collectionField = CollectionField::new('pages', new TranslatableMessage('Pages'));
-        $collectionField->formatValue(fn ($entity): int => count($entity));
-        $collectionField->hideOnForm();
+        $associationField = AssociationField::new('pages', new TranslatableMessage('Pages'));
+        $associationField->formatValue(fn ($entity): int => count($entity));
+        $associationField->hideOnForm();
 
-        $this->crudFieldFactory->addFieldsToTab('principal', [$collectionField]);
+        $this->crudFieldFactory->addFieldsToTab('principal', [$associationField]);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }

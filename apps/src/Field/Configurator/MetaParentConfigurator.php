@@ -22,8 +22,6 @@ use Labstag\Field\MetaParentField;
 use Labstag\Service\MetaService;
 use Override;
 use RuntimeException;
-use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Traversable;
 
@@ -49,12 +47,6 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->setProperty($object->name);
         $fieldDto->getDoctrineMetadata()
             ->set('targetEntity', ClassUtils::getClass($object->value));
-        if (!$entityDto->isAssociation($object->name)) {
-            throw new RuntimeException(sprintf(
-                'The "%s" field is not a Doctrine association, so it cannot be used as an association field.',
-                $object->name
-            ));
-        }
 
         $targetEntityFqcn = $fieldDto->getDoctrineMetadata()
             ->get('targetEntity');
@@ -154,53 +146,6 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
             }
 
             return;
-        }
-
-        // prepare starting class for association
-        $targetEntityFqcn = $entityDto->getPropertyMetadata($propertyNameParts[0]);
-        $targetEntityFqcn = $targetEntityFqcn->get('targetEntity');
-        array_shift($propertyNameParts);
-        $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
-
-        foreach ($propertyNameParts as $propertyNamePart) {
-            if (!$metadata->hasAssociation($propertyNamePart)) {
-                throw new RuntimeException(sprintf(
-                    'There is no association for the class "%s" with name "%s"',
-                    $targetEntityFqcn,
-                    $propertyNamePart
-                ));
-            }
-
-            // overwrite next class from association
-            $targetEntityFqcn = $metadata->getAssociationTargetClass($propertyNamePart);
-
-            // read next association metadata
-            $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
-        }
-
-        $propertyAccessor         = new PropertyAccessor();
-        $targetCrudControllerFqcn = $fieldDto->getCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER);
-
-        $fieldDto->setFormTypeOptionIfNotSet('class', $targetEntityFqcn);
-
-        try {
-            $relatedEntityId = $propertyAccessor->getValue(
-                $entityDto->getInstance(),
-                $propertyName . '.' . $metadata->getIdentifierFieldNames()[0]
-            );
-            $relatedEntityDto = $this->entityFactory->create($targetEntityFqcn, $relatedEntityId);
-
-            $fieldDto->setCustomOption(
-                MetaParentField::OPTION_RELATED_URL,
-                $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $relatedEntityDto)
-            );
-            $fieldDto->setFormattedValue($this->formatAsString($relatedEntityDto->getInstance()));
-        } catch (UnexpectedTypeException) {
-            throw new RuntimeException(sprintf(
-                'The property "%s" is not accessible in the entity "%s"',
-                $propertyName,
-                $entityDto->getFqcn()
-            ));
         }
     }
 

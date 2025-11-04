@@ -45,26 +45,6 @@ final class SerieService
     /**
      * @return array<string, mixed>
      */
-    public function getCategoryForForm(): array
-    {
-        if ([] !== $this->category) {
-            return $this->category;
-        }
-
-        $data       = $this->categoryRepository->findAllByTypeSerieEnable();
-        $categories = [];
-        foreach ($data as $category) {
-            $categories[$category->getTitle()] = $category->getSlug();
-        }
-
-        $this->category = $categories;
-
-        return $categories;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
     public function getCountryForForm(): array
     {
         if ([] !== $this->country) {

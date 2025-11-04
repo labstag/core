@@ -2,7 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Labstag\Entity\MovieCategory;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -14,9 +14,7 @@ class MovieCategoryCrudController extends CategoryCrudControllerAbstract
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $titleField = $this->crudFieldFactory->titleField();
         $titleField->setFormattedValue(
-            function($entity) {
-                return $entity->getTitle() ?? (new TranslatableMessage('Label not found'));
-            }
+            fn ($entity) => $entity->getTitle() ?? (new TranslatableMessage('Label not found'))
         );
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -25,11 +23,11 @@ class MovieCategoryCrudController extends CategoryCrudControllerAbstract
                 $titleField,
             ]
         );
-        $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
-        $collectionField->formatValue(fn ($entity): int => count($entity));
-        $collectionField->hideOnForm();
+        $associationField = AssociationField::new('movies', new TranslatableMessage('Movies'));
+        $associationField->formatValue(fn ($entity): int => count($entity));
+        $associationField->hideOnForm();
 
-        $this->crudFieldFactory->addFieldsToTab('principal', [$collectionField]);
+        $this->crudFieldFactory->addFieldsToTab('principal', [$associationField]);
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 

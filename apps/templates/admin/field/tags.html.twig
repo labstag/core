@@ -1,5 +1,5 @@
-{% set instance = entity.instance %}
-{% set tags = instance.tags|default([]) %}
+{# Use field.value when available to avoid depending on entity.instance #}
+{% set tags = field.value is defined and field.value is not null ? field.value : [] %}
 {% if ea.crud.currentAction == 'detail' %}
   <ul>
     {% for tag in tags %}

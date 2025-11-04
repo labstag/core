@@ -153,7 +153,7 @@ class MovieCrudController extends CrudControllerAbstract
             );
         }
 
-            $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
         $this->addFilterSaga($filters);
 
         return $filters;

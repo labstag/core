@@ -2,9 +2,12 @@
 
 namespace Labstag\Controller\Admin;
 
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Saga;
@@ -55,17 +58,13 @@ class SagaCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
-        $textField       = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
-        $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
-        $collectionField->onlyOnIndex();
-        $collectionField->formatValue(fn ($value): int => count($value));
+        $textField        = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
+        $associationField = AssociationField::new('movies', new TranslatableMessage('Movies'));
+        $associationField->onlyOnIndex();
+        $associationField->formatValue(fn ($value): int => count($value));
 
         $wysiwygField = WysiwygField::new('description', new TranslatableMessage('Description'));
         $wysiwygField->hideOnIndex();
-
-        $movieField2 = CollectionField::new('movies', new TranslatableMessage('Movies'));
-        $movieField2->setTemplatePath('admin/field/movies.html.twig');
-        $movieField2->onlyOnDetail();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -75,9 +74,9 @@ class SagaCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $textField,
-                $collectionField,
+                $associationField,
                 $wysiwygField,
-                $movieField2,
+                $this->moviesFieldForPage(self::getEntityFqcn(), $pageName),
             ]
         );
 
@@ -97,6 +96,49 @@ class SagaCrudController extends CrudControllerAbstract
         $saga                            = $repositoryAbstract->find($entity);
 
         return $this->publicLink($saga);
+    }
+
+    public function moviesField(): AssociationField
+    {
+        $associationField = AssociationField::new('movies', new TranslatableMessage('Movies'));
+        $associationField->setTemplatePath('admin/field/movies.html.twig');
+
+        return $associationField;
+    }
+
+    /**
+     * Page-aware variant to avoid AssociationConfigurator errors on index/detail pages.
+     * - On index/detail: always return a read-only CollectionField (count/list via template).
+     * - On edit/new: only return an AssociationField if Doctrine metadata confirms the association,
+     *   otherwise hide the field on forms (no-op for safety).
+     */
+    public function moviesFieldForPage(string $entityFqcn, string $pageName): AssociationField|CollectionField
+    {
+        $associationField = $this->moviesField();
+        // Always safe on listing/detail pages: no AssociationField to configure
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)) {
+            $associationField->hideOnForm();
+
+            return $associationField;
+        }
+
+        // For edit/new pages, check the real Doctrine association
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+
+        if ($metadata instanceof ClassMetadata && $metadata->hasAssociation('movies')) {
+            $associationField->autocomplete();
+            $associationField->setFormTypeOption('by_reference', false);
+
+            return $associationField;
+        }
+
+        // No association: ensure nothing is rendered on the form
+        $associationField->hideOnForm();
+
+        return $associationField;
     }
 
     #[Route('/admin/saga/{entity}/imdb', name: 'admin_saga_tmdb')]

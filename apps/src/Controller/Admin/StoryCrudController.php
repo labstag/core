@@ -2,11 +2,14 @@
 
 namespace Labstag\Controller\Admin;
 
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Chapter;
@@ -22,6 +25,49 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryCrudController extends CrudControllerAbstract
 {
+    public function chaptersField(): AssociationField
+    {
+        $associationField = AssociationField::new('chapters', new TranslatableMessage('Chapters'));
+        $associationField->setTemplatePath('admin/field/chapters.html.twig');
+
+        return $associationField;
+    }
+
+    /**
+     * Page-aware variant to avoid AssociationConfigurator errors on index/detail pages.
+     * - On index/detail: always return a read-only CollectionField (count/list via template).
+     * - On edit/new: only return an AssociationField if Doctrine metadata confirms the association,
+     *   otherwise hide the field on forms (no-op for safety).
+     */
+    public function chaptersFieldForPage(string $entityFqcn, string $pageName): AssociationField|CollectionField
+    {
+        $associationField = $this->chaptersField();
+        // Always safe on listing/detail pages: no AssociationField to configure
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)) {
+            $associationField->hideOnForm();
+
+            return $associationField;
+        }
+
+        // For edit/new pages, check the real Doctrine association
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+
+        if ($metadata instanceof ClassMetadata && $metadata->hasAssociation('chapters')) {
+            $associationField->autocomplete();
+            $associationField->setFormTypeOption('by_reference', false);
+
+            return $associationField;
+        }
+
+        // No association: ensure nothing is rendered on the form
+        $associationField->hideOnForm();
+
+        return $associationField;
+    }
+
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -62,10 +108,6 @@ class StoryCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
-        $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
-        $collectionField->setTemplatePath('admin/field/chapters.html.twig');
-        $collectionField->hideOnForm();
-
         $wysiwygField = WysiwygField::new('resume', new TranslatableMessage('resume'));
         $wysiwygField->hideOnIndex();
 
@@ -76,12 +118,15 @@ class StoryCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
-                $collectionField,
+                $this->chaptersFieldForPage(self::getEntityFqcn(), $pageName),
                 $wysiwygField,
             ]
         );
 
-        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet(self::getEntityFqcn(), $pageName));
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            $this->crudFieldFactory->taxonomySet(self::getEntityFqcn(), $pageName)
+        );
 
         $this->crudFieldFactory->setTabParagraphs($pageName);
         $this->crudFieldFactory->setTabSEO();
