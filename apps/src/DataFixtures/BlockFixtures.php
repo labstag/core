@@ -7,6 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use Exception;
 use Generator;
 use Labstag\Entity\Block;
+use Labstag\Entity\LinksBlock;
 use Labstag\Entity\Page;
 use Override;
 
@@ -40,32 +41,32 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         $objectManager->flush();
     }
 
-    private function addLinksFooter1(Block $block): void
+    private function addLinksFooter1(LinksBlock $linksBlock): void
     {
-        $data          = $block->getData();
+        $data          = $linksBlock->getData();
         $data['links'] = [];
         $page          = $this->getPageByTitle('Contact');
         $this->setLink($page, $data);
         $page = $this->getPageByTitle('Plan du site');
         $this->setLink($page, $data);
 
-        $block->setData($data);
+        $linksBlock->setData($data);
     }
 
-    private function addLinksFooter2(Block $block): void
+    private function addLinksFooter2(LinksBlock $linksBlock): void
     {
-        $data          = $block->getData();
+        $data          = $linksBlock->getData();
         $data['links'] = [];
         $page          = $this->getPageByTitle('Mentions légales');
         $this->setLink($page, $data);
         $page = $this->getPageByTitle('Données personnelles');
         $this->setLink($page, $data);
-        $block->setData($data);
+        $linksBlock->setData($data);
     }
 
-    private function addLinksHeader(Block $block): void
+    private function addLinksHeader(LinksBlock $linksBlock): void
     {
-        $data          = $block->getData();
+        $data          = $linksBlock->getData();
         $data['links'] = [];
         $page          = $this->getPageByTitle('Posts');
         $this->setLink($page, $data);
@@ -79,7 +80,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->setLink($page, $data);
         $page = $this->getPageByTitle('Mon parcours pro');
         $this->setLink($page, $data);
-        $block->setData($data);
+        $linksBlock->setData($data);
     }
 
     private function addParagraphsHead(Block $block): void

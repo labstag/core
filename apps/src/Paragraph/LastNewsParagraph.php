@@ -22,6 +22,12 @@ class LastNewsParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityLastNewsParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::POSTS->value);
         /** @var PostRepository $entityRepository */

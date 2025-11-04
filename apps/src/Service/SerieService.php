@@ -42,19 +42,6 @@ final class SerieService
     {
     }
 
-    public function deleteOldCategory(): void
-    {
-        $data = $this->categoryRepository->findAllByTypeSerieWithoutSerie();
-        foreach ($data as $category) {
-            $total = count($category->getMovies());
-            if (0 !== $total) {
-                continue;
-            }
-
-            $this->categoryRepository->delete($category);
-        }
-    }
-
     /**
      * @return array<string, mixed>
      */

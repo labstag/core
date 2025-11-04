@@ -7,7 +7,6 @@ use Exception;
 use Labstag\Api\TmdbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
-use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
 
@@ -28,25 +27,11 @@ final class MovieService
         private MovieRepository $movieRepository,
         private FileService $fileService,
         private SagaRepository $sagaRepository,
-        private CategoryRepository $categoryRepository,
         private CategoryService $categoryService,
         private SagaService $sagaService,
         private TmdbApi $tmdbApi,
     )
     {
-    }
-
-    public function deleteOldCategory(): void
-    {
-        $data = $this->categoryRepository->findAllByTypeMovieWithoutMovie();
-        foreach ($data as $category) {
-            $total = count($category->getMovies());
-            if (0 !== $total) {
-                continue;
-            }
-
-            $this->categoryRepository->delete($category);
-        }
     }
 
     public function deleteOldSaga(): void

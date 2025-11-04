@@ -107,8 +107,8 @@ class ChapterCrudController extends CrudControllerAbstract
     #[Route('/admin/chapter/{entity}/public', name: 'admin_chapter_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $repositoryAbstract              = $this->getRepository();
-        $chapter                         = $repositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $chapter                         = $RepositoryAbstract->find($entity);
 
         return $this->publicLink($chapter);
     }
@@ -116,8 +116,8 @@ class ChapterCrudController extends CrudControllerAbstract
     #[Route('/admin/chapter/{entity}/update', name: 'admin_chapter_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $repositoryAbstract              = $this->getRepository();
-        $chapter                         = $repositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $chapter                         = $RepositoryAbstract->find($entity);
         $messageBus->dispatch(new StoryMessage($chapter->getRefstory()->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -132,8 +132,8 @@ class ChapterCrudController extends CrudControllerAbstract
     #[Route('/admin/chapter/{entity}/w3c', name: 'admin_chapter_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $repositoryAbstract              = $this->getRepository();
-        $chapter                         = $repositoryAbstract->find($entity);
+        $RepositoryAbstract              = $this->getRepository();
+        $chapter                         = $RepositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($chapter);
     }

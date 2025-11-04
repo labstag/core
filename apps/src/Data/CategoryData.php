@@ -21,30 +21,7 @@ class CategoryData extends DataAbstract implements DataInterface
 
     public function generateSlug(object $entity): string
     {
-        $entityRepository = $this->entityManager->getRepository(Page::class);
-        $page             = match ($entity::class) {
-            MovieCategory::class => $entityRepository->findOneBy(
-                [
-                    'type' => PageEnum::MOVIES->value,
-                ]
-            ),
-            PostCategory::class => $entityRepository->findOneBy(
-                [
-                    'type' => PageEnum::POSTS->value,
-                ]
-            ),
-            SerieCategory::class => $entityRepository->findOneBy(
-                [
-                    'type' => PageEnum::SERIES->value,
-                ]
-            ),
-            StoryCategory::class => $entityRepository->findOneBy(
-                [
-                    'type' => PageEnum::STORIES->value,
-                ]
-            ),
-            default => null,
-        };
+        $page = $this->getPage($entity::class);
 
         if (!$page instanceof Page) {
             return '';
@@ -66,6 +43,7 @@ class CategoryData extends DataAbstract implements DataInterface
 
     public function getTitle(object $entity): string
     {
+        unset($entity);
         $request  = $this->requestStack->getCurrentRequest();
         $slug     = $request->attributes->get('slug');
         $category = $this->getCategoryBySlug($slug);
@@ -124,14 +102,7 @@ class CategoryData extends DataAbstract implements DataInterface
             return null;
         }
 
-        $typeclass = match ($page->getType()) {
-            PageEnum::MOVIES->value  => MovieCategory::class,
-            PageEnum::POSTS->value   => PostCategory::class,
-            PageEnum::SERIES->value  => SerieCategory::class,
-            PageEnum::STORIES->value => StoryCategory::class,
-            default                  => null,
-        };
-
+        $typeclass = $this->getClass($page->getType());
         if (is_null($typeclass)) {
             return null;
         }
@@ -141,6 +112,17 @@ class CategoryData extends DataAbstract implements DataInterface
         return $this->entityManager->getRepository($typeclass)->findOneBy(
             ['slug' => $slugSecond]
         );
+    }
+
+    protected function getClass(string $type): ?string
+    {
+        return match ($type) {
+            PageEnum::MOVIES->value  => MovieCategory::class,
+            PageEnum::POSTS->value   => PostCategory::class,
+            PageEnum::SERIES->value  => SerieCategory::class,
+            PageEnum::STORIES->value => StoryCategory::class,
+            default                  => null,
+        };
     }
 
     protected function getEntityBySlug(string $slug): ?object
@@ -163,14 +145,7 @@ class CategoryData extends DataAbstract implements DataInterface
             return null;
         }
 
-        $typeclass = match ($page->getType()) {
-            PageEnum::MOVIES->value  => MovieCategory::class,
-            PageEnum::POSTS->value   => PostCategory::class,
-            PageEnum::SERIES->value  => SerieCategory::class,
-            PageEnum::STORIES->value => StoryCategory::class,
-            default                  => null,
-        };
-
+        $typeclass = $this->getClass($page->getType());
         if (is_null($typeclass)) {
             return null;
         }
@@ -184,5 +159,34 @@ class CategoryData extends DataAbstract implements DataInterface
         }
 
         return $page;
+    }
+
+    protected function getPage(string $entity): ?Page
+    {
+        $entityRepository = $this->entityManager->getRepository(Page::class);
+
+        return match ($entity) {
+            MovieCategory::class => $entityRepository->findOneBy(
+                [
+                    'type' => PageEnum::MOVIES->value,
+                ]
+            ),
+            PostCategory::class => $entityRepository->findOneBy(
+                [
+                    'type' => PageEnum::POSTS->value,
+                ]
+            ),
+            SerieCategory::class => $entityRepository->findOneBy(
+                [
+                    'type' => PageEnum::SERIES->value,
+                ]
+            ),
+            StoryCategory::class => $entityRepository->findOneBy(
+                [
+                    'type' => PageEnum::STORIES->value,
+                ]
+            ),
+            default => null,
+        };
     }
 }

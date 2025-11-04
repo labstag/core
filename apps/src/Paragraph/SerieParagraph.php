@@ -20,6 +20,12 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntitySerieParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         /** @var SerieRepository $entityRepository */
         $entityRepository                = $this->getRepository(Serie::class);

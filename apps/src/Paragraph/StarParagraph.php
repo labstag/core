@@ -19,6 +19,12 @@ class StarParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityStarParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         /** @var StarRepository $entityRepository */
         $entityRepository = $this->getRepository(Star::class);

@@ -13,6 +13,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\MovieRepository;
 use Override;
+use ReflectionClass;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
@@ -131,7 +132,8 @@ class Movie implements Stringable
 
     public function addParagraph(Paragraph $paragraph): static
     {
-        if (!$this->paragraphs->contains($paragraph)) {
+        $reflectionClass = new ReflectionClass($paragraph);
+        if (!$this->paragraphs->contains($paragraph) && $reflectionClass->hasMethod('setRefmovie')) {
             $this->paragraphs->add($paragraph);
             $paragraph->setRefmovie($this);
         }
@@ -264,6 +266,11 @@ class Movie implements Stringable
 
     public function removeParagraph(Paragraph $paragraph): static
     {
+        $reflectionClass = new ReflectionClass($paragraph);
+        if (!$reflectionClass->hasMethod('setRefmovie') || !$reflectionClass->hasMethod('getRefmovie')) {
+            return $this;
+        }
+
         // set the owning side to null (unless already changed)
         if ($this->paragraphs->removeElement($paragraph) && $paragraph->getRefmovie() === $this
         ) {

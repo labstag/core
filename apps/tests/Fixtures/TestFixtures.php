@@ -10,7 +10,8 @@ use Faker\Factory;
 use Labstag\Entity\Category;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
-use Labstag\Entity\Tag;
+use Labstag\Entity\PostCategory;
+use Labstag\Entity\PostTag;
 use Labstag\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -54,22 +55,22 @@ final class TestFixtures extends Fixture
         $manager->persist($reader);
 
         // Create categories
-        $techCategory = $this->createTechCategory();
+        $postCategory = $this->createTechCategory();
         $newsCategory = $this->createNewsCategory();
 
-        $manager->persist($techCategory);
+        $manager->persist($postCategory);
         $manager->persist($newsCategory);
 
         // Create tags
-        $phpTag     = $this->createPhpTag();
-        $symfonyTag = $this->createSymfonyTag();
+        $postTag     = $this->createPhpTag();
+        $symfonyTag  = $this->createSymfonyTag();
 
-        $manager->persist($phpTag);
+        $manager->persist($postTag);
         $manager->persist($symfonyTag);
 
         // Create posts
-        $publishedPost = $this->createPublishedPost($author, $techCategory, [$phpTag, $symfonyTag]);
-        $draftPost     = $this->createDraftPost($author, $newsCategory, [$phpTag]);
+        $publishedPost = $this->createPublishedPost($author, $postCategory, [$postTag, $symfonyTag]);
+        $draftPost     = $this->createDraftPost($author, $newsCategory, [$postTag]);
 
         $manager->persist($publishedPost);
         $manager->persist($draftPost);
@@ -78,9 +79,9 @@ final class TestFixtures extends Fixture
         $this->addReference(self::USER_ADMIN, $user);
         $this->addReference(self::USER_AUTHOR, $author);
         $this->addReference(self::USER_READER, $reader);
-        $this->addReference(self::CATEGORY_TECH, $techCategory);
+        $this->addReference(self::CATEGORY_TECH, $postCategory);
         $this->addReference(self::CATEGORY_NEWS, $newsCategory);
-        $this->addReference(self::TAG_PHP, $phpTag);
+        $this->addReference(self::TAG_PHP, $postTag);
         $this->addReference(self::TAG_SYMFONY, $symfonyTag);
         $this->addReference(self::POST_PUBLISHED, $publishedPost);
         $this->addReference(self::POST_DRAFT, $draftPost);
@@ -136,21 +137,20 @@ final class TestFixtures extends Fixture
         return $post;
     }
 
-    private function createNewsCategory(): Category
+    private function createNewsCategory(): PostCategory
     {
-        $category = new Category();
-        $category->setTitle('Actualités');
-        $category->setType('post');
+        $postCategory = new PostCategory();
+        $postCategory->setTitle('Actualités');
 
-        return $category;
+        return $postCategory;
     }
 
-    private function createPhpTag(): Tag
+    private function createPhpTag(): PostTag
     {
-        $tag = new Tag();
-        $tag->setTitle('PHP');
+        $postTag = new PostTag();
+        $postTag->setTitle('PHP');
 
-        return $tag;
+        return $postTag;
     }
 
     private function createPublishedPost(User $user, Category $category, array $tags): Post
@@ -193,20 +193,19 @@ final class TestFixtures extends Fixture
         return $user;
     }
 
-    private function createSymfonyTag(): Tag
+    private function createSymfonyTag(): PostTag
     {
-        $tag = new Tag();
-        $tag->setTitle('Symfony');
+        $postTag = new PostTag();
+        $postTag->setTitle('Symfony');
 
-        return $tag;
+        return $postTag;
     }
 
-    private function createTechCategory(): Category
+    private function createTechCategory(): PostCategory
     {
-        $category = new Category();
-        $category->setTitle('Technologie');
-        $category->setType('post');
+        $postCategory = new PostCategory();
+        $postCategory->setTitle('Technologie');
 
-        return $category;
+        return $postCategory;
     }
 }

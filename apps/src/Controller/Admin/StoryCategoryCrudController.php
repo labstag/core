@@ -12,11 +12,17 @@ class StoryCategoryCrudController extends CategoryCrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $titleField = $this->crudFieldFactory->titleField();
+        $titleField->setFormattedValue(
+            function($entity) {
+                return $entity->getTitle() ?? (new TranslatableMessage('label.no_title'));
+            }
+        );
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
                 $this->crudFieldFactory->slugField(),
-                $this->crudFieldFactory->titleField(),
+                $titleField,
             ]
         );
         $collectionField = CollectionField::new('stories', new TranslatableMessage('Stories'));

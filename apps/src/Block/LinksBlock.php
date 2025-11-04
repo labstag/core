@@ -30,6 +30,10 @@ class LinksBlock extends BlockAbstract
     #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
+        if (!$block instanceof EntityLinksBlock) {
+            return;
+        }
+
         unset($disable);
 
         $this->logger->debug(

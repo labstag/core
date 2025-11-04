@@ -29,24 +29,9 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        $media = $this->getMedia($paragraph);
+
         unset($disable);
-        $url = $paragraph->getUrl();
-        if (is_null($url) || '' === $url || '0' === $url) {
-            $this->setShow($paragraph, false);
-
-            return;
-        }
-
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
         if (!$media instanceof Media) {
             $this->setShow($paragraph, false);
 
@@ -82,7 +67,7 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
     public function getClasses(Paragraph $paragraph): array
     {
         $tab = parent::getClasses($paragraph);
-        if ($paragraph->isLeftposition()) {
+        if ($paragraph instanceof EntityTextMediaParagraph && $paragraph->isLeftposition()) {
             $tab[] = 'text-media-left';
         }
 
@@ -143,6 +128,10 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function update(Paragraph $paragraph): void
     {
+        if (!$paragraph instanceof EntityTextMediaParagraph) {
+            return;
+        }
+
         if (!is_null($paragraph->getImg())) {
             return;
         }
@@ -173,5 +162,33 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
         // Télécharger l'image et l'écrire dans le fichier temporaire
         file_put_contents($tempPath, file_get_contents($thumbnailUrl));
         $this->fileService->setUploadedFile($tempPath, $paragraph, 'imgFile');
+    }
+
+    protected function getMedia(Paragraph $paragraph): ?Media
+    {
+        if (!$paragraph instanceof EntityTextMediaParagraph) {
+            return null;
+        }
+
+        $url = $paragraph->getUrl();
+        if (is_null($url) || '' === $url || '0' === $url) {
+            return null;
+        }
+
+        $essence = new Essence();
+
+        // Load any url:
+        $media = $essence->extract(
+            $url,
+            [
+                'maxwidth'  => 800,
+                'maxheight' => 600,
+            ]
+        );
+        if (!$media instanceof Media) {
+            return null;
+        }
+
+        return $media;
     }
 }

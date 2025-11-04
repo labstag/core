@@ -21,6 +21,12 @@ class MovieParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityMovieParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         /** @var MovieRepository $entityRepository */
         $entityRepository = $this->getRepository(Movie::class);

@@ -11,7 +11,19 @@ class StoryTagCrudController extends TagCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->configureFieldsDefault();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $titleField = $this->crudFieldFactory->titleField();
+        $titleField->setFormattedValue(
+            function($entity) {
+                return $entity->getTitle() ?? (new TranslatableMessage('label.no_title'));
+            }
+        );
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $titleField
+            ]
+        );
         $collectionField = CollectionField::new('stories', new TranslatableMessage('Stories'));
         $collectionField->formatValue(fn ($entity): int => count($entity));
         $collectionField->hideOnForm();

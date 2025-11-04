@@ -20,6 +20,12 @@ class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityStoryListParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         /** @var StoryRepository $entityRepository */
         $entityRepository = $this->getRepository(Story::class);

@@ -165,7 +165,11 @@ class BlockCrudController extends CrudControllerAbstract
         // Use the parent query builder so EasyAdmin can apply search and filters (including DiscriminatorTypeFilter)
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
 
-        $this->getRepository()->findAllOrderedByRegion($queryBuilder);
+        $repositoryAbstract = $this->getRepository();
+        $methods            = get_class_methods($repositoryAbstract);
+        if (in_array('findAllOrderedByRegion', $methods)) {
+            $repositoryAbstract->findAllOrderedByRegion($queryBuilder);
+        }
 
         return $queryBuilder;
     }

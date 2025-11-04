@@ -17,15 +17,4 @@ abstract class TagCrudControllerAbstract extends TypedCrudControllerAbstract
 
         return $crud;
     }
-
-    public function configureFieldsDefault(): void
-    {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
-        $this->crudFieldFactory->addFieldsToTab('principal', [$this->crudFieldFactory->titleField()]);
-    }
-
-    public static function getEntityFqcn(): string
-    {
-        return Tag::class;
-    }
 }

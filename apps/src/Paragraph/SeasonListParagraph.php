@@ -10,6 +10,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Season;
 use Labstag\Entity\SeasonListParagraph as EntitySeasonListParagraph;
 use Labstag\Entity\Serie;
+use Labstag\Repository\SeasonRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -29,6 +30,13 @@ class SeasonListParagraph extends ParagraphAbstract implements ParagraphInterfac
         }
 
         $entityRepository                = $this->getRepository(Season::class);
+        if (!$entityRepository instanceof SeasonRepository) {
+            $this->logger->error('SeasonListParagraph: Season repository not found.');
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         $seasons                         = $entityRepository->getAllActivateBySerie($data['entity']);
         if (0 === count($seasons)) {
             $this->setShow($paragraph, false);

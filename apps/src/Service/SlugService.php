@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\PageRepository;
+use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -18,9 +19,6 @@ final class SlugService
     private array $types = [];
 
     public function __construct(
-        /**
-         * @var iterable<\Labstag\Data\Abstract\DataLib>
-         */
         #[AutowireIterator('labstag.datas')]
         private readonly iterable $datalibs,
         private PageRepository $pageRepository,
@@ -51,7 +49,8 @@ final class SlugService
     public function getEntityBySlug(?string $slug): ?object
     {
         foreach ($this->datalibs as $datalib) {
-            if ($datalib->match($slug)) {
+            $classe = new ReflectionClass($datalib);
+            if ($datalib->match($slug) && $classe->hasMethod('getEntity')) {
                 return $datalib->getEntity($slug);
             }
         }

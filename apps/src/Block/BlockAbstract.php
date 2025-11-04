@@ -51,9 +51,6 @@ abstract class BlockAbstract extends AbstractController implements BlockInterfac
     protected array $templates = [];
 
     public function __construct(
-        /**
-         * @var iterable<\Labstag\Data\Abstract\DataLib>
-         */
         #[AutowireIterator('labstag.datas')]
         protected iterable $dataLibs,
         protected ShortCodeService $shortCodeService,

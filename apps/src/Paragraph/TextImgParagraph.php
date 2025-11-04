@@ -45,7 +45,7 @@ class TextImgParagraph extends ParagraphAbstract implements ParagraphInterface
     public function getClasses(Paragraph $paragraph): array
     {
         $tab = parent::getClasses($paragraph);
-        if ($paragraph->isLeftposition()) {
+        if ($paragraph instanceof EntityTextImgParagraph && $paragraph->isLeftposition()) {
             $tab[] = 'text-img-left';
         }
 

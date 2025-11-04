@@ -4,7 +4,6 @@ namespace Labstag\Entity;
 
 use DateTime;
 use DateTimeImmutable;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -14,9 +13,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 class VideoParagraph extends Paragraph
 {
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    protected ?string $content = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $img = null;
 
@@ -24,12 +20,10 @@ class VideoParagraph extends Paragraph
     protected ?File $imgFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    protected ?string $url = null;
+    protected ?string $title = null;
 
-    public function getContent(): ?string
-    {
-        return $this->content;
-    }
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $url = null;
 
     public function getImg(): ?string
     {
@@ -41,16 +35,14 @@ class VideoParagraph extends Paragraph
         return $this->imgFile;
     }
 
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
     public function getUrl(): ?string
     {
         return $this->url;
-    }
-
-    public function setContent(?string $content): static
-    {
-        $this->content = $content;
-
-        return $this;
     }
 
     public function setImg(?string $img): void
@@ -72,6 +64,13 @@ class VideoParagraph extends Paragraph
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setTitle(?string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
     }
 
     public function setUrl(?string $url): static

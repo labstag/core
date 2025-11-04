@@ -9,6 +9,7 @@ use Faker\Generator;
 use Faker\Provider\Youtube;
 use Labstag\Entity\Category;
 use Labstag\Entity\Tag;
+use Labstag\Entity\TextParagraph;
 use Labstag\Service\BlockService;
 use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
@@ -68,7 +69,7 @@ abstract class FixtureAbstract extends Fixture
     {
         $generator = $this->setFaker();
         $paragraph = $this->paragraphService->addParagraph($entity, 'text');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof TextParagraph) {
             return;
         }
 

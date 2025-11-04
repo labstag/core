@@ -2,7 +2,8 @@
 
 namespace Labstag\Command;
 
-use Labstag\Entity\Block;
+use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Entity\LinksBlock;
 use Labstag\Repository\BlockRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -15,6 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class CorrectionBlockLinkCommand extends Command
 {
     public function __construct(
+        protected EntityManagerInterface $entityManager,
         protected BlockRepository $blockRepository,
     )
     {
@@ -24,13 +26,10 @@ class CorrectionBlockLinkCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle     = new SymfonyStyle($input, $output);
-        $blocks           = $this->blockRepository->findBy(
-            ['type' => 'links']
-        );
-
-        $methods = get_class_methods(Block::class);
+        $blocks           = $this->entityManager->getRepository(LinksBlock::class)->findAll();
+        $methods          = get_class_methods(LinksBlock::class);
         if (!in_array('getLinks', $methods)) {
-            $symfonyStyle->error('La méthode getLinks est manquante dans l\'entité Block');
+            $symfonyStyle->error('La méthode getLinks est manquante dans l\'entité LinksBlock');
 
             return Command::FAILURE;
         }
@@ -55,10 +54,10 @@ class CorrectionBlockLinkCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function updateLinks(Block $block): void
+    private function updateLinks(LinksBlock $linksBlock): void
     {
-        $links = $block->getLinks();
-        $data  = $block->getData();
+        $links = $linksBlock->getLinks();
+        $data  = $linksBlock->getData();
         if (!isset($data['links'])) {
             $data['links'] = [];
         }
@@ -71,9 +70,9 @@ class CorrectionBlockLinkCommand extends Command
                 'blank'   => $tabLink->isBlank(),
             ];
             $data['links'][] = $link;
-            $block->removeLink($tabLink);
+            $linksBlock->removeLink($tabLink);
         }
 
-        $block->setData($data);
+        $linksBlock->setData($data);
     }
 }

@@ -11,7 +11,19 @@ class PageTagCrudController extends TagCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->configureFieldsDefault();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $titleField = $this->crudFieldFactory->titleField();
+        $titleField->setFormattedValue(
+            function($entity) {
+                return $entity->getTitle() ?? (new TranslatableMessage('label.no_title'));
+            }
+        );
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $titleField
+            ]
+        );
         $collectionField = CollectionField::new('pages', new TranslatableMessage('Pages'));
         $collectionField->formatValue(fn ($entity): int => count($entity));
         $collectionField->hideOnForm();

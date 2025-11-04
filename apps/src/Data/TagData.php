@@ -52,6 +52,7 @@ class TagData extends DataAbstract implements DataInterface
 
     public function getTitle(object $entity): string
     {
+        unset($entity);
         $request  = $this->requestStack->getCurrentRequest();
         $slug     = $request->attributes->get('slug');
         $tag      = $this->getTagBySlug($slug);
@@ -90,6 +91,15 @@ class TagData extends DataAbstract implements DataInterface
         return false;
     }
 
+    protected function getClass(string $type): ?string
+    {
+        return match ($type) {
+            PageEnum::POSTS->value   => PostTag::class,
+            PageEnum::STORIES->value => StoryTag::class,
+            default                  => null,
+        };
+    }
+
     protected function getEntityBySlug(string $slug): ?object
     {
         if (0 === substr_count($slug, '/')) {
@@ -110,12 +120,7 @@ class TagData extends DataAbstract implements DataInterface
             return null;
         }
 
-        $typeclass = match ($page->getType()) {
-            PageEnum::POSTS->value   => PostTag::class,
-            PageEnum::STORIES->value => StoryTag::class,
-            default                  => null,
-        };
-
+        $typeclass = $this->getClass($page->getType());
         if (is_null($typeclass)) {
             return null;
         }
@@ -151,12 +156,7 @@ class TagData extends DataAbstract implements DataInterface
             return null;
         }
 
-        $typeclass = match ($page->getType()) {
-            PageEnum::POSTS->value   => PostTag::class,
-            PageEnum::STORIES->value => StoryTag::class,
-            default                  => null,
-        };
-
+        $typeclass = $this->getClass($page->getType());
         if (is_null($typeclass)) {
             return null;
         }

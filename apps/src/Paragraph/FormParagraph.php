@@ -22,6 +22,12 @@ class FormParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityFormParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         $formCode = $paragraph->getForm();
         $save     = $paragraph->isSave();
         if (is_null($formCode)) {
@@ -97,6 +103,10 @@ class FormParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function templates(Paragraph $paragraph, string $type): array
     {
+        if (!$paragraph instanceof EntityFormParagraph) {
+            return [];
+        }
+
         $templates = $this->getTemplateContent($type, $this->getType() . '/' . $paragraph->getForm());
 
         if ($templates['view'] != end($templates['files'])) {

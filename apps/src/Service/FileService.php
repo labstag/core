@@ -14,10 +14,9 @@ use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 final class FileService
 {
+    private const BYTES = 1024;
+
     public function __construct(
-        /**
-         * @var iterable<\Labstag\FileStorage\Abstract\FileStorageLib>
-         */
         #[AutowireIterator('labstag.filestorage')]
         private readonly iterable $fileStorages,
         private EntityManagerInterface $entityManager,
@@ -211,17 +210,23 @@ final class FileService
 
     public function getSizeFormat(int $size): string
     {
-        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        $bytes = (float) $size;
+        $units     = [
+            'B',
+            'KB',
+            'MB',
+            'GB',
+            'TB',
+        ];
+        $bytes     = (float) $size;
         $unitIndex = 0;
-        $maxIndex = count($units) - 1;
+        $maxIndex  = count($units) - 1;
 
-        while ($bytes >= 1024 && $unitIndex < $maxIndex) {
-            $bytes /= 1024;
-            $unitIndex++;
+        while (self::BYTES <= $bytes && $unitIndex < $maxIndex) {
+            $bytes /= self::BYTES;
+            ++$unitIndex;
         }
 
-        if ($unitIndex === 0) {
+        if (0 === $unitIndex) {
             return (int) $bytes . ' ' . $units[$unitIndex];
         }
 

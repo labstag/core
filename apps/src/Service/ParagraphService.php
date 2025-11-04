@@ -23,9 +23,6 @@ final class ParagraphService
     private array $init = [];
 
     public function __construct(
-        /**
-         * @var iterable<\Labstag\Paragraph\ParagraphAbstract>
-         */
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
         private AdminUrlGenerator $adminUrlGenerator,
@@ -45,7 +42,7 @@ final class ParagraphService
             }
         }
 
-        if (!$find) {
+        if (!$find || !isset($row)) {
             return null;
         }
 

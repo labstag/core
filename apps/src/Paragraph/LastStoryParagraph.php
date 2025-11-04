@@ -22,6 +22,12 @@ class LastStoryParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityLastStoryParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::STORIES->value);
         /** @var StoryRepository $entityRepository */

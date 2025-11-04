@@ -8,6 +8,7 @@ use Labstag\Entity\BreadcrumbBlock as EntityBreadcrumbBlock;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Override;
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -115,7 +116,11 @@ class BreadcrumbBlock extends BlockAbstract
 
                 while ('' !== $currentSlug) {
                     foreach ($this->dataLibs as $dataLib) {
-                        if ($dataLib->match($currentSlug)) {
+                        $classe = new ReflectionClass($dataLib);
+                        if ($classe->hasMethod('getTitle') && $classe->hasMethod('match') && $dataLib->match(
+                            $currentSlug
+                        )
+                        ) {
                             $entity = $dataLib->getEntity($currentSlug);
                             $urls[] = [
                                 'title' => $dataLib->getTitle($entity),

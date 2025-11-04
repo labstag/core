@@ -22,6 +22,12 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityMovieSliderParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::MOVIES->value);
         if (!is_object($listing) || !$listing->isEnable()) {

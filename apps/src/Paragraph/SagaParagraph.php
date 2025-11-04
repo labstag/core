@@ -10,6 +10,7 @@ use Labstag\Entity\Saga;
 use Labstag\Entity\SagaParagraph as EntitySagaParagraph;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\MovieRepository;
+use Labstag\Repository\SagaRepository;
 use Override;
 
 class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
@@ -52,6 +53,12 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
 
         /** @var MovieRepository $entityRepository */
         $entityRepository = $this->getRepository(Saga::class);
+        if (!$entityRepository instanceof SagaRepository) {
+            $this->logger->error('SagaParagraph: Saga repository not found.');
+            $this->setShow($paragraph, false);
+
+            return;
+        }
 
         $sagas = $entityRepository->showPublic();
         foreach ($sagas as $key => $saga) {

@@ -67,6 +67,9 @@ class EpisodeCrudController extends CrudControllerAbstract
         $reasonField->formatValue(
             function ($value, $entity) {
                 unset($value);
+                if (is_null($entity)) {
+                    return '';
+                }
 
                 $season = $entity->getRefseason();
                 if (is_null($season)) {

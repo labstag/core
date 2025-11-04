@@ -7,6 +7,7 @@ use Labstag\Entity\Movie;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Saga;
 use Labstag\Entity\SagaListParagraph as EntitySagaListParagraph;
+use Labstag\Repository\MovieRepository;
 use Override;
 
 class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
@@ -25,8 +26,15 @@ class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
         }
 
         $entityRepository                = $this->getRepository(Movie::class);
+        if (!$entityRepository instanceof MovieRepository) {
+            $this->logger->error('SagaListParagraph: Movie repository not found.');
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         $movies                          = $entityRepository->getAllActivateBySaga($data['entity']);
-        if (0 === count($movies)) {
+        if ([] === $movies) {
             $this->setShow($paragraph, false);
 
             return;
