@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use Labstag\Entity\PageTag;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PageTagCrudController extends TagCrudControllerAbstract
@@ -19,13 +20,9 @@ class PageTagCrudController extends TagCrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    protected function getChildRelationshipProperty(): string
+    #[\Override]
+    public static function getEntityFqcn(): string
     {
-        return 'pages';
-    }
-
-    protected function getEntityType(): string
-    {
-        return 'page';
+        return PageTag::class;
     }
 }

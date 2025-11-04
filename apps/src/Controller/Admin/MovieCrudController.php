@@ -125,7 +125,7 @@ class MovieCrudController extends CrudControllerAbstract
                 $trailerField,
                 $wysiwygField,
                 $descriptionField,
-                $this->crudFieldFactory->categoriesField('movie'),
+                $this->crudFieldFactory->categoriesField(),
                 // image field déjà incluse dans baseIdentitySet
                 $booleanField,
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
@@ -153,7 +153,7 @@ class MovieCrudController extends CrudControllerAbstract
             );
         }
 
-        $this->crudFieldFactory->addFilterCategories($filters, 'movie');
+        $this->crudFieldFactory->addFilterCategories($filters);
         $this->addFilterSaga($filters);
 
         return $filters;

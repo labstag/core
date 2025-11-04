@@ -74,18 +74,11 @@ class Chapter implements Stringable
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $slug = null;
 
-    /**
-     * @var Collection<int, Tag>
-     */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'chapters', cascade: ['persist', 'detach'])]
-    protected Collection $tags;
-
     #[ORM\Column(length: 255)]
     protected ?string $title = null;
 
     public function __construct()
     {
-        $this->tags       = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
     }
 
@@ -100,16 +93,6 @@ class Chapter implements Stringable
         if (!$this->paragraphs->contains($paragraph)) {
             $this->paragraphs->add($paragraph);
             $paragraph->setChapter($this);
-        }
-
-        return $this;
-    }
-
-    public function addTag(Tag $tag): static
-    {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addChapter($this);
         }
 
         return $this;
@@ -163,14 +146,6 @@ class Chapter implements Stringable
         return $this->slug;
     }
 
-    /**
-     * @return Collection<int, Tag>
-     */
-    public function getTags(): Collection
-    {
-        return $this->tags;
-    }
-
     public function getTitle(): ?string
     {
         return $this->title;
@@ -187,15 +162,6 @@ class Chapter implements Stringable
         if ($this->paragraphs->removeElement($paragraph) && $paragraph->getChapter() === $this
         ) {
             $paragraph->setChapter(null);
-        }
-
-        return $this;
-    }
-
-    public function removeTag(Tag $tag): static
-    {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removeChapter($this);
         }
 
         return $this;

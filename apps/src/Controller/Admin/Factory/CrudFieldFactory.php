@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin\Factory;
 
-use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -19,8 +18,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Field\ParagraphsField;
 use Labstag\Field\UploadFileField;
 use Labstag\Field\UploadImageField;
-use Labstag\Repository\CategoryRepository;
-use Labstag\Repository\TagRepository;
 use Labstag\Service\FileService;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -79,19 +76,9 @@ final class CrudFieldFactory
         }
     }
 
-    public function addFilterCategories(Filters $filters, string $type): void
+    public function addFilterCategories(Filters $filters): void
     {
         $entityFilter = EntityFilter::new('categories', new TranslatableMessage('Categories'));
-        $entityFilter->setFormTypeOption(
-            'value_type_options.query_builder',
-            function (CategoryRepository $categoryRepository) use ($type): QueryBuilder {
-                $queryBuilder = $categoryRepository->createQueryBuilder('c');
-                $queryBuilder->andWhere('c.type = :type');
-                $queryBuilder->setParameter('type', $type);
-
-                return $queryBuilder;
-            }
-        );
         $filters->add($entityFilter);
     }
 
@@ -105,20 +92,9 @@ final class CrudFieldFactory
         $filters->add(EntityFilter::new('refuser', new TranslatableMessage('User')));
     }
 
-    public function addFilterTags(Filters $filters, string $type): void
+    public function addFilterTags(): void
     {
-        $entityFilter = EntityFilter::new('tags', new TranslatableMessage('Tags'));
-        $entityFilter->setFormTypeOption(
-            'value_type_options.query_builder',
-            function (TagRepository $tagRepository) use ($type): QueryBuilder {
-                $queryBuilder = $tagRepository->createQueryBuilder('t');
-                $queryBuilder->andWhere('t.type = :type');
-                $queryBuilder->setParameter('type', $type);
-
-                return $queryBuilder;
-            }
-        );
-        $filters->add($entityFilter);
+        EntityFilter::new('tags', new TranslatableMessage('Tags'));
     }
 
     public function addTab($tabName, FormField $formField): void
@@ -143,18 +119,12 @@ final class CrudFieldFactory
         return $booleanField;
     }
 
-    public function categoriesField(string $type): AssociationField
+    public function categoriesField(): AssociationField
     {
         $associationField = AssociationField::new('categories', new TranslatableMessage('Categories'));
         $associationField->autocomplete();
         $associationField->setTemplatePath('admin/field/categories.html.twig');
         $associationField->setFormTypeOption('by_reference', false);
-        $associationField->setQueryBuilder(
-            function (QueryBuilder $queryBuilder) use ($type): void {
-                $queryBuilder->andWhere('entity.type = :type');
-                $queryBuilder->setParameter('type', $type);
-            }
-        );
 
         return $associationField;
     }
@@ -377,18 +347,12 @@ final class CrudFieldFactory
         return $fields;
     }
 
-    public function tagsField(string $type): AssociationField
+    public function tagsField(): AssociationField
     {
         $associationField = AssociationField::new('tags', new TranslatableMessage('Tags'));
         $associationField->autocomplete();
         $associationField->setTemplatePath('admin/field/tags.html.twig');
         $associationField->setFormTypeOption('by_reference', false);
-        $associationField->setQueryBuilder(
-            function (QueryBuilder $queryBuilder) use ($type): void {
-                $queryBuilder->andWhere('entity.type = :type');
-                $queryBuilder->setParameter('type', $type);
-            }
-        );
 
         return $associationField;
     }
@@ -398,11 +362,11 @@ final class CrudFieldFactory
      *
      * @return array<int, AssociationField>
      */
-    public function taxonomySet(string $type): array
+    public function taxonomySet(): array
     {
         return [
-            $this->tagsField($type),
-            $this->categoriesField($type),
+            $this->tagsField(),
+            $this->categoriesField(),
         ];
     }
 

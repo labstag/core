@@ -58,7 +58,7 @@ class PageCrudController extends CrudControllerAbstract
             'principal',
             [AssociationField::new('page', new TranslatableMessage('Page'))]
         );
-        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet('page'));
+        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet());
 
         $this->crudFieldFactory->setTabParagraphs($pageName);
 
@@ -80,8 +80,8 @@ class PageCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterEnable($filters);
 
         $filters->add(EntityFilter::new('page', new TranslatableMessage('Page')));
-        $this->crudFieldFactory->addFilterTags($filters, 'page');
-        $this->crudFieldFactory->addFilterCategories($filters, 'page');
+        $this->crudFieldFactory->addFilterTags($filters);
+        $this->crudFieldFactory->addFilterCategories($filters);
 
         return $filters;
     }

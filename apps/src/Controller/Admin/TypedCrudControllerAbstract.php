@@ -42,10 +42,7 @@ abstract class TypedCrudControllerAbstract extends CrudControllerAbstract
     #[Override]
     public function createEntity(string $entityFqcn): object
     {
-        $entity = parent::createEntity($entityFqcn);
-        $entity->setType($this->getEntityType());
-
-        return $entity;
+        return parent::createEntity($entityFqcn);
     }
 
     #[Override]
@@ -56,25 +53,6 @@ abstract class TypedCrudControllerAbstract extends CrudControllerAbstract
         FilterCollection $filterCollection,
     ): QueryBuilder
     {
-        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
-        $queryBuilder->andWhere('entity.type = :type');
-        $queryBuilder->setParameter('type', $this->getEntityType());
-
-        return $queryBuilder;
+        return parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
     }
-
-    /**
-     * Get the child relationship property name for counting.
-     */
-    abstract protected function getChildRelationshipProperty(): string;
-
-    /**
-     * Get the child type for this controller.
-     */
-    abstract protected function getChildType(): string;
-
-    /**
-     * Get the type identifier for this specific controller.
-     */
-    abstract protected function getEntityType(): string;
 }

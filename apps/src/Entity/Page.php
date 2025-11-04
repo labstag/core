@@ -31,9 +31,9 @@ class Page implements Stringable
     use WorkflowTrait;
 
     /**
-     * @var Collection<int, Category>
+     * @var Collection<int, PageCategory>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(targetEntity: PageCategory::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
     protected Collection $categories;
 
     /**
@@ -96,9 +96,9 @@ class Page implements Stringable
     protected ?string $slug = null;
 
     /**
-     * @var Collection<int, Tag>
+     * @var Collection<int, PageTag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(targetEntity: PageTag::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
     protected Collection $tags;
 
     #[ORM\Column(length: 255)]
@@ -121,11 +121,11 @@ class Page implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addCategory(Category $category): static
+    public function addCategory(PageCategory $pageCategory): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addPage($this);
+        if (!$this->categories->contains($pageCategory)) {
+            $this->categories->add($pageCategory);
+            $pageCategory->addPage($this);
         }
 
         return $this;
@@ -151,18 +151,18 @@ class Page implements Stringable
         return $this;
     }
 
-    public function addTag(Tag $tag): static
+    public function addTag(PageTag $pageTag): static
     {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addPage($this);
+        if (!$this->tags->contains($pageTag)) {
+            $this->tags->add($pageTag);
+            $pageTag->addPage($this);
         }
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Category>
+     * @return Collection<int, PageCategory>
      */
     public function getCategories(): Collection
     {
@@ -226,7 +226,7 @@ class Page implements Stringable
     }
 
     /**
-     * @return Collection<int, Tag>
+     * @return Collection<int, PageTag>
      */
     public function getTags(): Collection
     {
@@ -248,10 +248,10 @@ class Page implements Stringable
         return $this->enable;
     }
 
-    public function removeCategory(Category $category): static
+    public function removeCategory(PageCategory $pageCategory): static
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removePage($this);
+        if ($this->categories->removeElement($pageCategory)) {
+            $pageCategory->removePage($this);
         }
 
         return $this;
@@ -279,10 +279,10 @@ class Page implements Stringable
         return $this;
     }
 
-    public function removeTag(Tag $tag): static
+    public function removeTag(PageTag $pageTag): static
     {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removePage($this);
+        if ($this->tags->removeElement($pageTag)) {
+            $pageTag->removePage($this);
         }
 
         return $this;

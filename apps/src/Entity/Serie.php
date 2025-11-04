@@ -31,9 +31,9 @@ class Serie implements Stringable
     protected ?bool $adult = null;
 
     /**
-     * @var Collection<int, Category>
+     * @var Collection<int, SerieCategory>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'series', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(targetEntity: SerieCategory::class, mappedBy: 'series', cascade: ['persist', 'detach'])]
     protected Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -138,11 +138,11 @@ class Serie implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addCategory(Category $category): static
+    public function addCategory(SerieCategory $serieCategory): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addSerie($this);
+        if (!$this->categories->contains($serieCategory)) {
+            $this->categories->add($serieCategory);
+            $serieCategory->addSerie($this);
         }
 
         return $this;
@@ -169,7 +169,7 @@ class Serie implements Stringable
     }
 
     /**
-     * @return Collection<int, Category>
+     * @return Collection<int, SerieCategory>
      */
     public function getCategories(): Collection
     {
@@ -300,10 +300,10 @@ class Serie implements Stringable
         return $this->inProduction;
     }
 
-    public function removeCategory(Category $category): static
+    public function removeCategory(SerieCategory $serieCategory): static
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removeSerie($this);
+        if ($this->categories->removeElement($serieCategory)) {
+            $serieCategory->removeSerie($this);
         }
 
         return $this;

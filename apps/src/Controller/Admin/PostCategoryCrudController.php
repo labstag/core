@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use Labstag\Entity\PostCategory;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PostCategoryCrudController extends CategoryCrudControllerAbstract
@@ -10,7 +11,14 @@ class PostCategoryCrudController extends CategoryCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->configureFieldsDefault();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->titleField(),
+            ]
+        );
         $collectionField = CollectionField::new('posts', new TranslatableMessage('Posts'));
         $collectionField->formatValue(fn ($entity): int => count($entity));
         $collectionField->hideOnForm();
@@ -20,13 +28,8 @@ class PostCategoryCrudController extends CategoryCrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    protected function getChildRelationshipProperty(): string
+    public static function getEntityFqcn(): string
     {
-        return 'posts';
-    }
-
-    protected function getEntityType(): string
-    {
-        return 'post';
+        return PostCategory::class;
     }
 }

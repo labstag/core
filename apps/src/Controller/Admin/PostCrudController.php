@@ -53,7 +53,7 @@ class PostCrudController extends CrudControllerAbstract
             ]
         );
 
-        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet('post'));
+        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet());
 
         // Additional specific field (resume) not yet in factory bundle - placed at end of principal tab
         $wysiwygField = WysiwygField::new('resume', new TranslatableMessage('resume'));
@@ -76,8 +76,8 @@ class PostCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->addFilterRefUser($filters);
         $this->crudFieldFactory->addFilterEnable($filters);
-        $this->crudFieldFactory->addFilterTags($filters, 'post');
-        $this->crudFieldFactory->addFilterCategories($filters, 'post');
+        $this->crudFieldFactory->addFilterTags($filters);
+        $this->crudFieldFactory->addFilterCategories($filters);
 
         return $filters;
     }

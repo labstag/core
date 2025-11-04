@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use Labstag\Entity\StoryCategory;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryCategoryCrudController extends CategoryCrudControllerAbstract
@@ -10,7 +11,14 @@ class StoryCategoryCrudController extends CategoryCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->configureFieldsDefault();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->titleField(),
+            ]
+        );
         $collectionField = CollectionField::new('stories', new TranslatableMessage('Stories'));
         $collectionField->formatValue(fn ($entity): int => count($entity));
         $collectionField->hideOnForm();
@@ -20,13 +28,8 @@ class StoryCategoryCrudController extends CategoryCrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    protected function getChildRelationshipProperty(): string
+    public static function getEntityFqcn(): string
     {
-        return 'stories';
-    }
-
-    protected function getEntityType(): string
-    {
-        return 'story';
+        return StoryCategory::class;
     }
 }

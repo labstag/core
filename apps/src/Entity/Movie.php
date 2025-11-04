@@ -30,9 +30,9 @@ class Movie implements Stringable
     protected ?bool $adult = null;
 
     /**
-     * @var Collection<int, Category>
+     * @var Collection<int, MovieCategory>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(targetEntity: MovieCategory::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
     protected Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -119,11 +119,11 @@ class Movie implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addCategory(Category $category): static
+    public function addCategory(MovieCategory $movieCategory): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addMovie($this);
+        if (!$this->categories->contains($movieCategory)) {
+            $this->categories->add($movieCategory);
+            $movieCategory->addMovie($this);
         }
 
         return $this;
@@ -140,7 +140,7 @@ class Movie implements Stringable
     }
 
     /**
-     * @return Collection<int, Category>
+     * @return Collection<int, MovieCategory>
      */
     public function getCategories(): Collection
     {
@@ -253,10 +253,10 @@ class Movie implements Stringable
         return $this->file;
     }
 
-    public function removeCategory(Category $category): static
+    public function removeCategory(MovieCategory $movieCategory): static
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removeMovie($this);
+        if ($this->categories->removeElement($movieCategory)) {
+            $movieCategory->removeMovie($this);
         }
 
         return $this;

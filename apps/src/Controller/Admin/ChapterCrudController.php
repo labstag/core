@@ -59,7 +59,6 @@ class ChapterCrudController extends CrudControllerAbstract
             $this->crudFieldFactory->titleField(),
             $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
             $this->addFieldRefStory(),
-            $this->crudFieldFactory->tagsField('chapter'),
             WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex(),
         ];
 
@@ -80,7 +79,7 @@ class ChapterCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->addFilterEnable($filters);
         $filters->add(EntityFilter::new('refstory', new TranslatableMessage('Story')));
-        $this->crudFieldFactory->addFilterTags($filters, 'chapter');
+        $this->crudFieldFactory->addFilterTags($filters);
 
         return $filters;
     }

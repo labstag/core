@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use Labstag\Entity\StoryTag;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryTagCrudController extends TagCrudControllerAbstract
@@ -20,13 +21,9 @@ class StoryTagCrudController extends TagCrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    protected function getChildRelationshipProperty(): string
+    #[\Override]
+    public static function getEntityFqcn(): string
     {
-        return 'stories';
-    }
-
-    protected function getEntityType(): string
-    {
-        return 'story';
+        return StoryTag::class;
     }
 }

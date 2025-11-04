@@ -232,7 +232,7 @@ class DashboardController extends AbstractDashboardController
                 'fas fa-landmark',
                 ChapterCrudController::class,
                 null,
-                $tags,
+                null,
                 [],
             ],
             [

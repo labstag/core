@@ -132,7 +132,7 @@ class SerieCrudController extends CrudControllerAbstract
                 $trailerField,
                 $wysiwygField,
                 $descriptionField,
-                $this->crudFieldFactory->categoriesField('serie'),
+                $this->crudFieldFactory->categoriesField(),
                 $collectionField,
                 $booleanField,
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
@@ -153,7 +153,7 @@ class SerieCrudController extends CrudControllerAbstract
         $filters->add('countries');
         $filters->add('inProduction');
 
-        $this->crudFieldFactory->addFilterCategories($filters, 'serie');
+        $this->crudFieldFactory->addFilterCategories($filters);
 
         return $filters;
     }

@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use Labstag\Entity\MovieCategory;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieCategoryCrudController extends CategoryCrudControllerAbstract
@@ -10,7 +11,14 @@ class MovieCategoryCrudController extends CategoryCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->configureFieldsDefault();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->titleField(),
+            ]
+        );
         $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
         $collectionField->formatValue(fn ($entity): int => count($entity));
         $collectionField->hideOnForm();
@@ -19,13 +27,8 @@ class MovieCategoryCrudController extends CategoryCrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    protected function getChildRelationshipProperty(): string
+    public static function getEntityFqcn(): string
     {
-        return 'movies';
-    }
-
-    protected function getEntityType(): string
-    {
-        return 'movie';
+        return MovieCategory::class;
     }
 }

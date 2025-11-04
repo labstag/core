@@ -6,7 +6,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\SubMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
-use Labstag\Controller\Admin\ChapterTagCrudController;
 use Labstag\Controller\Admin\MovieCategoryCrudController;
 use Labstag\Controller\Admin\PageCategoryCrudController;
 use Labstag\Controller\Admin\PageTagCrudController;
@@ -101,19 +100,15 @@ final class MenuItemFactory
     public function createTagMenuItems(): array
     {
         $tagControllers = [
-            'story'   => [
+            'story' => [
                 'crud'       => StoryTagCrudController::getEntityFqcn(),
                 'controller' => StoryTagCrudController::class,
             ],
-            'chapter' => [
-                'crud'       => ChapterTagCrudController::getEntityFqcn(),
-                'controller' => ChapterTagCrudController::class,
-            ],
-            'page'    => [
+            'page'  => [
                 'crud'       => PageTagCrudController::getEntityFqcn(),
                 'controller' => PageTagCrudController::class,
             ],
-            'post'    => [
+            'post'  => [
                 'crud'       => PostTagCrudController::getEntityFqcn(),
                 'controller' => PostTagCrudController::class,
             ],

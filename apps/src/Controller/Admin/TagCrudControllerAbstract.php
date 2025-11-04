@@ -28,10 +28,4 @@ abstract class TagCrudControllerAbstract extends TypedCrudControllerAbstract
     {
         return Tag::class;
     }
-
-    #[\Override]
-    protected function getChildType(): string
-    {
-        return 'tag';
-    }
 }

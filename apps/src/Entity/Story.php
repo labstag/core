@@ -30,9 +30,9 @@ class Story implements Stringable
     use WorkflowTrait;
 
     /**
-     * @var Collection<int, Category>
+     * @var Collection<int, StoryCategory>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(targetEntity: StoryCategory::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
     protected Collection $categories;
 
     /**
@@ -101,9 +101,9 @@ class Story implements Stringable
     protected ?string $slug = null;
 
     /**
-     * @var Collection<int, Tag>
+     * @var Collection<int, StoryTag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(targetEntity: StoryTag::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
     protected Collection $tags;
 
     #[ORM\Column(length: 255)]
@@ -123,11 +123,11 @@ class Story implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addCategory(Category $category): static
+    public function addCategory(StoryCategory $storyCategory): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addStory($this);
+        if (!$this->categories->contains($storyCategory)) {
+            $this->categories->add($storyCategory);
+            $storyCategory->addStory($this);
         }
 
         return $this;
@@ -153,18 +153,18 @@ class Story implements Stringable
         return $this;
     }
 
-    public function addTag(Tag $tag): static
+    public function addTag(StoryTag $storyTag): static
     {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addStory($this);
+        if (!$this->tags->contains($storyTag)) {
+            $this->tags->add($storyTag);
+            $storyTag->addStory($this);
         }
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Category>
+     * @return Collection<int, StoryCategory>
      */
     public function getCategories(): Collection
     {
@@ -233,7 +233,7 @@ class Story implements Stringable
     }
 
     /**
-     * @return Collection<int, Tag>
+     * @return Collection<int, StoryTag>
      */
     public function getTags(): Collection
     {
@@ -250,10 +250,10 @@ class Story implements Stringable
         return $this->enable;
     }
 
-    public function removeCategory(Category $category): static
+    public function removeCategory(StoryCategory $storyCategory): static
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removeStory($this);
+        if ($this->categories->removeElement($storyCategory)) {
+            $storyCategory->removeStory($this);
         }
 
         return $this;
@@ -281,10 +281,10 @@ class Story implements Stringable
         return $this;
     }
 
-    public function removeTag(Tag $tag): static
+    public function removeTag(StoryTag $storyTag): static
     {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removeStory($this);
+        if ($this->tags->removeElement($storyTag)) {
+            $storyTag->removeStory($this);
         }
 
         return $this;

@@ -3,6 +3,8 @@
 namespace Labstag\Data;
 
 use Labstag\Entity\Page;
+use Labstag\Entity\PostTag;
+use Labstag\Entity\StoryTag;
 use Labstag\Entity\Tag;
 use Labstag\Enum\PageEnum;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -17,25 +19,14 @@ class TagData extends DataAbstract implements DataInterface
 
     public function generateSlug(object $entity): string
     {
-        $type             = $entity->getType();
         $entityRepository = $this->entityManager->getRepository(Page::class);
-        $page             = match ($type) {
-            'movie' => $entityRepository->findOneBy(
-                [
-                    'type' => PageEnum::MOVIES->value,
-                ]
-            ),
-            'post' => $entityRepository->findOneBy(
+        $page             = match ($entity::class) {
+            PostTag::class => $entityRepository->findOneBy(
                 [
                     'type' => PageEnum::POSTS->value,
                 ]
             ),
-            'serie' => $entityRepository->findOneBy(
-                [
-                    'type' => PageEnum::SERIES->value,
-                ]
-            ),
-            'story' => $entityRepository->findOneBy(
+            StoryTag::class => $entityRepository->findOneBy(
                 [
                     'type' => PageEnum::STORIES->value,
                 ]
@@ -47,12 +38,10 @@ class TagData extends DataAbstract implements DataInterface
             return '';
         }
 
-        return match ($type) {
-            'movie' => $page->getSlug() . '/tag-' . $entity->getSlug(),
-            'post'  => $page->getSlug() . '/tag-' . $entity->getSlug(),
-            'serie' => $page->getSlug() . '/tag-' . $entity->getSlug(),
-            'story' => $page->getSlug() . '/tag-' . $entity->getSlug(),
-            default => '',
+        return match ($entity::class) {
+            PostTag::class  => $page->getSlug() . '/tag-' . $entity->getSlug(),
+            StoryTag::class => $page->getSlug() . '/tag-' . $entity->getSlug(),
+            default         => '',
         };
     }
 
