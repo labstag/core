@@ -132,7 +132,7 @@ class SerieCrudController extends CrudControllerAbstract
                 $trailerField,
                 $wysiwygField,
                 $descriptionField,
-                $this->crudFieldFactory->categoriesFieldFor(self::getEntityFqcn()),
+                $this->crudFieldFactory->categoriesFieldForPage(self::getEntityFqcn(), $pageName),
                 $collectionField,
                 $booleanField,
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
@@ -147,13 +147,13 @@ class SerieCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->crudFieldFactory->addFilterEnable($filters);
+    $this->crudFieldFactory->addFilterEnable($filters);
 
         $filters->add('releaseDate');
         $filters->add('countries');
         $filters->add('inProduction');
 
-        $this->crudFieldFactory->addFilterCategories($filters);
+        $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
 
         return $filters;
     }

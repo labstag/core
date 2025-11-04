@@ -58,7 +58,7 @@ class MemoCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
         $this->crudFieldFactory->addFilterEnable($filters);
 
         return $filters;

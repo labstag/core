@@ -16,6 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use Labstag\Controller\Admin\SerieCategoryCrudController;
 use Labstag\Field\ParagraphsField;
 use Labstag\Field\UploadFileField;
 use Labstag\Field\UploadImageField;
@@ -32,6 +33,7 @@ final class CrudFieldFactory
 {
 
     private array $tabfields = [];
+    private ?string $currentEntityFqcn = null;
 
     public function __construct(
         #[AutowireIterator('labstag.datas')]
@@ -84,14 +86,51 @@ final class CrudFieldFactory
         $filters->add($entityFilter);
     }
 
+    /**
+     * Add categories filter only if the given entity actually has a Doctrine association named 'categories'.
+     */
+    public function addFilterCategoriesFor(Filters $filters, string $entityFqcn): void
+    {
+        $em = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata = null !== $em ? $em->getClassMetadata($entityFqcn) : null;
+        if (null === $metadata || !$metadata->hasAssociation('categories')) {
+            return;
+        }
+
+        $this->addFilterCategories($filters);
+    }
+
     public function addFilterEnable(Filters $filters): void
     {
         $filters->add(BooleanFilter::new('enable', new TranslatableMessage('Enable')));
     }
 
-    public function addFilterRefUser(Filters $filters): void
+    /**
+     * Add refuser filter only if the given entity actually has a Doctrine association named 'refuser'.
+     */
+    public function addFilterRefUserFor(Filters $filters, string $entityFqcn): void
     {
+        $em = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata = null !== $em ? $em->getClassMetadata($entityFqcn) : null;
+        if (null === $metadata || !$metadata->hasAssociation('refuser')) {
+            return;
+        }
+
         $filters->add(EntityFilter::new('refuser', new TranslatableMessage('User')));
+    }
+
+    /**
+     * Add categories filter only if the given entity actually has a Doctrine association named 'categories'.
+     */
+    public function addFilterTagsFor(Filters $filters, string $entityFqcn): void
+    {
+        $em = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata = null !== $em ? $em->getClassMetadata($entityFqcn) : null;
+        if (null === $metadata || !$metadata->hasAssociation('tags')) {
+            return;
+        }
+
+        $this->addFilterTags($filters);
     }
 
     public function addFilterTags(Filters $filters): void
@@ -125,55 +164,73 @@ final class CrudFieldFactory
     public function categoriesField(): AssociationField
     {
         $associationField = AssociationField::new('categories', new TranslatableMessage('Categories'));
-        $associationField->autocomplete();
         $associationField->setTemplatePath('admin/field/categories.html.twig');
-        $associationField->setFormTypeOption('by_reference', false);
 
         return $associationField;
     }
 
     /**
-     * Safer helper: return an AssociationField for 'categories' when the given entity
-     * actually defines a Doctrine association named 'categories'. Otherwise, fall back
-     * to a read-only CollectionField to avoid runtime errors on index/detail pages.
+     * Page-aware variant to avoid AssociationConfigurator errors on index/detail pages.
+     * - On index/detail: always return a read-only CollectionField (count/list via template).
+     * - On edit/new: only return an AssociationField if Doctrine metadata confirms the association,
+     *   otherwise hide the field on forms (no-op for safety).
      */
-    public function tagsFieldFor(string $entityFqcn): AssociationField|CollectionField
+    public function tagsFieldForPage(string $entityFqcn, string $pageName): AssociationField|CollectionField
     {
+        $fields = $this->tagsField();
+        // Always safe on listing/detail pages: no AssociationField to configure
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)) {
+           $fields->hideOnForm();
+
+            return $fields;
+        }
+
+        // For edit/new pages, check the real Doctrine association
         $em = $this->managerRegistry->getManagerForClass($entityFqcn);
         $metadata = null !== $em ? $em->getClassMetadata($entityFqcn) : null;
 
         if (null !== $metadata && $metadata->hasAssociation('tags')) {
-            return $this->tagsField();
+            $fields->autocomplete();
+            $fields->setFormTypeOption('by_reference', false);
+
+            return $fields;
         }
 
-        // Fallback (non-association): render count/list, hidden on forms to prevent editing issues
-        $collectionField = CollectionField::new('tags', new TranslatableMessage('Categories'));
-        $collectionField->setTemplatePath('admin/field/tags.html.twig');
-        $collectionField->hideOnForm();
+        $fields->hideOnForm();
 
-        return $collectionField;
+        return $fields;
     }
 
     /**
-     * Safer helper: return an AssociationField for 'categories' when the given entity
-     * actually defines a Doctrine association named 'categories'. Otherwise, fall back
-     * to a read-only CollectionField to avoid runtime errors on index/detail pages.
+     * Page-aware variant to avoid AssociationConfigurator errors on index/detail pages.
+     * - On index/detail: always return a read-only CollectionField (count/list via template).
+     * - On edit/new: only return an AssociationField if Doctrine metadata confirms the association,
+     *   otherwise hide the field on forms (no-op for safety).
      */
-    public function categoriesFieldFor(string $entityFqcn): AssociationField|CollectionField
+    public function categoriesFieldForPage(string $entityFqcn, string $pageName): AssociationField|CollectionField
     {
+        $field = $this->categoriesField();
+        // Always safe on listing/detail pages: no AssociationField to configure
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)) {
+            $field->hideOnForm();
+
+            return $field;
+        }
+
+        // For edit/new pages, check the real Doctrine association
         $em = $this->managerRegistry->getManagerForClass($entityFqcn);
         $metadata = null !== $em ? $em->getClassMetadata($entityFqcn) : null;
 
         if (null !== $metadata && $metadata->hasAssociation('categories')) {
-            return $this->categoriesField();
+            $field->autocomplete();
+            $field->setFormTypeOption('by_reference', false);
+            return $field;
         }
 
-        // Fallback (non-association): render count/list, hidden on forms to prevent editing issues
-        $collectionField = CollectionField::new('categories', new TranslatableMessage('Categories'));
-        $collectionField->setTemplatePath('admin/field/categories.html.twig');
-        $collectionField->hideOnForm();
+        // No association: ensure nothing is rendered on the form
+        $field->hideOnForm();
 
-        return $collectionField;
+        return $field;
     }
 
     public function correctionFieldsTab(array $tabfields, string $pageName): array
@@ -292,6 +349,7 @@ final class CrudFieldFactory
 
     public function setTabPrincipal(string $entity): void
     {
+        $this->currentEntityFqcn = $entity;
         $this->addTab('principal', FormField::addTab(new TranslatableMessage('Principal')));
         $this->addFieldsToTab('principal', $this->addFieldIDShortcode($entity));
         $this->addFieldsToTab('principal', [$this->idField()]);
@@ -320,6 +378,14 @@ final class CrudFieldFactory
     {
         if (!$isSuperAdmin) {
             return;
+        }
+        // Guard against entities without a 'refuser' association to avoid AssociationConfigurator runtime errors
+        if (null !== $this->currentEntityFqcn) {
+            $em = $this->managerRegistry->getManagerForClass($this->currentEntityFqcn);
+            $metadata = null !== $em ? $em->getClassMetadata($this->currentEntityFqcn) : null;
+            if (null === $metadata || !$metadata->hasAssociation('refuser')) {
+                return;
+            }
         }
 
         $this->addTab('user', FormField::addTab(new TranslatableMessage('User')));
@@ -397,9 +463,7 @@ final class CrudFieldFactory
     public function tagsField(): AssociationField
     {
         $associationField = AssociationField::new('tags', new TranslatableMessage('Tags'));
-        $associationField->autocomplete();
         $associationField->setTemplatePath('admin/field/tags.html.twig');
-        $associationField->setFormTypeOption('by_reference', false);
 
         return $associationField;
     }
@@ -409,11 +473,11 @@ final class CrudFieldFactory
      *
      * @return array<int, AssociationField>
      */
-    public function taxonomySet(string $entityFqcn): array
+    public function taxonomySet(string $entityFqcn, string $pageName): array
     {
         return [
-            $this->tagsFieldFor($entityFqcn),
-            $this->categoriesFieldFor($entityFqcn),
+            $this->tagsFieldForPage($entityFqcn, $pageName),
+            $this->categoriesFieldForPage($entityFqcn, $pageName),
         ];
     }
 

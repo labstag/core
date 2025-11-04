@@ -81,7 +81,7 @@ class StoryCrudController extends CrudControllerAbstract
             ]
         );
 
-        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet(self::getEntityFqcn()));
+        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet(self::getEntityFqcn(), $pageName));
 
         $this->crudFieldFactory->setTabParagraphs($pageName);
         $this->crudFieldFactory->setTabSEO();
@@ -95,10 +95,10 @@ class StoryCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
         $this->crudFieldFactory->addFilterEnable($filters);
-        $this->crudFieldFactory->addFilterTags($filters);
-        $this->crudFieldFactory->addFilterCategories($filters);
+        $this->crudFieldFactory->addFilterTagsFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
 
         return $filters;
     }

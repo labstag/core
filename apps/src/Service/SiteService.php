@@ -33,8 +33,8 @@ final class SiteService
             break;
         }
 
-        if (!isset($file) || '' !== $file) {
-            return '';
+        if ('' !== $file) {
+            return $file;
         }
 
         if (!$placeholder) {

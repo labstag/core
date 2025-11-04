@@ -1,10 +1,11 @@
 {% set instance = entity.instance %}
+{% set categories = instance.categories|default([]) %}
 {% if ea.crud.currentAction == 'detail' %}
   <ul>
-    {% for category in instance.categories %}
+    {% for category in categories %}
         <li>{{ category.title }}</li>
     {% endfor %}
   </ul>
 {% else %}
-  {{ instance.categories|length }}
+  {{ categories|length }}
 {% endif %}

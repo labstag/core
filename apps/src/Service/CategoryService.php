@@ -4,6 +4,7 @@ namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Category;
+use Labstag\Entity\MovieCategory;
 use Labstag\Repository\CategoryRepository;
 
 class CategoryService
@@ -23,7 +24,7 @@ class CategoryService
      */
     public function getCategoryMovieForForm(): array
     {
-        $data       = $this->categoryRepository->findAllByTypeMovieEnable();
+        $data       = $this->categoryRepository->findAllByTypeMovieEnable(MovieCategory::class);
         $categories = [];
         foreach ($data as $category) {
             $categories[$category->getTitle()] = $category->getSlug();

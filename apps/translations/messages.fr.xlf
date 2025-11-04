@@ -1321,6 +1321,18 @@
         <source>Name</source>
         <target>Nom</target>
       </trans-unit>
+      <trans-unit id="5gRL0E1" resname="Size">
+        <source>Size</source>
+        <target>Taille</target>
+      </trans-unit>
+      <trans-unit id="VwkmLwH" resname="Mime type">
+        <source>Mime type</source>
+        <target>Type MIME</target>
+      </trans-unit>
+      <trans-unit id="g8LekOC" resname="Label not found">
+        <source>Label not found</source>
+        <target>Label non trouvé</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

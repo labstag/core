@@ -139,7 +139,7 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
         // Pas de champ enable pour les logs => pas de filtre enable
         $filters->add('internetProtocol');
         $filters->add('httpCode');

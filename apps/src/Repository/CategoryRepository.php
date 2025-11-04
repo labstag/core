@@ -21,8 +21,6 @@ class CategoryRepository extends RepositoryAbstract
     public function findAllByTypeMovie(): array
     {
         $queryBuilder = $this->createQueryBuilder('c');
-        $queryBuilder->andWhere('c.type = :type');
-        $queryBuilder->setParameter('type', 'movie');
         $queryBuilder->orderBy('c.title', 'ASC');
 
         $query = $queryBuilder->getQuery();
@@ -34,18 +32,17 @@ class CategoryRepository extends RepositoryAbstract
     /**
      * @return array<Category>
      */
-    public function findAllByTypeMovieEnable(): array
+    public function findAllByTypeMovieEnable(string $class): array
     {
         $queryBuilder = $this->createQueryBuilder('c');
-        $queryBuilder->andWhere('c.type = :type');
-        $queryBuilder->setParameter('type', 'movie');
+        $queryBuilder->resetDQLPart('from');
+        $queryBuilder->from($class, 'c');
         $queryBuilder->orderBy('c.title', 'ASC');
         $queryBuilder->leftJoin('c.movies', 'm')->addSelect('m');
         $queryBuilder->andWhere('m.enable = true');
-
+        dump(get_class_methods($queryBuilder));
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'category-type-movie-enable');
-
         return $query->getResult();
     }
 

@@ -15,7 +15,7 @@ class PageCategoryCrudController extends CategoryCrudControllerAbstract
         $titleField = $this->crudFieldFactory->titleField();
         $titleField->setFormattedValue(
             function($entity) {
-                return $entity->getTitle() ?? (new TranslatableMessage('label.no_title'));
+                return $entity->getTitle() ?? (new TranslatableMessage('Label not found'));
             }
         );
         $this->crudFieldFactory->addFieldsToTab(
