@@ -7,6 +7,8 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Category;
 use Labstag\Entity\Story;
+use Labstag\Entity\StoryCategory;
+use Labstag\Entity\StoryTag;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Override;
@@ -40,8 +42,8 @@ class StoryFixtures extends FixtureAbstract implements DependentFixtureInterface
     public function load(ObjectManager $objectManager): void
     {
         $this->users      = $this->getIdentitiesByClass(User::class);
-        $this->tags       = $this->getIdentitiesByClass(Tag::class, 'story');
-        $this->categories = $this->getIdentitiesByClass(Category::class, 'story');
+        $this->tags       = $this->getIdentitiesByClass(StoryTag::class);
+        $this->categories = $this->getIdentitiesByClass(StoryCategory::class);
         $this->loadForeach(self::NUMBER_HISTORY, 'addStory', $objectManager);
         $objectManager->flush();
     }
@@ -56,8 +58,8 @@ class StoryFixtures extends FixtureAbstract implements DependentFixtureInterface
         $story->setTitle($generator->unique()->colorName());
         $this->addParagraphText($story);
         $this->setImage($story, 'imgFile');
-        $this->addTagToEntity($story);
-        $this->addCategoryToEntity($story);
+        $this->addTagToEntity($story, StoryTag::class);
+        $this->addCategoryToEntity($story, StoryCategory::class);
         $this->addReference('story_' . md5(uniqid()), $story);
         $objectManager->persist($story);
     }

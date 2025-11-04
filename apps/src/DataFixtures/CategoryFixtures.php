@@ -5,6 +5,11 @@ namespace Labstag\DataFixtures;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Category;
+use Labstag\Entity\MovieCategory;
+use Labstag\Entity\PageCategory;
+use Labstag\Entity\PostCategory;
+use Labstag\Entity\SerieCategory;
+use Labstag\Entity\StoryCategory;
 use Override;
 
 class CategoryFixtures extends FixtureAbstract
@@ -24,30 +29,30 @@ class CategoryFixtures extends FixtureAbstract
     protected function addCategory(Generator $generator, ObjectManager $objectManager): void
     {
         $tab      = [
-            'movie',
-            'page',
-            'post',
-            'serie',
-            'story',
+            'movie' => MovieCategory::class,
+            'page' => PageCategory::class,
+            'post' => PostCategory::class,
+            'serie' => SerieCategory::class,
+            'story' => StoryCategory::class,
         ];
-        $code     = $tab[array_rand($tab)];
-        $category = new Category();
-        $category->setTitle($generator->unique()->colorName());
-        $category->setType($code);
+        foreach ($tab as $code => $class) {
+            $category = new $class();
+            $category->setTitle($generator->unique()->colorName());
 
-        $parent = random_int(0, 1);
-        if (1 === $parent) {
-            $categories = $this->getParent('category' . $code);
-            if ([] !== $categories) {
-                $parentCategory = $this->getReference(array_rand($categories), Category::class);
-                $category->setParent($parentCategory);
+            $parent = random_int(0, 1);
+            if (1 === $parent) {
+                $categories = $this->getParent('category' . $code);
+                if ([] !== $categories) {
+                    $parentCategory = $this->getReference(array_rand($categories), $class);
+                    $category->setParent($parentCategory);
+                }
             }
-        }
 
-        $id = 'category' . $code . '_' . md5(uniqid());
-        $this->addReference($id, $category);
-        $this->categories[$id] = $category;
-        $objectManager->persist($category);
+            $id = 'category' . $code . '_' . md5(uniqid());
+            $this->addReference($id, $category);
+            $this->categories[$id] = $category;
+            $objectManager->persist($category);
+        }
     }
 
     /**

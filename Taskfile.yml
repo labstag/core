@@ -502,6 +502,14 @@ tasks:
       vars:
         CMD: "messenger:consume async"
 
+  messenger:stats:
+    desc: "Show Messenger statistics"
+    silent: true
+    cmds:
+    - task: symfony:console
+      vars:
+        CMD: "messenger:stats"
+
   rector:
     desc: "Refactor code with Rector"
     silent: true

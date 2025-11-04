@@ -44,7 +44,7 @@ abstract class FixtureAbstract extends Fixture
     {
     }
 
-    protected function addCategoryToEntity(object $entity): void
+    protected function addCategoryToEntity(object $entity, string $class): void
     {
         if ([] === $this->categories) {
             return;
@@ -59,7 +59,7 @@ abstract class FixtureAbstract extends Fixture
         shuffle($categories);
         $categories = array_slice($categories, 0, $max);
         foreach ($categories as $categoryId) {
-            $category = $this->getReference($categoryId, Category::class);
+            $category = $this->getReference($categoryId, $class);
             $entity->addCategory($category);
         }
     }
@@ -75,7 +75,7 @@ abstract class FixtureAbstract extends Fixture
         $paragraph->setContent($generator->text(500));
     }
 
-    protected function addTagToEntity(object $entity): void
+    protected function addTagToEntity(object $entity, string $class): void
     {
         if ([] === $this->tags) {
             return;
@@ -90,7 +90,7 @@ abstract class FixtureAbstract extends Fixture
         shuffle($tags);
         $tags = array_slice($tags, 0, $max);
         foreach ($tags as $tagId) {
-            $tag = $this->getReference($tagId, Tag::class);
+            $tag = $this->getReference($tagId, $class);
             $entity->addTag($tag);
         }
     }
@@ -98,15 +98,11 @@ abstract class FixtureAbstract extends Fixture
     /**
      * @return mixed[]
      */
-    protected function getIdentitiesByClass(string $class, ?string $id = null): array
+    protected function getIdentitiesByClass(string $class): array
     {
         $data = $this->referenceRepository->getIdentitiesByClass();
 
         $data = $data[$class] ?? [];
-
-        if (!is_null($id)) {
-            return array_filter($data, fn ($key): bool => str_contains($key, $id), ARRAY_FILTER_USE_KEY);
-        }
 
         return $data;
     }

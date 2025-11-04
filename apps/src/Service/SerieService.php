@@ -6,6 +6,7 @@ use DateTime;
 use Exception;
 use Labstag\Api\TmdbApi;
 use Labstag\Entity\Serie;
+use Labstag\Entity\SerieCategory;
 use Labstag\Message\SeasonMessage;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\SerieRepository;
@@ -257,7 +258,7 @@ final class SerieService
 
         foreach ($details['tmdb']['genres'] as $genre) {
             $title    = trim((string) $genre['name']);
-            $category = $this->categoryService->getType('serie', $title);
+            $category = $this->categoryService->getType($title, SerieCategory::class);
 
             $serie->addCategory($category);
         }

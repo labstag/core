@@ -124,23 +124,22 @@ class CategoryData extends DataAbstract implements DataInterface
             return null;
         }
 
-        $type = match ($page->getType()) {
-            PageEnum::MOVIES->value  => 'movie',
-            PageEnum::POSTS->value   => 'post',
-            PageEnum::SERIES->value  => 'serie',
-            PageEnum::STORIES->value => 'story',
+        $typeclass = match ($page->getType()) {
+            PageEnum::MOVIES->value  => MovieCategory::class,
+            PageEnum::POSTS->value   => PostCategory::class,
+            PageEnum::SERIES->value  => SerieCategory::class,
+            PageEnum::STORIES->value => StoryCategory::class,
             default                  => null,
         };
 
-        if (is_null($type)) {
+        if (is_null($typeclass)) {
             return null;
         }
 
         $slugSecond = str_replace('category-', '', $slugSecond);
 
-        return $this->entityManager->getRepository(Category::class)->findOneBy(
+        return $this->entityManager->getRepository($typeclass)->findOneBy(
             [
-                'type' => $type,
                 'slug' => $slugSecond,
             ]
         );
@@ -166,22 +165,21 @@ class CategoryData extends DataAbstract implements DataInterface
             return null;
         }
 
-        $type = match ($page->getType()) {
-            PageEnum::MOVIES->value  => 'movie',
-            PageEnum::POSTS->value   => 'post',
-            PageEnum::SERIES->value  => 'serie',
-            PageEnum::STORIES->value => 'story',
+        $typeclass = match ($page->getType()) {
+            PageEnum::MOVIES->value  => MovieCategory::class,
+            PageEnum::POSTS->value   => PostCategory::class,
+            PageEnum::SERIES->value  => SerieCategory::class,
+            PageEnum::STORIES->value => StoryCategory::class,
             default                  => null,
         };
 
-        if (is_null($type)) {
+        if (is_null($typeclass)) {
             return null;
         }
 
         $slugSecond = str_replace('category-', '', $slugSecond);
-        $category   = $this->entityManager->getRepository(Category::class)->findOneBy(
+        $category   = $this->entityManager->getRepository($typeclass)->findOneBy(
             [
-                'type' => $type,
                 'slug' => $slugSecond,
             ]
         );

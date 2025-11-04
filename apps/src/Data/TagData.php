@@ -110,22 +110,19 @@ class TagData extends DataAbstract implements DataInterface
             return null;
         }
 
-        $type = match ($page->getType()) {
-            PageEnum::MOVIES->value  => 'movie',
-            PageEnum::POSTS->value   => 'post',
-            PageEnum::SERIES->value  => 'serie',
-            PageEnum::STORIES->value => 'story',
+        $typeclass = match ($page->getType()) {
+            PageEnum::POSTS->value   => PostTag::class,
+            PageEnum::STORIES->value => StoryTag::class,
             default                  => null,
         };
 
-        if (is_null($type)) {
+        if (is_null($typeclass)) {
             return null;
         }
 
         $slugSecond = str_replace('tag-', '', $slugSecond);
-        $tag        = $this->entityManager->getRepository(Tag::class)->findOneBy(
+        $tag        = $this->entityManager->getRepository($typeclass)->findOneBy(
             [
-                'type' => $type,
                 'slug' => $slugSecond,
             ]
         );
@@ -156,23 +153,20 @@ class TagData extends DataAbstract implements DataInterface
             return null;
         }
 
-        $type = match ($page->getType()) {
-            PageEnum::MOVIES->value  => 'movie',
-            PageEnum::POSTS->value   => 'post',
-            PageEnum::SERIES->value  => 'serie',
-            PageEnum::STORIES->value => 'story',
+        $typeclass = match ($page->getType()) {
+            PageEnum::POSTS->value   => PostTag::class,
+            PageEnum::STORIES->value => StoryTag::class,
             default                  => null,
         };
 
-        if (is_null($type)) {
+        if (is_null($typeclass)) {
             return null;
         }
 
         $slugSecond = str_replace('tag-', '', $slugSecond);
 
-        return $this->entityManager->getRepository(Tag::class)->findOneBy(
+        return $this->entityManager->getRepository($typeclass)->findOneBy(
             [
-                'type' => $type,
                 'slug' => $slugSecond,
             ]
         );

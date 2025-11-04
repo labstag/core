@@ -6,6 +6,7 @@ use DateTime;
 use Exception;
 use Labstag\Api\TmdbApi;
 use Labstag\Entity\Movie;
+use Labstag\Entity\MovieCategory;
 use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
@@ -227,7 +228,7 @@ final class MovieService
 
         foreach ($details['tmdb']['genres'] as $genre) {
             $title    = trim((string) $genre['name']);
-            $category = $this->categoryService->getType('movie', $title);
+            $category = $this->categoryService->getType($title, MovieCategory::class);
             $movie->addCategory($category);
         }
 

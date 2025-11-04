@@ -2,6 +2,7 @@
 
 namespace Labstag\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Category;
 use Labstag\Repository\CategoryRepository;
 
@@ -11,6 +12,7 @@ class CategoryService
     protected array $categories = [];
 
     public function __construct(
+        private EntityManagerInterface $entityManager,
         protected CategoryRepository $categoryRepository,
     )
     {
@@ -30,20 +32,18 @@ class CategoryService
         return $categories;
     }
 
-    public function getType(string $type, string $title): Category
+    public function getType(string $title, string $class): Category
     {
-        $categories = $this->categoryRepository->findBy(
-            ['type' => $type]
-        );
+        $repository = $this->entityManager->getRepository($class);
+        $categories = $repository->findAll();
         foreach ($categories as $category) {
             if ($category->getTitle() === $title) {
                 return $category;
             }
         }
 
-        $category = new Category();
+        $category = new $class();
         $category->setTitle($title);
-        $category->setType($type);
 
         $this->categoryRepository->save($category);
 

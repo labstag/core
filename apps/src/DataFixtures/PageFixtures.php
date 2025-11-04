@@ -7,6 +7,8 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Category;
 use Labstag\Entity\Page;
+use Labstag\Entity\PageCategory;
+use Labstag\Entity\PageTag;
 use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Labstag\Enum\PageEnum;
@@ -50,8 +52,8 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     {
         $generator        = $this->setFaker();
         $data             = $this->data();
-        $this->tags       = $this->getIdentitiesByClass(Tag::class, 'page');
-        $this->categories = $this->getIdentitiesByClass(Category::class, 'page');
+        $this->tags       = $this->getIdentitiesByClass(PageTag::class);
+        $this->categories = $this->getIdentitiesByClass(PageCategory::class);
         foreach ($data as $entity) {
             $this->setPage($objectManager, $generator, $entity);
         }
@@ -167,8 +169,8 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
         $page->setCreatedAt($date);
         $this->setImage($page, 'imgFile');
-        $this->addTagToEntity($page);
-        $this->addCategoryToEntity($page);
+        $this->addTagToEntity($page, PageTag::class);
+        $this->addCategoryToEntity($page, PageCategory::class);
 
         $this->addReference('page_' . md5(uniqid()), $page);
         $objectManager->persist($page);
