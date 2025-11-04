@@ -147,10 +147,10 @@ abstract class CrudControllerAbstract extends AbstractCrudController
 
     protected function getRepositoryParagraph(): ParagraphRepository
     {
-        $RepositoryAbstract = $this->getDoctrineRepository(Paragraph::class);
-        assert($RepositoryAbstract instanceof ParagraphRepository);
+        $repositoryAbstract = $this->getDoctrineRepository(Paragraph::class);
+        assert($repositoryAbstract instanceof ParagraphRepository);
 
-        return $RepositoryAbstract;
+        return $repositoryAbstract;
     }
 
     protected function isSuperAdmin(): bool

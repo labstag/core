@@ -113,19 +113,19 @@ class BackController extends AbstractController
 
     protected function adminEmpty(string $entity): void
     {
-        $RepositoryAbstract              = $this->getRepository($entity);
-        $all                             = $RepositoryAbstract->findDeleted();
+        $repositoryAbstract              = $this->getRepository($entity);
+        $all                             = $repositoryAbstract->findDeleted();
         foreach ($all as $row) {
-            $RepositoryAbstract->remove($row);
+            $repositoryAbstract->remove($row);
         }
 
-        $RepositoryAbstract->flush();
+        $repositoryAbstract->flush();
     }
 
     protected function adminRestore(string $entity, mixed $uuid): void
     {
-        $RepositoryAbstract              = $this->getRepository($entity);
-        $data                            = $RepositoryAbstract->find($uuid);
+        $repositoryAbstract              = $this->getRepository($entity);
+        $data                            = $repositoryAbstract->find($uuid);
         if (is_null($data)) {
             throw new Exception(new TranslatableMessage('Data not found'));
         }

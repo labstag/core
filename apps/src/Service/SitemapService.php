@@ -71,12 +71,12 @@ final class SitemapService
      */
     private function getDataFromRepository(string $entityClass): array
     {
-        $RepositoryAbstract = $this->getRepository($entityClass);
-        if (!method_exists($RepositoryAbstract, 'getAllActivate')) {
+        $repositoryAbstract = $this->getRepository($entityClass);
+        if (!method_exists($repositoryAbstract, 'getAllActivate')) {
             return [];
         }
 
-        return $RepositoryAbstract->getAllActivate();
+        return $repositoryAbstract->getAllActivate();
     }
 
     /**

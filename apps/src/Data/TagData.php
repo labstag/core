@@ -122,9 +122,7 @@ class TagData extends DataAbstract implements DataInterface
 
         $slugSecond = str_replace('tag-', '', $slugSecond);
         $tag        = $this->entityManager->getRepository($typeclass)->findOneBy(
-            [
-                'slug' => $slugSecond,
-            ]
+            ['slug' => $slugSecond]
         );
         if (!$tag instanceof Tag) {
             return null;
@@ -166,9 +164,7 @@ class TagData extends DataAbstract implements DataInterface
         $slugSecond = str_replace('tag-', '', $slugSecond);
 
         return $this->entityManager->getRepository($typeclass)->findOneBy(
-            [
-                'slug' => $slugSecond,
-            ]
+            ['slug' => $slugSecond]
         );
     }
 }

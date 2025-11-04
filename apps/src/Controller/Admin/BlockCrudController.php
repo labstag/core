@@ -193,13 +193,13 @@ class BlockCrudController extends CrudControllerAbstract
     public function positionBlock(AdminContext $adminContext): RedirectResponse|Response
     {
         $request                         = $adminContext->getRequest();
-        $RepositoryAbstract              = $this->getRepository();
-        if (!$RepositoryAbstract instanceof BlockRepository) {
+        $repositoryAbstract              = $this->getRepository();
+        if (!$repositoryAbstract instanceof BlockRepository) {
             throw new Exception('findAllOrderedByRegion not found');
         }
 
-        $queryBuilder = $RepositoryAbstract->createQueryBuilder('b');
-        $RepositoryAbstract->findAllOrderedByRegion($queryBuilder);
+        $queryBuilder = $repositoryAbstract->createQueryBuilder('b');
+        $repositoryAbstract->findAllOrderedByRegion($queryBuilder);
         $query        = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'block-position');
 
@@ -215,17 +215,17 @@ class BlockCrudController extends CrudControllerAbstract
                 }
 
                 foreach ($data as $id => $position) {
-                    $entity = $RepositoryAbstract->find($id);
+                    $entity = $repositoryAbstract->find($id);
                     if (!$entity instanceof Block) {
                         continue;
                     }
 
                     $entity->setPosition($position);
-                    $RepositoryAbstract->persist($entity);
+                    $repositoryAbstract->persist($entity);
                 }
             }
 
-            $RepositoryAbstract->flush();
+            $repositoryAbstract->flush();
             $this->addFlash('success', new TranslatableMessage('Position updated'));
 
             $url = $generator->setController(static::class)->setAction(Action::INDEX)->generateUrl();
@@ -277,13 +277,13 @@ class BlockCrudController extends CrudControllerAbstract
             }
 
             $data                            = $event->getData();
-            $RepositoryAbstract              = $this->getRepository();
+            $repositoryAbstract              = $this->getRepository();
             $region                          = $form->get('region')->getData();
-            if (is_null($region) || !$RepositoryAbstract instanceof BlockRepository) {
+            if (is_null($region) || !$repositoryAbstract instanceof BlockRepository) {
                 return;
             }
 
-            $maxPosition = $RepositoryAbstract->getMaxPositionByRegion($region);
+            $maxPosition = $repositoryAbstract->getMaxPositionByRegion($region);
             if (is_null($maxPosition)) {
                 $maxPosition = 0;
             }

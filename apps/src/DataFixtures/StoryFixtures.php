@@ -5,11 +5,9 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\Entity\Category;
 use Labstag\Entity\Story;
 use Labstag\Entity\StoryCategory;
 use Labstag\Entity\StoryTag;
-use Labstag\Entity\Tag;
 use Labstag\Entity\User;
 use Override;
 

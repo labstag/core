@@ -112,8 +112,8 @@ class PageCrudController extends CrudControllerAbstract
     #[Route('/admin/page/{entity}/public', name: 'admin_page_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $page                            = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $page                            = $repositoryAbstract->find($entity);
 
         return $this->publicLink($page);
     }
@@ -121,8 +121,8 @@ class PageCrudController extends CrudControllerAbstract
     #[Route('/admin/page/{entity}/w3c', name: 'admin_page_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $page                            = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $page                            = $repositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($page);
     }

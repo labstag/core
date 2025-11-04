@@ -139,9 +139,7 @@ class CategoryData extends DataAbstract implements DataInterface
         $slugSecond = str_replace('category-', '', $slugSecond);
 
         return $this->entityManager->getRepository($typeclass)->findOneBy(
-            [
-                'slug' => $slugSecond,
-            ]
+            ['slug' => $slugSecond]
         );
     }
 
@@ -179,9 +177,7 @@ class CategoryData extends DataAbstract implements DataInterface
 
         $slugSecond = str_replace('category-', '', $slugSecond);
         $category   = $this->entityManager->getRepository($typeclass)->findOneBy(
-            [
-                'slug' => $slugSecond,
-            ]
+            ['slug' => $slugSecond]
         );
         if (!$category instanceof Category) {
             return null;

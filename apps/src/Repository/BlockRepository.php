@@ -18,7 +18,7 @@ class BlockRepository extends RepositoryAbstract
 
     public function findAllOrderedByRegion(?QueryBuilder $queryBuilder): void
     {
-        if (!$queryBuilder instanceof \Doctrine\ORM\QueryBuilder) {
+        if (!$queryBuilder instanceof QueryBuilder) {
             $queryBuilder = $this->createQueryBuilder('b');
         }
 

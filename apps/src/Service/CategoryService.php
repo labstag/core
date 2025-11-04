@@ -34,8 +34,8 @@ class CategoryService
 
     public function getType(string $title, string $class): Category
     {
-        $repository = $this->entityManager->getRepository($class);
-        $categories = $repository->findAll();
+        $entityRepository = $this->entityManager->getRepository($class);
+        $categories       = $entityRepository->findAll();
         foreach ($categories as $category) {
             if ($category->getTitle() === $title) {
                 return $category;

@@ -102,9 +102,7 @@ abstract class FixtureAbstract extends Fixture
     {
         $data = $this->referenceRepository->getIdentitiesByClass();
 
-        $data = $data[$class] ?? [];
-
-        return $data;
+        return $data[$class] ?? [];
     }
 
     protected function loadForeach(int $number, string $method, ObjectManager $objectManager): void

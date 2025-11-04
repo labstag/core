@@ -90,8 +90,8 @@ class PostCrudController extends CrudControllerAbstract
     #[Route('/admin/post/{entity}/public', name: 'admin_post_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $post                            = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $post                            = $repositoryAbstract->find($entity);
 
         return $this->publicLink($post);
     }
@@ -99,8 +99,8 @@ class PostCrudController extends CrudControllerAbstract
     #[Route('/admin/post/{entity}/w3c', name: 'admin_post_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $post                            = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $post                            = $repositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($post);
     }

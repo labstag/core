@@ -170,8 +170,8 @@ class RedirectionCrudController extends CrudControllerAbstract
     #[Route('/admin/redirection/{entity}/test', name: 'admin_redirection_test')]
     public function testSource(string $entity): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $redirection                     = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $redirection                     = $repositoryAbstract->find($entity);
 
         return $this->redirect($redirection->getSource());
     }

@@ -7,8 +7,6 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
-use Labstag\Entity\StoryTag;
-use Labstag\Entity\Tag;
 use Override;
 
 class ChapterFixtures extends FixtureAbstract implements DependentFixtureInterface

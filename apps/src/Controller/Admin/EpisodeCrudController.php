@@ -146,8 +146,8 @@ class EpisodeCrudController extends CrudControllerAbstract
     #[Route('/admin/episode/{entity}/update', name: 'admin_episode_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $RepositoryAbstract                = $this->getRepository();
-        $episode                           = $RepositoryAbstract->find($entity);
+        $repositoryAbstract                = $this->getRepository();
+        $episode                           = $repositoryAbstract->find($entity);
         $messageBus->dispatch(new EpisodeMessage($episode->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');

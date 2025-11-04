@@ -111,8 +111,8 @@ class StoryCrudController extends CrudControllerAbstract
     #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $story                           = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $story                           = $repositoryAbstract->find($entity);
 
         return $this->publicLink($story);
     }
@@ -156,8 +156,8 @@ class StoryCrudController extends CrudControllerAbstract
     #[Route('/admin/story/{entity}/update', name: 'admin_story_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $story                           = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $story                           = $repositoryAbstract->find($entity);
         $messageBus->dispatch(new StoryMessage($story->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -171,8 +171,8 @@ class StoryCrudController extends CrudControllerAbstract
 
     public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
-        $RepositoryAbstract               = $this->getRepository();
-        $stories                          = $RepositoryAbstract->findAll();
+        $repositoryAbstract               = $this->getRepository();
+        $stories                          = $repositoryAbstract->findAll();
         foreach ($stories as $story) {
             $messageBus->dispatch(new StoryMessage($story->getId()));
         }
@@ -183,8 +183,8 @@ class StoryCrudController extends CrudControllerAbstract
     #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $story                           = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $story                           = $repositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($story);
     }

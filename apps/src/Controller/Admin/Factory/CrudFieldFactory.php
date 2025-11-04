@@ -92,9 +92,10 @@ final class CrudFieldFactory
         $filters->add(EntityFilter::new('refuser', new TranslatableMessage('User')));
     }
 
-    public function addFilterTags(): void
+    public function addFilterTags(Filters $filters): void
     {
-        EntityFilter::new('tags', new TranslatableMessage('Tags'));
+        $entityFilter = EntityFilter::new('tags', new TranslatableMessage('Tags'));
+        $filters->add($entityFilter);
     }
 
     public function addTab($tabName, FormField $formField): void

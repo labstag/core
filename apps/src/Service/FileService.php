@@ -211,17 +211,21 @@ final class FileService
 
     public function getSizeFormat(int $size): string
     {
-        if (1073741824 <= $size) {
-            $size = number_format($size / 1073741824, 2) . ' GB';
-        } elseif (1048576 <= $size) {
-            $size = number_format($size / 1048576, 2) . ' MB';
-        } elseif (1024 <= $size) {
-            $size = number_format($size / 1024, 2) . ' KB';
-        } else {
-            $size .= ' B';
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $bytes = (float) $size;
+        $unitIndex = 0;
+        $maxIndex = count($units) - 1;
+
+        while ($bytes >= 1024 && $unitIndex < $maxIndex) {
+            $bytes /= 1024;
+            $unitIndex++;
         }
 
-        return $size;
+        if ($unitIndex === 0) {
+            return (int) $bytes . ' ' . $units[$unitIndex];
+        }
+
+        return number_format($bytes, 2) . ' ' . $units[$unitIndex];
     }
 
     public function setUploadedFile(string $filePath, object $entity, string|PropertyPathInterface $type): void

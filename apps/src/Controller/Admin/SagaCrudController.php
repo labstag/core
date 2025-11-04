@@ -93,8 +93,8 @@ class SagaCrudController extends CrudControllerAbstract
     #[Route('/admin/saga/{entity}/public', name: 'admin_saga_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $saga                            = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $saga                            = $repositoryAbstract->find($entity);
 
         return $this->publicLink($saga);
     }
@@ -102,8 +102,8 @@ class SagaCrudController extends CrudControllerAbstract
     #[Route('/admin/saga/{entity}/imdb', name: 'admin_saga_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $saga                            = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $saga                            = $repositoryAbstract->find($entity);
 
         return $this->redirect('https://www.themoviedb.org/collection/' . $saga->getTmdb());
     }
@@ -111,8 +111,8 @@ class SagaCrudController extends CrudControllerAbstract
     #[Route('/admin/saga/{entity}/update', name: 'admin_saga_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $saga                            = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $saga                            = $repositoryAbstract->find($entity);
         $messageBus->dispatch(new SagaMessage($saga->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -127,8 +127,8 @@ class SagaCrudController extends CrudControllerAbstract
     #[Route('/admin/saga/{entity}/w3c', name: 'admin_saga_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $saga                            = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $saga                            = $repositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($saga);
     }

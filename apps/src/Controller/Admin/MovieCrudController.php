@@ -167,8 +167,8 @@ class MovieCrudController extends CrudControllerAbstract
     #[Route('/admin/movie/{entity}/imdb', name: 'admin_movie_imdb')]
     public function imdb(string $entity): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $movie                           = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $movie                           = $repositoryAbstract->find($entity);
 
         return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
     }
@@ -176,8 +176,8 @@ class MovieCrudController extends CrudControllerAbstract
     #[Route('/admin/movie/{entity}/tmdb', name: 'admin_movie_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $movie                           = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $movie                           = $repositoryAbstract->find($entity);
 
         return $this->redirect('https://www.themoviedb.org/movie/' . $movie->getTmdb());
     }
@@ -185,8 +185,8 @@ class MovieCrudController extends CrudControllerAbstract
     #[Route('/admin/movie/{entity}/update', name: 'admin_movie_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $RepositoryAbstract              = $this->getRepository();
-        $movie                           = $RepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $movie                           = $repositoryAbstract->find($entity);
         $messageBus->dispatch(new MovieMessage($movie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -224,10 +224,10 @@ class MovieCrudController extends CrudControllerAbstract
      */
     private function getMovieRepository(): MovieRepository
     {
-        $RepositoryAbstract = $this->getRepository();
-        assert($RepositoryAbstract instanceof MovieRepository);
+        $repositoryAbstract = $this->getRepository();
+        assert($repositoryAbstract instanceof MovieRepository);
 
-        return $RepositoryAbstract;
+        return $repositoryAbstract;
     }
 
     private function setLinkImdbAction(): Action

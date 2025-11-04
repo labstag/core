@@ -4,7 +4,6 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\Entity\Category;
 use Labstag\Entity\MovieCategory;
 use Labstag\Entity\PageCategory;
 use Labstag\Entity\PostCategory;
@@ -30,8 +29,8 @@ class CategoryFixtures extends FixtureAbstract
     {
         $tab      = [
             'movie' => MovieCategory::class,
-            'page' => PageCategory::class,
-            'post' => PostCategory::class,
+            'page'  => PageCategory::class,
+            'post'  => PostCategory::class,
             'serie' => SerieCategory::class,
             'story' => StoryCategory::class,
         ];
