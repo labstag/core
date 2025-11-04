@@ -59,9 +59,6 @@ class SagaCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $textField        = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
-        $associationField = AssociationField::new('movies', new TranslatableMessage('Movies'));
-        $associationField->onlyOnIndex();
-        $associationField->formatValue(fn ($value): int => count($value));
 
         $wysiwygField = WysiwygField::new('description', new TranslatableMessage('Description'));
         $wysiwygField->hideOnIndex();
@@ -74,7 +71,6 @@ class SagaCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $textField,
-                $associationField,
                 $wysiwygField,
                 $this->moviesFieldForPage(self::getEntityFqcn(), $pageName),
             ]
