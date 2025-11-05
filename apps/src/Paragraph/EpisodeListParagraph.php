@@ -36,9 +36,19 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
             return;
         }
 
+        $serie = $data['entity']->getRefSerie();
+        $number = $data['entity']->getNumber();
+        $repository = $this->getRepository(Season::class);
+
+        $prev = $repository->getOneBySerieAndPosition($serie, $number - 1);
+        $next = $repository->getOneBySerieAndPosition($serie, $number + 1);
+
         $this->setData(
             $paragraph,
             [
+                'prev'      => $prev,
+                'next'      => $next,
+                'serie'     => $serie,
                 'episodes'  => $episodes,
                 'paragraph' => $paragraph,
                 'data'      => $data,
