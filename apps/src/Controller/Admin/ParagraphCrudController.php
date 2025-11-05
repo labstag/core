@@ -35,7 +35,8 @@ class ParagraphCrudController extends CrudControllerAbstract
     {
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(
-            function ($paragraph, ?string $pageName): \Symfony\Component\Translation\TranslatableMessage {
+            function ($paragraph, ?string $pageName): TranslatableMessage {
+                unset($pageName);
                 if (is_null($paragraph)) {
                     return new TranslatableMessage('Paragraph');
                 }

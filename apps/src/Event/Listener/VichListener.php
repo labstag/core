@@ -26,24 +26,20 @@ final class VichListener
         $filterCollection = $this->entityManager->getFilters();
         $object           = $event->getObject();
 
-        // Si le filtre deletedfile est activé, on autorise toujours la suppression
         if ($filterCollection->isEnabled('deletedfile')
         ) {
             return;
         }
 
-        // Si c'est un nouveau fichier uploadé, on autorise la suppression
         if ($this->isDeletedFileNotEntity($object)
         ) {
             return;
         }
 
-        // Si c'est une requête admin, on autorise la suppression (simplifié)
         if ($this->isAdminRequest()) {
             return;
         }
 
-        // Sinon, on annule la suppression pour préserver les fichiers existants
         $event->cancel();
     }
 
@@ -54,7 +50,6 @@ final class VichListener
             return false;
         }
 
-        // Vérifier si c'est une requête admin
         $pathInfo = $request->getPathInfo();
 
         return str_contains($pathInfo, '/admin/');

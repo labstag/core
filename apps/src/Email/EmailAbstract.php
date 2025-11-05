@@ -3,10 +3,6 @@
 namespace Labstag\Email;
 
 use Labstag\Entity\Template;
-use Labstag\Replace\LinkLoginReplace;
-use Labstag\Replace\UserEmailReplace;
-use Labstag\Replace\UsernameReplace;
-use Labstag\Replace\UserRolesReplace;
 use Labstag\Repository\TemplateRepository;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\SiteService;
@@ -80,19 +76,6 @@ abstract class EmailAbstract extends Email
     public function getName(): string
     {
         return '';
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getReplaces(): array
-    {
-        return [
-            UsernameReplace::class,
-            LinkLoginReplace::class,
-            UserEmailReplace::class,
-            UserRolesReplace::class,
-        ];
     }
 
     public function getType(): string
@@ -209,57 +192,24 @@ abstract class EmailAbstract extends Email
         return $this->templates[$type];
     }
 
-    private function getReplace(mixed $data): ?object
-    {
-        $replace = null;
-        foreach ($this->replaces as $row) {
-            if (!$row instanceof $data) {
-                continue;
-            }
-
-            $replace = $row;
-
-            break;
-        }
-
-        return $replace;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    private function getReplacesClass(): array
-    {
-        $data     = [];
-        $replaces = $this->getReplaces();
-        foreach ($replaces as $replace) {
-            $data[] = $this->getReplace($replace);
-        }
-
-        return $data;
-    }
-
     private function getTemplate(string $type): string
     {
         $templates = $this->templates($type);
-        $this->getReplacesClass();
 
         return $this->twigEnvironment->render(
             $templates['view'],
             [
-                'codes' => $this->getReplacesClass(),
-                'type'  => $this->getType(),
-                'code'  => $type,
+                'type' => $this->getType(),
+                'code' => $type,
             ]
         );
     }
 
     private function replace(string $content): string
     {
-        $codes = $this->getReplacesClass();
-        foreach ($codes as $code) {
-            $code->setData($this->data);
-            $content = str_replace('%' . $code->getCode() . '%', $code->exec(), $content);
+        foreach ($this->replaces as $replace) {
+            $replace->setData($this->data);
+            $content = str_replace('%' . $replace->getCode() . '%', $replace->exec(), $content);
         }
 
         return $content;

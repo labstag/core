@@ -28,7 +28,7 @@ class FormationsParagraph extends ParagraphAbstract implements ParagraphInterfac
         }
 
         $formations  = $paragraph->getFormations();
-        if (0 == count($formations)) {
+        if (!is_array($formations) || [] === $formations) {
             $this->setShow($paragraph, false);
 
             return;
@@ -38,8 +38,9 @@ class FormationsParagraph extends ParagraphAbstract implements ParagraphInterfac
         $this->setData(
             $paragraph,
             [
-                'paragraph' => $paragraph,
-                'data'      => $data,
+                'formations' => $formations,
+                'paragraph'  => $paragraph,
+                'data'       => $data,
             ]
         );
     }
@@ -57,7 +58,7 @@ class FormationsParagraph extends ParagraphAbstract implements ParagraphInterfac
         yield FormField::addColumn(12);
         $collectionField = CollectionField::new('formations', new TranslatableMessage('Formations'));
         $collectionField->setEntryToStringMethod(
-            function ($link): \Symfony\Component\Translation\TranslatableMessage {
+            function ($link): TranslatableMessage {
                 unset($link);
 
                 return new TranslatableMessage('Formation');

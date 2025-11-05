@@ -44,7 +44,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
     private function addLinksFooter1(LinksBlock $linksBlock): void
     {
         $links          = $linksBlock->getLinks();
-        $page          = $this->getPageByTitle('Contact');
+        $page           = $this->getPageByTitle('Contact');
         $this->setLink($page, $links);
         $page = $this->getPageByTitle('Plan du site');
         $this->setLink($page, $links);
@@ -55,7 +55,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
     private function addLinksFooter2(LinksBlock $linksBlock): void
     {
         $links          = $linksBlock->getLinks();
-        $page          = $this->getPageByTitle('Mentions légales');
+        $page           = $this->getPageByTitle('Mentions légales');
         $this->setLink($page, $links);
         $page = $this->getPageByTitle('Données personnelles');
         $this->setLink($page, $links);
@@ -65,7 +65,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
     private function addLinksHeader(LinksBlock $linksBlock): void
     {
         $links          = $linksBlock->getLinks();
-        $page          = $this->getPageByTitle('Posts');
+        $page           = $this->getPageByTitle('Posts');
         $this->setLink($page, $links);
         $page = $this->getPageByTitle('Mes étoiles github');
         $this->setLink($page, $links);
@@ -208,6 +208,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         if (!is_array($data)) {
             $data = [];
         }
+
         if (!$page instanceof Page) {
             return;
         }

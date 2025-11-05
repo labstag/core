@@ -28,7 +28,7 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         }
 
         $experiences  = $paragraph->getExperiences();
-        if (0 == count($experiences)) {
+        if (!is_array($experiences) || [] === $experiences) {
             $this->setShow($paragraph, false);
 
             return;
@@ -38,8 +38,9 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         $this->setData(
             $paragraph,
             [
-                'paragraph' => $paragraph,
-                'data'      => $data,
+                'experiences' => $experiences,
+                'paragraph'   => $paragraph,
+                'data'        => $data,
             ]
         );
     }
@@ -58,7 +59,7 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         yield FormField::addColumn(12);
         $collectionField = CollectionField::new('experiences', new TranslatableMessage('Experiences'));
         $collectionField->setEntryToStringMethod(
-            function ($link): \Symfony\Component\Translation\TranslatableMessage {
+            function ($link): TranslatableMessage {
                 unset($link);
 
                 return new TranslatableMessage('Experience');

@@ -27,8 +27,8 @@ class CompetencesParagraph extends ParagraphAbstract implements ParagraphInterfa
             return;
         }
 
-        $experiences  = $paragraph->getCompetences();
-        if (0 == count($experiences)) {
+        $competences  = $paragraph->getCompetences();
+        if (!is_array($competences) || [] === $competences) {
             $this->setShow($paragraph, false);
 
             return;
@@ -38,8 +38,9 @@ class CompetencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         $this->setData(
             $paragraph,
             [
-                'paragraph' => $paragraph,
-                'data'      => $data,
+                'competences' => $competences,
+                'paragraph'   => $paragraph,
+                'data'        => $data,
             ]
         );
     }
@@ -57,7 +58,7 @@ class CompetencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         yield FormField::addColumn(12);
         $collectionField = CollectionField::new('competences', new TranslatableMessage('Competences'));
         $collectionField->setEntryToStringMethod(
-            function ($link): \Symfony\Component\Translation\TranslatableMessage {
+            function ($link): TranslatableMessage {
                 unset($link);
 
                 return new TranslatableMessage('Competence');
