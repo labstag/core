@@ -62,9 +62,8 @@ class EpisodeCrudController extends CrudControllerAbstract
         $textField = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
         $textField->hideOnIndex();
 
-        $reasonField = TextField::new('refseason', new TranslatableMessage('Serie'));
-        $reasonField->setFormTypeOption('choice_label', 'refserie');
-        $reasonField->formatValue(
+        $seasonField = TextField::new('refseason', new TranslatableMessage('Serie'));
+        $seasonField->formatValue(
             function ($value, $entity) {
                 unset($value);
                 if (is_null($entity)) {
@@ -102,7 +101,7 @@ class EpisodeCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $textField,
-                $reasonField,
+                $seasonField,
                 AssociationField::new('refseason', new TranslatableMessage('Season')),
                 IntegerField::new('number', new TranslatableMessage('Number')),
                 DateField::new('air_date', new TranslatableMessage('Air date')),

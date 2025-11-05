@@ -78,7 +78,7 @@ class SeasonCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $textField,
-                TextField::new('refserie', new TranslatableMessage('Serie')),
+                AssociationField::new('refserie', new TranslatableMessage('Serie')),
                 IntegerField::new('number', new TranslatableMessage('Number')),
                 DateField::new('airDate', new TranslatableMessage('Air date')),
                 $this->episodesFieldForPage(self::getEntityFqcn(), $pageName),
