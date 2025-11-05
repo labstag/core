@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20251105123211 extends AbstractMigration
+final class Version20251105124825 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,8 +21,10 @@ final class Version20251105123211 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE media (id CHAR(36) NOT NULL, mime_type VARCHAR(255) DEFAULT NULL, name VARCHAR(255) DEFAULT NULL, size INT DEFAULT NULL, slug VARCHAR(255) DEFAULT NULL, deleted_at DATETIME DEFAULT NULL, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL, UNIQUE INDEX UNIQ_6A2CA10C989D9B62 (slug), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
+        $this->addSql('ALTER TABLE link DROP FOREIGN KEY `FK_36AC99F1E9ED820C`');
         $this->addSql('ALTER TABLE tag_chapter DROP FOREIGN KEY `FK_CBB09884579F4768`');
         $this->addSql('ALTER TABLE tag_chapter DROP FOREIGN KEY `FK_CBB09884BAD26311`');
+        $this->addSql('DROP TABLE link');
         $this->addSql('DROP TABLE tag_chapter');
         $this->addSql('ALTER TABLE block ADD links JSON DEFAULT NULL');
         $this->addSql('DROP INDEX IDX_CATEGORY_TYPE_SLUG ON category');
@@ -77,7 +79,9 @@ final class Version20251105123211 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE tag_chapter (tag_id CHAR(36) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, chapter_id CHAR(36) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, INDEX IDX_CBB09884BAD26311 (tag_id), INDEX IDX_CBB09884579F4768 (chapter_id), PRIMARY KEY (tag_id, chapter_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+        $this->addSql('CREATE TABLE link (blank TINYINT(1) NOT NULL, classes VARCHAR(255) CHARACTER SET utf8mb4 DEFAULT NULL COLLATE `utf8mb4_unicode_ci`, id CHAR(36) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, title VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, url VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, block_id CHAR(36) CHARACTER SET utf8mb4 DEFAULT NULL COLLATE `utf8mb4_unicode_ci`, INDEX IDX_36AC99F1E9ED820C (block_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+        $this->addSql('CREATE TABLE tag_chapter (tag_id CHAR(36) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, chapter_id CHAR(36) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`, INDEX IDX_CBB09884579F4768 (chapter_id), INDEX IDX_CBB09884BAD26311 (tag_id), PRIMARY KEY (tag_id, chapter_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
+        $this->addSql('ALTER TABLE link ADD CONSTRAINT `FK_36AC99F1E9ED820C` FOREIGN KEY (block_id) REFERENCES block (id)');
         $this->addSql('ALTER TABLE tag_chapter ADD CONSTRAINT `FK_CBB09884579F4768` FOREIGN KEY (chapter_id) REFERENCES chapter (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE tag_chapter ADD CONSTRAINT `FK_CBB09884BAD26311` FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE');
         $this->addSql('DROP TABLE media');
