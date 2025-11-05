@@ -32,7 +32,7 @@ class HtmlBlock extends SimpleBlockAbstract
     #[Override]
     public function getName(): string
     {
-        return 'HTML';
+        return (string) new TranslatableMessage('HTML');
     }
 
     #[Override]

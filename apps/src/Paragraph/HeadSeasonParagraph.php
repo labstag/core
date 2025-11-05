@@ -7,6 +7,7 @@ use Labstag\Entity\HeadSeasonParagraph as EntityHeadSeasonParagraph;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Season;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class HeadSeasonParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -41,7 +42,7 @@ class HeadSeasonParagraph extends ParagraphAbstract implements ParagraphInterfac
     #[Override]
     public function getName(): string
     {
-        return 'Head season';
+        return (string) new TranslatableMessage('Head season');
     }
 
     #[Override]

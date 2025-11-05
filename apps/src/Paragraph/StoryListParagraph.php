@@ -11,6 +11,7 @@ use Labstag\Entity\StoryListParagraph as EntityStoryListParagraph;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\StoryRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -69,7 +70,7 @@ class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Story list';
+        return (string) new TranslatableMessage('Story list');
     }
 
     #[Override]

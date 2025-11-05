@@ -69,7 +69,7 @@ class TextImgParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Texte image';
+        return (string) new TranslatableMessage('Text Image');
     }
 
     #[Override]

@@ -7,6 +7,7 @@ use Labstag\Entity\HeadSerieParagraph as EntityHeadSerieParagraph;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Serie;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class HeadSerieParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -41,7 +42,7 @@ class HeadSerieParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Head serie';
+        return (string) new TranslatableMessage('Head serie');
     }
 
     #[Override]

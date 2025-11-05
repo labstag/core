@@ -12,11 +12,11 @@ class FormationsParagraph extends Paragraph
     protected ?string $title = null;
 
     #[ORM\Column(nullable: true)]
-    private ?array $data = null;
+    private ?array $formations = null;
 
-    public function getData(): ?array
+    public function getFormations(): ?array
     {
-        return $this->data;
+        return $this->formations;
     }
 
     public function getTitle(): ?string
@@ -24,9 +24,9 @@ class FormationsParagraph extends Paragraph
         return $this->title;
     }
 
-    public function setData(?array $data): static
+    public function setFormations(?array $formations): static
     {
-        $this->data = $data;
+        $this->formations = $formations;
 
         return $this;
     }

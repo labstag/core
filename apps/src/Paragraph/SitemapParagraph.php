@@ -6,6 +6,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\SitemapParagraph as EntitySitemapParagraph;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SitemapParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -35,7 +36,7 @@ class SitemapParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Sitemap';
+        return (string) new TranslatableMessage('Sitemap');
     }
 
     #[Override]

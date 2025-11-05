@@ -11,6 +11,7 @@ use Labstag\Entity\Post;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\PostRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -72,7 +73,7 @@ class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'News list';
+        return (string) new TranslatableMessage('News list');
     }
 
     #[Override]

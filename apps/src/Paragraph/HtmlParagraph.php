@@ -57,7 +57,7 @@ class HtmlParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'HTML';
+        return (string) new TranslatableMessage('HTML');
     }
 
     #[Override]

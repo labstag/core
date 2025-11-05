@@ -74,7 +74,7 @@ class LastNewsParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Last news';
+        return (string) new TranslatableMessage('Last news');
     }
 
     #[Override]

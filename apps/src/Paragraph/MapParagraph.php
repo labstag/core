@@ -12,6 +12,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class MapParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -39,7 +40,7 @@ class MapParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Map';
+        return (string) new TranslatableMessage('Map');
     }
 
     #[Override]

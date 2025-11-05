@@ -3,14 +3,15 @@
 namespace Labstag\Block;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\LinksBlock as EntityLinksBlock;
-use Labstag\Form\Block\DataLinkType;
+use Labstag\Form\Block\LinkType;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class LinksBlock extends BlockAbstract
 {
@@ -43,8 +44,7 @@ class LinksBlock extends BlockAbstract
             ]
         );
 
-        $data  = $block->getData();
-        $links = $data['links'] ?? [];
+        $links  = $block->getLinks();
         if (0 === count($links)) {
             $this->logger->debug(
                 'No valid links found',
@@ -83,15 +83,22 @@ class LinksBlock extends BlockAbstract
         unset($block, $pageName);
 
         yield FormField::addColumn(12);
-        $fieldData = Field::new('data', 'Bloc de données');
-        $fieldData->setFormType(DataLinkType::class);
-        yield $fieldData;
+        $collectionField = CollectionField::new('links', new TranslatableMessage('Links'));
+        $collectionField->setEntryToStringMethod(
+            function ($link): \Symfony\Component\Translation\TranslatableMessage {
+                unset($link);
+
+                return new TranslatableMessage('Link');
+            }
+        );
+        $collectionField->setEntryType(LinkType::class);
+        yield $collectionField;
     }
 
     #[Override]
     public function getName(): string
     {
-        return 'Links';
+        return (string) new TranslatableMessage('Links');
     }
 
     #[Override]

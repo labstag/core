@@ -14,6 +14,7 @@ use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ImageParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -51,7 +52,7 @@ class ImageParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Image';
+        return (string) new TranslatableMessage('Image');
     }
 
     #[Override]

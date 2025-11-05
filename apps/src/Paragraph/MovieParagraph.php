@@ -12,6 +12,7 @@ use Labstag\Enum\PageEnum;
 use Labstag\Form\Front\MovieType;
 use Labstag\Repository\MovieRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -85,7 +86,7 @@ class MovieParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Movie';
+        return (string) new TranslatableMessage('Movie');
     }
 
     #[Override]

@@ -628,8 +628,8 @@ tasks:
         task lint:docker DOCKERCOMPOSEFILE="{{.DOCKERCOMPOSEFILE}}"
       fi
     - task: cmd:validate_outdated
-    - npm run eslint:fix
-    - npm run lint:stylelint:fix
+    - npm run eslint
+    - npm run lint:stylelint
     - task: lint:twig
     - task: lint:container
     - task: lint:phpaudit
@@ -656,6 +656,8 @@ tasks:
     desc: "Automatically fix code issues"
     silent: true
     cmds:
+    - npm run eslint:fix
+    - npm run lint:stylelint:fix
     - task: ecs-fix
     - task: lint:phpcbf
     - task: lint:phpcs

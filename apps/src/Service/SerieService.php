@@ -8,17 +8,11 @@ use Labstag\Api\TmdbApi;
 use Labstag\Entity\Serie;
 use Labstag\Entity\SerieCategory;
 use Labstag\Message\SeasonMessage;
-use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\SerieRepository;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SerieService
 {
-
-    /**
-     * @var array<string, mixed>
-     */
-    private array $category = [];
 
     /**
      * @var array<string, mixed>
@@ -35,7 +29,6 @@ final class SerieService
         private FileService $fileService,
         private SeasonService $seasonService,
         private SerieRepository $serieRepository,
-        private CategoryRepository $categoryRepository,
         private CategoryService $categoryService,
         private TmdbApi $tmdbApi,
     )

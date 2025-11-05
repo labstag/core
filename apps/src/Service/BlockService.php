@@ -120,6 +120,17 @@ final class BlockService
         return null;
     }
 
+    public function getClasseByCode(?string $code): ?string
+    {
+        foreach ($this->blocks as $block) {
+            if ($block->getType() == $code) {
+                return $block->getClass();
+            }
+        }
+
+        return null;
+    }
+
     /**
      * @param mixed[] $blocks
      */

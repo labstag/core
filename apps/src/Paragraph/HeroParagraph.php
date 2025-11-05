@@ -7,6 +7,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Enum\PageEnum;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class HeroParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -34,7 +35,7 @@ class HeroParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Hero';
+        return (string) new TranslatableMessage('Hero');
     }
 
     #[Override]

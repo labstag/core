@@ -5,6 +5,7 @@ namespace Labstag\Block;
 use Labstag\Entity\Block;
 use Labstag\Entity\HeroBlock as EntityHeroBlock;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class HeroBlock extends ParagraphBlockAbstract
 {
@@ -16,7 +17,7 @@ class HeroBlock extends ParagraphBlockAbstract
     #[Override]
     public function getName(): string
     {
-        return 'Hero';
+        return (string) new TranslatableMessage('Hero');
     }
 
     #[Override]

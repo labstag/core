@@ -81,7 +81,7 @@ class FormParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Formulaire';
+        return (string) new TranslatableMessage('Formulaire');
     }
 
     #[Override]

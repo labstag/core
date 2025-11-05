@@ -22,9 +22,11 @@ use Exception;
 use Labstag\Entity\Block;
 use Labstag\Filter\DiscriminatorTypeFilter;
 use Labstag\Repository\BlockRepository;
+use LogicException;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -55,6 +57,14 @@ class BlockCrudController extends CrudControllerAbstract
         $action->createAsGlobalAction();
 
         $actions->add(Crud::PAGE_INDEX, $action);
+        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+
+        $action = Action::new('newBlock', new TranslatableMessage('New block'));
+        $action->displayAsLink();
+        $action->linkToCrudAction('newBlock');
+        $action->createAsGlobalAction();
+
+        $actions->add(Crud::PAGE_INDEX, $action);
 
         return $actions;
     }
@@ -63,7 +73,37 @@ class BlockCrudController extends CrudControllerAbstract
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setEntityLabelInSingular(new TranslatableMessage('Block'));
+        $crud->setEntityLabelInSingular(
+            function ($block, ?string $pageName): \Symfony\Component\Translation\TranslatableMessage {
+                if (is_null($block)) {
+                    $request = $this->requestStack->getCurrentRequest();
+
+                    $type = $request->query->get('type');
+                    if (is_null($type)) {
+                        return new TranslatableMessage('Block');
+                    }
+
+                    $classe = $this->blockService->getByCode($type);
+                    if (!is_object($classe)) {
+                        return new TranslatableMessage('Block');
+                    }
+
+                    $name = $classe->getName();
+
+                    return new TranslatableMessage(
+                        'Block %name%',
+                        ['%name%' => $name]
+                    );
+                }
+
+                $name = $this->blockService->getName($block);
+
+                return new TranslatableMessage(
+                    'Block %name%',
+                    ['%name%' => $name]
+                );
+            }
+        );
         $crud->setEntityLabelInPlural(new TranslatableMessage('Blocks'));
         $crud->setDefaultSort(
             ['title' => 'ASC']
@@ -82,13 +122,11 @@ class BlockCrudController extends CrudControllerAbstract
         $regionField->setChoices($this->blockService->getRegions());
 
         $numberField = NumberField::new('position', new TranslatableMessage('Position'))->hideOnForm();
-        $allTypes    = array_flip($this->blockService->getAll(null));
         $fields      = [
             $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
             $regionField,
             $numberField,
-            $this->getChoiceType($pageName, $allTypes),
         ];
 
         $this->crudFieldFactory->addFieldsToTab('principal', $fields);
@@ -155,6 +193,20 @@ class BlockCrudController extends CrudControllerAbstract
     }
 
     #[\Override]
+    public function createEntity(string $entityFqcn): object
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        $type   = $request->query->get('type');
+        $classe = $this->blockService->getClasseByCode($type);
+        if (is_null($type)) {
+            throw new LogicException('Impossible de créer un Block sans type.');
+        }
+
+        return new $classe();
+    }
+
+    #[\Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
@@ -192,6 +244,20 @@ class BlockCrudController extends CrudControllerAbstract
     public static function getEntityFqcn(): string
     {
         return Block::class;
+    }
+
+    public function newBlock(): Response
+    {
+        $blocks = $this->blockService->getAll(null);
+
+        // Sinon affiche un formulaire simple de sélection
+        return $this->render(
+            'admin/block/new.html.twig',
+            [
+                'controller' => static::class,
+                'blocks'     => $blocks,
+            ]
+        );
     }
 
     public function positionBlock(AdminContext $adminContext): RedirectResponse|Response
@@ -241,34 +307,6 @@ class BlockCrudController extends CrudControllerAbstract
             'admin/block/order.html.twig',
             ['blocks' => $blocks]
         );
-    }
-
-    /**
-     * @param mixed[] $allTypes
-     */
-    private function getChoiceType(string $pageName, array $allTypes): ChoiceField|TextField
-    {
-        if ('new' === $pageName) {
-            $field = ChoiceField::new('type', new TranslatableMessage('Type'));
-            $field->setChoices(array_flip($allTypes));
-
-            return $field;
-        }
-
-        $field = TextField::new('id', new TranslatableMessage('Type'));
-        $field = TextField::new('id', new TranslatableMessage('Type'))->formatValue(
-            function (?string $value) {
-                $block = $this->blockService->getBlock($value);
-                if (is_null($block)) {
-                    return $value;
-                }
-
-                return $block->getName();
-            }
-        );
-        $field->setDisabled(true);
-
-        return $field;
     }
 
     private function setPosition(): callable

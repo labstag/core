@@ -46,12 +46,6 @@ abstract class Block implements Stringable
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
 
-    /**
-     * @var Collection<int, Link>
-     */
-    #[ORM\OneToMany(targetEntity: Link::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
-    protected Collection $links;
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $pages = null;
 
@@ -91,22 +85,11 @@ abstract class Block implements Stringable
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
-        $this->links      = new ArrayCollection();
     }
 
     public function __toString(): string
     {
         return (string) $this->getId();
-    }
-
-    public function addLink(Link $link): static
-    {
-        if (!$this->links->contains($link)) {
-            $this->links->add($link);
-            $link->setBlock($this);
-        }
-
-        return $this;
     }
 
     public function addParagraph(Paragraph $paragraph): static
@@ -127,14 +110,6 @@ abstract class Block implements Stringable
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    /**
-     * @return Collection<int, Link>
-     */
-    public function getLinks(): Collection
-    {
-        return $this->links;
     }
 
     public function getPages(): ?string
@@ -186,17 +161,6 @@ abstract class Block implements Stringable
     public function isRequestPath(): ?bool
     {
         return $this->requestPath;
-    }
-
-    public function removeLink(Link $link): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->links->removeElement($link) && $link->getBlock() === $this
-        ) {
-            $link->setBlock(null);
-        }
-
-        return $this;
     }
 
     public function removeParagraph(Paragraph $paragraph): static

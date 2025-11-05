@@ -11,6 +11,7 @@ use Override;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class BreadcrumbBlock extends BlockAbstract
 {
@@ -69,7 +70,7 @@ class BreadcrumbBlock extends BlockAbstract
     #[Override]
     public function getName(): string
     {
-        return 'Breadcrumb';
+        return (string) new TranslatableMessage('Breadcrumb');
     }
 
     #[Override]

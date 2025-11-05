@@ -9,6 +9,7 @@ use Labstag\Entity\Saga;
 use Labstag\Entity\SagaListParagraph as EntitySagaListParagraph;
 use Labstag\Repository\MovieRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -67,7 +68,7 @@ class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Saga list';
+        return (string) new TranslatableMessage('Saga list');
     }
 
     #[Override]

@@ -43,7 +43,7 @@ class PresentationCVParagraph extends ParagraphAbstract implements ParagraphInte
     #[Override]
     public function getName(): string
     {
-        return 'presentation CV';
+        return (string) new TranslatableMessage('Presentation CV');
     }
 
     #[Override]

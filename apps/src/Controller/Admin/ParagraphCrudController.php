@@ -25,6 +25,7 @@ class ParagraphCrudController extends CrudControllerAbstract
         }
 
         $this->configureActionsTrash($actions);
+        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
 
         return $actions;
     }
@@ -33,7 +34,20 @@ class ParagraphCrudController extends CrudControllerAbstract
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setEntityLabelInSingular(new TranslatableMessage('Paragraph'));
+        $crud->setEntityLabelInSingular(
+            function ($paragraph, ?string $pageName): \Symfony\Component\Translation\TranslatableMessage {
+                if (is_null($paragraph)) {
+                    return new TranslatableMessage('Paragraph');
+                }
+
+                $name = $this->paragraphService->getName($paragraph);
+
+                return new TranslatableMessage(
+                    'Paragraph %name%',
+                    ['%name%' => $name]
+                );
+            }
+        );
         $crud->setEntityLabelInPlural(new TranslatableMessage('Paragraphs'));
         if ($this->isIframeEdit()) {
             $crud->renderSidebarMinimized();

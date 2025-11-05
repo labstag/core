@@ -55,7 +55,7 @@ class TextParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Texte';
+        return (string) new TranslatableMessage('Text');
     }
 
     #[Override]

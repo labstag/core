@@ -1,10 +1,9 @@
 <?php
 
-namespace Labstag\Form\Block\Collection;
+namespace Labstag\Form\Paragraph;
 
 use Override;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,7 +12,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 /**
  * @extends AbstractType<mixed>
  */
-class LinkType extends AbstractType
+class FormationType extends AbstractType
 {
     #[Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
@@ -26,26 +25,17 @@ class LinkType extends AbstractType
             ]
         );
         $formBuilder->add(
-            'url',
+            'year',
             TextType::class,
             [
-                'label' => new TranslatableMessage('Url'),
+                'label' => new TranslatableMessage('Year'),
             ]
         );
         $formBuilder->add(
-            'blank',
-            CheckboxType::class,
-            [
-                'label'    => new TranslatableMessage('Open link in new window'),
-                'required' => false,
-            ]
-        );
-        $formBuilder->add(
-            'classes',
+            'place',
             TextType::class,
             [
-                'label'    => new TranslatableMessage('Classes'),
-                'required' => false,
+                'label' => new TranslatableMessage('Place'),
             ]
         );
 

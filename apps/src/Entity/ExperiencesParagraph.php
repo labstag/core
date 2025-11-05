@@ -12,11 +12,11 @@ class ExperiencesParagraph extends Paragraph
     protected ?string $title = null;
 
     #[ORM\Column(nullable: true)]
-    private ?array $data = null;
+    private ?array $experiences = null;
 
-    public function getData(): ?array
+    public function getExperiences(): ?array
     {
-        return $this->data;
+        return $this->experiences;
     }
 
     public function getTitle(): ?string
@@ -24,9 +24,9 @@ class ExperiencesParagraph extends Paragraph
         return $this->title;
     }
 
-    public function setData(?array $data): static
+    public function setExperiences(?array $experiences): static
     {
-        $this->data = $data;
+        $this->experiences = $experiences;
 
         return $this;
     }

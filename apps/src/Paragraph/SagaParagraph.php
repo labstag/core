@@ -12,6 +12,7 @@ use Labstag\Enum\PageEnum;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -102,7 +103,7 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Saga';
+        return (string) new TranslatableMessage('Saga');
     }
 
     #[Override]

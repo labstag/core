@@ -73,7 +73,7 @@ class LastStoryParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Last story';
+        return (string) new TranslatableMessage('Last story');
     }
 
     #[Override]

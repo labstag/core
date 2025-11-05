@@ -1,7 +1,8 @@
 <?php
 
-namespace Labstag\Form\Paragraph\Collection;
+namespace Labstag\Form\Paragraph;
 
+use Labstag\Form\Paragraph\Collection\CompetenceType;
 use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;

@@ -2,14 +2,14 @@
 
 namespace Labstag\Paragraph;
 
-use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\ExperiencesParagraph as EntityExperiencesParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Enum\PageEnum;
-use Labstag\Form\Paragraph\DataExperiencesType;
+use Labstag\Form\Paragraph\ExperienceType;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -21,6 +21,19 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityExperiencesParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
+        $experiences  = $paragraph->getExperiences();
+        if (0 == count($experiences)) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         $this->setData(
             $paragraph,
@@ -43,15 +56,22 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
 
         yield TextField::new('title', new TranslatableMessage('Title'));
         yield FormField::addColumn(12);
-        $fieldData = Field::new('data', 'Bloc de données');
-        $fieldData->setFormType(DataExperiencesType::class);
-        yield $fieldData;
+        $collectionField = CollectionField::new('experiences', new TranslatableMessage('Experiences'));
+        $collectionField->setEntryToStringMethod(
+            function ($link): \Symfony\Component\Translation\TranslatableMessage {
+                unset($link);
+
+                return new TranslatableMessage('Experience');
+            }
+        );
+        $collectionField->setEntryType(ExperienceType::class);
+        yield $collectionField;
     }
 
     #[Override]
     public function getName(): string
     {
-        return 'experiences';
+        return (string) new TranslatableMessage('Experiences');
     }
 
     #[Override]

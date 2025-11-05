@@ -7,6 +7,7 @@ use Labstag\Entity\HeadSagaParagraph as EntityHeadSagaParagraph;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Saga;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class HeadSagaParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -41,7 +42,7 @@ class HeadSagaParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Head saga';
+        return (string) new TranslatableMessage('Head saga');
     }
 
     #[Override]

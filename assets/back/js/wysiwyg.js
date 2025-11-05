@@ -371,8 +371,37 @@ export class Wysiwyg
 {
   constructor()
   {
+	this.initEditor();
+	this.initClick();
+	this.collectionItemAdded();
+  }
+  collectionItemAdded() {
+	document.addEventListener('collection.item.added', () => {
+		this.initEditor();
+	});
+  }
+  initClick() {
+    document.body.addEventListener('click', (event) => {
+        if (event.target.closest('.ea-collection-add-btn') ||
+            event.target.closest('.field-collection-add-button')
+        ) {
+            document.dispatchEvent(new CustomEvent('collection.item.added', {
+                detail: {
+                    trigger: event.target
+                }
+            }));
+        }
+    });
+  }
+  initEditor() {
     document.querySelectorAll('.wysiwyg').forEach(element => {
-      ClassicEditor.create(element, editorConfig);
+		if (!element.ckeditorInstance) {
+			ClassicEditor.create(element, editorConfig)
+			.then(editor => {
+				element.ckeditorInstance = editor; // ✅ stockage correct
+			})
+			.catch(console.error);
+		}
     });
   }
 }

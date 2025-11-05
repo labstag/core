@@ -63,7 +63,7 @@ class EditoParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Edito';
+        return (string) new TranslatableMessage('Edito');
     }
 
     #[Override]

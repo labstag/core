@@ -11,6 +11,7 @@ use Labstag\Entity\SerieParagraph as EntitySerieParagraph;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\SerieRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -72,7 +73,7 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Serie';
+        return (string) new TranslatableMessage('Serie');
     }
 
     #[Override]

@@ -73,7 +73,7 @@ class SeasonListParagraph extends ParagraphAbstract implements ParagraphInterfac
     #[Override]
     public function getName(): string
     {
-        return 'Season list';
+        return (string) new TranslatableMessage('Season list');
     }
 
     #[Override]

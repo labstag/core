@@ -8,6 +8,7 @@ use Labstag\Entity\ContentBlock as EntityContentBlock;
 use Labstag\Entity\Page;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ContentBlock extends BlockAbstract
 {
@@ -84,7 +85,7 @@ class ContentBlock extends BlockAbstract
     #[Override]
     public function getName(): string
     {
-        return 'Content';
+        return (string) new TranslatableMessage('Content');
     }
 
     #[Override]

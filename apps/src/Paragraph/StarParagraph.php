@@ -10,6 +10,7 @@ use Labstag\Entity\Star;
 use Labstag\Entity\StarParagraph as EntityStarParagraph;
 use Labstag\Repository\StarRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class StarParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -75,7 +76,7 @@ class StarParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Star';
+        return (string) new TranslatableMessage('Star');
     }
 
     #[Override]

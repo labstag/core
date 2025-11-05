@@ -38,11 +38,6 @@ class CorrectionBlockLinkCommand extends Command
         $progressBar->start();
 
         foreach ($blocks as $block) {
-            if (0 === count($block->getLinks())) {
-                $progressBar->advance();
-                continue;
-            }
-
             $this->updateLinks($block);
             $this->blockRepository->save($block);
 
@@ -56,23 +51,7 @@ class CorrectionBlockLinkCommand extends Command
 
     private function updateLinks(LinksBlock $linksBlock): void
     {
-        $links = $linksBlock->getLinks();
-        $data  = $linksBlock->getData();
-        if (!isset($data['links'])) {
-            $data['links'] = [];
-        }
-
-        foreach ($links as $tabLink) {
-            $link = [
-                'classes' => $tabLink->getClasses(),
-                'title'   => $tabLink->getTitle(),
-                'url'     => $tabLink->getUrl(),
-                'blank'   => $tabLink->isBlank(),
-            ];
-            $data['links'][] = $link;
-            $linksBlock->removeLink($tabLink);
-        }
-
-        $linksBlock->setData($data);
+        $data = $linksBlock->getData();
+        $linksBlock->setLinks($data['links'] ?? []);
     }
 }

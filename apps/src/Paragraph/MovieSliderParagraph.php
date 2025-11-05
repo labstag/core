@@ -79,7 +79,7 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
     #[Override]
     public function getName(): string
     {
-        return 'movie slider';
+        return (string) new TranslatableMessage('movie slider');
     }
 
     #[Override]
