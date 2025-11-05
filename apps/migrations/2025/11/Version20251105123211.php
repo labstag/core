@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20251104214724 extends AbstractMigration
+final class Version20251105123211 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -24,6 +24,7 @@ final class Version20251104214724 extends AbstractMigration
         $this->addSql('ALTER TABLE tag_chapter DROP FOREIGN KEY `FK_CBB09884579F4768`');
         $this->addSql('ALTER TABLE tag_chapter DROP FOREIGN KEY `FK_CBB09884BAD26311`');
         $this->addSql('DROP TABLE tag_chapter');
+        $this->addSql('ALTER TABLE block ADD links JSON DEFAULT NULL');
         $this->addSql('DROP INDEX IDX_CATEGORY_TYPE_SLUG ON category');
         $this->addSql('CREATE INDEX IDX_CATEGORY_TYPE_SLUG ON category (slug)');
         $this->addSql('ALTER TABLE category_page DROP FOREIGN KEY `FK_9F91CC6712469DE2`');
@@ -51,7 +52,7 @@ final class Version20251104214724 extends AbstractMigration
         $this->addSql('ALTER TABLE category_movie CHANGE category_id movie_category_id CHAR(36) NOT NULL, DROP PRIMARY KEY, ADD PRIMARY KEY (movie_category_id, movie_id)');
         $this->addSql('ALTER TABLE category_movie ADD CONSTRAINT FK_F56DBD263DC01115 FOREIGN KEY (movie_category_id) REFERENCES category (id) ON DELETE CASCADE');
         $this->addSql('CREATE INDEX IDX_F56DBD263DC01115 ON category_movie (movie_category_id)');
-        $this->addSql('ALTER TABLE paragraph ADD pdf VARCHAR(255) DEFAULT NULL, CHANGE save save TINYINT(1) DEFAULT 1');
+        $this->addSql('ALTER TABLE paragraph ADD experiences JSON DEFAULT NULL, ADD formations JSON DEFAULT NULL, ADD pdf VARCHAR(255) DEFAULT NULL, CHANGE save save TINYINT(1) DEFAULT 1, CHANGE data competences JSON DEFAULT NULL');
         $this->addSql('ALTER TABLE season DROP FOREIGN KEY `FK_F0E45BA9691F3A10`');
         $this->addSql('ALTER TABLE season ADD CONSTRAINT FK_F0E45BA9691F3A10 FOREIGN KEY (refserie_id) REFERENCES serie (id) ON DELETE SET NULL');
         $this->addSql('DROP INDEX IDX_TAG_TYPE_SLUG ON tag');
@@ -80,6 +81,7 @@ final class Version20251104214724 extends AbstractMigration
         $this->addSql('ALTER TABLE tag_chapter ADD CONSTRAINT `FK_CBB09884579F4768` FOREIGN KEY (chapter_id) REFERENCES chapter (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE tag_chapter ADD CONSTRAINT `FK_CBB09884BAD26311` FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE');
         $this->addSql('DROP TABLE media');
+        $this->addSql('ALTER TABLE block DROP links');
         $this->addSql('DROP INDEX IDX_CATEGORY_TYPE_SLUG ON category');
         $this->addSql('CREATE INDEX IDX_CATEGORY_TYPE_SLUG ON category (type, slug)');
         $this->addSql('ALTER TABLE category_movie DROP FOREIGN KEY FK_F56DBD263DC01115');
@@ -107,7 +109,7 @@ final class Version20251104214724 extends AbstractMigration
         $this->addSql('ALTER TABLE category_story CHANGE story_category_id category_id CHAR(36) NOT NULL, DROP PRIMARY KEY, ADD PRIMARY KEY (category_id, story_id)');
         $this->addSql('ALTER TABLE category_story ADD CONSTRAINT `FK_3654B7112469DE2` FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE');
         $this->addSql('CREATE INDEX IDX_3654B7112469DE2 ON category_story (category_id)');
-        $this->addSql('ALTER TABLE paragraph DROP pdf, CHANGE save save TINYINT(1) DEFAULT 1 NOT NULL');
+        $this->addSql('ALTER TABLE paragraph ADD data JSON DEFAULT NULL, DROP competences, DROP experiences, DROP formations, DROP pdf, CHANGE save save TINYINT(1) DEFAULT 1 NOT NULL');
         $this->addSql('ALTER TABLE season DROP FOREIGN KEY FK_F0E45BA9691F3A10');
         $this->addSql('ALTER TABLE season ADD CONSTRAINT `FK_F0E45BA9691F3A10` FOREIGN KEY (refserie_id) REFERENCES serie (id)');
         $this->addSql('DROP INDEX IDX_TAG_TYPE_SLUG ON tag');
