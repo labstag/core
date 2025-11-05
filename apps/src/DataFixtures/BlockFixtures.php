@@ -43,44 +43,41 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function addLinksFooter1(LinksBlock $linksBlock): void
     {
-        $data          = $linksBlock->getData();
-        $data['links'] = [];
+        $links          = $linksBlock->getLinks();
         $page          = $this->getPageByTitle('Contact');
-        $this->setLink($page, $data);
+        $this->setLink($page, $links);
         $page = $this->getPageByTitle('Plan du site');
-        $this->setLink($page, $data);
+        $this->setLink($page, $links);
 
-        $linksBlock->setData($data);
+        $linksBlock->setLinks($links);
     }
 
     private function addLinksFooter2(LinksBlock $linksBlock): void
     {
-        $data          = $linksBlock->getData();
-        $data['links'] = [];
+        $links          = $linksBlock->getLinks();
         $page          = $this->getPageByTitle('Mentions légales');
-        $this->setLink($page, $data);
+        $this->setLink($page, $links);
         $page = $this->getPageByTitle('Données personnelles');
-        $this->setLink($page, $data);
-        $linksBlock->setData($data);
+        $this->setLink($page, $links);
+        $linksBlock->setLinks($links);
     }
 
     private function addLinksHeader(LinksBlock $linksBlock): void
     {
-        $data          = $linksBlock->getData();
-        $data['links'] = [];
+        $links          = $linksBlock->getLinks();
         $page          = $this->getPageByTitle('Posts');
-        $this->setLink($page, $data);
+        $this->setLink($page, $links);
         $page = $this->getPageByTitle('Mes étoiles github');
-        $this->setLink($page, $data);
+        $this->setLink($page, $links);
         $page = $this->getPageByTitle('Mes derniers films vus');
-        $this->setLink($page, $data);
+        $this->setLink($page, $links);
         $page = $this->getPageByTitle('Mes séries favorites');
-        $this->setLink($page, $data);
+        $this->setLink($page, $links);
         $page = $this->getPageByTitle('Histoires');
-        $this->setLink($page, $data);
+        $this->setLink($page, $links);
         $page = $this->getPageByTitle('Mon parcours pro');
-        $this->setLink($page, $data);
-        $linksBlock->setData($data);
+        $this->setLink($page, $links);
+        $linksBlock->setLinks($links);
     }
 
     private function addParagraphsHead(Block $block): void
@@ -206,13 +203,16 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         return new $blockClass();
     }
 
-    private function setLink(?Page $page, array &$data): void
+    private function setLink(?Page $page, ?array &$data): void
     {
+        if (!is_array($data)) {
+            $data = [];
+        }
         if (!$page instanceof Page) {
             return;
         }
 
-        $data['links'][] = [
+        $data[] = [
             'title'   => $page->getTitle(),
             'url'     => '[pageurl:' . $page->getId() . ']',
             'classes' => null,
