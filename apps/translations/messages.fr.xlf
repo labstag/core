@@ -1465,6 +1465,10 @@
         <source>Saga list</source>
         <target>Liste des sagas</target>
       </trans-unit>
+      <trans-unit id="_yRTiys" resname="Return to serie">
+        <source>Return to serie</source>
+        <target>Retour à la série</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
