@@ -40,7 +40,6 @@ class CategoryRepository extends RepositoryAbstract
         $queryBuilder->orderBy('c.title', 'ASC');
         $queryBuilder->leftJoin('c.movies', 'm')->addSelect('m');
         $queryBuilder->andWhere('m.enable = true');
-        dump(get_class_methods($queryBuilder));
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'category-type-movie-enable');
 
