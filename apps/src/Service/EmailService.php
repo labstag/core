@@ -4,6 +4,9 @@ namespace Labstag\Service;
 
 use Labstag\Email\EmailAbstract;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\Mailer\Envelope;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\RawMessage;
 
 final class EmailService
 {
@@ -13,6 +16,7 @@ final class EmailService
          */
         #[AutowireIterator('labstag.emails')]
         private readonly iterable $emails,
+        private MailerInterface $mailer,
     )
     {
     }
@@ -40,5 +44,10 @@ final class EmailService
         }
 
         return $template;
+    }
+
+    public function send(RawMessage $rawMessage, ?Envelope $envelope = null): void
+    {
+        $this->mailer->send($rawMessage, $envelope);
     }
 }

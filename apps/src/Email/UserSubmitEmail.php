@@ -2,7 +2,6 @@
 
 namespace Labstag\Email;
 
-use Labstag\Replace\LinkApprovalReplace;
 use Override;
 
 class UserSubmitEmail extends EmailAbstract
@@ -11,17 +10,6 @@ class UserSubmitEmail extends EmailAbstract
     public function getName(): string
     {
         return 'New user %user_email%';
-    }
-
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function getReplaces(): array
-    {
-        $codes = parent::getReplaces();
-
-        return array_merge($codes, [LinkApprovalReplace::class]);
     }
 
     #[Override]

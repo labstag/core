@@ -7,53 +7,35 @@ use EasyCorp\Bundle\EasyAdminBundle\Event\AfterEntityUpdatedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityUpdatedEvent;
 use Labstag\Event\Abstract\EventEntityLib;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
-class EasyadminSubscriber extends EventEntityLib implements EventSubscriberInterface
+class EasyadminSubscriber extends EventEntityLib
 {
-    /**
-     * @param AfterEntityPersistedEvent<object> $afterEntityPersistedEvent
-     */
+    #[AsEventListener(event: AfterEntityPersistedEvent::class)]
     public function afterPersisted(AfterEntityPersistedEvent $afterEntityPersistedEvent): void
     {
         $instance = $afterEntityPersistedEvent->getEntityInstance();
         $this->postPersistMethods($instance, $this->entityManager);
     }
 
-    /**
-     * @param AfterEntityUpdatedEvent<object> $afterEntityUpdatedEvent
-     */
+    #[AsEventListener(event: AfterEntityUpdatedEvent::class)]
     public function afterUpdated(AfterEntityUpdatedEvent $afterEntityUpdatedEvent): void
     {
         $instance = $afterEntityUpdatedEvent->getEntityInstance();
         $this->postPersistMethods($instance, $this->entityManager);
     }
 
-    /**
-     * @param BeforeEntityPersistedEvent<object> $beforeEntityPersistedEvent
-     */
+    #[AsEventListener(event: BeforeEntityPersistedEvent::class)]
     public function beforePersisted(BeforeEntityPersistedEvent $beforeEntityPersistedEvent): void
     {
         $instance = $beforeEntityPersistedEvent->getEntityInstance();
         $this->prePersistMethods($instance, $this->entityManager);
     }
 
-    /**
-     * @param BeforeEntityUpdatedEvent<object> $beforeEntityUpdatedEvent
-     */
+    #[AsEventListener(event: BeforeEntityUpdatedEvent::class)]
     public function beforeUpdated(BeforeEntityUpdatedEvent $beforeEntityUpdatedEvent): void
     {
         $instance = $beforeEntityUpdatedEvent->getEntityInstance();
         $this->prePersistMethods($instance, $this->entityManager);
-    }
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            BeforeEntityPersistedEvent::class => ['beforePersisted'],
-            BeforeEntityUpdatedEvent::class   => ['beforeUpdated'],
-            AfterEntityPersistedEvent::class  => ['afterPersisted'],
-            AfterEntityUpdatedEvent::class    => ['afterUpdated'],
-        ];
     }
 }

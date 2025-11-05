@@ -5,8 +5,7 @@ namespace Labstag\Event\Subscriber;
 use Labstag\Entity\BanIp;
 use Labstag\Entity\User;
 use Labstag\Service\SecurityService;
-use Override;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -17,7 +16,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class SiteSubscriber implements EventSubscriberInterface
+class SiteSubscriber
 {
     public function __construct(
         protected TokenStorageInterface $tokenStorage,
@@ -26,18 +25,7 @@ class SiteSubscriber implements EventSubscriberInterface
     {
     }
 
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            KernelEvents::REQUEST   => 'onKernelRequest',
-            KernelEvents::EXCEPTION => 'onKernelException',
-        ];
-    }
-
+    #[AsEventListener(event: KernelEvents::EXCEPTION)]
     public function onKernelException(ExceptionEvent $exceptionEvent): void
     {
         $throwable = $exceptionEvent->getThrowable();
@@ -50,6 +38,7 @@ class SiteSubscriber implements EventSubscriberInterface
         $this->securityService->set($statusCode);
     }
 
+    #[AsEventListener(event: KernelEvents::REQUEST)]
     public function onKernelRequest(RequestEvent $requestEvent): void
     {
         $redirect = $this->securityService->get();

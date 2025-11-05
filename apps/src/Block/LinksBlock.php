@@ -45,7 +45,7 @@ class LinksBlock extends BlockAbstract
         );
 
         $links  = $block->getLinks();
-        if (0 === count($links)) {
+        if (!is_array($links) || [] === $links) {
             $this->logger->debug(
                 'No valid links found',
                 [
@@ -85,7 +85,7 @@ class LinksBlock extends BlockAbstract
         yield FormField::addColumn(12);
         $collectionField = CollectionField::new('links', new TranslatableMessage('Links'));
         $collectionField->setEntryToStringMethod(
-            function ($link): \Symfony\Component\Translation\TranslatableMessage {
+            function ($link): TranslatableMessage {
                 unset($link);
 
                 return new TranslatableMessage('Link');

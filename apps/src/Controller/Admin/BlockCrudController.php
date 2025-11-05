@@ -26,7 +26,6 @@ use LogicException;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -74,7 +73,8 @@ class BlockCrudController extends CrudControllerAbstract
     {
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(
-            function ($block, ?string $pageName): \Symfony\Component\Translation\TranslatableMessage {
+            function ($block, ?string $pageName): TranslatableMessage {
+                unset($pageName);
                 if (is_null($block)) {
                     $request = $this->requestStack->getCurrentRequest();
 
@@ -195,6 +195,7 @@ class BlockCrudController extends CrudControllerAbstract
     #[\Override]
     public function createEntity(string $entityFqcn): object
     {
+        unset($entityFqcn);
         $request = $this->requestStack->getCurrentRequest();
 
         $type   = $request->query->get('type');
@@ -215,7 +216,12 @@ class BlockCrudController extends CrudControllerAbstract
     ): QueryBuilder
     {
         // Use the parent query builder so EasyAdmin can apply search and filters (including DiscriminatorTypeFilter)
-        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
+        $queryBuilder = parent::createIndexQueryBuilder(
+            $searchDto,
+            $entityDto,
+            $fieldCollection,
+            $filterCollection
+        );
 
         $repositoryAbstract = $this->getRepository();
         $methods            = get_class_methods($repositoryAbstract);

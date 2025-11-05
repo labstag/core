@@ -1,5 +1,5 @@
 <ul>
-    {% for key, data in codes %}
-        <li><b>{{ key }}</b> : {{ data.title }}</li>
+    {% for data in codes %}
+        <li><b>{{ data.code }}</b> : {{ data.title }}</li>
     {% endfor %}
 </ul>

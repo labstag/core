@@ -182,7 +182,8 @@ final class CrudFieldFactory
     {
         $associationField = $this->categoriesField();
         // Always safe on listing/detail pages: no AssociationField to configure
-        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)) {
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
+        ) {
             $associationField->hideOnForm();
 
             return $associationField;
@@ -373,7 +374,7 @@ final class CrudFieldFactory
 
     public function setTabWorkflow(): void
     {
-        $this->addTab('workflows', FormField::addTab(new TranslatableMessage('Workflow'))->onlyOnIndex());
+        $this->addTab('workflows', FormField::addTab(new TranslatableMessage('Workflow')));
 
         $this->addFieldsToTab('workflows', [$this->workflowField(), $this->stateField()]);
     }
@@ -413,11 +414,13 @@ final class CrudFieldFactory
         return $slugField;
     }
 
-    public function stateField(): TextField
+    public function stateField(): CollectionField
     {
-        return TextField::new('states', new TranslatableMessage('States'))->setTemplatePath(
-            'admin/field/states.html.twig'
-        )->onlyOnIndex();
+        $collectionField = CollectionField::new('states', new TranslatableMessage('States'));
+        $collectionField->setTemplatePath('admin/field/states.html.twig');
+        $collectionField->onlyOnIndex();
+
+        return $collectionField;
     }
 
     /**
@@ -455,7 +458,8 @@ final class CrudFieldFactory
     {
         $associationField = $this->tagsField();
         // Always safe on listing/detail pages: no AssociationField to configure
-        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)) {
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
+        ) {
             $associationField->hideOnForm();
 
             return $associationField;
@@ -504,11 +508,13 @@ final class CrudFieldFactory
         );
     }
 
-    public function workflowField(): TextField
+    public function workflowField(): CollectionField
     {
-        return TextField::new('workflow', new TranslatableMessage('Workflow'))->setTemplatePath(
-            'admin/field/workflow.html.twig'
-        )->onlyOnIndex();
+        $collectionField = CollectionField::new('workflow', new TranslatableMessage('Workflow'));
+        $collectionField->setTemplatePath('admin/field/workflow.html.twig');
+        $collectionField->onlyOnIndex();
+
+        return $collectionField;
     }
 
     private function isFieldVisibleOnPage($field, string $pageName): bool
