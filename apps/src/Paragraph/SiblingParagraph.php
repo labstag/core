@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\SiblingParagraph as EntitySiblingParagraph;
 use Labstag\Field\WysiwygField;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -45,6 +46,11 @@ class SiblingParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntitySiblingParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -59,7 +65,7 @@ class SiblingParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Page enfante';
+        return (string) new TranslatableMessage('Sibling pages');
     }
 
     #[Override]

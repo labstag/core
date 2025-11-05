@@ -131,7 +131,7 @@ final class EtagCacheServiceTest extends TestCase
     {
         // Arrange
         $createdAt = new DateTimeImmutable('2025-01-01 10:00:00');
-        $user      = $this->createMockUser('123', 'test@example.com', $createdAt, null);
+        $user      = $this->createMockUser('123', 'test@example.com', $createdAt);
 
         // Act
         $lastModified = $this->etagCacheService->getLastModified($user);
@@ -146,7 +146,7 @@ final class EtagCacheServiceTest extends TestCase
     public function getLastModifiedWithoutDates(): void
     {
         // Arrange
-        $user = $this->createMockUser('123', 'test@example.com', null, null);
+        $user = $this->createMockUser('123', 'test@example.com');
 
         // Act
         $lastModified = $this->etagCacheService->getLastModified($user);

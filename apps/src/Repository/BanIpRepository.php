@@ -6,9 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\BanIp;
 
 /**
- * @extends ServiceEntityRepositoryAbstract<BanIp>
+ * @extends RepositoryAbstract<BanIp>
  */
-class BanIpRepository extends ServiceEntityRepositoryAbstract
+class BanIpRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

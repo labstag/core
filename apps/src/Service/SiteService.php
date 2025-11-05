@@ -33,6 +33,15 @@ final class SiteService
             break;
         }
 
+        if (!isset($file)) {
+            $placeholder = $asset->placeholder();
+            if ('' !== $placeholder) {
+                return $placeholder;
+            }
+
+            return '';
+        }
+
         if ('' !== $file) {
             return $file;
         }

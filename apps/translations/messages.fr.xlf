@@ -1309,6 +1309,166 @@
         <source>TMDB page for the serie</source>
         <target>Page TMDB de la série</target>
       </trans-unit>
+      <trans-unit id="SPuRknZ" resname="Are you sure you want to edit the slug manually?">
+        <source>Are you sure you want to edit the slug manually?</source>
+        <target>Êtes-vous sûr de vouloir modifier le slug manuellement ?</target>
+      </trans-unit>
+      <trans-unit id="wbmyMpt" resname="Media">
+        <source>Media</source>
+        <target>Média</target>
+      </trans-unit>
+      <trans-unit id="wbMeKOh" resname="Name">
+        <source>Name</source>
+        <target>Nom</target>
+      </trans-unit>
+      <trans-unit id="5gRL0E1" resname="Size">
+        <source>Size</source>
+        <target>Taille</target>
+      </trans-unit>
+      <trans-unit id="VwkmLwH" resname="Mime type">
+        <source>Mime type</source>
+        <target>Type MIME</target>
+      </trans-unit>
+      <trans-unit id="g8LekOC" resname="Label not found">
+        <source>Label not found</source>
+        <target>Label non trouvé</target>
+      </trans-unit>
+      <trans-unit id="eHE_JuT" resname="Hero">
+        <source>Hero</source>
+        <target>Bannière principale</target>
+      </trans-unit>
+      <trans-unit id="YoM8bKT" resname="Flashbag">
+        <source>Flashbag</source>
+        <target>Messages flash</target>
+      </trans-unit>
+      <trans-unit id="qLQpaRT" resname="Breadcrumb">
+        <source>Breadcrumb</source>
+        <target>Fil d’Ariane</target>
+      </trans-unit>
+      <trans-unit id="YbUxazW" resname="Link">
+        <source>Link</source>
+        <target>Lien</target>
+      </trans-unit>
+      <trans-unit id="octDVnn" resname="Paragraph %name%">
+        <source>Paragraph %name%</source>
+        <target>Paragraphe %name%</target>
+      </trans-unit>
+      <trans-unit id="mcgx_7y" resname="New block">
+        <source>New block</source>
+        <target>Nouveau bloc</target>
+      </trans-unit>
+      <trans-unit id="kbNgf2P" resname="Block %name%">
+        <source>Block %name%</source>
+        <target>Bloc %name%</target>
+      </trans-unit>
+      <trans-unit id="j3ig7zx" resname="Head">
+        <source>Head</source>
+        <target>En-tête</target>
+      </trans-unit>
+      <trans-unit id="jvdROgs" resname="Competence">
+        <source>Competence</source>
+        <target>Compétence</target>
+      </trans-unit>
+      <trans-unit id="wIP2wVj" resname="Season list">
+        <source>Season list</source>
+        <target>Liste des saisons</target>
+      </trans-unit>
+      <trans-unit id="Tzg1xts" resname="Head story">
+        <source>Head story</source>
+        <target>En-tête histoire</target>
+      </trans-unit>
+      <trans-unit id="OkZYU5l" resname="Story list">
+        <source>Story list</source>
+        <target>Liste des histoires</target>
+      </trans-unit>
+      <trans-unit id="RKZOAMS" resname="movie slider">
+        <source>movie slider</source>
+        <target>Carrousel de films</target>
+      </trans-unit>
+      <trans-unit id="cDZ0XJe" resname="Experience">
+        <source>Experience</source>
+        <target>Expérience</target>
+      </trans-unit>
+      <trans-unit id="Ccln_oy" resname="News list">
+        <source>News list</source>
+        <target>Liste des actualités</target>
+      </trans-unit>
+      <trans-unit id=".hZIaER" resname="Text Image">
+        <source>Text Image</source>
+        <target>Texte + Image</target>
+      </trans-unit>
+      <trans-unit id="Vl3DGx4" resname="Formulaire">
+        <source>Formulaire</source>
+        <target>Formulaire</target>
+      </trans-unit>
+      <trans-unit id="q9hWvYv" resname="Head season">
+        <source>Head season</source>
+        <target>En-tête saison</target>
+      </trans-unit>
+      <trans-unit id="xDejQpO" resname="Head post">
+        <source>Head post</source>
+        <target>En-tête article</target>
+      </trans-unit>
+      <trans-unit id="aV1L_FP" resname="Map">
+        <source>Map</source>
+        <target>Carte</target>
+      </trans-unit>
+      <trans-unit id="CIZxjw6" resname="Head saga">
+        <source>Head saga</source>
+        <target>En-tête saga</target>
+      </trans-unit>
+      <trans-unit id="TPpHTyZ" resname="Sibling pages">
+        <source>Sibling pages</source>
+        <target>Pages du même niveau</target>
+      </trans-unit>
+      <trans-unit id="T0Cerd8" resname="Head chapter">
+        <source>Head chapter</source>
+        <target>En-tête chapitre</target>
+      </trans-unit>
+      <trans-unit id="VpFwj4x" resname="Presentation CV">
+        <source>Presentation CV</source>
+        <target>Présentation du CV</target>
+      </trans-unit>
+      <trans-unit id="k_IDNuO" resname="Text media">
+        <source>Text media</source>
+        <target>Texte + Média</target>
+      </trans-unit>
+      <trans-unit id="vWR8fag" resname="Video">
+        <source>Video</source>
+        <target>Vidéo</target>
+      </trans-unit>
+      <trans-unit id="4Kercgq" resname="Formation">
+        <source>Formation</source>
+        <target>Formation</target>
+      </trans-unit>
+      <trans-unit id="yL9G968" resname="Episode list">
+        <source>Episode list</source>
+        <target>Liste des épisodes</target>
+      </trans-unit>
+      <trans-unit id="Guu_ZT2" resname="Movie Info">
+        <source>Movie Info</source>
+        <target>Infos du film</target>
+      </trans-unit>
+      <trans-unit id="xnfRaZY" resname="Last news">
+        <source>Last news</source>
+        <target>Dernières actualités</target>
+      </trans-unit>
+      <trans-unit id="oqS6ePv" resname="Head serie">
+        <source>Head serie</source>
+        <target>En-tête série</target>
+      </trans-unit>
+      <trans-unit id="MKE1cB8" resname="Last story">
+        <source>Last story</source>
+        <target>Dernière histoire</target>
+      </trans-unit>
+      <trans-unit id="4BibATM" resname="Saga list">
+        <source>Saga list</source>
+        <target>Liste des sagas</target>
+      </trans-unit>
+      <trans-unit id="_yRTiys" resname="Return to serie">
+        <source>Return to serie</source>
+        <target>Retour à la série</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -7,8 +7,10 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Star;
+use Labstag\Entity\StarParagraph as EntityStarParagraph;
 use Labstag\Repository\StarRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class StarParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -18,21 +20,24 @@ class StarParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        unset($disable);
-        /** @var StarRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Star::class);
+        if (!$paragraph instanceof EntityStarParagraph) {
+            $this->setShow($paragraph, false);
 
-        $total = $serviceEntityRepositoryAbstract->findTotalEnable();
+            return;
+        }
+
+        unset($disable);
+        /** @var StarRepository $entityRepository */
+        $entityRepository = $this->getRepository(Star::class);
+
+        $total = $entityRepository->findTotalEnable();
         if (0 == $total) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
-        $pagination = $this->getPaginator(
-            $serviceEntityRepositoryAbstract->getQueryPaginator(),
-            $paragraph->getNbr()
-        );
+        $pagination = $this->getPaginator($entityRepository->getQueryPaginator(), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
@@ -53,6 +58,11 @@ class StarParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityStarParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -66,7 +76,7 @@ class StarParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Star';
+        return (string) new TranslatableMessage('Star');
     }
 
     #[Override]
@@ -82,12 +92,8 @@ class StarParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page;

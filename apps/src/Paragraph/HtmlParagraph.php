@@ -8,6 +8,7 @@ use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
+use Labstag\Entity\HtmlParagraph as EntityHtmlParagraph;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
@@ -35,6 +36,11 @@ class HtmlParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityHtmlParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -51,7 +57,7 @@ class HtmlParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'HTML';
+        return (string) new TranslatableMessage('HTML');
     }
 
     #[Override]
@@ -67,7 +73,7 @@ class HtmlParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        return in_array(
+        $inArray = in_array(
             $object::class,
             [
                 Block::class,
@@ -79,5 +85,7 @@ class HtmlParagraph extends ParagraphAbstract implements ParagraphInterface
                 Post::class,
             ]
         );
+
+        return $inArray || $object instanceof Block;
     }
 }

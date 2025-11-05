@@ -13,10 +13,22 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
+#[ORM\Table(name: 'category')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-#[ORM\Index(name: 'IDX_CATEGORY_TYPE_SLUG', columns: ['type', 'slug'])]
-class Category implements Stringable
+#[ORM\Index(name: 'IDX_CATEGORY_TYPE_SLUG', columns: ['slug'])]
+#[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
+#[ORM\DiscriminatorMap(
+    [
+        'page'  => PageCategory::class,
+        'post'  => PostCategory::class,
+        'serie' => SerieCategory::class,
+        'story' => StoryCategory::class,
+        'movie' => MovieCategory::class,
+    ]
+)]
+abstract class Category implements Stringable
 {
     use SoftDeleteableEntity;
 
@@ -32,58 +44,20 @@ class Category implements Stringable
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
 
-    /**
-     * @var Collection<int, Movie>
-     */
-    #[ORM\ManyToMany(targetEntity: Movie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
-    protected Collection $movies;
-
-    /**
-     * @var Collection<int, Page>
-     */
-    #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
-    protected Collection $pages;
-
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist', 'detach'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?self $parent = null;
 
-    /**
-     * @var Collection<int, Post>
-     */
-    #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
-    protected Collection $posts;
-
-    /**
-     * @var Collection<int, Serie>
-     */
-    #[ORM\ManyToMany(targetEntity: Serie::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
-    protected Collection $series;
-
-    #[Gedmo\Slug(updatable: true, fields: ['title'], unique_base: 'type')]
+    #[Gedmo\Slug(updatable: true, fields: ['title'])]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     protected ?string $slug = null;
-
-    /**
-     * @var Collection<int, Story>
-     */
-    #[ORM\ManyToMany(targetEntity: Story::class, inversedBy: 'categories', cascade: ['persist', 'detach'])]
-    protected Collection $stories;
 
     #[ORM\Column(length: 255)]
     protected ?string $title = null;
 
-    #[ORM\Column(length: 255)]
-    protected ?string $type = null;
-
     public function __construct()
     {
         $this->children = new ArrayCollection();
-        $this->stories  = new ArrayCollection();
-        $this->movies   = new ArrayCollection();
-        $this->series   = new ArrayCollection();
-        $this->pages    = new ArrayCollection();
-        $this->posts    = new ArrayCollection();
     }
 
     #[Override]
@@ -102,51 +76,6 @@ class Category implements Stringable
         return $this;
     }
 
-    public function addMovie(Movie $movie): static
-    {
-        if (!$this->movies->contains($movie)) {
-            $this->movies->add($movie);
-        }
-
-        return $this;
-    }
-
-    public function addPage(Page $page): static
-    {
-        if (!$this->pages->contains($page)) {
-            $this->pages->add($page);
-        }
-
-        return $this;
-    }
-
-    public function addPost(Post $post): static
-    {
-        if (!$this->posts->contains($post)) {
-            $this->posts->add($post);
-        }
-
-        return $this;
-    }
-
-    public function addSerie(Serie $serie): static
-    {
-        if (!$this->series->contains($serie)) {
-            $this->series->add($serie);
-        }
-
-        return $this;
-    }
-
-    public function addStory(Story $story): static
-    {
-        if (!$this->stories->contains($story)) {
-            $this->stories->add($story);
-        }
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, self>
      */
@@ -160,41 +89,9 @@ class Category implements Stringable
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, Movie>
-     */
-    public function getMovies(): Collection
-    {
-        return $this->movies;
-    }
-
-    /**
-     * @return Collection<int, Page>
-     */
-    public function getPages(): Collection
-    {
-        return $this->pages;
-    }
-
     public function getParent(): ?self
     {
         return $this->parent;
-    }
-
-    /**
-     * @return Collection<int, Post>
-     */
-    public function getPosts(): Collection
-    {
-        return $this->posts;
-    }
-
-    /**
-     * @return Collection<int, Serie>
-     */
-    public function getSeries(): Collection
-    {
-        return $this->series;
     }
 
     public function getSlug(): ?string
@@ -202,22 +99,9 @@ class Category implements Stringable
         return $this->slug;
     }
 
-    /**
-     * @return Collection<int, Story>
-     */
-    public function getStories(): Collection
-    {
-        return $this->stories;
-    }
-
     public function getTitle(): ?string
     {
         return $this->title;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
     }
 
     public function removeChild(self $child): static
@@ -227,41 +111,6 @@ class Category implements Stringable
         ) {
             $child->setParent(null);
         }
-
-        return $this;
-    }
-
-    public function removeMovie(Movie $movie): static
-    {
-        $this->movies->removeElement($movie);
-
-        return $this;
-    }
-
-    public function removePage(Page $page): static
-    {
-        $this->pages->removeElement($page);
-
-        return $this;
-    }
-
-    public function removePost(Post $post): static
-    {
-        $this->posts->removeElement($post);
-
-        return $this;
-    }
-
-    public function removeSerie(Serie $serie): static
-    {
-        $this->series->removeElement($serie);
-
-        return $this;
-    }
-
-    public function removeStory(Story $story): static
-    {
-        $this->stories->removeElement($story);
 
         return $this;
     }
@@ -283,13 +132,6 @@ class Category implements Stringable
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function setType(string $type): static
-    {
-        $this->type = $type;
 
         return $this;
     }

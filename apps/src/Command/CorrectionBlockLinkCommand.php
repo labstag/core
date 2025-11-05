@@ -2,7 +2,8 @@
 
 namespace Labstag\Command;
 
-use Labstag\Entity\Block;
+use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Entity\LinksBlock;
 use Labstag\Repository\BlockRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -15,6 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class CorrectionBlockLinkCommand extends Command
 {
     public function __construct(
+        protected EntityManagerInterface $entityManager,
         protected BlockRepository $blockRepository,
     )
     {
@@ -24,13 +26,10 @@ class CorrectionBlockLinkCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle     = new SymfonyStyle($input, $output);
-        $blocks           = $this->blockRepository->findBy(
-            ['type' => 'links']
-        );
-
-        $methods = get_class_methods(Block::class);
+        $blocks           = $this->entityManager->getRepository(LinksBlock::class)->findAll();
+        $methods          = get_class_methods(LinksBlock::class);
         if (!in_array('getLinks', $methods)) {
-            $symfonyStyle->error('La méthode getLinks est manquante dans l\'entité Block');
+            $symfonyStyle->error('La méthode getLinks est manquante dans l\'entité LinksBlock');
 
             return Command::FAILURE;
         }
@@ -39,11 +38,6 @@ class CorrectionBlockLinkCommand extends Command
         $progressBar->start();
 
         foreach ($blocks as $block) {
-            if (0 === count($block->getLinks())) {
-                $progressBar->advance();
-                continue;
-            }
-
             $this->updateLinks($block);
             $this->blockRepository->save($block);
 
@@ -55,25 +49,9 @@ class CorrectionBlockLinkCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function updateLinks(Block $block): void
+    private function updateLinks(LinksBlock $linksBlock): void
     {
-        $links = $block->getLinks();
-        $data  = $block->getData();
-        if (!isset($data['links'])) {
-            $data['links'] = [];
-        }
-
-        foreach ($links as $tabLink) {
-            $link = [
-                'classes' => $tabLink->getClasses(),
-                'title'   => $tabLink->getTitle(),
-                'url'     => $tabLink->getUrl(),
-                'blank'   => $tabLink->isBlank(),
-            ];
-            $data['links'][] = $link;
-            $block->removeLink($tabLink);
-        }
-
-        $block->setData($data);
+        $data = $linksBlock->getData();
+        $linksBlock->setLinks($data['links'] ?? []);
     }
 }

@@ -6,7 +6,10 @@ use Labstag\Entity\Block;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Saga;
+use Labstag\Entity\SagaListParagraph as EntitySagaListParagraph;
+use Labstag\Repository\MovieRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -23,9 +26,16 @@ class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Movie::class);
-        $movies                          = $serviceEntityRepositoryAbstract->getAllActivateBySaga($data['entity']);
-        if (0 === count($movies)) {
+        $entityRepository                = $this->getRepository(Movie::class);
+        if (!$entityRepository instanceof MovieRepository) {
+            $this->logger->error('SagaListParagraph: Movie repository not found.');
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
+        $movies                          = $entityRepository->getAllActivateBySaga($data['entity']);
+        if ([] === $movies) {
             $this->setShow($paragraph, false);
 
             return;
@@ -50,10 +60,15 @@ class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntitySagaListParagraph::class;
+    }
+
     #[Override]
     public function getName(): string
     {
-        return 'Saga list';
+        return (string) new TranslatableMessage('Saga list');
     }
 
     #[Override]
@@ -69,12 +84,8 @@ class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Block;

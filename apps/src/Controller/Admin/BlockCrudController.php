@@ -20,10 +20,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\Block;
+use Labstag\Filter\DiscriminatorTypeFilter;
 use Labstag\Repository\BlockRepository;
+use LogicException;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -31,8 +34,9 @@ class BlockCrudController extends CrudControllerAbstract
 {
     public function addFieldParagraphsForBlock(?Block $block, string $pageName): void
     {
+        $type = $this->blockService->getType($block);
         if ('edit' === $pageName && $block instanceof Block) {
-            if (in_array($block->getType(), ['paragraphs', 'content'])) {
+            if (in_array($type, ['paragraphs', 'content'])) {
                 $this->crudFieldFactory->setTabParagraphs($pageName);
 
                 return;
@@ -53,6 +57,14 @@ class BlockCrudController extends CrudControllerAbstract
         $action->createAsGlobalAction();
 
         $actions->add(Crud::PAGE_INDEX, $action);
+        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+
+        $action = Action::new('newBlock', new TranslatableMessage('New block'));
+        $action->displayAsLink();
+        $action->linkToCrudAction('newBlock');
+        $action->createAsGlobalAction();
+
+        $actions->add(Crud::PAGE_INDEX, $action);
 
         return $actions;
     }
@@ -61,7 +73,37 @@ class BlockCrudController extends CrudControllerAbstract
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setEntityLabelInSingular(new TranslatableMessage('Block'));
+        $crud->setEntityLabelInSingular(
+            function ($block, ?string $pageName): \Symfony\Component\Translation\TranslatableMessage {
+                if (is_null($block)) {
+                    $request = $this->requestStack->getCurrentRequest();
+
+                    $type = $request->query->get('type');
+                    if (is_null($type)) {
+                        return new TranslatableMessage('Block');
+                    }
+
+                    $classe = $this->blockService->getByCode($type);
+                    if (!is_object($classe)) {
+                        return new TranslatableMessage('Block');
+                    }
+
+                    $name = $classe->getName();
+
+                    return new TranslatableMessage(
+                        'Block %name%',
+                        ['%name%' => $name]
+                    );
+                }
+
+                $name = $this->blockService->getName($block);
+
+                return new TranslatableMessage(
+                    'Block %name%',
+                    ['%name%' => $name]
+                );
+            }
+        );
         $crud->setEntityLabelInPlural(new TranslatableMessage('Blocks'));
         $crud->setDefaultSort(
             ['title' => 'ASC']
@@ -80,13 +122,11 @@ class BlockCrudController extends CrudControllerAbstract
         $regionField->setChoices($this->blockService->getRegions());
 
         $numberField = NumberField::new('position', new TranslatableMessage('Position'))->hideOnForm();
-        $allTypes    = array_flip($this->blockService->getAll(null));
         $fields      = [
             $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
             $regionField,
             $numberField,
-            $this->getChoiceType($pageName, $allTypes),
         ];
 
         $this->crudFieldFactory->addFieldsToTab('principal', $fields);
@@ -126,15 +166,44 @@ class BlockCrudController extends CrudControllerAbstract
             ]
         );
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
+        $types = $this->blockService->getAll(null);
+        if ([] == $types) {
+            return $filters;
+        }
+
+        $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', new TranslatableMessage('Type'));
+        $discriminatorTypeFilter->setBlockService($this->blockService);
+        $discriminatorTypeFilter->setChoices(
+            array_merge(
+                ['' => ''],
+                $types
+            )
+        );
+
+        $filters->add($discriminatorTypeFilter);
 
         return $filters;
+    }
+
+    #[\Override]
+    public function createEntity(string $entityFqcn): object
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        $type   = $request->query->get('type');
+        $classe = $this->blockService->getClasseByCode($type);
+        if (is_null($type)) {
+            throw new LogicException('Impossible de créer un Block sans type.');
+        }
+
+        return new $classe();
     }
 
     #[\Override]
@@ -145,13 +214,16 @@ class BlockCrudController extends CrudControllerAbstract
         FilterCollection $filterCollection,
     ): QueryBuilder
     {
-        unset($searchDto, $entityDto, $fieldCollection, $filterCollection);
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        if (!$serviceEntityRepositoryAbstract instanceof BlockRepository) {
-            throw new Exception('findAllOrderedByRegion not found');
+        // Use the parent query builder so EasyAdmin can apply search and filters (including DiscriminatorTypeFilter)
+        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
+
+        $repositoryAbstract = $this->getRepository();
+        $methods            = get_class_methods($repositoryAbstract);
+        if (in_array('findAllOrderedByRegion', $methods)) {
+            $repositoryAbstract->findAllOrderedByRegion($queryBuilder);
         }
 
-        return $serviceEntityRepositoryAbstract->findAllOrderedByRegion();
+        return $queryBuilder;
     }
 
     /**
@@ -174,15 +246,30 @@ class BlockCrudController extends CrudControllerAbstract
         return Block::class;
     }
 
+    public function newBlock(): Response
+    {
+        $blocks = $this->blockService->getAll(null);
+
+        // Sinon affiche un formulaire simple de sélection
+        return $this->render(
+            'admin/block/new.html.twig',
+            [
+                'controller' => static::class,
+                'blocks'     => $blocks,
+            ]
+        );
+    }
+
     public function positionBlock(AdminContext $adminContext): RedirectResponse|Response
     {
         $request                         = $adminContext->getRequest();
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        if (!$serviceEntityRepositoryAbstract instanceof BlockRepository) {
+        $repositoryAbstract              = $this->getRepository();
+        if (!$repositoryAbstract instanceof BlockRepository) {
             throw new Exception('findAllOrderedByRegion not found');
         }
 
-        $queryBuilder = $serviceEntityRepositoryAbstract->findAllOrderedByRegion();
+        $queryBuilder = $repositoryAbstract->createQueryBuilder('b');
+        $repositoryAbstract->findAllOrderedByRegion($queryBuilder);
         $query        = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'block-position');
 
@@ -198,17 +285,17 @@ class BlockCrudController extends CrudControllerAbstract
                 }
 
                 foreach ($data as $id => $position) {
-                    $entity = $serviceEntityRepositoryAbstract->find($id);
+                    $entity = $repositoryAbstract->find($id);
                     if (!$entity instanceof Block) {
                         continue;
                     }
 
                     $entity->setPosition($position);
-                    $serviceEntityRepositoryAbstract->persist($entity);
+                    $repositoryAbstract->persist($entity);
                 }
             }
 
-            $serviceEntityRepositoryAbstract->flush();
+            $repositoryAbstract->flush();
             $this->addFlash('success', new TranslatableMessage('Position updated'));
 
             $url = $generator->setController(static::class)->setAction(Action::INDEX)->generateUrl();
@@ -222,25 +309,6 @@ class BlockCrudController extends CrudControllerAbstract
         );
     }
 
-    /**
-     * @param mixed[] $allTypes
-     */
-    private function getChoiceType(string $pageName, array $allTypes): ChoiceField|TextField
-    {
-        if ('new' === $pageName) {
-            $field = ChoiceField::new('type', new TranslatableMessage('Type'));
-            $field->setChoices(array_flip($allTypes));
-
-            return $field;
-        }
-
-        $field = TextField::new('type', new TranslatableMessage('Type'));
-        $field->formatValue(static fn ($value) => $allTypes[$value] ?? null);
-        $field->setDisabled(true);
-
-        return $field;
-    }
-
     private function setPosition(): callable
     {
         return function ($event): void
@@ -251,13 +319,13 @@ class BlockCrudController extends CrudControllerAbstract
             }
 
             $data                            = $event->getData();
-            $serviceEntityRepositoryAbstract = $this->getRepository();
+            $repositoryAbstract              = $this->getRepository();
             $region                          = $form->get('region')->getData();
-            if (is_null($region) || !$serviceEntityRepositoryAbstract instanceof BlockRepository) {
+            if (is_null($region) || !$repositoryAbstract instanceof BlockRepository) {
                 return;
             }
 
-            $maxPosition = $serviceEntityRepositoryAbstract->getMaxPositionByRegion($region);
+            $maxPosition = $repositoryAbstract->getMaxPositionByRegion($region);
             if (is_null($maxPosition)) {
                 $maxPosition = 0;
             }

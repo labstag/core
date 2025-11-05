@@ -13,6 +13,10 @@ flysystem:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/assets'
+    media.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/media'
     configuration.storage:
       adapter: 'local'
       options:

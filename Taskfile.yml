@@ -446,7 +446,6 @@ tasks:
 
   phpstan:
     desc: "Analyze code with PHPStan"
-    internal: true
     silent: true
     vars:
       LEVEL: '{{.LEVEL | default "0"}}'
@@ -502,6 +501,14 @@ tasks:
     - task: symfony:console
       vars:
         CMD: "messenger:consume async"
+
+  messenger:stats:
+    desc: "Show Messenger statistics"
+    silent: true
+    cmds:
+    - task: symfony:console
+      vars:
+        CMD: "messenger:stats"
 
   rector:
     desc: "Refactor code with Rector"
@@ -621,8 +628,8 @@ tasks:
         task lint:docker DOCKERCOMPOSEFILE="{{.DOCKERCOMPOSEFILE}}"
       fi
     - task: cmd:validate_outdated
-    - npm run eslint:fix
-    - npm run lint:stylelint:fix
+    - npm run eslint
+    - npm run lint:stylelint
     - task: lint:twig
     - task: lint:container
     - task: lint:phpaudit
@@ -649,6 +656,8 @@ tasks:
     desc: "Automatically fix code issues"
     silent: true
     cmds:
+    - npm run eslint:fix
+    - npm run lint:stylelint:fix
     - task: ecs-fix
     - task: lint:phpcbf
     - task: lint:phpcs

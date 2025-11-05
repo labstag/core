@@ -2,11 +2,14 @@
 
 namespace Labstag\Controller\Admin;
 
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Chapter;
@@ -22,6 +25,49 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryCrudController extends CrudControllerAbstract
 {
+    public function chaptersField(): AssociationField
+    {
+        $associationField = AssociationField::new('chapters', new TranslatableMessage('Chapters'));
+        $associationField->setTemplatePath('admin/field/chapters.html.twig');
+
+        return $associationField;
+    }
+
+    /**
+     * Page-aware variant to avoid AssociationConfigurator errors on index/detail pages.
+     * - On index/detail: always return a read-only CollectionField (count/list via template).
+     * - On edit/new: only return an AssociationField if Doctrine metadata confirms the association,
+     *   otherwise hide the field on forms (no-op for safety).
+     */
+    public function chaptersFieldForPage(string $entityFqcn, string $pageName): AssociationField|CollectionField
+    {
+        $associationField = $this->chaptersField();
+        // Always safe on listing/detail pages: no AssociationField to configure
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)) {
+            $associationField->hideOnForm();
+
+            return $associationField;
+        }
+
+        // For edit/new pages, check the real Doctrine association
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+
+        if ($metadata instanceof ClassMetadata && $metadata->hasAssociation('chapters')) {
+            $associationField->autocomplete();
+            $associationField->setFormTypeOption('by_reference', false);
+
+            return $associationField;
+        }
+
+        // No association: ensure nothing is rendered on the form
+        $associationField->hideOnForm();
+
+        return $associationField;
+    }
+
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -62,10 +108,6 @@ class StoryCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
-        $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
-        $collectionField->setTemplatePath('admin/field/chapters.html.twig');
-        $collectionField->hideOnForm();
-
         $wysiwygField = WysiwygField::new('resume', new TranslatableMessage('resume'));
         $wysiwygField->hideOnIndex();
 
@@ -76,12 +118,15 @@ class StoryCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
-                $collectionField,
+                $this->chaptersFieldForPage(self::getEntityFqcn(), $pageName),
                 $wysiwygField,
             ]
         );
 
-        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet('story'));
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            $this->crudFieldFactory->taxonomySet(self::getEntityFqcn(), $pageName)
+        );
 
         $this->crudFieldFactory->setTabParagraphs($pageName);
         $this->crudFieldFactory->setTabSEO();
@@ -89,28 +134,18 @@ class StoryCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->setTabWorkflow();
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
         $this->crudFieldFactory->addFilterEnable($filters);
-        $this->crudFieldFactory->addFilterTags($filters, 'story');
-        $this->crudFieldFactory->addFilterCategories($filters, 'story');
+        $this->crudFieldFactory->addFilterTagsFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
 
         return $filters;
-    }
-
-    #[\Override]
-    public function createEntity(string $entityFqcn): Story
-    {
-        $story = new $entityFqcn();
-        $this->workflowService->init($story);
-        $story->setRefuser($this->getUser());
-
-        return $story;
     }
 
     public static function getEntityFqcn(): string
@@ -121,8 +156,8 @@ class StoryCrudController extends CrudControllerAbstract
     #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $story                           = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $story                           = $repositoryAbstract->find($entity);
 
         return $this->publicLink($story);
     }
@@ -166,8 +201,8 @@ class StoryCrudController extends CrudControllerAbstract
     #[Route('/admin/story/{entity}/update', name: 'admin_story_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $story                           = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $story                           = $repositoryAbstract->find($entity);
         $messageBus->dispatch(new StoryMessage($story->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -181,8 +216,8 @@ class StoryCrudController extends CrudControllerAbstract
 
     public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract  = $this->getRepository();
-        $stories                          = $serviceEntityRepositoryAbstract->findAll();
+        $repositoryAbstract               = $this->getRepository();
+        $stories                          = $repositoryAbstract->findAll();
         foreach ($stories as $story) {
             $messageBus->dispatch(new StoryMessage($story->getId()));
         }
@@ -193,8 +228,8 @@ class StoryCrudController extends CrudControllerAbstract
     #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $story                           = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $story                           = $repositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($story);
     }

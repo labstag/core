@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Labstag\Message\ClearCacheMessage;
 use Labstag\Message\DeleteOldFileMessage;
-use Labstag\Repository\ServiceEntityRepositoryAbstract;
+use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
@@ -79,8 +79,8 @@ class BackController extends AbstractController
         }
 
         $routeName = $request->query->get('routeName');
-        $entity    = $request->attributes->get('entity', null);
-        $uuid      = $request->attributes->get('uuid', null);
+        $entity    = $request->attributes->get('entity');
+        $uuid      = $request->attributes->get('uuid');
         match ($routeName) {
             'admin_restore' => $this->adminRestore($entity, $uuid),
             'admin_empty'   => $this->adminEmpty($entity),
@@ -102,9 +102,9 @@ class BackController extends AbstractController
             return $this->redirectToRoute('admin');
         }
 
-        $entity     = $request->query->get('entity', null);
-        $transition = $request->query->get('transition', null);
-        $uid        = $request->query->get('uid', null);
+        $entity     = $request->query->get('entity');
+        $transition = $request->query->get('transition');
+        $uid        = $request->query->get('uid');
 
         $this->workflowService->change($entity, $transition, $uid);
 
@@ -113,19 +113,19 @@ class BackController extends AbstractController
 
     protected function adminEmpty(string $entity): void
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository($entity);
-        $all                             = $serviceEntityRepositoryAbstract->findDeleted();
+        $repositoryAbstract              = $this->getRepository($entity);
+        $all                             = $repositoryAbstract->findDeleted();
         foreach ($all as $row) {
-            $serviceEntityRepositoryAbstract->remove($row);
+            $repositoryAbstract->remove($row);
         }
 
-        $serviceEntityRepositoryAbstract->flush();
+        $repositoryAbstract->flush();
     }
 
     protected function adminRestore(string $entity, mixed $uuid): void
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository($entity);
-        $data                            = $serviceEntityRepositoryAbstract->find($uuid);
+        $repositoryAbstract              = $this->getRepository($entity);
+        $data                            = $repositoryAbstract->find($uuid);
         if (is_null($data)) {
             throw new Exception(new TranslatableMessage('Data not found'));
         }
@@ -142,12 +142,12 @@ class BackController extends AbstractController
     }
 
     /**
-     * @return ServiceEntityRepositoryAbstract<object>
+     * @return RepositoryAbstract<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryAbstract
+    protected function getRepository(string $entity): object
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
+        if (is_null($entityRepository)) {
             throw new Exception('Repository not found');
         }
 

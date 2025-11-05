@@ -7,9 +7,11 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Serie;
+use Labstag\Entity\SerieParagraph as EntitySerieParagraph;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\SerieRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -19,12 +21,18 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntitySerieParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
-        /** @var SerieRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Serie::class);
+        /** @var SerieRepository $entityRepository */
+        $entityRepository                = $this->getRepository(Serie::class);
         $categorySlug                    = $this->getCategorySlug();
         $pagination                      = $this->getPaginator(
-            $serviceEntityRepositoryAbstract->getQueryPaginator($categorySlug),
+            $entityRepository->getQueryPaginator($categorySlug),
             $paragraph->getNbr()
         );
 
@@ -47,6 +55,11 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntitySerieParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -60,7 +73,7 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Serie';
+        return (string) new TranslatableMessage('Serie');
     }
 
     #[Override]
@@ -76,12 +89,8 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page && $object->getType() == PageEnum::SERIES->value;

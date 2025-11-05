@@ -3,13 +3,6 @@
 	<div class="background" style="--image-url: url('{{ site_asset(chapter, 'img') }}')"></div>
 	<div class="content">
         <div class="wrapper">
-            {% if chapter.tags|length > 0 %}
-                <div class="tags">
-                    {% for tag in chapter.tags %}
-                        <span class="tag-{{ tag.slug }}">{{ tag.title }}</span>
-                    {% endfor %}
-                </div>
-            {% endif %}
             <h3 class="title">
                 {{ chapter.title }}
             </h3>

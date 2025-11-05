@@ -20,8 +20,9 @@ class StoryFileStorage extends FileStorageAbstract implements FileStorageInterfa
         $this->setType('story');
     }
 
-    public function getEntity(): ?string
+    #[\Override]
+    public function getEntity(): array
     {
-        return Story::class;
+        return [Story::class];
     }
 }

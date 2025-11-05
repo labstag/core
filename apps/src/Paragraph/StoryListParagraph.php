@@ -7,9 +7,11 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Story;
+use Labstag\Entity\StoryListParagraph as EntityStoryListParagraph;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\StoryRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -19,14 +21,17 @@ class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        unset($disable);
-        /** @var StoryRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Story::class);
+        if (!$paragraph instanceof EntityStoryListParagraph) {
+            $this->setShow($paragraph, false);
 
-        $pagination = $this->getPaginator(
-            $serviceEntityRepositoryAbstract->getQueryPaginator(),
-            $paragraph->getNbr()
-        );
+            return;
+        }
+
+        unset($disable);
+        /** @var StoryRepository $entityRepository */
+        $entityRepository = $this->getRepository(Story::class);
+
+        $pagination = $this->getPaginator($entityRepository->getQueryPaginator(), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
@@ -47,6 +52,11 @@ class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityStoryListParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -60,7 +70,7 @@ class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Story list';
+        return (string) new TranslatableMessage('Story list');
     }
 
     #[Override]
@@ -76,12 +86,8 @@ class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page && $object->getType() == PageEnum::STORIES->value;

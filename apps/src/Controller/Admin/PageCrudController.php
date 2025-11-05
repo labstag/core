@@ -58,7 +58,10 @@ class PageCrudController extends CrudControllerAbstract
             'principal',
             [AssociationField::new('page', new TranslatableMessage('Page'))]
         );
-        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet('page'));
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            $this->crudFieldFactory->taxonomySet(self::getEntityFqcn(), $pageName)
+        );
 
         $this->crudFieldFactory->setTabParagraphs($pageName);
 
@@ -70,18 +73,18 @@ class PageCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
         $this->crudFieldFactory->addFilterEnable($filters);
 
         $filters->add(EntityFilter::new('page', new TranslatableMessage('Page')));
-        $this->crudFieldFactory->addFilterTags($filters, 'page');
-        $this->crudFieldFactory->addFilterCategories($filters, 'page');
+        $this->crudFieldFactory->addFilterTagsFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
 
         return $filters;
     }
@@ -89,8 +92,7 @@ class PageCrudController extends CrudControllerAbstract
     #[\Override]
     public function createEntity(string $entityFqcn): Page
     {
-        $page = new $entityFqcn();
-        $this->workflowService->init($page);
+        $page = parent::createEntity($entityFqcn);
         $home = $this->getRepository()->findOneBy(
             [
                 'type' => PageEnum::HOME->value,
@@ -101,7 +103,6 @@ class PageCrudController extends CrudControllerAbstract
         }
 
         $page->setType(($home instanceof Page) ? PageEnum::PAGE->value : PageEnum::HOME->value);
-        $page->setRefuser($this->getUser());
 
         return $page;
     }
@@ -114,8 +115,8 @@ class PageCrudController extends CrudControllerAbstract
     #[Route('/admin/page/{entity}/public', name: 'admin_page_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $page                            = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $page                            = $repositoryAbstract->find($entity);
 
         return $this->publicLink($page);
     }
@@ -123,8 +124,8 @@ class PageCrudController extends CrudControllerAbstract
     #[Route('/admin/page/{entity}/w3c', name: 'admin_page_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $page                            = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $page                            = $repositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($page);
     }

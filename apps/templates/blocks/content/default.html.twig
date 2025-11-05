@@ -1,4 +1,4 @@
 {% use "elements.html.twig" %}
 <div{% with {attr: block_contextmenu(block)} %}{{ block('attributes') }}{% endwith %}>
-    {{ 'Block not configured'|trans }} ({{ block.type }})
+    {{ 'Block not configured'|trans }} ({{ block_type(block) }})
 </div>

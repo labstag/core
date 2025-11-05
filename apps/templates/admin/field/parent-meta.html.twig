@@ -2,6 +2,6 @@
     <span class="text-muted">{{ 'No parent'|trans }}</span>
 {% else %}
     <a href="{{ admin_url('detail', field.value) }}">
-        {{ field.value.title }}
+        {{ field.value.title }} ({{ admin_name(field.value) }})
     </a>
 {% endif %}

@@ -40,7 +40,7 @@
                     {% endif %}
                 </td> #}
 				<td data-label="Type" class=" text-left field-text" dir="ltr">
-					<span title="{{ paragraph_name(row.type)|e('html_attr') }}">{{ paragraph_name(row.type) }}</span>
+					<span title="{{ paragraph_name(row)|e('html_attr') }}">{{ paragraph_name(row) }}</span>
 				</td>
 				<td data-label="Date de création" class=" text-left field-datetime" dir="ltr">
 					<time datetime="{{ row.createdAt|date('c') }}" title="{{ row.createdAt|date('r') }}">{{ row.createdAt|format_datetime('medium', 'medium') }}</time>

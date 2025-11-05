@@ -26,8 +26,8 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
     #[Route('/admin/http-error-logs/{entity}/banip', name: 'admin_http_error_logs_banip')]
     public function banIp(string $entity, Request $request): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $httpErrorLogs                   = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $httpErrorLogs                   = $repositoryAbstract->find($entity);
         $internetProtocol                = $httpErrorLogs->getInternetProtocol();
 
         $redirectToRoute = $this->redirectToRoute('admin_http_error_logs_index');
@@ -133,13 +133,13 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
         // Pas de champ enable pour les logs => pas de filtre enable
         $filters->add('internetProtocol');
         $filters->add('httpCode');

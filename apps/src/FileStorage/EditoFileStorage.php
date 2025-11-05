@@ -20,8 +20,9 @@ class EditoFileStorage extends FileStorageAbstract implements FileStorageInterfa
         $this->setType('edito');
     }
 
-    public function getEntity(): ?string
+    #[\Override]
+    public function getEntity(): array
     {
-        return Edito::class;
+        return [Edito::class];
     }
 }

@@ -1,10 +1,11 @@
-{% set instance = entity.instance %}
+{# Prefer field.value (collection or array) to avoid relying on entity.instance in list rows #}
+{% set categories = field.value is defined and field.value is not null ? field.value : [] %}
 {% if ea.crud.currentAction == 'detail' %}
   <ul>
-    {% for category in instance.categories %}
+    {% for category in categories %}
         <li>{{ category.title }}</li>
     {% endfor %}
   </ul>
 {% else %}
-  {{ instance.categories|length }}
+  {{ categories|length }}
 {% endif %}

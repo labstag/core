@@ -9,6 +9,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use Gedmo\Tool\ClassUtils;
+use Labstag\Entity\Block;
+use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphsField;
 use Labstag\Service\ParagraphService;
 use Override;
@@ -32,13 +34,20 @@ final class ParagraphsConfigurator implements FieldConfiguratorInterface
         }
 
         $crudControllerRegistry = $adminContext->getCrudControllers();
-
-        $instance = $entityDto->getInstance();
+        $instance               = $entityDto->getInstance();
         if (is_null($instance)) {
             return;
         }
 
         $classInstance = ClassUtils::getClass($instance);
+        if ($instance instanceof Block) {
+            $classInstance = Block::class;
+        }
+
+        if ($instance instanceof Paragraph) {
+            $classInstance = Paragraph::class;
+        }
+
         $controller    = $crudControllerRegistry->findCrudFqcnByEntityFqcn($classInstance);
         $fieldDto->setCustomOption('controller', $controller);
         $paragraphs = $this->paragraphService->getAll($instance);

@@ -22,8 +22,6 @@ use Labstag\Field\ParagraphParentField;
 use Labstag\Service\ParagraphService;
 use Override;
 use RuntimeException;
-use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Traversable;
 
@@ -49,12 +47,6 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->setProperty($object->name);
         $fieldDto->getDoctrineMetadata()
             ->set('targetEntity', ClassUtils::getClass($object->value));
-        if (!$entityDto->isAssociation($object->name)) {
-            throw new RuntimeException(sprintf(
-                'The "%s" field is not a Doctrine association, so it cannot be used as an association field.',
-                $object->name
-            ));
-        }
 
         $targetEntityFqcn = $fieldDto->getDoctrineMetadata()
             ->get('targetEntity');
@@ -133,58 +125,6 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->setFormTypeOption('attr.data-ea-autocomplete-endpoint-url', $adminUrlGenerator);
     }
 
-    /**
-     * @param array<string> $propertyNameParts
-     */
-    private function configureFirst(
-        EntityDto &$entityDto,
-        array &$propertyNameParts,
-        FieldDto &$fieldDto,
-        string &$propertyName,
-    ): void {
-        // prepare starting class for association
-        $targetEntityFqcn = $entityDto->getPropertyMetadata($propertyNameParts[0])->get('targetEntity');
-        array_shift($propertyNameParts);
-        $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
-
-        foreach ($propertyNameParts as $propertyNamePart) {
-            if (!$metadata->hasAssociation($propertyNamePart)) {
-                throw new RuntimeException(sprintf(
-                    'There is no association for the class "%s" with name "%s"',
-                    $targetEntityFqcn,
-                    $propertyNamePart
-                ));
-            }
-
-            // overwrite next class from association
-            $targetEntityFqcn = $metadata->getAssociationTargetClass($propertyNamePart);
-
-            // read next association metadata
-            $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
-        }
-
-        $propertyAccessor         = new PropertyAccessor();
-        $targetCrudControllerFqcn = $fieldDto->getCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER);
-
-        $fieldDto->setFormTypeOptionIfNotSet('class', $targetEntityFqcn);
-
-        try {
-            $relatedEntityId = $propertyAccessor->getValue(
-                $entityDto->getInstance(),
-                $propertyName . '.' . $metadata->getIdentifierFieldNames()[0]
-            );
-            $relatedEntityDto = $this->entityFactory->create($targetEntityFqcn, $relatedEntityId);
-
-            $fieldDto->setCustomOption(
-                ParagraphParentField::OPTION_RELATED_URL,
-                $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $relatedEntityDto)
-            );
-            $fieldDto->setFormattedValue($this->formatAsString($relatedEntityDto->getInstance()));
-        } catch (UnexpectedTypeException) {
-            // this may crash if something in the tree is null, so just do nothing then
-        }
-    }
-
     private function configureSecond(FieldDto $fieldDto, EntityDto $entityDto, string $propertyName): void
     {
         if ($entityDto->getClassMetadata()->isSingleValuedAssociation($propertyName)) {
@@ -200,8 +140,6 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
     {
         $propertyNameParts = explode('.', $propertyName);
         if (1 < \count($propertyNameParts)) {
-            $this->configureFirst($entityDto, $propertyNameParts, $fieldDto, $propertyName);
-
             return;
         }
 

@@ -3,9 +3,11 @@
 namespace Labstag\Paragraph;
 
 use Labstag\Entity\Block;
+use Labstag\Entity\HeadStoryParagraph as EntityHeadStoryParagraph;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Story;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class HeadStoryParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -32,10 +34,15 @@ class HeadStoryParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityHeadStoryParagraph::class;
+    }
+
     #[Override]
     public function getName(): string
     {
-        return 'Head story';
+        return (string) new TranslatableMessage('Head story');
     }
 
     #[Override]
@@ -51,12 +58,8 @@ class HeadStoryParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Block;

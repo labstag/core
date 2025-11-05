@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -13,19 +11,22 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
+#[ORM\Table(name: 'tag')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-#[ORM\Index(name: 'IDX_TAG_TYPE_SLUG', columns: ['type', 'slug'])]
-class Tag implements Stringable
+#[ORM\Index(name: 'IDX_TAG_TYPE_SLUG', columns: ['slug'])]
+#[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
+#[ORM\DiscriminatorMap(
+    [
+        'page'  => PageTag::class,
+        'post'  => PostTag::class,
+        'story' => StoryTag::class,
+    ]
+)]
+abstract class Tag implements Stringable
 {
     use SoftDeleteableEntity;
-
-    /**
-     * @var Collection<int, Chapter>
-     */
-    #[ORM\ManyToMany(targetEntity: Chapter::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
-    #[ORM\JoinTable(name: 'tag_chapter')]
-    protected Collection $chapters;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -33,44 +34,12 @@ class Tag implements Stringable
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
 
-    /**
-     * @var Collection<int, Page>
-     */
-    #[ORM\ManyToMany(targetEntity: Page::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
-    #[ORM\JoinTable(name: 'tag_page')]
-    protected Collection $pages;
-
-    /**
-     * @var Collection<int, Post>
-     */
-    #[ORM\ManyToMany(targetEntity: Post::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
-    #[ORM\JoinTable(name: 'tag_post')]
-    protected Collection $posts;
-
-    #[Gedmo\Slug(updatable: true, fields: ['title'], unique_base: 'type')]
+    #[Gedmo\Slug(updatable: true, fields: ['title'])]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     protected ?string $slug = null;
 
-    /**
-     * @var Collection<int, Story>
-     */
-    #[ORM\ManyToMany(targetEntity: Story::class, inversedBy: 'tags', cascade: ['persist', 'detach'])]
-    #[ORM\JoinTable(name: 'tag_story')]
-    protected Collection $stories;
-
     #[ORM\Column(length: 255)]
     protected ?string $title = null;
-
-    #[ORM\Column(length: 255)]
-    protected ?string $type = null;
-
-    public function __construct()
-    {
-        $this->posts    = new ArrayCollection();
-        $this->pages    = new ArrayCollection();
-        $this->stories  = new ArrayCollection();
-        $this->chapters = new ArrayCollection();
-    }
 
     #[Override]
     public function __toString(): string
@@ -78,69 +47,9 @@ class Tag implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addChapter(Chapter $chapter): static
-    {
-        if (!$this->chapters->contains($chapter)) {
-            $this->chapters->add($chapter);
-        }
-
-        return $this;
-    }
-
-    public function addPage(Page $page): static
-    {
-        if (!$this->pages->contains($page)) {
-            $this->pages->add($page);
-        }
-
-        return $this;
-    }
-
-    public function addPost(Post $post): static
-    {
-        if (!$this->posts->contains($post)) {
-            $this->posts->add($post);
-        }
-
-        return $this;
-    }
-
-    public function addStory(Story $story): static
-    {
-        if (!$this->stories->contains($story)) {
-            $this->stories->add($story);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Chapter>
-     */
-    public function getChapters(): Collection
-    {
-        return $this->chapters;
-    }
-
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    /**
-     * @return Collection<int, Page>
-     */
-    public function getPages(): Collection
-    {
-        return $this->pages;
-    }
-
-    /**
-     * @return Collection<int, Post>
-     */
-    public function getPosts(): Collection
-    {
-        return $this->posts;
     }
 
     public function getSlug(): ?string
@@ -148,50 +57,9 @@ class Tag implements Stringable
         return $this->slug;
     }
 
-    /**
-     * @return Collection<int, Story>
-     */
-    public function getStories(): Collection
-    {
-        return $this->stories;
-    }
-
     public function getTitle(): ?string
     {
         return $this->title;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function removeChapter(Chapter $chapter): static
-    {
-        $this->chapters->removeElement($chapter);
-
-        return $this;
-    }
-
-    public function removePage(Page $page): static
-    {
-        $this->pages->removeElement($page);
-
-        return $this;
-    }
-
-    public function removePost(Post $post): static
-    {
-        $this->posts->removeElement($post);
-
-        return $this;
-    }
-
-    public function removeStory(Story $story): static
-    {
-        $this->stories->removeElement($story);
-
-        return $this;
     }
 
     public function setSlug(?string $slug): static
@@ -204,13 +72,6 @@ class Tag implements Stringable
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function setType(string $type): static
-    {
-        $this->type = $type;
 
         return $this;
     }

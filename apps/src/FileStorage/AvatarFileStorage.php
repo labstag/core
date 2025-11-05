@@ -20,8 +20,9 @@ class AvatarFileStorage extends FileStorageAbstract implements FileStorageInterf
         $this->setType('avatar');
     }
 
-    public function getEntity(): ?string
+    #[\Override]
+    public function getEntity(): array
     {
-        return User::class;
+        return [User::class];
     }
 }

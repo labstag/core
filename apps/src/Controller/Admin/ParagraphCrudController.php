@@ -8,9 +8,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
+use Labstag\Filter\DiscriminatorTypeFilter;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ParagraphCrudController extends CrudControllerAbstract
@@ -25,6 +25,7 @@ class ParagraphCrudController extends CrudControllerAbstract
         }
 
         $this->configureActionsTrash($actions);
+        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
 
         return $actions;
     }
@@ -33,7 +34,20 @@ class ParagraphCrudController extends CrudControllerAbstract
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setEntityLabelInSingular(new TranslatableMessage('Paragraph'));
+        $crud->setEntityLabelInSingular(
+            function ($paragraph, ?string $pageName): \Symfony\Component\Translation\TranslatableMessage {
+                if (is_null($paragraph)) {
+                    return new TranslatableMessage('Paragraph');
+                }
+
+                $name = $this->paragraphService->getName($paragraph);
+
+                return new TranslatableMessage(
+                    'Paragraph %name%',
+                    ['%name%' => $name]
+                );
+            }
+        );
         $crud->setEntityLabelInPlural(new TranslatableMessage('Paragraphs'));
         if ($this->isIframeEdit()) {
             $crud->renderSidebarMinimized();
@@ -70,9 +84,15 @@ class ParagraphCrudController extends CrudControllerAbstract
         $choiceField = ChoiceField::new('fond', new TranslatableMessage('Fond'))->hideOnIndex();
         $choiceField->setChoices($this->paragraphService->getFonds());
 
-        $allTypes  = array_flip($this->paragraphService->getAll(null));
-        $textField = TextField::new('type', new TranslatableMessage('Type'))->formatValue(
-            static fn ($value) => $allTypes[$value] ?? null
+        $textField = TextField::new('id', new TranslatableMessage('Type'))->formatValue(
+            function (?string $value) {
+                $paragraph = $this->paragraphService->getParagraph($value);
+                if (is_null($paragraph)) {
+                    return $value;
+                }
+
+                return $paragraph->getName();
+            }
         );
         $textField->setDisabled(true);
 
@@ -81,16 +101,27 @@ class ParagraphCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->addFieldsToTab('config', [$choiceField, $textField, $classesField]);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         $types = $this->paragraphService->getAll(null);
-        if ([] !== $types) {
-            $filters->add(ChoiceFilter::new('type', new TranslatableMessage('Type'))->setChoices($types));
+        if ([] == $types) {
+            return $filters;
         }
+
+        $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', new TranslatableMessage('Type'));
+        $discriminatorTypeFilter->setParagraphService($this->paragraphService);
+        $discriminatorTypeFilter->setChoices(
+            array_merge(
+                ['' => ''],
+                $types
+            )
+        );
+
+        $filters->add($discriminatorTypeFilter);
 
         return $filters;
     }

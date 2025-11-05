@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -88,14 +89,14 @@ class SerieCrudController extends CrudControllerAbstract
         $choiceField->allowMultipleChoices();
         $choiceField->renderExpanded(false);
 
-        $collectionField = CollectionField::new('seasons', new TranslatableMessage('Seasons'));
-        $collectionField->setTemplatePath('admin/field/seasons.html.twig');
-        $collectionField->hideOnForm();
+        $associationField = AssociationField::new('seasons', new TranslatableMessage('Seasons'));
+        $associationField->setTemplatePath('admin/field/seasons.html.twig');
+        $associationField->hideOnForm();
 
-        $runtimeField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
-        $runtimeField->setTemplatePath('admin/field/runtime-serie.html.twig');
-        $runtimeField->hideOnForm();
-        $runtimeField->hideOnIndex();
+        $collectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
+        $collectionField->setTemplatePath('admin/field/runtime-serie.html.twig');
+        $collectionField->hideOnForm();
+        $collectionField->hideOnIndex();
 
         $trailerField = TextField::new('trailer', new TranslatableMessage('Trailer'));
         $trailerField->hideOnIndex();
@@ -124,16 +125,16 @@ class SerieCrudController extends CrudControllerAbstract
                 $tmdField,
                 $certificationField,
                 DateField::new('releaseDate', new TranslatableMessage('Release date')),
-                DateField::new('lastReleaseDate', new TranslatableMessage('Last release date')),
+                DateField::new('lastreleaseDate', new TranslatableMessage('Last release date')),
                 $choiceField,
-                $runtimeField,
+                $collectionField,
                 NumberField::new('evaluation', new TranslatableMessage('Evaluation'))->hideOnIndex(),
                 IntegerField::new('votes', new TranslatableMessage('Votes'))->hideOnIndex(),
                 $trailerField,
                 $wysiwygField,
                 $descriptionField,
-                $this->crudFieldFactory->categoriesField('serie'),
-                $collectionField,
+                $this->crudFieldFactory->categoriesFieldForPage(self::getEntityFqcn(), $pageName),
+                $associationField,
                 $booleanField,
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
             ]
@@ -141,7 +142,7 @@ class SerieCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->setTabSEO();
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
@@ -153,7 +154,7 @@ class SerieCrudController extends CrudControllerAbstract
         $filters->add('countries');
         $filters->add('inProduction');
 
-        $this->crudFieldFactory->addFilterCategories($filters, 'serie');
+        $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
 
         return $filters;
     }
@@ -166,8 +167,8 @@ class SerieCrudController extends CrudControllerAbstract
     #[Route('/admin/serie/{entity}/imdb', name: 'admin_serie_imdb')]
     public function imdb(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $serie                           = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $serie                           = $repositoryAbstract->find($entity);
         if (empty($serie->getImdb())) {
             return $this->redirectToRoute('admin_serie_index');
         }
@@ -178,8 +179,8 @@ class SerieCrudController extends CrudControllerAbstract
     #[Route('/admin/serie/{entity}/public', name: 'admin_serie_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $serie                           = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $serie                           = $repositoryAbstract->find($entity);
 
         return $this->publicLink($serie);
     }
@@ -187,8 +188,8 @@ class SerieCrudController extends CrudControllerAbstract
     #[Route('/admin/serie/{entity}/tmdb', name: 'admin_serie_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $serie                           = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $serie                           = $repositoryAbstract->find($entity);
 
         return $this->redirect('https://www.themoviedb.org/tv/' . $serie->getTmdb());
     }
@@ -196,8 +197,8 @@ class SerieCrudController extends CrudControllerAbstract
     #[Route('/admin/serie/{entity}/update', name: 'admin_serie_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $serie                           = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $serie                           = $repositoryAbstract->find($entity);
         $messageBus->dispatch(new SerieMessage($serie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -211,8 +212,8 @@ class SerieCrudController extends CrudControllerAbstract
 
     public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $series                          = $serviceEntityRepositoryAbstract->findAll();
+        $repositoryAbstract              = $this->getRepository();
+        $series                          = $repositoryAbstract->findAll();
         foreach ($series as $serie) {
             $messageBus->dispatch(new SerieMessage($serie->getId()));
         }
@@ -223,8 +224,8 @@ class SerieCrudController extends CrudControllerAbstract
     #[Route('/admin/serie/{entity}/w3c', name: 'admin_serie_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $serie                           = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $serie                           = $repositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($serie);
     }

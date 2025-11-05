@@ -5,9 +5,9 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\Entity\Category;
 use Labstag\Entity\Post;
-use Labstag\Entity\Tag;
+use Labstag\Entity\PostCategory;
+use Labstag\Entity\PostTag;
 use Labstag\Entity\User;
 use Override;
 
@@ -40,8 +40,8 @@ class PostFixtures extends FixtureAbstract implements DependentFixtureInterface
     public function load(ObjectManager $objectManager): void
     {
         $this->users      = $this->getIdentitiesByClass(User::class);
-        $this->tags       = $this->getIdentitiesByClass(Tag::class, 'post');
-        $this->categories = $this->getIdentitiesByClass(Category::class, 'post');
+        $this->tags       = $this->getIdentitiesByClass(PostTag::class);
+        $this->categories = $this->getIdentitiesByClass(PostCategory::class);
         $this->loadForeach(self::NUMBER_POST, 'addPost', $objectManager);
         $objectManager->flush();
     }
@@ -56,8 +56,8 @@ class PostFixtures extends FixtureAbstract implements DependentFixtureInterface
         $post->setRefuser($this->getReference(array_rand($this->users), User::class));
         $post->setTitle($generator->unique()->colorName());
         $this->addParagraphText($post);
-        $this->addTagToEntity($post);
-        $this->addCategoryToEntity($post);
+        $this->addTagToEntity($post, PostTag::class);
+        $this->addCategoryToEntity($post, PostCategory::class);
         $this->addReference('post_' . md5(uniqid()), $post);
         $objectManager->persist($post);
     }

@@ -2,13 +2,14 @@
 
 namespace Labstag\Paragraph;
 
-use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Entity\FormationsParagraph as EntityFormationsParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Enum\PageEnum;
-use Labstag\Form\Paragraph\DataFormationsTypes;
+use Labstag\Form\Paragraph\FormationType;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -20,6 +21,19 @@ class FormationsParagraph extends ParagraphAbstract implements ParagraphInterfac
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityFormationsParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
+        $formations  = $paragraph->getFormations();
+        if (0 == count($formations)) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         $this->setData(
             $paragraph,
@@ -30,21 +44,33 @@ class FormationsParagraph extends ParagraphAbstract implements ParagraphInterfac
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityFormationsParagraph::class;
+    }
+
     #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($pageName, $paragraph);
         yield TextField::new('title', new TranslatableMessage('Title'));
         yield FormField::addColumn(12);
-        $fieldData = Field::new('data', 'Bloc de données');
-        $fieldData->setFormType(DataFormationsTypes::class);
-        yield $fieldData;
+        $collectionField = CollectionField::new('formations', new TranslatableMessage('Formations'));
+        $collectionField->setEntryToStringMethod(
+            function ($link): \Symfony\Component\Translation\TranslatableMessage {
+                unset($link);
+
+                return new TranslatableMessage('Formation');
+            }
+        );
+        $collectionField->setEntryType(FormationType::class);
+        yield $collectionField;
     }
 
     #[Override]
     public function getName(): string
     {
-        return 'Formations';
+        return (string) new TranslatableMessage('Formations');
     }
 
     #[Override]
@@ -60,12 +86,8 @@ class FormationsParagraph extends ParagraphAbstract implements ParagraphInterfac
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page && $object->getType() == PageEnum::CV->value;

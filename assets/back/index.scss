@@ -10,6 +10,22 @@
   width: 100%;
 }
 
+.form-group:has(textarea) {
+    display: flex;
+    flex-direction: column;
+
+    > label {
+        width: 100%;
+        display: block;
+        margin-bottom: .5rem;
+    }
+
+    .form-widget textarea {
+        width: 100%;
+        display: block;
+    }
+}
+
 .sort-list{
   li{
     cursor: move;

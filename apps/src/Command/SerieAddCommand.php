@@ -7,6 +7,7 @@ use Labstag\Message\AddSerieMessage;
 use Labstag\Service\FileService;
 use Override;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -83,7 +84,7 @@ class SerieAddCommand extends Command
     /**
      * @return list<array>
      */
-    private function generateJson(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet): array
+    private function generateJson(Worksheet $worksheet): array
     {
         $dataJson    = [];
         $headers     = [];

@@ -37,7 +37,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         $data['data-context_text'] = $this->translator->trans(
             new TranslatableMessage('Update paragraph (%type%)'),
             [
-                '%type%' => (string) $paragraph->getType(),
+                '%type%' => $this->paragraphService->getType($paragraph),
             ]
         );
 
@@ -47,11 +47,6 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
     public function getFond(?string $code): ?string
     {
         return $this->paragraphService->getFond($code);
-    }
-
-    public function getName(string $code): string
-    {
-        return $this->paragraphService->getNameByCode($code);
     }
 
     /**
@@ -72,11 +67,30 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         return $content->getContent();
     }
 
+    public function name(object $object): string
+    {
+        if (!$object instanceof Paragraph) {
+            return '';
+        }
+
+        return $this->paragraphService->getName($object);
+    }
+
+    public function type(object $object): string
+    {
+        if (!$object instanceof Paragraph) {
+            return '';
+        }
+
+        return $this->paragraphService->getType($object);
+    }
+
     private function getClass(Paragraph $paragraph): string
     {
-        $tab = [
+        $type = $this->paragraphService->getType($paragraph);
+        $tab  = [
             'paragraph',
-            'paragraph_' . $paragraph->getType(),
+            'paragraph_' . $type,
         ];
 
         $tab = array_merge($tab, $this->paragraphService->getClasses($paragraph));
@@ -86,6 +100,8 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
 
     private function getId(Paragraph $paragraph): string
     {
-        return 'paragraph_' . $paragraph->getType() . '-' . $paragraph->getId();
+        $type = $this->paragraphService->getType($paragraph);
+
+        return 'paragraph_' . $type . '-' . $paragraph->getId();
     }
 }

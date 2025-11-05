@@ -7,30 +7,31 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Block;
 
 /**
- * @extends ServiceEntityRepositoryAbstract<Block>
+ * @extends RepositoryAbstract<Block>
  */
-class BlockRepository extends ServiceEntityRepositoryAbstract
+class BlockRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
         parent::__construct($managerRegistry, Block::class);
     }
 
-    public function findAllOrderedByRegion(): QueryBuilder
+    public function findAllOrderedByRegion(?QueryBuilder $queryBuilder): void
     {
-        $queryBuilder = $this->createQueryBuilder('b');
-        $queryBuilder->orderBy(
-            "CASE 
-                WHEN b.region = 'header' THEN 1
-                WHEN b.region = 'main' THEN 2
-                WHEN b.region = 'footer' THEN 3
-                ELSE 4
-            END",
-            'ASC'
-        );
-        $queryBuilder->addOrderBy('b.position', 'ASC');
+        if (!$queryBuilder instanceof QueryBuilder) {
+            $queryBuilder = $this->createQueryBuilder('b');
+        }
 
-        return $queryBuilder;
+        $alias = $queryBuilder->getRootAliases()[0] ?? 'entity';
+        $queryBuilder->resetDQLPart('orderBy');
+        $caseExpr = 'CASE '
+            . 'WHEN ' . $alias . ".region = 'header' THEN 1 "
+            . 'WHEN ' . $alias . ".region = 'main' THEN 2 "
+            . 'WHEN ' . $alias . ".region = 'footer' THEN 3 "
+            . 'ELSE 4 '
+            . 'END';
+        $queryBuilder->orderBy($caseExpr, 'ASC');
+        $queryBuilder->addOrderBy($alias . '.position', 'ASC');
     }
 
     public function getMaxPositionByRegion(string $region): ?int

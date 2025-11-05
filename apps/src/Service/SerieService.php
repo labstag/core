@@ -6,18 +6,13 @@ use DateTime;
 use Exception;
 use Labstag\Api\TmdbApi;
 use Labstag\Entity\Serie;
+use Labstag\Entity\SerieCategory;
 use Labstag\Message\SeasonMessage;
-use Labstag\Repository\CategoryRepository;
 use Labstag\Repository\SerieRepository;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SerieService
 {
-
-    /**
-     * @var array<string, mixed>
-     */
-    private array $category = [];
 
     /**
      * @var array<string, mixed>
@@ -34,44 +29,10 @@ final class SerieService
         private FileService $fileService,
         private SeasonService $seasonService,
         private SerieRepository $serieRepository,
-        private CategoryRepository $categoryRepository,
         private CategoryService $categoryService,
         private TmdbApi $tmdbApi,
     )
     {
-    }
-
-    public function deleteOldCategory(): void
-    {
-        $data = $this->categoryRepository->findAllByTypeSerieWithoutSerie();
-        foreach ($data as $category) {
-            $total = count($category->getMovies());
-            if (0 !== $total) {
-                continue;
-            }
-
-            $this->categoryRepository->delete($category);
-        }
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getCategoryForForm(): array
-    {
-        if ([] !== $this->category) {
-            return $this->category;
-        }
-
-        $data       = $this->categoryRepository->findAllByTypeSerieEnable();
-        $categories = [];
-        foreach ($data as $category) {
-            $categories[$category->getTitle()] = $category->getSlug();
-        }
-
-        $this->category = $categories;
-
-        return $categories;
     }
 
     /**
@@ -103,7 +64,8 @@ final class SerieService
         /** @var Serie $serie */
         foreach ($series as $serie) {
             $label           = $serie->getTitle();
-            $choices[$label] = $label;
+            $id              = $serie->getId();
+            $choices[$label] = $id;
         }
 
         return $choices;
@@ -256,7 +218,7 @@ final class SerieService
 
         foreach ($details['tmdb']['genres'] as $genre) {
             $title    = trim((string) $genre['name']);
-            $category = $this->categoryService->getType('serie', $title);
+            $category = $this->categoryService->getType($title, SerieCategory::class);
 
             $serie->addCategory($category);
         }

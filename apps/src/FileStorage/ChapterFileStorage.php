@@ -20,8 +20,9 @@ class ChapterFileStorage extends FileStorageAbstract implements FileStorageInter
         $this->setType('chapter');
     }
 
-    public function getEntity(): ?string
+    #[\Override]
+    public function getEntity(): array
     {
-        return Chapter::class;
+        return [Chapter::class];
     }
 }

@@ -18,6 +18,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -87,7 +88,7 @@ class RedirectionCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
@@ -101,7 +102,7 @@ class RedirectionCrudController extends CrudControllerAbstract
     #[\Override]
     public function createEntity(string $entityFqcn): Redirection
     {
-        $redirection = new $entityFqcn();
+        $redirection = parent::createEntity($entityFqcn);
         $redirection->setActionType('url');
         $redirection->setPosition(0);
         $redirection->setActionCode(301);
@@ -170,8 +171,8 @@ class RedirectionCrudController extends CrudControllerAbstract
     #[Route('/admin/redirection/{entity}/test', name: 'admin_redirection_test')]
     public function testSource(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $redirection                     = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $redirection                     = $repositoryAbstract->find($entity);
 
         return $this->redirect($redirection->getSource());
     }
@@ -293,10 +294,7 @@ class RedirectionCrudController extends CrudControllerAbstract
     /**
      * @return Redirection[]
      */
-    private function importCsv(
-        \Symfony\Component\HttpFoundation\File\UploadedFile $uploadedFile,
-        RedirectionRepository $redirectionRepository,
-    ): array
+    private function importCsv(UploadedFile $uploadedFile, RedirectionRepository $redirectionRepository): array
     {
         $data        = [];
         $csv         = new Csv();

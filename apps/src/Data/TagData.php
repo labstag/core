@@ -3,6 +3,8 @@
 namespace Labstag\Data;
 
 use Labstag\Entity\Page;
+use Labstag\Entity\PostTag;
+use Labstag\Entity\StoryTag;
 use Labstag\Entity\Tag;
 use Labstag\Enum\PageEnum;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -17,25 +19,14 @@ class TagData extends DataAbstract implements DataInterface
 
     public function generateSlug(object $entity): string
     {
-        $type             = $entity->getType();
         $entityRepository = $this->entityManager->getRepository(Page::class);
-        $page             = match ($type) {
-            'movie' => $entityRepository->findOneBy(
-                [
-                    'type' => PageEnum::MOVIES->value,
-                ]
-            ),
-            'post' => $entityRepository->findOneBy(
+        $page             = match ($entity::class) {
+            PostTag::class => $entityRepository->findOneBy(
                 [
                     'type' => PageEnum::POSTS->value,
                 ]
             ),
-            'serie' => $entityRepository->findOneBy(
-                [
-                    'type' => PageEnum::SERIES->value,
-                ]
-            ),
-            'story' => $entityRepository->findOneBy(
+            StoryTag::class => $entityRepository->findOneBy(
                 [
                     'type' => PageEnum::STORIES->value,
                 ]
@@ -47,12 +38,10 @@ class TagData extends DataAbstract implements DataInterface
             return '';
         }
 
-        return match ($type) {
-            'movie' => $page->getSlug() . '/tag-' . $entity->getSlug(),
-            'post'  => $page->getSlug() . '/tag-' . $entity->getSlug(),
-            'serie' => $page->getSlug() . '/tag-' . $entity->getSlug(),
-            'story' => $page->getSlug() . '/tag-' . $entity->getSlug(),
-            default => '',
+        return match ($entity::class) {
+            PostTag::class  => $page->getSlug() . '/tag-' . $entity->getSlug(),
+            StoryTag::class => $page->getSlug() . '/tag-' . $entity->getSlug(),
+            default         => '',
         };
     }
 
@@ -63,6 +52,7 @@ class TagData extends DataAbstract implements DataInterface
 
     public function getTitle(object $entity): string
     {
+        unset($entity);
         $request  = $this->requestStack->getCurrentRequest();
         $slug     = $request->attributes->get('slug');
         $tag      = $this->getTagBySlug($slug);
@@ -101,6 +91,15 @@ class TagData extends DataAbstract implements DataInterface
         return false;
     }
 
+    protected function getClass(string $type): ?string
+    {
+        return match ($type) {
+            PageEnum::POSTS->value   => PostTag::class,
+            PageEnum::STORIES->value => StoryTag::class,
+            default                  => null,
+        };
+    }
+
     protected function getEntityBySlug(string $slug): ?object
     {
         if (0 === substr_count($slug, '/')) {
@@ -121,24 +120,14 @@ class TagData extends DataAbstract implements DataInterface
             return null;
         }
 
-        $type = match ($page->getType()) {
-            PageEnum::MOVIES->value  => 'movie',
-            PageEnum::POSTS->value   => 'post',
-            PageEnum::SERIES->value  => 'serie',
-            PageEnum::STORIES->value => 'story',
-            default                  => null,
-        };
-
-        if (is_null($type)) {
+        $typeclass = $this->getClass($page->getType());
+        if (is_null($typeclass)) {
             return null;
         }
 
         $slugSecond = str_replace('tag-', '', $slugSecond);
-        $tag        = $this->entityManager->getRepository(Tag::class)->findOneBy(
-            [
-                'type' => $type,
-                'slug' => $slugSecond,
-            ]
+        $tag        = $this->entityManager->getRepository($typeclass)->findOneBy(
+            ['slug' => $slugSecond]
         );
         if (!$tag instanceof Tag) {
             return null;
@@ -167,25 +156,15 @@ class TagData extends DataAbstract implements DataInterface
             return null;
         }
 
-        $type = match ($page->getType()) {
-            PageEnum::MOVIES->value  => 'movie',
-            PageEnum::POSTS->value   => 'post',
-            PageEnum::SERIES->value  => 'serie',
-            PageEnum::STORIES->value => 'story',
-            default                  => null,
-        };
-
-        if (is_null($type)) {
+        $typeclass = $this->getClass($page->getType());
+        if (is_null($typeclass)) {
             return null;
         }
 
         $slugSecond = str_replace('tag-', '', $slugSecond);
 
-        return $this->entityManager->getRepository(Tag::class)->findOneBy(
-            [
-                'type' => $type,
-                'slug' => $slugSecond,
-            ]
+        return $this->entityManager->getRepository($typeclass)->findOneBy(
+            ['slug' => $slugSecond]
         );
     }
 }

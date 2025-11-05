@@ -15,6 +15,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
+use Labstag\Entity\VideoParagraph as EntityVideoParagraph;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -26,24 +27,8 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        $media = $this->getMedia($paragraph);
         unset($disable);
-        $url = $paragraph->getUrl();
-        if (is_null($url) || '' === $url || '0' === $url) {
-            $this->setShow($paragraph, false);
-
-            return;
-        }
-
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
         if (!$media instanceof Media) {
             $this->setShow($paragraph, false);
 
@@ -70,6 +55,11 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityVideoParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -84,7 +74,7 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Video';
+        return (string) new TranslatableMessage('Video');
     }
 
     #[Override]
@@ -100,7 +90,7 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        return in_array(
+        $inArray = in_array(
             $object::class,
             [
                 Block::class,
@@ -112,11 +102,17 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
                 Post::class,
             ]
         );
+
+        return $inArray || $object instanceof Block;
     }
 
     #[Override]
     public function update(Paragraph $paragraph): void
     {
+        if (!$paragraph instanceof EntityVideoParagraph) {
+            return;
+        }
+
         if (!is_null($paragraph->getImg())) {
             return;
         }
@@ -147,5 +143,33 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
         // Télécharger l'image et l'écrire dans le fichier temporaire
         file_put_contents($tempPath, file_get_contents($thumbnailUrl));
         $this->fileService->setUploadedFile($tempPath, $paragraph, 'imgFile');
+    }
+
+    protected function getMedia(Paragraph $paragraph): ?Media
+    {
+        if (!$paragraph instanceof EntityVideoParagraph) {
+            return null;
+        }
+
+        $url = $paragraph->getUrl();
+        if (is_null($url) || '' === $url || '0' === $url) {
+            return null;
+        }
+
+        $essence = new Essence();
+
+        // Load any url:
+        $media = $essence->extract(
+            $url,
+            [
+                'maxwidth'  => 800,
+                'maxheight' => 600,
+            ]
+        );
+        if (!$media instanceof Media) {
+            return null;
+        }
+
+        return $media;
     }
 }

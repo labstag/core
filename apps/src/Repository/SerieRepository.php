@@ -9,9 +9,9 @@ use Labstag\Entity\Serie;
 use Symfony\Component\Intl\Countries;
 
 /**
- * @extends ServiceEntityRepositoryAbstract<Serie>
+ * @extends RepositoryAbstract<Serie>
  */
-class SerieRepository extends ServiceEntityRepositoryAbstract
+class SerieRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

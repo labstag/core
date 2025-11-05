@@ -47,7 +47,6 @@ class GeoCodeCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
-        unset($pageName);
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
@@ -66,7 +65,7 @@ class GeoCodeCrudController extends CrudControllerAbstract
             ]
         );
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
@@ -103,12 +102,12 @@ class GeoCodeCrudController extends CrudControllerAbstract
      */
     private function getAllData(string $type): array
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        if (!$serviceEntityRepositoryAbstract instanceof GeoCodeRepository) {
+        $repositoryAbstract = $this->getRepository();
+        if (!$repositoryAbstract instanceof GeoCodeRepository) {
             return [];
         }
 
-        $all = $serviceEntityRepositoryAbstract->findAllData($type);
+        $all = $repositoryAbstract->findAllData($type);
 
         $data = [];
         foreach ($all as $row) {

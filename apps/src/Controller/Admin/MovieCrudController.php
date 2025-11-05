@@ -125,7 +125,7 @@ class MovieCrudController extends CrudControllerAbstract
                 $trailerField,
                 $wysiwygField,
                 $descriptionField,
-                $this->crudFieldFactory->categoriesField('movie'),
+                $this->crudFieldFactory->categoriesFieldForPage(self::getEntityFqcn(), $pageName),
                 // image field déjà incluse dans baseIdentitySet
                 $booleanField,
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
@@ -133,7 +133,7 @@ class MovieCrudController extends CrudControllerAbstract
         );
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
@@ -153,8 +153,7 @@ class MovieCrudController extends CrudControllerAbstract
             );
         }
 
-        $this->crudFieldFactory->addFilterTags($filters, 'movie');
-        $this->crudFieldFactory->addFilterCategories($filters, 'movie');
+        $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
         $this->addFilterSaga($filters);
 
         return $filters;
@@ -168,8 +167,8 @@ class MovieCrudController extends CrudControllerAbstract
     #[Route('/admin/movie/{entity}/imdb', name: 'admin_movie_imdb')]
     public function imdb(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $movie                           = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $movie                           = $repositoryAbstract->find($entity);
 
         return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
     }
@@ -177,8 +176,8 @@ class MovieCrudController extends CrudControllerAbstract
     #[Route('/admin/movie/{entity}/tmdb', name: 'admin_movie_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $movie                           = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $movie                           = $repositoryAbstract->find($entity);
 
         return $this->redirect('https://www.themoviedb.org/movie/' . $movie->getTmdb());
     }
@@ -186,8 +185,8 @@ class MovieCrudController extends CrudControllerAbstract
     #[Route('/admin/movie/{entity}/update', name: 'admin_movie_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $movie                           = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $movie                           = $repositoryAbstract->find($entity);
         $messageBus->dispatch(new MovieMessage($movie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -225,10 +224,10 @@ class MovieCrudController extends CrudControllerAbstract
      */
     private function getMovieRepository(): MovieRepository
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        assert($serviceEntityRepositoryAbstract instanceof MovieRepository);
+        $repositoryAbstract = $this->getRepository();
+        assert($repositoryAbstract instanceof MovieRepository);
 
-        return $serviceEntityRepositoryAbstract;
+        return $repositoryAbstract;
     }
 
     private function setLinkImdbAction(): Action

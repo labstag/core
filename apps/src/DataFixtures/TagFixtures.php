@@ -4,7 +4,9 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\Entity\Tag;
+use Labstag\Entity\PageTag;
+use Labstag\Entity\PostTag;
+use Labstag\Entity\StoryTag;
 use Override;
 
 class TagFixtures extends FixtureAbstract
@@ -24,16 +26,15 @@ class TagFixtures extends FixtureAbstract
     protected function addTag(Generator $generator, ObjectManager $objectManager): void
     {
         $tab  = [
-            'chapter',
-            'page',
-            'post',
-            'story',
+            'page'  => PageTag::class,
+            'post'  => PostTag::class,
+            'story' => StoryTag::class,
         ];
-        $code = $tab[array_rand($tab)];
-        $tag  = new Tag();
-        $tag->setTitle($generator->unique()->colorName());
-        $tag->setType($code);
-        $this->addReference('tag' . $code . '_' . md5(uniqid()), $tag);
-        $objectManager->persist($tag);
+        foreach ($tab as $code => $class) {
+            $tag = new $class();
+            $tag->setTitle($generator->unique()->colorName());
+            $this->addReference('tag' . $code . '_' . md5(uniqid()), $tag);
+            $objectManager->persist($tag);
+        }
     }
 }

@@ -20,8 +20,9 @@ class ConfigurationFileStorage extends FileStorageAbstract implements FileStorag
         $this->setType('configuration');
     }
 
-    public function getEntity(): ?string
+    #[\Override]
+    public function getEntity(): array
     {
-        return Configuration::class;
+        return [Configuration::class];
     }
 }

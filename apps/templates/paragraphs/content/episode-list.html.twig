@@ -6,12 +6,38 @@
                 {{ paragraph.title }}
             </h3>
         {% endif %}
-        <ul>
-            {% for row in episodes %}
-                <li class="teaser-episode">
-                    {% include  "teasers/episode.html.twig"  with {'episode': row, 'index': loop.index} %}
+        <div class="episode-list">
+            <ul>
+                {% for row in episodes %}
+                    <li class="teaser-episode">
+                        {% include  "teasers/episode.html.twig"  with {'episode': row, 'index': loop.index} %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="season-navigation">
+            <ul>
+                {% if prev %}
+                    <li>
+                        <a href="{{ site_path(prev) }}" class="btn">
+                            {{ prev.title }}
+                        </a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="{{ site_path(data.entity.refserie) }}" class="btn">
+                        {{ 'Return to serie'|trans }}
+                    </a>
                 </li>
-            {% endfor %}
-        </ul>
+                {% if next %}
+                    <li>
+                        <a href="{{ site_path(next) }}" class="btn">
+            
+                            {{ next.title }}
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 </section>

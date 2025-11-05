@@ -2,7 +2,9 @@
 
 namespace Labstag\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Category;
+use Labstag\Entity\MovieCategory;
 use Labstag\Repository\CategoryRepository;
 
 class CategoryService
@@ -11,6 +13,7 @@ class CategoryService
     protected array $categories = [];
 
     public function __construct(
+        private EntityManagerInterface $entityManager,
         protected CategoryRepository $categoryRepository,
     )
     {
@@ -21,7 +24,7 @@ class CategoryService
      */
     public function getCategoryMovieForForm(): array
     {
-        $data       = $this->categoryRepository->findAllByTypeMovieEnable();
+        $data       = $this->categoryRepository->findAllByTypeMovieEnable(MovieCategory::class);
         $categories = [];
         foreach ($data as $category) {
             $categories[$category->getTitle()] = $category->getSlug();
@@ -30,20 +33,18 @@ class CategoryService
         return $categories;
     }
 
-    public function getType(string $type, string $title): Category
+    public function getType(string $title, string $class): Category
     {
-        $categories = $this->categoryRepository->findBy(
-            ['type' => $type]
-        );
+        $entityRepository = $this->entityManager->getRepository($class);
+        $categories       = $entityRepository->findAll();
         foreach ($categories as $category) {
             if ($category->getTitle() === $title) {
                 return $category;
             }
         }
 
-        $category = new Category();
+        $category = new $class();
         $category->setTitle($title);
-        $category->setType($type);
 
         $this->categoryRepository->save($category);
 

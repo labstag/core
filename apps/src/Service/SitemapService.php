@@ -11,7 +11,7 @@ use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
-use Labstag\Repository\ServiceEntityRepositoryAbstract;
+use Labstag\Repository\RepositoryAbstract;
 
 final class SitemapService
 {
@@ -71,12 +71,12 @@ final class SitemapService
      */
     private function getDataFromRepository(string $entityClass): array
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository($entityClass);
-        if (!method_exists($serviceEntityRepositoryAbstract, 'getAllActivate')) {
+        $repositoryAbstract = $this->getRepository($entityClass);
+        if (!method_exists($repositoryAbstract, 'getAllActivate')) {
             return [];
         }
 
-        return $serviceEntityRepositoryAbstract->getAllActivate();
+        return $repositoryAbstract->getAllActivate();
     }
 
     /**
@@ -139,9 +139,9 @@ final class SitemapService
             return [];
         }
 
-        $stories    = $this->getDataFromRepository(Story::class);
+        $stories          = $this->getDataFromRepository(Story::class);
         $entityRepository = $this->entityManager->getRepository(Chapter::class);
-        $chapters   = [];
+        $chapters         = [];
         foreach ($stories as &$story) {
             $chaptersStory = $entityRepository->getAllActivateByStory($story);
             if (0 === count($chaptersStory)) {
@@ -155,12 +155,12 @@ final class SitemapService
     }
 
     /**
-     * @return ServiceEntityRepositoryAbstract<object>
+     * @return RepositoryAbstract<object>
      */
-    private function getRepository(string $entity): ServiceEntityRepositoryAbstract
+    private function getRepository(string $entity): object
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
+        if (is_null($entityRepository)) {
             throw new Exception('Repository not found');
         }
 

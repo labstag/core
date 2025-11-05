@@ -4,9 +4,11 @@ namespace Labstag\Block;
 
 use Labstag\Block\Traits\ParagraphProcessingTrait;
 use Labstag\Entity\Block;
+use Labstag\Entity\ContentBlock as EntityContentBlock;
 use Labstag\Entity\Page;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ContentBlock extends BlockAbstract
 {
@@ -75,10 +77,15 @@ class ContentBlock extends BlockAbstract
         $this->setData($block, $tab);
     }
 
+    public function getClass(): string
+    {
+        return EntityContentBlock::class;
+    }
+
     #[Override]
     public function getName(): string
     {
-        return 'Content';
+        return (string) new TranslatableMessage('Content');
     }
 
     #[Override]

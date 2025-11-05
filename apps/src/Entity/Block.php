@@ -8,20 +8,31 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Labstag\Repository\BlockRepository;
-use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
+#[ORM\Table(name: 'block')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\Entity(repositoryClass: BlockRepository::class)]
 #[ORM\Index(name: 'IDX_BLOCK_SLUG', columns: ['slug'])]
-class Block implements Stringable
+#[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
+#[ORM\DiscriminatorMap(
+    [
+        'admin'      => AdminBlock::class,
+        'paragraphs' => ParagraphsBlock::class,
+        'links'      => LinksBlock::class,
+        'html'       => HtmlBlock::class,
+        'hero'       => HeroBlock::class,
+        'flashbag'   => FlashbagBlock::class,
+        'content'    => ContentBlock::class,
+        'breadcrumb' => BreadcrumbBlock::class,
+    ]
+)]
+abstract class Block implements Stringable
 {
 
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $classes = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    protected ?string $content = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
@@ -34,12 +45,6 @@ class Block implements Stringable
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
-
-    /**
-     * @var Collection<int, Link>
-     */
-    #[ORM\OneToMany(targetEntity: Link::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
-    protected Collection $links;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $pages = null;
@@ -77,32 +82,14 @@ class Block implements Stringable
     #[ORM\Column(length: 255)]
     protected ?string $title = null;
 
-    #[ORM\Column(length: 255)]
-    protected ?string $type = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?array $data = null;
-
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
-        $this->links      = new ArrayCollection();
     }
 
-    #[Override]
     public function __toString(): string
     {
-        return (string) $this->getTitle();
-    }
-
-    public function addLink(Link $link): static
-    {
-        if (!$this->links->contains($link)) {
-            $this->links->add($link);
-            $link->setBlock($this);
-        }
-
-        return $this;
+        return (string) $this->getId();
     }
 
     public function addParagraph(Paragraph $paragraph): static
@@ -120,27 +107,9 @@ class Block implements Stringable
         return $this->classes;
     }
 
-    public function getContent(): ?string
-    {
-        return $this->content;
-    }
-
-    public function getData(): ?array
-    {
-        return $this->data;
-    }
-
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    /**
-     * @return Collection<int, Link>
-     */
-    public function getLinks(): Collection
-    {
-        return $this->links;
     }
 
     public function getPages(): ?string
@@ -184,11 +153,6 @@ class Block implements Stringable
         return $this->title;
     }
 
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
     public function isEnable(): ?bool
     {
         return $this->enable;
@@ -197,17 +161,6 @@ class Block implements Stringable
     public function isRequestPath(): ?bool
     {
         return $this->requestPath;
-    }
-
-    public function removeLink(Link $link): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->links->removeElement($link) && $link->getBlock() === $this
-        ) {
-            $link->setBlock(null);
-        }
-
-        return $this;
     }
 
     public function removeParagraph(Paragraph $paragraph): static
@@ -224,20 +177,6 @@ class Block implements Stringable
     public function setClasses(?string $classes): static
     {
         $this->classes = $classes;
-
-        return $this;
-    }
-
-    public function setContent(?string $content): static
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    public function setData(?array $data): static
-    {
-        $this->data = $data;
 
         return $this;
     }
@@ -297,13 +236,6 @@ class Block implements Stringable
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function setType(string $type): static
-    {
-        $this->type = $type;
 
         return $this;
     }

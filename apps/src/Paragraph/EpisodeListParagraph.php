@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Episode;
+use Labstag\Entity\EpisodeListParagraph as EntityEpisodeListParagraph;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Season;
 use Override;
@@ -27,22 +28,37 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
             return;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Episode::class);
-        $episodes                        = $serviceEntityRepositoryAbstract->getAllActivateBySeason($data['entity']);
+        $entityRepository                = $this->getRepository(Episode::class);
+        $episodes                        = $entityRepository->getAllActivateBySeason($data['entity']);
         if (0 === count($episodes)) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
+        $serie = $data['entity']->getRefSerie();
+        $number = $data['entity']->getNumber();
+        $repository = $this->getRepository(Season::class);
+
+        $prev = $repository->getOneBySerieAndPosition($serie, $number - 1);
+        $next = $repository->getOneBySerieAndPosition($serie, $number + 1);
+
         $this->setData(
             $paragraph,
             [
+                'prev'      => $prev,
+                'next'      => $next,
+                'serie'     => $serie,
                 'episodes'  => $episodes,
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityEpisodeListParagraph::class;
     }
 
     /**
@@ -59,7 +75,7 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
     #[Override]
     public function getName(): string
     {
-        return 'Episode list';
+        return (string) new TranslatableMessage('Episode list');
     }
 
     #[Override]
@@ -75,12 +91,8 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Block;

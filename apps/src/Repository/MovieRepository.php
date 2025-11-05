@@ -10,9 +10,9 @@ use Labstag\Entity\Saga;
 use Symfony\Component\Intl\Countries;
 
 /**
- * @extends ServiceEntityRepositoryAbstract<Movie>
+ * @extends RepositoryAbstract<Movie>
  */
-class MovieRepository extends ServiceEntityRepositoryAbstract
+class MovieRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

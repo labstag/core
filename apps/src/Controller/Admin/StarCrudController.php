@@ -70,7 +70,7 @@ class StarCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
@@ -105,12 +105,12 @@ class StarCrudController extends CrudControllerAbstract
      */
     private function getAllData(string $type): array
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        if (!$serviceEntityRepositoryAbstract instanceof StarRepository) {
+        $repositoryAbstract = $this->getRepository();
+        if (!$repositoryAbstract instanceof StarRepository) {
             return [];
         }
 
-        $all = $serviceEntityRepositoryAbstract->findAllData($type);
+        $all = $repositoryAbstract->findAllData($type);
 
         $data = [];
         foreach ($all as $row) {

@@ -53,7 +53,10 @@ class PostCrudController extends CrudControllerAbstract
             ]
         );
 
-        $this->crudFieldFactory->addFieldsToTab('principal', $this->crudFieldFactory->taxonomySet('post'));
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            $this->crudFieldFactory->taxonomySet(self::getEntityFqcn(), $pageName)
+        );
 
         // Additional specific field (resume) not yet in factory bundle - placed at end of principal tab
         $wysiwygField = WysiwygField::new('resume', new TranslatableMessage('resume'));
@@ -68,28 +71,18 @@ class PostCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->setTabWorkflow();
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
         $this->crudFieldFactory->addFilterEnable($filters);
-        $this->crudFieldFactory->addFilterTags($filters, 'post');
-        $this->crudFieldFactory->addFilterCategories($filters, 'post');
+        $this->crudFieldFactory->addFilterTagsFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
 
         return $filters;
-    }
-
-    #[\Override]
-    public function createEntity(string $entityFqcn): Post
-    {
-        $post = new $entityFqcn();
-        $this->workflowService->init($post);
-        $post->setRefuser($this->getUser());
-
-        return $post;
     }
 
     public static function getEntityFqcn(): string
@@ -100,8 +93,8 @@ class PostCrudController extends CrudControllerAbstract
     #[Route('/admin/post/{entity}/public', name: 'admin_post_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $post                            = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $post                            = $repositoryAbstract->find($entity);
 
         return $this->publicLink($post);
     }
@@ -109,8 +102,8 @@ class PostCrudController extends CrudControllerAbstract
     #[Route('/admin/post/{entity}/w3c', name: 'admin_post_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $post                            = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $post                            = $repositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($post);
     }

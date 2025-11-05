@@ -4,11 +4,14 @@ namespace Labstag\Block;
 
 use Labstag\Block\Traits\CacheableTrait;
 use Labstag\Entity\Block;
+use Labstag\Entity\BreadcrumbBlock as EntityBreadcrumbBlock;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Override;
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class BreadcrumbBlock extends BlockAbstract
 {
@@ -59,10 +62,15 @@ class BreadcrumbBlock extends BlockAbstract
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityBreadcrumbBlock::class;
+    }
+
     #[Override]
     public function getName(): string
     {
-        return 'Breadcrumb';
+        return (string) new TranslatableMessage('Breadcrumb');
     }
 
     #[Override]
@@ -109,7 +117,11 @@ class BreadcrumbBlock extends BlockAbstract
 
                 while ('' !== $currentSlug) {
                     foreach ($this->dataLibs as $dataLib) {
-                        if ($dataLib->match($currentSlug)) {
+                        $classe = new ReflectionClass($dataLib);
+                        if ($classe->hasMethod('getTitle') && $classe->hasMethod('match') && $dataLib->match(
+                            $currentSlug
+                        )
+                        ) {
                             $entity = $dataLib->getEntity($currentSlug);
                             $urls[] = [
                                 'title' => $dataLib->getTitle($entity),

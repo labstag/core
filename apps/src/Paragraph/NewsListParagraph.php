@@ -4,12 +4,14 @@ namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
+use Labstag\Entity\NewsListParagraph as EntityNewsListParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\PostRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -19,13 +21,19 @@ class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityNewsListParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
-        /** @var PostRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Post::class);
+        /** @var PostRepository $entityRepository */
+        $entityRepository                = $this->getRepository(Post::class);
         $categorySlug                    = $this->getCategorySlug();
         $tagSlug                         = $this->getTagSlug();
         $pagination                      = $this->getPaginator(
-            $serviceEntityRepositoryAbstract->getQueryPaginator($categorySlug, $tagSlug),
+            $entityRepository->getQueryPaginator($categorySlug, $tagSlug),
             $paragraph->getNbr()
         );
         $this->setData(
@@ -47,6 +55,11 @@ class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityNewsListParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -60,7 +73,7 @@ class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'News list';
+        return (string) new TranslatableMessage('News list');
     }
 
     #[Override]
@@ -76,12 +89,8 @@ class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page && $object->getType() == PageEnum::POSTS->value;

@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Movie;
+use Labstag\Entity\MovieSliderParagraph as EntityMovieSliderParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Enum\PageEnum;
@@ -21,6 +22,12 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityMovieSliderParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::MOVIES->value);
         if (!is_object($listing) || !$listing->isEnable()) {
@@ -29,11 +36,11 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
             return;
         }
 
-        /** @var MovieRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Movie::class);
+        /** @var MovieRepository $entityRepository */
+        $entityRepository                = $this->getRepository(Movie::class);
         $nbr                             = $paragraph->getNbr();
         $title                           = $paragraph->getTitle();
-        $movies                          = $serviceEntityRepositoryAbstract->findLastByNbr($nbr);
+        $movies                          = $entityRepository->findLastByNbr($nbr);
         if (0 === count($movies)) {
             $this->setShow($paragraph, false);
 
@@ -52,6 +59,11 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityMovieSliderParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -67,7 +79,7 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
     #[Override]
     public function getName(): string
     {
-        return 'movie slider';
+        return (string) new TranslatableMessage('movie slider');
     }
 
     #[Override]
@@ -83,12 +95,8 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page && $object->getType() == PageEnum::HOME->value;

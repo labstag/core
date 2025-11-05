@@ -3,6 +3,7 @@
 namespace Labstag\Data;
 
 use Labstag\Entity\Paragraph;
+use stdClass;
 
 class ParagraphData extends DataAbstract implements DataInterface
 {
@@ -17,7 +18,7 @@ class ParagraphData extends DataAbstract implements DataInterface
     {
         unset($slug);
 
-        return new Paragraph();
+        return new stdClass();
     }
 
     public function getTitle(object $entity): string

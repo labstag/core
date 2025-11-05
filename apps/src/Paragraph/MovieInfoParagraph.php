@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Generator;
 use Labstag\Entity\Edito;
 use Labstag\Entity\Memo;
+use Labstag\Entity\MovieInfoParagraph as EntityMovieInfoParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
@@ -21,6 +22,12 @@ class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityMovieInfoParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         if (is_null($paragraph->getRefmovie())) {
             $this->setShow($paragraph, false);
@@ -35,6 +42,11 @@ class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
                 'data'      => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityMovieInfoParagraph::class;
     }
 
     /**
@@ -54,7 +66,7 @@ class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Movie Info';
+        return (string) new TranslatableMessage('Movie Info');
     }
 
     #[Override]

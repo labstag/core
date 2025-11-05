@@ -59,7 +59,6 @@ class ChapterCrudController extends CrudControllerAbstract
             $this->crudFieldFactory->titleField(),
             $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
             $this->addFieldRefStory(),
-            $this->crudFieldFactory->tagsField('chapter'),
             WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex(),
         ];
 
@@ -72,7 +71,7 @@ class ChapterCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->setTabWorkflow();
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
@@ -80,7 +79,7 @@ class ChapterCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->addFilterEnable($filters);
         $filters->add(EntityFilter::new('refstory', new TranslatableMessage('Story')));
-        $this->crudFieldFactory->addFilterTags($filters, 'chapter');
+        $this->crudFieldFactory->addFilterTagsFor($filters, self::getEntityFqcn());
 
         return $filters;
     }
@@ -88,7 +87,7 @@ class ChapterCrudController extends CrudControllerAbstract
     #[\Override]
     public function createEntity(string $entityFqcn): Chapter
     {
-        $chapter      = new $entityFqcn();
+        $chapter      = parent::createEntity($entityFqcn);
         $request      = $this->requestStack->getCurrentRequest();
         $defaultStory = $request->query->get('story');
         if ($defaultStory) {
@@ -96,8 +95,6 @@ class ChapterCrudController extends CrudControllerAbstract
             $story      = $repository->find($defaultStory);
             $chapter->setRefstory($story);
         }
-
-        $this->workflowService->init($chapter);
 
         return $chapter;
     }
@@ -110,8 +107,8 @@ class ChapterCrudController extends CrudControllerAbstract
     #[Route('/admin/chapter/{entity}/public', name: 'admin_chapter_public')]
     public function linkPublic(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $chapter                         = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $chapter                         = $repositoryAbstract->find($entity);
 
         return $this->publicLink($chapter);
     }
@@ -119,8 +116,8 @@ class ChapterCrudController extends CrudControllerAbstract
     #[Route('/admin/chapter/{entity}/update', name: 'admin_chapter_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $chapter                         = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $chapter                         = $repositoryAbstract->find($entity);
         $messageBus->dispatch(new StoryMessage($chapter->getRefstory()->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -135,8 +132,8 @@ class ChapterCrudController extends CrudControllerAbstract
     #[Route('/admin/chapter/{entity}/w3c', name: 'admin_chapter_w3c')]
     public function w3c(string $entity): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract = $this->getRepository();
-        $chapter                         = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract              = $this->getRepository();
+        $chapter                         = $repositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($chapter);
     }

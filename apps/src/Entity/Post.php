@@ -30,9 +30,9 @@ class Post implements Stringable
     use WorkflowTrait;
 
     /**
-     * @var Collection<int, Category>
+     * @var Collection<int, PostCategory>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(targetEntity: PostCategory::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
     protected Collection $categories;
 
     #[ORM\Column(
@@ -78,9 +78,9 @@ class Post implements Stringable
     protected ?string $slug = null;
 
     /**
-     * @var Collection<int, Tag>
+     * @var Collection<int, PostTag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(targetEntity: PostTag::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
     protected Collection $tags;
 
     #[ORM\Column(length: 255)]
@@ -99,11 +99,11 @@ class Post implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addCategory(Category $category): static
+    public function addCategory(PostCategory $postCategory): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addPost($this);
+        if (!$this->categories->contains($postCategory)) {
+            $this->categories->add($postCategory);
+            $postCategory->addPost($this);
         }
 
         return $this;
@@ -119,18 +119,18 @@ class Post implements Stringable
         return $this;
     }
 
-    public function addTag(Tag $tag): static
+    public function addTag(PostTag $postTag): static
     {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addPost($this);
+        if (!$this->tags->contains($postTag)) {
+            $this->tags->add($postTag);
+            $postTag->addPost($this);
         }
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Category>
+     * @return Collection<int, PostCategory>
      */
     public function getCategories(): Collection
     {
@@ -181,7 +181,7 @@ class Post implements Stringable
     }
 
     /**
-     * @return Collection<int, Tag>
+     * @return Collection<int, PostTag>
      */
     public function getTags(): Collection
     {
@@ -198,10 +198,10 @@ class Post implements Stringable
         return $this->enable;
     }
 
-    public function removeCategory(Category $category): static
+    public function removeCategory(PostCategory $postCategory): static
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removePost($this);
+        if ($this->categories->removeElement($postCategory)) {
+            $postCategory->removePost($this);
         }
 
         return $this;
@@ -218,10 +218,10 @@ class Post implements Stringable
         return $this;
     }
 
-    public function removeTag(Tag $tag): static
+    public function removeTag(PostTag $postTag): static
     {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removePost($this);
+        if ($this->tags->removeElement($postTag)) {
+            $postTag->removePost($this);
         }
 
         return $this;

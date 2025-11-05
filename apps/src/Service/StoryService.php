@@ -4,6 +4,7 @@ namespace Labstag\Service;
 
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
+use Labstag\Entity\TextParagraph;
 use Mpdf\Mpdf;
 use RuntimeException;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -133,7 +134,7 @@ final class StoryService
         $mpdf->TOC_Entry($chapter->getTitle(), 0);
         $position = 0;
         foreach ($paragraphs as $paragraph) {
-            if ('text' == $paragraph->getType()) {
+            if ($paragraph instanceof TextParagraph) {
                 if (0 === $position) {
                     $mpdf->WriteHTML('<h2>' . $chapter->getTitle() . '</h2>');
                 }

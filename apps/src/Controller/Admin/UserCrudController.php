@@ -120,7 +120,7 @@ class UserCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab('principal', $fields);
 
         $this->crudFieldFactory->setTabWorkflow();
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
@@ -149,7 +149,7 @@ class UserCrudController extends CrudControllerAbstract
     #[\Override]
     public function createEntity(string $entityFqcn): User
     {
-        $user = new $entityFqcn();
+        $user = parent::createEntity($entityFqcn);
         $this->workflowService->init($user);
         $langue = $this->userService->getLanguagesForChoices();
         $key    = array_key_first($langue);

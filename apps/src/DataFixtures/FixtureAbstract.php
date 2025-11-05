@@ -9,6 +9,8 @@ use Faker\Generator;
 use Faker\Provider\Youtube;
 use Labstag\Entity\Category;
 use Labstag\Entity\Tag;
+use Labstag\Entity\TextParagraph;
+use Labstag\Service\BlockService;
 use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
@@ -35,6 +37,7 @@ abstract class FixtureAbstract extends Fixture
     public function __construct(
         protected EmailService $emailService,
         protected WorkflowService $workflowService,
+        protected BlockService $blockService,
         protected UserService $userService,
         protected FileService $fileService,
         protected ParagraphService $paragraphService,
@@ -42,7 +45,7 @@ abstract class FixtureAbstract extends Fixture
     {
     }
 
-    protected function addCategoryToEntity(object $entity): void
+    protected function addCategoryToEntity(object $entity, string $class): void
     {
         if ([] === $this->categories) {
             return;
@@ -57,7 +60,7 @@ abstract class FixtureAbstract extends Fixture
         shuffle($categories);
         $categories = array_slice($categories, 0, $max);
         foreach ($categories as $categoryId) {
-            $category = $this->getReference($categoryId, Category::class);
+            $category = $this->getReference($categoryId, $class);
             $entity->addCategory($category);
         }
     }
@@ -66,14 +69,14 @@ abstract class FixtureAbstract extends Fixture
     {
         $generator = $this->setFaker();
         $paragraph = $this->paragraphService->addParagraph($entity, 'text');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof TextParagraph) {
             return;
         }
 
         $paragraph->setContent($generator->text(500));
     }
 
-    protected function addTagToEntity(object $entity): void
+    protected function addTagToEntity(object $entity, string $class): void
     {
         if ([] === $this->tags) {
             return;
@@ -88,7 +91,7 @@ abstract class FixtureAbstract extends Fixture
         shuffle($tags);
         $tags = array_slice($tags, 0, $max);
         foreach ($tags as $tagId) {
-            $tag = $this->getReference($tagId, Tag::class);
+            $tag = $this->getReference($tagId, $class);
             $entity->addTag($tag);
         }
     }
@@ -96,17 +99,11 @@ abstract class FixtureAbstract extends Fixture
     /**
      * @return mixed[]
      */
-    protected function getIdentitiesByClass(string $class, ?string $id = null): array
+    protected function getIdentitiesByClass(string $class): array
     {
         $data = $this->referenceRepository->getIdentitiesByClass();
 
-        $data = $data[$class] ?? [];
-
-        if (!is_null($id)) {
-            return array_filter($data, fn ($key): bool => str_contains($key, $id), ARRAY_FILTER_USE_KEY);
-        }
-
-        return $data;
+        return $data[$class] ?? [];
     }
 
     protected function loadForeach(int $number, string $method, ObjectManager $objectManager): void

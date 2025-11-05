@@ -7,9 +7,12 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Saga;
+use Labstag\Entity\SagaParagraph as EntitySagaParagraph;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\MovieRepository;
+use Labstag\Repository\SagaRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -49,10 +52,16 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
             }
         }
 
-        /** @var MovieRepository $serviceEntityRepositoryAbstract */
-        $serviceEntityRepositoryAbstract = $this->getRepository(Saga::class);
+        /** @var MovieRepository $entityRepository */
+        $entityRepository = $this->getRepository(Saga::class);
+        if (!$entityRepository instanceof SagaRepository) {
+            $this->logger->error('SagaParagraph: Saga repository not found.');
+            $this->setShow($paragraph, false);
 
-        $sagas = $serviceEntityRepositoryAbstract->showPublic();
+            return;
+        }
+
+        $sagas = $entityRepository->showPublic();
         foreach ($sagas as $key => $saga) {
             $total = $saga->getMovies()->filter(fn ($movie) => $movie->isEnable());
             if (self::MINMOVIES > count($total)) {
@@ -76,6 +85,11 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntitySagaParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -89,7 +103,7 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Saga';
+        return (string) new TranslatableMessage('Saga');
     }
 
     #[Override]
@@ -105,12 +119,8 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page && $object->getType() == PageEnum::MOVIES->value;

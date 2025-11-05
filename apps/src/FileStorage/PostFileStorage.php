@@ -20,8 +20,9 @@ class PostFileStorage extends FileStorageAbstract implements FileStorageInterfac
         $this->setType('post');
     }
 
-    public function getEntity(): ?string
+    #[\Override]
+    public function getEntity(): array
     {
-        return Post::class;
+        return [Post::class];
     }
 }

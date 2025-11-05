@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Labstag\Tests\Integration\Entity;
 
 use DateTime;
-use Labstag\Entity\Category;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Post;
-use Labstag\Entity\Tag;
+use Labstag\Entity\PostCategory;
+use Labstag\Entity\PostTag;
 use Labstag\Entity\User;
 use Labstag\Tests\AbstractTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -24,13 +24,11 @@ final class PostTest extends AbstractTestCase
     public function postcategoriesrelationship(): void
     {
         // Arrange
-        $category1 = new Category();
+        $category1 = new PostCategory();
         $category1->setTitle('Technology');
-        $category1->setType('post');
 
-        $category2 = new Category();
+        $category2 = new PostCategory();
         $category2->setTitle('Programming');
-        $category2->setType('post');
 
         $post = new Post();
         $post->setTitle('Tech Post');
@@ -128,25 +126,24 @@ final class PostTest extends AbstractTestCase
     public function postremovecategoryrelationship(): void
     {
         // Arrange
-        $category = new Category();
-        $category->setTitle('Removable Category');
-        $category->setType('post');
+        $postCategory = new PostCategory();
+        $postCategory->setTitle('Removable Category');
 
         $post = new Post();
         $post->setTitle('Post with Removable Category');
         $post->setEnable(true);
-        $post->addCategory($category);
+        $post->addCategory($postCategory);
 
-        $this->persistAndFlush($category);
+        $this->persistAndFlush($postCategory);
         $this->persistAndFlush($post);
 
         // Act
-        $post->removeCategory($category);
+        $post->removeCategory($postCategory);
         $this->persistAndFlush($post);
 
         // Assert
         $this->assertCount(0, $post->getCategories());
-        $this->assertFalse($category->getPosts()->contains($post));
+        $this->assertFalse($postCategory->getPosts()->contains($post));
     }
 
     #[Test]
@@ -154,25 +151,24 @@ final class PostTest extends AbstractTestCase
     public function postremovetagrelationship(): void
     {
         // Arrange
-        $tag = new Tag();
-        $tag->setTitle('Removable Tag');
-        $tag->setType('post');
+        $postTag = new PostTag();
+        $postTag->setTitle('Removable Tag');
 
         $post = new Post();
         $post->setTitle('Post with Removable Tag');
         $post->setEnable(true);
-        $post->addTag($tag);
+        $post->addTag($postTag);
 
-        $this->persistAndFlush($tag);
+        $this->persistAndFlush($postTag);
         $this->persistAndFlush($post);
 
         // Act
-        $post->removeTag($tag);
+        $post->removeTag($postTag);
         $this->persistAndFlush($post);
 
         // Assert
         $this->assertCount(0, $post->getTags());
-        $this->assertFalse($tag->getPosts()->contains($post));
+        $this->assertFalse($postTag->getPosts()->contains($post));
     }
 
     #[Test]
@@ -235,13 +231,11 @@ final class PostTest extends AbstractTestCase
     public function posttagsrelationship(): void
     {
         // Arrange
-        $tag1 = new Tag();
+        $tag1 = new PostTag();
         $tag1->setTitle('PHP');
-        $tag1->setType('post');
 
-        $tag2 = new Tag();
+        $tag2 = new PostTag();
         $tag2->setTitle('Symfony');
-        $tag2->setType('post');
 
         $post = new Post();
         $post->setTitle('PHP Symfony Post');

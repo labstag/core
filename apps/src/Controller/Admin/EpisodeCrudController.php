@@ -62,11 +62,13 @@ class EpisodeCrudController extends CrudControllerAbstract
         $textField = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
         $textField->hideOnIndex();
 
-        $reasonField = TextField::new('refseason', new TranslatableMessage('Serie'));
-        $reasonField->setFormTypeOption('choice_label', 'refserie');
-        $reasonField->formatValue(
+        $seasonField = TextField::new('refseason', new TranslatableMessage('Serie'));
+        $seasonField->formatValue(
             function ($value, $entity) {
                 unset($value);
+                if (is_null($entity)) {
+                    return '';
+                }
 
                 $season = $entity->getRefseason();
                 if (is_null($season)) {
@@ -99,7 +101,7 @@ class EpisodeCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $textField,
-                $reasonField,
+                $seasonField,
                 AssociationField::new('refseason', new TranslatableMessage('Season')),
                 IntegerField::new('number', new TranslatableMessage('Number')),
                 DateField::new('air_date', new TranslatableMessage('Air date')),
@@ -111,7 +113,7 @@ class EpisodeCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
@@ -120,12 +122,18 @@ class EpisodeCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterEnable($filters);
         $filters->add(
             SerieEpisodeFilter::new('number', new TranslatableMessage('Season'))->setChoices(
-                $this->seasonService->getSeasonsChoice()
+                array_merge(
+                    ['' => ''],
+                    $this->seasonService->getSeasonsChoice()
+                )
             )
         );
         $filters->add(
             SeasonEpisodeFilter::new('serie', new TranslatableMessage('Serie'))->setChoices(
-                $this->serieService->getSeriesChoice()
+                array_merge(
+                    ['' => ''],
+                    $this->serieService->getSeriesChoice()
+                )
             )
         );
 
@@ -140,8 +148,8 @@ class EpisodeCrudController extends CrudControllerAbstract
     #[Route('/admin/episode/{entity}/update', name: 'admin_episode_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
-        $serviceEntityRepositoryAbstract   = $this->getRepository();
-        $episode                           = $serviceEntityRepositoryAbstract->find($entity);
+        $repositoryAbstract                = $this->getRepository();
+        $episode                           = $repositoryAbstract->find($entity);
         $messageBus->dispatch(new EpisodeMessage($episode->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');

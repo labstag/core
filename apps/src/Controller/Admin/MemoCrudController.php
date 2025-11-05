@@ -52,26 +52,16 @@ class MemoCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->setTabWorkflow();
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
         $this->crudFieldFactory->addFilterEnable($filters);
 
         return $filters;
-    }
-
-    #[\Override]
-    public function createEntity(string $entityFqcn): Memo
-    {
-        $memo = new $entityFqcn();
-        $this->workflowService->init($memo);
-        $memo->setRefuser($this->getUser());
-
-        return $memo;
     }
 
     public static function getEntityFqcn(): string

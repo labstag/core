@@ -7,7 +7,6 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
-use Labstag\Entity\Tag;
 use Override;
 
 class ChapterFixtures extends FixtureAbstract implements DependentFixtureInterface
@@ -43,7 +42,6 @@ class ChapterFixtures extends FixtureAbstract implements DependentFixtureInterfa
     public function load(ObjectManager $objectManager): void
     {
         $this->stories = $this->getIdentitiesByClass(Story::class);
-        $this->tags    = $this->getIdentitiesByClass(Tag::class, 'chapter');
         $this->loadForeach(self::NUMBER_CHAPTER, 'addChapter', $objectManager);
         $objectManager->flush();
     }
@@ -68,7 +66,6 @@ class ChapterFixtures extends FixtureAbstract implements DependentFixtureInterfa
 
         $this->paragraphService->addParagraph($chapter, 'text');
         $this->setImage($chapter, 'imgFile');
-        $this->addTagToEntity($chapter);
         $this->addReference('chapter_' . md5(uniqid()), $chapter);
         $this->position[$storyId][] = $chapter;
         $objectManager->persist($chapter);

@@ -51,26 +51,16 @@ class EditoCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->setTabDate($pageName);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
         $this->crudFieldFactory->addFilterEnable($filters);
 
         return $filters;
-    }
-
-    #[\Override]
-    public function createEntity(string $entityFqcn): Edito
-    {
-        $edito = new $entityFqcn();
-        $this->workflowService->init($edito);
-        $edito->setRefuser($this->getUser());
-
-        return $edito;
     }
 
     public static function getEntityFqcn(): string

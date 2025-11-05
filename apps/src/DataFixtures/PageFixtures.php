@@ -5,10 +5,20 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\Entity\Category;
+use Labstag\Entity\FormParagraph;
+use Labstag\Entity\LastNewsParagraph;
+use Labstag\Entity\LastStoryParagraph;
+use Labstag\Entity\MovieParagraph;
+use Labstag\Entity\MovieSliderParagraph;
+use Labstag\Entity\NewsListParagraph;
 use Labstag\Entity\Page;
-use Labstag\Entity\Tag;
+use Labstag\Entity\PageCategory;
+use Labstag\Entity\PageTag;
+use Labstag\Entity\SerieParagraph;
+use Labstag\Entity\StarParagraph;
+use Labstag\Entity\StoryListParagraph;
 use Labstag\Entity\User;
+use Labstag\Entity\VideoParagraph;
 use Labstag\Enum\PageEnum;
 use Override;
 
@@ -50,8 +60,8 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     {
         $generator        = $this->setFaker();
         $data             = $this->data();
-        $this->tags       = $this->getIdentitiesByClass(Tag::class, 'page');
-        $this->categories = $this->getIdentitiesByClass(Category::class, 'page');
+        $this->tags       = $this->getIdentitiesByClass(PageTag::class);
+        $this->categories = $this->getIdentitiesByClass(PageCategory::class);
         foreach ($data as $entity) {
             $this->setPage($objectManager, $generator, $entity);
         }
@@ -167,8 +177,8 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
         $page->setCreatedAt($date);
         $this->setImage($page, 'imgFile');
-        $this->addTagToEntity($page);
-        $this->addCategoryToEntity($page);
+        $this->addTagToEntity($page, PageTag::class);
+        $this->addCategoryToEntity($page, PageCategory::class);
 
         $this->addReference('page_' . md5(uniqid()), $page);
         $objectManager->persist($page);
@@ -179,7 +189,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'form');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof FormParagraph) {
             return;
         }
 
@@ -211,7 +221,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     private function setParagraphsHomeEdito(Page $page): void
     {
         $paragraph = $this->paragraphService->addParagraph($page, 'edito');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof VideoParagraph) {
             return;
         }
 
@@ -226,19 +236,18 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     private function setParagraphsHomeLastNews(Page $page): void
     {
         $paragraph = $this->paragraphService->addParagraph($page, 'last-news');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof LastNewsParagraph) {
             return;
         }
 
         $paragraph->setTitle('Dernières news');
-        $paragraph->setType('last-news');
         $paragraph->setNbr(4);
     }
 
     private function setParagraphsHomeLastStory(Page $page): void
     {
         $paragraph = $this->paragraphService->addParagraph($page, 'last-story');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof LastStoryParagraph) {
             return;
         }
 
@@ -249,7 +258,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     private function setParagraphsHomeMovieSlider(Page $page): void
     {
         $paragraph = $this->paragraphService->addParagraph($page, 'movie-slider');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof MovieSliderParagraph) {
             return;
         }
 
@@ -265,12 +274,11 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         }
 
         $paragraph = $this->paragraphService->addParagraph($page, 'video');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof VideoParagraph) {
             return;
         }
 
         $paragraph->setTitle('Vidéo');
-        $paragraph->setType('video');
         $this->setImage($paragraph, 'imgFile');
         $paragraph->setUrl($generator->youtubeUri());
     }
@@ -288,7 +296,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'saga');
         $paragraph = $this->paragraphService->addParagraph($page, 'movie');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof MovieParagraph) {
             return;
         }
 
@@ -300,7 +308,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'news-list');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof NewsListParagraph) {
             return;
         }
 
@@ -312,7 +320,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'serie');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof SerieParagraph) {
             return;
         }
 
@@ -323,12 +331,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     {
         $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'sitemap');
-        if (is_null($paragraph)) {
-            return;
-        }
-
-        $paragraph->setTitle('Sitemap');
+        $this->paragraphService->addParagraph($page, 'sitemap');
     }
 
     private function setParagraphsStar(Page $page): void
@@ -336,7 +339,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'star');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof StarParagraph) {
             return;
         }
 
@@ -348,7 +351,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'story-list');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof StoryListParagraph) {
             return;
         }
 

@@ -1,13 +1,6 @@
 <a href="{{ site_path(chapter) }}" title="{{ chapter.title|e('html_attr') }}">
     <div class="background spoiler" data-bg="{{ site_asset(chapter, 'img') }}"></div>
     <div class="wrapper">
-        {% if chapter.tags|length > 0 %}
-            <div class="tags">
-                {% for tag in chapter.tags %}
-                    <span class="tag-{{ tag.slug }}">{{ tag.title }}</span>
-                {% endfor %}
-            </div>
-        {% endif %}
         <h3 class="title">
             {{ chapter.title }}
         </h3>

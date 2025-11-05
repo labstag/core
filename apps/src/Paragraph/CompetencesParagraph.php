@@ -2,13 +2,14 @@
 
 namespace Labstag\Paragraph;
 
-use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Entity\CompetencesParagraph as EntityCompetencesParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Enum\PageEnum;
-use Labstag\Form\Paragraph\DataCompetencesType;
+use Labstag\Form\Paragraph\CompetencesType;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -20,6 +21,19 @@ class CompetencesParagraph extends ParagraphAbstract implements ParagraphInterfa
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityCompetencesParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
+        $experiences  = $paragraph->getCompetences();
+        if (0 == count($experiences)) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         $this->setData(
             $paragraph,
@@ -30,15 +44,27 @@ class CompetencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityCompetencesParagraph::class;
+    }
+
     #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($pageName, $paragraph);
         yield TextField::new('title', new TranslatableMessage('Title'));
         yield FormField::addColumn(12);
-        $fieldData = Field::new('data', 'Bloc de données');
-        $fieldData->setFormType(DataCompetencesType::class);
-        yield $fieldData;
+        $collectionField = CollectionField::new('competences', new TranslatableMessage('Competences'));
+        $collectionField->setEntryToStringMethod(
+            function ($link): \Symfony\Component\Translation\TranslatableMessage {
+                unset($link);
+
+                return new TranslatableMessage('Competence');
+            }
+        );
+        $collectionField->setEntryType(CompetencesType::class);
+        yield $collectionField;
     }
 
     #[Override]
@@ -60,12 +86,8 @@ class CompetencesParagraph extends ParagraphAbstract implements ParagraphInterfa
             return true;
         }
 
-        $serviceEntityRepositoryAbstract = $this->getRepository(Paragraph::class);
-        $paragraph                       = $serviceEntityRepositoryAbstract->findOneBy(
-            [
-                'type' => $this->getType(),
-            ]
-        );
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
             return $object instanceof Page && $object->getType() == PageEnum::CV->value;

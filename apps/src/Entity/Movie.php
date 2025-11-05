@@ -13,6 +13,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\MovieRepository;
 use Override;
+use ReflectionClass;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
@@ -30,9 +31,9 @@ class Movie implements Stringable
     protected ?bool $adult = null;
 
     /**
-     * @var Collection<int, Category>
+     * @var Collection<int, MovieCategory>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToMany(targetEntity: MovieCategory::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
     protected Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -81,9 +82,9 @@ class Movie implements Stringable
     protected ?File $imgFile = null;
 
     /**
-     * @var Collection<int, Paragraph>
+     * @var Collection<int, MovieInfoParagraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'refmovie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: MovieInfoParagraph::class, mappedBy: 'refmovie', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -119,11 +120,11 @@ class Movie implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addCategory(Category $category): static
+    public function addCategory(MovieCategory $movieCategory): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addMovie($this);
+        if (!$this->categories->contains($movieCategory)) {
+            $this->categories->add($movieCategory);
+            $movieCategory->addMovie($this);
         }
 
         return $this;
@@ -131,7 +132,8 @@ class Movie implements Stringable
 
     public function addParagraph(Paragraph $paragraph): static
     {
-        if (!$this->paragraphs->contains($paragraph)) {
+        $reflectionClass = new ReflectionClass($paragraph);
+        if (!$this->paragraphs->contains($paragraph) && $reflectionClass->hasMethod('setRefmovie')) {
             $this->paragraphs->add($paragraph);
             $paragraph->setRefmovie($this);
         }
@@ -140,7 +142,7 @@ class Movie implements Stringable
     }
 
     /**
-     * @return Collection<int, Category>
+     * @return Collection<int, MovieCategory>
      */
     public function getCategories(): Collection
     {
@@ -201,7 +203,7 @@ class Movie implements Stringable
     }
 
     /**
-     * @return Collection<int, Paragraph>
+     * @return Collection<int, MovieInfoParagraph>
      */
     public function getParagraphs(): Collection
     {
@@ -253,10 +255,10 @@ class Movie implements Stringable
         return $this->file;
     }
 
-    public function removeCategory(Category $category): static
+    public function removeCategory(MovieCategory $movieCategory): static
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removeMovie($this);
+        if ($this->categories->removeElement($movieCategory)) {
+            $movieCategory->removeMovie($this);
         }
 
         return $this;
@@ -264,6 +266,11 @@ class Movie implements Stringable
 
     public function removeParagraph(Paragraph $paragraph): static
     {
+        $reflectionClass = new ReflectionClass($paragraph);
+        if (!$reflectionClass->hasMethod('setRefmovie') || !$reflectionClass->hasMethod('getRefmovie')) {
+            return $this;
+        }
+
         // set the owning side to null (unless already changed)
         if ($this->paragraphs->removeElement($paragraph) && $paragraph->getRefmovie() === $this
         ) {

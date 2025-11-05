@@ -2,9 +2,11 @@
 
 namespace Labstag\Block;
 
+use Labstag\Entity\AdminBlock as EntityAdminBlock;
 use Labstag\Entity\Block;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class AdminBlock extends BlockAbstract
 {
@@ -36,10 +38,15 @@ class AdminBlock extends BlockAbstract
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityAdminBlock::class;
+    }
+
     #[Override]
     public function getName(): string
     {
-        return 'Admin';
+        return (string) new TranslatableMessage('Admin');
     }
 
     #[Override]

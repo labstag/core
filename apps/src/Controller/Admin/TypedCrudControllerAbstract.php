@@ -2,13 +2,8 @@
 
 namespace Labstag\Controller\Admin;
 
-use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use Override;
 
 /**
@@ -35,46 +30,4 @@ abstract class TypedCrudControllerAbstract extends CrudControllerAbstract
 
         return $crud;
     }
-
-    /**
-     * Create entity with proper type setting.
-     */
-    #[Override]
-    public function createEntity(string $entityFqcn): object
-    {
-        $entity = new $entityFqcn();
-        $entity->setType($this->getEntityType());
-
-        return $entity;
-    }
-
-    #[Override]
-    public function createIndexQueryBuilder(
-        SearchDto $searchDto,
-        EntityDto $entityDto,
-        FieldCollection $fieldCollection,
-        FilterCollection $filterCollection,
-    ): QueryBuilder
-    {
-        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
-        $queryBuilder->andWhere('entity.type = :type');
-        $queryBuilder->setParameter('type', $this->getEntityType());
-
-        return $queryBuilder;
-    }
-
-    /**
-     * Get the child relationship property name for counting.
-     */
-    abstract protected function getChildRelationshipProperty(): string;
-
-    /**
-     * Get the child type for this controller.
-     */
-    abstract protected function getChildType(): string;
-
-    /**
-     * Get the type identifier for this specific controller.
-     */
-    abstract protected function getEntityType(): string;
 }

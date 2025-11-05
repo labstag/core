@@ -3,6 +3,7 @@
 namespace Labstag\Paragraph;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use DOMDocument;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -11,12 +12,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
-use Exception;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\Paragraph;
-use Labstag\Repository\ServiceEntityRepositoryAbstract;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\FormService;
@@ -276,16 +275,11 @@ abstract class ParagraphAbstract extends AbstractController
     }
 
     /**
-     * @return ServiceEntityRepositoryAbstract<object>
+     * @return EntityRepository<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryAbstract
+    protected function getRepository(string $entity): EntityRepository
     {
-        $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryAbstract) {
-            throw new Exception('Repository not found');
-        }
-
-        return $entityRepository;
+        return $this->entityManager->getRepository($entity);
     }
 
     protected function getTagSlug(): ?string

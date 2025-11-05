@@ -13,6 +13,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
+use Labstag\Entity\TextImgParagraph as EntityTextImgParagraph;
 use Labstag\Field\WysiwygField;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -35,11 +36,16 @@ class TextImgParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityTextImgParagraph::class;
+    }
+
     #[Override]
     public function getClasses(Paragraph $paragraph): array
     {
         $tab = parent::getClasses($paragraph);
-        if ($paragraph->isLeftposition()) {
+        if ($paragraph instanceof EntityTextImgParagraph && $paragraph->isLeftposition()) {
             $tab[] = 'text-img-left';
         }
 
@@ -63,7 +69,7 @@ class TextImgParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Texte image';
+        return (string) new TranslatableMessage('Text Image');
     }
 
     #[Override]
@@ -79,7 +85,7 @@ class TextImgParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        return in_array(
+        $inArray = in_array(
             $object::class,
             [
                 Block::class,
@@ -91,5 +97,7 @@ class TextImgParagraph extends ParagraphAbstract implements ParagraphInterface
                 Post::class,
             ]
         );
+
+        return $inArray || $object instanceof Block;
     }
 }

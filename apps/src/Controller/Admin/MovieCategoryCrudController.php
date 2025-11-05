@@ -2,7 +2,8 @@
 
 namespace Labstag\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use Labstag\Entity\MovieCategory;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieCategoryCrudController extends CategoryCrudControllerAbstract
@@ -10,23 +11,28 @@ class MovieCategoryCrudController extends CategoryCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
-        $this->configureFieldsDefault();
-        $collectionField = CollectionField::new('movies', new TranslatableMessage('Movies'));
-        $collectionField->formatValue(fn ($entity): int => count($entity));
-        $collectionField->hideOnForm();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $titleField = $this->crudFieldFactory->titleField();
+        $titleField->setFormattedValue(
+            fn ($entity) => $entity->getTitle() ?? (new TranslatableMessage('Label not found'))
+        );
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->slugField(),
+                $titleField,
+            ]
+        );
+        $associationField = AssociationField::new('movies', new TranslatableMessage('Movies'));
+        $associationField->formatValue(fn ($entity): int => count($entity));
+        $associationField->hideOnForm();
 
-        $this->crudFieldFactory->addFieldsToTab('principal', [$collectionField]);
-        yield from $this->crudFieldFactory->getConfigureFields();
+        $this->crudFieldFactory->addFieldsToTab('principal', [$associationField]);
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    protected function getChildRelationshipProperty(): string
+    public static function getEntityFqcn(): string
     {
-        return 'movies';
-    }
-
-    protected function getEntityType(): string
-    {
-        return 'movie';
+        return MovieCategory::class;
     }
 }

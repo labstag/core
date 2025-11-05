@@ -12,6 +12,7 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Entity\Story;
+use Labstag\Entity\TextParagraph as EntityTextParagraph;
 use Labstag\Field\WysiwygField;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -34,6 +35,11 @@ class TextParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityTextParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -49,7 +55,7 @@ class TextParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Texte';
+        return (string) new TranslatableMessage('Text');
     }
 
     #[Override]
@@ -65,7 +71,7 @@ class TextParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        return in_array(
+        $inArray = in_array(
             $object::class,
             [
                 Block::class,
@@ -77,5 +83,7 @@ class TextParagraph extends ParagraphAbstract implements ParagraphInterface
                 Post::class,
             ]
         );
+
+        return $inArray || $object instanceof Block;
     }
 }

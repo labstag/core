@@ -7,7 +7,11 @@
             {% if story.tags|length > 0 %}
                 <div class="tags">
                     {% for tag in story.tags %}
-                        <span class="tag-{{ tag.slug }}">{{ tag.title }}</span>
+                        <span class="tag-{{ tag.slug }}">
+                            <a href="{{ site_path(tag) }}">
+                                {{ tag.title }}
+                            </a>
+                        </span>
                     {% endfor %}
                 </div>
             {% endif %}

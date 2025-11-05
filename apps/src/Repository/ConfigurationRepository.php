@@ -6,9 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Configuration;
 
 /**
- * @extends ServiceEntityRepositoryAbstract<Configuration>
+ * @extends RepositoryAbstract<Configuration>
  */
-class ConfigurationRepository extends ServiceEntityRepositoryAbstract
+class ConfigurationRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

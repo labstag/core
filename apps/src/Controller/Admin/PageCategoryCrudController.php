@@ -2,7 +2,8 @@
 
 namespace Labstag\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use Labstag\Entity\PageCategory;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PageCategoryCrudController extends CategoryCrudControllerAbstract
@@ -10,24 +11,25 @@ class PageCategoryCrudController extends CategoryCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
-        $this->configureFieldsDefault();
-        $collectionField = CollectionField::new('pages', new TranslatableMessage('Pages'));
-        $collectionField->formatValue(fn ($entity): int => count($entity));
-        $collectionField->hideOnForm();
+        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->titleField(),
+            ]
+        );
+        $associationField = AssociationField::new('pages', new TranslatableMessage('Pages'));
+        $associationField->formatValue(fn ($entity): int => count($entity));
+        $associationField->hideOnForm();
 
-        $this->crudFieldFactory->addFieldsToTab('principal', [$collectionField]);
+        $this->crudFieldFactory->addFieldsToTab('principal', [$associationField]);
 
-        yield from $this->crudFieldFactory->getConfigureFields();
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    protected function getChildRelationshipProperty(): string
+    public static function getEntityFqcn(): string
     {
-        return 'pages';
-    }
-
-    protected function getEntityType(): string
-    {
-        return 'page';
+        return PageCategory::class;
     }
 }

@@ -3,7 +3,11 @@
 namespace Labstag\Data;
 
 use Labstag\Entity\Category;
+use Labstag\Entity\MovieCategory;
 use Labstag\Entity\Page;
+use Labstag\Entity\PostCategory;
+use Labstag\Entity\SerieCategory;
+use Labstag\Entity\StoryCategory;
 use Labstag\Enum\PageEnum;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -17,42 +21,18 @@ class CategoryData extends DataAbstract implements DataInterface
 
     public function generateSlug(object $entity): string
     {
-        $type             = $entity->getType();
-        $entityRepository = $this->entityManager->getRepository(Page::class);
-        $page             = match ($type) {
-            'movie' => $entityRepository->findOneBy(
-                [
-                    'type' => PageEnum::MOVIES->value,
-                ]
-            ),
-            'post' => $entityRepository->findOneBy(
-                [
-                    'type' => PageEnum::POSTS->value,
-                ]
-            ),
-            'serie' => $entityRepository->findOneBy(
-                [
-                    'type' => PageEnum::SERIES->value,
-                ]
-            ),
-            'story' => $entityRepository->findOneBy(
-                [
-                    'type' => PageEnum::STORIES->value,
-                ]
-            ),
-            default => null,
-        };
+        $page = $this->getPage($entity::class);
 
         if (!$page instanceof Page) {
             return '';
         }
 
-        return match ($type) {
-            'movie' => $page->getSlug() . '/category-' . $entity->getSlug(),
-            'post'  => $page->getSlug() . '/category-' . $entity->getSlug(),
-            'serie' => $page->getSlug() . '/category-' . $entity->getSlug(),
-            'story' => $page->getSlug() . '/category-' . $entity->getSlug(),
-            default => '',
+        return match ($entity::class) {
+            MovieCategory::class => $page->getSlug() . '/category-' . $entity->getSlug(),
+            PostCategory::class  => $page->getSlug() . '/category-' . $entity->getSlug(),
+            SerieCategory::class => $page->getSlug() . '/category-' . $entity->getSlug(),
+            StoryCategory::class => $page->getSlug() . '/category-' . $entity->getSlug(),
+            default              => '',
         };
     }
 
@@ -63,6 +43,7 @@ class CategoryData extends DataAbstract implements DataInterface
 
     public function getTitle(object $entity): string
     {
+        unset($entity);
         $request  = $this->requestStack->getCurrentRequest();
         $slug     = $request->attributes->get('slug');
         $category = $this->getCategoryBySlug($slug);
@@ -121,26 +102,27 @@ class CategoryData extends DataAbstract implements DataInterface
             return null;
         }
 
-        $type = match ($page->getType()) {
-            PageEnum::MOVIES->value  => 'movie',
-            PageEnum::POSTS->value   => 'post',
-            PageEnum::SERIES->value  => 'serie',
-            PageEnum::STORIES->value => 'story',
-            default                  => null,
-        };
-
-        if (is_null($type)) {
+        $typeclass = $this->getClass($page->getType());
+        if (is_null($typeclass)) {
             return null;
         }
 
         $slugSecond = str_replace('category-', '', $slugSecond);
 
-        return $this->entityManager->getRepository(Category::class)->findOneBy(
-            [
-                'type' => $type,
-                'slug' => $slugSecond,
-            ]
+        return $this->entityManager->getRepository($typeclass)->findOneBy(
+            ['slug' => $slugSecond]
         );
+    }
+
+    protected function getClass(string $type): ?string
+    {
+        return match ($type) {
+            PageEnum::MOVIES->value  => MovieCategory::class,
+            PageEnum::POSTS->value   => PostCategory::class,
+            PageEnum::SERIES->value  => SerieCategory::class,
+            PageEnum::STORIES->value => StoryCategory::class,
+            default                  => null,
+        };
     }
 
     protected function getEntityBySlug(string $slug): ?object
@@ -163,29 +145,48 @@ class CategoryData extends DataAbstract implements DataInterface
             return null;
         }
 
-        $type = match ($page->getType()) {
-            PageEnum::MOVIES->value  => 'movie',
-            PageEnum::POSTS->value   => 'post',
-            PageEnum::SERIES->value  => 'serie',
-            PageEnum::STORIES->value => 'story',
-            default                  => null,
-        };
-
-        if (is_null($type)) {
+        $typeclass = $this->getClass($page->getType());
+        if (is_null($typeclass)) {
             return null;
         }
 
         $slugSecond = str_replace('category-', '', $slugSecond);
-        $category   = $this->entityManager->getRepository(Category::class)->findOneBy(
-            [
-                'type' => $type,
-                'slug' => $slugSecond,
-            ]
+        $category   = $this->entityManager->getRepository($typeclass)->findOneBy(
+            ['slug' => $slugSecond]
         );
         if (!$category instanceof Category) {
             return null;
         }
 
         return $page;
+    }
+
+    protected function getPage(string $entity): ?Page
+    {
+        $entityRepository = $this->entityManager->getRepository(Page::class);
+
+        return match ($entity) {
+            MovieCategory::class => $entityRepository->findOneBy(
+                [
+                    'type' => PageEnum::MOVIES->value,
+                ]
+            ),
+            PostCategory::class => $entityRepository->findOneBy(
+                [
+                    'type' => PageEnum::POSTS->value,
+                ]
+            ),
+            SerieCategory::class => $entityRepository->findOneBy(
+                [
+                    'type' => PageEnum::SERIES->value,
+                ]
+            ),
+            StoryCategory::class => $entityRepository->findOneBy(
+                [
+                    'type' => PageEnum::STORIES->value,
+                ]
+            ),
+            default => null,
+        };
     }
 }

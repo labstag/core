@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Generator;
+use Labstag\Entity\FormParagraph as EntityFormParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
@@ -21,6 +22,12 @@ class FormParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityFormParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         $formCode = $paragraph->getForm();
         $save     = $paragraph->isSave();
         if (is_null($formCode)) {
@@ -50,6 +57,11 @@ class FormParagraph extends ParagraphAbstract implements ParagraphInterface
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityFormParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -69,7 +81,7 @@ class FormParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getName(): string
     {
-        return 'Formulaire';
+        return (string) new TranslatableMessage('Formulaire');
     }
 
     #[Override]
@@ -91,6 +103,10 @@ class FormParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function templates(Paragraph $paragraph, string $type): array
     {
+        if (!$paragraph instanceof EntityFormParagraph) {
+            return [];
+        }
+
         $templates = $this->getTemplateContent($type, $this->getType() . '/' . $paragraph->getForm());
 
         if ($templates['view'] != end($templates['files'])) {
