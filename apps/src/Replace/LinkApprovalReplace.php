@@ -12,6 +12,10 @@ class LinkApprovalReplace extends ReplaceAbstract
 
         $configuration = $this->configurationService->getConfiguration();
         $entity        = $this->data['user'];
+        $id = $entity->getId();
+        if (is_null($id)) {
+            return '#linkdisabled';
+        }
 
         return $configuration->getUrl() . $this->router->generate(
             'admin_workflow',
