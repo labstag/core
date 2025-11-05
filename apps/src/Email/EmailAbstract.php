@@ -199,6 +199,7 @@ abstract class EmailAbstract extends Email
         return $this->twigEnvironment->render(
             $templates['view'],
             [
+                'codes' => $this->replaces,
                 'type' => $this->getType(),
                 'code' => $type,
             ]
