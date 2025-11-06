@@ -157,6 +157,7 @@ class PageCrudController extends CrudControllerAbstract
     {
         $fields   = [
             $this->crudFieldFactory->slugField(),
+            $this->crudFieldFactory->booleanField('hide', (string) new TranslatableMessage('Hide')),
             $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
             $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),

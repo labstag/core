@@ -74,83 +74,27 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
      */
     private function data(): array
     {
-        $home = new Page();
-        $home->setTitle('Accueil');
-        $home->setType(PageEnum::HOME->value);
-        $this->setParagraphsHome($home);
-
-        $movies = new Page();
-        $movies->setPage($home);
-        $movies->setTitle('Mes derniers films vus');
-        $movies->setType(PageEnum::MOVIES->value);
-        $this->setParagraphsMovie($movies);
-
-        $cvpage = new Page();
-        $cvpage->setPage($home);
-        $cvpage->setTitle('Mon parcours pro');
-        $cvpage->setType(PageEnum::CV->value);
-        $this->setParagraphsCV($cvpage);
-
-        $series = new Page();
-        $series->setPage($home);
-        $series->setTitle('Mes séries favorites');
-        $series->setType(PageEnum::SERIES->value);
-        $this->setParagraphsSerie($series);
-
-        $stories = new Page();
-        $stories->setPage($home);
-        $stories->setTitle('Histoires');
-        $stories->setType(PageEnum::STORIES->value);
-        $this->setParagraphsStory($stories);
-
-        $post = new Page();
-        $post->setPage($home);
-        $post->setTitle('Posts');
-        $post->setType(PageEnum::POSTS->value);
-        $this->setParagraphsPost($post);
-
-        $star = new Page();
-        $star->setPage($home);
-        $star->setTitle('Mes étoiles github');
-        $star->setType(PageEnum::PAGE->value);
-        $this->setParagraphsStar($star);
-
-        $info = new Page();
-        $info->setPage($home);
-        $info->setTitle('Informations');
-        $info->setType(PageEnum::PAGE->value);
-        $this->setParagraphsInfo($info);
-
-        $contact = new Page();
-        $contact->setPage($info);
-        $contact->setTitle('Contact');
-        $contact->setType(PageEnum::PAGE->value);
-        $this->setParagraphsContact($contact);
-
-        $sitemap = new Page();
-        $sitemap->setPage($info);
-        $sitemap->setTitle('Plan du site');
-        $sitemap->setType(PageEnum::PAGE->value);
-        $this->setParagraphsSitemap($sitemap);
-
-        $mentions = new Page();
-        $mentions->setPage($home);
-        $mentions->setTitle('Mentions légales');
-        $mentions->setType(PageEnum::PAGE->value);
-
-        $this->paragraphService->addParagraph($mentions, 'head');
-        $this->addParagraphText($mentions);
-
-        $donneespersonnelles = new Page();
-        $donneespersonnelles->setPage($home);
-        $donneespersonnelles->setTitle('Données personnelles');
-        $donneespersonnelles->setType(PageEnum::PAGE->value);
-
-        $this->paragraphService->addParagraph($donneespersonnelles, 'head');
-        $this->addParagraphText($donneespersonnelles);
+        $page                = $this->setHome();
+        $movies              = $this->setMovies($page);
+        $cvpage              = $this->setCv($page);
+        $series              = $this->setSeries($page);
+        $stories             = $this->setStories($page);
+        $post                = $this->setPost($page);
+        $star                = $this->setStar($page);
+        $info                = $this->setInformations($page);
+        $changepassword      = $this->setChangePassword($page);
+        $lostpassword        = $this->setLostPassword($page);
+        $login               = $this->setLogin($page);
+        $contact             = $this->setContact($info);
+        $sitemap             = $this->setSitemap($info);
+        $mentions            = $this->setMentions($page);
+        $donneespersonnelles = $this->setDonneesPersonelles($page);
 
         return [
-            $home,
+            $page,
+            $login,
+            $changepassword,
+            $lostpassword,
             $series,
             $movies,
             $stories,
@@ -163,6 +107,122 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $cvpage,
             $donneespersonnelles,
         ];
+    }
+
+    private function setChangePassword(Page $page): Page
+    {
+        $changepassword = new Page();
+        $changepassword->setHide(true);
+        $changepassword->setPage($page);
+        $changepassword->setTitle('Changer de mot de passe');
+        $changepassword->setType(PageEnum::CHANGEPASSWORD->value);
+        $this->setParagraphsChangePassword($changepassword);
+
+        return $changepassword;
+    }
+
+    private function setContact(Page $page): Page
+    {
+        $contact = new Page();
+        $contact->setPage($page);
+        $contact->setTitle('Contact');
+        $contact->setType(PageEnum::PAGE->value);
+        $this->setParagraphsContact($contact);
+
+        return $contact;
+    }
+
+    private function setCv(Page $page): Page
+    {
+        $cvpage = new Page();
+        $cvpage->setPage($page);
+        $cvpage->setTitle('Mon parcours pro');
+        $cvpage->setType(PageEnum::CV->value);
+        $this->setParagraphsCV($cvpage);
+
+        return $cvpage;
+    }
+
+    private function setDonneesPersonelles(Page $page): Page
+    {
+        $donneespersonnelles = new Page();
+        $donneespersonnelles->setPage($page);
+        $donneespersonnelles->setTitle('Données personnelles');
+        $donneespersonnelles->setType(PageEnum::PAGE->value);
+
+        $this->paragraphService->addParagraph($donneespersonnelles, 'head');
+        $this->addParagraphText($donneespersonnelles);
+
+        return $donneespersonnelles;
+    }
+
+    private function setHome(): Page
+    {
+        $page = new Page();
+        $page->setTitle('Accueil');
+        $page->setType(PageEnum::HOME->value);
+        $this->setParagraphsHome($page);
+
+        return $page;
+    }
+
+    private function setInformations(Page $page): Page
+    {
+        $info = new Page();
+        $info->setPage($page);
+        $info->setTitle('Informations');
+        $info->setType(PageEnum::PAGE->value);
+        $this->setParagraphsInfo($info);
+
+        return $info;
+    }
+
+    private function setLogin(Page $page): Page
+    {
+        $login = new Page();
+        $login->setHide(true);
+        $login->setPage($page);
+        $login->setTitle('Login');
+        $login->setType(PageEnum::LOGIN->value);
+        $this->setParagraphsLogin($login);
+
+        return $login;
+    }
+
+    private function setLostPassword(Page $page): Page
+    {
+        $lostpassword = new Page();
+        $lostpassword->setHide(true);
+        $lostpassword->setPage($page);
+        $lostpassword->setTitle('Mot de passe oublié');
+        $lostpassword->setType(PageEnum::LOSTPASSWORD->value);
+        $this->setParagraphsLostPassword($lostpassword);
+
+        return $lostpassword;
+    }
+
+    private function setMentions(Page $page): Page
+    {
+        $mentions = new Page();
+        $mentions->setPage($page);
+        $mentions->setTitle('Mentions légales');
+        $mentions->setType(PageEnum::PAGE->value);
+
+        $this->paragraphService->addParagraph($mentions, 'head');
+        $this->addParagraphText($mentions);
+
+        return $mentions;
+    }
+
+    private function setMovies(Page $page): Page
+    {
+        $movies = new Page();
+        $movies->setPage($page);
+        $movies->setTitle('Mes derniers films vus');
+        $movies->setType(PageEnum::MOVIES->value);
+        $this->setParagraphsMovie($movies);
+
+        return $movies;
     }
 
     private function setPage(ObjectManager $objectManager, Generator $generator, Page $page): void
@@ -182,6 +242,20 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
         $this->addReference('page_' . md5(uniqid()), $page);
         $objectManager->persist($page);
+    }
+
+    private function setParagraphsChangePassword(Page $page): void
+    {
+        $this->paragraphService->addParagraph($page, 'head');
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'form');
+        if (is_null($paragraph) || !$paragraph instanceof FormParagraph) {
+            return;
+        }
+
+        $paragraph->setSave(true);
+        $paragraph->setContent('Formulaire envoyé');
+        $paragraph->setForm('change-password');
     }
 
     private function setParagraphsContact(Page $page): void
@@ -290,6 +364,26 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($page, 'sibling');
     }
 
+    private function setParagraphsLogin(Page $page): void
+    {
+        $this->paragraphService->addParagraph($page, 'head');
+        $this->addParagraphText($page);
+    }
+
+    private function setParagraphsLostPassword(Page $page): void
+    {
+        $this->paragraphService->addParagraph($page, 'head');
+        $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'form');
+        if (is_null($paragraph) || !$paragraph instanceof FormParagraph) {
+            return;
+        }
+
+        $paragraph->setSave(true);
+        $paragraph->setContent('Formulaire envoyé');
+        $paragraph->setForm('lost-password');
+    }
+
     private function setParagraphsMovie(Page $page): void
     {
         $this->paragraphService->addParagraph($page, 'head');
@@ -356,5 +450,60 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         }
 
         $paragraph->setNbr(18);
+    }
+
+    private function setPost(Page $page): Page
+    {
+        $post = new Page();
+        $post->setPage($page);
+        $post->setTitle('Posts');
+        $post->setType(PageEnum::POSTS->value);
+        $this->setParagraphsPost($post);
+
+        return $post;
+    }
+
+    private function setSeries(Page $page): Page
+    {
+        $series = new Page();
+        $series->setPage($page);
+        $series->setTitle('Mes séries favorites');
+        $series->setType(PageEnum::SERIES->value);
+        $this->setParagraphsSerie($series);
+
+        return $series;
+    }
+
+    private function setSitemap(Page $page): Page
+    {
+        $sitemap = new Page();
+        $sitemap->setPage($page);
+        $sitemap->setTitle('Plan du site');
+        $sitemap->setType(PageEnum::PAGE->value);
+        $this->setParagraphsSitemap($sitemap);
+
+        return $sitemap;
+    }
+
+    private function setStar(Page $page): Page
+    {
+        $star = new Page();
+        $star->setPage($page);
+        $star->setTitle('Mes étoiles github');
+        $star->setType(PageEnum::PAGE->value);
+        $this->setParagraphsStar($star);
+
+        return $star;
+    }
+
+    private function setStories(Page $page): Page
+    {
+        $stories = new Page();
+        $stories->setPage($page);
+        $stories->setTitle('Histoires');
+        $stories->setType(PageEnum::STORIES->value);
+        $this->setParagraphsStory($stories);
+
+        return $stories;
     }
 }

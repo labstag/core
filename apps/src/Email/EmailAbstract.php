@@ -200,8 +200,8 @@ abstract class EmailAbstract extends Email
             $templates['view'],
             [
                 'codes' => $this->replaces,
-                'type' => $this->getType(),
-                'code' => $type,
+                'type'  => $this->getType(),
+                'code'  => $type,
             ]
         );
     }

@@ -29,7 +29,7 @@ class PageData extends DataAbstract implements DataInterface
         return $this->homeData->generateSlug($entity) . $entity->getSlug();
     }
 
-    public function getEntity(string $slug): object
+    public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlug($slug);
     }
@@ -50,7 +50,7 @@ class PageData extends DataAbstract implements DataInterface
         return $this->getTitle($entity);
     }
 
-    public function match(string $slug): bool
+    public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlug($slug);
 
@@ -87,7 +87,7 @@ class PageData extends DataAbstract implements DataInterface
         return sprintf('[%s:%s]', 'pageurl', $id);
     }
 
-    protected function getEntityBySlug(string $slug): ?object
+    protected function getEntityBySlug(?string $slug): ?object
     {
         return $this->entityManager->getRepository(Page::class)->findOneBy(
             ['slug' => $slug]

@@ -6,6 +6,7 @@ use Labstag\Block\Traits\ParagraphProcessingTrait;
 use Labstag\Entity\Block;
 use Labstag\Entity\ContentBlock as EntityContentBlock;
 use Labstag\Entity\Page;
+use Labstag\Enum\PageEnum;
 use Override;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -68,7 +69,7 @@ class ContentBlock extends BlockAbstract
         ];
 
         // Configure aside - implemented the TODO
-        if (!($data['entity'] instanceof Page && 'home' == $data['entity']->getType())) {
+        if (!($data['entity'] instanceof Page && PageEnum::HOME->value == $data['entity']->getType())) {
             $this->getAside($data);
             // Note: getAside currently always returns null, so this block is effectively unused
             // TODO: Implement actual aside content logic when needed

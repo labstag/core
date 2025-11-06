@@ -43,18 +43,9 @@ class FormParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $form = $this->createForm($formClass->getForm());
-
-        $execute = $this->formService->execute($form, $formCode, $disable, $save);
-        $this->setData(
-            $paragraph,
-            [
-                'execute'   => $execute,
-                'form'      => $form,
-                'paragraph' => $paragraph,
-                'data'      => $data,
-            ]
-        );
+        $form   = $this->createForm($formClass->getForm());
+        $params = $this->formService->setParamsTwig($form, $formCode, $paragraph, $data, $disable, $save);
+        $this->setData($paragraph, $params);
     }
 
     public function getClass(): string

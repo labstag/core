@@ -61,6 +61,19 @@ final class WorkflowService
         return $this->workflowRegistry->get($entity);
     }
 
+    public function getPlaces(object $entity): array
+    {
+        $workflow = $this->get($entity);
+        if (!$workflow instanceof WorkflowInterface) {
+            return [];
+        }
+
+        $markingStore   = $workflow->getMarkingStore();
+        $marking        = $markingStore->getMarking($entity);
+
+        return $marking->getPlaces();
+    }
+
     public function init(object $entity): void
     {
         $workflow = $this->get($entity);

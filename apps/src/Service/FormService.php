@@ -35,19 +35,6 @@ final class FormService
         return $data;
     }
 
-    /**
-     * @param FormInterface<mixed> $form
-     */
-    public function execute(FormInterface $form, string $code, bool $disable = false, bool $save = true): bool
-    {
-        $frontform = $this->get($code);
-        if (!$frontform instanceof FrontFormAbstract) {
-            return false;
-        }
-
-        return $frontform->execute($form, $disable, $save);
-    }
-
     public function get(string $code): ?FrontFormAbstract
     {
         $form = null;
@@ -62,5 +49,22 @@ final class FormService
         }
 
         return $form;
+    }
+
+    public function setParamsTwig(
+        FormInterface $form,
+        string|bool $formCode,
+        $paragraph,
+        $data,
+        bool $disable = false,
+        bool $save = true,
+    ): array
+    {
+        $frontform = $this->get($formCode);
+        if (!$frontform instanceof FrontFormAbstract) {
+            return [];
+        }
+
+        return $frontform->setParamsTwig($form, $formCode, $paragraph, $data, $disable, $save);
     }
 }

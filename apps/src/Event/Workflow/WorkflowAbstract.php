@@ -2,14 +2,12 @@
 
 namespace Labstag\Event\Workflow;
 
-use Labstag\Service\ConfigurationService;
-use Labstag\Service\EmailService;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 abstract class WorkflowAbstract
 {
     public function __construct(
-        protected EmailService $emailService,
-        protected ConfigurationService $configurationService,
+        protected MessageBusInterface $messageBus,
     )
     {
     }

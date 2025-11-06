@@ -39,7 +39,7 @@ class ChapterData extends DataAbstract implements DataInterface
         return $this->storyData->generateSlug($entity->getRefstory()) . '/' . $entity->getSlug();
     }
 
-    public function getEntity(string $slug): object
+    public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlug($slug);
     }
@@ -54,7 +54,7 @@ class ChapterData extends DataAbstract implements DataInterface
         return $this->storyData->getTitleMeta($entity->getRefstory()) . ' - ' . $this->getTitle($entity);
     }
 
-    public function match(string $slug): bool
+    public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlug($slug);
 
@@ -86,14 +86,14 @@ class ChapterData extends DataAbstract implements DataInterface
         return false;
     }
 
-    protected function getEntityBySlug(string $slug): ?object
+    protected function getEntityBySlug(?string $slug): ?object
     {
-        if (0 === substr_count($slug, '/')) {
+        if (0 === substr_count((string) $slug, '/')) {
             return null;
         }
 
-        $slugSecond = basename($slug);
-        $slugFirst  = dirname($slug);
+        $slugSecond = basename((string) $slug);
+        $slugFirst  = dirname((string) $slug);
 
         if (false === $this->storyData->match($slugFirst)) {
             return null;

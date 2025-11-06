@@ -37,7 +37,7 @@ class StoryData extends DataAbstract implements DataInterface
         return $this->pageData->generateSlug($page) . '/' . $entity->getSlug();
     }
 
-    public function getEntity(string $slug): object
+    public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlug($slug);
     }
@@ -58,7 +58,7 @@ class StoryData extends DataAbstract implements DataInterface
         return $this->getTitle($entity);
     }
 
-    public function match(string $slug): bool
+    public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlug($slug);
 
@@ -90,14 +90,14 @@ class StoryData extends DataAbstract implements DataInterface
         return Story::class === $className;
     }
 
-    protected function getEntityBySlug(string $slug): ?object
+    protected function getEntityBySlug(?string $slug): ?object
     {
-        if (0 === substr_count($slug, '/')) {
+        if (0 === substr_count((string) $slug, '/')) {
             return null;
         }
 
-        $slugSecond = basename($slug);
-        $slugFirst  = dirname($slug);
+        $slugSecond = basename((string) $slug);
+        $slugFirst  = dirname((string) $slug);
 
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
             ['slug' => $slugFirst]

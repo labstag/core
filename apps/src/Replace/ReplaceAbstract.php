@@ -2,6 +2,7 @@
 
 namespace Labstag\Replace;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\SiteService;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -19,6 +20,7 @@ abstract class ReplaceAbstract implements ReplaceInterface
     public function __construct(
         protected ConfigurationService $configurationService,
         protected SiteService $siteService,
+        protected EntityManagerInterface $entityManager,
         protected RouterInterface $router,
     )
     {

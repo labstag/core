@@ -8,8 +8,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\User;
@@ -111,7 +111,7 @@ class UserCrudController extends CrudControllerAbstract
         ];
         $fields = [];
         foreach ($tab as $key => $label) {
-            $collectionField = CollectionField::new($key, $label);
+            $collectionField = AssociationField::new($key, $label);
             $collectionField->onlyOnDetail();
             $collectionField->formatValue(fn ($value): int => is_null($value) ? 0 : count($value));
             $fields[] = $collectionField;

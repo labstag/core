@@ -34,7 +34,8 @@ class BreadcrumbBlock extends BlockAbstract
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
-        if ($data['entity'] instanceof Page && PageEnum::HOME->value == $data['entity']->getType()) {
+        $entity = $data['entity'];
+        if ($entity instanceof Page && PageEnum::HOME->value == $entity->getType()) {
             $this->setShow($block, false);
 
             return;
@@ -44,6 +45,10 @@ class BreadcrumbBlock extends BlockAbstract
         $slug    = $request->attributes->get('slug');
         $urls    = $this->setBreadcrumb($slug);
         $params  = $this->getParamsAttributes($request);
+        if ($entity instanceof Page && $entity->isHide()) {
+            // delete last $urls element
+            array_pop($urls);
+        }
 
         if ([] === $urls) {
             $this->setShow($block, false);
@@ -105,11 +110,10 @@ class BreadcrumbBlock extends BlockAbstract
     /**
      * @return mixed[]
      */
-    private function setBreadcrumb(string $slug): array
+    private function setBreadcrumb(?string $slug): array
     {
-        $cacheKey = 'breadcrumb_' . md5($slug);
-
-        return $this->getCached(
+        $cacheKey = 'breadcrumb_' . md5((string) $slug);
+        $data     = $this->getCached(
             $cacheKey,
             function () use ($slug): array {
                 $urls        = [];
@@ -141,8 +145,15 @@ class BreadcrumbBlock extends BlockAbstract
                     ) : '';
                 }
 
-                return array_reverse($urls);
+                return $urls;
             }
         );
+
+        $data[] = [
+            'title' => (string) new TranslatableMessage('Home'),
+            'url'   => '',
+        ];
+
+        return array_reverse($data);
     }
 }

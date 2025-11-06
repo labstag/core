@@ -41,7 +41,7 @@ class EpisodeData extends DataAbstract implements DataInterface
         return '';
     }
 
-    public function getEntity(string $slug): object
+    public function getEntity(?string $slug): object
     {
         unset($slug);
 
@@ -55,7 +55,7 @@ class EpisodeData extends DataAbstract implements DataInterface
         return '';
     }
 
-    public function match(string $slug): bool
+    public function match(?string $slug): bool
     {
         unset($slug);
 
