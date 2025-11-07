@@ -20,7 +20,7 @@ final class SlugService
 
     public function __construct(
         #[AutowireIterator('labstag.datas')]
-        private readonly iterable $datalibs,
+        private readonly iterable $datas,
         private PageRepository $pageRepository,
         private RequestStack $requestStack,
     )
@@ -29,9 +29,9 @@ final class SlugService
 
     public function forEntity(object $entity): string
     {
-        foreach ($this->datalibs as $datalib) {
-            if ($datalib->supportsData($entity)) {
-                return $datalib->generateSlug($entity);
+        foreach ($this->datas as $data) {
+            if ($data->supportsData($entity)) {
+                return $data->generateSlug($entity);
             }
         }
 
@@ -48,10 +48,10 @@ final class SlugService
 
     public function getEntityBySlug(?string $slug): ?object
     {
-        foreach ($this->datalibs as $datalib) {
-            $classe = new ReflectionClass($datalib);
-            if ($datalib->match($slug) && $classe->hasMethod('getEntity')) {
-                return $datalib->getEntity($slug);
+        foreach ($this->datas as $data) {
+            $classe = new ReflectionClass($data);
+            if ($data->match($slug) && $classe->hasMethod('getEntity')) {
+                return $data->getEntity($slug);
             }
         }
 

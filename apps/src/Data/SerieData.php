@@ -25,6 +25,7 @@ class SerieData extends DataAbstract implements DataInterface
         parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator);
     }
 
+    #[\Override]
     public function generateSlug(object $entity): string
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
@@ -36,11 +37,13 @@ class SerieData extends DataAbstract implements DataInterface
         return $this->pageData->generateSlug($page) . '/' . $entity->getSlug();
     }
 
+    #[\Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlug($slug);
     }
 
+    #[\Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
@@ -51,6 +54,7 @@ class SerieData extends DataAbstract implements DataInterface
         return $this->getTitle($entity);
     }
 
+    #[\Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlug($slug);
@@ -58,6 +62,7 @@ class SerieData extends DataAbstract implements DataInterface
         return $page instanceof Serie;
     }
 
+    #[\Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('serie');
@@ -68,19 +73,16 @@ class SerieData extends DataAbstract implements DataInterface
         return $this->configPlaceholder();
     }
 
+    #[\Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Serie;
     }
 
+    #[\Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Serie;
-    }
-
-    public function supportsShortcode(string $className): bool
-    {
-        return false;
     }
 
     protected function getEntityBySlug(?string $slug): ?object

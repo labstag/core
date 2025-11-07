@@ -4,14 +4,15 @@ namespace Labstag\Data;
 
 class HomeData extends DataAbstract implements DataInterface
 {
+    #[\Override]
     public function generateSlug(object $entity): string
     {
         unset($entity);
-        $this->getHome();
 
         return '';
     }
 
+    #[\Override]
     public function getEntity(?string $slug): object
     {
         unset($slug);
@@ -19,35 +20,15 @@ class HomeData extends DataAbstract implements DataInterface
         return $this->getHome();
     }
 
+    #[\Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
     }
 
+    #[\Override]
     public function match(?string $slug): bool
     {
         return '' === $slug || is_null($slug);
-    }
-
-    public function placeholder(): string
-    {
-        return '';
-    }
-
-    public function supportsAsset(object $entity): bool
-    {
-        unset($entity);
-
-        return false;
-    }
-
-    public function supportsData(object $entity): bool
-    {
-        return false;
-    }
-
-    public function supportsShortcode(string $className): bool
-    {
-        return false;
     }
 }

@@ -26,6 +26,7 @@ class PostData extends DataAbstract implements DataInterface
         parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator);
     }
 
+    #[\Override]
     public function generateSlug(object $entity): string
     {
         $page  = $this->entityManager->getRepository(Page::class)->findOneBy(
@@ -37,6 +38,7 @@ class PostData extends DataAbstract implements DataInterface
         return $this->pageData->generateSlug($page) . '/' . $entity->getSlug();
     }
 
+    #[\Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlug($slug);
@@ -48,6 +50,7 @@ class PostData extends DataAbstract implements DataInterface
         return [PostUrlShortcode::class];
     }
 
+    #[\Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
@@ -58,6 +61,7 @@ class PostData extends DataAbstract implements DataInterface
         return $this->getTitle($entity);
     }
 
+    #[\Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlug($slug);
@@ -65,6 +69,7 @@ class PostData extends DataAbstract implements DataInterface
         return $page instanceof Post;
     }
 
+    #[\Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('Post');
@@ -75,16 +80,19 @@ class PostData extends DataAbstract implements DataInterface
         return $this->configPlaceholder();
     }
 
+    #[\Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Post;
     }
 
+    #[\Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Post;
     }
 
+    #[\Override]
     public function supportsShortcode(string $className): bool
     {
         return Post::class === $className;

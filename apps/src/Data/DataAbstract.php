@@ -7,8 +7,10 @@ use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use stdClass;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AutoconfigureTag('labstag.datas')]
@@ -29,9 +31,77 @@ abstract class DataAbstract
         return $this->fileService->asset($entity, $field);
     }
 
+    public function generateSlug(object $entity): string
+    {
+        unset($entity);
+
+        return '';
+    }
+
+    public function getEntity(?string $slug): object
+    {
+        unset($slug);
+
+        return new stdClass();
+    }
+
     public function getShortcodes(): array
     {
         return [];
+    }
+
+    public function getTitle(object $entity): string
+    {
+        unset($entity);
+
+        return '';
+    }
+
+    public function match(?string $slug): bool
+    {
+        unset($slug);
+
+        return false;
+    }
+
+    public function placeholder(): string
+    {
+        return '';
+    }
+
+    public function scriptBefore(object $entity, Response $response): Response
+    {
+        unset($entity);
+
+        return $response;
+    }
+
+    public function supportsAsset(object $entity): bool
+    {
+        unset($entity);
+
+        return false;
+    }
+
+    public function supportsData(object $entity): bool
+    {
+        unset($entity);
+
+        return false;
+    }
+
+    public function supportsScriptBefore(object $entity): bool
+    {
+        unset($entity);
+
+        return false;
+    }
+
+    public function supportsShortcode(string $className): bool
+    {
+        unset($className);
+
+        return false;
     }
 
     protected function configPlaceholder(): string

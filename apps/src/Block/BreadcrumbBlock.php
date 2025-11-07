@@ -120,15 +120,15 @@ class BreadcrumbBlock extends BlockAbstract
                 $currentSlug = $slug;
 
                 while ('' !== $currentSlug) {
-                    foreach ($this->dataLibs as $dataLib) {
-                        $classe = new ReflectionClass($dataLib);
-                        if ($classe->hasMethod('getTitle') && $classe->hasMethod('match') && $dataLib->match(
+                    foreach ($this->datas as $data) {
+                        $classe = new ReflectionClass($data);
+                        if ($classe->hasMethod('getTitle') && $classe->hasMethod('match') && $data->match(
                             $currentSlug
                         )
                         ) {
-                            $entity = $dataLib->getEntity($currentSlug);
+                            $entity = $data->getEntity($currentSlug);
                             $urls[] = [
-                                'title' => $dataLib->getTitle($entity),
+                                'title' => $data->getTitle($entity),
                                 'url'   => $currentSlug,
                             ];
                         }

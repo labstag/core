@@ -24,11 +24,13 @@ class PageData extends DataAbstract implements DataInterface
         parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator);
     }
 
+    #[\Override]
     public function generateSlug(object $entity): string
     {
         return $this->homeData->generateSlug($entity) . $entity->getSlug();
     }
 
+    #[\Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlug($slug);
@@ -40,6 +42,7 @@ class PageData extends DataAbstract implements DataInterface
         return [PageUrlShortcode::class];
     }
 
+    #[\Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
@@ -50,6 +53,7 @@ class PageData extends DataAbstract implements DataInterface
         return $this->getTitle($entity);
     }
 
+    #[\Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlug($slug);
@@ -57,6 +61,7 @@ class PageData extends DataAbstract implements DataInterface
         return $page instanceof Page;
     }
 
+    #[\Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('page');
@@ -67,16 +72,19 @@ class PageData extends DataAbstract implements DataInterface
         return $this->configPlaceholder();
     }
 
+    #[\Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Page;
     }
 
+    #[\Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Page;
     }
 
+    #[\Override]
     public function supportsShortcode(string $className): bool
     {
         return Page::class === $className;

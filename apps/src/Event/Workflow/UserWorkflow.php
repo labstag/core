@@ -13,7 +13,6 @@ class UserWorkflow extends WorkflowAbstract
     {
         $user = $transitionEvent->getSubject();
         $this->messageBus->dispatch(new UserEmailMessage($user->getUsername(), 'user_activate'));
-        $this->sendMail('user_activate', $user);
     }
 
     #[AsTransitionListener(workflow: 'user', transition: 'approval')]

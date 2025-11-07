@@ -12,11 +12,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 class TagData extends DataAbstract implements DataInterface
 {
     #[\Override]
-    public function asset(mixed $entity, string $field): string
-    {
-        return '';
-    }
-
     public function generateSlug(object $entity): string
     {
         $entityRepository = $this->entityManager->getRepository(Page::class);
@@ -45,11 +40,13 @@ class TagData extends DataAbstract implements DataInterface
         };
     }
 
+    #[\Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlug($slug);
     }
 
+    #[\Override]
     public function getTitle(object $entity): string
     {
         unset($entity);
@@ -64,6 +61,7 @@ class TagData extends DataAbstract implements DataInterface
         return $this->translator->trans(new TranslatableMessage('Tag %tag%'), $params);
     }
 
+    #[\Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlug($slug);
@@ -71,24 +69,10 @@ class TagData extends DataAbstract implements DataInterface
         return $page instanceof Page;
     }
 
-    public function placeholder(): string
-    {
-        return '';
-    }
-
-    public function supportsAsset(object $entity): bool
-    {
-        return false;
-    }
-
+    #[\Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Tag;
-    }
-
-    public function supportsShortcode(string $className): bool
-    {
-        return false;
     }
 
     protected function getClass(string $type): ?string

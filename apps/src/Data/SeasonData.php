@@ -34,6 +34,7 @@ class SeasonData extends DataAbstract implements DataInterface
         return $this->serieData->asset($entity->getRefserie(), $field);
     }
 
+    #[\Override]
     public function generateSlug(object $entity): string
     {
         return $this->serieData->generateSlug(
@@ -41,6 +42,7 @@ class SeasonData extends DataAbstract implements DataInterface
         ) . '/' . $this->getPrefixSeason() . $entity->getNumber();
     }
 
+    #[\Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlug($slug);
@@ -51,6 +53,7 @@ class SeasonData extends DataAbstract implements DataInterface
         return 'saison-';
     }
 
+    #[\Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
@@ -61,6 +64,7 @@ class SeasonData extends DataAbstract implements DataInterface
         return $this->serieData->getTitle($entity->getRefserie()) . ' - ' . $this->getTitle($entity);
     }
 
+    #[\Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlug($slug);
@@ -68,6 +72,7 @@ class SeasonData extends DataAbstract implements DataInterface
         return $page instanceof Season;
     }
 
+    #[\Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('season');
@@ -78,19 +83,16 @@ class SeasonData extends DataAbstract implements DataInterface
         return $this->serieData->configPlaceholder();
     }
 
+    #[\Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Season;
     }
 
+    #[\Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Season;
-    }
-
-    public function supportsShortcode(string $className): bool
-    {
-        return false;
     }
 
     protected function getEntityBySlug(?string $slug): ?object

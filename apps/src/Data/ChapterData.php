@@ -34,16 +34,19 @@ class ChapterData extends DataAbstract implements DataInterface
         return $this->storyData->asset($entity->getStory(), $field);
     }
 
+    #[\Override]
     public function generateSlug(object $entity): string
     {
         return $this->storyData->generateSlug($entity->getRefstory()) . '/' . $entity->getSlug();
     }
 
+    #[\Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlug($slug);
     }
 
+    #[\Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
@@ -54,6 +57,7 @@ class ChapterData extends DataAbstract implements DataInterface
         return $this->storyData->getTitleMeta($entity->getRefstory()) . ' - ' . $this->getTitle($entity);
     }
 
+    #[\Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlug($slug);
@@ -61,6 +65,7 @@ class ChapterData extends DataAbstract implements DataInterface
         return $page instanceof Chapter;
     }
 
+    #[\Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('chapter');
@@ -71,19 +76,16 @@ class ChapterData extends DataAbstract implements DataInterface
         return $this->storyData->placeholder();
     }
 
+    #[\Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Chapter;
     }
 
+    #[\Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Chapter;
-    }
-
-    public function supportsShortcode(string $className): bool
-    {
-        return false;
     }
 
     protected function getEntityBySlug(?string $slug): ?object
