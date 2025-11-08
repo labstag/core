@@ -113,78 +113,91 @@ class ConfigurationCrudController extends CrudControllerAbstract
     private function addConfigureFieldsPlaceHolders(string $pageName): array
     {
         return [
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'chapterPlaceholder',
                 $pageName,
                 self::getEntityFqcn(),
                 (string) new TranslatableMessage('Chapter')
             ),
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'editoPlaceholder',
                 $pageName,
                 self::getEntityFqcn(),
                 (string) new TranslatableMessage('Edito')
             ),
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'episodePlaceholder',
                 $pageName,
                 self::getEntityFqcn(),
                 (string) new TranslatableMessage('Episode')
             ),
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'memoPlaceholder',
                 $pageName,
                 self::getEntityFqcn(),
                 (string) new TranslatableMessage('Memo')
             ),
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'moviePlaceholder',
                 $pageName,
                 self::getEntityFqcn(),
                 (string) new TranslatableMessage('Movie')
             ),
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'pagePlaceholder',
                 $pageName,
                 self::getEntityFqcn(),
                 (string) new TranslatableMessage('Page')
             ),
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'postPlaceholder',
                 $pageName,
                 self::getEntityFqcn(),
                 (string) new TranslatableMessage('Post')
             ),
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'sagaPlaceholder',
                 $pageName,
                 self::getEntityFqcn(),
                 (string) new TranslatableMessage('Saga')
             ),
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'seasonPlaceholder',
                 $pageName,
                 self::getEntityFqcn(),
                 (string) new TranslatableMessage('Season')
             ),
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'seriePlaceholder',
                 $pageName,
                 self::getEntityFqcn(),
                 (string) new TranslatableMessage('Serie')
             ),
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'starPlaceholder',
                 $pageName,
                 self::getEntityFqcn(),
                 (string) new TranslatableMessage('Star')
             ),
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'storyPlaceholder',
                 $pageName,
                 self::getEntityFqcn(),
                 (string) new TranslatableMessage('Story')
             ),
+            FormField::addColumn(6),
             $this->crudFieldFactory->imageField(
                 'userPlaceholder',
                 $pageName,

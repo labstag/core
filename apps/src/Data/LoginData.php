@@ -4,7 +4,9 @@ namespace Labstag\Data;
 
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class LoginData extends DataAbstract implements DataInterface
 {
@@ -12,7 +14,19 @@ class LoginData extends DataAbstract implements DataInterface
     public function scriptBefore(object $entity, Response $response): Response
     {
         unset($entity);
-        dump('aa');
+        $user = $this->security->getUser();
+        if ($user instanceof UserInterface) {
+            return new RedirectResponse(
+                $this->router->generate(
+                    'front',
+                    ['slug' => '']
+                )
+            );
+        }
+
+        $response->headers->set('X-Content-Type-Options', 'nosniff');
+        $response->headers->set('X-Frame-Options', 'DENY');
+        $response->headers->set('X-XSS-Protection', '1; mode=block');
 
         return $response;
     }
@@ -20,21 +34,6 @@ class LoginData extends DataAbstract implements DataInterface
     #[\Override]
     public function supportsScriptBefore(object $entity): bool
     {
-        $page = $this->loginPage();
-
-        return $page instanceof Page && $entity->getId() === $page->getId();
-    }
-
-    private function loginPage(): ?Page
-    {
-        $entityRepository = $this->entityManager->getRepository(Page::class);
-        /** @var Page|null $page */
-        $page = $entityRepository->findOneBy(
-            [
-                'type' => PageEnum::LOGIN->value,
-            ]
-        );
-
-        return $page;
+        return $entity instanceof Page && $entity->getType() == PageEnum::LOGIN->value;
     }
 }

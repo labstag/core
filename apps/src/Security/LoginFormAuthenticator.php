@@ -2,8 +2,13 @@
 
 namespace Labstag\Security;
 
+use Labstag\Entity\Page;
 use Labstag\Entity\User;
+use Labstag\Enum\PageEnum;
+use Labstag\Repository\PageRepository;
 use Labstag\Repository\UserRepository;
+use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
 use Override;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -28,10 +33,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'app_login';
-
     public function __construct(
         private UserRepository $userRepository,
+        protected SiteService $siteService,
+        protected SlugService $slugService,
+        protected PageRepository $pageRepository,
         private UrlGeneratorInterface $urlGenerator,
     )
     {
@@ -40,20 +46,30 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     #[Override]
     public function authenticate(Request $request): Passport
     {
-        $username = $request->request->get('username', '');
+        // Récupération des données du formulaire login
+        $loginData = $request->request->all('login');
+        $username  = $loginData['username'] ?? '';
+        $password  = $loginData['password'] ?? '';
+        $csrfToken = $loginData['_token'] ?? '';
 
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $username);
 
-        $user = $this->userRepository->findUserName($username);
-        if (!$user instanceof User) {
-            throw new CustomUserMessageAuthenticationException('Identifiant incorrect');
-        }
-
         return new Passport(
-            new UserBadge($user->getEmail()),
-            new PasswordCredentials($request->request->get('password', '')),
+            new UserBadge(
+                $username,
+                function (string $username): User {
+                    $user = $this->userRepository->findUserName($username);
+                    if (!$user instanceof User) {
+                        throw new CustomUserMessageAuthenticationException('Identifiant incorrect');
+                    }
+
+                    return $user;
+                }
+            ),
+            new PasswordCredentials($password),
             [
-                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
+                new CsrfTokenBadge('login', $csrfToken),
+                // Le nom doit correspondre au nom du formulaire
                 new RememberMeBadge(),
             ]
         );
@@ -64,9 +80,9 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     {
         unset($token);
         $targetPath = $this->getTargetPath($request->getSession(), $firewallName);
-
-        if (!$targetPath && $request->request->has('_target_path')) {
-            $targetPath = $request->request->get('_target_path');
+        $loginData  = $request->request->all('login');
+        if (!$targetPath && isset($loginData['target_path'])) {
+            $targetPath = $loginData['target_path'];
         }
 
         return new RedirectResponse($targetPath ?: $this->urlGenerator->generate('front'));
@@ -76,7 +92,20 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     protected function getLoginUrl(Request $request): string
     {
         unset($request);
+        $login = $this->pageRepository->findOneBy(
+            [
+                'type' => PageEnum::LOGIN->value,
+            ]
+        );
+        if (!$login instanceof Page) {
+            return '#linkdisabled';
+        }
 
-        return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+        $slug = $this->slugService->forEntity($login);
+
+        return $this->urlGenerator->generate(
+            'front',
+            ['slug' => $slug]
+        );
     }
 }

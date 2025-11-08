@@ -83,8 +83,8 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $star                = $this->setStar($page);
         $info                = $this->setInformations($page);
         $changepassword      = $this->setChangePassword($page);
-        $lostpassword        = $this->setLostPassword($page);
         $login               = $this->setLogin($page);
+        $lostpassword        = $this->setLostPassword($page);
         $contact             = $this->setContact($info);
         $sitemap             = $this->setSitemap($info);
         $mentions            = $this->setMentions($page);
@@ -92,9 +92,9 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
         return [
             $page,
-            $login,
             $changepassword,
             $lostpassword,
+            $login,
             $series,
             $movies,
             $stories,
@@ -150,7 +150,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $donneespersonnelles->setTitle('Données personnelles');
         $donneespersonnelles->setType(PageEnum::PAGE->value);
 
-        $this->paragraphService->addParagraph($donneespersonnelles, 'head');
+        // $this->paragraphService->addParagraph($donneespersonnelles, 'head');
         $this->addParagraphText($donneespersonnelles);
 
         return $donneespersonnelles;
@@ -179,14 +179,14 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setLogin(Page $page): Page
     {
-        $login = new Page();
-        $login->setHide(true);
-        $login->setPage($page);
-        $login->setTitle('Login');
-        $login->setType(PageEnum::LOGIN->value);
-        $this->setParagraphsLogin($login);
+        $changepassword = new Page();
+        $changepassword->setHide(true);
+        $changepassword->setPage($page);
+        $changepassword->setTitle('Connexion');
+        $changepassword->setType(PageEnum::LOGIN->value);
+        $this->setParagraphsLogin($changepassword);
 
-        return $login;
+        return $changepassword;
     }
 
     private function setLostPassword(Page $page): Page
@@ -208,7 +208,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $mentions->setTitle('Mentions légales');
         $mentions->setType(PageEnum::PAGE->value);
 
-        $this->paragraphService->addParagraph($mentions, 'head');
+        // $this->paragraphService->addParagraph($mentions, 'head');
         $this->addParagraphText($mentions);
 
         return $mentions;
@@ -246,7 +246,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsChangePassword(Page $page): void
     {
-        $this->paragraphService->addParagraph($page, 'head');
+        // $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'form');
         if (is_null($paragraph) || !$paragraph instanceof FormParagraph) {
@@ -260,7 +260,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsContact(Page $page): void
     {
-        $this->paragraphService->addParagraph($page, 'head');
+        // $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'form');
         if (is_null($paragraph) || !$paragraph instanceof FormParagraph) {
@@ -274,7 +274,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsCv(Page $page): void
     {
-        $this->paragraphService->addParagraph($page, 'head');
+        // $this->paragraphService->addParagraph($page, 'head');
         $this->paragraphService->addParagraph($page, 'presentation-cv');
         $this->paragraphService->addParagraph($page, 'competences');
         $this->paragraphService->addParagraph($page, 'experiences');
@@ -359,20 +359,28 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsInfo(Page $page): void
     {
-        $this->paragraphService->addParagraph($page, 'head');
+        // $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $this->paragraphService->addParagraph($page, 'sibling');
     }
 
     private function setParagraphsLogin(Page $page): void
     {
-        $this->paragraphService->addParagraph($page, 'head');
+        // $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
+        $paragraph = $this->paragraphService->addParagraph($page, 'form');
+        if (is_null($paragraph) || !$paragraph instanceof FormParagraph) {
+            return;
+        }
+
+        $paragraph->setSave(true);
+        $paragraph->setContent('Formulaire envoyé');
+        $paragraph->setForm('login');
     }
 
     private function setParagraphsLostPassword(Page $page): void
     {
-        $this->paragraphService->addParagraph($page, 'head');
+        // $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'form');
         if (is_null($paragraph) || !$paragraph instanceof FormParagraph) {
@@ -386,7 +394,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsMovie(Page $page): void
     {
-        $this->paragraphService->addParagraph($page, 'head');
+        // $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'saga');
         $paragraph = $this->paragraphService->addParagraph($page, 'movie');
@@ -399,7 +407,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsPost(Page $page): void
     {
-        $this->paragraphService->addParagraph($page, 'head');
+        // $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'news-list');
         if (is_null($paragraph) || !$paragraph instanceof NewsListParagraph) {
@@ -411,7 +419,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsSerie(Page $page): void
     {
-        $this->paragraphService->addParagraph($page, 'head');
+        // $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'serie');
         if (is_null($paragraph) || !$paragraph instanceof SerieParagraph) {
@@ -423,14 +431,14 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsSitemap(Page $page): void
     {
-        $this->paragraphService->addParagraph($page, 'head');
+        // $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $this->paragraphService->addParagraph($page, 'sitemap');
     }
 
     private function setParagraphsStar(Page $page): void
     {
-        $this->paragraphService->addParagraph($page, 'head');
+        // $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'star');
         if (is_null($paragraph) || !$paragraph instanceof StarParagraph) {
@@ -442,7 +450,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
     private function setParagraphsStory(Page $page): void
     {
-        $this->paragraphService->addParagraph($page, 'head');
+        // $this->paragraphService->addParagraph($page, 'head');
         $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'story-list');
         if (is_null($paragraph) || !$paragraph instanceof StoryListParagraph) {

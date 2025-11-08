@@ -32,7 +32,31 @@ final class ParagraphService
     {
     }
 
-    public function addParagraph(object $entity, string $type): ?Paragraph
+    public function addInPosition(object $entity, Paragraph $paragraph, int $position): void
+    {
+        $paragraphs = $entity->getParagraphs()->toArray();
+        array_splice($paragraphs, $position, 0, [$paragraph]);
+        foreach ($paragraphs as $key => $row) {
+            $row->setPosition($key);
+        }
+
+        // clear the Doctrine Collection instead of calling a non-existent clearParagraphs()
+        $collection = $entity->getParagraphs();
+        if (method_exists($collection, 'clear')) {
+            $collection->clear();
+        } elseif (method_exists($entity, 'removeParagraph')) {
+            // fallback: try to remove items via removeParagraph if available
+            foreach ($collection as $p) {
+                $entity->removeParagraph($p);
+            }
+        }
+
+        foreach ($paragraphs as $row) {
+            $entity->addParagraph($row);
+        }
+    }
+
+    public function addParagraph(object $entity, string $type, ?int $position = null): ?Paragraph
     {
         $find = false;
         foreach ($this->paragraphs as $row) {
@@ -48,11 +72,12 @@ final class ParagraphService
 
         $paragraphClass = $row->getClass();
         $paragraph      = new $paragraphClass();
-
-        $position  = count($entity->getParagraphs());
-        $paragraph->setPosition($position);
-
-        $entity->addParagraph($paragraph);
+        if (is_null($position)) {
+            $paragraph->setPosition(count($entity->getParagraphs()));
+            $entity->addParagraph($paragraph);
+        } else {
+            $this->addInPosition($entity, $paragraph, $position);
+        }
 
         return $paragraph;
     }

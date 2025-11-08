@@ -10,24 +10,25 @@ use Labstag\Repository\SubmissionRepository;
 use Labstag\Service\EmailService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 #[AutoconfigureTag('labstag.frontforms')]
-abstract class FrontFormAbstract implements FrontFormInterface
+abstract class FrontFormAbstract extends AbstractController implements FrontFormInterface
 {
     public function __construct(
         protected MailerInterface $mailer,
-        protected FormFactoryInterface $formFactory,
         protected SubmissionRepository $submissionRepository,
         protected EmailService $emailService,
         protected RequestStack $requestStack,
         protected WorkflowService $workflowService,
         protected EntityManagerInterface $entityManager,
         protected UserService $userService,
+        protected AuthenticationUtils $authenticationUtils,
     )
     {
     }

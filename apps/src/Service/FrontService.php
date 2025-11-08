@@ -69,9 +69,12 @@ class FrontService extends AbstractController
         );
     }
 
-    public function showView(): Response
+    public function showView(?object $entity = null): Response
     {
-        $entity = $this->slugService->getEntity();
+        if (is_null($entity)) {
+            $entity = $this->slugService->getEntity();
+        }
+
         if (!is_object($entity)) {
             throw $this->createNotFoundException();
         }

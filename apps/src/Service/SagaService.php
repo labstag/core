@@ -67,7 +67,10 @@ class SagaService
             return false;
         }
 
-        $saga->setTitle($details['name']);
+        $name = trim(str_replace('- Saga', '', $details['name']));
+        $name = trim(str_replace('- Saga', '', $name));
+
+        $saga->setTitle($name);
         $saga->setDescription($details['overview']);
         $this->updateImageSaga($saga, $details);
 

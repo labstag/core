@@ -13,11 +13,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Controller\Admin\Factory\MenuItemFactory;
+use Labstag\Entity\Memo;
 use Labstag\Entity\User;
 use Labstag\Repository\ConfigurationRepository;
 use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
@@ -30,6 +32,7 @@ class DashboardController extends AbstractDashboardController
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
+        protected ParagraphService $paragraphService,
         protected ConfigurationService $configurationService,
         protected ConfigurationRepository $configurationRepository,
         protected UserService $userService,
@@ -136,7 +139,23 @@ class DashboardController extends AbstractDashboardController
     #[\Override]
     public function index(): Response
     {
-        return $this->render('admin/dashboard.html.twig', []);
+        $repositoryAbstract = $this->getRepository(Memo::class);
+        $memos              = $repositoryAbstract->findBy(
+            ['enable' => true]
+        );
+        foreach ($memos as $memo) {
+            $idMemo     = $memo->getId();
+            $paragraphs = $memo->getParagraphs()->getValues();
+            $paragraphs[$idMemo] = $this->paragraphService->generate($paragraphs, [], false);
+        }
+
+        return $this->render(
+            'admin/dashboard.html.twig',
+            [
+                'paragraphs' => $paragraphs,
+                'memos'      => $memos,
+            ]
+        );
     }
 
     protected function adminEmpty(string $entity): void

@@ -1,0 +1,24 @@
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+{% use "elements.html.twig" %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
+    <div class="wrapper">
+        {% if error|default(false) %}
+            <div class="alert" role="alert">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+			</div>
+        {% endif %}
+        {{ form_start(form) }}
+        {{ form_row(form.username) }}
+        {{ form_row(form.password) }}
+        {{ form_row(form.remember_me) }}
+        {% if lost is defined and lost is not null %}
+            <div class="mb-3">
+                <a href="{{ site_path(lost) }}">
+                    {{ 'Forgot your password?'|trans }}
+                </a>
+            </div>
+        {% endif %}
+        {{ form_row(form.submit) }}
+        {{ form_end(form) }}
+    </div>
+</section>

@@ -51,7 +51,7 @@ abstract class EventEntityLib
     {
     }
 
-    protected function addParagraph(object $instance, string $type): void
+    protected function addParagraph(object $instance, string $type, ?int $position = null): void
     {
         $classType  = $this->paragraphService->getByCode($type);
         $paragraphs = $instance->getParagraphs();
@@ -61,7 +61,7 @@ abstract class EventEntityLib
             }
         }
 
-        $this->paragraphService->addParagraph($instance, $type);
+        $this->paragraphService->addParagraph($instance, $type, $position);
     }
 
     protected function initEntityMeta(object $instance): void
@@ -205,7 +205,7 @@ abstract class EventEntityLib
         }
 
         if (PageEnum::HOME->value != $instance->getType()) {
-            $this->addParagraph($instance, 'head');
+            $this->addParagraph($instance, 'head', 0);
 
             return;
         }

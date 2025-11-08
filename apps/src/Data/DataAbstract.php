@@ -8,9 +8,11 @@ use Labstag\Enum\PageEnum;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use stdClass;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AutoconfigureTag('labstag.datas')]
@@ -22,6 +24,8 @@ abstract class DataAbstract
         protected EntityManagerInterface $entityManager,
         protected RequestStack $requestStack,
         protected TranslatorInterface $translator,
+        protected Security $security,
+        protected RouterInterface $router,
     )
     {
     }
