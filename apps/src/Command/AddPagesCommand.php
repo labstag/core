@@ -7,9 +7,7 @@ use Labstag\Enum\PageEnum;
 use Labstag\Repository\PageRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -17,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class AddPagesCommand extends Command
 {
     public function __construct(
-        protected PageRepository $pageRepository
+        protected PageRepository $pageRepository,
     )
     {
         parent::__construct();
@@ -29,7 +27,7 @@ class AddPagesCommand extends Command
 
         $home = $this->pageRepository->findOneBy(
             [
-                'type' => PageEnum::HOME->value
+                'type' => PageEnum::HOME->value,
             ]
         );
         if (!$home instanceof Page) {
@@ -42,6 +40,7 @@ class AddPagesCommand extends Command
             if ($case->value === PageEnum::HOME->value) {
                 continue;
             }
+
             $page = $this->pageRepository->findOneBy(
                 [
                     'type' => $case->value,
