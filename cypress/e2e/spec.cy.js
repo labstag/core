@@ -7,8 +7,8 @@ describe('template spec', () => {
   it('redirection /admin vers /connexion et connexion superadmin', () => {
     cy.visit(`https://${Cypress.env('SERVERNAME')}/admin`, {failOnStatusCode: false});
     cy.url().should('include', '/connexion');
-    cy.get('#login_username').first().type('superadmin');
-    cy.get('#login_password').first().type('password');
+    cy.get('#login_username').should('be.visible').clear().type('superadmin');
+    cy.get('#login_password').should('be.visible').clear().type('password');
     cy.get('form').submit();
     cy.url().should('not.include', '/connexion');
     cy.visit(`https://${Cypress.env('SERVERNAME')}/admin`, {failOnStatusCode: false});
