@@ -54,6 +54,12 @@ class AddPagesCommand extends Command
                 $page = new Page();
                 $page->setType($case->value);
                 match ($case->value) {
+                    'changepassword' => $page->setTitle('Changer le mot de passe'),
+                    'login'          => $page->setTitle('Se connecter'),
+                    'lostpassword'   => $page->setTitle('Mot de passe oublié'),
+                    default          => $page->setTitle($case->value),
+                };
+                match ($case->value) {
                     'changepassword' => $this->setParagraphsChangePassword($page),
                     'login'          => $this->setParagraphsLogin($page),
                     'lostpassword'   => $this->setParagraphsLostPassword($page),
