@@ -59,6 +59,12 @@ class AddPagesCommand extends Command
                     'lostpassword'   => $this->setParagraphsLostPassword($page),
                     default          => $page->setEnable(false),
                 };
+                match ($case->value) {
+                    'changepassword' => $page->setHide(true),
+                    'login'          => $page->setHide(true),
+                    'lostpassword'   => $page->setHide(true),
+                    default          => $page->setEnable(false),
+                };
 
                 $page->setPage($home);
                 $this->pageRepository->save($page);
