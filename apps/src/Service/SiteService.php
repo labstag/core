@@ -23,27 +23,29 @@ final class SiteService
     public function asset(mixed $entity, string $field, bool $placeholder = true): string
     {
         $asset = null;
-        foreach ($this->datas as $data) {
-            if (!$data->supportsAsset($entity)) {
-                continue;
+        if (!is_null($entity)) {
+            foreach ($this->datas as $data) {
+                if (!$data->supportsAsset($entity)) {
+                    continue;
+                }
+
+                $file  = $data->asset($entity, $field);
+                $asset = $data;
+                break;
             }
 
-            $file  = $data->asset($entity, $field);
-            $asset = $data;
-            break;
-        }
+            if (!isset($file)) {
+                $placeholder = $asset->placeholder();
+                if ('' !== $placeholder) {
+                    return $placeholder;
+                }
 
-        if (!isset($file)) {
-            $placeholder = $asset->placeholder();
-            if ('' !== $placeholder) {
-                return $placeholder;
+                return '';
             }
 
-            return '';
-        }
-
-        if ('' !== $file) {
-            return $file;
+            if ('' !== $file) {
+                return $file;
+            }
         }
 
         if (!$placeholder) {
