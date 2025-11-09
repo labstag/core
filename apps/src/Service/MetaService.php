@@ -74,8 +74,11 @@ final class MetaService
 
         $file = str_replace('/uploads/', '', $file);
         $file = $this->fileService->getFileInAdapter('public', $file);
+        if (is_null($file)) {
+            return null;
+        }
 
-        if (0 < substr_count((string) $file, 'https://')) {
+        if (0 < substr_count($file, 'https://')) {
             return [
                 'src'    => $file,
                 'width'  => null,

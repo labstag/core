@@ -23,11 +23,13 @@ class ConfigurationCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
-        $actions->remove(Crud::PAGE_INDEX, Action::DELETE);
-        $actions->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setShowDetail(false);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::DELETE);
+        $this->actionsFactory->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]

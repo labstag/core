@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -21,11 +20,10 @@ class StarCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->configureActionsBtn($actions);
-        $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
-        $actions->remove(Crud::PAGE_DETAIL, Action::EDIT);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setShowDetail(false);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]

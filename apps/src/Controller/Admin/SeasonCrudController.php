@@ -28,19 +28,12 @@ class SeasonCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setActionPublic($actions, 'admin_season_w3c', 'admin_season_public');
-        $this->setEditDetail($actions);
-        $action = $this->setUpdateAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
-        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
-        $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
-        $actions->remove(Crud::PAGE_DETAIL, Action::EDIT);
-        $this->configureActionsTrash($actions);
-        $this->configureActionsUpdateImage();
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setActionLinkPublic('admin_season_public');
+        $this->actionsFactory->setActionLinkW3CValidator('admin_season_w3c');
+        $this->setUpdateAction();
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]
@@ -184,14 +177,12 @@ class SeasonCrudController extends CrudControllerAbstract
         return $this->linkw3CValidator($season);
     }
 
-    private function configureActionsUpdateImage(): void
+    private function setUpdateAction(): void
     {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $request->query->get('action', null);
-    }
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
 
-    private function setUpdateAction(): Action
-    {
         $action = Action::new('update', new TranslatableMessage('Update'));
         $action->linkToUrl(
             fn (Season $season): string => $this->generateUrl(
@@ -203,6 +194,8 @@ class SeasonCrudController extends CrudControllerAbstract
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 }

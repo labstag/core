@@ -4,7 +4,6 @@ namespace Labstag\Command;
 
 use Labstag\Entity\FormParagraph;
 use Labstag\Entity\Page;
-use Labstag\Entity\TextParagraph;
 use Labstag\Enum\PageEnum;
 use Labstag\Repository\PageRepository;
 use Labstag\Service\ParagraphService;
@@ -59,12 +58,14 @@ class AddPagesCommand extends Command
                     'lostpassword'   => $page->setTitle('Mot de passe oublié'),
                     default          => $page->setTitle($case->value),
                 };
+
                 match ($case->value) {
                     'changepassword' => $this->setParagraphsChangePassword($page),
                     'login'          => $this->setParagraphsLogin($page),
                     'lostpassword'   => $this->setParagraphsLostPassword($page),
                     default          => $page->setEnable(false),
                 };
+
                 match ($case->value) {
                     'changepassword' => $page->setHide(true),
                     'login'          => $page->setHide(true),

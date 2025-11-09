@@ -28,34 +28,15 @@ class SerieCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setActionPublic($actions, 'admin_serie_w3c', 'admin_serie_public');
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setActionLinkPublic('admin_serie_public');
+        $this->actionsFactory->setActionLinkW3CValidator('admin_serie_w3c');
+        $this->setLinkImdbAction();
+        $this->setLinkTmdbAction();
+        $this->setUpdateAction();
+        $this->actionsFactory->setActionUpdateAll();
 
-        $action = $this->setLinkImdbAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
-
-        $action = $this->setLinkTmdbAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
-
-        $action = $this->setUpdateAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
-        $this->setEditDetail($actions);
-        $this->configureActionsTrash($actions);
-        $this->configureActionsUpdateImage();
-
-        $action = Action::new('updateAll', new TranslatableMessage('Update all'), 'fas fa-sync-alt');
-        $action->displayAsLink();
-        $action->linkToCrudAction('updateAll');
-        $action->createAsGlobalAction();
-
-        $actions->add(Crud::PAGE_INDEX, $action);
-
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]
@@ -230,14 +211,12 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->linkw3CValidator($serie);
     }
 
-    private function configureActionsUpdateImage(): void
+    private function setLinkImdbAction(): void
     {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $request->query->get('action', null);
-    }
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
 
-    private function setLinkImdbAction(): Action
-    {
         $action = Action::new('imdb', new TranslatableMessage('IMDB Page'));
         $action->setHtmlAttributes(
             ['target' => '_blank']
@@ -252,11 +231,17 @@ class SerieCrudController extends CrudControllerAbstract
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function setLinkTmdbAction(): Action
+    private function setLinkTmdbAction(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
         $action->setHtmlAttributes(
             ['target' => '_blank']
@@ -269,12 +254,17 @@ class SerieCrudController extends CrudControllerAbstract
                 ]
             )
         );
-
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function setUpdateAction(): Action
+    private function setUpdateAction(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('update', new TranslatableMessage('Update'));
         $action->linkToUrl(
             fn (Serie $serie): string => $this->generateUrl(
@@ -286,6 +276,8 @@ class SerieCrudController extends CrudControllerAbstract
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 }

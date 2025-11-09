@@ -20,11 +20,11 @@ class PageCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setActionPublic($actions, 'admin_page_w3c', 'admin_page_public');
-        $this->setEditDetail($actions);
-        $this->configureActionsTrash($actions);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setActionLinkPublic('admin_page_public');
+        $this->actionsFactory->setActionLinkW3CValidator('admin_page_w3c');
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]

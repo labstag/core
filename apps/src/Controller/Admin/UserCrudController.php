@@ -24,10 +24,9 @@ class UserCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setEditDetail($actions);
-        $this->configureActionsTrash($actions);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]

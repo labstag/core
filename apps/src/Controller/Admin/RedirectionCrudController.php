@@ -33,12 +33,12 @@ class RedirectionCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->configureActionsTrash($actions);
-        $this->configureActionsTestSource($actions);
-        $this->configureActionsImport($actions);
-        $this->configureActionsExport($actions);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->configureActionsTestSource();
+        $this->configureActionsImport();
+        $this->configureActionsExport();
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]
@@ -230,28 +230,40 @@ class RedirectionCrudController extends CrudControllerAbstract
         );
     }
 
-    private function configureActionsExport(Actions $actions): void
+    private function configureActionsExport(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('export', 'Exporter', 'fas fa-file-export');
         $action->addCssClass('btn btn-primary');
         $action->linkToCrudAction('export');
         $action->createAsGlobalAction();
 
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function configureActionsImport(Actions $actions): void
+    private function configureActionsImport(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('import', 'Importer', 'fas fa-file-import');
         $action->addCssClass('btn btn-primary');
         $action->linkToCrudAction('import');
         $action->createAsGlobalAction();
 
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function configureActionsTestSource(Actions $actions): void
+    private function configureActionsTestSource(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('testSource', 'Test de la source');
         $action->setHtmlAttributes(
             ['target' => '_blank']
@@ -265,9 +277,9 @@ class RedirectionCrudController extends CrudControllerAbstract
             )
         );
 
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
     private function getFilename(string $filename, string $extension = 'xlsx'): string

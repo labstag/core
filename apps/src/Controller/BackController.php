@@ -136,6 +136,11 @@ class BackController extends AbstractController
 
         if ($data->isDeleted()) {
             $data->setDeletedAt(null);
+            if (method_exists($data, 'getMeta')) {
+                $meta = $data->getMeta();
+                $this->adminRestore($meta::class, $meta->getId());
+            }
+
             $this->entityManager->persist($data);
             $this->entityManager->flush();
         }

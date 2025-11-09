@@ -14,9 +14,10 @@ class BanIpCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->configureActionsTrash($actions);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setReadOnly(true);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]

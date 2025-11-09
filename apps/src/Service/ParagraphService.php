@@ -72,12 +72,12 @@ final class ParagraphService
 
         $paragraphClass = $row->getClass();
         $paragraph      = new $paragraphClass();
-        if (is_null($position)) {
-            $paragraph->setPosition(count($entity->getParagraphs()));
-            $entity->addParagraph($paragraph);
-        } else {
-            $this->addInPosition($entity, $paragraph, $position);
-        }
+        
+        $this->addInPosition(
+            $entity,
+            $paragraph,
+            is_null($position) ? count($entity->getParagraphs()) : $position
+        );
 
         return $paragraph;
     }

@@ -16,10 +16,9 @@ class TemplateCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setEditDetail($actions);
-        $this->configureActionsTrash($actions);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]
@@ -41,7 +40,9 @@ class TemplateCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
         $textField = TextField::new('code', new TranslatableMessage('Code'));
-        $textField->setDisabled(true);
+        if (Crud::PAGE_NEW !== $pageName) {
+            $textField->setDisabled(true);
+        }
 
         $wysiwygField  = WysiwygField::new('html', new TranslatableMessage('HTML'));
         $wysiwygField->onlyOnForms();

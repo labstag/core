@@ -16,14 +16,11 @@ class PostCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        // Actions de base (trash + navigation + détail)
-        $this->configureActionsTrash($actions);
-        $this->setEditDetail($actions);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setActionLinkPublic('admin_post_public');
+        $this->actionsFactory->setActionLinkW3CValidator('admin_post_w3c');
 
-        // Actions publiques et W3C via la factory (héritées abstrait)
-        $this->setActionPublic($actions, 'admin_post_w3c', 'admin_post_public');
-
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]

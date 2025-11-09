@@ -15,10 +15,10 @@ class MetaCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->configureActionsTrash($actions);
-        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]
