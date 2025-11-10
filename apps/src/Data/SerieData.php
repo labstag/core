@@ -59,11 +59,12 @@ class SerieData extends PageData implements DataInterface
             )
         );
         $tvSeries->numberOfSeasons(count($entity->getSeasons()));
+
         $seasons = [];
         foreach ($entity->getSeasons() as $season) {
             $seasons[] = $this->getJsonLdSeason($season);
         }
-        
+
         $tvSeries->containsSeason($seasons);
 
         return $tvSeries;

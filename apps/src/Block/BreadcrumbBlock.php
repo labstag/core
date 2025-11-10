@@ -8,6 +8,7 @@ use Labstag\Entity\BreadcrumbBlock as EntityBreadcrumbBlock;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Override;
+use Spatie\SchemaOrg\Schema;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -55,9 +56,12 @@ class BreadcrumbBlock extends BlockAbstract
             return;
         }
 
+        $jsonLd = $this->getJsonLd($urls);
+
         $this->setData(
             $block,
             [
+                'jsonLd' => $jsonLd,
                 'params' => $params,
                 'urls'   => $urls,
                 'block'  => $block,
@@ -69,6 +73,36 @@ class BreadcrumbBlock extends BlockAbstract
     public function getClass(): string
     {
         return EntityBreadcrumbBlock::class;
+    }
+
+    public function getJsonLd($urls)
+    {
+        $breadcrumbList  = Schema::breadcrumbList();
+        $breadcrumbs = [];
+        foreach ($urls as $position => $data) {
+            $item = Schema::listItem();
+            $item->position($position + 1);
+            $item->name($data['title']);
+            $item->item(
+                $this->router->generate(
+                    'front',
+                    [
+                        'slug' => $data['url'],
+                    ],
+                    0
+                )
+            );
+            $breadcrumbs[] = $item;
+        }
+
+        $breadcrumbList->itemListElement($breadcrumbs);
+
+        $jsonLd = $breadcrumbList->jsonSerialize();
+
+        return json_encode(
+            $jsonLd,
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+        );
     }
 
     #[Override]
