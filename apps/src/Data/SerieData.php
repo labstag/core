@@ -32,6 +32,18 @@ class SerieData extends PageData implements DataInterface
     {
         $tvSeries = Schema::tvSeries();
         $tvSeries->name($entity->getTitle());
+        $img = $this->siteService->asset($entity, 'img', true, true);
+        if ('' !== $img) {
+            $tvSeries->image($img);
+        }
+
+        $genres = [];
+        foreach ($entity->getCategories() as $category) {
+            $genres[] = $category->getTitle();
+        }
+        if (count($genres) > 0) {
+            $tvSeries->genre($genres);
+        }
 
         $description = (string) $entity->getDescription();
         $clean       = trim(html_entity_decode(strip_tags($description), ENT_QUOTES | ENT_HTML5, 'UTF-8'));

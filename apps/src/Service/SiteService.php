@@ -15,13 +15,15 @@ final class SiteService
         #[AutowireIterator('labstag.datas')]
         private iterable $datas,
         private FileService $fileService,
+        private ConfigurationService $configurationService,
         private TokenStorageInterface $tokenStorage,
     )
     {
     }
 
-    public function asset(mixed $entity, string $field, bool $placeholder = true): string
+    public function asset(mixed $entity, string $field, bool $placeholder = true, bool $absolute = false): string
     {
+        $configuration = $this->configurationService->getConfiguration();
         $asset = null;
         if (!is_null($entity)) {
             foreach ($this->datas as $data) {
@@ -37,14 +39,14 @@ final class SiteService
             if (!isset($file)) {
                 $placeholder = $asset->placeholder();
                 if ('' !== $placeholder) {
-                    return $placeholder;
+                    return $absolute ? $configuration->getUrl().$placeholder : $placeholder;
                 }
 
                 return '';
             }
 
             if ('' !== $file) {
-                return $file;
+                return $absolute ? $configuration->getUrl().$file : $file;
             }
         }
 

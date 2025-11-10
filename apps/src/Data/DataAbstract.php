@@ -7,6 +7,7 @@ use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
 use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -28,6 +29,7 @@ abstract class DataAbstract
         protected Security $security,
         protected RouterInterface $router,
         protected SlugService $slugService,
+        protected SiteService $siteService,
     )
     {
     }
