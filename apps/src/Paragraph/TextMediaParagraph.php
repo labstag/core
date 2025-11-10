@@ -78,7 +78,7 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): \Generator
+    public function getFields(Paragraph $paragraph, string $pageName): Generator
     {
         yield $this->addFieldImageUpload('img', $pageName, $paragraph);
 

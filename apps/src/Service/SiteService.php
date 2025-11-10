@@ -24,39 +24,21 @@ final class SiteService
     public function asset(mixed $entity, string $field, bool $placeholder = true, bool $absolute = false): string
     {
         $configuration = $this->configurationService->getConfiguration();
-        $asset = null;
-        if (!is_null($entity)) {
-            foreach ($this->datas as $data) {
-                if (!$data->supportsAsset($entity)) {
-                    continue;
-                }
-
-                $file  = $data->asset($entity, $field);
-                $asset = $data;
-                break;
-            }
-
-            if (!isset($file)) {
-                $placeholder = $asset->placeholder();
-                if ('' !== $placeholder) {
-                    return $absolute ? $configuration->getUrl().$placeholder : $placeholder;
-                }
-
-                return '';
-            }
-
-            if ('' !== $file) {
-                return $absolute ? $configuration->getUrl().$file : $file;
-            }
+        $data          = $this->getAsset($entity);
+        if (is_null($entity) || is_null($data)) {
+            return ($placeholder) ? 'https://picsum.photos/1200/1200?md5=' . bin2hex(random_bytes(16)) : '';
         }
 
-        if (!$placeholder) {
-            return '';
+        $file        = $data->asset($entity, $field);
+        $placeholder = $data->placeholder();
+
+        if ('' !== $file) {
+            return $absolute ? $configuration->getUrl() . $file : $file;
         }
 
-        $placeholder = $asset->placeholder();
+        $placeholder = $data->placeholder();
         if ('' !== $placeholder) {
-            return $placeholder;
+            return $absolute ? $configuration->getUrl() . $placeholder : $placeholder;
         }
 
         return 'https://picsum.photos/1200/1200?md5=' . md5((string) $entity->getId());
@@ -95,6 +77,23 @@ final class SiteService
     public function isHome(array $data): bool
     {
         return isset($data['entity']) && $data['entity'] instanceof Page && PageEnum::HOME->value == $data['entity']->getType();
+    }
+
+    private function getAsset(mixed $entity): ?object
+    {
+        if (is_null($entity)) {
+            return null;
+        }
+
+        foreach ($this->datas as $data) {
+            if (!$data->supportsAsset($entity)) {
+                continue;
+            }
+
+            return $data;
+        }
+
+        return null;
     }
 
     /**

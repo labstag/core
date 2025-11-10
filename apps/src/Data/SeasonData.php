@@ -36,9 +36,8 @@ class SeasonData extends SerieData implements DataInterface
     public function getJsonLd(object $entity): object
     {
         $schema = $this->getJsonLdSeason($entity);
-        $img = $this->siteService->asset($entity, 'img', true, true);
+        $img    = $this->siteService->asset($entity, 'img', true, true);
         if ('' !== $img) {
-
             $schema->image($img);
         }
 
@@ -46,40 +45,22 @@ class SeasonData extends SerieData implements DataInterface
         foreach ($entity->getEpisodes() as $episode) {
             $episodes[] = $this->getJsonLdEpisode($episode);
         }
-        
+
         $schema->episode($episodes);
-        $serie = Schema::tvSeries();
-        $serie->name($entity->getRefserie()->getTitle());
+        $tvSeries = Schema::tvSeries();
+        $tvSeries->name($entity->getRefserie()->getTitle());
+
         $slug = $this->slugService->forEntity($entity->getRefserie());
-        $serie->url(
+        $tvSeries->url(
             $this->router->generate(
                 'front',
                 ['slug' => $slug],
                 UrlGeneratorInterface::ABSOLUTE_URL
             )
         );
-        $schema->partOfSeries($serie);
+        $schema->partOfSeries($tvSeries);
+
         return $schema;
-    }
-
-    protected function getJsonLdEpisode(Episode $entity): object
-    {
-        $tvepisode = Schema::tvEpisode();
-        $tvepisode->name($entity->getTitle());
-        $tvepisode->episodeNumber($entity->getNumber());
-        if ($entity->getAirDate()) {
-            $tvepisode->episodeNumber($entity->getAirDate()->format('Y-m-d'));
-        }
-
-        $description = (string) $entity->getOverview();
-        $clean       = trim(html_entity_decode(strip_tags($description), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
-        $tvepisode->description($clean);
-        $img = $this->siteService->asset($entity, 'img', true, true);
-        if ('' !== $img) {
-            $tvepisode->image($img);
-        }
-
-        return $tvepisode;
     }
 
     public function getPrefixSeason(): string
@@ -164,5 +145,25 @@ class SeasonData extends SerieData implements DataInterface
                 'number'   => $slugSecond,
             ]
         );
+    }
+
+    protected function getJsonLdEpisode(Episode $episode): object
+    {
+        $tvepisode = Schema::tvEpisode();
+        $tvepisode->name($episode->getTitle());
+        $tvepisode->episodeNumber($episode->getNumber());
+        if ($episode->getAirDate() instanceof \DateTime) {
+            $tvepisode->episodeNumber($episode->getAirDate()->format('Y-m-d'));
+        }
+
+        $description = (string) $episode->getOverview();
+        $clean       = trim(html_entity_decode(strip_tags($description), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $tvepisode->description($clean);
+        $img = $this->siteService->asset($episode, 'img', true, true);
+        if ('' !== $img) {
+            $tvepisode->image($img);
+        }
+
+        return $tvepisode;
     }
 }

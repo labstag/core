@@ -32,6 +32,7 @@ class SerieData extends PageData implements DataInterface
     {
         $tvSeries = Schema::tvSeries();
         $tvSeries->name($entity->getTitle());
+
         $img = $this->siteService->asset($entity, 'img', true, true);
         if ('' !== $img) {
             $tvSeries->image($img);
@@ -41,7 +42,8 @@ class SerieData extends PageData implements DataInterface
         foreach ($entity->getCategories() as $category) {
             $genres[] = $category->getTitle();
         }
-        if (count($genres) > 0) {
+
+        if ([] !== $genres) {
             $tvSeries->genre($genres);
         }
 
