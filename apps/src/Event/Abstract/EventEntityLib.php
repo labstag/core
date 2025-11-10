@@ -262,6 +262,10 @@ abstract class EventEntityLib
 
         $asciiSlugger  = new AsciiSlugger();
         $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
+        if ('' === trim($unicodeString)) {
+            return;
+        }
+
         $slug      = $unicodeString;
         $find      = false;
         $number    = 1;

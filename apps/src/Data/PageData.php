@@ -2,42 +2,21 @@
 
 namespace Labstag\Data;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Page;
-use Labstag\Service\ConfigurationService;
-use Labstag\Service\FileService;
 use Labstag\Shortcode\PageUrlShortcode;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-class PageData extends DataAbstract implements DataInterface
+class PageData extends HomeData implements DataInterface
 {
-    public function __construct(
-        protected HomeData $homeData,
-        protected FileService $fileService,
-        protected ConfigurationService $configurationService,
-        protected EntityManagerInterface $entityManager,
-        protected RequestStack $requestStack,
-        protected TranslatorInterface $translator,
-        protected Security $security,
-        protected RouterInterface $router,
-    )
-    {
-        parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator, $security, $router);
-    }
-
     #[\Override]
     public function generateSlug(object $entity): string
     {
-        return $this->homeData->generateSlug($entity) . $entity->getSlug();
+        return parent::generateSlug($entity) . $entity->getSlug();
     }
 
     #[\Override]
     public function getEntity(?string $slug): object
     {
-        return $this->getEntityBySlug($slug);
+        return $this->getEntityBySlugPage($slug);
     }
 
     #[\Override]
@@ -60,7 +39,7 @@ class PageData extends DataAbstract implements DataInterface
     #[\Override]
     public function match(?string $slug): bool
     {
-        $page = $this->getEntityBySlug($slug);
+        $page = $this->getEntityBySlugPage($slug);
 
         return $page instanceof Page;
     }
@@ -99,7 +78,7 @@ class PageData extends DataAbstract implements DataInterface
         return sprintf('[%s:%s]', 'pageurl', $id);
     }
 
-    protected function getEntityBySlug(?string $slug): ?object
+    protected function getEntityBySlugPage(?string $slug): ?object
     {
         return $this->entityManager->getRepository(Page::class)->findOneBy(
             ['slug' => $slug]

@@ -1,0 +1,13 @@
+{% use "elements.html.twig" %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
+    <div class="wrapper">
+        <h2>{{ paragraph.title }}</h2>
+        <ul>
+            {% for item in paragraph.experiences %}
+                <li class="teaser-experience">
+                    {% include  "teasers/experience.html.twig"  with {'item': item} %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>

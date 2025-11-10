@@ -2,34 +2,13 @@
 
 namespace Labstag\Data;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Page;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
-use Labstag\Service\ConfigurationService;
-use Labstag\Service\FileService;
 use Labstag\Shortcode\StoryUrlShortcode;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-class StoryData extends DataAbstract implements DataInterface
+class StoryData extends PageData implements DataInterface
 {
-    public function __construct(
-        protected PageData $pageData,
-        protected FileService $fileService,
-        protected ConfigurationService $configurationService,
-        protected EntityManagerInterface $entityManager,
-        protected RequestStack $requestStack,
-        protected TranslatorInterface $translator,
-        protected Security $security,
-        protected RouterInterface $router,
-    )
-    {
-        parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator, $security, $router);
-    }
-
     #[\Override]
     public function generateSlug(object $entity): string
     {
@@ -39,13 +18,13 @@ class StoryData extends DataAbstract implements DataInterface
             ]
         );
 
-        return $this->pageData->generateSlug($page) . '/' . $entity->getSlug();
+        return parent::generateSlug($page) . '/' . $entity->getSlug();
     }
 
     #[\Override]
     public function getEntity(?string $slug): object
     {
-        return $this->getEntityBySlug($slug);
+        return $this->getEntityBySlugStory($slug);
     }
 
     #[\Override]
@@ -60,6 +39,7 @@ class StoryData extends DataAbstract implements DataInterface
         return $entity->getTitle();
     }
 
+    #[\Override]
     public function getTitleMeta(object $entity): string
     {
         return $this->getTitle($entity);
@@ -68,7 +48,7 @@ class StoryData extends DataAbstract implements DataInterface
     #[\Override]
     public function match(?string $slug): bool
     {
-        $page = $this->getEntityBySlug($slug);
+        $page = $this->getEntityBySlugStory($slug);
 
         return $page instanceof Story;
     }
@@ -102,7 +82,7 @@ class StoryData extends DataAbstract implements DataInterface
         return Story::class === $className;
     }
 
-    protected function getEntityBySlug(?string $slug): ?object
+    protected function getEntityBySlugStory(?string $slug): ?object
     {
         if (0 === substr_count((string) $slug, '/')) {
             return null;

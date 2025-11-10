@@ -7,6 +7,7 @@ use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Labstag\Service\SlugService;
 use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -26,6 +27,7 @@ abstract class DataAbstract
         protected TranslatorInterface $translator,
         protected Security $security,
         protected RouterInterface $router,
+        protected SlugService $slugService,
     )
     {
     }
@@ -88,6 +90,13 @@ abstract class DataAbstract
     }
 
     public function supportsData(object $entity): bool
+    {
+        unset($entity);
+
+        return false;
+    }
+
+    public function supportsJsonLd(object $entity): bool
     {
         unset($entity);
 

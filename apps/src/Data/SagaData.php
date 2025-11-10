@@ -2,33 +2,12 @@
 
 namespace Labstag\Data;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Page;
 use Labstag\Entity\Saga;
 use Labstag\Enum\PageEnum;
-use Labstag\Service\ConfigurationService;
-use Labstag\Service\FileService;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-class SagaData extends DataAbstract implements DataInterface
+class SagaData extends PageData implements DataInterface
 {
-    public function __construct(
-        protected PageData $pageData,
-        protected FileService $fileService,
-        protected ConfigurationService $configurationService,
-        protected EntityManagerInterface $entityManager,
-        protected RequestStack $requestStack,
-        protected TranslatorInterface $translator,
-        protected Security $security,
-        protected RouterInterface $router,
-    )
-    {
-        parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator, $security, $router);
-    }
-
     #[\Override]
     public function generateSlug(object $entity): string
     {
@@ -38,13 +17,13 @@ class SagaData extends DataAbstract implements DataInterface
             ]
         );
 
-        return $this->pageData->generateSlug($page) . '/' . $entity->getSlug();
+        return parent::generateSlug($page) . '/' . $entity->getSlug();
     }
 
     #[\Override]
     public function getEntity(?string $slug): object
     {
-        return $this->getEntityBySlug($slug);
+        return $this->getEntityBySlugSaga($slug);
     }
 
     #[\Override]
@@ -53,6 +32,7 @@ class SagaData extends DataAbstract implements DataInterface
         return $entity->getTitle();
     }
 
+    #[\Override]
     public function getTitleMeta(object $entity): string
     {
         return $this->getTitle($entity);
@@ -61,7 +41,7 @@ class SagaData extends DataAbstract implements DataInterface
     #[\Override]
     public function match(?string $slug): bool
     {
-        $page = $this->getEntityBySlug($slug);
+        $page = $this->getEntityBySlugSaga($slug);
 
         return $page instanceof Saga;
     }
@@ -89,7 +69,7 @@ class SagaData extends DataAbstract implements DataInterface
         return $entity instanceof Saga;
     }
 
-    protected function getEntityBySlug(?string $slug): ?object
+    protected function getEntityBySlugSaga(?string $slug): ?object
     {
         if (0 === substr_count((string) $slug, '/')) {
             return null;

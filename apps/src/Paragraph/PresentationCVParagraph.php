@@ -34,10 +34,11 @@ class PresentationCVParagraph extends ParagraphAbstract implements ParagraphInte
     }
 
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): mixed
+    public function getFields(Paragraph $paragraph, string $pageName): \Generator
     {
-        unset($pageName, $paragraph);
         yield TextField::new('title', new TranslatableMessage('Title'));
+        yield $this->addFieldImageUpload('img', $pageName, $paragraph);
+        yield $this->addFieldFileUpload('pdf', $pageName, $paragraph);
     }
 
     #[Override]

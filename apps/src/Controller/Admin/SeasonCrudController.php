@@ -37,37 +37,6 @@ class SeasonCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    private function setLinkTmdbAction(): void
-    {
-        if (!$this->actionsFactory->isTrash()) {
-            return;
-        }
-
-        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
-        $action->linkToUrl(
-            fn (Season $season): string => $this->generateUrl(
-                'admin_season_tmdb',
-                [
-                    'entity' => $season->getId(),
-                ]
-            )
-        );
-        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
-        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
-    }
-
-    #[Route('/admin/season/{entity}/tmdb', name: 'admin_season_tmdb')]
-    public function tmdb(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $season                           = $repositoryAbstract->find($entity);
-        return $this->redirect('https://www.themoviedb.org/tv/' . $season->getRefserie()->getTmdb().'/season/'.$season->getNumber());
-    }
-
     #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
@@ -184,6 +153,17 @@ class SeasonCrudController extends CrudControllerAbstract
         return $this->publicLink($season);
     }
 
+    #[Route('/admin/season/{entity}/tmdb', name: 'admin_season_tmdb')]
+    public function tmdb(string $entity): RedirectResponse
+    {
+        $repositoryAbstract               = $this->getRepository();
+        $season                           = $repositoryAbstract->find($entity);
+
+        return $this->redirect(
+            'https://www.themoviedb.org/tv/' . $season->getRefserie()->getTmdb() . '/season/' . $season->getNumber()
+        );
+    }
+
     #[Route('/admin/season/{entity}/update', name: 'admin_season_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
@@ -207,6 +187,29 @@ class SeasonCrudController extends CrudControllerAbstract
         $season                           = $repositoryAbstract->find($entity);
 
         return $this->linkw3CValidator($season);
+    }
+
+    private function setLinkTmdbAction(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToUrl(
+            fn (Season $season): string => $this->generateUrl(
+                'admin_season_tmdb',
+                [
+                    'entity' => $season->getId(),
+                ]
+            )
+        );
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
     private function setUpdateAction(): void

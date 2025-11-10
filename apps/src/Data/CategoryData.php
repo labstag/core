@@ -34,7 +34,7 @@ class CategoryData extends DataAbstract implements DataInterface
     #[\Override]
     public function getEntity(?string $slug): object
     {
-        return $this->getEntityBySlug($slug);
+        return $this->getEntityBySlugCategory($slug);
     }
 
     #[\Override]
@@ -55,7 +55,7 @@ class CategoryData extends DataAbstract implements DataInterface
     #[\Override]
     public function match(?string $slug): bool
     {
-        $page = $this->getEntityBySlug($slug);
+        $page = $this->getEntityBySlugCategory($slug);
 
         return $page instanceof Page;
     }
@@ -109,7 +109,7 @@ class CategoryData extends DataAbstract implements DataInterface
         };
     }
 
-    protected function getEntityBySlug(?string $slug): ?object
+    protected function getEntityBySlugCategory(?string $slug): ?object
     {
         if (0 === substr_count((string) $slug, '/')) {
             return null;

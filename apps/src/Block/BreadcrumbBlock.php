@@ -8,7 +8,6 @@ use Labstag\Entity\BreadcrumbBlock as EntityBreadcrumbBlock;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Override;
-use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -112,48 +111,32 @@ class BreadcrumbBlock extends BlockAbstract
      */
     private function setBreadcrumb(?string $slug): array
     {
-        $cacheKey = 'breadcrumb_' . md5((string) $slug);
-        $data     = $this->getCached(
-            $cacheKey,
-            function () use ($slug): array {
-                $urls        = [];
-                $currentSlug = $slug;
-
-                while ('' !== $currentSlug) {
-                    foreach ($this->datas as $data) {
-                        $classe = new ReflectionClass($data);
-                        if ($classe->hasMethod('getTitle') && $classe->hasMethod('match') && $data->match(
-                            $currentSlug
-                        )
-                        ) {
-                            $entity = $data->getEntity($currentSlug);
-                            $urls[] = [
-                                'title' => $data->getTitle($entity),
-                                'url'   => $currentSlug,
-                            ];
-                        }
-                    }
-
-                    if ('0' === $currentSlug) {
-                        break;
-                    }
-
-                    $currentSlug = (0 < substr_count($currentSlug, '/')) ? substr(
-                        $currentSlug,
-                        0,
-                        strrpos($currentSlug, '/')
-                    ) : '';
+        $currentSlug = $slug;
+        $urls        = [];
+        while ('' != $currentSlug) {
+            foreach ($this->datas as $data) {
+                if ($data->match($currentSlug)) {
+                    $entity = $data->getEntity($currentSlug);
+                    $urls[] = [
+                        'title' => $data->getTitle($entity),
+                        'url'   => $currentSlug,
+                    ];
+                    break;
                 }
-
-                return $urls;
             }
-        );
 
-        $data[] = [
+            $currentSlug = (0 < substr_count($currentSlug, '/')) ? substr(
+                $currentSlug,
+                0,
+                strrpos($currentSlug, '/')
+            ) : '';
+        }
+
+        $urls[] = [
             'title' => (string) new TranslatableMessage('Home'),
             'url'   => '',
         ];
 
-        return array_reverse($data);
+        return array_reverse($urls);
     }
 }

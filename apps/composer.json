@@ -26,6 +26,7 @@
         "nelmio/cors-bundle": "2.6.*",
         "nesbot/carbon": "3.10.*",
         "phpoffice/phpspreadsheet": "5.2.*",
+        "spatie/schema-org": "3.23.*",
         "symfony/apache-pack": "1.0.*",
         "symfony/bluesky-notifier": "7.3.*",
         "symfony/cache": "7.3.*",

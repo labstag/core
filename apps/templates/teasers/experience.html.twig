@@ -1,0 +1,21 @@
+<div class="wrapper">
+    <h3 class="title">
+        {{ item.title }}
+    </h3>
+    <div class="dates">
+        {{ item.yearStart|format_date(locale: 'fr_FR', dateFormat: 'full') }} - {% if item.end == false %}{{ item.yearEnd|format_date(locale: 'fr_FR', dateFormat: 'full') }}{% else %}{{ "experience.present"|trans }}{% endif %}
+    </div>
+    <div class="enterprise">
+        {{ item.entreprise }}
+    </div>
+    <div class="content">
+        {{ item.description|raw }}
+    </div>
+    <ul class="list-competences">
+        {% for competence in item.competences %}
+            <li class="icon-{{ competence.icon }}">
+                {{ competence.title }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>

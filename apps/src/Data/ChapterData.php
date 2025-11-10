@@ -2,31 +2,10 @@
 
 namespace Labstag\Data;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Chapter;
-use Labstag\Service\ConfigurationService;
-use Labstag\Service\FileService;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ChapterData extends DataAbstract implements DataInterface
+class ChapterData extends StoryData implements DataInterface
 {
-    public function __construct(
-        protected StoryData $storyData,
-        protected FileService $fileService,
-        protected ConfigurationService $configurationService,
-        protected EntityManagerInterface $entityManager,
-        protected RequestStack $requestStack,
-        protected TranslatorInterface $translator,
-        protected Security $security,
-        protected RouterInterface $router,
-    )
-    {
-        parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator, $security, $router);
-    }
-
     #[\Override]
     public function asset(mixed $entity, string $field): string
     {
@@ -35,19 +14,19 @@ class ChapterData extends DataAbstract implements DataInterface
             return $asset;
         }
 
-        return $this->storyData->asset($entity->getStory(), $field);
+        return parent::asset($entity->getStory(), $field);
     }
 
     #[\Override]
     public function generateSlug(object $entity): string
     {
-        return $this->storyData->generateSlug($entity->getRefstory()) . '/' . $entity->getSlug();
+        return parent::generateSlug($entity->getRefstory()) . '/' . $entity->getSlug();
     }
 
     #[\Override]
     public function getEntity(?string $slug): object
     {
-        return $this->getEntityBySlug($slug);
+        return $this->getEntityBySlugChapter($slug);
     }
 
     #[\Override]
@@ -56,15 +35,16 @@ class ChapterData extends DataAbstract implements DataInterface
         return $entity->getTitle();
     }
 
+    #[\Override]
     public function getTitleMeta(object $entity): string
     {
-        return $this->storyData->getTitleMeta($entity->getRefstory()) . ' - ' . $this->getTitle($entity);
+        return parent::getTitleMeta($entity->getRefstory()) . ' - ' . $this->getTitle($entity);
     }
 
     #[\Override]
     public function match(?string $slug): bool
     {
-        $page = $this->getEntityBySlug($slug);
+        $page = $this->getEntityBySlugChapter($slug);
 
         return $page instanceof Chapter;
     }
@@ -77,7 +57,7 @@ class ChapterData extends DataAbstract implements DataInterface
             return $placeholder;
         }
 
-        return $this->storyData->placeholder();
+        return parent::placeholder();
     }
 
     #[\Override]
@@ -92,7 +72,7 @@ class ChapterData extends DataAbstract implements DataInterface
         return $entity instanceof Chapter;
     }
 
-    protected function getEntityBySlug(?string $slug): ?object
+    protected function getEntityBySlugChapter(?string $slug): ?object
     {
         if (0 === substr_count((string) $slug, '/')) {
             return null;
@@ -101,11 +81,11 @@ class ChapterData extends DataAbstract implements DataInterface
         $slugSecond = basename((string) $slug);
         $slugFirst  = dirname((string) $slug);
 
-        if (false === $this->storyData->match($slugFirst)) {
+        if (false === parent::match($slugFirst)) {
             return null;
         }
 
-        $story      = $this->storyData->getEntity($slugFirst);
+        $story      = parent::getEntity($slugFirst);
 
         return $this->entityManager->getRepository(Chapter::class)->findOneBy(
             [

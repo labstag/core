@@ -2,31 +2,10 @@
 
 namespace Labstag\Data;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Season;
-use Labstag\Service\ConfigurationService;
-use Labstag\Service\FileService;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-class SeasonData extends DataAbstract implements DataInterface
+class SeasonData extends SerieData implements DataInterface
 {
-    public function __construct(
-        protected SerieData $serieData,
-        protected FileService $fileService,
-        protected ConfigurationService $configurationService,
-        protected EntityManagerInterface $entityManager,
-        protected RequestStack $requestStack,
-        protected TranslatorInterface $translator,
-        protected Security $security,
-        protected RouterInterface $router,
-    )
-    {
-        parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator, $security, $router);
-    }
-
     #[\Override]
     public function asset(mixed $entity, string $field): string
     {
@@ -35,21 +14,25 @@ class SeasonData extends DataAbstract implements DataInterface
             return $asset;
         }
 
-        return $this->serieData->asset($entity->getRefserie(), $field);
+        return parent::asset($entity->getRefserie(), $field);
     }
 
     #[\Override]
     public function generateSlug(object $entity): string
     {
-        return $this->serieData->generateSlug(
-            $entity->getRefserie()
-        ) . '/' . $this->getPrefixSeason() . $entity->getNumber();
+        return parent::generateSlug($entity->getRefserie()) . '/' . $entity->getSlug();
     }
 
     #[\Override]
     public function getEntity(?string $slug): object
     {
-        return $this->getEntityBySlug($slug);
+        return $this->getEntityBySlugSeason($slug);
+    }
+
+    #[\Override]
+    public function getJsonLd(object $entity): object
+    {
+        return $this->getJsonLdSeason($entity);
     }
 
     public function getPrefixSeason(): string
@@ -63,15 +46,16 @@ class SeasonData extends DataAbstract implements DataInterface
         return $entity->getTitle();
     }
 
+    #[\Override]
     public function getTitleMeta(object $entity): string
     {
-        return $this->serieData->getTitle($entity->getRefserie()) . ' - ' . $this->getTitle($entity);
+        return parent::getTitle($entity->getRefserie()) . ' - ' . $this->getTitle($entity);
     }
 
     #[\Override]
     public function match(?string $slug): bool
     {
-        $page = $this->getEntityBySlug($slug);
+        $page = $this->getEntityBySlugSeason($slug);
 
         return $page instanceof Season;
     }
@@ -84,7 +68,7 @@ class SeasonData extends DataAbstract implements DataInterface
             return $placeholder;
         }
 
-        return $this->serieData->configPlaceholder();
+        return parent::configPlaceholder();
     }
 
     #[\Override]
@@ -99,7 +83,13 @@ class SeasonData extends DataAbstract implements DataInterface
         return $entity instanceof Season;
     }
 
-    protected function getEntityBySlug(?string $slug): ?object
+    #[\Override]
+    public function supportsJsonLd(object $entity): bool
+    {
+        return $entity instanceof Season;
+    }
+
+    protected function getEntityBySlugSeason(?string $slug): ?object
     {
         if (0 === substr_count((string) $slug, '/')) {
             return null;
@@ -107,16 +97,18 @@ class SeasonData extends DataAbstract implements DataInterface
 
         $slugSecond = basename((string) $slug);
         $slugFirst  = dirname((string) $slug);
-
-        if (0 === substr_count($slugSecond, $this->getPrefixSeason())) {
+        $season     = $this->entityManager->getRepository(Season::class)->findOneBy(
+            ['slug' => $slugSecond]
+        );
+        if (!$season instanceof Season) {
             return null;
         }
 
-        if (false === $this->serieData->match($slugFirst)) {
+        if (false === parent::match($slugFirst)) {
             return null;
         }
 
-        $serie      = $this->serieData->getEntity($slugFirst);
+        $serie      = parent::getEntity($slugFirst);
         $slugSecond = str_replace($this->getPrefixSeason(), '', $slugSecond);
 
         return $this->entityManager->getRepository(Season::class)->findOneBy(

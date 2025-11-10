@@ -43,10 +43,9 @@ class ImageParagraph extends ParagraphAbstract implements ParagraphInterface
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): mixed
+    public function getFields(Paragraph $paragraph, string $pageName): \Generator
     {
-        unset($paragraph);
-        yield $this->addFieldImageUpload('img', $pageName);
+        yield $this->addFieldImageUpload('img', $pageName, $paragraph);
     }
 
     #[Override]

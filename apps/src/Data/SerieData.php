@@ -2,33 +2,14 @@
 
 namespace Labstag\Data;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Page;
 use Labstag\Entity\Serie;
 use Labstag\Enum\PageEnum;
-use Labstag\Service\ConfigurationService;
-use Labstag\Service\FileService;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Spatie\SchemaOrg\Schema;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-class SerieData extends DataAbstract implements DataInterface
+class SerieData extends PageData implements DataInterface
 {
-    public function __construct(
-        protected PageData $pageData,
-        protected FileService $fileService,
-        protected ConfigurationService $configurationService,
-        protected EntityManagerInterface $entityManager,
-        protected RequestStack $requestStack,
-        protected TranslatorInterface $translator,
-        protected Security $security,
-        protected RouterInterface $router,
-    )
-    {
-        parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator, $security, $router);
-    }
-
     #[\Override]
     public function generateSlug(object $entity): string
     {
@@ -38,13 +19,37 @@ class SerieData extends DataAbstract implements DataInterface
             ]
         );
 
-        return $this->pageData->generateSlug($page) . '/' . $entity->getSlug();
+        return parent::generateSlug($page) . '/' . $entity->getSlug();
     }
 
     #[\Override]
     public function getEntity(?string $slug): object
     {
-        return $this->getEntityBySlug($slug);
+        return $this->getEntityBySlugSerie($slug);
+    }
+
+    public function getJsonLd(object $entity): object
+    {
+        $tvSeries = Schema::tvSeries();
+        $tvSeries->name($entity->getTitle());
+
+        $description = (string) $entity->getDescription();
+        $clean       = trim(html_entity_decode(strip_tags($description), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $tvSeries->description($clean);
+        $slug = $this->slugService->forEntity($entity);
+        $tvSeries->url(
+            $this->router->generate(
+                'front',
+                ['slug' => $slug],
+                RouterInterface::ABSOLUTE_URL
+            )
+        );
+        $tvSeries->numberOfSeasons(count($entity->getSeasons()));
+        foreach ($entity->getSeasons() as $season) {
+            $tvSeries->containsSeason($this->getJsonLdSeason($season));
+        }
+
+        return $tvSeries;
     }
 
     #[\Override]
@@ -53,6 +58,7 @@ class SerieData extends DataAbstract implements DataInterface
         return $entity->getTitle();
     }
 
+    #[\Override]
     public function getTitleMeta(object $entity): string
     {
         return $this->getTitle($entity);
@@ -61,7 +67,7 @@ class SerieData extends DataAbstract implements DataInterface
     #[\Override]
     public function match(?string $slug): bool
     {
-        $page = $this->getEntityBySlug($slug);
+        $page = $this->getEntityBySlugSerie($slug);
 
         return $page instanceof Serie;
     }
@@ -89,7 +95,13 @@ class SerieData extends DataAbstract implements DataInterface
         return $entity instanceof Serie;
     }
 
-    protected function getEntityBySlug(?string $slug): ?object
+    #[\Override]
+    public function supportsJsonLd(object $entity): bool
+    {
+        return $entity instanceof Serie;
+    }
+
+    protected function getEntityBySlugSerie(?string $slug): ?object
     {
         if (0 === substr_count((string) $slug, '/')) {
             return null;
@@ -112,5 +124,23 @@ class SerieData extends DataAbstract implements DataInterface
         return $this->entityManager->getRepository(Serie::class)->findOneBy(
             ['slug' => $slugSecond]
         );
+    }
+
+    protected function getJsonLdSeason(object $entity): object
+    {
+        $tvseason = Schema::tvSeason();
+        $tvseason->name($entity->getTitle());
+        $tvseason->seasonNumber($entity->getNumber());
+
+        $slug = $this->slugService->forEntity($entity);
+        $tvseason->url(
+            $this->router->generate(
+                'front',
+                ['slug' => $slug],
+                RouterInterface::ABSOLUTE_URL
+            )
+        );
+
+        return $tvseason;
     }
 }

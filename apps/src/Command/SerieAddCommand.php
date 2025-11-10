@@ -52,7 +52,7 @@ class SerieAddCommand extends Command
         if (!is_file($file)) {
             $symfonyStyle->error('File not found ' . $filename);
 
-            return Command::FAILURE;
+            return Command::SUCCESS;
         }
 
         $csv = new Csv();

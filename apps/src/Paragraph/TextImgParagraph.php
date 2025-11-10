@@ -56,10 +56,9 @@ class TextImgParagraph extends ParagraphAbstract implements ParagraphInterface
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): mixed
+    public function getFields(Paragraph $paragraph, string $pageName): \Generator
     {
-        unset($paragraph);
-        yield $this->addFieldImageUpload('img', $pageName);
+        yield $this->addFieldImageUpload('img', $pageName, $paragraph);
         yield BooleanField::new('leftposition', new TranslatableMessage('Image on the left'));
         $wysiwygField = WysiwygField::new('content', 'Texte');
 
