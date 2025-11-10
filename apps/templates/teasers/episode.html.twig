@@ -1,7 +1,7 @@
 <div class="background spoiler" data-bg="{{ site_asset(episode, 'img') }}"></div>
 <div class="content">
     <h3 class="title">
-        #{{ index }} {{ episode.title }}
+        #{{ episode.number }} {{ episode.title }}
     </h3>
     <div>
         {{ "Air date : %air_date%"|trans({'%air_date%': episode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
