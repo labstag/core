@@ -407,7 +407,6 @@ abstract class ParagraphAbstract extends AbstractController
     protected function setData(Paragraph $paragraph, array $data): void
     {
         $this->setShow($paragraph, true);
-
         $data['url_admin']     = $this->setUrlAdmin($paragraph);
         $data['configuration'] = $this->configurationService->getConfiguration();
 

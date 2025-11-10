@@ -78,7 +78,7 @@ class BreadcrumbBlock extends BlockAbstract
     public function getJsonLd($urls)
     {
         $breadcrumbList  = Schema::breadcrumbList();
-        $breadcrumbs = [];
+        $breadcrumbs     = [];
         foreach ($urls as $position => $data) {
             $item = Schema::listItem();
             $item->position($position + 1);
@@ -99,10 +99,7 @@ class BreadcrumbBlock extends BlockAbstract
 
         $jsonLd = $breadcrumbList->jsonSerialize();
 
-        return json_encode(
-            $jsonLd,
-            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
-        );
+        return json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
     }
 
     #[Override]

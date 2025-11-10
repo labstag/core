@@ -6,7 +6,6 @@ use DateTime;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
-use Gedmo\Tool\ClassUtils;
 use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\Paragraph;
 use Labstag\Repository\ParagraphRepository;
@@ -222,10 +221,12 @@ final class ParagraphService
                 continue;
             }
 
-            $class = ClassUtils::getClass($value);
-            if (!str_contains($class, 'Labstag\Entity')) {
+            $class = new ReflectionClass($value);
+            if ('Labstag\Entity' !== $class->getNamespaceName() || !$class->hasMethod('getParagraphs')) {
                 continue;
             }
+
+            dump($value);
 
             $object->name  = $name;
             $object->value = $value;
