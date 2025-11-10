@@ -141,7 +141,7 @@ class SeasonData extends SerieData implements DataInterface
         return $this->entityManager->getRepository(Season::class)->findOneBy(
             [
                 'refserie' => $serie,
-                'number'   => $slugSecond,
+                'slug'     => $slugSecond,
             ]
         );
     }
