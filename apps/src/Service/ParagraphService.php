@@ -226,8 +226,6 @@ final class ParagraphService
                 continue;
             }
 
-            dump($value);
-
             $object->name  = $name;
             $object->value = $value;
 
