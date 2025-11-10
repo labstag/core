@@ -32,8 +32,40 @@ class SeasonCrudController extends CrudControllerAbstract
         $this->actionsFactory->setActionLinkPublic('admin_season_public');
         $this->actionsFactory->setActionLinkW3CValidator('admin_season_w3c');
         $this->setUpdateAction();
+        $this->setLinkTmdbAction();
 
         return $this->actionsFactory->show();
+    }
+
+    private function setLinkTmdbAction(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToUrl(
+            fn (Season $season): string => $this->generateUrl(
+                'admin_season_tmdb',
+                [
+                    'entity' => $season->getId(),
+                ]
+            )
+        );
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
+    #[Route('/admin/season/{entity}/tmdb', name: 'admin_season_tmdb')]
+    public function tmdb(string $entity): RedirectResponse
+    {
+        $repositoryAbstract              = $this->getRepository();
+        $season                           = $repositoryAbstract->find($entity);
+        return $this->redirect('https://www.themoviedb.org/tv/' . $season->getTmdb());
     }
 
     #[\Override]
