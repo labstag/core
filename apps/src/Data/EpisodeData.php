@@ -9,7 +9,7 @@ class EpisodeData extends SeasonData implements DataInterface
     #[\Override]
     public function asset(mixed $entity, string $field): string
     {
-        $asset = parent::asset($entity, $field);
+        $asset = $this->fileService->asset($entity, $field);;
         if ('' !== $asset) {
             return $asset;
         }
