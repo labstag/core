@@ -137,7 +137,6 @@ class SeasonData extends SerieData implements DataInterface
         }
 
         $serie      = parent::getEntity($slugFirst);
-        $slugSecond = str_replace($this->getPrefixSeason(), '', $slugSecond);
 
         return $this->entityManager->getRepository(Season::class)->findOneBy(
             [
