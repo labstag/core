@@ -72,7 +72,7 @@ final class ParagraphService
 
         $paragraphClass = $row->getClass();
         $paragraph      = new $paragraphClass();
-        
+
         $this->addInPosition(
             $entity,
             $paragraph,
