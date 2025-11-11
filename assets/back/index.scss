@@ -1,7 +1,7 @@
 @charset "UTF-8";
 /* stylelint-disable */
 @use "bootstrap/dist/css/bootstrap";
-@use "@fortawesome/fontawesome-free/css/all.min";
+@use "@fortawesome/fontawesome-free/css/all";
 @use 'ckeditor5/ckeditor5';
 /* stylelint-enable */
 @use './../wysiwyg';
@@ -62,24 +62,20 @@ a{
   text-decoration: none;
 
   &.paragraph-edit{
+    width: 35px;
+    height: 30px;
     @extend .btn;
-    @extend .btn-sm;
     @extend .btn-primary;
-
-    &::before{
-      @extend .fa-solid;
-      @extend .fa-pen-to-square;
-    }
+    @extend .fa-solid;
+    @extend .fa-pen-to-square;
   }
 
   &.paragraph-delete{
+    width: 35px;
+    height: 30px;
     @extend .btn;
-    @extend .btn-sm;
     @extend .btn-danger;
-
-    &::before{
-      @extend .fa-solid;
-      @extend .fa-trash;
-    }
+    @extend .fa-solid;
+    @extend .fa-trash;
   }
 }

@@ -1469,6 +1469,74 @@
         <source>Return to serie</source>
         <target>Retour à la série</target>
       </trans-unit>
+      <trans-unit id="F8qVgPJ" resname="Form change password">
+        <source>Form change password</source>
+        <target>Formulaire de changement de mot de passe</target>
+      </trans-unit>
+      <trans-unit id="pGpPjDQ" resname="Form login">
+        <source>Form login</source>
+        <target>Formulaire de connexion</target>
+      </trans-unit>
+      <trans-unit id="QBUQp.i" resname="Form contact">
+        <source>Form contact</source>
+        <target>Formulaire de contact</target>
+      </trans-unit>
+      <trans-unit id="YUAyqHk" resname="Form lost password">
+        <source>Form lost password</source>
+        <target>Formulaire de mot de passe oublié</target>
+      </trans-unit>
+      <trans-unit id="U9GQ_br" resname="Hide">
+        <source>Hide</source>
+        <target>Masquer</target>
+      </trans-unit>
+      <trans-unit id="X6uDt7s" resname="Email / Pseudo">
+        <source>Email / Pseudo</source>
+        <target>Email / Pseudo</target>
+      </trans-unit>
+      <trans-unit id="rEL9RUR" resname="Username / email">
+        <source>Username / email</source>
+        <target>Nom d'utilisateur / email</target>
+      </trans-unit>
+      <trans-unit id="4f3WEva" resname="Login">
+        <source>Login</source>
+        <target>Connexion</target>
+      </trans-unit>
+      <trans-unit id="_z4el3Z" resname="The password fields must match.">
+        <source>The password fields must match.</source>
+        <target>Les champs de mot de passe doivent correspondre.</target>
+      </trans-unit>
+      <trans-unit id="Zm.jZiK" resname="New password">
+        <source>New password</source>
+        <target>Nouveau mot de passe</target>
+      </trans-unit>
+      <trans-unit id="B7yoMOR" resname="Please enter a password">
+        <source>Please enter a password</source>
+        <target>Veuillez saisir un mot de passe</target>
+      </trans-unit>
+      <trans-unit id="_OmnKuR" resname="Your password should be at least {{ limit }} characters">
+        <source>Your password should be at least {{ limit }} characters</source>
+        <target>Votre mot de passe doit contenir au moins {{ limit }} caractères</target>
+      </trans-unit>
+      <trans-unit id="YDym9Dx" resname="Confirm password">
+        <source>Confirm password</source>
+        <target>Confirmer le mot de passe</target>
+      </trans-unit>
+      <trans-unit id="8N_O9jw" resname="experience.present">
+        <source>experience.present</source>
+        <target>Actuellement</target>
+      </trans-unit>
+      <trans-unit id="P5i5ukg" resname="User not found">
+        <source>User not found</source>
+        <target>Utilisateur introuvable</target>
+      </trans-unit>
+      <trans-unit id="z.lU7wz" resname="Password change not allowed for this user">
+        <source>Password change not allowed for this user</source>
+        <target>Changement de mot de passe non autorisé pour cet utilisateur</target>
+      </trans-unit>
+      <trans-unit id="T039kOr" resname="My CV">
+        <source>My CV</source>
+        <target>Mon CV</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
