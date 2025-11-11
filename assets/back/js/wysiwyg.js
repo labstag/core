@@ -394,6 +394,20 @@ export class Wysiwyg
     });
   }
   initEditor() {
+	document.addEventListener('DOMContentLoaded', () => {
+		const isDark = document.body.classList.contains('ea-dark-scheme');
+
+		// Applique le thème à CKEditor
+		document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+
+		// Surveille un éventuel changement de thème (si tu as un toggle)
+		const observer = new MutationObserver(() => {
+			const dark = document.body.classList.contains('ea-dark-scheme');
+			document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+		});
+
+		observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+	});
     document.querySelectorAll('.wysiwyg').forEach(element => {
 		if (!element.ckeditorInstance) {
 			ClassicEditor.create(element, editorConfig)

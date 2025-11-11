@@ -1,0 +1,12 @@
+@use "../mixins";
+@use "../placeholders" as *;
+.paragraph_competences{
+  ul{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    @include mixins.respond-to(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}

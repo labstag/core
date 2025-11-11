@@ -83,10 +83,3 @@ a{
     }
   }
 }
-body {
-  &.ea-dark-scheme {
-    .ck-editor__editable{
-      --ck-color-base-background: #1e1e1e; // fond noir
-    }
-  }
-}

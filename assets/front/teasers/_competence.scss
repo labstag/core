@@ -1,0 +1,12 @@
+@use "../mixins";
+@use "../placeholders" as *;
+
+.teaser-competence {
+    @extend %teaser;
+
+    .wrapper {
+        &:nth-child(1) {
+            width: 100%;
+        }
+    }
+}

@@ -1,6 +1,9 @@
 @use "../placeholders" as *;
 @use "../mixins";
 .paragraph_text-media{
+  a{
+    text-decoration: underline;
+  }
   &.text-media-left {
     .wrapper {
       @include mixins.respond-to(md) {

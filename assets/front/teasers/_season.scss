@@ -2,6 +2,9 @@
 @use "../mixins";
 .teaser-season{
   @extend %teaser;
+  h2{
+    font-size: 0.75rem;
+  }
   a{
     display: grid;
     grid-template-areas:

@@ -26,14 +26,14 @@
         </span>
     </div>
     <div class="wrapper">
-        <h3 class="title">
+        <h2 class="title">
             {% if serie.isinProduction %}
                 <i class="fa fa-play-circle" title="{{ 'In production'|trans|e('html_attr') }}"></i>
             {% else %}
                 <i class="fa fa-stop-circle" title="{{ 'Not in production'|trans|e('html_attr') }}"></i>
             {% endif %}
             {{ serie.title }}
-        </h3>
+        </h2>
         <div class="duration">
             {{ time_runtime(runtime) }}
         </div>

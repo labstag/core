@@ -1,10 +1,12 @@
 @use "variables";
 @use "placeholders" as *;
 @use "sass:color";
-
 body{
   background: variables.$colorbg;
   color: variables.$colortext;
+}
+ul {
+  padding: 0px;
 }
 
 header{
@@ -58,13 +60,6 @@ h6 {
    font-size: 0.5rem;
    margin: 2px;
 }
-
-
-h2::after { width: 90%; }
-h3::after { width: 70%; }
-h4::after { width: 50%; }
-h5::after { width: 30%; }
-h6::after { width: 10%; }
 
 label {
   .required {

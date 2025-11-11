@@ -41,7 +41,7 @@
   li{
     display: flex;
     flex-direction: column;
-    height: 550px;
+    height: 600px;
     &.teaser-serie{
       background-color: color.scale(variables.$colorbg, $lightness: 15%);
       &:nth-child(even)

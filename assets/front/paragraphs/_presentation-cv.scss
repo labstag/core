@@ -1,5 +1,6 @@
 @use "../mixins";
 @use "../placeholders" as *;
+@import '@fontsource/lobster';
 .paragraph_presentation-cv{
   @extend %head;
   margin-top: 0px;
@@ -16,7 +17,9 @@
     }
   }
   .title{
+    font-family: 'Lobster', system-ui;
     grid-area: title;
+    font-size: 40px;
     height: 100%;
     display: flex;
     align-items: center;

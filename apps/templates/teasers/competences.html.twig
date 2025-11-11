@@ -2,11 +2,11 @@
     <h3 class="title">
         {{ item.title }}
     </h3>
-    <ul class="list-competences">
+    <div class="list-competences">
         {% for competence in item.competences %}
-            <li class="icon-{{ competence.icon }}">
+            <span class="icon-{{ competence.icon }}">
                 {{ competence.title }}
-            </li>
+            </span>
         {% endfor %}
-    </ul>
+    </div>
 </div>

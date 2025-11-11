@@ -1,5 +1,8 @@
 @use "../mixins";
 .paragraph_text-img{
+  a{
+    text-decoration: underline;
+  }
   &.text-img-left {
     .wrapper {
       @include mixins.respond-to(md) {

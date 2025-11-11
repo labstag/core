@@ -1,0 +1,86 @@
+$color_1: #fff;
+$color_2: #333;
+$border-color_1: #7ab55c;
+
+form {
+	max-width: 500px;
+	margin: 0 auto;
+	padding: 20px;
+	background: #ffffff;
+	border-radius: 12px;
+	box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+	label {
+		display: block;
+		margin-bottom: 6px;
+		font-weight: 600;
+		color: $color_1;
+	}
+	input {
+		width: 100%;
+		padding: 10px 14px;
+		margin-bottom: 15px;
+		background: #f8f8f8;
+		border: 1px solid #dcdcdc;
+		border-radius: 8px;
+		font-size: 15px;
+		transition: all .25s ease;
+		&:focus {
+			background: #fff;
+			border-color: $border-color_1;
+			box-shadow: 0 0 0 3px rgba(122,181,92,0.25);
+			outline: none;
+		}
+	}
+	select {
+		width: 100%;
+		padding: 10px 14px;
+		margin-bottom: 15px;
+		background: #f8f8f8;
+		border: 1px solid #dcdcdc;
+		border-radius: 8px;
+		font-size: 15px;
+		transition: all .25s ease;
+		&:focus {
+			background: #fff;
+			border-color: $border-color_1;
+			box-shadow: 0 0 0 3px rgba(122,181,92,0.25);
+			outline: none;
+		}
+	}
+	textarea {
+		width: 100%;
+		padding: 10px 14px;
+		margin-bottom: 15px;
+		background: #f8f8f8;
+		border: 1px solid #dcdcdc;
+		border-radius: 8px;
+		font-size: 15px;
+		transition: all .25s ease;
+		min-height: 120px;
+		resize: vertical;
+		&:focus {
+			background: #fff;
+			border-color: $border-color_1;
+			box-shadow: 0 0 0 3px rgba(122,181,92,0.25);
+			outline: none;
+		}
+	}
+	button {
+    width: 100%;
+    margin: auto;
+    margin: 20px 0;
+		display: inline-block;
+		padding: 12px 0;
+		font-size: 16px;
+		font-weight: 600;
+		background: #7ab55c;
+		color: $color_1;
+		border: none;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: background .25s ease;
+		&:hover {
+			background: #679d4f;
+		}
+	}
+}
