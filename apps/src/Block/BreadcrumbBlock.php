@@ -99,7 +99,7 @@ class BreadcrumbBlock extends BlockAbstract
 
         $jsonLd = $breadcrumbList->jsonSerialize();
 
-        return json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        return json_encode($jsonLd);
     }
 
     #[Override]

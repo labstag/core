@@ -24,6 +24,8 @@ interface DataInterface
 
     public function supportsData(object $entity): bool;
 
+    public function supportsJsonLd(object $entity): bool;
+
     public function supportsScriptBefore(object $entity): bool;
 
     public function supportsShortcode(string $className): bool;

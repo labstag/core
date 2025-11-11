@@ -2,10 +2,13 @@
 
 namespace Labstag\Data;
 
+use Labstag\Entity\Chapter;
 use Labstag\Entity\Page;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
 use Labstag\Shortcode\StoryUrlShortcode;
+use Spatie\SchemaOrg\Schema;
+use Symfony\Component\Routing\RouterInterface;
 
 class StoryData extends PageData implements DataInterface
 {
@@ -25,6 +28,34 @@ class StoryData extends PageData implements DataInterface
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugStory($slug);
+    }
+
+    public function getJsonLd(object $entity): object
+    {
+        $creativeWorkSeries = Schema::creativeWorkSeries();
+        $creativeWorkSeries->name($entity->getTitle());
+
+        $resume      = $entity->getResume();
+        $clean       = trim(html_entity_decode(strip_tags($resume), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $creativeWorkSeries->description($clean);
+        $slug = $this->slugService->forEntity($entity);
+        $creativeWorkSeries->url(
+            $this->router->generate(
+                'front',
+                ['slug' => $slug],
+                RouterInterface::ABSOLUTE_URL
+            )
+        );
+        $chapters = [];
+        foreach ($entity->getChapters() as $chapter) {
+            if ($chapter->isEnable()) {
+                $chapters[] = $this->getJsonLdChapter($chapter);
+            }
+        }
+
+        $creativeWorkSeries->hasPart($chapters);
+
+        return $creativeWorkSeries;
     }
 
     #[\Override]
@@ -77,6 +108,12 @@ class StoryData extends PageData implements DataInterface
     }
 
     #[\Override]
+    public function supportsJsonLd(object $entity): bool
+    {
+        return $entity instanceof Story;
+    }
+
+    #[\Override]
     public function supportsShortcode(string $className): bool
     {
         return Story::class === $className;
@@ -105,5 +142,23 @@ class StoryData extends PageData implements DataInterface
         return $this->entityManager->getRepository(Story::class)->findOneBy(
             ['slug' => $slugSecond]
         );
+    }
+
+    protected function getJsonLdChapter(Chapter $chapter): object
+    {
+        $schema = Schema::chapter();
+        $schema->name($chapter->getTitle());
+
+        $slug = $this->slugService->forEntity($chapter);
+        $schema->url(
+            $this->router->generate(
+                'front',
+                ['slug' => $slug],
+                RouterInterface::ABSOLUTE_URL
+            )
+        );
+        $schema->position($chapter->getPosition());
+
+        return $schema;
     }
 }

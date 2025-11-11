@@ -3,6 +3,8 @@
 namespace Labstag\Data;
 
 use Labstag\Entity\Chapter;
+use Spatie\SchemaOrg\Schema;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ChapterData extends StoryData implements DataInterface
 {
@@ -27,6 +29,27 @@ class ChapterData extends StoryData implements DataInterface
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugChapter($slug);
+    }
+
+    #[\Override]
+    public function getJsonLd(object $entity): object
+    {
+        $schema = $this->getJsonLdChapter($entity);
+
+        $creativeWorkSeries = Schema::creativeWorkSeries();
+        $creativeWorkSeries->name($entity->getRefstory()->getTitle());
+
+        $slug = $this->slugService->forEntity($entity->getRefstory());
+        $creativeWorkSeries->url(
+            $this->router->generate(
+                'front',
+                ['slug' => $slug],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            )
+        );
+        $schema->isPartOf($creativeWorkSeries);
+
+        return $schema;
     }
 
     #[\Override]
@@ -68,6 +91,12 @@ class ChapterData extends StoryData implements DataInterface
 
     #[\Override]
     public function supportsData(object $entity): bool
+    {
+        return $entity instanceof Chapter;
+    }
+
+    #[\Override]
+    public function supportsJsonLd(object $entity): bool
     {
         return $entity instanceof Chapter;
     }
