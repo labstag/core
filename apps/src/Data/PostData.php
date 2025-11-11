@@ -2,10 +2,13 @@
 
 namespace Labstag\Data;
 
+use DateTime;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Enum\PageEnum;
 use Labstag\Shortcode\PostUrlShortcode;
+use Spatie\SchemaOrg\Schema;
+use Symfony\Component\Routing\RouterInterface;
 
 class PostData extends PageData implements DataInterface
 {
@@ -25,6 +28,44 @@ class PostData extends PageData implements DataInterface
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugPost($slug);
+    }
+
+    public function getJsonLd(object $entity): object
+    {
+        $blogPosting = Schema::BlogPosting();
+        $blogPosting->headline($entity->getTitle());
+
+        $resume      = $entity->getResume();
+        $clean       = trim(html_entity_decode(strip_tags($resume), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $blogPosting->description($clean);
+
+        $img = $this->siteService->asset($entity, 'img', true, true);
+        if ('' !== $img) {
+            $blogPosting->image($img);
+        }
+
+        $blogPosting->author(Schema::person()->name($entity->getRefuser()->getUsername()));
+
+        if ($entity->getCreatedAt() instanceof DateTime) {
+            $blogPosting->datePublished($entity->getCreatedAt()->format('c'));
+        }
+
+        if ($entity->getUpdatedAt() instanceof DateTime) {
+            $blogPosting->dateModified($entity->getUpdatedAt()->format('c'));
+        }
+
+        $slug = $this->slugService->forEntity($entity);
+        $blogPosting->mainEntityOfPage(
+            Schema::webPage()->id(
+                $this->router->generate(
+                    'front',
+                    ['slug' => $slug],
+                    RouterInterface::ABSOLUTE_URL
+                )
+            )
+        );
+
+        return $blogPosting;
     }
 
     #[\Override]
@@ -72,6 +113,12 @@ class PostData extends PageData implements DataInterface
 
     #[\Override]
     public function supportsData(object $entity): bool
+    {
+        return $entity instanceof Post;
+    }
+
+    #[\Override]
+    public function supportsJsonLd(object $entity): bool
     {
         return $entity instanceof Post;
     }

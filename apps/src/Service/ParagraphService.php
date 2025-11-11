@@ -217,12 +217,7 @@ final class ParagraphService
                 continue;
             }
 
-            if ($value instanceof DateTime) {
-                continue;
-            }
-
-            $class = new ReflectionClass($value);
-            if ('Labstag\Entity' !== $class->getNamespaceName() || !$class->hasMethod('getParagraphs')) {
+            if (!$this->isClass($value)) {
                 continue;
             }
 
@@ -383,6 +378,20 @@ final class ParagraphService
         }
 
         return $header;
+    }
+
+    private function isClass(object $value): bool
+    {
+        if ($value instanceof DateTime) {
+            return false;
+        }
+
+        $reflectionClass = new ReflectionClass($value);
+        if ('Labstag\Entity' !== $reflectionClass->getNamespaceName()) {
+            return false;
+        }
+
+        return $reflectionClass->hasMethod('getParagraphs');
     }
 
     /**

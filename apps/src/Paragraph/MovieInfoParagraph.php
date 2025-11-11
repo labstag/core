@@ -77,9 +77,11 @@ class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        yield ChoiceField::new('refmovie', new TranslatableMessage('Movie'))->setChoices($choices)->allowMultipleChoices(false)->renderExpanded(false)->renderAsBadges(false)->formatValue(
-            static fn($value): string => $value instanceof Movie ? $value->getTitle() ?? '' : ''
-        );
+        yield ChoiceField::new('refmovie', new TranslatableMessage('Movie'))->setChoices(
+            $choices
+        )->allowMultipleChoices(false)->renderExpanded(false)->renderAsBadges(
+            false
+        )->formatValue(static fn ($value): string => $value instanceof Movie ? $value->getTitle() ?? '' : '');
     }
 
     #[Override]
