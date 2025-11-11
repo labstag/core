@@ -3,10 +3,12 @@ $color_2: #333;
 $border-color_1: #7ab55c;
 
 form {
+	.form-check{
+		display: inline-flex;
+	}
 	max-width: 500px;
 	margin: 0 auto;
 	padding: 20px;
-	background: #ffffff;
 	border-radius: 12px;
 	box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 	label {
@@ -18,6 +20,10 @@ form {
 	input {
 		width: 100%;
 		padding: 10px 14px;
+		&[type="checkbox"] {
+			width: auto;
+			margin-right: 5px;
+		}
 		margin-bottom: 15px;
 		background: #f8f8f8;
 		border: 1px solid #dcdcdc;
