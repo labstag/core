@@ -1,7 +1,10 @@
 {% use "elements.html.twig" %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
-        <h2>{{ paragraph.title }}</h2>
+        <h2>
+            <i class="fa-solid fa-briefcase"></i>
+            {{ paragraph.title }}
+        </h2>
         <ul>
             {% for item in paragraph.experiences %}
                 <li class="teaser-experience">

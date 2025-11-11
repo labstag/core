@@ -1,5 +1,6 @@
 @use "../mixins";
 @use "../placeholders" as *;
+@use "@fortawesome/fontawesome-free/css/all";
 .paragraph_formations{
   ul{
     list-style: none;

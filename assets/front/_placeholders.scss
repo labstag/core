@@ -84,6 +84,9 @@
   position: relative;
   padding-bottom: 5px;
   font-family: 'Lobster', system-ui;
+  &::first-letter {
+      text-transform: uppercase;
+  }
 }
 
 %video{
