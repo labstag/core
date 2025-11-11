@@ -62,7 +62,7 @@ a{
   text-decoration: none;
 
   &.paragraph-edit{
-    width: 35px;
+    width: 40px;
     height: 30px;
     @extend .btn;
     @extend .btn-primary;
@@ -71,7 +71,7 @@ a{
   }
 
   &.paragraph-delete{
-    width: 35px;
+    width: 40px;
     height: 30px;
     @extend .btn;
     @extend .btn-danger;
