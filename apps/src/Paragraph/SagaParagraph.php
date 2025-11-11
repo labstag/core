@@ -122,12 +122,6 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
         $entityRepository                = $this->getRepository($this->getClass());
         $paragraph                       = $entityRepository->findOneBy([]);
 
-        if (!$paragraph instanceof Paragraph) {
-            return $object instanceof Page && $object->getType() == PageEnum::MOVIES->value;
-        }
-
-        $parent = $this->paragraphService->getEntityParent($paragraph);
-
-        return $parent->value->getId() == $object->getId();
+        return (!$paragraph instanceof Paragraph);
     }
 }
