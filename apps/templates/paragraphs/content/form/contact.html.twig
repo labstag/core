@@ -4,7 +4,7 @@
     <div class="wrapper">
         {% if execute %}
             <div class="alert" role="alert">
-				<div class="alert__content">{{ paragraph.content|raw }}</div>
+				<div class="alert__content html-content">{{ paragraph.content|raw }}</div>
 			</div>
         {% endif %}
         {{ form_start(form) }}

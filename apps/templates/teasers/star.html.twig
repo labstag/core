@@ -1,7 +1,7 @@
 <a href="{{ star.url }}" target="_blank" title="{{ star.title|e('html_attr') }}">
     <div class="background spoiler" data-bg="{{ site_asset(star, 'img') }}"></div>
     <h2 class="title">{{ star.title }}</h2>
-    <div class="description">{{ star.description|raw }}</div>
+    <div class="description html-content">{{ star.description|raw }}</div>
     <div class="wrapper">
         <b>{{ 'Informations'|trans }}</b>
         <ul>

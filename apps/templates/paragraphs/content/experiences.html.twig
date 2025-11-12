@@ -5,7 +5,7 @@
             <i class="fa-solid fa-briefcase"></i>
             {{ paragraph.title }}
         </h2>
-        <ul>
+        <ul class="listexperiences">
             {% for item in paragraph.experiences %}
                 <li class="teaser-experience">
                     {% include  "teasers/experience.html.twig"  with {'item': item} %}

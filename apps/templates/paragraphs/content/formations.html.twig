@@ -5,7 +5,7 @@
             <i class="fa-solid fa-school"></i>
             {{ paragraph.title}}
         </h2>
-        <ul>
+        <ul class="listformations">
             {% for item in paragraph.formations %}
                 <li class="teaser-formation">
                     {% include  "teasers/formation.html.twig"  with {'item': item} %}

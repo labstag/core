@@ -1,7 +1,7 @@
 {% use "elements.html.twig" %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
-        <div class="text">
+        <div class="text html-content">
             {{ paragraph.content|raw }}
         </div>
         <div class="image">
