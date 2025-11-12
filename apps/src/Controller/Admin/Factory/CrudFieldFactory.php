@@ -319,10 +319,7 @@ final class CrudFieldFactory
         $paragraphsField = ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'));
         $paragraphsField->hideWhenCreating();
         $paragraphsField->hideOnIndex();
-        $this->addFieldsToTab(
-            'paragraphs',
-            [$paragraphsField]
-        );
+        $this->addFieldsToTab('paragraphs', [$paragraphsField]);
     }
 
     public function setTabPrincipal(string $entity): void

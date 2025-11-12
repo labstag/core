@@ -50,37 +50,44 @@ class AddPagesCommand extends Command
                 ]
             );
             if (!$page instanceof Page) {
-                $page = new Page();
-                $page->setType($case->value);
-                match ($case->value) {
-                    'changepassword' => $page->setTitle('Changer le mot de passe'),
-                    'login'          => $page->setTitle('Se connecter'),
-                    'lostpassword'   => $page->setTitle('Mot de passe oublié'),
-                    default          => $page->setTitle($case->value),
-                };
-
-                match ($case->value) {
-                    'changepassword' => $this->setParagraphsChangePassword($page),
-                    'login'          => $this->setParagraphsLogin($page),
-                    'lostpassword'   => $this->setParagraphsLostPassword($page),
-                    default          => $page->setEnable(false),
-                };
-
-                match ($case->value) {
-                    'changepassword' => $page->setHide(true),
-                    'login'          => $page->setHide(true),
-                    'lostpassword'   => $page->setHide(true),
-                    default          => $page->setEnable(false),
-                };
-
-                $page->setPage($home);
-                $this->pageRepository->save($page);
+                $this->newPage($home, $case->value);
             }
         }
 
         $symfonyStyle->success('You have a new command! Now make it your own! Pass --help to see your options.');
 
         return Command::SUCCESS;
+    }
+
+    private function newPage(Page $home, string $case): void
+    {
+        $page = new Page();
+        $page->setType($case);
+        $this->setTitle($page, $case);
+        $this->setData($page, $case);
+        $this->setHide($page, $case);
+        $page->setPage($home);
+        $this->pageRepository->save($page);
+    }
+
+    private function setData(Page $page, string $case): void
+    {
+        match ($case) {
+            'changepassword' => $this->setParagraphsChangePassword($page),
+            'login'          => $this->setParagraphsLogin($page),
+            'lostpassword'   => $this->setParagraphsLostPassword($page),
+            default          => $page->setEnable(false),
+        };
+    }
+
+    private function setHide(Page $page, string $case): void
+    {
+        match ($case) {
+            'changepassword' => $page->setHide(true),
+            'login'          => $page->setHide(true),
+            'lostpassword'   => $page->setHide(true),
+            default          => $page->setEnable(false),
+        };
     }
 
     private function setParagraphsChangePassword(Page $page): void
@@ -120,5 +127,15 @@ class AddPagesCommand extends Command
         $paragraph->setSave(true);
         $paragraph->setContent('Formulaire envoyé');
         $paragraph->setForm('lost-password');
+    }
+
+    private function setTitle(Page $page, string $case): void
+    {
+        match ($case) {
+            'changepassword' => $page->setTitle('Changer le mot de passe'),
+            'login'          => $page->setTitle('Se connecter'),
+            'lostpassword'   => $page->setTitle('Mot de passe oublié'),
+            default          => $page->setTitle($case->value),
+        };
     }
 }

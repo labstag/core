@@ -69,6 +69,19 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $objectManager->flush();
     }
 
+    public function setSaga(Page $page): Page
+    {
+        $sagas = new Page();
+        $sagas->setPage($page);
+        $sagas->setTitle('Mes sagas favorites');
+        $sagas->setType(PageEnum::PAGE->value);
+
+        $this->addParagraphText($sagas);
+        $this->paragraphService->addParagraph($sagas, 'saga');
+
+        return $sagas;
+    }
+
     /**
      * @return mixed[]
      */
@@ -126,7 +139,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $paragraph->setForm('change-password');
         }
 
-
         return $changepassword;
     }
 
@@ -144,7 +156,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $paragraph->setForm('contact');
         }
 
-
         return $contact;
     }
 
@@ -154,6 +165,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $cvpage->setPage($page);
         $cvpage->setTitle('Mon parcours pro');
         $cvpage->setType(PageEnum::CV->value);
+
         $this->paragraphService->addParagraph($cvpage, 'presentation-cv');
         $this->paragraphService->addParagraph($cvpage, 'competences');
         $this->paragraphService->addParagraph($cvpage, 'experiences');
@@ -211,7 +223,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $paragraph->setForm('login');
         }
 
-
         return $login;
     }
 
@@ -230,7 +241,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $paragraph->setForm('lost-password');
         }
 
-
         return $lostpassword;
     }
 
@@ -246,19 +256,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         return $mentions;
     }
 
-    public function setSaga(Page $page): Page
-    {
-        $sagas = new Page();
-        $sagas->setPage($page);
-        $sagas->setTitle('Mes sagas favorites');
-        $sagas->setType(PageEnum::PAGE->value);
-
-        $this->addParagraphText($sagas);
-        $this->paragraphService->addParagraph($sagas, 'saga');
-
-        return $sagas;
-    }
-
     private function setMovies(Page $page): Page
     {
         $movies = new Page();
@@ -270,7 +267,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         if ($paragraph instanceof MovieParagraph) {
             $paragraph->setNbr(18);
         }
-
 
         return $movies;
     }
@@ -352,7 +348,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $paragraph->setNbr(18);
         }
 
-
         return $post;
     }
 
@@ -367,7 +362,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         if ($paragraph instanceof SerieParagraph) {
             $paragraph->setNbr(18);
         }
-
 
         return $series;
     }
@@ -395,7 +389,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         if ($paragraph instanceof StarParagraph) {
             $paragraph->setNbr(18);
         }
-
 
         return $star;
     }

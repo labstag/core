@@ -128,8 +128,19 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         $actions->add(Crud::PAGE_NEW, Action::INDEX);
     }
 
+    protected function filterTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
+    {
+        $action = $searchDto->getRequest()->query->get('action');
+        if ('trash' === $action) {
+            $queryBuilder->andWhere('entity.deletedAt IS NOT NULL');
+        }
+
+        return $queryBuilder;
+    }
+
     protected function filterUser(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
     {
+        unset($searchDto);
         if ($this->isSuperAdmin()) {
             return $queryBuilder;
         }
@@ -143,16 +154,6 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         if ($reflectionClass->hasMethod('setUser')) {
             $queryBuilder->andWhere('entity.user = :user');
             $queryBuilder->setParameter('user', $user->getId());
-        }
-
-        return $queryBuilder;
-    }
-
-    protected function filterTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
-    {
-        $action = $searchDto->getRequest()->query->get('action');
-        if ('trash' === $action) {
-            $queryBuilder->andWhere('entity.deletedAt IS NOT NULL');
         }
 
         return $queryBuilder;

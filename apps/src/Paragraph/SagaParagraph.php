@@ -4,11 +4,9 @@ namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
-use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Saga;
 use Labstag\Entity\SagaParagraph as EntitySagaParagraph;
-use Labstag\Enum\PageEnum;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
 use Override;
@@ -122,6 +120,6 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
         $entityRepository                = $this->getRepository($this->getClass());
         $paragraph                       = $entityRepository->findOneBy([]);
 
-        return (!$paragraph instanceof Paragraph);
+        return !$paragraph instanceof Paragraph;
     }
 }
