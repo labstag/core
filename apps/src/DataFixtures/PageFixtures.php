@@ -76,6 +76,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     {
         $page                = $this->setHome();
         $movies              = $this->setMovies($page);
+        $sagas               = $this->setSaga($movies);
         $cvpage              = $this->setCv($page);
         $series              = $this->setSeries($page);
         $stories             = $this->setStories($page);
@@ -99,6 +100,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
             $movies,
             $stories,
             $post,
+            $sagas,
             $star,
             $info,
             $contact,
@@ -116,7 +118,14 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $changepassword->setPage($page);
         $changepassword->setTitle('Changer de mot de passe');
         $changepassword->setType(PageEnum::CHANGEPASSWORD->value);
-        $this->setParagraphsChangePassword($changepassword);
+        $this->addParagraphText($changepassword);
+        $paragraph = $this->paragraphService->addParagraph($changepassword, 'form');
+        if ($paragraph instanceof FormParagraph) {
+            $paragraph->setSave(false);
+            $paragraph->setContent('Formulaire envoyé');
+            $paragraph->setForm('change-password');
+        }
+
 
         return $changepassword;
     }
@@ -127,7 +136,14 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $contact->setPage($page);
         $contact->setTitle('Contact');
         $contact->setType(PageEnum::PAGE->value);
-        $this->setParagraphsContact($contact);
+        $this->addParagraphText($contact);
+        $paragraph = $this->paragraphService->addParagraph($contact, 'form');
+        if ($paragraph instanceof FormParagraph) {
+            $paragraph->setSave(true);
+            $paragraph->setContent('Formulaire envoyé');
+            $paragraph->setForm('contact');
+        }
+
 
         return $contact;
     }
@@ -138,7 +154,10 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $cvpage->setPage($page);
         $cvpage->setTitle('Mon parcours pro');
         $cvpage->setType(PageEnum::CV->value);
-        $this->setParagraphsCV($cvpage);
+        $this->paragraphService->addParagraph($cvpage, 'presentation-cv');
+        $this->paragraphService->addParagraph($cvpage, 'competences');
+        $this->paragraphService->addParagraph($cvpage, 'experiences');
+        $this->paragraphService->addParagraph($cvpage, 'formations');
 
         return $cvpage;
     }
@@ -171,7 +190,8 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $info->setPage($page);
         $info->setTitle('Informations');
         $info->setType(PageEnum::PAGE->value);
-        $this->setParagraphsInfo($info);
+        $this->addParagraphText($info);
+        $this->paragraphService->addParagraph($info, 'sibling');
 
         return $info;
     }
@@ -183,7 +203,14 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $login->setPage($page);
         $login->setTitle('Connexion');
         $login->setType(PageEnum::LOGIN->value);
-        $this->setParagraphsLogin($login);
+        $this->addParagraphText($login);
+        $paragraph = $this->paragraphService->addParagraph($login, 'form');
+        if ($paragraph instanceof FormParagraph) {
+            $paragraph->setSave(true);
+            $paragraph->setContent('Formulaire envoyé');
+            $paragraph->setForm('login');
+        }
+
 
         return $login;
     }
@@ -195,7 +222,14 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $lostpassword->setPage($page);
         $lostpassword->setTitle('Mot de passe oublié');
         $lostpassword->setType(PageEnum::LOSTPASSWORD->value);
-        $this->setParagraphsLostPassword($lostpassword);
+        $this->addParagraphText($lostpassword);
+        $paragraph = $this->paragraphService->addParagraph($lostpassword, 'form');
+        if ($paragraph instanceof FormParagraph) {
+            $paragraph->setSave(true);
+            $paragraph->setContent('Formulaire envoyé');
+            $paragraph->setForm('lost-password');
+        }
+
 
         return $lostpassword;
     }
@@ -212,13 +246,31 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         return $mentions;
     }
 
+    public function setSaga(Page $page): Page
+    {
+        $sagas = new Page();
+        $sagas->setPage($page);
+        $sagas->setTitle('Mes sagas favorites');
+        $sagas->setType(PageEnum::PAGE->value);
+
+        $this->addParagraphText($sagas);
+        $this->paragraphService->addParagraph($sagas, 'saga');
+
+        return $sagas;
+    }
+
     private function setMovies(Page $page): Page
     {
         $movies = new Page();
         $movies->setPage($page);
         $movies->setTitle('Mes derniers films vus');
         $movies->setType(PageEnum::MOVIES->value);
-        $this->setParagraphsMovie($movies);
+        $this->addParagraphText($movies);
+        $paragraph = $this->paragraphService->addParagraph($movies, 'movie');
+        if ($paragraph instanceof MovieParagraph) {
+            $paragraph->setNbr(18);
+        }
+
 
         return $movies;
     }
@@ -242,97 +294,33 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $objectManager->persist($page);
     }
 
-    private function setParagraphsChangePassword(Page $page): void
-    {
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'form');
-        if (is_null($paragraph) || !$paragraph instanceof FormParagraph) {
-            return;
-        }
-
-        $paragraph->setSave(true);
-        $paragraph->setContent('Formulaire envoyé');
-        $paragraph->setForm('change-password');
-    }
-
-    private function setParagraphsContact(Page $page): void
-    {
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'form');
-        if (is_null($paragraph) || !$paragraph instanceof FormParagraph) {
-            return;
-        }
-
-        $paragraph->setSave(true);
-        $paragraph->setContent('Formulaire envoyé');
-        $paragraph->setForm('contact');
-    }
-
-    private function setParagraphsCv(Page $page): void
-    {
-        $this->paragraphService->addParagraph($page, 'presentation-cv');
-        $this->paragraphService->addParagraph($page, 'competences');
-        $this->paragraphService->addParagraph($page, 'experiences');
-        $this->paragraphService->addParagraph($page, 'formations');
-    }
-
     private function setParagraphsHome(Page $page): void
     {
-        $this->setParagraphsHomeHero($page);
-        $this->setParagraphsHomeEdito($page);
-        $this->addParagraphText($page);
-        $this->setParagraphsHomeLastNews($page);
-        $this->setParagraphsHomeLastStory($page);
-        $this->setParagraphsHomeVideo($page);
-        $this->setParagraphsHomeMovieSlider($page);
-    }
-
-    private function setParagraphsHomeEdito(Page $page): void
-    {
-        $paragraph = $this->paragraphService->addParagraph($page, 'edito');
-        if (is_null($paragraph) || !$paragraph instanceof VideoParagraph) {
-            return;
-        }
-
-        $paragraph->setTitle('edito');
-    }
-
-    private function setParagraphsHomeHero(Page $page): void
-    {
         $this->paragraphService->addParagraph($page, 'hero');
-    }
+        $paragraph = $this->paragraphService->addParagraph($page, 'edito');
+        if ($paragraph instanceof VideoParagraph) {
+            $paragraph->setTitle('edito');
+        }
 
-    private function setParagraphsHomeLastNews(Page $page): void
-    {
+        $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'last-news');
-        if (is_null($paragraph) || !$paragraph instanceof LastNewsParagraph) {
-            return;
+        if ($paragraph instanceof LastNewsParagraph) {
+            $paragraph->setTitle('Dernières news');
+            $paragraph->setNbr(4);
         }
 
-        $paragraph->setTitle('Dernières news');
-        $paragraph->setNbr(4);
-    }
-
-    private function setParagraphsHomeLastStory(Page $page): void
-    {
         $paragraph = $this->paragraphService->addParagraph($page, 'last-story');
-        if (is_null($paragraph) || !$paragraph instanceof LastStoryParagraph) {
-            return;
+        if ($paragraph instanceof LastStoryParagraph) {
+            $paragraph->setTitle('Dernière histoires');
+            $paragraph->setNbr(4);
         }
 
-        $paragraph->setTitle('Dernière histoires');
-        $paragraph->setNbr(4);
-    }
-
-    private function setParagraphsHomeMovieSlider(Page $page): void
-    {
+        $this->setParagraphsHomeVideo($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'movie-slider');
-        if (is_null($paragraph) || !$paragraph instanceof MovieSliderParagraph) {
-            return;
+        if ($paragraph instanceof MovieSliderParagraph) {
+            $paragraph->setTitle('Mes derniers films vus');
+            $paragraph->setNbr(12);
         }
-
-        $paragraph->setTitle('Mes derniers films vus');
-        $paragraph->setNbr(12);
     }
 
     private function setParagraphsHomeVideo(Page $page): void
@@ -352,107 +340,18 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $paragraph->setUrl($generator->youtubeUri());
     }
 
-    private function setParagraphsInfo(Page $page): void
-    {
-        $this->addParagraphText($page);
-        $this->paragraphService->addParagraph($page, 'sibling');
-    }
-
-    private function setParagraphsLogin(Page $page): void
-    {
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'form');
-        if (is_null($paragraph) || !$paragraph instanceof FormParagraph) {
-            return;
-        }
-
-        $paragraph->setSave(true);
-        $paragraph->setContent('Formulaire envoyé');
-        $paragraph->setForm('login');
-    }
-
-    private function setParagraphsLostPassword(Page $page): void
-    {
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'form');
-        if (is_null($paragraph) || !$paragraph instanceof FormParagraph) {
-            return;
-        }
-
-        $paragraph->setSave(true);
-        $paragraph->setContent('Formulaire envoyé');
-        $paragraph->setForm('lost-password');
-    }
-
-    private function setParagraphsMovie(Page $page): void
-    {
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'saga');
-        $paragraph = $this->paragraphService->addParagraph($page, 'movie');
-        if (is_null($paragraph) || !$paragraph instanceof MovieParagraph) {
-            return;
-        }
-
-        $paragraph->setNbr(18);
-    }
-
-    private function setParagraphsPost(Page $page): void
-    {
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'news-list');
-        if (is_null($paragraph) || !$paragraph instanceof NewsListParagraph) {
-            return;
-        }
-
-        $paragraph->setNbr(18);
-    }
-
-    private function setParagraphsSerie(Page $page): void
-    {
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'serie');
-        if (is_null($paragraph) || !$paragraph instanceof SerieParagraph) {
-            return;
-        }
-
-        $paragraph->setNbr(18);
-    }
-
-    private function setParagraphsSitemap(Page $page): void
-    {
-        $this->addParagraphText($page);
-        $this->paragraphService->addParagraph($page, 'sitemap');
-    }
-
-    private function setParagraphsStar(Page $page): void
-    {
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'star');
-        if (is_null($paragraph) || !$paragraph instanceof StarParagraph) {
-            return;
-        }
-
-        $paragraph->setNbr(18);
-    }
-
-    private function setParagraphsStory(Page $page): void
-    {
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'story-list');
-        if (is_null($paragraph) || !$paragraph instanceof StoryListParagraph) {
-            return;
-        }
-
-        $paragraph->setNbr(18);
-    }
-
     private function setPost(Page $page): Page
     {
         $post = new Page();
         $post->setPage($page);
         $post->setTitle('Posts');
         $post->setType(PageEnum::POSTS->value);
-        $this->setParagraphsPost($post);
+        $this->addParagraphText($post);
+        $paragraph = $this->paragraphService->addParagraph($post, 'news-list');
+        if ($paragraph instanceof NewsListParagraph) {
+            $paragraph->setNbr(18);
+        }
+
 
         return $post;
     }
@@ -463,7 +362,12 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $series->setPage($page);
         $series->setTitle('Mes séries favorites');
         $series->setType(PageEnum::SERIES->value);
-        $this->setParagraphsSerie($series);
+        $this->addParagraphText($series);
+        $paragraph = $this->paragraphService->addParagraph($series, 'serie');
+        if ($paragraph instanceof SerieParagraph) {
+            $paragraph->setNbr(18);
+        }
+
 
         return $series;
     }
@@ -474,7 +378,8 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $sitemap->setPage($page);
         $sitemap->setTitle('Plan du site');
         $sitemap->setType(PageEnum::PAGE->value);
-        $this->setParagraphsSitemap($sitemap);
+        $this->addParagraphText($sitemap);
+        $this->paragraphService->addParagraph($sitemap, 'sitemap');
 
         return $sitemap;
     }
@@ -485,7 +390,12 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $star->setPage($page);
         $star->setTitle('Mes étoiles github');
         $star->setType(PageEnum::PAGE->value);
-        $this->setParagraphsStar($star);
+        $this->addParagraphText($star);
+        $paragraph = $this->paragraphService->addParagraph($star, 'star');
+        if ($paragraph instanceof StarParagraph) {
+            $paragraph->setNbr(18);
+        }
+
 
         return $star;
     }
@@ -496,7 +406,11 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $stories->setPage($page);
         $stories->setTitle('Histoires');
         $stories->setType(PageEnum::STORIES->value);
-        $this->setParagraphsStory($stories);
+        $this->addParagraphText($stories);
+        $paragraph = $this->paragraphService->addParagraph($stories, 'story-list');
+        if ($paragraph instanceof StoryListParagraph) {
+            $paragraph->setNbr(18);
+        }
 
         return $stories;
     }

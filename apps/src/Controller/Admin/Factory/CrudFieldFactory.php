@@ -316,9 +316,12 @@ final class CrudFieldFactory
         }
 
         $this->addTab('paragraphs', FormField::addTab(new TranslatableMessage('Paragraphs')));
+        $paragraphsField = ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'));
+        $paragraphsField->hideWhenCreating();
+        $paragraphsField->hideOnIndex();
         $this->addFieldsToTab(
             'paragraphs',
-            [ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'))->hideWhenCreating()]
+            [$paragraphsField]
         );
     }
 

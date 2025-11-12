@@ -116,6 +116,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     {
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
         $queryBuilder = $this->filterTrash($searchDto, $queryBuilder);
+        $queryBuilder = $this->filterUser($searchDto, $queryBuilder);
 
         return $queryBuilder;
     }
@@ -125,6 +126,26 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         $actions->add(Crud::PAGE_EDIT, Action::INDEX);
         $actions->add(Crud::PAGE_INDEX, Action::DETAIL);
         $actions->add(Crud::PAGE_NEW, Action::INDEX);
+    }
+
+    protected function filterUser(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
+    {
+        if ($this->isSuperAdmin()) {
+            return $queryBuilder;
+        }
+
+        $user = $this->getUser();
+        if (!is_object($user)) {
+            return $queryBuilder;
+        }
+
+        $reflectionClass = new ReflectionClass($this->getEntityFqcn());
+        if ($reflectionClass->hasMethod('setUser')) {
+            $queryBuilder->andWhere('entity.user = :user');
+            $queryBuilder->setParameter('user', $user->getId());
+        }
+
+        return $queryBuilder;
     }
 
     protected function filterTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
