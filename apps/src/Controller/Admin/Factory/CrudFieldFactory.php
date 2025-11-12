@@ -184,7 +184,7 @@ final class CrudFieldFactory
         // Always safe on listing/detail pages: no AssociationField to configure
         if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
         ) {
-            $associationField->hideOnForm();
+            $associationField->onlyOnDetail();
 
             return $associationField;
         }
@@ -460,7 +460,7 @@ final class CrudFieldFactory
         // Always safe on listing/detail pages: no AssociationField to configure
         if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
         ) {
-            $associationField->hideOnForm();
+            $associationField->onlyOnDetail();
 
             return $associationField;
         }
