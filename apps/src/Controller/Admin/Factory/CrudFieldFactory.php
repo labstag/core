@@ -257,7 +257,10 @@ final class CrudFieldFactory
 
     public function idField(): IdField
     {
-        return IdField::new('id', new TranslatableMessage('ID'))->onlyOnDetail();
+        $idField = IdField::new('id', new TranslatableMessage('ID'));
+        $idField->onlyOnDetail();
+
+        return $idField;
     }
 
     public function imageField(
@@ -273,7 +276,10 @@ final class CrudFieldFactory
 
         $basePath = $this->fileService->getBasePath($entityFqcn, $type . 'File');
 
-        return ImageField::new($type, $label ?? new TranslatableMessage('Image'))->setBasePath($basePath);
+        $imageField = ImageField::new($type, $label ?? new TranslatableMessage('Image'));
+        $imageField->setBasePath($basePath);
+
+        return $imageField;
     }
 
     public function setTabConfig(): void
@@ -304,7 +310,7 @@ final class CrudFieldFactory
 
     public function setTabOther(): void
     {
-        $this->addTab('other', FormField::addTab(new TranslatableMessage('Other'))->onlyOnIndex());
+        $this->addTab('other', FormField::addTab(new TranslatableMessage('Other')));
     }
 
     /**
@@ -337,12 +343,18 @@ final class CrudFieldFactory
     public function setTabSEO(): void
     {
         $this->addTab('seo', FormField::addTab(new TranslatableMessage('SEO')));
+        $title = TextField::new('meta.title', new TranslatableMessage('Title'));
+        $title->hideOnIndex();
+        $keywords = TextField::new('meta.keywords', new TranslatableMessage('Keywords'));
+        $keywords->hideOnIndex();
+        $description = TextField::new('meta.description', new TranslatableMessage('Description'));
+        $description->hideOnIndex();
         $this->addFieldsToTab(
             'seo',
             [
-                TextField::new('meta.title', new TranslatableMessage('Title'))->hideOnIndex(),
-                TextField::new('meta.keywords', new TranslatableMessage('Keywords'))->hideOnIndex(),
-                TextField::new('meta.description', new TranslatableMessage('Description'))->hideOnIndex(),
+                $title,
+                $keywords,
+                $description,
             ]
         );
     }
@@ -510,9 +522,13 @@ final class CrudFieldFactory
 
     public function totalChildField(string $type): CollectionField
     {
-        return CollectionField::new($type, new TranslatableMessage('Childs'))->hideOnForm()->formatValue(
+        $collectionField = CollectionField::new($type, new TranslatableMessage('Childs'));
+        $collectionField->hideOnForm();
+        $collectionField->formatValue(
             fn ($value): int => is_countable($value) ? count($value) : 0
         );
+
+        return $collectionField;
     }
 
     public function workflowField(): CollectionField
