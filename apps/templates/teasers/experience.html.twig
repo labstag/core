@@ -3,7 +3,7 @@
         {{ item.title }}
     </h3>
     <div class="dates">
-        {{ item.yearStart|format_date(locale: 'fr_FR', dateFormat: 'full') }} - {% if item.end == false %}{{ item.yearEnd|format_date(locale: 'fr_FR', dateFormat: 'full') }}{% else %}{{ "experience.present"|trans }}{% endif %}
+        {{ item.yearStart|format_date(locale: 'fr_FR', pattern='MMMM yyyy') }} - {% if item.end == false %}{{ item.yearEnd|format_date(locale: 'fr_FR', pattern='MMMM yyyy') }}{% else %}{{ "experience.present"|trans }}{% endif %}
     </div>
     <div class="enterprise">
         {{ item.entreprise }}
