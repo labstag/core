@@ -18,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use Labstag\Entity\User;
 use Labstag\Field\ParagraphsField;
 use Labstag\Field\UploadFileField;
 use Labstag\Field\UploadImageField;
@@ -352,6 +353,12 @@ final class CrudFieldFactory
     public function setTabUser(bool $isSuperAdmin): void
     {
         if (!$isSuperAdmin) {
+            return;
+        }
+
+        $repository = $this->managerRegistry->getRepository(User::class);
+        $users = $repository->findAll();
+        if (1 === count($users)) {
             return;
         }
 
