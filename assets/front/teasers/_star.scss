@@ -5,6 +5,13 @@
   .description {
     padding: 20px;
   }
+  a{
+    &[target="_blank"] {
+      &::before{
+        background-image: none;
+      }
+    }
+  }
   ul{
     display: block;
     padding-top: 20px;
@@ -15,11 +22,6 @@
     li{
       padding-bottom: 10px;
       background: none;
-    }
-  }
-  a{
-    &::before{
-      content: '';
     }
   }
 }

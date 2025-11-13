@@ -343,20 +343,15 @@ final class CrudFieldFactory
     public function setTabSEO(): void
     {
         $this->addTab('seo', FormField::addTab(new TranslatableMessage('SEO')));
-        $title = TextField::new('meta.title', new TranslatableMessage('Title'));
-        $title->hideOnIndex();
+        $textField = TextField::new('meta.title', new TranslatableMessage('Title'));
+        $textField->hideOnIndex();
+
         $keywords = TextField::new('meta.keywords', new TranslatableMessage('Keywords'));
         $keywords->hideOnIndex();
+
         $description = TextField::new('meta.description', new TranslatableMessage('Description'));
         $description->hideOnIndex();
-        $this->addFieldsToTab(
-            'seo',
-            [
-                $title,
-                $keywords,
-                $description,
-            ]
-        );
+        $this->addFieldsToTab('seo', [$textField, $keywords, $description]);
     }
 
     /**
@@ -368,8 +363,8 @@ final class CrudFieldFactory
             return;
         }
 
-        $repository = $this->managerRegistry->getRepository(User::class);
-        $users = $repository->findAll();
+        $objectRepository = $this->managerRegistry->getRepository(User::class);
+        $users      = $objectRepository->findAll();
         if (1 === count($users)) {
             return;
         }
@@ -524,9 +519,7 @@ final class CrudFieldFactory
     {
         $collectionField = CollectionField::new($type, new TranslatableMessage('Childs'));
         $collectionField->hideOnForm();
-        $collectionField->formatValue(
-            fn ($value): int => is_countable($value) ? count($value) : 0
-        );
+        $collectionField->formatValue(fn ($value): int => is_countable($value) ? count($value) : 0);
 
         return $collectionField;
     }
