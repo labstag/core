@@ -1,7 +1,14 @@
 @use "../placeholders" as *;
 @use "../mixins";
+@use "../icons";
 .teaser-season{
   @extend %teaser;
+  .title{
+    &::before{
+      @extend .iconbefore;
+      @extend .icon-tv;
+    }
+  }
   h2{
     font-size: 0.75rem;
   }

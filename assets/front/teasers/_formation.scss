@@ -10,4 +10,10 @@
             width: 100%;
         }
     }
+    .date {
+        &::before{
+            @extend .iconbefore;
+            @extend .icon-date;
+        }
+    }
 }

@@ -1,6 +1,7 @@
 @use "variables";
 @use "placeholders" as *;
 @use "sass:color";
+@use "icons";
 body{
   background: variables.$colorbg;
   color: variables.$colortext;
@@ -75,14 +76,16 @@ a {
   &[target="_blank"] {
     cursor: alias;
     &::before{
-      content: "🔗";
-      margin-right: 5px;
-      font-size: 0.9em;
-    
+      @extend .iconbefore;
+      @extend .icon-link;
     }
   }
 }
-
+.list-competences {
+  &::before{
+    @extend .iconbefore;
+  }
+}
 .tags{
   @extend %tags;
   padding: 0.5rem;

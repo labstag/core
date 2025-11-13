@@ -1,10 +1,10 @@
 @charset "UTF-8";
 /* stylelint-disable */
-@use "@fortawesome/fontawesome-free/css/all";
 @use 'ckeditor5/ckeditor5';
 /* stylelint-enable */
 @use './../wysiwyg';
 @use 'placeholder';
+@use 'icons';
 
 .accordion-item{
   width: 100%;
@@ -55,13 +55,15 @@ a{
 
   &.paragraph-edit{
     @extend %btnprimary;
-    @extend .fa-solid;
-    @extend .fa-pen-to-square;
+    i{
+      @extend .material-symbols--edit;
+    }
   }
 
   &.paragraph-delete{
     @extend %btndanger;
-    @extend .fa-solid;
-    @extend .fa-trash;
+    i{
+      @extend .material-symbols--delete;
+    }
   }
 }

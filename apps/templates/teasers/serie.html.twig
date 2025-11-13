@@ -8,6 +8,20 @@
         {% set runtime = runtime + episode.runtime %}
     {% endfor %}
 {% endfor %}
+{% if serie.isinProduction %}
+    {% set title_icon = 'play' %}
+    {% set title_icon_title = 'In production'|trans %}
+{% else %}
+    {% set title_icon = 'stop' %}
+    {% set title_icon_title = 'Not in production'|trans %}
+{% endif %}
+{% if serie.isinProduction %}
+    {% set title_icon = 'play' %}
+    {% set title_icon_title = 'In production'|trans %}
+{% else %}
+    {% set title_icon = 'stop' %}
+    {% set title_icon_title = 'Not in production'|trans %}
+{% endif %}
 <a href="{{ site_path(serie) }}">
     <div class="background spoiler" data-bg="{{ site_asset(serie, 'img') }}">
         {% if serie.releaseDate != '' %}
@@ -26,14 +40,7 @@
         </span>
     </div>
     <div class="wrapper">
-        <h2 class="title">
-            {% if serie.isinProduction %}
-                <i class="fa fa-play-circle" title="{{ 'In production'|trans|e('html_attr') }}"></i>
-            {% else %}
-                <i class="fa fa-stop-circle" title="{{ 'Not in production'|trans|e('html_attr') }}"></i>
-            {% endif %}
-            {{ serie.title }}
-        </h2>
+        <h2 class="title {{ title_icon }}" title="{{ title_icon_title|e('html_attr') }}">{{ serie.title }}</h2>
         <div class="duration">
             {{ time_runtime(runtime) }}
         </div>

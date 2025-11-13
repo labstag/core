@@ -1,4 +1,5 @@
 @use "../placeholders" as *;
+@use "../icons";
 .paragraph_head-story{
   @extend %head;
   .content{
@@ -24,6 +25,10 @@
   }
   .pdf{
     a{
+      &::before{
+        @extend .iconbefore;
+        @extend .icon-pdf;
+      }
       i{
         
       }

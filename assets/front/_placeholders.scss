@@ -1,5 +1,6 @@
 @use "mixins";
 @use "variables";
+@use "icons";
 @import '@fontsource/lobster';
 %tags{
   span{
@@ -13,6 +14,10 @@
     vertical-align: baseline;
     background-color: variables.$tagbg;
     color: #fff;
+    &::before{
+      @extend .iconbefore;
+      @extend .icon-tags;
+    }
   }
 }
 %categories{
@@ -27,6 +32,10 @@
     vertical-align: baseline;
     background-color: variables.$categorybg;
     color: #fff;
+    &::before{
+      @extend .iconbefore;
+      @extend .icon-category;
+    }
   }
 }
 %paddingdefault{

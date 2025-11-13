@@ -10,10 +10,7 @@
         <div class="background spoiler" data-bg="{{ site_asset(season, 'img') }}"></div>
     </div>
     <div class="wrapper">
-        <h3 class="title">
-            <i class="fa fa-tv"></i>
-            {{ season.title }}
-        </h3>
+        <h3 class="title">{{ season.title }}</h3>
         <div class="dates">
             {{ "From %start% to %end%"|trans({'%start%': firstEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full'), '%end%' : lastEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
         </div>

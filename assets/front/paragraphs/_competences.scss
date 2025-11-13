@@ -1,6 +1,13 @@
 @use "../mixins";
 @use "../placeholders" as *;
+@use "../icons";
 .paragraph_competences{
+  h2{
+    &::before{
+      @extend .icon-skill;
+      @extend .iconbefore;
+    }
+  }
   ul{
     display: grid;
     grid-template-columns: 1fr;

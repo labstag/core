@@ -1,6 +1,13 @@
 @use "../mixins";
 @use "../placeholders" as *;
+@use "../icons";
 .paragraph_experiences{
+  h2{
+    &::before{
+      @extend .icon-briefcase;
+      @extend .iconbefore;
+    }
+  }
   ul{
     &.listexperiences{
       list-style: none;
@@ -26,10 +33,18 @@
           top: 35px;
           width: 30px;
           height: 30px;
-          background: #c7dfb4;
+
+          // Cercle de fond
+          background-color: #c7dfb4;
           border-radius: 50%;
           border: 3px solid white;
-          box-shadow: 0 0 5px rgba(0,0,0,0.2);
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+
+          // Icône SVG centrée
+          @extend .icon-briefcase__black;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: 60%;
         }
       }
     }

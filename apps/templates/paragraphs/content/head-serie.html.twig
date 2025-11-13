@@ -5,19 +5,19 @@
         {% set runtime = runtime + episode.runtime %}
     {% endfor %}
 {% endfor %}
+{% if serie.isinProduction %}
+    {% set title_icon = 'play' %}
+    {% set title_icon_title = 'In production'|trans %}
+{% else %}
+    {% set title_icon = 'stop' %}
+    {% set title_icon_title = 'Not in production'|trans %}
+{% endif %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
     <div class="first">
         <div class="background" style="--image-url: url('{{ site_asset(serie, 'img') }}')"></div>
         <div class="content">
             <div class="wrapper">
-                <h3 class="title">
-                    {% if serie.isinProduction %}
-                        <i class="fa fa-play-circle" title="{{ 'In production'|trans|e('html_attr') }}"></i>
-                    {% else %}
-                        <i class="fa fa-stop-circle" title="{{ 'Not in production'|trans|e('html_attr') }}"></i>
-                    {% endif %}
-                    {{ serie.title }}
-                </h3>
+                <h3 class="title {{ title_icon }}" title="{{ title_icon_title|e('html_attr') }}">{{ serie.title }}</h3>
                 {% if serie.categories|length > 0 %}
                     <div class="categories">
                         {% for category in serie.categories %}
