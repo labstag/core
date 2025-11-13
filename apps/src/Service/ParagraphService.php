@@ -15,6 +15,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ParagraphService
 {
@@ -26,6 +27,7 @@ final class ParagraphService
         private readonly iterable $paragraphs,
         private AdminUrlGenerator $adminUrlGenerator,
         private ParagraphRepository $paragraphRepository,
+        private TranslatorInterface $translator,
         private Security $security,
     )
     {
@@ -126,7 +128,7 @@ final class ParagraphService
     {
         $paragraphs = [];
         foreach ($this->paragraphs as $paragraph) {
-            $name  = $paragraph->getName();
+            $name  = $this->translator->trans($paragraph->getName());
             if ($paragraph->supports($entity)) {
                 $paragraphs[$name] = $paragraph->getType();
             }
@@ -278,7 +280,7 @@ final class ParagraphService
         $name = '';
         foreach ($this->paragraphs as $row) {
             if ($row->getClass() == $paragraph::class) {
-                $name = $row->getName();
+                $name = $this->translator->trans($row->getName());
 
                 break;
             }

@@ -13,6 +13,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class BlockService
 {
@@ -29,6 +30,7 @@ final class BlockService
         private Security $security,
         private AuthorizationCheckerInterface $authorizationChecker,
         private BlockRepository $blockRepository,
+        private TranslatorInterface $translator,
     )
     {
     }
@@ -82,7 +84,7 @@ final class BlockService
         $blocks = [];
         foreach ($this->blocks as $block) {
             $type  = $block->getType();
-            $name  = $block->getName();
+            $name  = $this->translator->trans($block->getName());
             if ($block->isEnable() || is_null($entity)) {
                 $blocks[$name] = $type;
             }
@@ -192,7 +194,7 @@ final class BlockService
         $name = '';
         foreach ($this->blocks as $row) {
             if ($row->getClass() == $block::class) {
-                $name = $row->getName();
+                $name = $this->translator->trans($row->getName());
 
                 break;
             }
