@@ -54,6 +54,10 @@ abstract class EventEntityLib
     protected function addParagraph(object $instance, string $type, ?int $position = null): void
     {
         $classType  = $this->paragraphService->getByCode($type);
+        if (is_null($classType)) {
+            return;
+        }
+
         $paragraphs = $instance->getParagraphs();
         foreach ($paragraphs as $paragraph) {
             if ($classType->getClass() == $paragraph::class) {
@@ -204,8 +208,10 @@ abstract class EventEntityLib
             return;
         }
 
-        $code = (PageEnum::HOME->value != $instance->getType()) ? 'head' : 'head-cv';
-        $this->addParagraph($instance, 'code', 0);
+        if (PageEnum::HOME->value != $instance->getType()) {
+            $code = (PageEnum::CV->value == $instance->getType()) ? 'head-cv' : 'head';
+            $this->addParagraph($instance, $code, 0);
+        }
 
         $oldHome = $this->pageRepository->getOneByType(PageEnum::HOME->value);
         if (PageEnum::HOME->value == $instance->getType()) {
@@ -221,7 +227,9 @@ abstract class EventEntityLib
             $this->pageRepository->save($oldHome);
         }
 
-        $instance->setSlug('');
+        if (PageEnum::HOME->value == $instance->getType()) {
+            $instance->setSlug('');
+        }
     }
 
     protected function updateEntityParagraph(object $instance): void
