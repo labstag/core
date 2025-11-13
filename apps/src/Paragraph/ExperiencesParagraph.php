@@ -38,9 +38,9 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         $this->setData(
             $paragraph,
             [
-                'skills'      => $skills,
-                'paragraph'   => $paragraph,
-                'data'        => $data,
+                'skills'    => $skills,
+                'paragraph' => $paragraph,
+                'data'      => $data,
             ]
         );
     }

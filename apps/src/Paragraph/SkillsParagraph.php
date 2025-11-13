@@ -5,9 +5,9 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Entity\SkillsParagraph as EntitySkillsParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\SkillsParagraph as EntitySkillsParagraph;
 use Labstag\Enum\PageEnum;
 use Labstag\Form\Paragraph\SkillsType;
 use Override;
@@ -38,9 +38,9 @@ class SkillsParagraph extends ParagraphAbstract implements ParagraphInterface
         $this->setData(
             $paragraph,
             [
-                'skills'      => $skills,
-                'paragraph'   => $paragraph,
-                'data'        => $data,
+                'skills'    => $skills,
+                'paragraph' => $paragraph,
+                'data'      => $data,
             ]
         );
     }

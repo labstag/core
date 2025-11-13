@@ -2,8 +2,8 @@
 
 namespace Labstag\FileStorage;
 
-use Labstag\Entity\ImageParagraph;
 use Labstag\Entity\HeadCvParagraph;
+use Labstag\Entity\ImageParagraph;
 use Labstag\Entity\TextImgParagraph;
 use Labstag\Entity\TextMediaParagraph;
 use Labstag\Entity\VideoParagraph;

@@ -27,7 +27,6 @@ class MovieParagraph extends ParagraphAbstract implements ParagraphInterface
 
             return;
         }
-        
 
         unset($disable);
         /** @var MovieRepository $entityRepository */

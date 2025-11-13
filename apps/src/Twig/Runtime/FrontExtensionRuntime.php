@@ -135,7 +135,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
     public function tarteaucitron(): string
     {
         $tac = $this->configurationService->getTacConfig();
-        if ('' == $tac) {
+        if ('' === $tac) {
             return '';
         }
 

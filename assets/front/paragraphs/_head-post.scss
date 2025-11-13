@@ -1,5 +1,5 @@
 @use "../placeholders" as *;
-
+@use "../icons";
 .paragraph_head-post{
   @extend %head;
   .content{
@@ -15,6 +15,9 @@
 
   }
   .date{
-    
+    &::before{
+      @extend .iconbefore;
+      @extend .icon-date;
+    }
   }
 }

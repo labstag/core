@@ -14,26 +14,26 @@ class TrainingCoursesParagraph extends Paragraph
     #[ORM\Column(nullable: true)]
     private ?array $trainings = null;
 
-    public function getTrainings(): ?array
-    {
-        return $this->trainings;
-    }
-
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function setTrainings(?array $trainings): static
+    public function getTrainings(): ?array
     {
-        $this->trainings = $trainings;
-
-        return $this;
+        return $this->trainings;
     }
 
     public function setTitle(?string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function setTrainings(?array $trainings): static
+    {
+        $this->trainings = $trainings;
 
         return $this;
     }

@@ -23,35 +23,10 @@ class SagaData extends PageData implements DataInterface
         return parent::generateSlug($page) . '/' . $entity->getSlug();
     }
 
-    public function getJsonLdSaga(Saga $entity): object
+    #[\Override]
+    public function getEntity(?string $slug): object
     {
-        $movieSeries = Schema::movieSeries();
-        $movieSeries->name($entity->getTitle());
-
-        $slug = $this->slugService->forEntity($entity);
-        $movieSeries->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                RouterInterface::ABSOLUTE_URL
-            )
-        );
-
-
-        return $movieSeries;
-    }
-
-    public function getJsonLdMovie(Movie $entity): object
-    {
-        $movie = Schema::movie();
-        $movie->name($entity->getTitle());
-
-        $img = $this->siteService->asset($entity, 'img', true, true);
-        if ('' !== $img) {
-            $movie->image($img);
-        }
-
-        return $movie;
+        return $this->getEntityBySlugSaga($slug);
     }
 
     public function getJsonLd(object $entity): object
@@ -72,21 +47,40 @@ class SagaData extends PageData implements DataInterface
                 $movies[] = $this->getJsonLdMovie($movieEntity);
             }
         }
+
         $movieSeries->hasPart($movies);
 
         return $movieSeries;
     }
 
-    #[\Override]
-    public function supportsJsonLd(object $entity): bool
+    public function getJsonLdMovie(Movie $entity): object
     {
-        return $entity instanceof Saga;
+        $movie = Schema::movie();
+        $movie->name($entity->getTitle());
+
+        $img = $this->siteService->asset($entity, 'img', true, true);
+        if ('' !== $img) {
+            $movie->image($img);
+        }
+
+        return $movie;
     }
 
-    #[\Override]
-    public function getEntity(?string $slug): object
+    public function getJsonLdSaga(Saga $saga): object
     {
-        return $this->getEntityBySlugSaga($slug);
+        $movieSeries = Schema::movieSeries();
+        $movieSeries->name($saga->getTitle());
+
+        $slug = $this->slugService->forEntity($saga);
+        $movieSeries->url(
+            $this->router->generate(
+                'front',
+                ['slug' => $slug],
+                RouterInterface::ABSOLUTE_URL
+            )
+        );
+
+        return $movieSeries;
     }
 
     #[\Override]
@@ -128,6 +122,12 @@ class SagaData extends PageData implements DataInterface
 
     #[\Override]
     public function supportsData(object $entity): bool
+    {
+        return $entity instanceof Saga;
+    }
+
+    #[\Override]
+    public function supportsJsonLd(object $entity): bool
     {
         return $entity instanceof Saga;
     }

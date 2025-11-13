@@ -72,7 +72,7 @@ class SerieCrudController extends CrudControllerAbstract
 
         $associationField = AssociationField::new('seasons', new TranslatableMessage('Seasons'));
         $associationField->setTemplatePath('admin/field/seasons.html.twig');
-        $associationField->hideOnForm();
+        $associationField->onlyOnDetail();
 
         $collectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
         $collectionField->setTemplatePath('admin/field/runtime-serie.html.twig');

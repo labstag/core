@@ -3,9 +3,9 @@
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Entity\HeadCvParagraph as EntityHeadCvParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\HeadCvParagraph as EntityHeadCvParagraph;
 use Labstag\Enum\PageEnum;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;

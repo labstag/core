@@ -5,9 +5,9 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Entity\TrainingCoursesParagraph as EntityTrainingCoursesParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\TrainingCoursesParagraph as EntityTrainingCoursesParagraph;
 use Labstag\Enum\PageEnum;
 use Labstag\Form\Paragraph\TrainingCourseType;
 use Override;
@@ -39,8 +39,8 @@ class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInt
             $paragraph,
             [
                 'trainings' => $trainings,
-                'paragraph'  => $paragraph,
-                'data'       => $data,
+                'paragraph' => $paragraph,
+                'data'      => $data,
             ]
         );
     }
