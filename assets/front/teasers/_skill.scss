@@ -1,7 +1,7 @@
 @use "../mixins";
 @use "../placeholders" as *;
 
-.teaser-competence {
+.teaser-skill {
     @extend %teaser;
 
     .wrapper {

@@ -2,10 +2,10 @@
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
         <h2>{{ paragraph.title}}</h2>
-        <ul class="listformations">
-            {% for item in paragraph.formations %}
-                <li class="teaser-formation">
-                    {% include "teasers/formation.html.twig"  with {'item': item} %}
+        <ul class="listetrainingcourses">
+            {% for item in paragraph.trainings %}
+                <li class="teaser-training">
+                    {% include "teasers/training.html.twig"  with {'item': item} %}
                 </li>
             {% endfor %}
         </ul>

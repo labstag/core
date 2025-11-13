@@ -3,7 +3,7 @@
     <div class="wrapper">
         <h2>{{ paragraph.title }}</h2>
         <ul class="listexperiences">
-            {% for item in paragraph.experiences %}
+            {% for item in paragraph.skills %}
                 <li class="teaser-experience">
                     {% include  "teasers/experience.html.twig"  with {'item': item} %}
                 </li>

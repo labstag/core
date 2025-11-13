@@ -5,18 +5,18 @@ namespace Labstag\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-class FormationsParagraph extends Paragraph
+class TrainingCoursesParagraph extends Paragraph
 {
 
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $title = null;
 
     #[ORM\Column(nullable: true)]
-    private ?array $formations = null;
+    private ?array $trainings = null;
 
-    public function getFormations(): ?array
+    public function getTrainings(): ?array
     {
-        return $this->formations;
+        return $this->trainings;
     }
 
     public function getTitle(): ?string
@@ -24,9 +24,9 @@ class FormationsParagraph extends Paragraph
         return $this->title;
     }
 
-    public function setFormations(?array $formations): static
+    public function setTrainings(?array $trainings): static
     {
-        $this->formations = $formations;
+        $this->trainings = $trainings;
 
         return $this;
     }

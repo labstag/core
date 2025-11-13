@@ -1,24 +1,29 @@
 @use "../mixins";
 @use "../placeholders" as *;
 @import '@fontsource/lobster';
-.paragraph_presentation-cv{
+.paragraph_head-cv{
   @extend %head;
   margin-top: 0px;
   .content{
     display: grid;
     grid-template-areas:
-      "title"
+      "title1"
+      "title2"
       "pdf";
     height: 250px;
     justify-content: space-around;
     @include mixins.respond-to(md) {
       grid-template-areas:
-        "title pdf";
+        "title1 pdf"
+        "title2 pdf";
     }
   }
-  .title{
+  h1{
+    grid-area: title1;
+  }
+  h2{
     font-family: 'Lobster', system-ui;
-    grid-area: title;
+    grid-area: title2;
     font-size: 40px;
     height: 100%;
     display: flex;

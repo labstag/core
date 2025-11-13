@@ -2,7 +2,7 @@
 
 namespace Labstag\Form\Paragraph;
 
-use Labstag\Form\Paragraph\Collection\CompetenceType;
+use Labstag\Form\Paragraph\Collection\SkillsType;
 use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -77,13 +77,13 @@ class ExperienceType extends AbstractType
             ]
         );
         $formBuilder->add(
-            'competences',
+            'skills',
             CollectionType::class,
             [
-                'entry_type'   => CompetenceType::class,
+                'entry_type'   => SkillsType::class,
                 'allow_add'    => true,
                 'allow_delete' => true,
-                'label'        => new TranslatableMessage('Competences'),
+                'label'        => new TranslatableMessage('Skills'),
             ]
         );
 

@@ -1,7 +1,7 @@
 @use "../mixins";
 @use "../placeholders" as *;
 @use "../icons";
-.paragraph_formations{
+  .paragraph_trainingcourses {
   h2{
     &::before{
       @extend .icon-school;
@@ -10,7 +10,7 @@
   }
 
   ul{
-    &.listformations{
+    &.listetrainingcourses{
       list-style: none;
       margin: 0;
       margin-top: 50px;

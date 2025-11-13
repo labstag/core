@@ -5,15 +5,15 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Entity\CompetencesParagraph as EntityCompetencesParagraph;
+use Labstag\Entity\TrainingCoursesParagraph as EntityTrainingCoursesParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Enum\PageEnum;
-use Labstag\Form\Paragraph\CompetencesType;
+use Labstag\Form\Paragraph\TrainingCourseType;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class CompetencesParagraph extends ParagraphAbstract implements ParagraphInterface
+class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -21,14 +21,14 @@ class CompetencesParagraph extends ParagraphAbstract implements ParagraphInterfa
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        if (!$paragraph instanceof EntityCompetencesParagraph) {
+        if (!$paragraph instanceof EntityTrainingCoursesParagraph) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
-        $competences  = $paragraph->getCompetences();
-        if (!is_array($competences) || [] === $competences) {
+        $trainings  = $paragraph->getTrainings();
+        if (!is_array($trainings) || [] === $trainings) {
             $this->setShow($paragraph, false);
 
             return;
@@ -38,16 +38,16 @@ class CompetencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         $this->setData(
             $paragraph,
             [
-                'competences' => $competences,
-                'paragraph'   => $paragraph,
-                'data'        => $data,
+                'trainings' => $trainings,
+                'paragraph'  => $paragraph,
+                'data'       => $data,
             ]
         );
     }
 
     public function getClass(): string
     {
-        return EntityCompetencesParagraph::class;
+        return EntityTrainingCoursesParagraph::class;
     }
 
     #[Override]
@@ -56,28 +56,28 @@ class CompetencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         unset($pageName, $paragraph);
         yield TextField::new('title', new TranslatableMessage('Title'));
         yield FormField::addColumn(12);
-        $collectionField = CollectionField::new('competences', new TranslatableMessage('Competences'));
+        $collectionField = CollectionField::new('trainings', new TranslatableMessage('Formations'));
         $collectionField->setEntryToStringMethod(
             function ($link): TranslatableMessage {
                 unset($link);
 
-                return new TranslatableMessage('Competence');
+                return new TranslatableMessage('Formation');
             }
         );
-        $collectionField->setEntryType(CompetencesType::class);
+        $collectionField->setEntryType(TrainingCourseType::class);
         yield $collectionField;
     }
 
     #[Override]
     public function getName(): string
     {
-        return 'Compétences';
+        return (string) new TranslatableMessage('Training courses');
     }
 
     #[Override]
     public function getType(): string
     {
-        return 'competences';
+        return 'trainingcourses';
     }
 
     #[Override]

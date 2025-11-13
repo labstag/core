@@ -1,7 +1,7 @@
 @use "../mixins";
 @use "../placeholders" as *;
 @use "../icons";
-.paragraph_competences{
+.paragraph_skills{
   h2{
     &::before{
       @extend .icon-skill;

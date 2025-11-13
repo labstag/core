@@ -12,7 +12,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 /**
  * @extends AbstractType<mixed>
  */
-class CompetenceType extends AbstractType
+class SkillsType extends AbstractType
 {
     #[Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void

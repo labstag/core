@@ -27,8 +27,8 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
             return;
         }
 
-        $experiences  = $paragraph->getExperiences();
-        if (!is_array($experiences) || [] === $experiences) {
+        $skills  = $paragraph->getSkills();
+        if (!is_array($skills) || [] === $skills) {
             $this->setShow($paragraph, false);
 
             return;
@@ -38,7 +38,7 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         $this->setData(
             $paragraph,
             [
-                'experiences' => $experiences,
+                'skills'      => $skills,
                 'paragraph'   => $paragraph,
                 'data'        => $data,
             ]
@@ -57,12 +57,12 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
 
         yield TextField::new('title', new TranslatableMessage('Title'));
         yield FormField::addColumn(12);
-        $collectionField = CollectionField::new('experiences', new TranslatableMessage('Experiences'));
+        $collectionField = CollectionField::new('skills', new TranslatableMessage('Skills'));
         $collectionField->setEntryToStringMethod(
             function ($link): TranslatableMessage {
                 unset($link);
 
-                return new TranslatableMessage('Experience');
+                return new TranslatableMessage('Skill');
             }
         );
         $collectionField->setEntryType(ExperienceType::class);

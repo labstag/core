@@ -5,12 +5,12 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\PresentationCvParagraph as EntityPresentationCvParagraph;
+use Labstag\Entity\HeadCvParagraph as EntityHeadCvParagraph;
 use Labstag\Enum\PageEnum;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class PresentationCVParagraph extends ParagraphAbstract implements ParagraphInterface
+class HeadCvParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -30,27 +30,26 @@ class PresentationCVParagraph extends ParagraphAbstract implements ParagraphInte
 
     public function getClass(): string
     {
-        return EntityPresentationCvParagraph::class;
+        return EntityHeadCvParagraph::class;
     }
 
     #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): \Generator
     {
         yield TextField::new('title', new TranslatableMessage('Title'));
-        yield $this->addFieldImageUpload('img', $pageName, $paragraph);
         yield $this->addFieldFileUpload('pdf', $pageName, $paragraph);
     }
 
     #[Override]
     public function getName(): string
     {
-        return (string) new TranslatableMessage('Presentation CV');
+        return (string) new TranslatableMessage('Head CV');
     }
 
     #[Override]
     public function getType(): string
     {
-        return 'presentation-cv';
+        return 'head-cv';
     }
 
     #[Override]

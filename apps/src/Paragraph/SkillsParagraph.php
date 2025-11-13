@@ -5,15 +5,15 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Entity\FormationsParagraph as EntityFormationsParagraph;
+use Labstag\Entity\SkillsParagraph as EntitySkillsParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Enum\PageEnum;
-use Labstag\Form\Paragraph\FormationType;
+use Labstag\Form\Paragraph\SkillsType;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class FormationsParagraph extends ParagraphAbstract implements ParagraphInterface
+class SkillsParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -21,14 +21,14 @@ class FormationsParagraph extends ParagraphAbstract implements ParagraphInterfac
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        if (!$paragraph instanceof EntityFormationsParagraph) {
+        if (!$paragraph instanceof EntitySkillsParagraph) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
-        $formations  = $paragraph->getFormations();
-        if (!is_array($formations) || [] === $formations) {
+        $skills  = $paragraph->getSkills();
+        if (!is_array($skills) || [] === $skills) {
             $this->setShow($paragraph, false);
 
             return;
@@ -38,16 +38,16 @@ class FormationsParagraph extends ParagraphAbstract implements ParagraphInterfac
         $this->setData(
             $paragraph,
             [
-                'formations' => $formations,
-                'paragraph'  => $paragraph,
-                'data'       => $data,
+                'skills'      => $skills,
+                'paragraph'   => $paragraph,
+                'data'        => $data,
             ]
         );
     }
 
     public function getClass(): string
     {
-        return EntityFormationsParagraph::class;
+        return EntitySkillsParagraph::class;
     }
 
     #[Override]
@@ -56,28 +56,28 @@ class FormationsParagraph extends ParagraphAbstract implements ParagraphInterfac
         unset($pageName, $paragraph);
         yield TextField::new('title', new TranslatableMessage('Title'));
         yield FormField::addColumn(12);
-        $collectionField = CollectionField::new('formations', new TranslatableMessage('Formations'));
+        $collectionField = CollectionField::new('skills', new TranslatableMessage('Skills'));
         $collectionField->setEntryToStringMethod(
             function ($link): TranslatableMessage {
                 unset($link);
 
-                return new TranslatableMessage('Formation');
+                return new TranslatableMessage('Skill');
             }
         );
-        $collectionField->setEntryType(FormationType::class);
+        $collectionField->setEntryType(SkillsType::class);
         yield $collectionField;
     }
 
     #[Override]
     public function getName(): string
     {
-        return (string) new TranslatableMessage('Formations');
+        return (string) new TranslatableMessage('Skills');
     }
 
     #[Override]
     public function getType(): string
     {
-        return 'formations';
+        return 'skills';
     }
 
     #[Override]

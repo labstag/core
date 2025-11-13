@@ -2,10 +2,8 @@
 
 namespace Labstag\Form\Paragraph;
 
-use Labstag\Form\Paragraph\Collection\CompetenceType;
 use Override;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,7 +12,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 /**
  * @extends AbstractType<mixed>
  */
-class CompetencesType extends AbstractType
+class TrainingCourseType extends AbstractType
 {
     #[Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
@@ -27,13 +25,17 @@ class CompetencesType extends AbstractType
             ]
         );
         $formBuilder->add(
-            'competences',
-            CollectionType::class,
+            'year',
+            TextType::class,
             [
-                'entry_type'   => CompetenceType::class,
-                'allow_add'    => true,
-                'allow_delete' => true,
-                'label'        => new TranslatableMessage('Competences'),
+                'label' => new TranslatableMessage('Year'),
+            ]
+        );
+        $formBuilder->add(
+            'place',
+            TextType::class,
+            [
+                'label' => new TranslatableMessage('Place'),
             ]
         );
 

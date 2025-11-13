@@ -11,10 +11,10 @@
     <div class="content html-content">
         {{ item.description|raw }}
     </div>
-    <div class="list-competences">
-        {% for competence in item.competences %}
-            <span class="icon-{{ competence.icon }}">
-                {{ competence.title }}
+    <div class="list-skills">
+        {% for skill in item.skills %}
+            <span class="icon-{{ skill.icon }}">
+                {{ skill.title }}
             </span>
         {% endfor %}
     </div>
