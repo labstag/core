@@ -19,6 +19,12 @@
       margin: 5px;
     }
   }
+  .duration{
+    &::before{
+      @extend .iconbefore;
+      @extend .icon-runtime;
+    }
+  }
   .play{
     &::before{
       @extend .iconbefore;

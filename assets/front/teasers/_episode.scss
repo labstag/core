@@ -1,5 +1,6 @@
 @use "../placeholders" as *;
 @use "../mixins";
+@use "../icons";
 .teaser-episode{
   @extend %teaser;
   display: grid;
@@ -20,5 +21,11 @@
   .wrapper{
     grid-area: content;
     padding: 1rem;
+  }
+  .duration{
+    &::before{
+      @extend .iconbefore;
+      @extend .icon-runtime;
+    }
   }
 }

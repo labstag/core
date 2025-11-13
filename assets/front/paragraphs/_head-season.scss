@@ -1,4 +1,5 @@
-  @use "../placeholders" as *;
+@use "../placeholders" as *;
+@use "../icons";
 .paragraph_head-season{
   .first {
     @extend %head;
@@ -17,6 +18,12 @@
     }
     .date{
       
+    }
+    .duration{
+      &::before{
+        @extend .iconbefore;
+        @extend .icon-runtime;
+      }
     }
   }
 }

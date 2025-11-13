@@ -54,4 +54,10 @@
       }
     }
   }
+  .duration{
+    &::before{
+      @extend .iconbefore;
+      @extend .icon-runtime;
+    }
+  }
 }
