@@ -58,10 +58,10 @@ class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInt
         yield FormField::addColumn(12);
         $collectionField = CollectionField::new('trainings', new TranslatableMessage('Training courses'));
         $collectionField->setEntryToStringMethod(
-            function ($link): TranslatableMessage {
+            function ($link): string {
                 unset($link);
 
-                return new TranslatableMessage('Training course');
+                return $this->translator->trans(new TranslatableMessage('Training course'));
             }
         );
         $collectionField->setEntryType(TrainingCourseType::class);

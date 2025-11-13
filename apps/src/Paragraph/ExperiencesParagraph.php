@@ -59,10 +59,10 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         yield FormField::addColumn(12);
         $collectionField = CollectionField::new('skills', new TranslatableMessage('Skills'));
         $collectionField->setEntryToStringMethod(
-            function ($link): TranslatableMessage {
+            function ($link): string {
                 unset($link);
 
-                return new TranslatableMessage('Skill');
+                return $this->translator->trans(new TranslatableMessage('Skill'));
             }
         );
         $collectionField->setEntryType(ExperienceType::class);

@@ -35,6 +35,7 @@ use Symfony\Component\Validator\Constraints\File;
 use Twig\Environment;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AutoconfigureTag('labstag.paragraphs')]
 abstract class ParagraphAbstract extends AbstractController
@@ -78,6 +79,7 @@ abstract class ParagraphAbstract extends AbstractController
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
         protected SlugService $slugService,
+        protected TranslatorInterface $translator,
         protected ConfigurationService $configurationService,
         protected Environment $twigEnvironment,
         protected ParameterBagInterface $parameterBag,
