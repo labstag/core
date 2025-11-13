@@ -4,7 +4,7 @@ namespace Labstag\Data;
 
 use Labstag\Entity\Movie;
 
-class MovieData extends DataAbstract implements DataInterface
+class MovieData extends SagaData implements DataInterface
 {
     #[\Override]
     public function placeholder(): string

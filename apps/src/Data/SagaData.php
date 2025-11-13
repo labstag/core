@@ -2,9 +2,12 @@
 
 namespace Labstag\Data;
 
+use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Saga;
 use Labstag\Enum\PageEnum;
+use Spatie\SchemaOrg\Schema;
+use Symfony\Component\Routing\RouterInterface;
 
 class SagaData extends PageData implements DataInterface
 {
@@ -18,6 +21,66 @@ class SagaData extends PageData implements DataInterface
         );
 
         return parent::generateSlug($page) . '/' . $entity->getSlug();
+    }
+
+    public function getJsonLdSaga(Saga $entity): object
+    {
+        $movieSeries = Schema::movieSeries();
+        $movieSeries->name($entity->getTitle());
+
+        $slug = $this->slugService->forEntity($entity);
+        $movieSeries->url(
+            $this->router->generate(
+                'front',
+                ['slug' => $slug],
+                RouterInterface::ABSOLUTE_URL
+            )
+        );
+
+
+        return $movieSeries;
+    }
+
+    public function getJsonLdMovie(Movie $entity): object
+    {
+        $movie = Schema::movie();
+        $movie->name($entity->getTitle());
+
+        $img = $this->siteService->asset($entity, 'img', true, true);
+        if ('' !== $img) {
+            $movie->image($img);
+        }
+
+        return $movie;
+    }
+
+    public function getJsonLd(object $entity): object
+    {
+        $movieSeries = $this->getJsonLdSaga($entity);
+        $description = (string) $entity->getDescription();
+        $clean       = trim(html_entity_decode(strip_tags($description), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $movieSeries->description($clean);
+
+        $img = $this->siteService->asset($entity, 'img', true, true);
+        if ('' !== $img) {
+            $movieSeries->image($img);
+        }
+
+        $movies = [];
+        foreach ($entity->getMovies() as $movieEntity) {
+            if ($movieEntity->isEnable()) {
+                $movies[] = $this->getJsonLdMovie($movieEntity);
+            }
+        }
+        $movieSeries->hasPart($movies);
+
+        return $movieSeries;
+    }
+
+    #[\Override]
+    public function supportsJsonLd(object $entity): bool
+    {
+        return $entity instanceof Saga;
     }
 
     #[\Override]
