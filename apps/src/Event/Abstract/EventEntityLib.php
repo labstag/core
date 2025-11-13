@@ -204,11 +204,8 @@ abstract class EventEntityLib
             return;
         }
 
-        if (PageEnum::HOME->value != $instance->getType()) {
-            $this->addParagraph($instance, 'head', 0);
-
-            return;
-        }
+        $code = (PageEnum::HOME->value != $instance->getType()) ? 'head' : 'head-cv';
+        $this->addParagraph($instance, 'code', 0);
 
         $oldHome = $this->pageRepository->getOneByType(PageEnum::HOME->value);
         if (PageEnum::HOME->value == $instance->getType()) {
