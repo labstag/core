@@ -134,15 +134,17 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 
     public function tarteaucitron(): string
     {
-        $config = $this->configurationService->getConfiguration();
-        if (in_array(trim((string) $config->getTacServices()), ['', '0'], true)) {
+        $tac = $this->configurationService->getTacConfig();
+        if ('' == $tac) {
             return '';
         }
+
+        $config = $this->configurationService->getConfiguration();
 
         return $this->twigEnvironment->render(
             'tarteaucitron.html.twig',
             [
-                'config'   => $config,
+                'tac'      => $tac,
                 'services' => $config->getTacServices(),
             ]
         );

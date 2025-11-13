@@ -364,7 +364,7 @@ final class CrudFieldFactory
         }
 
         $objectRepository = $this->managerRegistry->getRepository(User::class);
-        $users      = $objectRepository->findAll();
+        $users            = $objectRepository->findAll();
         if (1 === count($users)) {
             return;
         }

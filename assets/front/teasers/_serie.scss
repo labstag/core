@@ -12,23 +12,23 @@
       padding: 5px;
       margin: 5px;
     }
-    .play{
-      &::before{
-        @extend .iconbefore;
-        @extend .icon-play;
-      }
-    }
-    .stop{
-      &::before{
-        @extend .iconbefore;
-        @extend .icon-stop;
-      }
-    }
     .seasons{
       background-color: #363636;
       color: yellow;
       padding: 5px;
       margin: 5px;
+    }
+  }
+  .play{
+    &::before{
+      @extend .iconbefore;
+      @extend .icon-play;
+    }
+  }
+  .stop{
+    &::before{
+      @extend .iconbefore;
+      @extend .icon-stop;
     }
   }
 }
