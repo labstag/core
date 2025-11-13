@@ -1537,6 +1537,26 @@
         <source>My CV</source>
         <target>Mon CV</target>
       </trans-unit>
+      <trans-unit id="ZbM76Qb" resname="Skills">
+        <source>Skills</source>
+        <target>Compétences</target>
+      </trans-unit>
+      <trans-unit id="_SM.2px" resname="Skill">
+        <source>Skill</source>
+        <target>Compétence</target>
+      </trans-unit>
+      <trans-unit id="iEOJnGu" resname="Training courses">
+        <source>Training courses</source>
+        <target>Formations</target>
+      </trans-unit>
+      <trans-unit id="a8cs_tv" resname="Head CV">
+        <source>Head CV</source>
+        <target>En-tête CV</target>
+      </trans-unit>
+      <trans-unit id="emV186T" resname="Training course">
+        <source>Training course</source>
+        <target>Formation</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
