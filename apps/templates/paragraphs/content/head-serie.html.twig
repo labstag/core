@@ -49,9 +49,24 @@
             </div>
         </div>
     </div>
-    <div class="description">
-        <div class="wrapper html-content">
-            {{ serie.description|raw }}
+    <div class="second">
+        <div class="description">
+            <div class="wrapper html-content">
+                {{ serie.description|raw }}
+            </div>
         </div>
+        {% if serie.trailer != '' %}
+            {% set oembed = oembed(serie.trailer) %}
+            {% if oembed.oembed != '' %}
+                <div class="trailer">
+                    {% include "embed/video.html.twig" with {
+                        'btntitle': 'Watch the trailer'|trans,
+                        'image': site_asset(serie, 'img'),
+                        'provider': oembed.provider,
+                        'trailer': oembed.oembed
+                    } %}
+                </div>
+            {% endif %}
+        {% endif %}
     </div>
 </section>
