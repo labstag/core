@@ -82,11 +82,12 @@ class ExperienceType extends AbstractType
             'skills',
             CollectionType::class,
             [
-                'attr'         => ['data-controller' => 'sortable'],
-                'entry_type'   => SkillsType::class,
-                'allow_add'    => true,
-                'allow_delete' => true,
-                'label'        => new TranslatableMessage('Skills'),
+                'attr'          => ['data-controller' => 'sortable'],
+                'entry_type'    => SkillsType::class,
+                'allow_add'     => true,
+                'allow_delete'  => true,
+                'entry_options' => ['label' => 'Compétence'],
+                'label'         => new TranslatableMessage('Skills'),
             ]
         );
 

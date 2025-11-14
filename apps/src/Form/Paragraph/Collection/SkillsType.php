@@ -40,6 +40,8 @@ class SkillsType extends AbstractType
     #[Override]
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
-        $optionsResolver->setDefaults([]);
+        $optionsResolver->setDefaults(
+            ['label' => false]
+        );
     }
 }
