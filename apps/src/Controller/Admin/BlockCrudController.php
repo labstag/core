@@ -60,14 +60,29 @@ class BlockCrudController extends CrudControllerAbstract
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('newBlock', new TranslatableMessage('New block'));
-        $action->displayAsLink();
-        $action->linkToCrudAction('newBlock');
+        $action = Action::new('showModal', new TranslatableMessage('New block'));
+        $action->linkToCrudAction('showModal');
+        $action->setHtmlAttributes([
+            'data-action' => 'show-modal'
+        ]);
         $action->createAsGlobalAction();
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
         return $this->actionsFactory->show();
+    }
+
+    public function showModal(AdminContext $context)
+    {
+        $blocks = $this->blockService->getAll(null);
+
+        return $this->render(
+            'admin/block/new.html.twig',
+            [
+                'controller' => static::class,
+                'blocks'     => $blocks,
+            ]
+        );
     }
 
     #[\Override]
