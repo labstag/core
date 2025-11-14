@@ -1,3 +1,4 @@
+/* global bootstrap */
 export class Modal {
   constructor() {
     this.init()

@@ -15,9 +15,9 @@ class PostUrlShortcode extends ShortcodeAbstract
     {
     }
 
-    public function content(array $matches): ?string
+    public function content(string $id): ?string
     {
-        $entity = $this->postRepository->find($matches[1]);
+        $entity = $this->postRepository->find($id);
         if (!$entity instanceof Post) {
             return null;
         }

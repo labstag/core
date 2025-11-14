@@ -50,13 +50,7 @@ class TemplateCrudController extends CrudControllerAbstract
         $textareaField = TextareaField::new('text', new TranslatableMessage('Texte brut'));
         $textareaField->onlyOnForms();
 
-        $this->crudFieldFactory->addFieldsToTab(
-            'principal',
-            [
-                $textField,
-                $this->crudFieldFactory->titleField(),
-            ]
-        );
+        $this->crudFieldFactory->addFieldsToTab('principal', [$textField, $this->crudFieldFactory->titleField()]);
 
         if (!is_null($currentEntity)) {
             $template = $this->emailService->get($currentEntity->getCode());
