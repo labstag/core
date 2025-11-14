@@ -30,6 +30,7 @@ final class SerieService
         private SeasonService $seasonService,
         private SerieRepository $serieRepository,
         private CategoryService $categoryService,
+        private ConfigurationService $configurationService,
         private TmdbApi $tmdbApi,
     )
     {
@@ -130,7 +131,7 @@ final class SerieService
 
         $details = $this->tmdbApi->getDetailsSerie($details, $tmdbId);
 
-        return $this->tmdbApi->getTrailersSerie($details, $tmdbId);
+        return $this->setTrailer($details, $tmdbId);
     }
 
     /**
@@ -201,6 +202,24 @@ final class SerieService
             $details['tmdb']['first_air_date']
         ) || empty($details['tmdb']['first_air_date'])) ? null : new DateTime($details['tmdb']['first_air_date']);
         $serie->setReleaseDate($releaseDate);
+    }
+
+    private function setTrailer(array $details, string $tmdbId): array
+    {
+        $locale   = $this->configurationService->getLocaleTmdb();
+        $trailers = $this->tmdbApi->getTrailersSerie($tmdbId, $locale);
+        if (null !== $trailers) {
+            $details['trailers'] = $trailers;
+
+            return $details;
+        }
+
+        $trailers = $this->tmdbApi->getTrailersSerie($tmdbId);
+        if (null !== $trailers) {
+            $details['trailers'] = $trailers;
+        }
+
+        return $details;
     }
 
     /**

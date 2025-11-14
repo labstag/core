@@ -251,9 +251,9 @@ final class FileService
     }
 
     /**
-     * @return RepositoryAbstract<object>
+     * @return \Doctrine\ORM\EntityRepository<object>
      */
-    private function getRepository(string $entity): object
+    private function getRepository(string $entity): \Doctrine\ORM\EntityRepository
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (is_null($entityRepository)) {
