@@ -2,28 +2,30 @@
 
 .block_breadcrumb {
   display: none;
+
   @include mixins.respond-to(md) {
     display: block;
   }
-  .wrapper{
 
-  }
+  .wrapper {}
+
   ul {
     display: flex;
     flex-direction: column;
     gap: 10px;
+
     @include mixins.respond-to(md) {
       flex-direction: row;
     }
   }
+
   li {
-    & + li::before {
-        content: '>';
-        margin: 0 8px;
-        color: #888;
+    &+li::before {
+      content: '>';
+      margin: 0 8px;
+      color: #888;
     }
   }
-  a{
-    
-  }
+
+  a {}
 }

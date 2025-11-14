@@ -1,21 +1,19 @@
 @use "../placeholders" as *;
 @use "../icons";
-.paragraph_head-post{
+
+.paragraph_head-post {
   @extend %head;
-  .content{
-    
-  }
-  .background{
-    
-  }
-  .wrapper{
 
-  }
-  .title{
+  .content {}
 
-  }
-  .date{
-    &::before{
+  .background {}
+
+  .wrapper {}
+
+  .title {}
+
+  .date {
+    &::before {
       @extend .iconbefore;
       @extend .icon-date;
     }

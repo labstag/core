@@ -1,23 +1,27 @@
 @use "../mixins";
 @use "../placeholders" as *;
-.teaser-training{
+
+.teaser-training {
     @extend %teaser;
     position: relative;
     padding-left: 60px;
     margin-bottom: 40px;
+
     .wrapper {
         &:nth-child(1) {
             width: 100%;
         }
     }
+
     .date {
-        &::before{
+        &::before {
             @extend .iconbefore;
             @extend .icon-date;
         }
     }
+
     .place {
-        &::before{
+        &::before {
             @extend .iconbefore;
             @extend .icon-place;
         }

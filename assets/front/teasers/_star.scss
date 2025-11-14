@@ -1,25 +1,31 @@
 @use "../placeholders" as *;
-.teaser-star{
+
+.teaser-star {
   @extend %teaser;
   padding: 1rem;
+
   .description {
     padding: 20px;
   }
-  a{
+
+  a {
     &[target="_blank"] {
-      &::before{
+      &::before {
         background-image: none;
       }
     }
   }
-  ul{
+
+  ul {
     display: block;
     padding-top: 20px;
     padding-left: 40px;
-    b{
+
+    b {
       font-weight: bold;
     }
-    li{
+
+    li {
       padding-bottom: 10px;
       background: none;
     }

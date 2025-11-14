@@ -1,9 +1,11 @@
 @use "../placeholders" as *;
 @use "../icons";
+
 .teaser-post {
   @extend %teaser;
-  .date{
-    &::before{
+
+  .date {
+    &::before {
       @extend .iconbefore;
       @extend .icon-date;
     }

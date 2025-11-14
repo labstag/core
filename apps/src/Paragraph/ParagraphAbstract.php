@@ -32,10 +32,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 use Vich\UploaderBundle\Form\Type\VichImageType;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AutoconfigureTag('labstag.paragraphs')]
 abstract class ParagraphAbstract extends AbstractController

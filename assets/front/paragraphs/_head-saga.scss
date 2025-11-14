@@ -1,20 +1,15 @@
 @use "../placeholders" as *;
 
-.paragraph_head-saga{
+.paragraph_head-saga {
   @extend %head;
-  .content{
-    
-  }
-  .background{
-    
-  }
-  .wrapper{
 
-  }
-  .title{
+  .content {}
 
-  }
-  .date{
-    
-  }
+  .background {}
+
+  .wrapper {}
+
+  .title {}
+
+  .date {}
 }

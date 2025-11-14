@@ -64,6 +64,10 @@ class SkillsParagraph extends ParagraphAbstract implements ParagraphInterface
                 return $this->translator->trans(new TranslatableMessage('Skill'));
             }
         );
+        $collectionField->setFormTypeOption(
+            'attr',
+            ['data-controller' => 'sortable']
+        );
         $collectionField->setEntryType(SkillsType::class);
         yield $collectionField;
     }
@@ -97,5 +101,50 @@ class SkillsParagraph extends ParagraphAbstract implements ParagraphInterface
         $parent = $this->paragraphService->getEntityParent($paragraph);
 
         return $parent->value->getId() == $object->getId();
+    }
+
+    #[Override]
+    public function update(Paragraph $paragraph): void
+    {
+        $this->updateParagraphsSkills($paragraph);
+    }
+
+    private function updateParagraphsSkills(Paragraph $paragraph): void
+    {
+        if (!$paragraph instanceof EntitySkillsParagraph) {
+            return;
+        }
+
+        $oldskils = $paragraph->getSkills();
+        if (!is_array($oldskils)) {
+            return;
+        }
+
+        $skills = [];
+        foreach ($oldskils as $key => $skill) {
+            $position          = is_null($skill['position']) ? $key : $skill['position'];
+            $skill['position'] = $position;
+            $skill['skills']   = isset($skill['skills']) ? $this->updateSkills($skill['skills']) : [];
+            $skills[$position] = $skill;
+        }
+
+        ksort($skills);
+
+        $paragraph->setSkills($skills);
+    }
+
+    private function updateSkills(array $tab): array
+    {
+        $old = $tab;
+        $tab = [];
+        foreach ($old as $key => $skill) {
+            $position          = is_null($skill['position']) ? $key : $skill['position'];
+            $skill['position'] = $position;
+            $tab[$position]    = $skill;
+        }
+
+        ksort($tab);
+
+        return $tab;
     }
 }

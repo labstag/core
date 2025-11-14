@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,6 +23,7 @@ class ExperienceType extends AbstractType
     #[Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
+        $formBuilder->add('position', HiddenType::class);
         $formBuilder->add(
             'title',
             TextType::class,
@@ -80,6 +82,7 @@ class ExperienceType extends AbstractType
             'skills',
             CollectionType::class,
             [
+                'attr'         => ['data-controller' => 'sortable'],
                 'entry_type'   => SkillsType::class,
                 'allow_add'    => true,
                 'allow_delete' => true,

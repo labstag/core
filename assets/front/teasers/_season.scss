@@ -1,39 +1,48 @@
 @use "../placeholders" as *;
 @use "../mixins";
 @use "../icons";
-.teaser-season{
+
+.teaser-season {
   @extend %teaser;
-  .title{
-    &::before{
+
+  .title {
+    &::before {
       @extend .iconbefore;
       @extend .icon-tv;
     }
   }
-  h2{
+
+  h2 {
     font-size: 0.75rem;
   }
-  a{
+
+  a {
     display: grid;
     grid-template-areas:
-        "img"
-        "content";
+      "img"
+      "content";
     grid-template-columns: 1fr;
+
     @include mixins.respond-to(md) {
       grid-template-areas:
-          "img content";
+        "img content";
       grid-template-columns: 1fr 4fr;
       gap: 16px;
     }
-    .img{
+
+    .img {
       grid-area: img;
     }
-    .background{
+
+    .background {
       height: 300px;
     }
-    .content{
+
+    .content {
       grid-area: content;
     }
   }
+
   &:nth-child(odd) {
     a {
       @include mixins.respond-to(md) {
@@ -54,8 +63,9 @@
       }
     }
   }
-  .duration{
-    &::before{
+
+  .duration {
+    &::before {
       @extend .iconbefore;
       @extend .icon-runtime;
     }

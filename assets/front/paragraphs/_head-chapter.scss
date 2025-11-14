@@ -1,19 +1,15 @@
 @use "../placeholders" as *;
-.paragraph_head-chapter{
+
+.paragraph_head-chapter {
   @extend %head;
-  .background{
 
-  }
-  .wrapper{
+  .background {}
 
-  }
-  .title{
+  .wrapper {}
 
-  }
-  .author{
+  .title {}
 
-  }
-  .date{
-    
-  }
+  .author {}
+
+  .date {}
 }

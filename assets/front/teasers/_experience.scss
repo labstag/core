@@ -7,24 +7,28 @@
     position: relative;
     padding-left: 60px;
     margin-bottom: 40px;
-    .enterprise{
-        &::before{
+
+    .enterprise {
+        &::before {
             @extend .iconbefore;
             @extend .icon-place;
         }
     }
+
     .dates {
-        &::before{
+        &::before {
             @extend .iconbefore;
             @extend .icon-date;
         }
     }
+
     .wrapper {
         &:nth-child(1) {
             width: 100%;
         }
     }
-    .content{
+
+    .content {
         padding: 10px;
     }
 }

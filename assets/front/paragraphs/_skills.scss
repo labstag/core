@@ -1,17 +1,20 @@
 @use "../mixins";
 @use "../placeholders" as *;
 @use "../icons";
-.paragraph_skills{
-  h2{
-    &::before{
+
+.paragraph_skills {
+  h2 {
+    &::before {
       @extend .icon-skill;
       @extend .iconbefore;
     }
   }
-  ul{
+
+  ul {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
+
     @include mixins.respond-to(md) {
       grid-template-columns: repeat(2, 1fr);
     }

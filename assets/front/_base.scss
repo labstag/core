@@ -2,64 +2,66 @@
 @use "placeholders" as *;
 @use "sass:color";
 @use "icons";
-body{
+
+body {
   background: variables.$colorbg;
   color: variables.$colortext;
 }
+
 ul {
   padding: 0px;
 }
 
-header{
+header {
   background: color.scale(variables.$colorbg, $lightness: -10%);
   @extend %paddingdefault;
+
   &:has(.block_admin) {
     padding-top: 86px;
   }
 }
 
-main{
-}
+main {}
 
-footer{
+footer {
   background: color.scale(variables.$colorbg, $lightness: -10%);
   @extend %wrapper;
 }
 
 h1 {
-   @extend %hn;
-   font-size: 3rem;
-   margin: 12px;
+  @extend %hn;
+  font-size: 3rem;
+  margin: 12px;
 }
 
 h2 {
-   @extend %hn;
-   font-size: 2.5rem;
-   margin: 10px;
+  @extend %hn;
+  font-size: 2.5rem;
+  margin: 10px;
 }
 
 h3 {
-   @extend %hn;
-   font-size: 2rem;
-   margin: 8px;
+  @extend %hn;
+  font-size: 2rem;
+  margin: 8px;
 }
 
 h4 {
-   @extend %hn;
-   font-size: 1.5rem;
-   margin: 6px;
+  @extend %hn;
+  font-size: 1.5rem;
+  margin: 6px;
 }
 
 h5 {
-   @extend %hn;
-   font-size: 1rem;
-   margin: 4px;
+  @extend %hn;
+  font-size: 1rem;
+  margin: 4px;
 }
 
 h6 {
-   @extend %hn;
-   font-size: 0.5rem;
-   margin: 2px;
+  @extend %hn;
+  font-size: 0.5rem;
+  margin: 2px;
 }
 
 label {
@@ -71,40 +73,43 @@ label {
     }
   }
 }
+
 a {
-  
+
   &[target="_blank"] {
     cursor: alias;
-    &::before{
+
+    &::before {
       @extend .iconbefore;
       @extend .icon-link;
     }
   }
 }
+
 .list-skills {
-  &::before{
+  &::before {
     @extend .iconbefore;
   }
 }
-.tags{
+
+.tags {
   @extend %tags;
   padding: 0.5rem;
 }
 
-.categories{
+.categories {
   @extend %categories;
   padding: 0.5rem;
 }
 
-.block {
-}
+.block {}
 
 .paragraph {
   margin-top: 22px;
   @extend %wrapper;
 }
 
-.background{
+.background {
   background-position: 50%;
   height: 324px;
   background-size: cover;
@@ -113,23 +118,25 @@ a {
   position: relative;
   opacity: 1;
   transition: opacity 0.5s ease-in-out;
+
   &:not(.spoiler) {
     background-image: var(--image-url);
   }
-  &.spoiler{
+
+  &.spoiler {
     position: relative;
 
     &::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: black; // Couleur du spoiler
-        transition: opacity 1s ease-in-out;
-        opacity: 1; // Complètement caché au départ
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: black; // Couleur du spoiler
+      transition: opacity 1s ease-in-out;
+      opacity: 1; // Complètement caché au départ
     }
 
     &.loaded::before {
-        opacity: 0; // Révèle progressivement l’image
+      opacity: 0; // Révèle progressivement l’image
     }
   }
 }
@@ -141,14 +148,21 @@ a {
   padding-left: 0;
   list-style: none;
   border-radius: 0.25rem;
-  a{
+
+  a {
     color: black;
     text-decoration: none;
   }
+
   span {
     margin: 0 0.25rem;
 
-    &.first, &.previous, &.page, &.next, &.last, &.current {
+    &.first,
+    &.previous,
+    &.page,
+    &.next,
+    &.last,
+    &.current {
       display: inline-block;
       border: 1px solid #dee2e6;
       padding: 0.375rem 0.75rem;
@@ -159,6 +173,7 @@ a {
       color: #007bff;
       background-color: #fff;
     }
+
     &:hover {
       color: #0056b3;
       background-color: #e9ecef;

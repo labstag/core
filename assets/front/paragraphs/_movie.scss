@@ -2,15 +2,17 @@
 @use "../variables";
 
 @use "sass:color";
-.paragraph_movie{
-  .wrapper{
-    .content{
+
+.paragraph_movie {
+  .wrapper {
+    .content {
       display: grid;
       grid-template-areas:
         "aside"
         "list";
       grid-template-columns: 1fr;
       gap: 16px;
+
       @include mixins.respond-to(md) {
         grid-template-columns: 4fr 1fr;
         grid-template-areas:
@@ -18,7 +20,8 @@
       }
     }
   }
-  .notfound{
+
+  .notfound {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -27,46 +30,52 @@
     box-shadow: 0 2px 8px #c0392b22;
     padding: 1.5em;
     margin: 2em 0;
-    .text{
+
+    .text {
       color: #c0392b;
       font-weight: bold;
       font-size: 1.2em;
     }
   }
-  .title{
 
-  }
-  aside{
+  .title {}
+
+  aside {
     grid-area: aside;
-    form{
+
+    form {
       padding: 5px;
       background-color: #363636;
     }
   }
-  ul{
+
+  ul {
     grid-area: list;
     display: grid;
-    grid-template-columns:  repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     align-items: start;
     grid-template-rows: 1fr;
     gap: 12px;
     height: auto;
+
     @include mixins.respond-to(md) {
       grid-template-columns: repeat(3, 1fr);
     }
   }
-  li{
+
+  li {
     display: flex;
     flex-direction: column;
     height: 550px;
-    &.teaser-movie{
+
+    &.teaser-movie {
       background-color: color.scale(variables.$colorbg, $lightness: 15%);
-      &:nth-child(even)
-      {
+
+      &:nth-child(even) {
         background-color: color.scale(variables.$colorbg, $lightness: 10%);
       }
 
-      .background{
+      .background {
         background-position: center;
         background-repeat: no-repeat;
         background-size: contain;
@@ -75,11 +84,11 @@
         display: flex;
       }
     }
+
     .wrapper {
       padding: 1rem;
     }
   }
-  .navigation{
-    
-  }
+
+  .navigation {}
 }

@@ -1,12 +1,10 @@
-export class Video
-{
-  constructor()
-  {
+export class Video {
+  constructor() {
     document.querySelectorAll('.js-btnvideo').forEach(
       (btn) => {
         btn.addEventListener('click', (event) => {
           event.preventDefault();
-          
+
           // closest event .video
           let video = btn.closest('.video');
           const player = document.createElement('iframe');

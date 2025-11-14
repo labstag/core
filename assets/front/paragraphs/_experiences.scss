@@ -1,22 +1,25 @@
 @use "../mixins";
 @use "../placeholders" as *;
 @use "../icons";
-.paragraph_experiences{
-  h2{
-    &::before{
+
+.paragraph_experiences {
+  h2 {
+    &::before {
       @extend .icon-briefcase;
       @extend .iconbefore;
     }
   }
-  ul{
-    &.listexperiences{
+
+  ul {
+    &.listexperiences {
       list-style: none;
       margin: 0;
       margin-top: 50px;
       margin-left: 50px;
       padding: 0;
       position: relative;
-      &::before{
+
+      &::before {
         content: "";
         position: absolute;
         left: 20px;
@@ -25,7 +28,8 @@
         width: 2px;
         background: white;
       }
-      li{
+
+      li {
         &::before {
           content: "";
           position: absolute;

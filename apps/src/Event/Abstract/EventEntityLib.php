@@ -99,26 +99,21 @@ abstract class EventEntityLib
 
     protected function postPersistMethods(object $object, EntityManagerInterface $entityManager)
     {
-        $this->updateEntityParagraph($object);
-        $this->updateEntityBlock($object);
         $this->updateEntityStory($object);
         $this->updateEntityMovie($object);
         $this->updateEntitySerie($object);
         $this->updateEntitySaga($object);
-        $this->updateEntityPage($object);
-        $this->updateEntityChapter($object);
-        $this->updateEntitySeason($object);
-        $this->updateEntityBanIp($object, $entityManager);
-        $this->updateEntityRedirection($object);
-        $this->initEntityMeta($object);
 
         $entityManager->flush();
     }
 
-    protected function prePersistMethods(object $object, $entityManager)
+    protected function prePersistMethods(object $object, EntityManagerInterface $entityManager)
     {
-        unset($entityManager);
         $this->initworkflow($object);
+        $this->updateEntityBanIp($object, $entityManager);
+        $this->updateEntityBlock($object);
+        $this->updateEntityRedirection($object);
+        $this->updateEntityParagraph($object);
         $this->updateEntityPage($object);
         $this->updateEntityChapter($object);
         $this->updateEntitySeason($object);
@@ -224,11 +219,8 @@ abstract class EventEntityLib
 
         if ($oldHome instanceof Page) {
             $oldHome->setType(PageEnum::PAGE->value);
+            $oldHome->setSlug(null);
             $this->pageRepository->save($oldHome);
-        }
-
-        if (PageEnum::HOME->value == $instance->getType()) {
-            $instance->setSlug('');
         }
     }
 

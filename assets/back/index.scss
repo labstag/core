@@ -6,63 +6,65 @@
 @use 'placeholder';
 @use 'icons';
 
-.accordion-item{
+.accordion-item {
   width: 100%;
 }
 
 .form-group:has(textarea) {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    > label {
-        width: 100%;
-        display: block;
-        margin-bottom: .5rem;
-    }
+  >label {
+    width: 100%;
+    display: block;
+    margin-bottom: .5rem;
+  }
 
-    .form-widget textarea {
-        width: 100%;
-        display: block;
-    }
+  .form-widget textarea {
+    width: 100%;
+    display: block;
+  }
 }
 
-.sort-list{
-  li{
+.sort-list {
+  li {
     cursor: move;
   }
 }
 
 .form-group.field-array {
-	.form-widget {
-		.form-group {
-			label {
-				display: block !important;
-			}
-		}
-	}
+  .form-widget {
+    .form-group {
+      label {
+        display: block !important;
+      }
+    }
+  }
 }
 
 .story-sort,
 .block-sort,
-#paragraph-sort{
-  .fa-arrows-alt{
+#paragraph-sort {
+  .fa-arrows-alt {
     cursor: move;
   }
 }
 
-a{
+a {
   text-decoration: none;
 
-  &.paragraph-edit{
+  &.paragraph-edit {
     @extend %btnprimary;
-    i{
+
+    i {
       @extend .material-symbols--edit;
     }
   }
 
-  &.paragraph-delete{
+  &.paragraph-delete {
     @extend %btndanger;
-    i{
+
+    i {
       @extend .material-symbols--delete;
     }
   }

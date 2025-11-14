@@ -1,9 +1,11 @@
 @use "../placeholders" as *;
-.teaser-story{
+
+.teaser-story {
   @extend %teaser;
+
   .wrapper {
     &:nth-child(1) {
-        width: 100%;
+      width: 100%;
     }
   }
 }

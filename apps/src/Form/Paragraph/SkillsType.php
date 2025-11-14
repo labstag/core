@@ -6,6 +6,7 @@ use Labstag\Form\Paragraph\Collection\SkillsType as CollectionSkillsType;
 use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,6 +20,7 @@ class SkillsType extends AbstractType
     #[Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
+        $formBuilder->add('position', HiddenType::class);
         $formBuilder->add(
             'title',
             TextType::class,
@@ -30,6 +32,7 @@ class SkillsType extends AbstractType
             'skills',
             CollectionType::class,
             [
+                'attr'         => ['data-controller' => 'sortable'],
                 'entry_type'   => CollectionSkillsType::class,
                 'allow_add'    => true,
                 'allow_delete' => true,

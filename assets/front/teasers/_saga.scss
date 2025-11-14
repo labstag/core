@@ -1,11 +1,14 @@
 @use "../placeholders" as *;
-.teaser-saga{
+
+.teaser-saga {
   @extend %teaser;
-  .background{
+
+  .background {
     height: 587px;
     align-items: flex-end;
     justify-content: flex-start;
-    .movies{
+
+    .movies {
       background-color: #363636;
       color: yellow;
       padding: 5px;

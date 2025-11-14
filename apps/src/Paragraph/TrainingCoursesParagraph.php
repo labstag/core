@@ -64,6 +64,10 @@ class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInt
                 return $this->translator->trans(new TranslatableMessage('Training course'));
             }
         );
+        $collectionField->setFormTypeOption(
+            'attr',
+            ['data-controller' => 'sortable']
+        );
         $collectionField->setEntryType(TrainingCourseType::class);
         yield $collectionField;
     }
@@ -97,5 +101,34 @@ class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInt
         $parent = $this->paragraphService->getEntityParent($paragraph);
 
         return $parent->value->getId() == $object->getId();
+    }
+
+    #[Override]
+    public function update(Paragraph $paragraph): void
+    {
+        $this->updateParagraphsTraining($paragraph);
+    }
+
+    private function updateParagraphsTraining(Paragraph $paragraph): void
+    {
+        if (!$paragraph instanceof EntityTrainingCoursesParagraph) {
+            return;
+        }
+
+        $oldskils = $paragraph->getTrainings();
+        if (!is_array($oldskils)) {
+            return;
+        }
+
+        $skills = [];
+        foreach ($oldskils as $key => $skill) {
+            $position          = is_null($skill['position']) ? $key : $skill['position'];
+            $skill['position'] = $position;
+            $skills[$position] = $skill;
+        }
+
+        ksort($skills);
+
+        $paragraph->setTrainings($skills);
     }
 }
