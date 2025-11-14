@@ -10,7 +10,7 @@
             <ul>
                 {% for row in episodes %}
                     <li class="teaser-episode">
-                        {% include  "teasers/episode.html.twig"  with {'episode': row, 'index': loop.index} %}
+                        {% include  "teasers/episode.html.twig"  with {'episode': row} %}
                     </li>
                 {% endfor %}
             </ul>

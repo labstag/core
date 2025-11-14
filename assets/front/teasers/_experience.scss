@@ -1,0 +1,34 @@
+@use "../mixins";
+@use "../placeholders" as *;
+@use "../icons";
+
+.teaser-experience {
+    @extend %teaser;
+    position: relative;
+    padding-left: 60px;
+    margin-bottom: 40px;
+
+    .enterprise {
+        &::before {
+            @extend .iconbefore;
+            @extend .icon-place;
+        }
+    }
+
+    .dates {
+        &::before {
+            @extend .iconbefore;
+            @extend .icon-date;
+        }
+    }
+
+    .wrapper {
+        &:nth-child(1) {
+            width: 100%;
+        }
+    }
+
+    .content {
+        padding: 10px;
+    }
+}

@@ -1,22 +1,49 @@
 @use "../placeholders" as *;
-.paragraph_head-serie{
+@use "../icons";
+
+.paragraph_head-serie {
   .first {
     @extend %head;
     height: 300px;
-    .background{
 
-    }
-    .wrapper{
+    .background {}
 
-    }
-    .title{
+    .wrapper {}
 
-    }
-    .author{
+    .title {}
 
+    .play {
+      &::before {
+        @extend .iconbefore;
+        @extend .icon-play;
+      }
     }
-    .date{
-      
+
+    .stop {
+      &::before {
+        @extend .iconbefore;
+        @extend .icon-stop;
+      }
     }
+
+    .author {}
+
+    .date {}
+
+    .duration {
+      &::before {
+        @extend .iconbefore;
+        @extend .icon-runtime;
+      }
+    }
+  }
+  .trailer {
+    width: 50%;
+    margin: auto;
+  }
+  .video {
+    margin-top: 11px;
+    margin-bottom: 11px;
+    @extend %video;
   }
 }

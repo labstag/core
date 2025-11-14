@@ -49,8 +49,12 @@
 					<time datetime="{{ row.updatedAt|date('c') }}" title="{{ row.updatedAt|date('r') }}">{{ row.updatedAt|format_datetime('medium', 'medium') }}</time>
 				</td>
 				<td class="text-center field-id" dir="ltr">
-					<a class="paragraph-edit" href="{{ ea_url().setController(controller).setAction('edit').setEntityId(row.id).set('iframe', 1) }}" data-target="#paragraph-iframe" data-bs-toggle="modal" data-bs-target="#paragraph-modal" id="paragrapEdit{{ row.id }}"></a>
-					<a class="paragraph-delete" href="#" id="paragrapDelete{{ row.id }}"></a>
+					<a class="paragraph-edit" href="{{ ea_url().setController(controller).setAction('edit').setEntityId(row.id).set('iframe', 1) }}" data-target="#paragraph-iframe" data-bs-toggle="modal" data-bs-target="#paragraph-modal" id="paragrapEdit{{ row.id }}">
+						<i></i>
+					</a>
+					<a class="paragraph-delete" href="#" id="paragrapDelete{{ row.id }}">
+						<i></i>
+					</a>
 				</td>
 			</tr>
         {% else %}

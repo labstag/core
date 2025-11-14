@@ -34,7 +34,7 @@ class ContactFrontForm extends FrontFormAbstract
         }
 
         $email->init();
-        $this->mailer->send($email);
+        $this->emailService->send($email);
 
         return true;
     }
@@ -64,6 +64,6 @@ class ContactFrontForm extends FrontFormAbstract
 
     public function getName(): string
     {
-        return 'Formulaire contact';
+        return (string) new TranslatableMessage('Form contact');
     }
 }

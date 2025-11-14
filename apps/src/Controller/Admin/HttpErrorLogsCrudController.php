@@ -10,7 +10,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Traits\ReadOnlyActionsTrait;
 use Labstag\Entity\HttpErrorLogs;
 use Labstag\Field\HttpLogs\IsBotField;
 use Labstag\Field\HttpLogs\SameField;
@@ -21,8 +20,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class HttpErrorLogsCrudController extends CrudControllerAbstract
 {
-    use ReadOnlyActionsTrait;
-
     #[Route('/admin/http-error-logs/{entity}/banip', name: 'admin_http_error_logs_banip')]
     public function banIp(string $entity, Request $request): RedirectResponse
     {
@@ -59,12 +56,12 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->configureActionsTrash($actions);
-        $this->addToBan($actions);
-        $this->addToRedirection($actions);
-        $this->applyReadOnly($actions);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setReadOnly(true);
+        $this->addToBan();
+        $this->addToRedirection();
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]
@@ -153,20 +150,28 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
         return HttpErrorLogs::class;
     }
 
-    private function addToBan(Actions $actions): void
+    private function addToBan(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = $this->setLinkBanAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function addtoRedirection(Actions $actions): void
+    private function addtoRedirection(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = $this->setLinkNewRedirectionAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
     private function setLinkBanAction(): Action

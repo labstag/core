@@ -16,13 +16,7 @@ class MovieCategoryCrudController extends CategoryCrudControllerAbstract
         $titleField->setFormattedValue(
             fn ($entity) => $entity->getTitle() ?? (new TranslatableMessage('Label not found'))
         );
-        $this->crudFieldFactory->addFieldsToTab(
-            'principal',
-            [
-                $this->crudFieldFactory->slugField(),
-                $titleField,
-            ]
-        );
+        $this->crudFieldFactory->addFieldsToTab('principal', [$this->crudFieldFactory->slugField(), $titleField]);
         $associationField = AssociationField::new('movies', new TranslatableMessage('Movies'));
         $associationField->formatValue(fn ($entity): int => count($entity));
         $associationField->hideOnForm();

@@ -12,7 +12,7 @@ class LinkApprovalReplace extends ReplaceAbstract
 
         $configuration = $this->configurationService->getConfiguration();
         $entity        = $this->data['user'];
-        $id = $entity->getId();
+        $id            = $entity->getId();
         if (is_null($id)) {
             return '#linkdisabled';
         }

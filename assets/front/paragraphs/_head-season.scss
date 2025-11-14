@@ -1,22 +1,26 @@
-  @use "../placeholders" as *;
-.paragraph_head-season{
+@use "../placeholders" as *;
+@use "../icons";
+
+.paragraph_head-season {
   .first {
     @extend %head;
     height: 300px;
-    .background{
 
-    }
-    .wrapper{
+    .background {}
 
-    }
-    .title{
+    .wrapper {}
 
-    }
-    .author{
+    .title {}
 
-    }
-    .date{
-      
+    .author {}
+
+    .date {}
+
+    .duration {
+      &::before {
+        @extend .iconbefore;
+        @extend .icon-runtime;
+      }
     }
   }
 }

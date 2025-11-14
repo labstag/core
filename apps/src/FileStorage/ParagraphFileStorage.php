@@ -2,8 +2,8 @@
 
 namespace Labstag\FileStorage;
 
+use Labstag\Entity\HeadCvParagraph;
 use Labstag\Entity\ImageParagraph;
-use Labstag\Entity\PresentationCvParagraph;
 use Labstag\Entity\TextImgParagraph;
 use Labstag\Entity\TextMediaParagraph;
 use Labstag\Entity\VideoParagraph;
@@ -29,7 +29,7 @@ class ParagraphFileStorage extends FileStorageAbstract implements FileStorageInt
     {
         return [
             ImageParagraph::class,
-            PresentationCvParagraph::class,
+            HeadCvParagraph::class,
             TextImgParagraph::class,
             TextMediaParagraph::class,
             VideoParagraph::class,

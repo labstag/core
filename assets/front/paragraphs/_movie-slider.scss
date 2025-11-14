@@ -1,40 +1,39 @@
 @use "../placeholders" as *;
 @use "../variables" as *;
-.paragraph_movie-slider{
-  .wrapper{
 
-  }
-  .background{
+.paragraph_movie-slider {
+  .wrapper {}
+
+  .background {
     height: 324px;
     background-size: contain;
-    &.spoiler{
-      &::before{
+
+    &.spoiler {
+      &::before {
         background: $colorbg;
       }
     }
   }
-  h2{
 
-  }
-  .slider{
+  h2 {}
+
+  .slider {
     padding-top: 1rem;
   }
-  .swiper-movie{
 
-  }
-  .swiper-wrapper{
+  .swiper-movie {}
 
-  }
-  .swiper-movie-button-next{
+  .swiper-wrapper {}
 
-  }
-  .swiper-movie-button-prev{
-    
-  }
-  .link{
+  .swiper-movie-button-next {}
+
+  .swiper-movie-button-prev {}
+
+  .link {
     text-align: center;
     padding: 1rem;
-    a{
+
+    a {
       @extend %btn;
     }
   }

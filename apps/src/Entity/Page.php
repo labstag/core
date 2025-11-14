@@ -46,7 +46,7 @@ class Page implements Stringable
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    protected ?bool $enable = null;
+    protected ?bool $enable = true;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -106,6 +106,12 @@ class Page implements Stringable
 
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $type = null;
+
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 0]
+    )]
+    private ?bool $hide = false;
 
     public function __construct()
     {
@@ -248,6 +254,11 @@ class Page implements Stringable
         return $this->enable;
     }
 
+    public function isHide(): ?bool
+    {
+        return $this->hide;
+    }
+
     public function removeCategory(PageCategory $pageCategory): static
     {
         if ($this->categories->removeElement($pageCategory)) {
@@ -291,6 +302,13 @@ class Page implements Stringable
     public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
+
+        return $this;
+    }
+
+    public function setHide(bool $hide): static
+    {
+        $this->hide = $hide;
 
         return $this;
     }

@@ -2,12 +2,13 @@
 
 namespace Labstag\Form\Paragraph;
 
-use Labstag\Form\Paragraph\Collection\CompetenceType;
+use Labstag\Form\Paragraph\Collection\SkillsType;
 use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,6 +23,7 @@ class ExperienceType extends AbstractType
     #[Override]
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
+        $formBuilder->add('position', HiddenType::class);
         $formBuilder->add(
             'title',
             TextType::class,
@@ -77,13 +79,15 @@ class ExperienceType extends AbstractType
             ]
         );
         $formBuilder->add(
-            'competences',
+            'skills',
             CollectionType::class,
             [
-                'entry_type'   => CompetenceType::class,
-                'allow_add'    => true,
-                'allow_delete' => true,
-                'label'        => new TranslatableMessage('Competences'),
+                'attr'          => ['data-controller' => 'sortable'],
+                'entry_type'    => SkillsType::class,
+                'allow_add'     => true,
+                'allow_delete'  => true,
+                'entry_options' => ['label' => 'Compétence'],
+                'label'         => new TranslatableMessage('Skills'),
             ]
         );
 

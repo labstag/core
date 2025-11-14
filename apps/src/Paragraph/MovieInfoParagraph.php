@@ -2,11 +2,14 @@
 
 namespace Labstag\Paragraph;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Edito;
 use Labstag\Entity\Memo;
+use Labstag\Entity\Movie;
 use Labstag\Entity\MovieInfoParagraph as EntityMovieInfoParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
@@ -55,12 +58,30 @@ class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
-        unset($paragraph, $pageName);
-        $associationField = AssociationField::new('refmovie', new TranslatableMessage('Movie'));
-        $associationField->autocomplete();
-        $associationField->setSortProperty('title');
+        unset($paragraph);
+        $entityRepository = $this->entityManager->getRepository(Movie::class);
 
-        yield $associationField;
+        // Récupération manuelle des films pour éviter les problèmes d'association
+        $movies = $entityRepository->findBy(
+            [],
+            ['title' => 'ASC']
+        );
+        $choices = [];
+        foreach ($movies as $movie) {
+            $choices[$movie->getTitle()] = $movie;
+        }
+
+        if (Crud::PAGE_DETAIL === $pageName) {
+            yield TextField::new('refmovie', new TranslatableMessage('Movie'));
+
+            return;
+        }
+
+        yield ChoiceField::new('refmovie', new TranslatableMessage('Movie'))->setChoices(
+            $choices
+        )->allowMultipleChoices(false)->renderExpanded(false)->renderAsBadges(
+            false
+        )->formatValue(static fn ($value): string => $value instanceof Movie ? $value->getTitle() ?? '' : '');
     }
 
     #[Override]

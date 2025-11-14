@@ -1,9 +1,11 @@
 @use "../placeholders";
 @use "../mixins";
+
 .dialog-movie {
   @extend %dialog;
   width: 100%;
   padding: 1rem;
+
   .video {
     margin-top: 11px;
     margin-bottom: 11px;
@@ -25,7 +27,8 @@
     ul {
       list-style: none;
       padding: 0;
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
 
       li {
@@ -58,6 +61,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

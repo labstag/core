@@ -27,8 +27,8 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
             return;
         }
 
-        $experiences  = $paragraph->getExperiences();
-        if (!is_array($experiences) || [] === $experiences) {
+        $skills  = $paragraph->getSkills();
+        if (!is_array($skills) || [] === $skills) {
             $this->setShow($paragraph, false);
 
             return;
@@ -38,9 +38,9 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         $this->setData(
             $paragraph,
             [
-                'experiences' => $experiences,
-                'paragraph'   => $paragraph,
-                'data'        => $data,
+                'skills'    => $skills,
+                'paragraph' => $paragraph,
+                'data'      => $data,
             ]
         );
     }
@@ -57,13 +57,17 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
 
         yield TextField::new('title', new TranslatableMessage('Title'));
         yield FormField::addColumn(12);
-        $collectionField = CollectionField::new('experiences', new TranslatableMessage('Experiences'));
+        $collectionField = CollectionField::new('skills', new TranslatableMessage('Skills'));
         $collectionField->setEntryToStringMethod(
-            function ($link): TranslatableMessage {
+            function ($link): string {
                 unset($link);
 
-                return new TranslatableMessage('Experience');
+                return $this->translator->trans(new TranslatableMessage('Skill'));
             }
+        );
+        $collectionField->setFormTypeOption(
+            'attr',
+            ['data-controller' => 'sortable']
         );
         $collectionField->setEntryType(ExperienceType::class);
         yield $collectionField;
@@ -98,5 +102,54 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         $parent = $this->paragraphService->getEntityParent($paragraph);
 
         return $parent->value->getId() == $object->getId();
+    }
+
+    #[Override]
+    public function update(Paragraph $paragraph): void
+    {
+        $this->updateParagraphsSkills($paragraph);
+    }
+
+    private function updateParagraphsSkills(Paragraph $paragraph): void
+    {
+        if (!$paragraph instanceof EntityExperiencesParagraph) {
+            return;
+        }
+
+        $oldskils = $paragraph->getSkills();
+        if (!is_array($oldskils)) {
+            return;
+        }
+
+        $skills = [];
+        foreach ($oldskils as $key => $skill) {
+            $position          = (!isset($skill['position']) || is_null(
+                $skill['position']
+            )) ? $key : $skill['position'];
+            $skill['position'] = $position;
+            $skill['skills']   = isset($skill['skills']) ? $this->updateSkills($skill['skills']) : [];
+            $skills[$position] = $skill;
+        }
+
+        ksort($skills);
+
+        $paragraph->setSkills($skills);
+    }
+
+    private function updateSkills(array $tab): array
+    {
+        $old = $tab;
+        $tab = [];
+        foreach ($old as $key => $skill) {
+            $position          = (!isset($skill['position']) || is_null(
+                $skill['position']
+            )) ? $key : $skill['position'];
+            $skill['position'] = $position;
+            $tab[$position]    = $skill;
+        }
+
+        ksort($tab);
+
+        return $tab;
     }
 }

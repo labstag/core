@@ -11,7 +11,6 @@ use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
-use Labstag\Repository\RepositoryAbstract;
 
 final class SitemapService
 {
@@ -71,12 +70,12 @@ final class SitemapService
      */
     private function getDataFromRepository(string $entityClass): array
     {
-        $repositoryAbstract = $this->getRepository($entityClass);
-        if (!method_exists($repositoryAbstract, 'getAllActivate')) {
+        $entityRepository = $this->getRepository($entityClass);
+        if (!method_exists($entityRepository, 'getAllActivate')) {
             return [];
         }
 
-        return $repositoryAbstract->getAllActivate();
+        return $entityRepository->getAllActivate();
     }
 
     /**
@@ -155,9 +154,9 @@ final class SitemapService
     }
 
     /**
-     * @return RepositoryAbstract<object>
+     * @return \Doctrine\ORM\EntityRepository<object>
      */
-    private function getRepository(string $entity): object
+    private function getRepository(string $entity): \Doctrine\ORM\EntityRepository
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (is_null($entityRepository)) {

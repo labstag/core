@@ -1,14 +1,18 @@
-{% extends '@EasyAdmin/page/content.html.twig' %}
-{% block main %}
-    <h1>Choisir le type de Block à créer</h1>
-
-    <ul>
-        {% for name, label in blocks %}
-            <li>
-                <a href="{{  ea_url().setController(controller).setAction('new').set('type', label) }}">
-                    {{ name }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-{% endblock %}
+<div class="modal-header">
+	<h5 class="modal-title">Choisir le type de Block à créer</h5>
+	<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body">
+	<ul>
+		{% for name, label in blocks %}
+			<li>
+				<a href="{{ ea_url().setController(controller).setAction('new').set('type', label) }}">
+					{{ name }}
+				</a>
+			</li>
+		{% endfor %}
+	</ul>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+</div>

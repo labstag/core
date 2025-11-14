@@ -6,7 +6,6 @@ use DateTime;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
-use Gedmo\Tool\ClassUtils;
 use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\Paragraph;
 use Labstag\Repository\ParagraphRepository;
@@ -16,6 +15,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ParagraphService
 {
@@ -27,12 +27,37 @@ final class ParagraphService
         private readonly iterable $paragraphs,
         private AdminUrlGenerator $adminUrlGenerator,
         private ParagraphRepository $paragraphRepository,
+        private TranslatorInterface $translator,
         private Security $security,
     )
     {
     }
 
-    public function addParagraph(object $entity, string $type): ?Paragraph
+    public function addInPosition(object $entity, Paragraph $paragraph, int $position): void
+    {
+        $paragraphs = $entity->getParagraphs()->toArray();
+        array_splice($paragraphs, $position, 0, [$paragraph]);
+        foreach ($paragraphs as $key => $row) {
+            $row->setPosition($key);
+        }
+
+        // clear the Doctrine Collection instead of calling a non-existent clearParagraphs()
+        $collection = $entity->getParagraphs();
+        if (method_exists($collection, 'clear')) {
+            $collection->clear();
+        } elseif (method_exists($entity, 'removeParagraph')) {
+            // fallback: try to remove items via removeParagraph if available
+            foreach ($collection as $p) {
+                $entity->removeParagraph($p);
+            }
+        }
+
+        foreach ($paragraphs as $row) {
+            $entity->addParagraph($row);
+        }
+    }
+
+    public function addParagraph(object $entity, string $type, ?int $position = null): ?Paragraph
     {
         $find = false;
         foreach ($this->paragraphs as $row) {
@@ -49,10 +74,11 @@ final class ParagraphService
         $paragraphClass = $row->getClass();
         $paragraph      = new $paragraphClass();
 
-        $position  = count($entity->getParagraphs());
-        $paragraph->setPosition($position);
-
-        $entity->addParagraph($paragraph);
+        $this->addInPosition(
+            $entity,
+            $paragraph,
+            is_null($position) ? count($entity->getParagraphs()) : $position
+        );
 
         return $paragraph;
     }
@@ -102,7 +128,7 @@ final class ParagraphService
     {
         $paragraphs = [];
         foreach ($this->paragraphs as $paragraph) {
-            $name  = $paragraph->getName();
+            $name  = $this->translator->trans($paragraph->getName());
             if ($paragraph->supports($entity)) {
                 $paragraphs[$name] = $paragraph->getType();
             }
@@ -193,12 +219,7 @@ final class ParagraphService
                 continue;
             }
 
-            if ($value instanceof DateTime) {
-                continue;
-            }
-
-            $class = ClassUtils::getClass($value);
-            if (!str_contains($class, 'Labstag\Entity')) {
+            if (!$this->isClass($value)) {
                 continue;
             }
 
@@ -259,7 +280,7 @@ final class ParagraphService
         $name = '';
         foreach ($this->paragraphs as $row) {
             if ($row->getClass() == $paragraph::class) {
-                $name = $row->getName();
+                $name = $this->translator->trans($row->getName());
 
                 break;
             }
@@ -359,6 +380,20 @@ final class ParagraphService
         }
 
         return $header;
+    }
+
+    private function isClass(object $value): bool
+    {
+        if ($value instanceof DateTime) {
+            return false;
+        }
+
+        $reflectionClass = new ReflectionClass($value);
+        if ('Labstag\Entity' !== $reflectionClass->getNamespaceName()) {
+            return false;
+        }
+
+        return $reflectionClass->hasMethod('getParagraphs');
     }
 
     /**

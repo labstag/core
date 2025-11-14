@@ -19,13 +19,13 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 #[ORM\DiscriminatorMap(
     [
         'admin'      => AdminBlock::class,
-        'paragraphs' => ParagraphsBlock::class,
-        'links'      => LinksBlock::class,
-        'html'       => HtmlBlock::class,
-        'hero'       => HeroBlock::class,
-        'flashbag'   => FlashbagBlock::class,
-        'content'    => ContentBlock::class,
         'breadcrumb' => BreadcrumbBlock::class,
+        'content'    => ContentBlock::class,
+        'flashbag'   => FlashbagBlock::class,
+        'hero'       => HeroBlock::class,
+        'html'       => HtmlBlock::class,
+        'links'      => LinksBlock::class,
+        'paragraphs' => ParagraphsBlock::class,
     ]
 )]
 abstract class Block implements Stringable

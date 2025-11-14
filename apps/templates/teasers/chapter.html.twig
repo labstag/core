@@ -1,9 +1,9 @@
 <a href="{{ site_path(chapter) }}" title="{{ chapter.title|e('html_attr') }}">
     <div class="background spoiler" data-bg="{{ site_asset(chapter, 'img') }}"></div>
     <div class="wrapper">
-        <h3 class="title">
+        <h2 class="title">
             {{ chapter.title }}
-        </h3>
+        </h2>
         <div class="date">
             {{ 'Creation date : %date%'|trans({ '%date%': chapter.createdat|date('d/m/Y') }) }}
         </div>
@@ -12,7 +12,7 @@
                 {{ 'Author : %author%'|trans({ '%author%': chapter.refstory.refuser.username }) }}
             </div>
         {% endif %}
-        <div class="resume">
+        <div class="resume html-content">
             {{ chapter.resume|raw }}
         </div>
     </div>

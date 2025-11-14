@@ -8,7 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 class MovieInfoParagraph extends Paragraph
 {
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs')]
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?Movie $refmovie = null;
 
     #[ORM\Column(length: 255, nullable: true)]

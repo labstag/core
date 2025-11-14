@@ -546,11 +546,6 @@ class Configuration
         return (string) $this->tacCustomCloserId;
     }
 
-    public function getTacGroupServices(): bool
-    {
-        return $this->tacGroupServices;
-    }
-
     public function getTacHashtag(): string
     {
         $hashtag = (string) $this->tacHashtag;
@@ -674,6 +669,11 @@ class Configuration
     public function isTacGoogleConsentMode(): bool
     {
         return $this->tacGoogleConsentMode;
+    }
+
+    public function isTacGroupServices(): bool
+    {
+        return $this->tacGroupServices;
     }
 
     public function isTacHandleBrowserDNTRequest(): bool

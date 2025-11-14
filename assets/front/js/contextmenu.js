@@ -8,21 +8,21 @@ export class ContextMenu {
     const contextMenu = document.getElementById("contextMenu");
     const menuItems = document.getElementById("menuItems");
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Control') {
-            this.ctrlPressed = true;
-        }
+      if (event.key === 'Control') {
+        this.ctrlPressed = true;
+      }
     });
-    
+
     document.addEventListener('keyup', (event) => {
-        if (event.key === 'Control') {
-            this.ctrlPressed = false;
-        }
+      if (event.key === 'Control') {
+        this.ctrlPressed = false;
+      }
     });
     document.addEventListener("contextmenu", (event) => {
       if (!this.ctrlPressed) {
         return;
       }
-      
+
       event.preventDefault();
 
       const blockdiv = event.target.closest('.block');
@@ -37,7 +37,7 @@ export class ContextMenu {
           'text': blockdiv.dataset.context_text,
         }
       );
-      
+
       blockdiv.querySelectorAll('.paragraph').forEach((paragraphdiv) => {
         if (paragraphdiv.dataset === undefined || paragraphdiv.dataset.context_url === undefined) {
           console.error('No context menu data found for this paragraph', paragraphdiv);
@@ -56,11 +56,11 @@ export class ContextMenu {
       contextMenu.style.left = `${event.pageX}px`;
       contextMenu.style.top = `${event.pageY}px`;
 
-      
+
     });
     // Cacher le menu lorsqu'on clique ailleurs
     document.addEventListener("click", function () {
-        contextMenu.style.display = "none";
+      contextMenu.style.display = "none";
     });
   }
 }

@@ -1,5 +1,7 @@
 {# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
 {% extends '@EasyAdmin/page/content.html.twig' %}
-
 {% block main %}
+    {% for memo in memos %}
+        {% include "admin/memo.html.twig" with { 'memo': memo, 'paragraphs': paragraphs } %}
+    {% endfor %}
 {% endblock %}

@@ -7,7 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -27,18 +26,11 @@ class EpisodeCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setEditDetail($actions);
-        $action = $this->setUpdateAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
-        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
-        $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
-        $actions->remove(Crud::PAGE_DETAIL, Action::EDIT);
-        $this->configureActionsTrash($actions);
-        $this->configureActionsUpdateImage();
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setReadOnly(true);
+        $this->setUpdateAction();
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]
@@ -84,12 +76,7 @@ class EpisodeCrudController extends CrudControllerAbstract
             }
         );
         $integerField = IntegerField::new('runtime', new TranslatableMessage('Runtime'));
-        $integerField->hideOnIndex();
-        $integerField->hideOnDetail();
-
-        $collectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
-        $collectionField->setTemplatePath('admin/field/runtime-episode.html.twig');
-        $collectionField->hideOnForm();
+        $integerField->setTemplatePath('admin/field/runtime-episode.html.twig');
 
         $wysiwygField = WysiwygField::new('overview', new TranslatableMessage('Overview'));
         $wysiwygField->hideOnIndex();
@@ -106,7 +93,6 @@ class EpisodeCrudController extends CrudControllerAbstract
                 IntegerField::new('number', new TranslatableMessage('Number')),
                 DateField::new('air_date', new TranslatableMessage('Air date')),
                 $integerField,
-                $collectionField,
                 $wysiwygField,
             ]
         );
@@ -161,14 +147,12 @@ class EpisodeCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_episode_index');
     }
 
-    private function configureActionsUpdateImage(): void
+    private function setUpdateAction(): void
     {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $request->query->get('action', null);
-    }
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
 
-    private function setUpdateAction(): Action
-    {
         $action = Action::new('update', new TranslatableMessage('Update'));
         $action->linkToUrl(
             fn (Episode $episode): string => $this->generateUrl(
@@ -180,6 +164,8 @@ class EpisodeCrudController extends CrudControllerAbstract
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 }

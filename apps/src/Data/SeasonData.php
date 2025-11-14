@@ -2,48 +2,65 @@
 
 namespace Labstag\Data;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
-use Labstag\Service\ConfigurationService;
-use Labstag\Service\FileService;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Spatie\SchemaOrg\Schema;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SeasonData extends DataAbstract implements DataInterface
+class SeasonData extends SerieData implements DataInterface
 {
-    public function __construct(
-        protected SerieData $serieData,
-        protected FileService $fileService,
-        protected ConfigurationService $configurationService,
-        protected EntityManagerInterface $entityManager,
-        protected RequestStack $requestStack,
-        protected TranslatorInterface $translator,
-    )
-    {
-        parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator);
-    }
-
     #[\Override]
     public function asset(mixed $entity, string $field): string
     {
-        $asset = parent::asset($entity, $field);
+        $asset = $this->fileService->asset($entity, $field);
         if ('' !== $asset) {
             return $asset;
         }
 
-        return $this->serieData->asset($entity->getRefserie(), $field);
+        return parent::asset($entity->getRefserie(), $field);
     }
 
+    #[\Override]
     public function generateSlug(object $entity): string
     {
-        return $this->serieData->generateSlug(
-            $entity->getRefserie()
-        ) . '/' . $this->getPrefixSeason() . $entity->getNumber();
+        return parent::generateSlug($entity->getRefserie()) . '/' . $entity->getSlug();
     }
 
-    public function getEntity(string $slug): object
+    #[\Override]
+    public function getEntity(?string $slug): object
     {
-        return $this->getEntityBySlug($slug);
+        return $this->getEntityBySlugSeason($slug);
+    }
+
+    #[\Override]
+    public function getJsonLd(object $entity): object
+    {
+        $schema = $this->getJsonLdSeason($entity);
+        $img    = $this->siteService->asset($entity, 'img', true, true);
+        if ('' !== $img) {
+            $schema->image($img);
+        }
+
+        $episodes = [];
+        foreach ($entity->getEpisodes() as $episode) {
+            $episodes[] = $this->getJsonLdEpisode($episode);
+        }
+
+        $schema->episode($episodes);
+        $tvSeries = Schema::tvSeries();
+        $tvSeries->name($entity->getRefserie()->getTitle());
+
+        $slug = $this->slugService->forEntity($entity->getRefserie());
+        $tvSeries->url(
+            $this->router->generate(
+                'front',
+                ['slug' => $slug],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            )
+        );
+        $schema->partOfSeries($tvSeries);
+
+        return $schema;
     }
 
     public function getPrefixSeason(): string
@@ -51,23 +68,27 @@ class SeasonData extends DataAbstract implements DataInterface
         return 'saison-';
     }
 
+    #[\Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
     }
 
+    #[\Override]
     public function getTitleMeta(object $entity): string
     {
-        return $this->serieData->getTitle($entity->getRefserie()) . ' - ' . $this->getTitle($entity);
+        return parent::getTitle($entity->getRefserie()) . ' - ' . $this->getTitle($entity);
     }
 
-    public function match(string $slug): bool
+    #[\Override]
+    public function match(?string $slug): bool
     {
-        $page = $this->getEntityBySlug($slug);
+        $page = $this->getEntityBySlugSeason($slug);
 
         return $page instanceof Season;
     }
 
+    #[\Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('season');
@@ -75,49 +96,73 @@ class SeasonData extends DataAbstract implements DataInterface
             return $placeholder;
         }
 
-        return $this->serieData->configPlaceholder();
+        return parent::configPlaceholder();
     }
 
+    #[\Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Season;
     }
 
+    #[\Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Season;
     }
 
-    public function supportsShortcode(string $className): bool
+    #[\Override]
+    public function supportsJsonLd(object $entity): bool
     {
-        return false;
+        return $entity instanceof Season;
     }
 
-    protected function getEntityBySlug(string $slug): ?object
+    protected function getEntityBySlugSeason(?string $slug): ?object
     {
-        if (0 === substr_count($slug, '/')) {
+        if (0 === substr_count((string) $slug, '/')) {
             return null;
         }
 
-        $slugSecond = basename($slug);
-        $slugFirst  = dirname($slug);
-
-        if (0 === substr_count($slugSecond, $this->getPrefixSeason())) {
+        $slugSecond = basename((string) $slug);
+        $slugFirst  = dirname((string) $slug);
+        $season     = $this->entityManager->getRepository(Season::class)->findOneBy(
+            ['slug' => $slugSecond]
+        );
+        if (!$season instanceof Season) {
             return null;
         }
 
-        if (false === $this->serieData->match($slugFirst)) {
+        if (false === parent::match($slugFirst)) {
             return null;
         }
 
-        $serie      = $this->serieData->getEntity($slugFirst);
-        $slugSecond = str_replace($this->getPrefixSeason(), '', $slugSecond);
+        $serie      = parent::getEntity($slugFirst);
 
         return $this->entityManager->getRepository(Season::class)->findOneBy(
             [
                 'refserie' => $serie,
-                'number'   => $slugSecond,
+                'slug'     => $slugSecond,
             ]
         );
+    }
+
+    protected function getJsonLdEpisode(Episode $episode): object
+    {
+        $tvepisode = Schema::tvEpisode();
+        $tvepisode->name($episode->getTitle());
+        $tvepisode->episodeNumber($episode->getNumber());
+        if ($episode->getAirDate() instanceof \DateTime) {
+            $tvepisode->episodeNumber($episode->getAirDate()->format('Y-m-d'));
+        }
+
+        $description = (string) $episode->getOverview();
+        $clean       = trim(html_entity_decode(strip_tags($description), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $tvepisode->description($clean);
+        $img = $this->siteService->asset($episode, 'img', true, true);
+        if ('' !== $img) {
+            $tvepisode->image($img);
+        }
+
+        return $tvepisode;
     }
 }

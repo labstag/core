@@ -30,6 +30,7 @@ final class MovieService
         private CategoryService $categoryService,
         private SagaService $sagaService,
         private TmdbApi $tmdbApi,
+        private ConfigurationService $configurationService,
     )
     {
     }
@@ -190,6 +191,14 @@ final class MovieService
 
     private function setTrailer(array $details, string $tmdbId): array
     {
+        $locale   = $this->configurationService->getLocaleTmdb();
+        $trailers = $this->tmdbApi->getTrailerMovie($tmdbId, $locale);
+        if (null !== $trailers) {
+            $details['trailers'] = $trailers;
+
+            return $details;
+        }
+
         $trailers = $this->tmdbApi->getTrailerMovie($tmdbId);
         if (null !== $trailers) {
             $details['trailers'] = $trailers;

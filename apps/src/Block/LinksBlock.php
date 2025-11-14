@@ -91,6 +91,10 @@ class LinksBlock extends BlockAbstract
                 return new TranslatableMessage('Link');
             }
         );
+        $collectionField->setFormTypeOption(
+            'attr',
+            ['data-controller' => 'sortable']
+        );
         $collectionField->setEntryType(LinkType::class);
         yield $collectionField;
     }
@@ -107,6 +111,12 @@ class LinksBlock extends BlockAbstract
         return 'links';
     }
 
+    #[Override]
+    public function update(Block $block): void
+    {
+        $this->updateBlockLinks($block);
+    }
+
     /**
      * @return mixed[]
      */
@@ -120,11 +130,34 @@ class LinksBlock extends BlockAbstract
                 continue;
             }
 
-            $link['url'] = $url;
-
             $data[] = $link;
         }
 
         return $data;
+    }
+
+    private function updateBlockLinks(Block $block): void
+    {
+        if (!$block instanceof EntityLinksBlock) {
+            return;
+        }
+
+        $oldskils = $block->getLinks();
+        if (!is_array($oldskils)) {
+            return;
+        }
+
+        $skills = [];
+        foreach ($oldskils as $key => $skill) {
+            $position          = (!isset($skill['position']) || is_null(
+                $skill['position']
+            )) ? $key : $skill['position'];
+            $skill['position'] = $position;
+            $skills[$position] = $skill;
+        }
+
+        ksort($skills);
+
+        $block->setLinks($skills);
     }
 }

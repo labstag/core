@@ -1,92 +1,91 @@
 @charset "UTF-8";
 /* stylelint-disable */
-@use "bootstrap/dist/css/bootstrap";
-@use "@fortawesome/fontawesome-free/css/all.min";
 @use 'ckeditor5/ckeditor5';
 /* stylelint-enable */
 @use './../wysiwyg';
+@use 'placeholder';
+@use 'icons';
 
-.accordion-item{
+.accordion-item {
   width: 100%;
 }
 
 .form-group:has(textarea) {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    > label {
-        width: 100%;
-        display: block;
-        margin-bottom: .5rem;
-    }
+  >label {
+    width: 100%;
+    display: block;
+    margin-bottom: .5rem;
+  }
 
-    .form-widget textarea {
-        width: 100%;
-        display: block;
-    }
+  .form-widget textarea {
+    width: 100%;
+    display: block;
+  }
 }
 
-.sort-list{
-  li{
+.sort-list {
+  li {
     cursor: move;
   }
 }
 
 .form-group.field-array {
-	.form-widget {
-		.form-group {
-			label {
-				display: block !important;
-			}
-		}
-	}
+  .form-widget {
+    .form-group {
+      label {
+        display: block !important;
+      }
+    }
+  }
 }
 
 .story-sort,
 .block-sort,
-#paragraph-sort{
-  .fa-arrows-alt{
+#paragraph-sort {
+  .fa-arrows-alt {
     cursor: move;
   }
 }
 
-.paragraph-header{
-  @extend .accordion-header;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-a{
+a {
   text-decoration: none;
 
-  &.paragraph-edit{
-    @extend .btn;
-    @extend .btn-sm;
-    @extend .btn-primary;
+  &.paragraph-edit {
+    @extend %btnprimary;
 
-    &::before{
-      @extend .fa-solid;
-      @extend .fa-pen-to-square;
+    i {
+      @extend .material-symbols--edit;
     }
   }
 
-  &.paragraph-delete{
-    @extend .btn;
-    @extend .btn-sm;
-    @extend .btn-danger;
+  &.paragraph-delete {
+    @extend %btndanger;
 
-    &::before{
-      @extend .fa-solid;
-      @extend .fa-trash;
+    i {
+      @extend .material-symbols--delete;
     }
   }
 }
-body {
-  &.ea-dark-scheme {
-    .ck-editor__editable{
-      --ck-color-base-background: #1e1e1e; // fond noir
-    }
-  }
+
+[data-controller="sortable"] {
+	.field-collection-item {
+		.accordion-header {
+			cursor: move;
+			position: relative;
+			padding-left: 2rem;
+			&::before {
+				content: "⋮⋮";
+				position: absolute;
+				left: 10px;
+				top: 50%;
+				transform: translateY(-50%);
+				opacity: 0.4;
+				font-size: 18px;
+				cursor: grab;
+			}
+		}
+	}
 }

@@ -1,8 +1,7 @@
 import Sortable from 'sortablejs';
 
 export class Paragraphs {
-  constructor()
-  {
+  constructor() {
     this.disableBeforeUnload();
     this.actionDelete();
     this.actionModal();
@@ -12,14 +11,12 @@ export class Paragraphs {
     this.actionSort()
   }
 
-  disableBeforeUnload()
-  {
+  disableBeforeUnload() {
     window.onbeforeunload = null;
 
   }
 
-  actionSort()
-  {
+  actionSort() {
     document.querySelectorAll(".paragraphs-list").forEach(
       element => {
         // disable if element have class 'datagrid-empty'
@@ -72,8 +69,7 @@ export class Paragraphs {
       }
     );
   }
-  actionModal()
-  {
+  actionModal() {
     document.querySelectorAll('#paragraph-modal').forEach(
       element => {
         element.addEventListener(
@@ -86,19 +82,17 @@ export class Paragraphs {
       }
     );
   }
-  actionEdit()
-  {
+  actionEdit() {
     document.querySelectorAll('.paragraph-edit').forEach(element => {
       element.addEventListener(
         'click',
         () => {
           document.querySelector(element.dataset.target).src = element.href;
-        }  
+        }
       );
     });
   }
-  actionAdd()
-  {
+  actionAdd() {
     document.querySelectorAll('.paragraph-btn').forEach(
       element => {
         element.addEventListener(
@@ -120,16 +114,14 @@ export class Paragraphs {
       }
     );
   }
-  actionDelete()
-  {
+  actionDelete() {
     document.querySelectorAll('.paragraph-delete').forEach(
       element => {
         this.actionDeleteElement(element);
       }
     );
   }
-  actionDeleteElement(element)
-  {
+  actionDeleteElement(element) {
     element.addEventListener(
       'click',
       async (event) => {
@@ -148,8 +140,7 @@ export class Paragraphs {
       }
     );
   }
-  actionRefresh()
-  {
+  actionRefresh() {
     document.querySelectorAll('#paragraph-refresh').forEach(
       element => {
         element.addEventListener(
@@ -165,8 +156,7 @@ export class Paragraphs {
       }
     );
   }
-  list(data)
-  {
+  list(data) {
     document.querySelector('.paragraphs-list').innerHTML = data;
     this.actionDelete();
     this.actionEdit();

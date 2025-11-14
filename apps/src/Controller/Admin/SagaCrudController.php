@@ -24,21 +24,12 @@ class SagaCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setActionPublic($actions, 'admin_saga_w3c', 'admin_saga_public');
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->setLinkTmdbAction();
+        $this->setUpdateAction();
+        $this->actionsFactory->setActionUpdateAll();
 
-        $this->setEditDetail($actions);
-        $this->configureActionsBtn($actions);
-        $action = $this->setLinkTmdbAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
-
-        $action = $this->setUpdateAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
-
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]
@@ -83,15 +74,6 @@ class SagaCrudController extends CrudControllerAbstract
     public static function getEntityFqcn(): string
     {
         return Saga::class;
-    }
-
-    #[Route('/admin/saga/{entity}/public', name: 'admin_saga_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $saga                            = $repositoryAbstract->find($entity);
-
-        return $this->publicLink($saga);
     }
 
     public function moviesField(): AssociationField
@@ -163,17 +145,23 @@ class SagaCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_saga_index');
     }
 
-    #[Route('/admin/saga/{entity}/w3c', name: 'admin_saga_w3c')]
-    public function w3c(string $entity): RedirectResponse
+    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
         $repositoryAbstract              = $this->getRepository();
-        $saga                            = $repositoryAbstract->find($entity);
+        $sagas                           = $repositoryAbstract->findAll();
+        foreach ($sagas as $saga) {
+            $messageBus->dispatch(new SagaMessage($saga->getId()));
+        }
 
-        return $this->linkw3CValidator($saga);
+        return $this->redirectToRoute('admin_saga_index');
     }
 
-    private function setLinkTmdbAction(): Action
+    private function setLinkTmdbAction(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
         $action->setHtmlAttributes(
             ['target' => '_blank']
@@ -187,11 +175,17 @@ class SagaCrudController extends CrudControllerAbstract
             )
         );
 
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function setUpdateAction(): Action
+    private function setUpdateAction(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('update', new TranslatableMessage('Update'));
         $action->linkToUrl(
             fn (Saga $saga): string => $this->generateUrl(
@@ -203,6 +197,8 @@ class SagaCrudController extends CrudControllerAbstract
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 }

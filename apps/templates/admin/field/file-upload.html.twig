@@ -1,0 +1,7 @@
+{% if field.value %}
+    <a href="{{ site_asset(_context.entity.instance, field.property, false) }}" target="_blank">
+        📄 Télécharger le fichier ({{ field.value }})
+    </a>
+{% else %}
+    <span class="badge badge-secondary">Aucun fichier</span>
+{% endif %}

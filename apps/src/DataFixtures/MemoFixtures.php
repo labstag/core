@@ -47,7 +47,7 @@ class MemoFixtures extends FixtureAbstract implements DependentFixtureInterface
         $memo->setTitle($generator->unique()->colorName());
 
         $this->paragraphService->addParagraph($memo, 'head');
-        $this->paragraphService->addParagraph($memo, 'text');
+        $this->addParagraphText($memo);
         $this->setImage($memo, 'imgFile');
         $this->addReference('memo_' . md5(uniqid()), $memo);
         $objectManager->persist($memo);

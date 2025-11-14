@@ -1,31 +1,81 @@
 @use "variables";
 
+@mixin fa-before($icon, $style: 'solid', $color: null) {
+  // Liste de codes Unicode de base (exemples courants)
+  $icons: (
+    'briefcase': '\f0b1',
+    'user': '\f007',
+    'check': '\f00c',
+    'times': '\f00d',
+    'circle': '\f111',
+    'graduation-cap': '\f19d',
+    'arrow-right': '\f061',
+    'envelope': '\f0e0',
+  );
+
+// Récupération du code unicode selon l'icône
+$unicode: map-get($icons, $icon);
+
+// Si non trouvé → message d'erreur utile
+@if $unicode ==null {
+  @warn "Icône `#{$icon}` non trouvée dans la map Font Awesome. Ajoute-la dans le mixin.";
+  $unicode: '\f128'; // fallback : icône question
+}
+
+// Définition du style de police selon le type (solid, regular, brands)
+$family: 'Font Awesome 7 Free', 'Font Awesome 6 Free';
+$weight: 900; // par défaut solid
+
+@if $style =='regular' {
+  $weight: 400;
+}
+
+@else if $style =='brands' {
+  $family: 'Font Awesome 7 Brands', 'Font Awesome 6 Brands';
+  $weight: 400;
+}
+
+// Application des styles
+font-family: $family;
+font-weight: $weight;
+content: $unicode;
+speak: none;
+display: inline-block;
+line-height: 1;
+text-rendering: auto;
+-webkit-font-smoothing: antialiased;
+
+@if $color !=null {
+  color: $color;
+}
+}
+
 @mixin respond-to($device) {
-  @if $device == xs {
+  @if $device ==xs {
     @media (max-width: variables.$breakpoint-sm - 1) {
       @content;
     }
   }
 
-  @else if $device == sm {
+  @else if $device ==sm {
     @media (min-width: variables.$breakpoint-sm) {
       @content;
     }
   }
 
-  @else if $device == md {
+  @else if $device ==md {
     @media (min-width: variables.$breakpoint-md) {
       @content;
     }
   }
 
-  @else if $device == lg {
+  @else if $device ==lg {
     @media (min-width: variables.$breakpoint-lg) {
       @content;
     }
   }
 
-  @else if $device == xl {
+  @else if $device ==xl {
     @media (min-width: variables.$breakpoint-xl) {
       @content;
     }

@@ -19,7 +19,8 @@ security:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
     main:
-      stateless: true    
+      entry_point: Labstag\Security\CustomEntryPoint
+      stateless: false    
       login_throttling:
         max_attempts: 5
         interval: '15 minutes'
@@ -29,7 +30,7 @@ security:
       remember_me:
         secret: '%kernel.secret%'
         lifetime: 604800 # 1 week in seconds
-        remember_me_parameter: "remember_me"
+        remember_me_parameter: "login[remember_me]"
         path: /
         samesite: 'lax'
         domain: ~

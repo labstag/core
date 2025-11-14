@@ -1,24 +1,36 @@
 @use "../placeholders" as *;
 @use "../mixins";
-.teaser-episode{
+@use "../icons";
+
+.teaser-episode {
   @extend %teaser;
   display: grid;
   grid-template-areas:
-      "img"
-      "content";
+    "img"
+    "content";
   grid-template-columns: 1fr;
+
   @include mixins.respond-to(md) {
     grid-template-areas:
-        "img content";
+      "img content";
     grid-template-columns: 2fr 3fr;
     gap: 16px;
   }
-  .background{
+
+  .background {
     grid-area: img;
     height: 219px;
   }
-  .content{
+
+  .wrapper {
     grid-area: content;
     padding: 1rem;
+  }
+
+  .duration {
+    &::before {
+      @extend .iconbefore;
+      @extend .icon-runtime;
+    }
   }
 }

@@ -2,26 +2,27 @@
 @use "../variables";
 
 @use "sass:color";
-.paragraph_saga{
-  .wrapper{
 
-  }
-  .title{
+.paragraph_saga {
+  .wrapper {}
 
-  }
-  ul{
+  .title {}
+
+  ul {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
+
     @include mixins.respond-to(md) {
       grid-template-columns: repeat(3, 1fr);
     }
   }
-  li{
-    &.teaser-saga{
+
+  li {
+    &.teaser-saga {
       background-color: color.scale(variables.$colorbg, $lightness: 15%);
-      &:nth-child(even)
-      {
+
+      &:nth-child(even) {
         background-color: color.scale(variables.$colorbg, $lightness: 10%);
       }
     }

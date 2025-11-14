@@ -12,11 +12,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 class TagData extends DataAbstract implements DataInterface
 {
     #[\Override]
-    public function asset(mixed $entity, string $field): string
-    {
-        return '';
-    }
-
     public function generateSlug(object $entity): string
     {
         $entityRepository = $this->entityManager->getRepository(Page::class);
@@ -45,11 +40,13 @@ class TagData extends DataAbstract implements DataInterface
         };
     }
 
-    public function getEntity(string $slug): object
+    #[\Override]
+    public function getEntity(?string $slug): object
     {
-        return $this->getEntityBySlug($slug);
+        return $this->getEntityBySlugTag($slug);
     }
 
+    #[\Override]
     public function getTitle(object $entity): string
     {
         unset($entity);
@@ -64,31 +61,18 @@ class TagData extends DataAbstract implements DataInterface
         return $this->translator->trans(new TranslatableMessage('Tag %tag%'), $params);
     }
 
-    public function match(string $slug): bool
+    #[\Override]
+    public function match(?string $slug): bool
     {
-        $page = $this->getEntityBySlug($slug);
+        $page = $this->getEntityBySlugTag($slug);
 
         return $page instanceof Page;
     }
 
-    public function placeholder(): string
-    {
-        return '';
-    }
-
-    public function supportsAsset(object $entity): bool
-    {
-        return false;
-    }
-
+    #[\Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Tag;
-    }
-
-    public function supportsShortcode(string $className): bool
-    {
-        return false;
     }
 
     protected function getClass(string $type): ?string
@@ -100,14 +84,14 @@ class TagData extends DataAbstract implements DataInterface
         };
     }
 
-    protected function getEntityBySlug(string $slug): ?object
+    protected function getEntityBySlugTag(?string $slug): ?object
     {
-        if (0 === substr_count($slug, '/')) {
+        if (0 === substr_count((string) $slug, '/')) {
             return null;
         }
 
-        $slugSecond = basename($slug);
-        $slugFirst  = dirname($slug);
+        $slugSecond = basename((string) $slug);
+        $slugFirst  = dirname((string) $slug);
 
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
             ['slug' => $slugFirst]

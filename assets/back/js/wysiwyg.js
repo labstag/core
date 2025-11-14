@@ -42,12 +42,10 @@ import {
 	LinkImage,
 	List,
 	ListProperties,
-	Markdown,
 	MediaEmbed,
 	Mention,
 	PageBreak,
 	Paragraph,
-	PasteFromMarkdownExperimental,
 	PasteFromOffice,
 	RemoveFormat,
 	ShowBlocks,
@@ -80,12 +78,12 @@ import translations from 'ckeditor5/translations/fr.js';
 
 
 WebFont.load({
-  google: {
-    families: [
-      'Oswald&family=PT+Serif:ital,wght@0,400;0,700;1,400',
-      'Lato:ital,wght@0,400;0,700;1,400;1,700'
-    ]
-  }
+	google: {
+		families: [
+			'Oswald&family=PT+Serif:ital,wght@0,400;0,700;1,400',
+			'Lato:ital,wght@0,400;0,700;1,400;1,700'
+		]
+	}
 });
 /**
  * Create a free account with a trial: https://portal.ckeditor.com/checkout?plan=free
@@ -168,12 +166,10 @@ const editorConfig = {
 		LinkImage,
 		List,
 		ListProperties,
-		Markdown,
 		MediaEmbed,
 		Mention,
 		PageBreak,
 		Paragraph,
-		PasteFromMarkdownExperimental,
 		PasteFromOffice,
 		RemoveFormat,
 		ShowBlocks,
@@ -367,41 +363,53 @@ const editorConfig = {
 };
 
 
-export class Wysiwyg
-{
-  constructor()
-  {
-	this.initEditor();
-	this.initClick();
-	this.collectionItemAdded();
-  }
-  collectionItemAdded() {
-	document.addEventListener('collection.item.added', () => {
+export class Wysiwyg {
+	constructor() {
 		this.initEditor();
-	});
-  }
-  initClick() {
-    document.body.addEventListener('click', (event) => {
-        if (event.target.closest('.ea-collection-add-btn') ||
-            event.target.closest('.field-collection-add-button')
-        ) {
-            document.dispatchEvent(new CustomEvent('collection.item.added', {
-                detail: {
-                    trigger: event.target
-                }
-            }));
-        }
-    });
-  }
-  initEditor() {
-    document.querySelectorAll('.wysiwyg').forEach(element => {
-		if (!element.ckeditorInstance) {
-			ClassicEditor.create(element, editorConfig)
-			.then(editor => {
-				element.ckeditorInstance = editor; // ✅ stockage correct
-			})
-			.catch(console.error);
-		}
-    });
-  }
+		this.initClick();
+		this.collectionItemAdded();
+	}
+	collectionItemAdded() {
+		document.addEventListener('collection.item.added', () => {
+			this.initEditor();
+		});
+	}
+	initClick() {
+		document.body.addEventListener('click', (event) => {
+			if (event.target.closest('.ea-collection-add-btn') ||
+				event.target.closest('.field-collection-add-button')
+			) {
+				document.dispatchEvent(new CustomEvent('collection.item.added', {
+					detail: {
+						trigger: event.target
+					}
+				}));
+			}
+		});
+	}
+	initEditor() {
+		document.addEventListener('DOMContentLoaded', () => {
+			const isDark = document.body.classList.contains('ea-dark-scheme');
+
+			// Applique le thème à CKEditor
+			document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+
+			// Surveille un éventuel changement de thème (si tu as un toggle)
+			const observer = new MutationObserver(() => {
+				const dark = document.body.classList.contains('ea-dark-scheme');
+				document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+			});
+
+			observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+		});
+		document.querySelectorAll('.wysiwyg').forEach(element => {
+			if (!element.ckeditorInstance) {
+				ClassicEditor.create(element, editorConfig)
+					.then(editor => {
+						element.ckeditorInstance = editor; // ✅ stockage correct
+					})
+					.catch(console.error);
+			}
+		});
+	}
 }

@@ -25,15 +25,10 @@ class ChapterCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setActionPublic($actions, 'admin_chapter_w3c', 'admin_chapter_public');
-        $this->setEditDetail($actions);
-        $this->configureActionsTrash($actions);
-        $action = $this->setUpdateAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->setUpdateAction();
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]
@@ -104,15 +99,6 @@ class ChapterCrudController extends CrudControllerAbstract
         return Chapter::class;
     }
 
-    #[Route('/admin/chapter/{entity}/public', name: 'admin_chapter_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $chapter                         = $repositoryAbstract->find($entity);
-
-        return $this->publicLink($chapter);
-    }
-
     #[Route('/admin/chapter/{entity}/update', name: 'admin_chapter_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
@@ -127,15 +113,6 @@ class ChapterCrudController extends CrudControllerAbstract
         }
 
         return $this->redirectToRoute('admin_story_index');
-    }
-
-    #[Route('/admin/chapter/{entity}/w3c', name: 'admin_chapter_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $chapter                         = $repositoryAbstract->find($entity);
-
-        return $this->linkw3CValidator($chapter);
     }
 
     private function addFieldRefStory(): AssociationField
@@ -163,8 +140,12 @@ class ChapterCrudController extends CrudControllerAbstract
         return $associationField;
     }
 
-    private function setUpdateAction(): Action
+    private function setUpdateAction(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('update', new TranslatableMessage('Update'));
         $action->linkToUrl(
             fn (Chapter $chapter): string => $this->generateUrl(
@@ -176,6 +157,8 @@ class ChapterCrudController extends CrudControllerAbstract
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 }

@@ -29,7 +29,7 @@ final class EmailService
     /**
      * @param mixed[] $data
      */
-    public function get(string $code, array $data = []): ?EmailAbstract
+    public function get(?string $code, array $data = []): ?EmailAbstract
     {
         $template = null;
         foreach ($this->emails as $email) {

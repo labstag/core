@@ -10,3 +10,8 @@
     <meta property="og:image:height" content="{{ image.data.height }}">
     <meta property="og:image:type" content="{{ image.data.type }}">
 {% endif %}
+{% if jsonLd != '' %}
+    <script type="application/ld+json">
+        {{ jsonLd|raw }}
+    </script>
+{% endif %}

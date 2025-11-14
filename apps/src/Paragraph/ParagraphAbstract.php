@@ -32,7 +32,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
+use Vich\UploaderBundle\Form\Type\VichFileType;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 #[AutoconfigureTag('labstag.paragraphs')]
@@ -77,6 +79,7 @@ abstract class ParagraphAbstract extends AbstractController
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
         protected SlugService $slugService,
+        protected TranslatorInterface $translator,
         protected ConfigurationService $configurationService,
         protected Environment $twigEnvironment,
         protected ParameterBagInterface $parameterBag,
@@ -84,10 +87,51 @@ abstract class ParagraphAbstract extends AbstractController
     {
     }
 
-    public function addFieldImageUpload(string $type, string $pageName): TextField|ImageField
+    public function addFieldFileUpload(string $type, string $pageName, Paragraph $paragraph): TextField|ImageField
     {
+        $label = new TranslatableMessage('File');
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $textField = TextField::new($type . 'File', new TranslatableMessage('Image'));
+            $textField = TextField::new($type . 'File', $label);
+            $textField->setFormType(VichFileType::class);
+            $deleteLabel      = new TranslatableMessage('Delete file');
+            $downloadLabel    = new TranslatableMessage('Download');
+            $maxSizeMessage   = new TranslatableMessage(
+                'The file is too large. Its size should not exceed {{ limit }}.'
+            );
+            $textField->setFormTypeOptions(
+                [
+                    'required'       => false,
+                    'allow_delete'   => true,
+                    'delete_label'   => $deleteLabel->__toString(),
+                    'download_label' => $downloadLabel->__toString(),
+                    'download_uri'   => true,
+                    'asset_helper'   => true,
+                    'constraints'    => [
+                        new File(
+                            [
+                                'maxSize'        => ini_get('upload_max_filesize'),
+                                'maxSizeMessage' => $maxSizeMessage->__toString(),
+                            ]
+                        ),
+                    ],
+                ]
+            );
+
+            return $textField;
+        }
+
+        $this->fileService->getBasePath($paragraph::class, $type . 'File');
+        $imageField = TextField::new($type, $label);
+        $imageField->setTemplatePath('admin/field/file-upload.html.twig');
+
+        return $imageField;
+    }
+
+    public function addFieldImageUpload(string $type, string $pageName, Paragraph $paragraph): TextField|ImageField
+    {
+        $label = new TranslatableMessage('Image');
+        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
+            $textField = TextField::new($type . 'File', $label);
             $textField->setFormType(VichImageType::class);
             $deleteLabel      = new TranslatableMessage('Delete image');
             $downloadLabel    = new TranslatableMessage('Download');
@@ -125,8 +169,8 @@ abstract class ParagraphAbstract extends AbstractController
             return $textField;
         }
 
-        $basePath   = $this->fileService->getBasePath(Paragraph::class, $type . 'File');
-        $imageField = ImageField::new($type, new TranslatableMessage('Image'));
+        $basePath   = $this->fileService->getBasePath($paragraph::class, $type . 'File');
+        $imageField = ImageField::new($type, $label);
         $imageField->setBasePath($basePath);
 
         return $imageField;
@@ -365,7 +409,6 @@ abstract class ParagraphAbstract extends AbstractController
     protected function setData(Paragraph $paragraph, array $data): void
     {
         $this->setShow($paragraph, true);
-
         $data['url_admin']     = $this->setUrlAdmin($paragraph);
         $data['configuration'] = $this->configurationService->getConfiguration();
 

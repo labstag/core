@@ -1,5 +1,10 @@
 @use "../mixins";
-.paragraph_text-img{
+
+.paragraph_text-img {
+  a {
+    text-decoration: underline;
+  }
+
   &.text-img-left {
     .wrapper {
       @include mixins.respond-to(md) {
@@ -8,24 +13,28 @@
       }
     }
   }
-  .wrapper{
+
+  .wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
       "image"
       "text";
+
     @include mixins.respond-to(md) {
       grid-template-areas:
         "text image";
     }
   }
-  .text{
+
+  .text {
     grid-area: text;
     padding: 5px;
   }
+
   .image {
     grid-area: image;
-    img {
-    }
+
+    img {}
   }
 }

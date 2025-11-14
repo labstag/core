@@ -1,21 +1,47 @@
 @use "../placeholders" as *;
-.teaser-serie{
+@use "../icons";
+
+.teaser-serie {
   @extend %teaser;
-  .background{
+
+  .background {
     height: 433px;
     align-items: flex-end;
     justify-content: space-between;
-    .year{
+
+    .year {
       background-color: #363636;
       color: yellow;
       padding: 5px;
       margin: 5px;
     }
-    .seasons{
+
+    .seasons {
       background-color: #363636;
       color: yellow;
       padding: 5px;
       margin: 5px;
+    }
+  }
+
+  .duration {
+    &::before {
+      @extend .iconbefore;
+      @extend .icon-runtime;
+    }
+  }
+
+  .play {
+    &::before {
+      @extend .iconbefore;
+      @extend .icon-play;
+    }
+  }
+
+  .stop {
+    &::before {
+      @extend .iconbefore;
+      @extend .icon-stop;
     }
   }
 }

@@ -18,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use Labstag\Entity\User;
 use Labstag\Field\ParagraphsField;
 use Labstag\Field\UploadFileField;
 use Labstag\Field\UploadImageField;
@@ -184,7 +185,7 @@ final class CrudFieldFactory
         // Always safe on listing/detail pages: no AssociationField to configure
         if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
         ) {
-            $associationField->hideOnForm();
+            $associationField->onlyOnDetail();
 
             return $associationField;
         }
@@ -256,7 +257,10 @@ final class CrudFieldFactory
 
     public function idField(): IdField
     {
-        return IdField::new('id', new TranslatableMessage('ID'))->onlyOnDetail();
+        $idField = IdField::new('id', new TranslatableMessage('ID'));
+        $idField->onlyOnDetail();
+
+        return $idField;
     }
 
     public function imageField(
@@ -272,7 +276,10 @@ final class CrudFieldFactory
 
         $basePath = $this->fileService->getBasePath($entityFqcn, $type . 'File');
 
-        return ImageField::new($type, $label ?? new TranslatableMessage('Image'))->setBasePath($basePath);
+        $imageField = ImageField::new($type, $label ?? new TranslatableMessage('Image'));
+        $imageField->setBasePath($basePath);
+
+        return $imageField;
     }
 
     public function setTabConfig(): void
@@ -303,7 +310,7 @@ final class CrudFieldFactory
 
     public function setTabOther(): void
     {
-        $this->addTab('other', FormField::addTab(new TranslatableMessage('Other'))->onlyOnIndex());
+        $this->addTab('other', FormField::addTab(new TranslatableMessage('Other')));
     }
 
     /**
@@ -316,10 +323,10 @@ final class CrudFieldFactory
         }
 
         $this->addTab('paragraphs', FormField::addTab(new TranslatableMessage('Paragraphs')));
-        $this->addFieldsToTab(
-            'paragraphs',
-            [ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'))->hideWhenCreating()]
-        );
+        $paragraphsField = ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'));
+        $paragraphsField->hideWhenCreating();
+        $paragraphsField->hideOnIndex();
+        $this->addFieldsToTab('paragraphs', [$paragraphsField]);
     }
 
     public function setTabPrincipal(string $entity): void
@@ -336,14 +343,15 @@ final class CrudFieldFactory
     public function setTabSEO(): void
     {
         $this->addTab('seo', FormField::addTab(new TranslatableMessage('SEO')));
-        $this->addFieldsToTab(
-            'seo',
-            [
-                TextField::new('meta.title', new TranslatableMessage('Title'))->hideOnIndex(),
-                TextField::new('meta.keywords', new TranslatableMessage('Keywords'))->hideOnIndex(),
-                TextField::new('meta.description', new TranslatableMessage('Description'))->hideOnIndex(),
-            ]
-        );
+        $textField = TextField::new('meta.title', new TranslatableMessage('Title'));
+        $textField->hideOnIndex();
+
+        $keywords = TextField::new('meta.keywords', new TranslatableMessage('Keywords'));
+        $keywords->hideOnIndex();
+
+        $description = TextField::new('meta.description', new TranslatableMessage('Description'));
+        $description->hideOnIndex();
+        $this->addFieldsToTab('seo', [$textField, $keywords, $description]);
     }
 
     /**
@@ -352,6 +360,12 @@ final class CrudFieldFactory
     public function setTabUser(bool $isSuperAdmin): void
     {
         if (!$isSuperAdmin) {
+            return;
+        }
+
+        $objectRepository = $this->managerRegistry->getRepository(User::class);
+        $users            = $objectRepository->findAll();
+        if (1 === count($users)) {
             return;
         }
 
@@ -460,7 +474,7 @@ final class CrudFieldFactory
         // Always safe on listing/detail pages: no AssociationField to configure
         if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
         ) {
-            $associationField->hideOnForm();
+            $associationField->onlyOnDetail();
 
             return $associationField;
         }
@@ -503,9 +517,11 @@ final class CrudFieldFactory
 
     public function totalChildField(string $type): CollectionField
     {
-        return CollectionField::new($type, new TranslatableMessage('Childs'))->hideOnForm()->formatValue(
-            fn ($value): int => is_countable($value) ? count($value) : 0
-        );
+        $collectionField = CollectionField::new($type, new TranslatableMessage('Childs'));
+        $collectionField->hideOnForm();
+        $collectionField->formatValue(fn ($value): int => is_countable($value) ? count($value) : 0);
+
+        return $collectionField;
     }
 
     public function workflowField(): CollectionField

@@ -9,14 +9,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Labstag\Controller\Admin\Factory\ActionsFactory;
 use Labstag\Controller\Admin\Factory\CrudFieldFactory;
-use Labstag\Controller\Admin\Factory\LinkActionFactory;
 use Labstag\Controller\Admin\Traits\ParagraphAdminTrait;
-use Labstag\Controller\Admin\Traits\TrashActionsTrait;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Paragraph;
 use Labstag\Repository\ParagraphRepository;
@@ -39,6 +39,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[AutoconfigureTag('labstag.admincontroller')]
 /**
@@ -49,7 +50,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 abstract class CrudControllerAbstract extends AbstractCrudController
 {
     use ParagraphAdminTrait;
-    use TrashActionsTrait;
 
     public function __construct(
         protected EmailService $emailService,
@@ -66,8 +66,8 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         protected WorkflowService $workflowService,
         protected RequestStack $requestStack,
         protected UserService $userService,
+        protected ActionsFactory $actionsFactory,
         protected CrudFieldFactory $crudFieldFactory,
-        protected LinkActionFactory $linkActionFactory,
         protected AdminUrlGenerator $adminUrlGenerator,
         protected ManagerRegistry $managerRegistry,
     )
@@ -116,9 +116,24 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     ): QueryBuilder
     {
         $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fieldCollection, $filterCollection);
-        $queryBuilder = $this->filterListeTrash($searchDto, $queryBuilder);
+        $queryBuilder = $this->filterTrash($searchDto, $queryBuilder);
+        $queryBuilder = $this->filterUser($searchDto, $queryBuilder);
 
         return $queryBuilder;
+    }
+
+    public function linkPublic(AdminContext $adminContext): RedirectResponse
+    {
+        $request    = $adminContext->getRequest();
+        $entityId   = $request->query->get('entityId');
+        $repositoryAbstract = $this->getRepository();
+        $entity     = $repositoryAbstract->find($entityId);
+        $slug       = $this->slugService->forEntity($entity);
+
+        return $this->redirectToRoute(
+            'front',
+            ['slug' => $slug]
+        );
     }
 
     protected function configureActionsBtn(Actions $actions): void
@@ -128,9 +143,35 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         $actions->add(Crud::PAGE_NEW, Action::INDEX);
     }
 
-    protected function configureActionsTrash(Actions $actions): void
+    protected function filterTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
     {
-        $this->configureTrashActions($actions, $this->requestStack->getCurrentRequest(), $this->adminUrlGenerator);
+        $action = $searchDto->getRequest()->query->get('action');
+        if ('trash' === $action) {
+            $queryBuilder->andWhere('entity.deletedAt IS NOT NULL');
+        }
+
+        return $queryBuilder;
+    }
+
+    protected function filterUser(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
+    {
+        unset($searchDto);
+        if ($this->isSuperAdmin()) {
+            return $queryBuilder;
+        }
+
+        $user = $this->getUser();
+        if (!is_object($user)) {
+            return $queryBuilder;
+        }
+
+        $reflectionClass = new ReflectionClass($this->getEntityFqcn());
+        if ($reflectionClass->hasMethod('setUser')) {
+            $queryBuilder->andWhere('entity.user = :user');
+            $queryBuilder->setParameter('user', $user->getId());
+        }
+
+        return $queryBuilder;
     }
 
     /**
@@ -163,9 +204,15 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
     }
 
-    protected function linkw3CValidator(object $entity): RedirectResponse
+    protected function linkw3CValidator(AdminContext $adminContext): RedirectResponse
     {
-        $slug = $this->slugService->forEntity($entity);
+        $request                         = $adminContext->getRequest();
+        $entityId                        = $request->query->get('entityId');
+        $repository                      = $this->getRepository();
+        $entity                          = $repository->find($entityId);
+        $repositoryAbstract              = $this->getRepository();
+        $repositoryAbstract->find($entity);
+        $slug                            = $this->slugService->forEntity($entity);
 
         return $this->redirect(
             'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
@@ -176,26 +223,34 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         );
     }
 
-    protected function publicLink(object $entity): RedirectResponse
-    {
-        $slug = $this->slugService->forEntity($entity);
-
-        return $this->redirectToRoute(
-            'front',
-            ['slug' => $slug]
-        );
-    }
-
     protected function setActionPublic(Actions $actions, string $urlW3c, string $urlPublic): void
     {
         $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
 
-        $action = $this->linkActionFactory->createPublicAction($urlPublic);
+        $action = Action::new('linkPublic', new TranslatableMessage('View Page'))->setHtmlAttributes(
+            ['target' => '_blank']
+        )->linkToRoute(
+            $urlPublic,
+            fn ($entity): array => [
+                'entity' => $entity->getId(),
+            ]
+        )->displayIf(
+            static fn ($entity): bool => !method_exists($entity, 'getDeletedAt') || null === $entity->getDeletedAt()
+        );
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
 
-        $w3cAction = $this->linkActionFactory->createW3cAction($urlW3c);
+        $w3cAction = Action::new('linkw3CValidator', new TranslatableMessage('W3C Validator'))->setHtmlAttributes(
+            ['target' => '_blank']
+        )->linkToRoute(
+            $urlW3c,
+            fn ($entity): array => [
+                'entity' => $entity->getId(),
+            ]
+        )->displayIf(
+            static fn ($entity): bool => !method_exists($entity, 'getDeletedAt') || null === $entity->getDeletedAt()
+        );
         $actions->add(Crud::PAGE_EDIT, $w3cAction);
         $actions->add(Crud::PAGE_INDEX, $w3cAction);
         $actions->add(Crud::PAGE_DETAIL, $w3cAction);
@@ -204,11 +259,6 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     protected function setEditDetail(Actions $actions): void
     {
         $actions->add(Crud::PAGE_EDIT, Action::DETAIL);
-    }
-
-    private function filterListeTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
-    {
-        return $this->filterTrash($searchDto, $queryBuilder);
     }
 
     /**

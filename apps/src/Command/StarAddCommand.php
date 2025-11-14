@@ -52,7 +52,7 @@ class StarAddCommand extends Command
         if (!is_file($file)) {
             $symfonyStyle->error('File not found ' . $filename);
 
-            return Command::FAILURE;
+            return Command::SUCCESS;
         }
 
         $json = file_get_contents($file);

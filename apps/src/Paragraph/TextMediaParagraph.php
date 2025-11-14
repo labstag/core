@@ -78,10 +78,9 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): mixed
+    public function getFields(Paragraph $paragraph, string $pageName): Generator
     {
-        unset($paragraph);
-        yield $this->addFieldImageUpload('img', $pageName);
+        yield $this->addFieldImageUpload('img', $pageName, $paragraph);
 
         yield BooleanField::new('leftposition', new TranslatableMessage('Media on the left'));
         yield UrlField::new('url', new TranslatableMessage('Url'));

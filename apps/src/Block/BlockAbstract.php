@@ -52,7 +52,7 @@ abstract class BlockAbstract extends AbstractController implements BlockInterfac
 
     public function __construct(
         #[AutowireIterator('labstag.datas')]
-        protected iterable $dataLibs,
+        protected iterable $datas,
         protected ShortCodeService $shortCodeService,
         protected LoggerInterface $logger,
         protected Security $security,

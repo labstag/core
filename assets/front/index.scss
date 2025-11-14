@@ -1,14 +1,13 @@
-
-@use "@fortawesome/fontawesome-free/css/all.min";
 @use "flag-icons/css/flag-icons.min";
-@use "bootstrap/scss/bootstrap.scss";
 
 
+@use 'icons';
 @use 'variables';
 @use 'mixins';
 @use 'placeholders';
 @use 'reset';
 @use 'base';
+@use 'form';
 @use 'layout';
 
 
@@ -25,10 +24,14 @@
 
 @use 'paragraphs/video' as paragraphvideo;
 @use 'paragraphs/text' as paragraphtext;
+@use 'paragraphs/skills' as paragraphskills;
 @use 'paragraphs/text-media' as paragraphtext-media;
 @use 'paragraphs/text-img' as paragraphtext-img;
 @use 'paragraphs/story-list' as paragraphstory-list;
 @use 'paragraphs/star' as paragraphstar;
+@use 'paragraphs/experiences' as paragraphexperiences;
+@use 'paragraphs/trainingcourses' as paragraphtrainingcourses;
+@use 'paragraphs/head-cv' as paragraphhead-cv;
 @use 'paragraphs/sitemap' as paragraphsitemap;
 @use 'paragraphs/sibling' as paragraphsibling;
 @use 'paragraphs/news-list' as paragraphnews-list;
@@ -59,9 +62,12 @@
 @use 'paragraphs/chapter-lastnext' as paragraphchapter-lastnext;
 
 @use 'teasers/chapter' as teaserchapter;
+@use 'teasers/skill' as teaserskill;
+@use 'teasers/experience' as teaserexperience;
 @use 'teasers/movie' as teasermovie;
 @use 'teasers/serie' as teaserserie;
 @use 'teasers/page' as teaserpage;
+@use 'teasers/training' as teasertraining;
 @use 'teasers/post' as teaserpost;
 @use 'teasers/star' as teaserstar;
 @use 'teasers/saga' as teasersaga;
@@ -70,6 +76,5 @@
 @use 'teasers/story' as teaserstory;
 
 @use 'modal/movie' as modalmovie;
-@use 'modal/serie' as modalserie;
 
 @use 'labstag';

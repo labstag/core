@@ -1,6 +1,11 @@
 @use "../placeholders" as *;
 @use "../mixins";
-.paragraph_text-media{
+
+.paragraph_text-media {
+  a {
+    text-decoration: underline;
+  }
+
   &.text-media-left {
     .wrapper {
       @include mixins.respond-to(md) {
@@ -9,21 +14,25 @@
       }
     }
   }
+
   .wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
       "media"
       "text";
+
     @include mixins.respond-to(md) {
       grid-template-areas:
         "text media";
     }
   }
-  .text{
+
+  .text {
     grid-area: text;
   }
-  .video{
+
+  .video {
     grid-area: media;
     margin-bottom: 11px;
     @extend %video;

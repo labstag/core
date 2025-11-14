@@ -3,26 +3,26 @@
 namespace Labstag\Event\Listener;
 
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Labstag\Event\Abstract\EventEntityLib;
 
 #[AsDoctrineListener(event: Events::prePersist)]
-#[AsDoctrineListener(event: Events::postPersist)]
+#[AsDoctrineListener(event: Events::preUpdate)]
 final class EntityListener extends EventEntityLib
 {
-    public function postPersist(PostPersistEventArgs $postPersistEventArgs): void
-    {
-        $object        = $postPersistEventArgs->getObject();
-        $entityManager = $postPersistEventArgs->getObjectManager();
-        $this->postPersistMethods($object, $entityManager);
-    }
-
     public function prePersist(PrePersistEventArgs $prePersistEventArgs): void
     {
         $object        = $prePersistEventArgs->getObject();
         $entityManager = $prePersistEventArgs->getObjectManager();
+        $this->prePersistMethods($object, $entityManager);
+    }
+
+    public function preUpdate(PreUpdateEventArgs $preUpdateEventArgs): void
+    {
+        $object        = $preUpdateEventArgs->getObject();
+        $entityManager = $preUpdateEventArgs->getObjectManager();
         $this->prePersistMethods($object, $entityManager);
     }
 }

@@ -2,14 +2,13 @@
 <nav aria-label="breadcrumb"{% with {attr: block_contextmenu(block)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
         <ul>
-            <li>
-                <a href="{{ path('front') }}">{{ 'Home'|trans }}</a>
-            </li>
             {% for row in urls %}
                 <li{% if loop.last %} aria-current="page"{% endif %}>
                     {% if loop.last == false %}
                         <a href="{{ path('front', {'slug': row.url})}}">{{ row.title }}</a>
                     {% elseif params|length != 0 %}
+                        <a href="{{ path('front', {'slug': row.url})}}">{{ row.title }}</a>
+                    {% elseif loop.last == true and urls|length == 1 %}
                         <a href="{{ path('front', {'slug': row.url})}}">{{ row.title }}</a>
                     {% else %}
                         {{ row.title }}
@@ -19,3 +18,6 @@
         </ul>
     </div>
 </nav>
+<script type="application/ld+json">
+    {{ jsonLd|raw }}
+</script>

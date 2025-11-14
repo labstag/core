@@ -18,16 +18,16 @@ class ParagraphCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         if ($this->isIframeEdit()) {
-            $actions->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN);
+            $this->actionsFactory->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN);
 
-            return $actions;
+            return $this->actionsFactory->show();
         }
 
-        $this->configureActionsTrash($actions);
-        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]

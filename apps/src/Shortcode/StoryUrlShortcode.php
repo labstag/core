@@ -15,9 +15,9 @@ class StoryUrlShortcode extends ShortcodeAbstract
     {
     }
 
-    public function content(array $matches): ?string
+    public function content(string $id): ?string
     {
-        $entity = $this->storyRepository->find($matches[1]);
+        $entity = $this->storyRepository->find($id);
         if (!$entity instanceof Story) {
             return null;
         }

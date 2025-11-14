@@ -56,6 +56,7 @@ class Saga implements Stringable
      * @var Collection<int, Movie>
      */
     #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: 'saga')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     #[ORM\OrderBy(
         ['releaseDate' => 'ASC']
     )]

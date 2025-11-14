@@ -2,8 +2,7 @@ import Swiper from 'swiper';
 import { Navigation } from 'swiper/modules';
 import '@nm/swiper/swiper-bundle.min.css';
 export class Slider {
-  constructor(element, nextbutton, prevbutton)
-  {
+  constructor(element, nextbutton, prevbutton) {
     new Swiper(
       element,
       {

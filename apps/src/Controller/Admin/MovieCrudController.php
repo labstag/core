@@ -8,7 +8,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
@@ -33,25 +32,13 @@ class MovieCrudController extends CrudControllerAbstract
     {
         $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
 
-        $action = $this->setLinkImdbAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->setLinkImdbAction();
+        $this->setLinkTmdbAction();
+        $this->setUpdateAction();
+        $this->actionsFactory->setActionUpdateAll();
 
-        $action = $this->setLinkTmdbAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
-
-        $action = $this->setUpdateAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
-        $this->setEditDetail($actions);
-        $this->configureActionsTrash($actions);
-        $this->configureActionsUpdateImage();
-
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]
@@ -86,13 +73,8 @@ class MovieCrudController extends CrudControllerAbstract
         $choiceField->allowMultipleChoices();
         $choiceField->renderExpanded(false);
 
-        $episodeCollectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
-        $episodeCollectionField->setTemplatePath('admin/field/runtime-movie.html.twig');
-        $episodeCollectionField->hideOnForm();
-
         $integerField = IntegerField::new('duration', new TranslatableMessage('Duration'));
-        $integerField->hideOnIndex();
-        $integerField->hideOnDetail();
+        $integerField->setTemplatePath('admin/field/runtime-movie.html.twig');
 
         $trailerField = TextField::new('trailer', new TranslatableMessage('Trailer'));
         $trailerField->hideOnIndex();
@@ -117,7 +99,6 @@ class MovieCrudController extends CrudControllerAbstract
                 $certificationField,
                 DateField::new('releaseDate', new TranslatableMessage('Release date')),
                 $choiceField,
-                $episodeCollectionField,
                 $integerField,
                 $this->addFieldSaga(),
                 NumberField::new('evaluation', new TranslatableMessage('Evaluation'))->hideOnIndex(),
@@ -198,6 +179,17 @@ class MovieCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_movie_index');
     }
 
+    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    {
+        $repositoryAbstract              = $this->getRepository();
+        $movies                          = $repositoryAbstract->findAll();
+        foreach ($movies as $movie) {
+            $messageBus->dispatch(new MovieMessage($movie->getId()));
+        }
+
+        return $this->redirectToRoute('admin_movie_index');
+    }
+
     protected function addFieldSaga(): AssociationField
     {
         $associationField = AssociationField::new('saga', new TranslatableMessage('Saga'));
@@ -213,12 +205,6 @@ class MovieCrudController extends CrudControllerAbstract
         $filters->add($entityFilter);
     }
 
-    private function configureActionsUpdateImage(): void
-    {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $request->query->get('action', null);
-    }
-
     /**
      * Get the MovieRepository with proper typing for PHPStan.
      */
@@ -230,8 +216,12 @@ class MovieCrudController extends CrudControllerAbstract
         return $repositoryAbstract;
     }
 
-    private function setLinkImdbAction(): Action
+    private function setLinkImdbAction(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('imdb', new TranslatableMessage('IMDB Page'));
         $action->setHtmlAttributes(
             ['target' => '_blank']
@@ -246,11 +236,17 @@ class MovieCrudController extends CrudControllerAbstract
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function setLinkTmdbAction(): Action
+    private function setLinkTmdbAction(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
         $action->setHtmlAttributes(
             ['target' => '_blank']
@@ -264,11 +260,17 @@ class MovieCrudController extends CrudControllerAbstract
             )
         );
 
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function setUpdateAction(): Action
+    private function setUpdateAction(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('update', new TranslatableMessage('Update'));
         $action->linkToUrl(
             fn (Movie $movie): string => $this->generateUrl(
@@ -280,6 +282,8 @@ class MovieCrudController extends CrudControllerAbstract
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 }

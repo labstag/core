@@ -4,13 +4,13 @@ describe('template spec', () => {
     cy.screenshot('first-page');
   });
 
-  it('redirection /admin vers /login et connexion superadmin', () => {
+  it('redirection /admin vers /connexion et connexion superadmin', () => {
     cy.visit(`https://${Cypress.env('SERVERNAME')}/admin`, {failOnStatusCode: false});
-    cy.url().should('include', '/login');
-    cy.get('input[name="_username"], input[name="username"], input[type="text"]').first().type('superadmin');
-    cy.get('input[name="_password"], input[name="password"], input[type="password"]').first().type('password');
+    cy.url().should('include', '/connexion');
+    cy.get('#login_username').should('be.visible').clear().type('superadmin');
+    cy.get('#login_password').should('be.visible').clear().type('password');
     cy.get('form').submit();
-    cy.url().should('not.include', '/login');
+    cy.url().should('not.include', '/connexion');
     cy.visit(`https://${Cypress.env('SERVERNAME')}/admin`, {failOnStatusCode: false});
     cy.url().should('include', '/admin');
     cy.screenshot('apres-connexion-superadmin');

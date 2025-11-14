@@ -51,9 +51,13 @@ abstract class EventEntityLib
     {
     }
 
-    protected function addParagraph(object $instance, string $type): void
+    protected function addParagraph(object $instance, string $type, ?int $position = null): void
     {
         $classType  = $this->paragraphService->getByCode($type);
+        if (is_null($classType)) {
+            return;
+        }
+
         $paragraphs = $instance->getParagraphs();
         foreach ($paragraphs as $paragraph) {
             if ($classType->getClass() == $paragraph::class) {
@@ -61,7 +65,7 @@ abstract class EventEntityLib
             }
         }
 
-        $this->paragraphService->addParagraph($instance, $type);
+        $this->paragraphService->addParagraph($instance, $type, $position);
     }
 
     protected function initEntityMeta(object $instance): void
@@ -95,26 +99,21 @@ abstract class EventEntityLib
 
     protected function postPersistMethods(object $object, EntityManagerInterface $entityManager)
     {
-        $this->updateEntityParagraph($object);
-        $this->updateEntityBlock($object);
         $this->updateEntityStory($object);
         $this->updateEntityMovie($object);
         $this->updateEntitySerie($object);
         $this->updateEntitySaga($object);
-        $this->updateEntityPage($object);
-        $this->updateEntityChapter($object);
-        $this->updateEntitySeason($object);
-        $this->updateEntityBanIp($object, $entityManager);
-        $this->updateEntityRedirection($object);
-        $this->initEntityMeta($object);
 
         $entityManager->flush();
     }
 
-    protected function prePersistMethods(object $object, $entityManager)
+    protected function prePersistMethods(object $object, EntityManagerInterface $entityManager)
     {
-        unset($entityManager);
         $this->initworkflow($object);
+        $this->updateEntityBanIp($object, $entityManager);
+        $this->updateEntityBlock($object);
+        $this->updateEntityRedirection($object);
+        $this->updateEntityParagraph($object);
         $this->updateEntityPage($object);
         $this->updateEntityChapter($object);
         $this->updateEntitySeason($object);
@@ -205,7 +204,8 @@ abstract class EventEntityLib
         }
 
         if (PageEnum::HOME->value != $instance->getType()) {
-            $this->addParagraph($instance, 'head');
+            $code = (PageEnum::CV->value == $instance->getType()) ? 'head-cv' : 'head';
+            $this->addParagraph($instance, $code, 0);
 
             return;
         }
@@ -221,10 +221,9 @@ abstract class EventEntityLib
 
         if ($oldHome instanceof Page) {
             $oldHome->setType(PageEnum::PAGE->value);
+            $oldHome->setSlug(null);
             $this->pageRepository->save($oldHome);
         }
-
-        $instance->setSlug('');
     }
 
     protected function updateEntityParagraph(object $instance): void
@@ -262,6 +261,10 @@ abstract class EventEntityLib
 
         $asciiSlugger  = new AsciiSlugger();
         $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
+        if ('' === trim($unicodeString)) {
+            return;
+        }
+
         $slug      = $unicodeString;
         $find      = false;
         $number    = 1;

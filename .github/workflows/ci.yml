@@ -112,10 +112,7 @@ jobs:
           restore-keys: ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: |
-            if [ ! -d node_modules ]; then
-                npm install
-            fi
+        run: npm install
       
       - name: Build assets
         run: npm run encore:build

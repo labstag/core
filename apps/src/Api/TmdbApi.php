@@ -373,19 +373,25 @@ class TmdbApi
     /**
      * @return array<string, mixed>
      */
-    public function getTrailerMovie(string $tmdbId): ?array
+    public function getTrailerMovie(string $tmdbId, ?string $locale = null): ?array
     {
         if ('' === $this->tmdbapiKey) {
             return null;
         }
 
-        $locale   = $this->configurationService->getLocaleTmdb();
-        $cacheKey = 'tmdb_movie-trailers_' . $tmdbId . '_lang_' . $locale;
+        $cacheKey = 'tmdb_movie-trailers_' . $tmdbId;
+        if (!is_null($locale)) {
+            $cacheKey .= '_lang_' . $locale;
+        }
 
         return $this->cacheService->get(
             $cacheKey,
             function (ItemInterface $item) use ($tmdbId, $locale) {
-                $url      = 'https://api.themoviedb.org/3/movie/' . $tmdbId . '/videos?language=' . $locale;
+                $url      = 'https://api.themoviedb.org/3/movie/' . $tmdbId . '/videos';
+                if (!is_null($locale)) {
+                    $url .= '?language=' . $locale;
+                }
+
                 $response = $this->httpClient->request(
                     'GET',
                     $url,
@@ -402,32 +408,43 @@ class TmdbApi
                     return null;
                 }
 
+                $data = json_decode($response->getContent(), true);
+                if (0 === count($data['results'])) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
                 $item->expiresAfter(86400);
 
-                return json_decode($response->getContent(), true);
+                return $data;
             },
             60
         );
     }
 
     /**
-     * @param array<string, mixed> $details
-     *
      * @return array<string, mixed>
      */
-    public function getTrailersSerie(array $details, string $tmdbId): array
+    public function getTrailersSerie(string $tmdbId, ?string $locale = null): ?array
     {
         if ('' === $this->tmdbapiKey) {
-            return $details;
+            return null;
         }
 
-        $locale   = $this->configurationService->getLocaleTmdb();
-        $cacheKey = 'tmdb-serie-trailers_' . $tmdbId . '_lang_' . $locale;
+        $cacheKey = 'tmdb-serie-trailers_' . $tmdbId;
+        if (!is_null($locale)) {
+            $cacheKey .= '_lang_' . $locale;
+        }
 
-        $data = $this->cacheService->get(
+        return $this->cacheService->get(
             $cacheKey,
             function (ItemInterface $item) use ($tmdbId, $locale) {
-                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdbId . '/videos?language=' . $locale;
+                $url      = 'https://api.themoviedb.org/3/tv/' . $tmdbId . '/videos';
+                if (!is_null($locale)) {
+                    $url .= '?language=' . $locale;
+                }
+
                 $response = $this->httpClient->request(
                     'GET',
                     $url,
@@ -444,19 +461,18 @@ class TmdbApi
                     return null;
                 }
 
+                $data = json_decode($response->getContent(), true);
+                if (0 === count($data['results'])) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
                 $item->expiresAfter(86400);
 
-                return json_decode($response->getContent(), true);
+                return $data;
             },
             60
         );
-
-        if (null == $data) {
-            return $details;
-        }
-
-        $details['trailers'] = $data;
-
-        return $details;
     }
 }

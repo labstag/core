@@ -2,23 +2,23 @@
 @use "../variables";
 
 @use "sass:color";
-.paragraph_season-list{
-  .wrapper{
 
-  }
-  .title{
+.paragraph_season-list {
+  .wrapper {}
 
-  }
-  ul{
+  .title {}
+
+  ul {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  li{
-    &.teaser-season{
+
+  li {
+    &.teaser-season {
       background-color: color.scale(variables.$colorbg, $lightness: 15%);
-      &:nth-child(even)
-      {
+
+      &:nth-child(even) {
         background-color: color.scale(variables.$colorbg, $lightness: 10%);
       }
     }

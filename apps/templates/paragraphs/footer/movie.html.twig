@@ -24,7 +24,7 @@
 					<div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}"></div>
 				{% endif %}
 				<div class="info">
-					<div class="description">{{ movie.description|raw }}</div>
+					<div class="description html-content">{{ movie.description|raw }}</div>
 					<ul>
                         {% if movie.certification != '' %}
                             <li class="certification">

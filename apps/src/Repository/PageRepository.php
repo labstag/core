@@ -19,7 +19,9 @@ class PageRepository extends RepositoryAbstract
     {
         $queryBuilder = $this->createQueryBuilder('p');
         $queryBuilder->where('p.enable = :enable');
+        $queryBuilder->andWhere('p.hide = :hide');
         $queryBuilder->setParameter('enable', true);
+        $queryBuilder->setParameter('hide', false);
         $queryBuilder->orderBy('p.createdAt', 'DESC');
 
         $query = $queryBuilder->getQuery();

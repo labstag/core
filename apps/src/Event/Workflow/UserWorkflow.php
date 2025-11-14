@@ -2,8 +2,7 @@
 
 namespace Labstag\Event\Workflow;
 
-use Labstag\Email\EmailAbstract;
-use Labstag\Entity\User;
+use Labstag\Message\UserEmailMessage;
 use Symfony\Component\Workflow\Attribute\AsTransitionListener;
 use Symfony\Component\Workflow\Event\TransitionEvent;
 
@@ -13,60 +12,41 @@ class UserWorkflow extends WorkflowAbstract
     public function onActivate(TransitionEvent $transitionEvent): void
     {
         $user = $transitionEvent->getSubject();
-        $this->sendMail('user_activate', $user);
+        $this->messageBus->dispatch(new UserEmailMessage($user->getUsername(), 'user_activate'));
     }
 
     #[AsTransitionListener(workflow: 'user', transition: 'approval')]
     public function onApproval(TransitionEvent $transitionEvent): void
     {
         $user = $transitionEvent->getSubject();
-        $this->sendMail('user_approval', $user);
+        $this->messageBus->dispatch(new UserEmailMessage($user->getUsername(), 'user_approval'));
     }
 
     #[AsTransitionListener(workflow: 'user', transition: 'changepassword')]
     public function onChangePassword(TransitionEvent $transitionEvent): void
     {
         $user = $transitionEvent->getSubject();
-        $this->sendMail('user_changepassword', $user);
+        $this->messageBus->dispatch(new UserEmailMessage($user->getUsername(), 'user_changepassword'));
     }
 
     #[AsTransitionListener(workflow: 'user', transition: 'deactivate')]
     public function onDeactivate(TransitionEvent $transitionEvent): void
     {
         $user = $transitionEvent->getSubject();
-        $this->sendMail('user_deactivate', $user);
+        $this->messageBus->dispatch(new UserEmailMessage($user->getUsername(), 'user_deactivate'));
     }
 
     #[AsTransitionListener(workflow: 'user', transition: 'passwordlost')]
     public function onPasswordLost(TransitionEvent $transitionEvent): void
     {
         $user = $transitionEvent->getSubject();
-        $this->sendMail('user_passwordlost', $user);
+        $this->messageBus->dispatch(new UserEmailMessage($user->getUsername(), 'user_passwordlost'));
     }
 
     #[AsTransitionListener(workflow: 'user', transition: 'submit')]
     public function onSubmit(TransitionEvent $transitionEvent): void
     {
         $user = $transitionEvent->getSubject();
-        $this->sendMail('user_submit', $user);
-    }
-
-    protected function sendMail(string $template, User $user): void
-    {
-        $configuration = $this->configurationService->getConfiguration();
-        $data          = [
-            'user'          => $user,
-            'configuration' => $configuration,
-        ];
-
-        $email = $this->emailService->get($template, $data);
-        if (!$email instanceof EmailAbstract) {
-            return;
-        }
-
-        $email->init();
-        $email->to($user->getEmail());
-
-        $this->emailService->send($email);
+        $this->messageBus->dispatch(new UserEmailMessage($user->getUsername(), 'user_submit'));
     }
 }

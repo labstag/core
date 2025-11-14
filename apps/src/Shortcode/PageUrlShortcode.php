@@ -15,9 +15,9 @@ class PageUrlShortcode extends ShortcodeAbstract
     {
     }
 
-    public function content(array $matches): ?string
+    public function content(string $id): ?string
     {
-        $entity = $this->pageRepository->find($matches[1]);
+        $entity = $this->pageRepository->find($id);
         if (!$entity instanceof Page) {
             return null;
         }

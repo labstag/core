@@ -23,12 +23,12 @@ class ProfilCrudController extends UserCrudController
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
-        $actions->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN);
-        $actions->remove(Crud::PAGE_INDEX, Action::DELETE);
-        $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setReadOnly(true);
+        $this->actionsFactory->setShowDetail(false);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, Action::EDIT);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]

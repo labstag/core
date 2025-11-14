@@ -2,30 +2,17 @@
 
 namespace Labstag\Data;
 
-use Doctrine\ORM\EntityManagerInterface;
+use DateTime;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Enum\PageEnum;
-use Labstag\Service\ConfigurationService;
-use Labstag\Service\FileService;
 use Labstag\Shortcode\PostUrlShortcode;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Spatie\SchemaOrg\Schema;
+use Symfony\Component\Routing\RouterInterface;
 
-class PostData extends DataAbstract implements DataInterface
+class PostData extends PageData implements DataInterface
 {
-    public function __construct(
-        protected PageData $pageData,
-        protected FileService $fileService,
-        protected ConfigurationService $configurationService,
-        protected EntityManagerInterface $entityManager,
-        protected RequestStack $requestStack,
-        protected TranslatorInterface $translator,
-    )
-    {
-        parent::__construct($fileService, $configurationService, $entityManager, $requestStack, $translator);
-    }
-
+    #[\Override]
     public function generateSlug(object $entity): string
     {
         $page  = $this->entityManager->getRepository(Page::class)->findOneBy(
@@ -34,12 +21,51 @@ class PostData extends DataAbstract implements DataInterface
             ]
         );
 
-        return $this->pageData->generateSlug($page) . '/' . $entity->getSlug();
+        return parent::generateSlug($page) . '/' . $entity->getSlug();
     }
 
-    public function getEntity(string $slug): object
+    #[\Override]
+    public function getEntity(?string $slug): object
     {
-        return $this->getEntityBySlug($slug);
+        return $this->getEntityBySlugPost($slug);
+    }
+
+    public function getJsonLd(object $entity): object
+    {
+        $blogPosting = Schema::BlogPosting();
+        $blogPosting->headline($entity->getTitle());
+
+        $resume      = $entity->getResume();
+        $clean       = trim(html_entity_decode(strip_tags($resume), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $blogPosting->description($clean);
+
+        $img = $this->siteService->asset($entity, 'img', true, true);
+        if ('' !== $img) {
+            $blogPosting->image($img);
+        }
+
+        $blogPosting->author(Schema::person()->name($entity->getRefuser()->getUsername()));
+
+        if ($entity->getCreatedAt() instanceof DateTime) {
+            $blogPosting->datePublished($entity->getCreatedAt()->format('c'));
+        }
+
+        if ($entity->getUpdatedAt() instanceof DateTime) {
+            $blogPosting->dateModified($entity->getUpdatedAt()->format('c'));
+        }
+
+        $slug = $this->slugService->forEntity($entity);
+        $blogPosting->mainEntityOfPage(
+            Schema::webPage()->id(
+                $this->router->generate(
+                    'front',
+                    ['slug' => $slug],
+                    RouterInterface::ABSOLUTE_URL
+                )
+            )
+        );
+
+        return $blogPosting;
     }
 
     #[\Override]
@@ -48,23 +74,27 @@ class PostData extends DataAbstract implements DataInterface
         return [PostUrlShortcode::class];
     }
 
+    #[\Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
     }
 
+    #[\Override]
     public function getTitleMeta(object $entity): string
     {
         return $this->getTitle($entity);
     }
 
-    public function match(string $slug): bool
+    #[\Override]
+    public function match(?string $slug): bool
     {
-        $page = $this->getEntityBySlug($slug);
+        $page = $this->getEntityBySlugPost($slug);
 
         return $page instanceof Post;
     }
 
+    #[\Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('Post');
@@ -75,29 +105,38 @@ class PostData extends DataAbstract implements DataInterface
         return $this->configPlaceholder();
     }
 
+    #[\Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Post;
     }
 
+    #[\Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Post;
     }
 
+    #[\Override]
+    public function supportsJsonLd(object $entity): bool
+    {
+        return $entity instanceof Post;
+    }
+
+    #[\Override]
     public function supportsShortcode(string $className): bool
     {
         return Post::class === $className;
     }
 
-    protected function getEntityBySlug(string $slug): ?object
+    protected function getEntityBySlugPost(?string $slug): ?object
     {
-        if (0 === substr_count($slug, '/')) {
+        if (0 === substr_count((string) $slug, '/')) {
             return null;
         }
 
-        $slugSecond = basename($slug);
-        $slugFirst  = dirname($slug);
+        $slugSecond = basename((string) $slug);
+        $slugFirst  = dirname((string) $slug);
 
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
             ['slug' => $slugFirst]

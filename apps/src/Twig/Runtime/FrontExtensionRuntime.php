@@ -76,10 +76,12 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         $image    = $this->metaService->getImageForMetatags($entity);
         $config   = $this->configurationService->getConfiguration();
         $favicon  = $this->siteService->getFileFavicon();
+        $jsonLd   = $this->metaService->getJsonLd($entity);
 
         return $this->twigEnvironment->render(
             'metatags.html.twig',
             [
+                'jsonLd'   => $jsonLd,
                 'url'      => $config->getUrl(),
                 'favicon'  => $favicon,
                 'image'    => $image,
@@ -132,15 +134,17 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 
     public function tarteaucitron(): string
     {
-        $config = $this->configurationService->getConfiguration();
-        if (in_array(trim((string) $config->getTacServices()), ['', '0'], true)) {
+        $tac = $this->configurationService->getTacConfig();
+        if ('' === $tac) {
             return '';
         }
+
+        $config = $this->configurationService->getConfiguration();
 
         return $this->twigEnvironment->render(
             'tarteaucitron.html.twig',
             [
-                'config'   => $config,
+                'tac'      => $tac,
                 'services' => $config->getTacServices(),
             ]
         );

@@ -72,24 +72,13 @@ class StoryCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setActionPublic($actions, 'admin_story_w3c', 'admin_story_public');
-        $this->setEditDetail($actions);
-        $this->configureActionsTrash($actions);
-        $this->setActionMoveChapter($actions);
-        $this->setActionNewChapter($actions);
-        $action = $this->setUpdateAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->setActionMoveChapter();
+        $this->setActionNewChapter();
+        $this->setUpdateAction();
+        $this->actionsFactory->setActionUpdateAll();
 
-        $action = Action::new('updateAll', new TranslatableMessage('Update all'), 'fas fa-sync-alt');
-        $action->displayAsLink();
-        $action->linkToCrudAction('updateAll');
-        $action->createAsGlobalAction();
-
-        $actions->add(Crud::PAGE_INDEX, $action);
-
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]
@@ -152,15 +141,6 @@ class StoryCrudController extends CrudControllerAbstract
     public static function getEntityFqcn(): string
     {
         return Story::class;
-    }
-
-    #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $story                           = $repositoryAbstract->find($entity);
-
-        return $this->publicLink($story);
     }
 
     public function moveChapter(AdminContext $adminContext): RedirectResponse|Response
@@ -226,28 +206,27 @@ class StoryCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_story_index');
     }
 
-    #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
-    public function w3c(string $entity): RedirectResponse
+    private function setActionMoveChapter(): void
     {
-        $repositoryAbstract              = $this->getRepository();
-        $story                           = $repositoryAbstract->find($entity);
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
 
-        return $this->linkw3CValidator($story);
-    }
-
-    private function setActionMoveChapter(Actions $actions): void
-    {
         $action = Action::new('moveChapter', new TranslatableMessage('Move a chapter'));
         $action->linkToCrudAction('moveChapter');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function setActionNewChapter(Actions $actions): void
+    private function setActionNewChapter(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('newChapter', new TranslatableMessage('New chapter'));
         $action->linkToUrl(
             fn (Story $story): string => $this->generateUrl(
@@ -259,13 +238,17 @@ class StoryCrudController extends CrudControllerAbstract
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function setUpdateAction(): Action
+    private function setUpdateAction(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('update', new TranslatableMessage('Update'));
         $action->linkToUrl(
             fn (Story $story): string => $this->generateUrl(
@@ -277,6 +260,8 @@ class StoryCrudController extends CrudControllerAbstract
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 }

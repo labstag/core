@@ -7,12 +7,15 @@ use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Meta;
 use ReflectionClass;
 use stdClass;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Twig\Environment;
 
 final class MetaService
 {
     public function __construct(
+        #[AutowireIterator('labstag.datas')]
+        private iterable $datas,
         private Environment $twigEnvironment,
         private EntityManagerInterface $entityManager,
         private ViewResolverService $viewResolverService,
@@ -74,8 +77,11 @@ final class MetaService
 
         $file = str_replace('/uploads/', '', $file);
         $file = $this->fileService->getFileInAdapter('public', $file);
+        if (is_null($file)) {
+            return null;
+        }
 
-        if (0 < substr_count((string) $file, 'https://')) {
+        if (0 < substr_count($file, 'https://')) {
             return [
                 'src'    => $file,
                 'width'  => null,
@@ -85,6 +91,27 @@ final class MetaService
         }
 
         return $this->fileService->getInfoImage($file);
+    }
+
+    public function getJsonLd(object $entity): string
+    {
+        $jsonLd = [];
+        foreach ($this->datas as $data) {
+            if ($data->supportsJsonLd($entity)) {
+                $jsonLd = $data->getJsonLd($entity);
+                break;
+            }
+        }
+
+        if (is_object($jsonLd)) {
+            $jsonLd = $jsonLd->jsonSerialize();
+        }
+
+        if (0 === count($jsonLd)) {
+            return '';
+        }
+
+        return json_encode($jsonLd);
     }
 
     public function getMetatags(object $entity): Meta

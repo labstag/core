@@ -50,22 +50,26 @@ class BlockCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
+
         $action = Action::new('positionBlock', new TranslatableMessage('Change Position'), 'fas fa-arrows-alt');
         $action->displayAsLink();
         $action->linkToCrudAction('positionBlock');
         $action->createAsGlobalAction();
 
-        $actions->add(Crud::PAGE_INDEX, $action);
-        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('newBlock', new TranslatableMessage('New block'));
-        $action->displayAsLink();
-        $action->linkToCrudAction('newBlock');
+        $action = Action::new('showModal', new TranslatableMessage('New block'));
+        $action->linkToCrudAction('showModal');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
         $action->createAsGlobalAction();
 
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
     #[\Override]
@@ -312,6 +316,20 @@ class BlockCrudController extends CrudControllerAbstract
         return $this->render(
             'admin/block/order.html.twig',
             ['blocks' => $blocks]
+        );
+    }
+
+    public function showModal(AdminContext $adminContext): Response
+    {
+        unset($adminContext);
+        $blocks = $this->blockService->getAll(null);
+
+        return $this->render(
+            'admin/block/new.html.twig',
+            [
+                'controller' => static::class,
+                'blocks'     => $blocks,
+            ]
         );
     }
 

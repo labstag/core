@@ -2,24 +2,24 @@
 @use "../variables";
 
 @use "sass:color";
-.paragraph_episode-list{
-  .wrapper{
 
-  }
-  .title{
+.paragraph_episode-list {
+  .wrapper {}
 
-  }
-  .episode-list{
-    ul{
+  .title {}
+
+  .episode-list {
+    ul {
       display: grid;
       grid-template-columns: 1fr;
       gap: 12px;
     }
-    li{
-      &.teaser-episode{
+
+    li {
+      &.teaser-episode {
         background-color: color.scale(variables.$colorbg, $lightness: 15%);
-        &:nth-child(even)
-        {
+
+        &:nth-child(even) {
           background-color: color.scale(variables.$colorbg, $lightness: 10%);
         }
       }
@@ -29,7 +29,8 @@
       }
     }
   }
-  .season-navigation{
+
+  .season-navigation {
     background-color: #222; // Mode sombre par défaut
     padding: 2rem;
     text-align: center;

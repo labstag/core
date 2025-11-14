@@ -2,6 +2,9 @@
 
 namespace Labstag\Replace;
 
+use Labstag\Entity\Page;
+use Labstag\Enum\PageEnum;
+
 class LinkChangePasswordReplace extends ReplaceAbstract
 {
     public function exec(): string
@@ -12,16 +15,29 @@ class LinkChangePasswordReplace extends ReplaceAbstract
 
         $configuration = $this->configurationService->getConfiguration();
         $entity        = $this->data['user'];
-        $id = $entity->getId();
+        $id            = $entity->getId();
         if (is_null($id)) {
             return '#linkdisabled';
         }
 
+        $entityRepository = $this->entityManager->getRepository(Page::class);
+
+        $page = $entityRepository->findOneBy(
+            [
+                'type' => PageEnum::CHANGEPASSWORD->value,
+            ]
+        );
+        if (!$page instanceof Page) {
+            return '#linkdisabled';
+        }
+
+        $slug = $this->slugService->forEntity($page);
 
         return $configuration->getUrl() . $this->router->generate(
-            'app_changepassword',
+            'front',
             [
-                'uid' => $entity->getId(),
+                'slug' => $slug,
+                'uid'  => $entity->getId(),
             ]
         );
     }

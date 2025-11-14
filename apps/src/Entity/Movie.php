@@ -13,7 +13,6 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\MovieRepository;
 use Override;
-use ReflectionClass;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
@@ -81,15 +80,6 @@ class Movie implements Stringable
     #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
-    /**
-     * @var Collection<int, MovieInfoParagraph>
-     */
-    #[ORM\OneToMany(targetEntity: MovieInfoParagraph::class, mappedBy: 'refmovie', cascade: ['persist', 'remove'])]
-    #[ORM\OrderBy(
-        ['position' => 'ASC']
-    )]
-    protected Collection $paragraphs;
-
     #[ORM\Column(name: 'release_date', type: Types::DATE_MUTABLE, nullable: true)]
     protected ?DateTime $releaseDate = null;
 
@@ -111,7 +101,6 @@ class Movie implements Stringable
     public function __construct()
     {
         $this->categories = new ArrayCollection();
-        $this->paragraphs = new ArrayCollection();
     }
 
     #[Override]
@@ -125,17 +114,6 @@ class Movie implements Stringable
         if (!$this->categories->contains($movieCategory)) {
             $this->categories->add($movieCategory);
             $movieCategory->addMovie($this);
-        }
-
-        return $this;
-    }
-
-    public function addParagraph(Paragraph $paragraph): static
-    {
-        $reflectionClass = new ReflectionClass($paragraph);
-        if (!$this->paragraphs->contains($paragraph) && $reflectionClass->hasMethod('setRefmovie')) {
-            $this->paragraphs->add($paragraph);
-            $paragraph->setRefmovie($this);
         }
 
         return $this;
@@ -202,14 +180,6 @@ class Movie implements Stringable
         return $this->imgFile;
     }
 
-    /**
-     * @return Collection<int, MovieInfoParagraph>
-     */
-    public function getParagraphs(): Collection
-    {
-        return $this->paragraphs;
-    }
-
     public function getReleaseDate(): ?DateTime
     {
         return $this->releaseDate;
@@ -259,22 +229,6 @@ class Movie implements Stringable
     {
         if ($this->categories->removeElement($movieCategory)) {
             $movieCategory->removeMovie($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParagraph(Paragraph $paragraph): static
-    {
-        $reflectionClass = new ReflectionClass($paragraph);
-        if (!$reflectionClass->hasMethod('setRefmovie') || !$reflectionClass->hasMethod('getRefmovie')) {
-            return $this;
-        }
-
-        // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getRefmovie() === $this
-        ) {
-            $paragraph->setRefmovie(null);
         }
 
         return $this;
