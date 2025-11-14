@@ -4,7 +4,6 @@ namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Labstag\Repository\RepositoryAbstract;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;

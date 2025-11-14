@@ -410,7 +410,14 @@ class TmdbApi
 
                 $item->expiresAfter(86400);
 
-                return json_decode($response->getContent(), true);
+                $data = json_decode($response->getContent(), true);
+                if (0 === count($data['results'])) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                return $data;
             },
             60
         );
@@ -456,7 +463,14 @@ class TmdbApi
 
                 $item->expiresAfter(86400);
 
-                return json_decode($response->getContent(), true);
+                $data = json_decode($response->getContent(), true);
+                if (0 === count($data['results'])) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                return $data;
             },
             60
         );
