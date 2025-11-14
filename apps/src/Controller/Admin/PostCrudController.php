@@ -7,8 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use Labstag\Entity\Post;
 use Labstag\Field\WysiwygField;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PostCrudController extends CrudControllerAbstract
@@ -17,8 +15,6 @@ class PostCrudController extends CrudControllerAbstract
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
-        $this->actionsFactory->setActionLinkPublic('admin_post_public');
-        $this->actionsFactory->setActionLinkW3CValidator('admin_post_w3c');
 
         return $this->actionsFactory->show();
     }
@@ -85,23 +81,5 @@ class PostCrudController extends CrudControllerAbstract
     public static function getEntityFqcn(): string
     {
         return Post::class;
-    }
-
-    #[Route('/admin/post/{entity}/public', name: 'admin_post_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $post                            = $repositoryAbstract->find($entity);
-
-        return $this->publicLink($post);
-    }
-
-    #[Route('/admin/post/{entity}/w3c', name: 'admin_post_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $post                            = $repositoryAbstract->find($entity);
-
-        return $this->linkw3CValidator($post);
     }
 }

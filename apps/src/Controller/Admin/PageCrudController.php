@@ -11,8 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Field\WysiwygField;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PageCrudController extends CrudControllerAbstract
@@ -21,8 +19,6 @@ class PageCrudController extends CrudControllerAbstract
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
-        $this->actionsFactory->setActionLinkPublic('admin_page_public');
-        $this->actionsFactory->setActionLinkW3CValidator('admin_page_w3c');
 
         return $this->actionsFactory->show();
     }
@@ -110,24 +106,6 @@ class PageCrudController extends CrudControllerAbstract
     public static function getEntityFqcn(): string
     {
         return Page::class;
-    }
-
-    #[Route('/admin/page/{entity}/public', name: 'admin_page_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $page                            = $repositoryAbstract->find($entity);
-
-        return $this->publicLink($page);
-    }
-
-    #[Route('/admin/page/{entity}/w3c', name: 'admin_page_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $page                            = $repositoryAbstract->find($entity);
-
-        return $this->linkw3CValidator($page);
     }
 
     protected function addFieldIsHome(?Page $page, string $pageName): ?ChoiceField

@@ -29,8 +29,6 @@ class SerieCrudController extends CrudControllerAbstract
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
-        $this->actionsFactory->setActionLinkPublic('admin_serie_public');
-        $this->actionsFactory->setActionLinkW3CValidator('admin_serie_w3c');
         $this->setLinkImdbAction();
         $this->setLinkTmdbAction();
         $this->setUpdateAction();
@@ -157,15 +155,6 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.imdb.com/title/' . $serie->getImdb() . '/');
     }
 
-    #[Route('/admin/serie/{entity}/public', name: 'admin_serie_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $serie                           = $repositoryAbstract->find($entity);
-
-        return $this->publicLink($serie);
-    }
-
     #[Route('/admin/serie/{entity}/tmdb', name: 'admin_serie_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
@@ -200,15 +189,6 @@ class SerieCrudController extends CrudControllerAbstract
         }
 
         return $this->redirectToRoute('admin_serie_index');
-    }
-
-    #[Route('/admin/serie/{entity}/w3c', name: 'admin_serie_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $serie                           = $repositoryAbstract->find($entity);
-
-        return $this->linkw3CValidator($serie);
     }
 
     private function setLinkImdbAction(): void

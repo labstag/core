@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
@@ -121,6 +122,20 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return $queryBuilder;
     }
 
+    public function linkPublic(AdminContext $adminContext): RedirectResponse
+    {
+        $request    = $adminContext->getRequest();
+        $entityId   = $request->query->get('entityId');
+        $repositoryAbstract = $this->getRepository();
+        $entity     = $repositoryAbstract->find($entityId);
+        $slug       = $this->slugService->forEntity($entity);
+
+        return $this->redirectToRoute(
+            'front',
+            ['slug' => $slug]
+        );
+    }
+
     protected function configureActionsBtn(Actions $actions): void
     {
         $actions->add(Crud::PAGE_EDIT, Action::INDEX);
@@ -189,9 +204,15 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
     }
 
-    protected function linkw3CValidator(object $entity): RedirectResponse
+    protected function linkw3CValidator(AdminContext $adminContext): RedirectResponse
     {
-        $slug = $this->slugService->forEntity($entity);
+        $request                         = $adminContext->getRequest();
+        $entityId                        = $request->query->get('entityId');
+        $repository                      = $this->getRepository();
+        $entity                          = $repository->find($entityId);
+        $repositoryAbstract              = $this->getRepository();
+        $repositoryAbstract->find($entity);
+        $slug                            = $this->slugService->forEntity($entity);
 
         return $this->redirect(
             'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
@@ -199,16 +220,6 @@ abstract class CrudControllerAbstract extends AbstractCrudController
                 ['slug' => $slug],
                 UrlGeneratorInterface::ABSOLUTE_URL
             )
-        );
-    }
-
-    protected function publicLink(object $entity): RedirectResponse
-    {
-        $slug = $this->slugService->forEntity($entity);
-
-        return $this->redirectToRoute(
-            'front',
-            ['slug' => $slug]
         );
     }
 

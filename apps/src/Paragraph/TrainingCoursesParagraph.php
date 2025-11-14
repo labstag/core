@@ -122,7 +122,9 @@ class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInt
 
         $skills = [];
         foreach ($oldskils as $key => $skill) {
-            $position          = is_null($skill['position']) ? $key : $skill['position'];
+            $position          = (!isset($skill['position']) || is_null(
+                $skill['position']
+            )) ? $key : $skill['position'];
             $skill['position'] = $position;
             $skills[$position] = $skill;
         }

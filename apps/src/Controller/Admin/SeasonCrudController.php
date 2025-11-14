@@ -29,8 +29,6 @@ class SeasonCrudController extends CrudControllerAbstract
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
-        $this->actionsFactory->setActionLinkPublic('admin_season_public');
-        $this->actionsFactory->setActionLinkW3CValidator('admin_season_w3c');
         $this->setUpdateAction();
         $this->setLinkTmdbAction();
 
@@ -144,15 +142,6 @@ class SeasonCrudController extends CrudControllerAbstract
         return Season::class;
     }
 
-    #[Route('/admin/season/{entity}/public', name: 'admin_season_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $repositoryAbstract               = $this->getRepository();
-        $season                           = $repositoryAbstract->find($entity);
-
-        return $this->publicLink($season);
-    }
-
     #[Route('/admin/season/{entity}/tmdb', name: 'admin_season_tmdb')]
     public function tmdb(string $entity): RedirectResponse
     {
@@ -178,15 +167,6 @@ class SeasonCrudController extends CrudControllerAbstract
         }
 
         return $this->redirectToRoute('admin_season_index');
-    }
-
-    #[Route('/admin/season/{entity}/w3c', name: 'admin_season_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $repositoryAbstract               = $this->getRepository();
-        $season                           = $repositoryAbstract->find($entity);
-
-        return $this->linkw3CValidator($season);
     }
 
     private function setLinkTmdbAction(): void

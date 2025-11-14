@@ -25,8 +25,6 @@ class SagaCrudController extends CrudControllerAbstract
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
-        $this->actionsFactory->setActionLinkPublic('admin_saga_public');
-        $this->actionsFactory->setActionLinkW3CValidator('admin_saga_w3c');
         $this->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
@@ -76,15 +74,6 @@ class SagaCrudController extends CrudControllerAbstract
     public static function getEntityFqcn(): string
     {
         return Saga::class;
-    }
-
-    #[Route('/admin/saga/{entity}/public', name: 'admin_saga_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $saga                            = $repositoryAbstract->find($entity);
-
-        return $this->publicLink($saga);
     }
 
     public function moviesField(): AssociationField
@@ -165,15 +154,6 @@ class SagaCrudController extends CrudControllerAbstract
         }
 
         return $this->redirectToRoute('admin_saga_index');
-    }
-
-    #[Route('/admin/saga/{entity}/w3c', name: 'admin_saga_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $saga                            = $repositoryAbstract->find($entity);
-
-        return $this->linkw3CValidator($saga);
     }
 
     private function setLinkTmdbAction(): void

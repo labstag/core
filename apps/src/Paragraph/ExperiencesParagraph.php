@@ -123,7 +123,9 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
 
         $skills = [];
         foreach ($oldskils as $key => $skill) {
-            $position          = is_null($skill['position']) ? $key : $skill['position'];
+            $position          = (!isset($skill['position']) || is_null(
+                $skill['position']
+            )) ? $key : $skill['position'];
             $skill['position'] = $position;
             $skill['skills']   = isset($skill['skills']) ? $this->updateSkills($skill['skills']) : [];
             $skills[$position] = $skill;
@@ -139,7 +141,9 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         $old = $tab;
         $tab = [];
         foreach ($old as $key => $skill) {
-            $position          = is_null($skill['position']) ? $key : $skill['position'];
+            $position          = (!isset($skill['position']) || is_null(
+                $skill['position']
+            )) ? $key : $skill['position'];
             $skill['position'] = $position;
             $tab[$position]    = $skill;
         }

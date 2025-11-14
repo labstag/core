@@ -73,9 +73,6 @@ class StoryCrudController extends CrudControllerAbstract
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
-        $this->actionsFactory->setActionLinkPublic('admin_story_public');
-        $this->actionsFactory->setActionLinkW3CValidator('admin_story_w3c');
-
         $this->setActionMoveChapter();
         $this->setActionNewChapter();
         $this->setUpdateAction();
@@ -146,15 +143,6 @@ class StoryCrudController extends CrudControllerAbstract
         return Story::class;
     }
 
-    #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $story                           = $repositoryAbstract->find($entity);
-
-        return $this->publicLink($story);
-    }
-
     public function moveChapter(AdminContext $adminContext): RedirectResponse|Response
     {
         $request    = $adminContext->getRequest();
@@ -216,15 +204,6 @@ class StoryCrudController extends CrudControllerAbstract
         }
 
         return $this->redirectToRoute('admin_story_index');
-    }
-
-    #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $story                           = $repositoryAbstract->find($entity);
-
-        return $this->linkw3CValidator($story);
     }
 
     private function setActionMoveChapter(): void

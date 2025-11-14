@@ -26,8 +26,6 @@ class ChapterCrudController extends CrudControllerAbstract
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
-        $this->actionsFactory->setActionLinkPublic('admin_chapter_public');
-        $this->actionsFactory->setActionLinkW3CValidator('admin_chapter_w3c');
         $this->setUpdateAction();
 
         return $this->actionsFactory->show();
@@ -101,15 +99,6 @@ class ChapterCrudController extends CrudControllerAbstract
         return Chapter::class;
     }
 
-    #[Route('/admin/chapter/{entity}/public', name: 'admin_chapter_public')]
-    public function linkPublic(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $chapter                         = $repositoryAbstract->find($entity);
-
-        return $this->publicLink($chapter);
-    }
-
     #[Route('/admin/chapter/{entity}/update', name: 'admin_chapter_update')]
     public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
@@ -124,15 +113,6 @@ class ChapterCrudController extends CrudControllerAbstract
         }
 
         return $this->redirectToRoute('admin_story_index');
-    }
-
-    #[Route('/admin/chapter/{entity}/w3c', name: 'admin_chapter_w3c')]
-    public function w3c(string $entity): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $chapter                         = $repositoryAbstract->find($entity);
-
-        return $this->linkw3CValidator($chapter);
     }
 
     private function addFieldRefStory(): AssociationField

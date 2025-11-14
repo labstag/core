@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use ReflectionClass;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -28,6 +29,8 @@ class ActionsFactory
     protected bool $showDetail = true;
 
     public function __construct(
+        #[AutowireIterator('labstag.datas')]
+        private readonly iterable $datas,
         protected RequestStack $requestStack,
         protected AdminUrlGenerator $adminUrlGenerator,
     )
@@ -83,6 +86,8 @@ class ActionsFactory
         $this->entity     = $entity;
         $this->controller = $controller;
         $this->getDefaultActions();
+        $this->setActionLinkPublic();
+        $this->setActionLinkW3CValidator();
     }
 
     public function isTrash(): bool
@@ -109,44 +114,50 @@ class ActionsFactory
         }
     }
 
-    public function setActionLinkPublic(string $urlPublic): void
+    public function setActionLinkPublic(): void
     {
-        if (!$this->isTrash()) {
+        $find   = false;
+        $entity = new $this->entity();
+        foreach ($this->datas as $data) {
+            if ($data->supportsData($entity)) {
+                $find = true;
+                break;
+            }
+        }
+
+        if (!$find || !$this->isTrash()) {
             return;
         }
 
         $action = Action::new('linkPublic', new TranslatableMessage('View Page'))->setHtmlAttributes(
             ['target' => '_blank']
-        )->linkToRoute(
-            $urlPublic,
-            fn ($entity): array => [
-                'entity' => $entity->getId(),
-            ]
-        )->displayIf(
-            static fn ($entity): bool => !method_exists($entity, 'getDeletedAt') || null === $entity->getDeletedAt()
         );
+        $action->linkToCrudAction('linkPublic');
 
         $this->add(Crud::PAGE_DETAIL, $action);
         $this->add(Crud::PAGE_EDIT, $action);
         $this->add(Crud::PAGE_INDEX, $action);
     }
 
-    public function setActionLinkW3CValidator(string $urlW3c): void
+    public function setActionLinkW3CValidator(): void
     {
-        if (!$this->isTrash()) {
+        $find   = false;
+        $entity = new $this->entity();
+        foreach ($this->datas as $data) {
+            if ($data->supportsData($entity)) {
+                $find = true;
+                break;
+            }
+        }
+
+        if (!$find || !$this->isTrash()) {
             return;
         }
 
         $w3cAction = Action::new('linkw3CValidator', new TranslatableMessage('W3C Validator'))->setHtmlAttributes(
             ['target' => '_blank']
-        )->linkToRoute(
-            $urlW3c,
-            fn ($entity): array => [
-                'entity' => $entity->getId(),
-            ]
-        )->displayIf(
-            static fn ($entity): bool => !method_exists($entity, 'getDeletedAt') || null === $entity->getDeletedAt()
         );
+        $w3cAction->linkToCrudAction('linkw3CValidator');
 
         $this->add(Crud::PAGE_DETAIL, $w3cAction);
         $this->add(Crud::PAGE_EDIT, $w3cAction);
