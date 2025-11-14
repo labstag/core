@@ -57,7 +57,7 @@ class LinksBlock extends BlockAbstract
             return;
         }
 
-        // $links = $this->correctionLinks($links);
+        $links = $this->correctionLinks($links);
 
         $this->setData(
             $block,
@@ -115,6 +115,25 @@ class LinksBlock extends BlockAbstract
     public function update(Block $block): void
     {
         $this->updateBlockLinks($block);
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function correctionLinks(array $links): array
+    {
+        $data  = [];
+
+        foreach ($links as $link) {
+            $url = $this->shortCodeService->getContent($link['url']);
+            if (null === $url) {
+                continue;
+            }
+
+            $data[] = $link;
+        }
+
+        return $data;
     }
 
     private function updateBlockLinks(Block $block): void
