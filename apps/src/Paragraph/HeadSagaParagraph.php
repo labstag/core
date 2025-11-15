@@ -58,15 +58,6 @@ class HeadSagaParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $entityRepository                = $this->getRepository($this->getClass());
-        $paragraph                       = $entityRepository->findOneBy([]);
-
-        if (!$paragraph instanceof Paragraph) {
-            return $object instanceof Block;
-        }
-
-        $parent = $this->paragraphService->getEntityParent($paragraph);
-
-        return $parent->value->getId() == $object->getId();
+        return $object instanceof Block;
     }
 }

@@ -97,7 +97,7 @@ class StoryCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $wysiwygField = WysiwygField::new('resume', new TranslatableMessage('resume'));
         $wysiwygField->hideOnIndex();
 
@@ -117,11 +117,6 @@ class StoryCrudController extends CrudControllerAbstract
             'principal',
             $this->crudFieldFactory->taxonomySet(self::getEntityFqcn(), $pageName)
         );
-
-        $this->crudFieldFactory->setTabParagraphs($pageName);
-        $this->crudFieldFactory->setTabSEO();
-        $this->crudFieldFactory->setTabUser($this->isSuperAdmin());
-        $this->crudFieldFactory->setTabWorkflow();
         $this->crudFieldFactory->setTabDate($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);

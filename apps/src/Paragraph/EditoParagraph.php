@@ -79,15 +79,6 @@ class EditoParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $entityRepository                = $this->getRepository($this->getClass());
-        $paragraph                       = $entityRepository->findOneBy([]);
-
-        if (!$paragraph instanceof Paragraph) {
-            return $object instanceof Page;
-        }
-
-        $parent = $this->paragraphService->getEntityParent($paragraph);
-
-        return $parent->value->getId() == $object->getId();
+        return $object instanceof Page;
     }
 }

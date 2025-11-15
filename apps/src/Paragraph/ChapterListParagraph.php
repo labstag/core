@@ -83,18 +83,6 @@ class ChapterListParagraph extends ParagraphAbstract implements ParagraphInterfa
             return true;
         }
 
-        // Avec l'héritage en table unique (STI), "type" est la colonne discriminante
-        // et n'est pas un champ mappé. On interroge donc directement la sous-classe
-        // pour bénéficier automatiquement du filtre sur le discriminateur.
-        $entityRepository   = $this->getRepository($this->getClass());
-        $paragraph          = $entityRepository->findOneBy([]);
-
-        if (!$paragraph instanceof Paragraph) {
-            return $object instanceof Block;
-        }
-
-        $parent = $this->paragraphService->getEntityParent($paragraph);
-
-        return $parent->value->getId() == $object->getId();
+        return $object instanceof Block;
     }
 }

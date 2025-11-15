@@ -7,6 +7,7 @@ use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
@@ -23,7 +24,10 @@ use Labstag\Field\ParagraphsField;
 use Labstag\Field\UploadFileField;
 use Labstag\Field\UploadImageField;
 use Labstag\Service\FileService;
+use Labstag\Service\WorkflowService;
+use ReflectionClass;
 use RuntimeException;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -34,7 +38,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 final class CrudFieldFactory
 {
 
-    private ?string $currentEntityFqcn = null;
+    private ?AdminContext $adminContext = null;
 
     private array $tabfields = [];
 
@@ -44,16 +48,19 @@ final class CrudFieldFactory
         #[AutowireIterator('labstag.shortcodes')]
         private iterable $shortcodes,
         private FileService $fileService,
+        private Security $security,
         private ManagerRegistry $managerRegistry,
+        private WorkflowService $workflowService,
     )
     {
     }
 
-    public function addFieldIDShortcode(string $className): iterable
+    public function addFieldIDShortcode(): iterable
     {
+        $fqcn = $this->getFqcn();
         foreach ($this->datas as $data) {
             $shortcodes = $data->getShortCodes();
-            if (!$data->supportsShortcode($className)) {
+            if (!$data->supportsShortcode($fqcn)) {
                 continue;
             }
 
@@ -245,6 +252,10 @@ final class CrudFieldFactory
 
     public function getConfigureFields(string $pageName): iterable
     {
+        $this->setTabParagraphs($pageName);
+        $this->setTabSEO();
+        $this->setTabWorkflow();
+        $this->setTabUser();
         $tabfields = $this->correctionFieldsTab($this->tabfields, $pageName);
         foreach ($tabfields as $tabfield) {
             if (1 !== count($this->tabfields)) {
@@ -313,84 +324,12 @@ final class CrudFieldFactory
         $this->addTab('other', FormField::addTab(new TranslatableMessage('Other')));
     }
 
-    /**
-     * @return array<int, FormField|ParagraphsField>
-     */
-    public function setTabParagraphs(string $pageName): void
+    public function setTabPrincipal(AdminContext $adminContext): void
     {
-        if ('new' === $pageName) {
-            return;
-        }
-
-        $this->addTab('paragraphs', FormField::addTab(new TranslatableMessage('Paragraphs')));
-        $paragraphsField = ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'));
-        $paragraphsField->hideWhenCreating();
-        $paragraphsField->hideOnIndex();
-        $this->addFieldsToTab('paragraphs', [$paragraphsField]);
-    }
-
-    public function setTabPrincipal(string $entity): void
-    {
-        $this->currentEntityFqcn = $entity;
+        $this->adminContext = $adminContext;
         $this->addTab('principal', FormField::addTab(new TranslatableMessage('Principal')));
-        $this->addFieldsToTab('principal', $this->addFieldIDShortcode($entity));
+        $this->addFieldsToTab('principal', $this->addFieldIDShortcode());
         $this->addFieldsToTab('principal', [$this->idField()]);
-    }
-
-    /**
-     * @return array<int, FormField|TextField>
-     */
-    public function setTabSEO(): void
-    {
-        $this->addTab('seo', FormField::addTab(new TranslatableMessage('SEO')));
-        $textField = TextField::new('meta.title', new TranslatableMessage('Title'));
-        $textField->hideOnIndex();
-
-        $keywords = TextField::new('meta.keywords', new TranslatableMessage('Keywords'));
-        $keywords->hideOnIndex();
-
-        $description = TextField::new('meta.description', new TranslatableMessage('Description'));
-        $description->hideOnIndex();
-        $this->addFieldsToTab('seo', [$textField, $keywords, $description]);
-    }
-
-    /**
-     * @return array<int, FormField|AssociationField>
-     */
-    public function setTabUser(bool $isSuperAdmin): void
-    {
-        if (!$isSuperAdmin) {
-            return;
-        }
-
-        $objectRepository = $this->managerRegistry->getRepository(User::class);
-        $users            = $objectRepository->findAll();
-        if (1 === count($users)) {
-            return;
-        }
-
-        // Guard against entities without a 'refuser' association to avoid AssociationConfigurator runtime errors
-        if (null !== $this->currentEntityFqcn) {
-            $entityManager       = $this->managerRegistry->getManagerForClass($this->currentEntityFqcn);
-            $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
-                $this->currentEntityFqcn
-            ) : null;
-            if (!$metadata instanceof ClassMetadata || !$metadata->hasAssociation('refuser')) {
-                return;
-            }
-        }
-
-        $this->addTab('user', FormField::addTab(new TranslatableMessage('User')));
-        $associationField = AssociationField::new('refuser', new TranslatableMessage('User'));
-        $associationField->setSortProperty('username');
-        $this->addFieldsToTab('user', [$associationField]);
-    }
-
-    public function setTabWorkflow(): void
-    {
-        $this->addTab('workflows', FormField::addTab(new TranslatableMessage('Workflow')));
-
-        $this->addFieldsToTab('workflows', [$this->workflowField(), $this->stateField()]);
     }
 
     public function shortcodeField(array $shortcodes): iterable
@@ -533,6 +472,26 @@ final class CrudFieldFactory
         return $collectionField;
     }
 
+    private function getFqcn(): ?string
+    {
+        $entityDto = $this->adminContext->getEntity();
+        if (is_null($entityDto)) {
+            return null;
+        }
+
+        return $entityDto->getFqcn();
+    }
+
+    private function getInstance()
+    {
+        $entityDto = $this->adminContext->getEntity();
+        if (is_null($entityDto)) {
+            return null;
+        }
+
+        return $entityDto->getInstance();
+    }
+
     private function isFieldVisibleOnPage($field, string $pageName): bool
     {
         $dto = $field->getAsDto();
@@ -544,5 +503,111 @@ final class CrudFieldFactory
             Crud::PAGE_NEW    => $dto->isDisplayedOn(Crud::PAGE_NEW),
             default           => true,
         };
+    }
+
+    private function isSuperAdmin(): bool
+    {
+        $user = $this->security->getUser();
+        if (!is_object($user)) {
+            return false;
+        }
+
+        return in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
+    }
+
+    /**
+     * @return array<int, FormField|ParagraphsField>
+     */
+    private function setTabParagraphs(string $pageName): void
+    {
+        $instance = $this->getInstance();
+        if ('new' === $pageName || null == $instance) {
+            return;
+        }
+
+        $reflectionClass = new ReflectionClass($instance);
+        if (!$reflectionClass->hasMethod('getParagraphs')) {
+            return;
+        }
+
+        $key = 'paragraphs';
+        $this->addTab($key, FormField::addTab(new TranslatableMessage('Paragraphs')));
+        $paragraphsField = ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'));
+        $paragraphsField->hideWhenCreating();
+        $paragraphsField->hideOnIndex();
+        $this->addFieldsToTab($key, [$paragraphsField]);
+    }
+
+    /**
+     * @return array<int, FormField|TextField>
+     */
+    private function setTabSEO(): void
+    {
+        $instance = $this->getInstance();
+        if (is_null($instance)) {
+            return;
+        }
+
+        $reflectionClass = new ReflectionClass($instance);
+        if (!$reflectionClass->hasMethod('getMeta')) {
+            return;
+        }
+
+        $this->addTab('seo', FormField::addTab(new TranslatableMessage('SEO')));
+        $textField = TextField::new('meta.title', new TranslatableMessage('Title'));
+        $textField->hideOnIndex();
+
+        $keywords = TextField::new('meta.keywords', new TranslatableMessage('Keywords'));
+        $keywords->hideOnIndex();
+
+        $description = TextField::new('meta.description', new TranslatableMessage('Description'));
+        $description->hideOnIndex();
+        $this->addFieldsToTab('seo', [$textField, $keywords, $description]);
+    }
+
+    /**
+     * @return array<int, FormField|AssociationField>
+     */
+    private function setTabUser(): void
+    {
+        if (!$this->isSuperAdmin()) {
+            return;
+        }
+
+        $fqcn            = $this->getFqcn();
+        $reflectionClass = new ReflectionClass($fqcn);
+        // if ($reflectionClass->isAbstract() || !$isSuperAdmin || !$reflectionClass->hasMethod('getRefuser')) {
+        if ($reflectionClass->isAbstract() || !$reflectionClass->hasMethod('getRefuser')) {
+            return;
+        }
+
+        $objectRepository = $this->managerRegistry->getRepository(User::class);
+        $users            = $objectRepository->findAll();
+        if (1 === count($users)) {
+            return;
+        }
+
+        $this->addTab('user', FormField::addTab(new TranslatableMessage('User')));
+        $associationField = AssociationField::new('refuser', new TranslatableMessage('User'));
+        $associationField->setSortProperty('username');
+        $this->addFieldsToTab('user', [$associationField]);
+    }
+
+    private function setTabWorkflow(): void
+    {
+        $fqcn            = $this->getFqcn();
+        $reflectionClass = new ReflectionClass($fqcn);
+        if ($reflectionClass->isAbstract()) {
+            return;
+        }
+
+        $entity = new $fqcn();
+        if (!$this->workflowService->has($entity)) {
+            return;
+        }
+
+        $this->addTab('workflows', FormField::addTab(new TranslatableMessage('Workflow')));
+
+        $this->addFieldsToTab('workflows', [$this->workflowField(), $this->stateField()]);
     }
 }

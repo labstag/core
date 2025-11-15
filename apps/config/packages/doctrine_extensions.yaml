@@ -152,8 +152,6 @@ services:
     - { name: doctrine.event_listener, event: 'prePersist' }
     - { name: doctrine.event_listener, event: 'onFlush' }
     - { name: doctrine.event_listener, event: 'loadClassMetadata' }
-    calls:
-    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
 
   # Gedmo IP Traceable Extension Listener
   gedmo.listener.ip_traceable:
@@ -162,8 +160,6 @@ services:
     - { name: doctrine.event_listener, event: 'prePersist' }
     - { name: doctrine.event_listener, event: 'onFlush' }
     - { name: doctrine.event_listener, event: 'loadClassMetadata' }
-    calls:
-    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
 
   # Gedmo Loggable Extension Listener
   gedmo.listener.loggable:
@@ -172,8 +168,6 @@ services:
     - { name: doctrine.event_listener, event: 'onFlush' }
     - { name: doctrine.event_listener, event: 'loadClassMetadata' }
     - { name: doctrine.event_listener, event: 'postPersist' }
-    calls:
-    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
 
   # Gedmo Sluggable Extension Listener
   gedmo.listener.sluggable:
@@ -182,8 +176,6 @@ services:
     - { name: doctrine.event_listener, event: 'onFlush' }
     - { name: doctrine.event_listener, event: 'loadClassMetadata' }
     - { name: doctrine.event_listener, event: 'prePersist' }
-    calls:
-    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
 
   # Gedmo Soft Deleteable Extension listener
   gedmo.listener.soft_deleteable:
@@ -192,7 +184,6 @@ services:
     - { name: doctrine.event_listener, event: 'loadClassMetadata' }
     - { name: doctrine.event_listener, event: 'onFlush' }
     calls:
-    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
     # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
     - [ setClock, [ '@clock' ] ]
 
@@ -207,8 +198,6 @@ services:
     - { name: doctrine.event_listener, event: 'preUpdate' }
     - { name: doctrine.event_listener, event: 'postRemove' }
     - { name: doctrine.event_listener, event: 'postFlush' }
-    calls:
-    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
 
   # Gedmo Timestampable Extension Listener
   gedmo.listener.timestampable:
@@ -218,7 +207,6 @@ services:
     - { name: doctrine.event_listener, event: 'onFlush' }
     - { name: doctrine.event_listener, event: 'loadClassMetadata' }
     calls:
-    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
     # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
     - [ setClock, [ '@clock' ] ]
 
@@ -232,7 +220,6 @@ services:
     - { name: doctrine.event_listener, event: 'onFlush' }
     - { name: doctrine.event_listener, event: 'loadClassMetadata' }
     calls:
-    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
     # The Kernel's `locale` parameter is used to configure the default locale for the extension
     - [ setDefaultLocale, [ 'fr' ] ]
 
@@ -248,5 +235,3 @@ services:
     - { name: doctrine.event_listener, event: 'postPersist' }
     - { name: doctrine.event_listener, event: 'postUpdate' }
     - { name: doctrine.event_listener, event: 'postRemove' }
-    calls:
-    - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]

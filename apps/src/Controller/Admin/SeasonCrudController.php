@@ -51,7 +51,7 @@ class SeasonCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $textField = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
         $textField->hideOnIndex();
 
@@ -78,7 +78,6 @@ class SeasonCrudController extends CrudControllerAbstract
                 $wysiwygField,
             ]
         );
-        $this->crudFieldFactory->setTabSEO();
         $this->crudFieldFactory->setTabDate($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);

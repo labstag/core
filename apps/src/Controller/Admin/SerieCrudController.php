@@ -53,7 +53,7 @@ class SerieCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $textField = TextField::new('imdb', new TranslatableMessage('Imdb'));
         $textField->hideOnIndex();
 
@@ -118,7 +118,6 @@ class SerieCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
             ]
         );
-        $this->crudFieldFactory->setTabSEO();
         $this->crudFieldFactory->setTabDate($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);

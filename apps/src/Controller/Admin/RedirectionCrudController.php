@@ -44,7 +44,7 @@ class RedirectionCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
 
         $textField = TextField::new('source', new TranslatableMessage('Source'));
         if (Action::NEW === $pageName) {

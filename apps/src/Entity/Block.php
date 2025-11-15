@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -49,15 +47,6 @@ abstract class Block implements Stringable
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $pages = null;
 
-    /**
-     * @var Collection<int, Paragraph>
-     */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
-    #[ORM\OrderBy(
-        ['position' => 'ASC']
-    )]
-    protected Collection $paragraphs;
-
     #[ORM\Column(
         options: ['default' => 1]
     )]
@@ -82,24 +71,9 @@ abstract class Block implements Stringable
     #[ORM\Column(length: 255)]
     protected ?string $title = null;
 
-    public function __construct()
-    {
-        $this->paragraphs = new ArrayCollection();
-    }
-
     public function __toString(): string
     {
         return (string) $this->getId();
-    }
-
-    public function addParagraph(Paragraph $paragraph): static
-    {
-        if (!$this->paragraphs->contains($paragraph)) {
-            $this->paragraphs->add($paragraph);
-            $paragraph->setBlock($this);
-        }
-
-        return $this;
     }
 
     public function getClasses(): ?string
@@ -115,14 +89,6 @@ abstract class Block implements Stringable
     public function getPages(): ?string
     {
         return $this->pages;
-    }
-
-    /**
-     * @return Collection<int, Paragraph>
-     */
-    public function getParagraphs(): Collection
-    {
-        return $this->paragraphs;
     }
 
     public function getPosition(): int
@@ -161,17 +127,6 @@ abstract class Block implements Stringable
     public function isRequestPath(): ?bool
     {
         return $this->requestPath;
-    }
-
-    public function removeParagraph(Paragraph $paragraph): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getBlock() === $this
-        ) {
-            $paragraph->setBlock(null);
-        }
-
-        return $this;
     }
 
     public function setClasses(?string $classes): static

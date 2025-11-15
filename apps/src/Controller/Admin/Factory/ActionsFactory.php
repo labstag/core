@@ -117,6 +117,12 @@ class ActionsFactory
     public function setActionLinkPublic(): void
     {
         $find   = false;
+
+        $reflectionClass = new ReflectionClass($this->entity);
+        if ($reflectionClass->isAbstract()) {
+            return;
+        }
+
         $entity = new $this->entity();
         foreach ($this->datas as $data) {
             if ($data->supportsData($entity)) {
@@ -142,6 +148,12 @@ class ActionsFactory
     public function setActionLinkW3CValidator(): void
     {
         $find   = false;
+
+        $reflectionClass = new ReflectionClass($this->entity);
+        if ($reflectionClass->isAbstract()) {
+            return;
+        }
+
         $entity = new $this->entity();
         foreach ($this->datas as $data) {
             if ($data->supportsData($entity)) {
