@@ -19,6 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use Labstag\Entity\EntityWithParagraphsInterface;
 use Labstag\Entity\User;
 use Labstag\Field\ParagraphsField;
 use Labstag\Field\UploadFileField;
@@ -526,7 +527,10 @@ final class CrudFieldFactory
         }
 
         $reflectionClass = new ReflectionClass($instance);
-        if (!$reflectionClass->hasMethod('getParagraphs')) {
+        if (!$reflectionClass->hasMethod('getParagraphs') || !$reflectionClass->implementsInterface(
+            EntityWithParagraphsInterface::class
+        )
+        ) {
             return;
         }
 

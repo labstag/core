@@ -96,7 +96,7 @@ abstract class Paragraph implements Stringable
     protected ?Memo $memo = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    protected ?Page $movie = null;
+    protected ?Movie $movie = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     protected ?Page $page = null;

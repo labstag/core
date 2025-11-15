@@ -64,9 +64,10 @@ class RegenerateMetaCommand extends Command
             if (0 < $count) {
                 $this->entityManager->flush();
                 $symfonyStyle->success(sprintf('✅ %d metas regenerated for %s', $count, $entity));
-            } else {
-                $symfonyStyle->info('ℹ️  No metas to regenerate for ' . $entity);
+                continue;
             }
+        
+            $symfonyStyle->info('ℹ️  No metas to regenerate for ' . $entity);
         }
 
         $symfonyStyle->success('🎉 All metas have been successfully regenerated!');

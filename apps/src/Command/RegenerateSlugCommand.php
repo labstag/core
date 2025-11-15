@@ -62,9 +62,10 @@ class RegenerateSlugCommand extends Command
             if (0 < $count) {
                 $this->entityManager->flush();
                 $symfonyStyle->success(sprintf('✅ %d slugs regenerated for %s', $count, $entity));
-            } else {
-                $symfonyStyle->info('ℹ️  No slugs to regenerate for ' . $entity);
+                continue;
             }
+            
+            $symfonyStyle->info('ℹ️  No slugs to regenerate for ' . $entity);
         }
 
         $symfonyStyle->success('🎉 All slugs have been successfully regenerated!');
