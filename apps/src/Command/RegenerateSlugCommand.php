@@ -56,10 +56,8 @@ class RegenerateSlugCommand extends Command
 
                 ++$count;
             }
-
-            if (0 < $count) {
-                $this->entityManager->flush();
-            }
+            
+            $this->entityManager->flush();
 
             $count = 0;
             foreach ($items as $item) {
@@ -69,9 +67,10 @@ class RegenerateSlugCommand extends Command
 
                 ++$count;
             }
+            
+            $this->entityManager->flush();
 
             if (0 < $count) {
-                $this->entityManager->flush();
                 $symfonyStyle->success(sprintf('✅ %d slugs regenerated for %s', $count, $entity));
                 continue;
             }
