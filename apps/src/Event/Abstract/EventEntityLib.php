@@ -114,9 +114,11 @@ abstract class EventEntityLib
         $this->updateEntityBlock($object);
         $this->updateEntityRedirection($object);
         $this->updateEntityParagraph($object);
-        $this->updateEntityPage($object);
-        $this->updateEntityChapter($object);
-        $this->updateEntitySeason($object);
+        $this->updateEntityMovieSlug($object);
+        $this->updateEntitySagaSlug($object);
+        $this->updateEntityPageSlug($object);
+        $this->updateEntityChapterSlug($object);
+        $this->updateEntitySeasonSlug($object);
         $this->initEntityMeta($object);
     }
 
@@ -145,7 +147,7 @@ abstract class EventEntityLib
         $this->blockService->update($instance);
     }
 
-    protected function updateEntityChapter(object $instance): void
+    protected function updateEntityChapterSlug(object $instance): void
     {
         if (!$instance instanceof Chapter) {
             return;
@@ -197,7 +199,38 @@ abstract class EventEntityLib
         $this->messageBus->dispatch(new MovieMessage($instance->getId()));
     }
 
-    protected function updateEntityPage(object $instance): void
+    protected function updateEntitySagaSlug(object $instance): void
+    {
+        if (!$instance instanceof Saga) {
+            return;
+        }
+
+        $repository = $this->entityManager->getRepository(Movie::class);
+        $movie = $repository->findOneBy(
+            [
+                'slug' => $instance->getSlug(),
+            ]
+        );
+        if ($movie instanceof Movie) {
+            $instance->setSlug($instance->getSlug().'-saga');
+        }
+    }
+
+    protected function updateEntityMovieSlug(object $instance): void
+    {
+        if (!$instance instanceof Movie) {
+            return;
+        }
+
+        $slug = $instance->getSlug();
+        if (!preg_match('/^\d+$/', $slug)) {
+            return;
+        }
+
+        $instance->setSlug($slug.'-film');
+    }
+
+    protected function updateEntityPageSlug(object $instance): void
     {
         if (!$instance instanceof Page) {
             return;
@@ -253,7 +286,7 @@ abstract class EventEntityLib
         $this->messageBus->dispatch(new SagaMessage($instance->getId()));
     }
 
-    protected function updateEntitySeason(object $instance): void
+    protected function updateEntitySeasonSlug(object $instance): void
     {
         if (!$instance instanceof Season) {
             return;
