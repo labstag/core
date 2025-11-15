@@ -11,7 +11,7 @@ class MovieCategoryCrudController extends CategoryCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $titleField = $this->crudFieldFactory->titleField();
         $titleField->setFormattedValue(
             fn ($entity) => $entity->getTitle() ?? (new TranslatableMessage('Label not found'))

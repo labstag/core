@@ -74,6 +74,11 @@ final class WorkflowService
         return $marking->getPlaces();
     }
 
+    public function has(object $entity): bool
+    {
+        return $this->workflowRegistry->has($entity);
+    }
+
     public function init(object $entity): void
     {
         $workflow = $this->get($entity);

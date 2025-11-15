@@ -47,7 +47,7 @@ class ChapterCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $fields = [
             $this->crudFieldFactory->slugField(readOnly: true),
             $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
@@ -59,11 +59,6 @@ class ChapterCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->addFieldsToTab('principal', $fields);
 
-        $this->crudFieldFactory->setTabParagraphs($pageName);
-
-        $this->crudFieldFactory->setTabSEO();
-
-        $this->crudFieldFactory->setTabWorkflow();
         $this->crudFieldFactory->setTabDate($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);

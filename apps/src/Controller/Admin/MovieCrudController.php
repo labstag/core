@@ -57,7 +57,7 @@ class MovieCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
 
         $textField = TextField::new('imdb', new TranslatableMessage('Imdb'));
         $textField->hideOnIndex();
@@ -91,6 +91,7 @@ class MovieCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
+                $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),

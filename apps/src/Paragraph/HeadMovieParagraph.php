@@ -3,13 +3,13 @@
 namespace Labstag\Paragraph;
 
 use Labstag\Entity\Block;
-use Labstag\Entity\HeadStoryParagraph as EntityHeadStoryParagraph;
+use Labstag\Entity\HeadMovieParagraph as EntityHeadMovieParagraph;
+use Labstag\Entity\Movie;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Story;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class HeadStoryParagraph extends ParagraphAbstract implements ParagraphInterface
+class HeadMovieParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -18,7 +18,7 @@ class HeadStoryParagraph extends ParagraphAbstract implements ParagraphInterface
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        if (!isset($data['entity']) || !$data['entity'] instanceof Story) {
+        if (!isset($data['entity']) || !$data['entity'] instanceof Movie) {
             $this->setShow($paragraph, false);
 
             return;
@@ -27,7 +27,7 @@ class HeadStoryParagraph extends ParagraphAbstract implements ParagraphInterface
         $this->setData(
             $paragraph,
             [
-                'story'     => $data['entity'],
+                'movie'     => $data['entity'],
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]
@@ -36,19 +36,19 @@ class HeadStoryParagraph extends ParagraphAbstract implements ParagraphInterface
 
     public function getClass(): string
     {
-        return EntityHeadStoryParagraph::class;
+        return EntityHeadMovieParagraph::class;
     }
 
     #[Override]
     public function getName(): string
     {
-        return (string) new TranslatableMessage('Head story');
+        return (string) new TranslatableMessage('Head movie');
     }
 
     #[Override]
     public function getType(): string
     {
-        return 'head-story';
+        return 'head-movie';
     }
 
     #[Override]

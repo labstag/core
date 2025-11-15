@@ -83,6 +83,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
     private function addParagraphsHead(Block $block): void
     {
         $this->paragraphService->addParagraph($block, 'head-story');
+        $this->paragraphService->addParagraph($block, 'head-movie');
         $this->paragraphService->addParagraph($block, 'head-serie');
         $this->paragraphService->addParagraph($block, 'head-post');
         $this->paragraphService->addParagraph($block, 'head-chapter');

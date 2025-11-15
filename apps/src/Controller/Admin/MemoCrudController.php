@@ -34,7 +34,7 @@ class MemoCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         // Memo n'a pas de slug : enlever le slug field du set identité
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -44,11 +44,6 @@ class MemoCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
             ]
         );
-
-        $this->crudFieldFactory->setTabParagraphs($pageName);
-        $this->crudFieldFactory->setTabUser($this->isSuperAdmin());
-
-        $this->crudFieldFactory->setTabWorkflow();
         $this->crudFieldFactory->setTabDate($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);

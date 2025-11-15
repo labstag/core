@@ -5,6 +5,6 @@ namespace Labstag\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-class ParagraphsBlock extends Block implements EntityWithParagraphsInterface
+class HeadMovieParagraph extends Paragraph
 {
 }

@@ -107,13 +107,13 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
             ]
         );
         if (!$media instanceof Media) {
-            return [];
+            return ['oembed' => ''];
         }
 
         $html   = $media->has('html') ? $media->get('html') : '';
         $oembed = $this->getOEmbedUrl($html);
         if (is_null($oembed)) {
-            return [];
+            return ['oembed' => ''];
         }
 
         return [

@@ -31,22 +31,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class BlockCrudController extends CrudControllerAbstract
 {
-    public function addFieldParagraphsForBlock(?Block $block, string $pageName): void
-    {
-        $type = $this->blockService->getType($block);
-        if ('edit' === $pageName && $block instanceof Block) {
-            if (in_array($type, ['paragraphs', 'content'])) {
-                $this->crudFieldFactory->setTabParagraphs($pageName);
-
-                return;
-            }
-
-            return;
-        }
-
-        $this->crudFieldFactory->setTabParagraphs($pageName);
-    }
-
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -119,13 +103,15 @@ class BlockCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
 
         $regionField = ChoiceField::new('region', new TranslatableMessage('Region'));
         $regionField->setChoices($this->blockService->getRegions());
 
-        $numberField = NumberField::new('position', new TranslatableMessage('Position'))->hideOnForm();
+        $numberField = NumberField::new('position', new TranslatableMessage('Position'));
+        $numberField->hideOnForm();
+
         $fields      = [
             $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
@@ -134,7 +120,6 @@ class BlockCrudController extends CrudControllerAbstract
         ];
 
         $this->crudFieldFactory->addFieldsToTab('principal', $fields);
-        $this->addFieldParagraphsForBlock($currentEntity, $pageName);
 
         $this->crudFieldFactory->setTabOther();
         $this->crudFieldFactory->addFieldsToTab('other', $this->blockService->getFields($currentEntity, $pageName));

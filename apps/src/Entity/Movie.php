@@ -21,7 +21,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Movie implements Stringable
+#[ORM\Index(name: 'IDX_MOVIE_SLUG', columns: ['slug'])]
+class Movie implements Stringable, EntityWithParagraphsInterface
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
@@ -80,11 +81,28 @@ class Movie implements Stringable
     #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
+    #[ORM\OneToOne(inversedBy: 'movie', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?Meta $meta = null;
+
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'movie', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    protected Collection $paragraphs;
+
     #[ORM\Column(name: 'release_date', type: Types::DATE_MUTABLE, nullable: true)]
     protected ?DateTime $releaseDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'movies')]
     protected ?Saga $saga = null;
+
+    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
     protected ?string $title = null;
@@ -101,6 +119,7 @@ class Movie implements Stringable
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
     }
 
     #[Override]
@@ -114,6 +133,16 @@ class Movie implements Stringable
         if (!$this->categories->contains($movieCategory)) {
             $this->categories->add($movieCategory);
             $movieCategory->addMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setMovie($this);
         }
 
         return $this;
@@ -180,6 +209,19 @@ class Movie implements Stringable
         return $this->imgFile;
     }
 
+    public function getMeta(): ?Meta
+    {
+        return $this->meta;
+    }
+
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
     public function getReleaseDate(): ?DateTime
     {
         return $this->releaseDate;
@@ -188,6 +230,11 @@ class Movie implements Stringable
     public function getSaga(): ?Saga
     {
         return $this->saga;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
     }
 
     public function getTitle(): ?string
@@ -229,6 +276,17 @@ class Movie implements Stringable
     {
         if ($this->categories->removeElement($movieCategory)) {
             $movieCategory->removeMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this
+        ) {
+            $paragraph->setPage(null);
         }
 
         return $this;
@@ -328,6 +386,13 @@ class Movie implements Stringable
         }
     }
 
+    public function setMeta(Meta $meta): static
+    {
+        $this->meta = $meta;
+
+        return $this;
+    }
+
     public function setReleaseDate(?DateTime $releaseDate): static
     {
         $this->releaseDate = $releaseDate;
@@ -338,6 +403,13 @@ class Movie implements Stringable
     public function setSaga(?Saga $saga): static
     {
         $this->saga = $saga;
+
+        return $this;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

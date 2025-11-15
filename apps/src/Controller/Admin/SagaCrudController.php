@@ -48,7 +48,7 @@ class SagaCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $textField        = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
 
         $wysiwygField = WysiwygField::new('description', new TranslatableMessage('Description'));
@@ -67,7 +67,6 @@ class SagaCrudController extends CrudControllerAbstract
             ]
         );
 
-        $this->crudFieldFactory->setTabSEO();
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 

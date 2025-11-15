@@ -22,7 +22,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
 #[ORM\Index(name: 'IDX_SERIE_SLUG', columns: ['slug'])]
-class Serie implements Stringable
+class Serie implements Stringable, EntityWithParagraphsInterface
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;

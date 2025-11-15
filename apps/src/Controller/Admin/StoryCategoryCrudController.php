@@ -11,7 +11,7 @@ class StoryCategoryCrudController extends CategoryCrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [

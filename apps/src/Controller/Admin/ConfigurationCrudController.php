@@ -35,7 +35,7 @@ class ConfigurationCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $fields = [
             TextField::new('titleFormat', new TranslatableMessage('Title format')),
             TextField::new('name', new TranslatableMessage('Site name')),

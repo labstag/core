@@ -35,6 +35,9 @@ class Meta implements Stringable
     protected ?string $keywords = null;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
+    protected ?Movie $movie = null;
+
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
     protected ?Page $page = null;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
@@ -79,6 +82,11 @@ class Meta implements Stringable
     public function getKeywords(): ?string
     {
         return $this->keywords;
+    }
+
+    public function getMovie(): ?Movie
+    {
+        return $this->movie;
     }
 
     public function getPage(): ?Page
@@ -138,6 +146,18 @@ class Meta implements Stringable
     public function setKeywords(?string $keywords): static
     {
         $this->keywords = $keywords;
+
+        return $this;
+    }
+
+    public function setMovie(Movie $movie): static
+    {
+        // set the owning side of the relation if necessary
+        if ($movie->getMeta() !== $this) {
+            $movie->setMeta($this);
+        }
+
+        $this->movie = $movie;
 
         return $this;
     }

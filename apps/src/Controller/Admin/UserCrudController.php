@@ -45,7 +45,7 @@ class UserCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $choiceField = ChoiceField::new('roles', new TranslatableMessage('Roles'));
         $choiceField->allowMultipleChoices();
         $choiceField->setChoices($this->userService->getRoles());
@@ -117,8 +117,6 @@ class UserCrudController extends CrudControllerAbstract
         }
 
         $this->crudFieldFactory->addFieldsToTab('principal', $fields);
-
-        $this->crudFieldFactory->setTabWorkflow();
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 

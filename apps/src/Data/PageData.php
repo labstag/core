@@ -13,6 +13,11 @@ class PageData extends HomeData implements DataInterface
         return parent::generateSlug($entity) . $entity->getSlug();
     }
 
+    public function generateSlugPage(object $entity): string
+    {
+        return parent::generateSlug($entity) . $entity->getSlug();
+    }
+
     #[\Override]
     public function getEntity(?string $slug): object
     {

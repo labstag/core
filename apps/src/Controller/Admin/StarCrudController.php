@@ -42,7 +42,7 @@ class StarCrudController extends CrudControllerAbstract
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $textField = TextField::new('repository', new TranslatableMessage('Repository'));
         $textField->hideOnIndex();
 

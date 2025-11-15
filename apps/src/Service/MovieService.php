@@ -265,6 +265,7 @@ final class MovieService
             return false;
         }
 
+        $movie->setSlug(null);
         $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
         $movie->setAdult($adult);
         $movie->setTitle((string) $details['tmdb']['title']);

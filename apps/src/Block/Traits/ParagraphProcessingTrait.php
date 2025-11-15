@@ -3,6 +3,8 @@
 namespace Labstag\Block\Traits;
 
 use Labstag\Entity\Block;
+use Labstag\Entity\EntityWithParagraphsInterface;
+use ReflectionClass;
 
 trait ParagraphProcessingTrait
 {
@@ -15,6 +17,11 @@ trait ParagraphProcessingTrait
      */
     protected function processParagraphs(Block $block, array $data, bool $disable): ?array
     {
+        $reflectionClass = new ReflectionClass($block);
+        if (!$reflectionClass->implementsInterface(EntityWithParagraphsInterface::class)) {
+            return null;
+        }
+
         $paragraphs = $block->getParagraphs()->getValues();
         if (0 === count($paragraphs)) {
             $this->logger->debug(

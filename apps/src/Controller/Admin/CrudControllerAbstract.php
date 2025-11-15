@@ -124,15 +124,35 @@ abstract class CrudControllerAbstract extends AbstractCrudController
 
     public function linkPublic(AdminContext $adminContext): RedirectResponse
     {
-        $request    = $adminContext->getRequest();
-        $entityId   = $request->query->get('entityId');
+        $request            = $adminContext->getRequest();
+        $entityId           = $request->query->get('entityId');
         $repositoryAbstract = $this->getRepository();
-        $entity     = $repositoryAbstract->find($entityId);
-        $slug       = $this->slugService->forEntity($entity);
+        $entity             = $repositoryAbstract->find($entityId);
+        $slug               = $this->slugService->forEntity($entity);
 
         return $this->redirectToRoute(
             'front',
             ['slug' => $slug]
+        );
+    }
+
+    public function linkw3CValidator(AdminContext $adminContext): RedirectResponse
+    {
+        $request                         = $adminContext->getRequest();
+        $entityId                        = $request->query->get('entityId');
+        $repository                      = $this->getRepository();
+        $entity                          = $repository->find($entityId);
+        $repositoryAbstract              = $this->getRepository();
+        $repositoryAbstract->find($entity);
+
+        $slug                            = $this->slugService->forEntity($entity);
+
+        return $this->redirect(
+            'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
+                'front',
+                ['slug' => $slug],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            )
         );
     }
 
@@ -202,25 +222,6 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         }
 
         return in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
-    }
-
-    protected function linkw3CValidator(AdminContext $adminContext): RedirectResponse
-    {
-        $request                         = $adminContext->getRequest();
-        $entityId                        = $request->query->get('entityId');
-        $repository                      = $this->getRepository();
-        $entity                          = $repository->find($entityId);
-        $repositoryAbstract              = $this->getRepository();
-        $repositoryAbstract->find($entity);
-        $slug                            = $this->slugService->forEntity($entity);
-
-        return $this->redirect(
-            'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
-                'front',
-                ['slug' => $slug],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            )
-        );
     }
 
     protected function setActionPublic(Actions $actions, string $urlW3c, string $urlPublic): void

@@ -27,6 +27,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
         'form'             => FormParagraph::class,
         'head-chapter'     => HeadChapterParagraph::class,
         'head-cv'          => HeadCvParagraph::class,
+        'head-movie'       => HeadMovieParagraph::class,
         'head-post'        => HeadPostParagraph::class,
         'head-saga'        => HeadSagaParagraph::class,
         'head-season'      => HeadSeasonParagraph::class,
@@ -95,6 +96,9 @@ abstract class Paragraph implements Stringable
     protected ?Memo $memo = null;
 
     #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    protected ?Movie $movie = null;
+
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
     protected ?Page $page = null;
 
     #[ORM\Column]
@@ -154,6 +158,11 @@ abstract class Paragraph implements Stringable
     public function getMemo(): ?Memo
     {
         return $this->memo;
+    }
+
+    public function getMovie(): ?Page
+    {
+        return $this->movie;
     }
 
     public function getPage(): ?Page
@@ -241,6 +250,13 @@ abstract class Paragraph implements Stringable
     public function setMemo(?Memo $memo): static
     {
         $this->memo = $memo;
+
+        return $this;
+    }
+
+    public function setMovie(?Movie $movie): static
+    {
+        $this->movie = $movie;
 
         return $this;
     }

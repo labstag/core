@@ -40,7 +40,7 @@ class PageCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $this->crudFieldFactory->addFieldsToTab('principal', $this->getIdEntity($pageName, $currentEntity));
 
         $fieldChoice  = $this->addFieldIsHome($currentEntity, $pageName);
@@ -58,14 +58,6 @@ class PageCrudController extends CrudControllerAbstract
             'principal',
             $this->crudFieldFactory->taxonomySet(self::getEntityFqcn(), $pageName)
         );
-
-        $this->crudFieldFactory->setTabParagraphs($pageName);
-
-        $this->crudFieldFactory->setTabSEO();
-
-        $this->crudFieldFactory->setTabUser($this->isSuperAdmin());
-
-        $this->crudFieldFactory->setTabWorkflow();
 
         $this->crudFieldFactory->setTabDate($pageName);
 

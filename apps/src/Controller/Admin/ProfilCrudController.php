@@ -45,7 +45,7 @@ class ProfilCrudController extends UserCrudController
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
-        $this->crudFieldFactory->setTabPrincipal(self::getEntityFqcn());
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $textField = TextField::new('password', new TranslatableMessage('Password'));
         $textField->setFormType(RepeatedType::class);
         $textField->setFormTypeOptions(
