@@ -11,7 +11,9 @@
                     <div class="categories">
                         {% for category in movie.categories %}
                             <span class="categorie-{{ category.slug }}">
-                                {{ category.title }}
+                                <a href="{{ site_path(category) }}">
+                                    {{ category.title }}
+                                </a>
                             </span>
                         {% endfor %}
                     </div>
