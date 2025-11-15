@@ -5,12 +5,14 @@ namespace Labstag\Command;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Category;
 use Labstag\Entity\Media;
+use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Post;
 use Labstag\Entity\Saga;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Entity\Tag;
+use ReflectionClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -48,8 +50,18 @@ class RegenerateSlugCommand extends Command
             $repository = $this->entityManager->getRepository($entity);
             $items      = $repository->findAll();
 
+            $reflectionClass = new ReflectionClass($entity);
+
             $count = 0;
             foreach ($items as $item) {
+                if ($reflectionClass->hasMethod('getMeta')) {
+                    $meta = $item->getMeta();
+                    if (!$meta instanceof Meta) {
+                        $meta = new Meta();
+                        $item->setMeta($meta);
+                    }
+                }
+
                 $title = $item->getTitle();
                 $item->setTitle($title . ' ');
                 $this->entityManager->persist($item);
