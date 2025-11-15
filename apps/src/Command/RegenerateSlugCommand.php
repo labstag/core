@@ -53,6 +53,17 @@ class RegenerateSlugCommand extends Command
                 $title = $item->getTitle();
                 $item->setTitle($title . ' ');
                 $this->entityManager->persist($item);
+
+                ++$count;
+            }
+
+            if (0 < $count) {
+                $this->entityManager->flush();
+            }
+
+            $count = 0;
+            foreach ($items as $item) {
+                $title = $item->getTitle();
                 $item->setTitle(trim((string) $title));
                 $this->entityManager->persist($item);
 
