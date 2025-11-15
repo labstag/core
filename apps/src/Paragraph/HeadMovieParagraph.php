@@ -17,7 +17,6 @@ class HeadMovieParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        dump($data['entity']);
         unset($disable);
         if (!isset($data['entity']) || !$data['entity'] instanceof Movie) {
             $this->setShow($paragraph, false);

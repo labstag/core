@@ -22,8 +22,6 @@ trait ParagraphProcessingTrait
             return null;
         }
 
-        dump($block);
-
         $paragraphs = $block->getParagraphs()->getValues();
         if (0 === count($paragraphs)) {
             $this->logger->debug(
