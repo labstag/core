@@ -50,15 +50,6 @@ class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
             )
         );
 
-        $templates = $this->templates($paragraph, 'footer');
-        $this->setFooter(
-            $paragraph,
-            $this->render(
-                $templates['view'],
-                ['movies' => $movies]
-            )
-        );
-
         $this->setData(
             $paragraph,
             [

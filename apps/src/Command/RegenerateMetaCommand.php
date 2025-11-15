@@ -66,7 +66,7 @@ class RegenerateMetaCommand extends Command
                 $symfonyStyle->success(sprintf('✅ %d metas regenerated for %s', $count, $entity));
                 continue;
             }
-        
+
             $symfonyStyle->info('ℹ️  No metas to regenerate for ' . $entity);
         }
 

@@ -64,7 +64,7 @@ class RegenerateSlugCommand extends Command
                 $symfonyStyle->success(sprintf('✅ %d slugs regenerated for %s', $count, $entity));
                 continue;
             }
-            
+
             $symfonyStyle->info('ℹ️  No slugs to regenerate for ' . $entity);
         }
 

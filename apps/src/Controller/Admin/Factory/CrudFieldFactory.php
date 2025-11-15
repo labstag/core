@@ -527,10 +527,7 @@ final class CrudFieldFactory
         }
 
         $reflectionClass = new ReflectionClass($instance);
-        if (!$reflectionClass->hasMethod('getParagraphs') || !$reflectionClass->implementsInterface(
-            EntityWithParagraphsInterface::class
-        )
-        ) {
+        if (!$reflectionClass->implementsInterface(EntityWithParagraphsInterface::class)) {
             return;
         }
 

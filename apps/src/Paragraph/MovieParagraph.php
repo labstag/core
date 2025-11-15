@@ -46,15 +46,6 @@ class MovieParagraph extends ParagraphAbstract implements ParagraphInterface
             )
         );
 
-        $templates = $this->templates($paragraph, 'footer');
-        $this->setFooter(
-            $paragraph,
-            $this->render(
-                $templates['view'],
-                ['pagination' => $pagination]
-            )
-        );
-
         $form = $this->createForm(MovieType::class, $query);
 
         $this->setData(
