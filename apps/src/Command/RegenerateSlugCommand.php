@@ -68,7 +68,7 @@ class RegenerateSlugCommand extends Command
 
                 ++$count;
             }
-            
+
             $this->entityManager->flush();
 
             $count = 0;
@@ -79,7 +79,7 @@ class RegenerateSlugCommand extends Command
 
                 ++$count;
             }
-            
+
             $this->entityManager->flush();
 
             if (0 < $count) {

@@ -199,23 +199,6 @@ abstract class EventEntityLib
         $this->messageBus->dispatch(new MovieMessage($instance->getId()));
     }
 
-    protected function updateEntitySagaSlug(object $instance): void
-    {
-        if (!$instance instanceof Saga) {
-            return;
-        }
-
-        $repository = $this->entityManager->getRepository(Movie::class);
-        $movie = $repository->findOneBy(
-            [
-                'slug' => $instance->getSlug(),
-            ]
-        );
-        if ($movie instanceof Movie) {
-            $instance->setSlug($instance->getSlug().'-saga');
-        }
-    }
-
     protected function updateEntityMovieSlug(object $instance): void
     {
         if (!$instance instanceof Movie) {
@@ -223,11 +206,11 @@ abstract class EventEntityLib
         }
 
         $slug = $instance->getSlug();
-        if (!preg_match('/^\d+$/', $slug)) {
+        if (!preg_match('/^\d+$/', (string) $slug)) {
             return;
         }
 
-        $instance->setSlug($slug.'-film');
+        $instance->setSlug($slug . '-film');
     }
 
     protected function updateEntityPageSlug(object $instance): void
@@ -284,6 +267,23 @@ abstract class EventEntityLib
         }
 
         $this->messageBus->dispatch(new SagaMessage($instance->getId()));
+    }
+
+    protected function updateEntitySagaSlug(object $instance): void
+    {
+        if (!$instance instanceof Saga) {
+            return;
+        }
+
+        $entityRepository = $this->entityManager->getRepository(Movie::class);
+        $movie            = $entityRepository->findOneBy(
+            [
+                'slug' => $instance->getSlug(),
+            ]
+        );
+        if ($movie instanceof Movie) {
+            $instance->setSlug($instance->getSlug() . '-saga');
+        }
     }
 
     protected function updateEntitySeasonSlug(object $instance): void
