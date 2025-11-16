@@ -150,7 +150,7 @@ final class MovieService
     private function updateImageMovie(Movie $movie, array $details): bool
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
-        if ('' === $poster) {
+        if (is_null($poster)) {
             return false;
         }
 

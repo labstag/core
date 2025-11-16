@@ -127,7 +127,7 @@ final class SeasonService
     private function updateImage(Season $season, array $details): bool
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($details['poster_path'] ?? '');
-        if ('' === $poster) {
+        if (is_null($poster)) {
             return false;
         }
 

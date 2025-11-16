@@ -195,7 +195,7 @@ final class SerieService
     private function updateImageMovie(Serie $serie, array $details): bool
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
-        if ('' === $poster) {
+        if (is_null($poster)) {
             return false;
         }
 

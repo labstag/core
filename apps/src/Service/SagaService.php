@@ -82,12 +82,8 @@ class SagaService
 
     private function updateImageSaga(Saga $saga, array $data): bool
     {
-        if (isset($data['poster_path'])) {
-            return false;
-        }
-
         $poster = $this->theMovieDbApi->images()->getPosterUrl($data['poster_path'] ?? '');
-        if ('' === $poster) {
+        if (is_null($poster)) {
             return false;
         }
 
