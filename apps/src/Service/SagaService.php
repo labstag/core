@@ -64,6 +64,7 @@ class SagaService
         $locale   = $this->configurationService->getLocaleTmdb();
         $details  = $this->theMovieDbApi->movies()->getMovieCollection($saga->getTmdb(), $locale);
         if (is_null($details)) {
+            $this->sagaRepository->delete($saga);
             $this->logger->error('Saga not found TMDB id ' . $saga->getTmdb());
 
             return false;
