@@ -3,12 +3,16 @@
     <h3 class="title">
         #{{ episode.number }} {{ episode.title }}
     </h3>
-    <div>
-        {{ "Air date : %air_date%"|trans({'%air_date%': episode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
-    </div>
-    <div class="duration">
-        {{ time_runtime(episode.runtime) }}
-    </div>
+    {% if episode.airDate is not null %}
+        <div>
+            {{ "Air date : %air_date%"|trans({'%air_date%': episode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
+        </div>
+    {% endif %}
+    {% if episode.directors|length > 0 %}
+        <div class="duration">
+            {{ time_runtime(episode.runtime) }}
+        </div>
+    {% endif %}
     <div class="overview html-content">
         {{ episode.overview|raw }}
     </div>

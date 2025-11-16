@@ -11,7 +11,7 @@
     </div>
     <div class="wrapper">
         <h3 class="title">{{ season.title }}</h3>
-        {% if firstEpisode.airDate is defined %}
+        {% if firstEpisode.airDate is not null %}
             <div class="dates">
                 {{ "From %start% to %end%"|trans({'%start%': firstEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full'), '%end%' : lastEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
             </div>
