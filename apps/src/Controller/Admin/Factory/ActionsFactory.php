@@ -195,11 +195,11 @@ class ActionsFactory
             return;
         }
 
-        $action = Action::new('imdbAction', new TranslatableMessage('IMDB Page'));
+        $action = Action::new('imdb', new TranslatableMessage('IMDB Page'));
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
-        $action->linkToCrudAction('imdbAction');
+        $action->linkToCrudAction('imdb');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $this->add(Crud::PAGE_DETAIL, $action);
@@ -213,11 +213,11 @@ class ActionsFactory
             return;
         }
 
-        $action = Action::new('tmdbAction', new TranslatableMessage('TMDB Page'));
+        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
-        $action->linkToCrudAction('tmdbAction');
+        $action->linkToCrudAction('tmdb');
         $this->add(Crud::PAGE_DETAIL, $action);
         $this->add(Crud::PAGE_EDIT, $action);
         $this->add(Crud::PAGE_INDEX, $action);
