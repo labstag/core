@@ -5,6 +5,7 @@ namespace Labstag\Service;
 use DateTime;
 use Exception;
 use Labstag\Api\TheMovieDbApi;
+use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\SerieCategory;
 use Labstag\Message\SeasonMessage;
@@ -238,7 +239,10 @@ final class SerieService
     {
         if (isset($details['tmdb']['seasons']) && is_array($details['tmdb']['seasons'])) {
             foreach ($details['tmdb']['seasons'] as $seasonData) {
-                $this->seasonService->getSeason($serie, $seasonData);
+                $season = $this->seasonService->getSeason($serie, $seasonData);
+                if ($season instanceof Season) {
+                    $this->seasonService->save($season);
+                }
             }
         }
 
