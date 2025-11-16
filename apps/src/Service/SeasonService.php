@@ -131,7 +131,7 @@ final class SeasonService
             return false;
         }
 
-        if ('' != $season->getImg()) {
+        if ('' != (string)$season->getImg()) {
             return false;
         }
 

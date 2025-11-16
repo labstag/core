@@ -90,11 +90,11 @@ class EpisodeService
     private function updateImage(Episode $episode, array $details): bool
     {
         $poster = $this->theMovieDbApi->images()->getStillUrl($details['still_path'] ?? '');
-        if ('' === $poster) {
+        if (is_null($poster)) {
             return false;
         }
 
-        if ('' != $episode->getImg()) {
+        if ('' != (string) $episode->getImg()) {
             return false;
         }
 

@@ -199,7 +199,7 @@ final class SerieService
             return false;
         }
 
-        if ('' != $serie->getImg()) {
+        if ('' != (string)$serie->getImg()) {
             return false;
         }
 

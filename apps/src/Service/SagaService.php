@@ -87,6 +87,10 @@ class SagaService
             return false;
         }
 
+        if ('' != (string) $saga->getImg()) {
+            return false;
+        }
+
         try {
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 

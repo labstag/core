@@ -154,7 +154,7 @@ final class MovieService
             return false;
         }
 
-        if ('' != $movie->getImg()) {
+        if ('' != (string) $movie->getImg()) {
             return false;
         }
 
