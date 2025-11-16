@@ -218,12 +218,12 @@ final class SerieService
 
     private function updateSeasons(Serie $serie, array $details): bool
     {
-        if (!isset($details['tmdb']['number_of_seasons'])) {
+        if (!isset($details['tmdb']['seasons']) || 0 === count($details['tmdb']['seasons'])) {
             return false;
         }
 
-        for ($number = 0; $number <= (int) $details['tmdb']['number_of_seasons']; ++$number) {
-            $season = $this->seasonService->getSeason($serie, $number);
+        foreach ($details['tmdb']['seasons'] as $seasonData) {
+            $season = $this->seasonService->getSeason($serie, $seasonData['season_number']);
             $this->seasonService->save($season);
             $this->messageBus->dispatch(new SeasonMessage($season->getId()));
         }
