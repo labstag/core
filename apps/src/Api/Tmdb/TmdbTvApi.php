@@ -214,6 +214,45 @@ class TmdbTvApi extends AbstractTmdbApi
     }
 
     /**
+     * Get TV season videos/trailers.
+     *
+     * @param string      $seriesId     TV series ID
+     * @param int         $seasonNumber Season number
+     * @param string|null $language     Language (e.g., 'en-US', 'fr-FR')
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getSeasonVideos(string $seriesId, int $seasonNumber, ?string $language = null): ?array
+    {
+        $params = array_filter(
+            ['language' => $language]
+        );
+
+        $query    = $this->buildQueryParams($params);
+        $cacheKey = 'tmdb_tv_season_videos_' . $seriesId . '_s' . $seasonNumber . '_' . md5($query);
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($seriesId, $seasonNumber, $query): ?array {
+                $url  = self::BASE_URL . '/tv/' . $seriesId . '/season/' . $seasonNumber . '/videos' . $query;
+                $data = $this->makeRequest($url);
+
+                if (null === $data || 0 === count($data['results'] ?? [])) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+                // 24 hours cache
+
+                return $data;
+            },
+            86400
+        );
+    }
+
+    /**
      * Get TV series videos/trailers.
      *
      * @param string      $seriesId TV series ID

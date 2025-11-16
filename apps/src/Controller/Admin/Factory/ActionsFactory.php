@@ -189,6 +189,40 @@ class ActionsFactory
         $this->add(Crud::PAGE_INDEX, $action);
     }
 
+    public function setLinkImdbAction(): void
+    {
+        if (!$this->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('imdbAction', new TranslatableMessage('IMDB Page'));
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToCrudAction('imdbAction');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->add(Crud::PAGE_DETAIL, $action);
+        $this->add(Crud::PAGE_EDIT, $action);
+        $this->add(Crud::PAGE_INDEX, $action);
+    }
+
+    public function setLinkTmdbAction(): void
+    {
+        if (!$this->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('tmdbAction', new TranslatableMessage('TMDB Page'));
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToCrudAction('tmdbAction');
+        $this->add(Crud::PAGE_DETAIL, $action);
+        $this->add(Crud::PAGE_EDIT, $action);
+        $this->add(Crud::PAGE_INDEX, $action);
+    }
+
     public function setReadOnly(bool $readOnly): void
     {
         $this->readOnly = $readOnly;

@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Chapter;
@@ -17,7 +18,6 @@ use Labstag\Message\StoryMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ChapterCrudController extends CrudControllerAbstract
@@ -94,11 +94,15 @@ class ChapterCrudController extends CrudControllerAbstract
         return Chapter::class;
     }
 
-    #[Route('/admin/chapter/{entity}/update', name: 'admin_chapter_update')]
-    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
+    public function updateChapter(
+        AdminContext $adminContext,
+        Request $request,
+        MessageBusInterface $messageBus,
+    ): RedirectResponse
     {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
-        $chapter                         = $repositoryAbstract->find($entity);
+        $chapter                         = $repositoryAbstract->find($entityId);
         $messageBus->dispatch(new StoryMessage($chapter->getRefstory()->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -141,15 +145,8 @@ class ChapterCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('update', new TranslatableMessage('Update'));
-        $action->linkToUrl(
-            fn (Chapter $chapter): string => $this->generateUrl(
-                'admin_chapter_update',
-                [
-                    'entity' => $chapter->getId(),
-                ]
-            )
-        );
+        $action = Action::new('updateChapter', new TranslatableMessage('Update'));
+        $action->linkToCrudAction('updateChapter');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);

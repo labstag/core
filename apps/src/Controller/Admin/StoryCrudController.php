@@ -20,7 +20,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryCrudController extends CrudControllerAbstract
@@ -174,28 +173,32 @@ class StoryCrudController extends CrudControllerAbstract
         );
     }
 
-    #[Route('/admin/story/{entity}/update', name: 'admin_story_update')]
-    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $story                           = $repositoryAbstract->find($entity);
-        $messageBus->dispatch(new StoryMessage($story->getId()));
-        if ($request->headers->has('referer')) {
-            $url = $request->headers->get('referer');
-            if (is_string($url) && '' !== $url) {
-                return $this->redirect($url);
-            }
-        }
-
-        return $this->redirectToRoute('admin_story_index');
-    }
-
     public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
         $repositoryAbstract               = $this->getRepository();
         $stories                          = $repositoryAbstract->findAll();
         foreach ($stories as $story) {
             $messageBus->dispatch(new StoryMessage($story->getId()));
+        }
+
+        return $this->redirectToRoute('admin_story_index');
+    }
+
+    public function updateStory(
+        AdminContext $adminContext,
+        Request $request,
+        MessageBusInterface $messageBus,
+    ): RedirectResponse
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $story                           = $repositoryAbstract->find($entityId);
+        $messageBus->dispatch(new StoryMessage($story->getId()));
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                return $this->redirect($url);
+            }
         }
 
         return $this->redirectToRoute('admin_story_index');
@@ -244,15 +247,8 @@ class StoryCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('update', new TranslatableMessage('Update'));
-        $action->linkToUrl(
-            fn (Story $story): string => $this->generateUrl(
-                'admin_story_update',
-                [
-                    'entity' => $story->getId(),
-                ]
-            )
-        );
+        $action = Action::new('updateStory', new TranslatableMessage('Update'));
+        $action->linkToCrudAction('updateStory');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
