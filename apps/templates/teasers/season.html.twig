@@ -11,12 +11,16 @@
     </div>
     <div class="wrapper">
         <h3 class="title">{{ season.title }}</h3>
-        <div class="dates">
-            {{ "From %start% to %end%"|trans({'%start%': firstEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full'), '%end%' : lastEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
-        </div>
-        <div class="duration">
-            {{ time_runtime(runtime) }}
-        </div>
+        {% if firstEpisode.airDate is defined %}
+            <div class="dates">
+                {{ "From %start% to %end%"|trans({'%start%': firstEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full'), '%end%' : lastEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
+            </div>
+        {% endif %}
+        {% if runtime != 0 %}
+            <div class="duration">
+                {{ time_runtime(runtime) }}
+            </div>
+        {% endif %}
         <div class="episodes">
             {{ "%number% episodes"|trans({'%number%': season.episodes|length}) }}
         </div>

@@ -26,12 +26,16 @@
                             {% endfor %}
                         </div>
                     {% endif %}
-                    <div class="dates">
-                        {{ "From %start% to %end%"|trans({'%start%': firstEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full'), '%end%' : lastEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
-                    </div>
-                    <div class="duration">
-                        {{ time_runtime(runtime) }}
-                    </div>
+                    {% if firstEpisode.airDate is defined %}
+                        <div class="dates">
+                            {{ "From %start% to %end%"|trans({'%start%': firstEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full'), '%end%' : lastEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
+                        </div>
+                    {% endif %}
+                    {% if runtime != 0 %}
+                        <div class="duration">
+                            {{ time_runtime(runtime) }}
+                        </div>
+                    {% endif %}
                     <div class="links">
                         <a href="https://www.imdb.com/title/{{ season.refserie.imdb }}" target="_blank" title="{{ 'IMDB page for the serie'|trans|e('html_attr') }}">
                             {{ 'IMDB page for the serie'|trans }}
