@@ -4,7 +4,7 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
-use Labstag\Api\TmdbApi;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Message\EpisodeMessage;
@@ -20,7 +20,8 @@ final class SeasonService
         private MessageBusInterface $messageBus,
         private SeasonRepository $seasonRepository,
         private EpisodeService $episodeService,
-        private TmdbApi $tmdbApi,
+        private TheMovieDbApi $theMovieDbApi,
+        private ConfigurationService $configurationService,
     )
     {
     }
@@ -74,7 +75,8 @@ final class SeasonService
     {
         $tmdb = $season->getRefSerie()->getTmdb();
         $numberSeason = $season->getNumber();
-        $details      = $this->tmdbApi->getDetailsSerieBySeason($tmdb, $numberSeason);
+        $locale       = $this->configurationService->getLocaleTmdb();
+        $details      = $this->theMovieDbApi->tvserie()->getSeasonDetails($tmdb, $numberSeason, $locale);
         if (null === $details) {
             $this->logger->error(
                 'Season not found TMDB',
@@ -120,23 +122,11 @@ final class SeasonService
     }
 
     /**
-     * @param array<string, mixed> $data
-     */
-    private function getImgSeason(array $data): string
-    {
-        if (isset($data['poster_path'])) {
-            return $this->tmdbApi->getImgw300h450($data['poster_path']);
-        }
-
-        return '';
-    }
-
-    /**
      * @param array<string, mixed> $details
      */
     private function updateImage(Season $season, array $details): bool
     {
-        $poster = $this->getImgSeason($details);
+        $poster = $this->theMovieDbApi->images()->getPosterUrl($details['poster_path'] ?? '');
         if ('' === $poster) {
             return false;
         }

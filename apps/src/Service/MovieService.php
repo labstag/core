@@ -4,7 +4,7 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
-use Labstag\Api\TmdbApi;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
 use Labstag\Repository\MovieRepository;
@@ -29,8 +29,7 @@ final class MovieService
         private SagaRepository $sagaRepository,
         private CategoryService $categoryService,
         private SagaService $sagaService,
-        private TmdbApi $tmdbApi,
-        private ConfigurationService $configurationService,
+        private TheMovieDbApi $theMovieDbApi,
     )
     {
     }
@@ -86,7 +85,7 @@ final class MovieService
 
     public function update(Movie $movie): bool
     {
-        $details  = $this->getDetails($movie);
+        $details  = $this->theMovieDbApi->getDetailsMovie($movie);
         $statuses = [
             $this->updateMovie($movie, $details),
             $this->updateSaga($movie, $details),
@@ -95,47 +94,6 @@ final class MovieService
         ];
 
         return in_array(true, $statuses, true);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function getDetails(Movie $movie): array
-    {
-        $details = [];
-
-        $tmdbId = $movie->getTmdb();
-        if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
-            $data   = $this->tmdbApi->findByImdb($movie->getImdb());
-            if (null !== $data && isset($data['movie_results'][0]['id'])) {
-                $tmdbId = $data['movie_results'][0]['id'];
-            }
-        }
-
-        if (empty($tmdbId)) {
-            return [];
-        }
-
-        $details = $this->setReleaseDates($details, $tmdbId);
-        $tmdb    = $this->tmdbApi->getMovieDetails($tmdbId);
-        if (null !== $tmdb) {
-            $details['tmdb'] = $tmdb;
-            $details         = $this->setCollection($details);
-        }
-
-        return $this->setTrailer($details, $tmdbId);
-    }
-
-    /**
-     * @param array<string, mixed> $data
-     */
-    private function getImgMovie(array $data): string
-    {
-        if (isset($data['tmdb']['poster_path'])) {
-            return $this->tmdbApi->getImgw300h450($data['tmdb']['poster_path']);
-        }
-
-        return '';
     }
 
     /**
@@ -162,49 +120,6 @@ final class MovieService
                 return;
             }
         }
-    }
-
-    private function setCollection(array $details): array
-    {
-        if (isset($details['tmdb']['belongs_to_collection']['id']) && !is_null(
-            $details['tmdb']['belongs_to_collection']['id']
-        )
-        ) {
-            $collection = $this->tmdbApi->getMovieCollection($details['tmdb']['belongs_to_collection']['id']);
-            if (null !== $collection) {
-                $details['collection'] = $collection;
-            }
-        }
-
-        return $details;
-    }
-
-    private function setReleaseDates(array $details, string $tmdbId): array
-    {
-        $releases = $this->tmdbApi->getMovieReleasesDates($tmdbId);
-        if (null !== $releases) {
-            $details['release_dates'] = $releases;
-        }
-
-        return $details;
-    }
-
-    private function setTrailer(array $details, string $tmdbId): array
-    {
-        $locale   = $this->configurationService->getLocaleTmdb();
-        $trailers = $this->tmdbApi->getTrailerMovie($tmdbId, $locale);
-        if (null !== $trailers) {
-            $details['trailers'] = $trailers;
-
-            return $details;
-        }
-
-        $trailers = $this->tmdbApi->getTrailerMovie($tmdbId);
-        if (null !== $trailers) {
-            $details['trailers'] = $trailers;
-        }
-
-        return $details;
     }
 
     /**
@@ -234,7 +149,7 @@ final class MovieService
      */
     private function updateImageMovie(Movie $movie, array $details): bool
     {
-        $poster = $this->getImgMovie($details);
+        $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
         if ('' === $poster) {
             return false;
         }
@@ -322,13 +237,13 @@ final class MovieService
      */
     private function updateTrailer(Movie $movie, array $details): bool
     {
-        if (!isset($details['trailers'])) {
+        if (!isset($details['videos'])) {
             return false;
         }
 
         $find = false;
 
-        foreach ($details['trailers']['results'] as $result) {
+        foreach ($details['videos']['results'] as $result) {
             if ('YouTube' == $result['site'] && 'Trailer' == $result['type']) {
                 $url = 'https://www.youtube.com/watch?v=' . $result['key'];
                 $movie->setTrailer($url);

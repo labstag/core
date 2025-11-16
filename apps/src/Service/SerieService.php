@@ -4,7 +4,7 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
-use Labstag\Api\TmdbApi;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
 use Labstag\Entity\SerieCategory;
 use Labstag\Message\SeasonMessage;
@@ -30,8 +30,7 @@ final class SerieService
         private SeasonService $seasonService,
         private SerieRepository $serieRepository,
         private CategoryService $categoryService,
-        private ConfigurationService $configurationService,
-        private TmdbApi $tmdbApi,
+        private TheMovieDbApi $theMovieDbApi,
     )
     {
     }
@@ -98,8 +97,7 @@ final class SerieService
             return false;
         }
 
-        $details = $this->getDetails($serie);
-
+        $details  = $this->theMovieDbApi->getDetailsSerie($serie);
         $statuses = [
             $this->updateSerie($serie, $details),
             $this->updateCategory($serie, $details),
@@ -108,42 +106,6 @@ final class SerieService
         ];
 
         return in_array(true, $statuses, true);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function getDetails(Serie $serie): array
-    {
-        $details = [];
-
-        $tmdbId = $serie->getTmdb();
-        if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
-            $data   = $this->tmdbApi->findByImdb($serie->getImdb());
-            if (null !== $data && isset($data['tv_results'][0]['id'])) {
-                $tmdbId = $data['tv_results'][0]['id'];
-            }
-        }
-
-        if (empty($tmdbId)) {
-            return [];
-        }
-
-        $details = $this->tmdbApi->getDetailsSerie($details, $tmdbId);
-
-        return $this->setTrailer($details, $tmdbId);
-    }
-
-    /**
-     * @param array<string, mixed> $data
-     */
-    private function getImgMovie(array $data): string
-    {
-        if (isset($data['tmdb']['poster_path'])) {
-            return $this->tmdbApi->getImgw300h450($data['tmdb']['poster_path']);
-        }
-
-        return '';
     }
 
     /**
@@ -204,24 +166,6 @@ final class SerieService
         $serie->setReleaseDate($releaseDate);
     }
 
-    private function setTrailer(array $details, string $tmdbId): array
-    {
-        $locale   = $this->configurationService->getLocaleTmdb();
-        $trailers = $this->tmdbApi->getTrailersSerie($tmdbId, $locale);
-        if (null !== $trailers) {
-            $details['trailers'] = $trailers;
-
-            return $details;
-        }
-
-        $trailers = $this->tmdbApi->getTrailersSerie($tmdbId);
-        if (null !== $trailers) {
-            $details['trailers'] = $trailers;
-        }
-
-        return $details;
-    }
-
     /**
      * @param array<string, mixed> $details
      */
@@ -250,7 +194,7 @@ final class SerieService
      */
     private function updateImageMovie(Serie $serie, array $details): bool
     {
-        $poster = $this->getImgMovie($details);
+        $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
         if ('' === $poster) {
             return false;
         }
@@ -326,13 +270,13 @@ final class SerieService
      */
     private function updateTrailer(Serie $serie, array $details): bool
     {
-        if (!isset($details['trailers'])) {
+        if (!isset($details['videos']) && !is_array($details['videos'])) {
             return false;
         }
 
         $find = false;
 
-        foreach ($details['trailers']['results'] as $result) {
+        foreach ($details['videos']['results'] as $result) {
             if ('YouTube' == $result['site'] && 'Trailer' == $result['type']) {
                 $url = 'https://www.youtube.com/watch?v=' . $result['key'];
                 $serie->setTrailer($url);

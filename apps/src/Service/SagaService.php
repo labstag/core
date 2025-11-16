@@ -3,7 +3,7 @@
 namespace Labstag\Service;
 
 use Exception;
-use Labstag\Api\TmdbApi;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Saga;
 use Labstag\Message\SagaMessage;
 use Labstag\Repository\SagaRepository;
@@ -16,8 +16,9 @@ class SagaService
         private LoggerInterface $logger,
         protected MessageBusInterface $messageBus,
         protected SagaRepository $sagaRepository,
+        protected ConfigurationService $configurationService,
         protected FileService $fileService,
-        private TmdbApi $tmdbApi,
+        protected TheMovieDbApi $theMovieDbApi,
     )
     {
     }
@@ -60,7 +61,8 @@ class SagaService
 
     public function update(Saga $saga): bool
     {
-        $details = $this->tmdbApi->getSagaDetails($saga->getTmdb());
+        $locale   = $this->configurationService->getLocaleTmdb();
+        $details  = $this->theMovieDbApi->movies()->getMovieCollection($saga->getTmdb(), $locale);
         if (is_null($details)) {
             $this->logger->error('Saga not found TMDB id ' . $saga->getTmdb());
 
@@ -78,24 +80,13 @@ class SagaService
         return true;
     }
 
-    /**
-     * @param array<string, mixed> $data
-     */
-    private function getImgSaga(array $data): string
+    private function updateImageSaga(Saga $saga, array $data): bool
     {
         if (isset($data['poster_path'])) {
-            return $this->tmdbApi->getImgw300h450($data['poster_path']);
+            return false;
         }
 
-        return '';
-    }
-
-    /**
-     * @param array<string, mixed> $details
-     */
-    private function updateImageSaga(Saga $saga, array $details): bool
-    {
-        $poster = $this->getImgSaga($details);
+        $poster = $this->theMovieDbApi->images()->getPosterUrl($data['poster_path'] ?? '');
         if ('' === $poster) {
             return false;
         }

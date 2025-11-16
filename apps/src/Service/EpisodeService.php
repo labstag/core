@@ -4,7 +4,7 @@ namespace Labstag\Service;
 
 use DateTime;
 use Exception;
-use Labstag\Api\TmdbApi;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Repository\EpisodeRepository;
@@ -15,8 +15,9 @@ class EpisodeService
     public function __construct(
         private LoggerInterface $logger,
         private FileService $fileService,
-        protected EpisodeRepository $episodeRepository,
-        private TmdbApi $tmdbApi,
+        private EpisodeRepository $episodeRepository,
+        private TheMovieDbApi $theMovieDbApi,
+        private ConfigurationService $configurationService,
     )
     {
     }
@@ -52,7 +53,8 @@ class EpisodeService
         $tmdb = $episode->getRefseason()->getRefserie()->getTmdb();
         $seasonNumber = $episode->getRefseason()->getNumber();
         $episodeNumber = $episode->getNumber();
-        $details       = $this->tmdbApi->getEpisode($tmdb, $seasonNumber, $episodeNumber);
+        $locale        = $this->configurationService->getLocaleTmdb();
+        $details       = $this->theMovieDbApi->tvserie()->getEpisodeDetails($tmdb, $seasonNumber, $episodeNumber, $locale);
         if (!is_array($details)) {
             $this->logger->error(
                 'Episode not found TMDB',
@@ -83,23 +85,11 @@ class EpisodeService
     }
 
     /**
-     * @param array<string, mixed> $data
-     */
-    private function getImgEpisode(array $data): string
-    {
-        if (isset($data['still_path'])) {
-            return $this->tmdbApi->getImgw227h127($data['still_path']);
-        }
-
-        return '';
-    }
-
-    /**
      * @param array<string, mixed> $details
      */
     private function updateImage(Episode $episode, array $details): bool
     {
-        $poster = $this->getImgEpisode($details);
+        $poster = $this->theMovieDbApi->images()->getStillUrl($details['still_path'] ?? '');
         if ('' === $poster) {
             return false;
         }

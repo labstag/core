@@ -69,7 +69,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         protected ActionsFactory $actionsFactory,
         protected CrudFieldFactory $crudFieldFactory,
         protected AdminUrlGenerator $adminUrlGenerator,
-        protected ManagerRegistry $managerRegistry,
+        protected ManagerRegistry $managerRegistry
     )
     {
     }

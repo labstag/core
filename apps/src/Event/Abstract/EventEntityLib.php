@@ -103,6 +103,7 @@ abstract class EventEntityLib
         $this->updateEntityMovie($object);
         $this->updateEntitySerie($object);
         $this->updateEntitySaga($object);
+        $this->updateSlug($object);
 
         $entityManager->flush();
     }
@@ -114,12 +115,8 @@ abstract class EventEntityLib
         $this->updateEntityBlock($object);
         $this->updateEntityRedirection($object);
         $this->updateEntityParagraph($object);
-        $this->updateEntityMovieSlug($object);
-        $this->updateEntitySagaSlug($object);
-        $this->updateEntityPageSlug($object);
-        $this->updateEntityChapterSlug($object);
-        $this->updateEntitySeasonSlug($object);
         $this->initEntityMeta($object);
+        $this->updateSlug($object);
     }
 
     protected function updateEntityBanIp(object $instance, EntityManagerInterface $entityManager): void
@@ -341,5 +338,14 @@ abstract class EventEntityLib
         }
 
         $this->messageBus->dispatch(new StoryMessage($instance->getId()));
+    }
+
+    protected function updateSlug(object $object)
+    {
+        $this->updateEntityMovieSlug($object);
+        $this->updateEntitySagaSlug($object);
+        $this->updateEntityPageSlug($object);
+        $this->updateEntityChapterSlug($object);
+        $this->updateEntitySeasonSlug($object);
     }
 }
