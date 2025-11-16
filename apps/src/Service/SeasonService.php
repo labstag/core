@@ -120,7 +120,7 @@ final class SeasonService
             $this->messageBus->dispatch(new EpisodeMessage($episode->getId()));
         }
 
-        if ([] !== $episodes) {
+        if ([] == $episodes) {
             $this->seasonRepository->delete($season);
 
             return true;
