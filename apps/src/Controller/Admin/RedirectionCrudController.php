@@ -168,7 +168,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         );
     }
 
-    public function testSource(AdminContext $adminContext, string $entity): RedirectResponse
+    public function testSource(AdminContext $adminContext): RedirectResponse
     {
         $entityId = $adminContext->getRequest()->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();

@@ -157,16 +157,6 @@ class TheMovieDbApi
     }
 
     /**
-     * Get TV season videos/trailers.
-     *
-     * @return array<string, mixed>|null
-     */
-    public function getSeasonVideos(string $seriesId, int $seasonNumber, ?string $language = null): ?array
-    {
-        return $this->tvserie()->getSeasonVideos($seriesId, $seasonNumber, $language);
-    }
-
-    /**
      * Get direct access to images API for advanced usage.
      */
     public function images(): TmdbImagesApi
