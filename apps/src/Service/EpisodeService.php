@@ -76,7 +76,8 @@ class EpisodeService
         $episode->setOverview($details['tmdb']['overview']);
         $episode->setTmdb($details['tmdb']['id']);
         $episode->setTitle($details['tmdb']['name']);
-        $episode->setVoteAverage($details['tmdb']['vote_average']);
+        $voteAverage = (float) ($details['tmdb']['vote_average'] ?? 0);
+        $episode->setVoteAverage($voteAverage);
         $episode->setVoteCount($details['tmdb']['vote_count']);
         $episode->setRuntime($details['tmdb']['runtime']);
 

@@ -204,10 +204,10 @@ final class MovieService
             $movie->setDescription($overview);
         }
 
-        $voteEverage = (float) ($details['tmdb']['vote_average'] ?? 0);
+        $voteAverage = (float) ($details['tmdb']['vote_average'] ?? 0);
         $voteCount   = (int) ($details['tmdb']['vote_count'] ?? 0);
 
-        $movie->setEvaluation($voteEverage);
+        $movie->setEvaluation($voteAverage);
         $movie->setVotes($voteCount);
 
         $movie->setCountries($details['tmdb']['origin_country']);
