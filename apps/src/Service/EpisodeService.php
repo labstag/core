@@ -8,7 +8,6 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Repository\EpisodeRepository;
-use Psr\Log\LoggerInterface;
 
 class EpisodeService
 {

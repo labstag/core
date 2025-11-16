@@ -9,7 +9,6 @@ use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Message\EpisodeMessage;
 use Labstag\Repository\SeasonRepository;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SeasonService
@@ -24,7 +23,7 @@ final class SeasonService
     {
     }
 
-    public function getSeason(Serie $serie, array $data): Season
+    public function getSeason(Serie $serie, array $data): ?Season
     {
         $season = $this->seasonRepository->findOneBy(
             [
@@ -34,7 +33,17 @@ final class SeasonService
         );
 
         if ($season instanceof Season) {
+            if (0 == $data['episode_count']) {
+                $this->seasonRepository->delete($season);
+
+                return null;
+            }
+
             return $season;
+        }
+
+        if (0 == $data['episode_count']) {
+            return null;
         }
 
         $season = new Season();
@@ -108,6 +117,12 @@ final class SeasonService
         $episodes = $this->episodeService->getEpisodes($season);
         foreach ($episodes as $episode) {
             $this->messageBus->dispatch(new EpisodeMessage($episode->getId()));
+        }
+
+        if ([] !== $episodes) {
+            $this->seasonRepository->delete($season);
+
+            return true;
         }
 
         return true;

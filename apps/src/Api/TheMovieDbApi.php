@@ -61,12 +61,12 @@ class TheMovieDbApi
         }
 
         $seasonNumber = $episode->getRefseason()->getNumber();
-        if ($seasonNumber === null || $seasonNumber === 0) {
+        if (null === $seasonNumber || 0 === $seasonNumber) {
             return [];
         }
 
         $episodeNumber = $episode->getNumber();
-        if ($episodeNumber === null || $episodeNumber === 0) {
+        if (null === $episodeNumber || 0 === $episodeNumber) {
             return [];
         }
 

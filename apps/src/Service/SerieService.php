@@ -238,8 +238,7 @@ final class SerieService
     {
         if (isset($details['tmdb']['seasons']) && is_array($details['tmdb']['seasons'])) {
             foreach ($details['tmdb']['seasons'] as $seasonData) {
-                $season = $this->seasonService->getSeason($serie, $seasonData);
-                $this->seasonService->save($season);
+                $this->seasonService->getSeason($serie, $seasonData);
             }
         }
 
