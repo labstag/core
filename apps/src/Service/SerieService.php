@@ -222,7 +222,7 @@ final class SerieService
             return false;
         }
 
-        for ($number = 1; $number <= (int) $details['tmdb']['number_of_seasons']; ++$number) {
+        for ($number = 0; $number <= (int) $details['tmdb']['number_of_seasons']; ++$number) {
             $season = $this->seasonService->getSeason($serie, $number);
             $this->seasonService->save($season);
             $this->messageBus->dispatch(new SeasonMessage($season->getId()));
