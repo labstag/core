@@ -61,15 +61,7 @@ class TheMovieDbApi
         }
 
         $seasonNumber = $episode->getRefseason()->getNumber();
-        if (null === $seasonNumber || 0 === $seasonNumber) {
-            return [];
-        }
-
         $episodeNumber = $episode->getNumber();
-        if (null === $episodeNumber || 0 === $episodeNumber) {
-            return [];
-        }
-
         $locale          = $this->configurationService->getLocaleTmdb();
         $details['tmdb'] = $this->tvserie()->getEpisodeDetails($tmdb, $seasonNumber, $episodeNumber, $locale);
 

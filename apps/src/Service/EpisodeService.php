@@ -19,7 +19,7 @@ class EpisodeService
     {
     }
 
-    public function getEpisode(Season $season, array $data): ?Episode
+    public function getEpisode(Season $season, array $data): Episode
     {
         $episode = $this->episodeRepository->findOneBy(
             [
