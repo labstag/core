@@ -120,7 +120,7 @@ abstract class EventEntityLib
         }
 
         $entityRepository = $this->entityManager->getRepository(HttpErrorLogs::class);
-        $httpsLogs  = $entityRepository->findBy(
+        $httpsLogs        = $entityRepository->findBy(
             [
                 'internetProtocol' => $instance->getInternetProtocol(),
             ]
@@ -146,8 +146,8 @@ abstract class EventEntityLib
         }
 
         $entityRepository    = $this->entityManager->getRepository(Chapter::class);
-        $asciiSlugger  = new AsciiSlugger();
-        $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
+        $asciiSlugger        = new AsciiSlugger();
+        $unicodeString       = $asciiSlugger->slug((string) $instance->getTitle())->lower();
         $slug      = $unicodeString;
         $find      = false;
         $number    = 1;
@@ -211,6 +211,10 @@ abstract class EventEntityLib
         $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
         if ('' === trim($unicodeString)) {
             return;
+        }
+
+        if (preg_match('/^\d+$/', (string) $unicodeString)) {
+            $unicodeString .= '-film';
         }
 
         $test = $entityRepository->findOneBy(
@@ -316,8 +320,8 @@ abstract class EventEntityLib
         }
 
         $entityRepository    = $this->entityManager->getRepository(Season::class);
-        $asciiSlugger  = new AsciiSlugger();
-        $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
+        $asciiSlugger        = new AsciiSlugger();
+        $unicodeString       = $asciiSlugger->slug((string) $instance->getTitle())->lower();
         if ('' === trim($unicodeString)) {
             return;
         }
