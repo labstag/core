@@ -31,6 +31,7 @@ class SeasonCrudController extends CrudControllerAbstract
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->setUpdateAction();
         $this->setLinkTmdbAction();
+        $this->actionsFactory->setActionUpdateAll();
 
         return $this->actionsFactory->show();
     }
@@ -163,6 +164,17 @@ class SeasonCrudController extends CrudControllerAbstract
             if (is_string($url) && '' !== $url) {
                 return $this->redirect($url);
             }
+        }
+
+        return $this->redirectToRoute('admin_season_index');
+    }
+
+    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    {
+        $repositoryAbstract              = $this->getRepository();
+        $series                          = $repositoryAbstract->findAll();
+        foreach ($series as $serie) {
+            $messageBus->dispatch(new SeasonMessage($serie->getId()));
         }
 
         return $this->redirectToRoute('admin_season_index');
