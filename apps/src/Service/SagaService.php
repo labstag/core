@@ -87,7 +87,7 @@ class SagaService
             return false;
         }
 
-        if ('' != (string) $saga->getImg()) {
+        if ('' !== (string) $saga->getImg()) {
             return false;
         }
 

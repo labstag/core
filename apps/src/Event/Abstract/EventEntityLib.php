@@ -2,10 +2,12 @@
 
 namespace Labstag\Event\Abstract;
 
+use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\BanIp;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\HttpErrorLogs;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
@@ -20,10 +22,6 @@ use Labstag\Message\MovieMessage;
 use Labstag\Message\SagaMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Message\StoryMessage;
-use Labstag\Repository\ChapterRepository;
-use Labstag\Repository\HttpErrorLogsRepository;
-use Labstag\Repository\PageRepository;
-use Labstag\Repository\SeasonRepository;
 use Labstag\Service\BlockService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\WorkflowService;
@@ -40,13 +38,9 @@ abstract class EventEntityLib
         private Registry $workflowRegistry,
         protected MessageBusInterface $messageBus,
         protected WorkflowService $workflowService,
-        protected ChapterRepository $chapterRepository,
-        protected SeasonRepository $seasonRepository,
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
         protected BlockService $blockService,
-        protected PageRepository $pageRepository,
-        protected HttpErrorLogsRepository $httpErrorLogsRepository,
     )
     {
     }
@@ -125,7 +119,8 @@ abstract class EventEntityLib
             return;
         }
 
-        $httpsLogs = $this->httpErrorLogsRepository->findBy(
+        $entityRepository = $this->entityManager->getRepository(HttpErrorLogs::class);
+        $httpsLogs  = $entityRepository->findBy(
             [
                 'internetProtocol' => $instance->getInternetProtocol(),
             ]
@@ -150,13 +145,14 @@ abstract class EventEntityLib
             return;
         }
 
+        $entityRepository    = $this->entityManager->getRepository(Chapter::class);
         $asciiSlugger  = new AsciiSlugger();
         $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
         $slug      = $unicodeString;
         $find      = false;
         $number    = 1;
         while (false === $find) {
-            $testChapter = $this->chapterRepository->findOneBy(
+            $testChapter = $entityRepository->findOneBy(
                 [
                     'refstory' => $instance->getRefstory(),
                     'slug'     => $slug,
@@ -203,11 +199,40 @@ abstract class EventEntityLib
         }
 
         $slug = $instance->getSlug();
-        if (!preg_match('/^\d+$/', (string) $slug)) {
+        if (preg_match('/^\d+$/', (string) $slug)) {
+            $instance->setSlug($slug . '-film');
+
             return;
         }
 
-        $instance->setSlug($slug . '-film');
+        $entityRepository = $this->entityManager->getRepository(Movie::class);
+
+        $asciiSlugger  = new AsciiSlugger();
+        $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
+        if ('' === trim($unicodeString)) {
+            return;
+        }
+
+        $test = $entityRepository->findOneBy(
+            ['slug' => $unicodeString]
+        );
+        if (!$test instanceof Movie) {
+            $instance->setSlug($unicodeString);
+
+            return;
+        }
+
+        if ($test->getId() === $instance->getId()) {
+            return;
+        }
+
+        $date = $instance->getReleaseDate();
+        if ($date instanceof DateTimeInterface) {
+            $year = $date->format('Y');
+            $instance->setSlug($unicodeString . '-' . $year);
+
+            return;
+        }
     }
 
     protected function updateEntityPageSlug(object $instance): void
@@ -216,6 +241,7 @@ abstract class EventEntityLib
             return;
         }
 
+        $entityRepository = $this->entityManager->getRepository(Page::class);
         if (PageEnum::HOME->value != $instance->getType()) {
             $code = (PageEnum::CV->value == $instance->getType()) ? 'head-cv' : 'head';
             $this->addParagraph($instance, $code, 0);
@@ -223,7 +249,7 @@ abstract class EventEntityLib
             return;
         }
 
-        $oldHome = $this->pageRepository->getOneByType(PageEnum::HOME->value);
+        $oldHome = $entityRepository->getOneByType(PageEnum::HOME->value);
         if (PageEnum::HOME->value == $instance->getType()) {
             $instance->setSlug('');
         }
@@ -235,7 +261,7 @@ abstract class EventEntityLib
         if ($oldHome instanceof Page) {
             $oldHome->setType(PageEnum::PAGE->value);
             $oldHome->setSlug(null);
-            $this->pageRepository->save($oldHome);
+            $entityRepository->save($oldHome);
         }
     }
 
@@ -289,6 +315,7 @@ abstract class EventEntityLib
             return;
         }
 
+        $entityRepository    = $this->entityManager->getRepository(Season::class);
         $asciiSlugger  = new AsciiSlugger();
         $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
         if ('' === trim($unicodeString)) {
@@ -299,7 +326,7 @@ abstract class EventEntityLib
         $find      = false;
         $number    = 1;
         while (false === $find) {
-            $testSeason = $this->seasonRepository->findOneBy(
+            $testSeason = $entityRepository->findOneBy(
                 [
                     'refserie' => $instance->getRefserie(),
                     'slug'     => $slug,

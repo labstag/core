@@ -199,7 +199,7 @@ final class SerieService
             return false;
         }
 
-        if ('' != (string)$serie->getImg()) {
+        if ('' !== (string) $serie->getImg()) {
             return false;
         }
 
@@ -270,7 +270,7 @@ final class SerieService
      */
     private function updateTrailer(Serie $serie, array $details): bool
     {
-        if (!isset($details['videos']) && !is_array($details['videos'])) {
+        if (is_null($details['videos']) || !is_array($details['videos'])) {
             return false;
         }
 

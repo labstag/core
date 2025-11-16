@@ -86,6 +86,7 @@ final class MovieService
     public function update(Movie $movie): bool
     {
         $details  = $this->theMovieDbApi->getDetailsMovie($movie);
+
         $statuses = [
             $this->updateMovie($movie, $details),
             $this->updateSaga($movie, $details),
@@ -154,7 +155,7 @@ final class MovieService
             return false;
         }
 
-        if ('' != (string) $movie->getImg()) {
+        if ('' !== (string) $movie->getImg()) {
             return false;
         }
 
@@ -220,7 +221,7 @@ final class MovieService
      */
     private function updateSaga(Movie $movie, array $details): bool
     {
-        if (!isset($details['collection'])) {
+        if (is_null($details['collection'])) {
             return false;
         }
 
@@ -237,7 +238,7 @@ final class MovieService
      */
     private function updateTrailer(Movie $movie, array $details): bool
     {
-        if (!isset($details['videos'])) {
+        if (is_null($details['videos']) || !is_array($details['videos'])) {
             return false;
         }
 

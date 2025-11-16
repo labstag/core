@@ -94,7 +94,7 @@ class EpisodeService
             return false;
         }
 
-        if ('' != (string) $episode->getImg()) {
+        if ('' !== (string) $episode->getImg()) {
             return false;
         }
 

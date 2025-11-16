@@ -75,7 +75,10 @@ class TheMovieDbApi
 
         $details['release_dates'] = $this->movies()->getMovieReleasesDates($tmdbId);
 
-        $details['collection'] = $this->movies()->getMovieCollection($tmdbId, $locale);
+        $details['collection'] = $this->movies()->getMovieCollection(
+            $details['tmdb']['belongs_to_collection']['id'] ?? '',
+            $locale
+        );
 
         return $details;
     }
