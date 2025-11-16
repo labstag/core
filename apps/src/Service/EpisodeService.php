@@ -13,21 +13,19 @@ use Psr\Log\LoggerInterface;
 class EpisodeService
 {
     public function __construct(
-        private LoggerInterface $logger,
         private FileService $fileService,
         private EpisodeRepository $episodeRepository,
         private TheMovieDbApi $theMovieDbApi,
-        private ConfigurationService $configurationService,
     )
     {
     }
 
-    public function getEpisode(Season $season, int $number): ?Episode
+    public function getEpisode(Season $season, array $data): ?Episode
     {
         $episode = $this->episodeRepository->findOneBy(
             [
                 'refseason' => $season,
-                'number'    => $number,
+                'number'    => $data['episode_number'],
             ]
         );
 
@@ -38,9 +36,18 @@ class EpisodeService
         $episode = new Episode();
         $episode->setEnable(true);
         $episode->setRefseason($season);
-        $episode->setNumber($number);
+        $episode->setTitle($data['name']);
+        $episode->setNumber($data['episode_number']);
 
         return $episode;
+    }
+
+    public function getEpisodes(Season $season): array
+    {
+        return $this->episodeRepository->findBy(
+            ['refseason' => $season],
+            ['number' => 'ASC']
+        );
     }
 
     public function save(Episode $episode): void
@@ -50,34 +57,32 @@ class EpisodeService
 
     public function update(Episode $episode): bool
     {
-        $tmdb = $episode->getRefseason()->getRefserie()->getTmdb();
-        $seasonNumber = $episode->getRefseason()->getNumber();
-        $episodeNumber = $episode->getNumber();
-        $locale        = $this->configurationService->getLocaleTmdb();
-        $details       = $this->theMovieDbApi->tvserie()->getEpisodeDetails($tmdb, $seasonNumber, $episodeNumber, $locale);
-        if (!is_array($details)) {
-            $this->logger->error(
-                'Episode not found TMDB',
-                [
-                    'tmdb'           => $tmdb,
-                    'season_number'  => $seasonNumber,
-                    'episode_number' => $episodeNumber,
-                ]
-            );
+        $details = $this->theMovieDbApi->getDetailsEpisode($episode);
+        if ([] === $details) {
+            $this->episodeRepository->delete($episode);
 
             return false;
         }
 
-        $this->updateImage($episode, $details);
-        $episode->setOverview($details['overview']);
-        $episode->setTmdb($details['id']);
-        $episode->setTitle($details['name']);
-        $episode->setVoteAverage($details['vote_average']);
-        $episode->setVoteCount($details['vote_count']);
-        $episode->setRuntime($details['runtime']);
+        $statuses = [
+            $this->updateEpisode($episode, $details),
+            $this->updateImage($episode, $details),
+        ];
 
-        $airDate = (is_null($details['air_date']) || empty($details['air_date'])) ? null : new DateTime(
-            $details['air_date']
+        return in_array(true, $statuses, true);
+    }
+
+    private function updateEpisode(Episode $episode, array $details): bool
+    {
+        $episode->setOverview($details['tmdb']['overview']);
+        $episode->setTmdb($details['tmdb']['id']);
+        $episode->setTitle($details['tmdb']['name']);
+        $episode->setVoteAverage($details['tmdb']['vote_average']);
+        $episode->setVoteCount($details['tmdb']['vote_count']);
+        $episode->setRuntime($details['tmdb']['runtime']);
+
+        $airDate = (is_null($details['tmdb']['air_date']) || empty($details['tmdb']['air_date'])) ? null : new DateTime(
+            $details['tmdb']['air_date']
         );
         $episode->setAirDate($airDate);
 
@@ -89,7 +94,7 @@ class EpisodeService
      */
     private function updateImage(Episode $episode, array $details): bool
     {
-        $poster = $this->theMovieDbApi->images()->getStillUrl($details['still_path'] ?? '');
+        $poster = $this->theMovieDbApi->images()->getStillUrl($details['tmdb']['still_path'] ?? '');
         if (is_null($poster)) {
             return false;
         }

@@ -5,7 +5,9 @@ namespace Labstag\Api;
 use Labstag\Api\Tmdb\TmdbImagesApi;
 use Labstag\Api\Tmdb\TmdbMoviesApi;
 use Labstag\Api\Tmdb\TmdbTvApi;
+use Labstag\Entity\Episode;
 use Labstag\Entity\Movie;
+use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Service\CacheService;
 use Labstag\Service\ConfigurationService;
@@ -50,6 +52,30 @@ class TheMovieDbApi
         return $this->tmdbMoviesApi->findByImdb($imdbId, $language);
     }
 
+    public function getDetailsEpisode(Episode $episode): array
+    {
+        $details = [];
+        $tmdb    = $episode->getRefseason()->getRefserie()->getTmdb();
+        if (in_array($tmdb, [null, '', '0'], true)) {
+            return [];
+        }
+
+        $seasonNumber = $episode->getRefseason()->getNumber();
+        if ($seasonNumber === null || $seasonNumber === 0) {
+            return [];
+        }
+
+        $episodeNumber = $episode->getNumber();
+        if ($episodeNumber === null || $episodeNumber === 0) {
+            return [];
+        }
+
+        $locale          = $this->configurationService->getLocaleTmdb();
+        $details['tmdb'] = $this->tvserie()->getEpisodeDetails($tmdb, $seasonNumber, $episodeNumber, $locale);
+
+        return $details;
+    }
+
     /**
      * @return mixed[][]|null[]
      */
@@ -79,6 +105,24 @@ class TheMovieDbApi
             $details['tmdb']['belongs_to_collection']['id'] ?? '',
             $locale
         );
+
+        return $details;
+    }
+
+    public function getDetailsSeason(Season $season): array
+    {
+        $details = [];
+        $tmdb    = $season->getRefserie()->getTmdb();
+        if (in_array($tmdb, [null, '', '0'], true)) {
+            return [];
+        }
+
+        $numberSeason    = $season->getNumber();
+        $locale          = $this->configurationService->getLocaleTmdb();
+        $details['tmdb'] = $this->tvserie()->getSeasonDetails($tmdb, $numberSeason, $locale);
+        if (is_null($details['tmdb'])) {
+            return [];
+        }
 
         return $details;
     }

@@ -23,6 +23,7 @@ use Labstag\Repository\ParagraphRepository;
 use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\BlockService;
 use Labstag\Service\EmailService;
+use Labstag\Service\EpisodeService;
 use Labstag\Service\FileService;
 use Labstag\Service\FormService;
 use Labstag\Service\MovieService;
@@ -61,6 +62,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         protected SeasonService $seasonService,
         protected SecurityService $securityService,
         protected BlockService $blockService,
+        protected EpisodeService $episodeService,
         protected MovieService $movieService,
         protected ParagraphService $paragraphService,
         protected WorkflowService $workflowService,

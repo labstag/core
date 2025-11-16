@@ -15,23 +15,21 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final class SeasonService
 {
     public function __construct(
-        private LoggerInterface $logger,
         private FileService $fileService,
         private MessageBusInterface $messageBus,
         private SeasonRepository $seasonRepository,
         private EpisodeService $episodeService,
         private TheMovieDbApi $theMovieDbApi,
-        private ConfigurationService $configurationService,
     )
     {
     }
 
-    public function getSeason(Serie $serie, int $number): Season
+    public function getSeason(Serie $serie, array $data): Season
     {
         $season = $this->seasonRepository->findOneBy(
             [
                 'refserie' => $serie,
-                'number'   => $number,
+                'number'   => $data['season_number'],
             ]
         );
 
@@ -42,9 +40,18 @@ final class SeasonService
         $season = new Season();
         $season->setEnable(true);
         $season->setRefserie($serie);
-        $season->setNumber($number);
+        $season->setNumber($data['season_number']);
+        $season->setTitle($data['name']);
 
         return $season;
+    }
+
+    public function getSeasons(Serie $serie): array
+    {
+        return $this->seasonRepository->findBy(
+            ['refserie' => $serie],
+            ['number' => 'ASC']
+        );
     }
 
     /**
@@ -73,48 +80,33 @@ final class SeasonService
 
     public function update(Season $season): bool
     {
-        $tmdb = $season->getRefSerie()->getTmdb();
-        $numberSeason = $season->getNumber();
-        $locale       = $this->configurationService->getLocaleTmdb();
-        $details      = $this->theMovieDbApi->tvserie()->getSeasonDetails($tmdb, $numberSeason, $locale);
-        if (null === $details) {
-            $this->logger->error(
-                'Season not found TMDB',
-                [
-                    'tmdb'          => $tmdb,
-                    'season_number' => $numberSeason,
-                ]
-            );
-
-            $this->seasonRepository->remove($season);
-            $this->seasonRepository->flush();
+        $details = $this->theMovieDbApi->getDetailsSeason($season);
+        if ([] === $details) {
+            $this->seasonRepository->delete($season);
 
             return false;
         }
 
-        $season->setTitle($details['name']);
-        $airDate = (is_null($details['air_date']) || empty($details['air_date'])) ? null : new DateTime(
-            $details['air_date']
-        );
-        $season->setAirDate($airDate);
-        $season->setTmdb($details['id']);
-        $season->setOverview($details['overview']);
-        $season->setVoteAverage($details['vote_average']);
-        if (isset($details['overview']) && '' != $details['overview']) {
-            $season->setOverview($details['overview']);
+        $statuses = [
+            $this->updateSeason($season, $details),
+            $this->updateImage($season, $details),
+            $this->updateEpisodes($season, $details),
+        ];
+
+        return in_array(true, $statuses, true);
+    }
+
+    private function updateEpisodes(Season $season, array $details): bool
+    {
+        if (isset($details['tmdb']['episodes']) && is_array($details['tmdb']['episodes'])) {
+            foreach ($details['tmdb']['episodes'] as $episodeData) {
+                $episode = $this->episodeService->getEpisode($season, $episodeData);
+                $this->episodeService->save($episode);
+            }
         }
 
-        $this->updateImage($season, $details);
-        $episodes = count($details['episodes']);
-        if (0 === $episodes && 0 === count($season->getEpisodes())) {
-            $this->seasonRepository->remove($season);
-
-            return true;
-        }
-
-        for ($number = 1; $number <= $episodes; ++$number) {
-            $episode = $this->episodeService->getEpisode($season, $number);
-            $this->episodeService->save($episode);
+        $episodes = $this->episodeService->getEpisodes($season);
+        foreach ($episodes as $episode) {
             $this->messageBus->dispatch(new EpisodeMessage($episode->getId()));
         }
 
@@ -126,7 +118,7 @@ final class SeasonService
      */
     private function updateImage(Season $season, array $details): bool
     {
-        $poster = $this->theMovieDbApi->images()->getPosterUrl($details['poster_path'] ?? '');
+        $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
             return false;
         }
@@ -147,5 +139,22 @@ final class SeasonService
         } catch (Exception) {
             return false;
         }
+    }
+
+    private function updateSeason(Season $season, array $details): bool
+    {
+        $season->setTitle($details['tmdb']['name']);
+        $airDate = (is_null($details['tmdb']['air_date']) || empty($details['tmdb']['air_date'])) ? null : new DateTime(
+            $details['tmdb']['air_date']
+        );
+        $season->setAirDate($airDate);
+        $season->setTmdb($details['tmdb']['id']);
+        $season->setOverview($details['tmdb']['overview']);
+        $season->setVoteAverage($details['tmdb']['vote_average']);
+        if (isset($details['tmdb']['overview']) && '' != $details['tmdb']['overview']) {
+            $season->setOverview($details['tmdb']['overview']);
+        }
+
+        return true;
     }
 }

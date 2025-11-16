@@ -86,9 +86,15 @@ final class MovieService
     public function update(Movie $movie): bool
     {
         $details  = $this->theMovieDbApi->getDetailsMovie($movie);
+        if ([] === $details) {
+            $this->movieRepository->delete($movie);
+
+            return false;
+        }
 
         $statuses = [
             $this->updateMovie($movie, $details),
+            $this->updateImageMovie($movie, $details),
             $this->updateSaga($movie, $details),
             $this->updateCategory($movie, $details),
             $this->updateTrailer($movie, $details),
@@ -211,8 +217,6 @@ final class MovieService
         $movie->setReleaseDate(new DateTime($details['tmdb']['release_date']));
         $movie->setDuration((int) $details['tmdb']['runtime']);
 
-        $this->updateImageMovie($movie, $details);
-
         return true;
     }
 
@@ -225,8 +229,7 @@ final class MovieService
             return false;
         }
 
-        $tmdbId = $details['collection']['id'];
-        $saga   = $this->sagaService->getSagaByTmdbId((string) $tmdbId);
+        $saga   = $this->sagaService->getSaga($details['collection']);
 
         $movie->setSaga($saga);
 

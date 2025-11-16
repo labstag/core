@@ -23,16 +23,18 @@ class SagaService
     {
     }
 
-    public function getSagaByTmdbId(string $tmdbId): Saga
+    public function getSaga(array $data): Saga
     {
         $saga = $this->sagaRepository->findOneBy(
-            ['tmdb' => $tmdbId]
+            [
+                'tmdb' => $data['id'],
+            ]
         );
         if (!$saga instanceof Saga) {
             $saga = new Saga();
             $saga->setEnable(true);
-            $saga->setTitle($tmdbId);
-            $saga->setTmdb($tmdbId);
+            $saga->setTitle($data['name']);
+            $saga->setTmdb($data['id']);
             $this->sagaRepository->save($saga);
             $this->messageBus->dispatch(new SagaMessage($saga->getId()));
         }

@@ -93,13 +93,21 @@ final class SerieService
 
     public function update(Serie $serie): bool
     {
-        if (in_array($serie->getImdb(), [null, '', '0'], true)) {
+        $details  = $this->theMovieDbApi->getDetailsSerie($serie);
+        if ([] === $details) {
+            $this->serieRepository->delete($serie);
+
             return false;
         }
 
-        $details  = $this->theMovieDbApi->getDetailsSerie($serie);
         $statuses = [
             $this->updateSerie($serie, $details),
+            $this->setCertification($details, $serie),
+            $this->setCitation($serie, $details),
+            $this->setDescription($serie, $details),
+            $this->setReleaseDate($serie, $details),
+            $this->setLastreleaseDate($serie, $details),
+            $this->updateImageMovie($serie, $details),
             $this->updateCategory($serie, $details),
             $this->updateTrailer($serie, $details),
             $this->updateSeasons($serie, $details),
@@ -111,10 +119,10 @@ final class SerieService
     /**
      * @param array<string, mixed> $details
      */
-    private function setCertification(array $details, Serie $serie): void
+    private function setCertification(array $details, Serie $serie): bool
     {
         if (!isset($details['release_dates']['results']) || 0 === count($details['release_dates']['results'])) {
-            return;
+            return false;
         }
 
         foreach ($details['release_dates']['results'] as $result) {
@@ -129,41 +137,51 @@ final class SerieService
 
                 $serie->setCertification((string) $release['certification']);
 
-                return;
+                return true;
             }
         }
+
+        return false;
     }
 
-    private function setCitation(Serie $serie, array $details): void
+    private function setCitation(Serie $serie, array $details): bool
     {
         $tagline = (string) $details['tmdb']['tagline'];
         if ('' !== $tagline && '0' !== $tagline) {
             $serie->setCitation($tagline);
         }
+
+        return true;
     }
 
-    private function setDescription(Serie $serie, array $details): void
+    private function setDescription(Serie $serie, array $details): bool
     {
         $overview = (string) $details['tmdb']['overview'];
         if ('' !== $overview && '0' !== $overview) {
             $serie->setDescription($overview);
         }
+
+        return true;
     }
 
-    private function setLastreleaseDate(Serie $serie, array $details): void
+    private function setLastreleaseDate(Serie $serie, array $details): bool
     {
         $lastReleaseDate = (is_null(
             $details['tmdb']['last_air_date']
         ) || empty($details['tmdb']['last_air_date'])) ? null : new DateTime($details['tmdb']['last_air_date']);
         $serie->setLastreleaseDate($lastReleaseDate);
+
+        return true;
     }
 
-    private function setReleaseDate(Serie $serie, array $details): void
+    private function setReleaseDate(Serie $serie, array $details): bool
     {
         $releaseDate = (is_null(
             $details['tmdb']['first_air_date']
         ) || empty($details['tmdb']['first_air_date'])) ? null : new DateTime($details['tmdb']['first_air_date']);
         $serie->setReleaseDate($releaseDate);
+
+        return true;
     }
 
     /**
@@ -218,13 +236,15 @@ final class SerieService
 
     private function updateSeasons(Serie $serie, array $details): bool
     {
-        if (!isset($details['tmdb']['seasons']) || 0 === count($details['tmdb']['seasons'])) {
-            return false;
+        if (isset($details['tmdb']['seasons']) && is_array($details['tmdb']['seasons'])) {
+            foreach ($details['tmdb']['seasons'] as $seasonData) {
+                $season = $this->seasonService->getSeason($serie, $seasonData);
+                $this->seasonService->save($season);
+            }
         }
 
-        foreach ($details['tmdb']['seasons'] as $seasonData) {
-            $season = $this->seasonService->getSeason($serie, $seasonData['season_number']);
-            $this->seasonService->save($season);
+        $seasons = $this->seasonService->getSeasons($serie);
+        foreach ($seasons as $season) {
             $this->messageBus->dispatch(new SeasonMessage($season->getId()));
         }
 
@@ -245,10 +265,6 @@ final class SerieService
         $serie->setAdult($adult);
         $serie->setTitle((string) $details['tmdb']['name']);
 
-        $this->setCertification($details, $serie);
-        $this->setCitation($serie, $details);
-        $this->setDescription($serie, $details);
-
         $voteEverage = (float) ($details['tmdb']['vote_average'] ?? 0);
         $voteCount   = (int) ($details['tmdb']['vote_count'] ?? 0);
 
@@ -258,9 +274,6 @@ final class SerieService
         $serie->setCountries($details['tmdb']['origin_country']);
 
         $serie->setTmdb($details['tmdb']['id']);
-        $this->setReleaseDate($serie, $details);
-        $this->setLastreleaseDate($serie, $details);
-        $this->updateImageMovie($serie, $details);
 
         return true;
     }
