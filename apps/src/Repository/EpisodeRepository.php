@@ -28,8 +28,8 @@ class EpisodeRepository extends RepositoryAbstract
 
         $queryBuilder = $this->createQueryBuilder('e');
         $queryBuilder->where('e.enable = :enable');
-        $queryBuilder->andWhere('e.airDate <= :now');
         $queryBuilder->andWhere('e.refseason = :refseason');
+        $queryBuilder->andWhere('(e.airDate <= :now OR e.airDate IS NULL)');
         $queryBuilder->setParameters($data);
         $queryBuilder->orderBy('e.number', 'ASC');
 
