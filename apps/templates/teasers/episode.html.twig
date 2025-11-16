@@ -8,7 +8,7 @@
             {{ "Air date : %air_date%"|trans({'%air_date%': episode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
         </div>
     {% endif %}
-    {% if episode.directors|length > 0 %}
+    {% if episode.runtime is not null %}
         <div class="duration">
             {{ time_runtime(episode.runtime) }}
         </div>
