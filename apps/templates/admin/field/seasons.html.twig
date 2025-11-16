@@ -5,7 +5,7 @@
     {% for season in seasons %}
         <li>
           <a href="{{ admin_url('detail', season) }}">
-            #{{ loop.index }}
+            #{{ loop.number }}
           </a>: {{ season.title }}
         </li>
     {% endfor %}
