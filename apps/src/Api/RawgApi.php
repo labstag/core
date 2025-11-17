@@ -21,11 +21,7 @@ class RawgApi
 
     private RawgPeopleApi $rawgPeopleApi;
 
-    public function __construct(
-        CacheService $cacheService,
-        HttpClientInterface $httpClient,
-        string $rawgApiKey,
-    )
+    public function __construct(CacheService $cacheService, HttpClientInterface $httpClient, string $rawgApiKey)
     {
         $this->rawgGamesApi    = new RawgGamesApi($cacheService, $httpClient, $rawgApiKey);
         $this->rawgPeopleApi   = new RawgPeopleApi($cacheService, $httpClient, $rawgApiKey);

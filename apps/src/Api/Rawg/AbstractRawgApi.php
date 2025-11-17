@@ -30,11 +30,25 @@ abstract class AbstractRawgApi
      */
     protected function buildCacheKey(string $baseKey, array $filters = []): string
     {
-        if ($filters === []) {
+        if ([] === $filters) {
             return $baseKey;
         }
 
         return $baseKey . '_' . md5(serialize($filters));
+    }
+
+    /**
+     * Generic cache wrapper for API requests.
+     *
+     * @param string   $cacheKey     Cache key
+     * @param callable $callback     Function to execute if cache miss
+     * @param int      $cacheTimeout Cache timeout in seconds
+     *
+     * @return array<string, mixed>|null
+     */
+    protected function getCached(string $cacheKey, callable $callback, int $cacheTimeout = 60): ?array
+    {
+        return $this->cacheService->get($cacheKey, $callback, $cacheTimeout);
     }
 
     /**

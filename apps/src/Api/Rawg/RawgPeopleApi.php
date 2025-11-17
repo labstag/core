@@ -17,7 +17,7 @@ class RawgPeopleApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_creator_' . $creatorId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($creatorId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/creators/' . $creatorId, $additionalFilters);
@@ -44,7 +44,7 @@ class RawgPeopleApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_creator_roles', $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($additionalFilters): ?array {
                 $data = $this->makeRequest('/creator-roles', $additionalFilters);
@@ -71,7 +71,7 @@ class RawgPeopleApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_creators_list', $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($additionalFilters): ?array {
                 $data = $this->makeRequest('/creators', $additionalFilters);
@@ -98,7 +98,7 @@ class RawgPeopleApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_developer_' . $developerId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($developerId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/developers/' . $developerId, $additionalFilters);
@@ -125,7 +125,7 @@ class RawgPeopleApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_developers_list', $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($additionalFilters): ?array {
                 $data = $this->makeRequest('/developers', $additionalFilters);
@@ -152,7 +152,7 @@ class RawgPeopleApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_publisher_' . $publisherId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($publisherId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/publishers/' . $publisherId, $additionalFilters);
@@ -179,7 +179,7 @@ class RawgPeopleApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_publishers_list', $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($additionalFilters): ?array {
                 $data = $this->makeRequest('/publishers', $additionalFilters);

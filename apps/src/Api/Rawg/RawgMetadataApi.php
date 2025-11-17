@@ -17,7 +17,7 @@ class RawgMetadataApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_genre_' . $genreId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($genreId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/genres/' . $genreId, $additionalFilters);
@@ -44,7 +44,7 @@ class RawgMetadataApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_genres_list', $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($additionalFilters): ?array {
                 $data = $this->makeRequest('/genres', $additionalFilters);
@@ -71,7 +71,7 @@ class RawgMetadataApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_parent_platforms', $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($additionalFilters): ?array {
                 $data = $this->makeRequest('/platforms/lists/parents', $additionalFilters);
@@ -98,7 +98,7 @@ class RawgMetadataApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_platform_' . $platformId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($platformId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/platforms/' . $platformId, $additionalFilters);
@@ -125,7 +125,7 @@ class RawgMetadataApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_platforms_list', $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($additionalFilters): ?array {
                 $data = $this->makeRequest('/platforms', $additionalFilters);
@@ -152,7 +152,7 @@ class RawgMetadataApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_store_' . $storeId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($storeId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/stores/' . $storeId, $additionalFilters);
@@ -179,7 +179,7 @@ class RawgMetadataApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_stores_list', $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($additionalFilters): ?array {
                 $data = $this->makeRequest('/stores', $additionalFilters);
@@ -206,7 +206,7 @@ class RawgMetadataApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_tag_' . $tagId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($tagId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/tags/' . $tagId, $additionalFilters);
@@ -233,7 +233,7 @@ class RawgMetadataApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_tags_list', $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($additionalFilters): ?array {
                 $data = $this->makeRequest('/tags', $additionalFilters);

@@ -17,7 +17,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_achievements_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId . '/achievements', $additionalFilters);
@@ -44,7 +44,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_additions_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId . '/additions', $additionalFilters);
@@ -71,7 +71,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId, $additionalFilters);
@@ -98,7 +98,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_dev_team_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId . '/development-team', $additionalFilters);
@@ -125,7 +125,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_parent_games_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId . '/parent-games', $additionalFilters);
@@ -152,7 +152,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_reddit_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId . '/reddit', $additionalFilters);
@@ -179,7 +179,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_screenshots_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId . '/screenshots', $additionalFilters);
@@ -206,7 +206,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_series_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId . '/game-series', $additionalFilters);
@@ -233,7 +233,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_games', $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($additionalFilters): ?array {
                 $data = $this->makeRequest('/games', $additionalFilters);
@@ -260,7 +260,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_stores_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId . '/stores', $additionalFilters);
@@ -287,7 +287,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_suggested_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId . '/suggested', $additionalFilters);
@@ -314,7 +314,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_trailers_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId . '/movies', $additionalFilters);
@@ -341,7 +341,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_twitch_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId . '/twitch', $additionalFilters);
@@ -368,7 +368,7 @@ class RawgGamesApi extends AbstractRawgApi
     {
         $cacheKey = $this->buildCacheKey('rawg_game_youtube_' . $gameId, $additionalFilters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($gameId, $additionalFilters): ?array {
                 $data = $this->makeRequest('/games/' . $gameId . '/youtube', $additionalFilters);
@@ -404,7 +404,7 @@ class RawgGamesApi extends AbstractRawgApi
 
         $cacheKey = $this->buildCacheKey('rawg_search', $filters);
 
-        return $this->cacheService->get(
+        return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($filters): ?array {
                 $data = $this->makeRequest('/games', $filters);
