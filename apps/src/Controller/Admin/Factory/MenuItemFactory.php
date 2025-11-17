@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\SubMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use Labstag\Controller\Admin\GameCategoryCrudController;
 use Labstag\Controller\Admin\MovieCategoryCrudController;
 use Labstag\Controller\Admin\PageCategoryCrudController;
 use Labstag\Controller\Admin\PageTagCrudController;
@@ -46,7 +47,7 @@ final class MenuItemFactory
             'serie' => [
                 'crud'       => SerieCategoryCrudController::getEntityFqcn(),
                 'controller' => SerieCategoryCrudController::class,
-            ],
+            ]
         ];
 
         return $this->createMenuItems($categoryControllers, new TranslatableMessage('Category'), 'fas fa-hashtag');

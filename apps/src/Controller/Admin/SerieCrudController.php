@@ -17,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
+use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -178,11 +179,7 @@ class SerieCrudController extends CrudControllerAbstract
 
     public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
-        $repositoryAbstract              = $this->getRepository();
-        $series                          = $repositoryAbstract->findAll();
-        foreach ($series as $serie) {
-            $messageBus->dispatch(new SerieMessage($serie->getId()));
-        }
+        $messageBus->dispatch(new SerieAllMessage());
 
         return $this->redirectToRoute('admin_serie_index');
     }

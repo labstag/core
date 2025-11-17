@@ -18,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Season;
 use Labstag\Field\WysiwygField;
+use Labstag\Message\SeasonAllMessage;
 use Labstag\Message\SeasonMessage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -168,11 +169,7 @@ class SeasonCrudController extends CrudControllerAbstract
 
     public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
-        $repositoryAbstract              = $this->getRepository();
-        $series                          = $repositoryAbstract->findAll();
-        foreach ($series as $serie) {
-            $messageBus->dispatch(new SeasonMessage($serie->getId()));
-        }
+        $messageBus->dispatch(new SeasonAllMessage());
 
         return $this->redirectToRoute('admin_season_index');
     }

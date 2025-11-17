@@ -5,7 +5,7 @@ namespace Labstag\MessageHandler;
 use Labstag\Entity\Saga;
 use Labstag\Message\SagaMessage;
 use Labstag\Repository\SagaRepository;
-use Labstag\Service\SagaService;
+use Labstag\Service\Imdb\SagaService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

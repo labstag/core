@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Saga;
 use Labstag\Field\WysiwygField;
+use Labstag\Message\SagaAllMessage;
 use Labstag\Message\SagaMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -130,11 +131,7 @@ class SagaCrudController extends CrudControllerAbstract
 
     public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
-        $repositoryAbstract              = $this->getRepository();
-        $sagas                           = $repositoryAbstract->findAll();
-        foreach ($sagas as $saga) {
-            $messageBus->dispatch(new SagaMessage($saga->getId()));
-        }
+        $messageBus->dispatch(new SagaAllMessage());
 
         return $this->redirectToRoute('admin_saga_index');
     }

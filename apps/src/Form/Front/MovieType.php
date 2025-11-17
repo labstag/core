@@ -3,8 +3,8 @@
 namespace Labstag\Form\Front;
 
 use Labstag\Service\CategoryService;
-use Labstag\Service\MovieService;
-use Labstag\Service\SagaService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SagaService;
 use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

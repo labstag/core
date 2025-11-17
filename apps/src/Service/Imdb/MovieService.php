@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Service;
+namespace Labstag\Service\Imdb;
 
 use DateTime;
 use Exception;
@@ -9,6 +9,8 @@ use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
+use Labstag\Service\CategoryService;
+use Labstag\Service\FileService;
 
 final class MovieService
 {

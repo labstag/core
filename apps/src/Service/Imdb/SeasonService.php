@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Service;
+namespace Labstag\Service\Imdb;
 
 use DateTime;
 use Exception;
@@ -9,6 +9,7 @@ use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Message\EpisodeMessage;
 use Labstag\Repository\SeasonRepository;
+use Labstag\Service\FileService;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SeasonService

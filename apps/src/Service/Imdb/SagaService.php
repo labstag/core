@@ -1,24 +1,26 @@
 <?php
 
-namespace Labstag\Service;
+namespace Labstag\Service\Imdb;
 
 use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Saga;
 use Labstag\Message\SagaMessage;
 use Labstag\Repository\SagaRepository;
+use Labstag\Service\ConfigurationService;
+use Labstag\Service\FileService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class SagaService
+final class SagaService
 {
     public function __construct(
         private LoggerInterface $logger,
-        protected MessageBusInterface $messageBus,
-        protected SagaRepository $sagaRepository,
-        protected ConfigurationService $configurationService,
-        protected FileService $fileService,
-        protected TheMovieDbApi $theMovieDbApi,
+        private MessageBusInterface $messageBus,
+        private SagaRepository $sagaRepository,
+        private ConfigurationService $configurationService,
+        private FileService $fileService,
+        private TheMovieDbApi $theMovieDbApi,
     )
     {
     }

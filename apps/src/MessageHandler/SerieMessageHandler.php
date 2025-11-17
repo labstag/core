@@ -6,7 +6,7 @@ use Labstag\Entity\Serie;
 use Labstag\Message\SerieMessage;
 use Labstag\Repository\SeasonRepository;
 use Labstag\Repository\SerieRepository;
-use Labstag\Service\SerieService;
+use Labstag\Service\Imdb\SerieService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

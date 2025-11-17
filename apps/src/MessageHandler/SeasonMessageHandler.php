@@ -5,7 +5,7 @@ namespace Labstag\MessageHandler;
 use Labstag\Entity\Season;
 use Labstag\Message\SeasonMessage;
 use Labstag\Repository\SeasonRepository;
-use Labstag\Service\SeasonService;
+use Labstag\Service\Imdb\SeasonService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

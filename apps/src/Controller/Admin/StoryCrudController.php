@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
 use Labstag\Field\WysiwygField;
+use Labstag\Message\StoryAllMessage;
 use Labstag\Message\StoryMessage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -175,11 +176,7 @@ class StoryCrudController extends CrudControllerAbstract
 
     public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
-        $repositoryAbstract               = $this->getRepository();
-        $stories                          = $repositoryAbstract->findAll();
-        foreach ($stories as $story) {
-            $messageBus->dispatch(new StoryMessage($story->getId()));
-        }
+        $messageBus->dispatch(new StoryAllMessage());
 
         return $this->redirectToRoute('admin_story_index');
     }

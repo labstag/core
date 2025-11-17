@@ -15,10 +15,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
+use Labstag\Message\MovieAllMessage;
 use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Countries;
@@ -155,6 +158,17 @@ class MovieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
     }
 
+    public function jsonMovie(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $movie                           = $repositoryAbstract->find($entityId);
+
+        $details = $theMovieDbApi->getDetailsMovie($movie);
+
+        return new JsonResponse($details);
+    }
+
     public function tmdb(AdminContext $adminContext): RedirectResponse
     {
         $entityId = $adminContext->getRequest()->query->get('entityId');
@@ -166,11 +180,7 @@ class MovieCrudController extends CrudControllerAbstract
 
     public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
-        $repositoryAbstract              = $this->getRepository();
-        $movies                          = $repositoryAbstract->findAll();
-        foreach ($movies as $movie) {
-            $messageBus->dispatch(new MovieMessage($movie->getId()));
-        }
+        $messageBus->dispatch(new MovieAllMessage());
 
         return $this->redirectToRoute('admin_movie_index');
     }
@@ -229,6 +239,17 @@ class MovieCrudController extends CrudControllerAbstract
 
         $action = Action::new('updateMovie', new TranslatableMessage('Update'));
         $action->linkToCrudAction('updateMovie');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+
+        $action = Action::new('jsonMovie', new TranslatableMessage('Json'));
+        $action->linkToCrudAction('jsonMovie');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Service;
+namespace Labstag\Service\Imdb;
 
 use DateTime;
 use Exception;
@@ -8,8 +8,9 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Repository\EpisodeRepository;
+use Labstag\Service\FileService;
 
-class EpisodeService
+final class EpisodeService
 {
     public function __construct(
         private FileService $fileService,

@@ -286,7 +286,7 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         // set the owning side to null (unless already changed)
         if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this
         ) {
-            $paragraph->setPage(null);
+            $paragraph->setMovie(null);
         }
 
         return $this;
