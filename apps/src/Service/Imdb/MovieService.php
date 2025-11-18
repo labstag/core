@@ -44,7 +44,10 @@ final class MovieService
     {
     }
 
-    public function getAllRecommandations()
+    /**
+     * @return mixed[]
+     */
+    public function getAllRecommandations(): array
     {
         $rows = $this->entityManager->getConnection()->fetchAllAssociative('SELECT json FROM movie');
 

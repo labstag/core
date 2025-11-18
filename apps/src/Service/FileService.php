@@ -246,6 +246,7 @@ final class FileService
         }
 
         $fileSystem->write($fileName, $content);
+
         return null;
     }
 

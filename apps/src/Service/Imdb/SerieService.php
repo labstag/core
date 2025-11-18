@@ -46,7 +46,10 @@ final class SerieService
     {
     }
 
-    public function getAllRecommandations()
+    /**
+     * @return mixed[]
+     */
+    public function getAllRecommandations(): array
     {
         $results         = $this->serieRepository->getAllJsonFields();
         $recommandations = [];

@@ -18,7 +18,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
-use Labstag\Message\RecommandationSerieMessage;
 use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Service\FileService;
@@ -107,7 +106,6 @@ class SerieCrudController extends CrudControllerAbstract
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
         $this->setShowAllRecommandations();
-        $this->setUpdateRecommandations();
 
         return $this->actionsFactory->show();
     }
@@ -283,24 +281,6 @@ class SerieCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    public function setUpdateRecommandations(): void
-    {
-        if (!$this->actionsFactory->isTrash()) {
-            return;
-        }
-
-        $action = Action::new(
-            'updateRecommandations',
-            new TranslatableMessage('Update recommendations'),
-            'fas fa-terminal'
-        );
-        $action->displayAsLink();
-        $action->linkToCrudAction('updateRecommandations');
-        $action->createAsGlobalAction();
-
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
-    }
-
     public function tmdb(AdminContext $adminContext): RedirectResponse
     {
         $entityId = $adminContext->getRequest()->query->get('entityId');
@@ -313,13 +293,6 @@ class SerieCrudController extends CrudControllerAbstract
     public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
         $messageBus->dispatch(new SerieAllMessage());
-
-        return $this->redirectToRoute('admin_serie_index');
-    }
-
-    public function updateRecommandations(MessageBusInterface $messageBus): RedirectResponse
-    {
-        $messageBus->dispatch(new RecommandationSerieMessage());
 
         return $this->redirectToRoute('admin_serie_index');
     }
