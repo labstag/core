@@ -8,8 +8,9 @@
             <th>{{ 'Overview'|trans }}</th>
             <th>{{ 'Vote Average'|trans }}</th>
             <th>{{ 'Popularity'|trans }}</th>
+            <th>{{ 'Date'|trans }}</th>
             <th>{{ 'Links'|trans }}</th>
-            <th>{{ 'Add'|trans }}</th>
+            <th>{{ 'Release Date'|trans }}</th>
         </tr>
     </thead>
     <tbody>
@@ -17,11 +18,20 @@
         {% set title = (recommandation.title is defined ) ? recommandation.title : recommandation.name %}
         <tr>
             <td>{{ title }}</td>
-            <td><img src="{{ recommandation.poster_path }}" alt="{{ title }}" style="height: 100px;"></td>
-            <td><img src="{{ recommandation.backdrop_path }}" alt="{{ title }}" style="height: 100px;"></td>
+            <td>
+                {% if recommandation.poster_path != null %}
+                    <img src="{{ recommandation.poster_path }}" alt="{{ title }}" style="height: 100px;">
+                {% endif %}
+            </td>
+            <td>
+                {% if recommandation.backdrop_path != null %}
+                    <img src="{{ recommandation.backdrop_path }}" alt="{{ title }}" style="height: 100px;">
+                {% endif %}
+            </td>
             <td>{{ recommandation.overview }}</td>
             <td>{{ recommandation.vote_average }}</td>
             <td>{{ recommandation.popularity }}</td>
+            <td>{{ recommandation.first_air_date|format_date(locale: 'fr_FR', dateFormat: 'medium') }}
             <td>
                 <a href="{{ recommandation.links }}" target="_blank">{{ 'View on TMDb'|trans }}</a>
             </td>
