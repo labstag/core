@@ -3,6 +3,7 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Season;
@@ -12,6 +13,7 @@ use Labstag\Message\SeasonMessage;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SerieService
@@ -22,12 +24,17 @@ final class SerieService
      */
     private array $country = [];
 
+    private ?array $jsonTmdb = null;
+
     /**
      * @var array<string, mixed>
      */
     private array $year = [];
 
     public function __construct(
+        #[AutowireIterator('labstag.admincontroller')]
+        private readonly iterable $controllers,
+        private AdminUrlGenerator $adminUrlGenerator,
         private MessageBusInterface $messageBus,
         private FileService $fileService,
         private CompanyService $companyService,
@@ -37,6 +44,18 @@ final class SerieService
         private TheMovieDbApi $theMovieDbApi,
     )
     {
+    }
+
+    public function getAllRecommandations()
+    {
+        $results         = $this->serieRepository->getAllJsonFields();
+        $recommandations = [];
+        foreach ($results as $result) {
+            $data            = json_decode((string) $result, true);
+            $recommandations = $this->setJsonRecommandations($data, new Serie(), $recommandations);
+        }
+
+        return $recommandations;
     }
 
     /**
@@ -95,6 +114,13 @@ final class SerieService
         return $year;
     }
 
+    public function recommandations(Serie $serie, array $recommandations = []): array
+    {
+        $jsonRecommandations = $this->theMovieDbApi->getDetailsSerie($serie);
+
+        return $this->setJsonRecommandations($jsonRecommandations, $serie, $recommandations);
+    }
+
     public function update(Serie $serie): bool
     {
         $details  = $this->theMovieDbApi->getDetailsSerie($serie);
@@ -119,6 +145,17 @@ final class SerieService
         ];
 
         return in_array(true, $statuses, true);
+    }
+
+    private function getAllJsonTmdb(): array
+    {
+        if (!is_null($this->jsonTmdb)) {
+            return $this->jsonTmdb;
+        }
+
+        $this->jsonTmdb = $this->serieRepository->getAllJsonTmdb();
+
+        return $this->jsonTmdb;
     }
 
     /**
@@ -169,6 +206,29 @@ final class SerieService
         return true;
     }
 
+    private function setJsonRecommandations(array $json, Serie $serie, array $recommandations = []): array
+    {
+        if (!isset($json['recommandations'])) {
+            return $recommandations;
+        }
+
+        foreach ($json['recommandations']['results'] as $recommandation) {
+            $tmdb              = $recommandation['id'];
+            if (isset($recommandations[$tmdb])) {
+                continue;
+            }
+
+            $recommandation = $this->setRecommandation($recommandation, $serie);
+            if (!is_array($recommandation)) {
+                continue;
+            }
+
+            $recommandations[$tmdb] = $recommandation;
+        }
+
+        return $recommandations;
+    }
+
     private function setLastreleaseDate(Serie $serie, array $details): bool
     {
         $lastReleaseDate = (is_null(
@@ -177,6 +237,28 @@ final class SerieService
         $serie->setLastreleaseDate($lastReleaseDate);
 
         return true;
+    }
+
+    private function setRecommandation(array $recommandation, Serie $serie): ?array
+    {
+        $tmdbs            = $this->getAllJsonTmdb();
+        $tmdb             = $recommandation['id'];
+        if (in_array($tmdb, $tmdbs)) {
+            return null;
+        }
+
+        $recommandation['poster_path'] = $this->theMovieDbApi->images()->getPosterUrl(
+            $recommandation['poster_path'] ?? ''
+        );
+        $recommandation['backdrop_path'] = $this->theMovieDbApi->images()->getBackdropUrl(
+            $recommandation['backdrop_path'] ?? ''
+        );
+        $recommandation['links'] = 'https://www.themoviedb.org/tv/' . $recommandation['id'];
+        $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $serie, $recommandation);
+
+        $recommandation['date'] = new DateTime($recommandation['first_air_date']);
+
+        return $recommandation;
     }
 
     private function setReleaseDate(Serie $serie, array $details): bool
@@ -327,5 +409,22 @@ final class SerieService
         }
 
         return $find;
+    }
+
+    private function urlAddWithTmdb(string $type, Serie $serie, array $data): string
+    {
+        foreach ($this->controllers as $controller) {
+            $entityClass = $controller->getEntityFqcn();
+            if ($entityClass == $serie::class || $serie instanceof $entityClass) {
+                $url = $this->adminUrlGenerator->setController($controller::class);
+                $url->set('name', $data['title'] ?? $data['name']);
+                $url->set('tmdb', $data['id']);
+                $url->setAction($type);
+
+                return $url->generateUrl();
+            }
+        }
+
+        return '';
     }
 }

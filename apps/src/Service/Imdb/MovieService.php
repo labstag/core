@@ -3,14 +3,16 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
 use Labstag\Repository\MovieRepository;
-use Labstag\Repository\SagaRepository;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 final class MovieService
 {
@@ -20,34 +22,40 @@ final class MovieService
      */
     private array $country = [];
 
+    private ?array $jsonTmdb = null;
+
     /**
      * @var array<string, mixed>
      */
     private array $year = [];
 
     public function __construct(
+        #[AutowireIterator('labstag.admincontroller')]
+        private readonly iterable $controllers,
+        private AdminUrlGenerator $adminUrlGenerator,
         private MovieRepository $movieRepository,
         private FileService $fileService,
         private CompanyService $companyService,
-        private SagaRepository $sagaRepository,
         private CategoryService $categoryService,
         private SagaService $sagaService,
+        private EntityManagerInterface $entityManager,
         private TheMovieDbApi $theMovieDbApi,
     )
     {
     }
 
-    public function deleteOldSaga(): void
+    public function getAllRecommandations()
     {
-        $data = $this->sagaRepository->findSagaWithoutMovie();
-        foreach ($data as $saga) {
-            $total = count($saga->getMovies());
-            if (0 !== $total) {
-                continue;
-            }
+        $rows = $this->entityManager->getConnection()->fetchAllAssociative('SELECT json FROM movie');
 
-            $this->sagaRepository->delete($saga);
+        $results         = array_column($rows, 'json');
+        $recommandations = [];
+        foreach ($results as $result) {
+            $data            = json_decode((string) $result, true);
+            $recommandations = $this->setJsonRecommandations($data, new Movie(), $recommandations);
         }
+
+        return $recommandations;
     }
 
     /**
@@ -86,6 +94,13 @@ final class MovieService
         return $year;
     }
 
+    public function recommandations(Movie $movie, array $recommandations = []): array
+    {
+        $jsonRecommandations = $this->theMovieDbApi->getDetailsMovie($movie);
+
+        return $this->setJsonRecommandations($jsonRecommandations, $movie, $recommandations);
+    }
+
     public function update(Movie $movie): bool
     {
         $details  = $this->theMovieDbApi->getDetailsMovie($movie);
@@ -105,6 +120,17 @@ final class MovieService
         ];
 
         return in_array(true, $statuses, true);
+    }
+
+    private function getAllJsonTmdb(): array
+    {
+        if (!is_null($this->jsonTmdb)) {
+            return $this->jsonTmdb;
+        }
+
+        $this->jsonTmdb = $this->movieRepository->getAllJsonTmdb();
+
+        return $this->jsonTmdb;
     }
 
     /**
@@ -131,6 +157,51 @@ final class MovieService
                 return;
             }
         }
+    }
+
+    private function setJsonRecommandations(array $json, Movie $movie, array $recommandations = []): array
+    {
+        if (!isset($json['recommandations'])) {
+            return $recommandations;
+        }
+
+        foreach ($json['recommandations']['results'] as $recommandation) {
+            $tmdb              = $recommandation['id'];
+            if (isset($recommandations[$tmdb])) {
+                continue;
+            }
+
+            $recommandation = $this->setRecommandation($recommandation, $movie);
+            if (!is_array($recommandation)) {
+                continue;
+            }
+
+            $recommandations[$tmdb] = $recommandation;
+        }
+
+        return $recommandations;
+    }
+
+    private function setRecommandation(array $recommandation, Movie $movie): ?array
+    {
+        $tmdbs            = $this->getAllJsonTmdb();
+        $tmdb             = $recommandation['id'];
+        if (in_array($tmdb, $tmdbs)) {
+            return null;
+        }
+
+        $recommandation['poster_path'] = $this->theMovieDbApi->images()->getPosterUrl(
+            $recommandation['poster_path'] ?? ''
+        );
+        $recommandation['backdrop_path'] = $this->theMovieDbApi->images()->getBackdropUrl(
+            $recommandation['backdrop_path'] ?? ''
+        );
+        $recommandation['links'] = 'https://www.themoviedb.org/movie/' . $recommandation['id'];
+        $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $movie, $recommandation);
+
+        $recommandation['date'] = new DateTime($recommandation['release_date']);
+
+        return $recommandation;
     }
 
     /**
@@ -282,5 +353,22 @@ final class MovieService
         }
 
         return $find;
+    }
+
+    private function urlAddWithTmdb(string $type, Movie $movie, array $data): string
+    {
+        foreach ($this->controllers as $controller) {
+            $entityClass = $controller->getEntityFqcn();
+            if ($entityClass == $movie::class || $movie instanceof $entityClass) {
+                $url = $this->adminUrlGenerator->setController($controller::class);
+                $url->set('name', $data['title'] ?? $data['name']);
+                $url->set('tmdb', $data['id']);
+                $url->setAction($type);
+
+                return $url->generateUrl();
+            }
+        }
+
+        return '';
     }
 }

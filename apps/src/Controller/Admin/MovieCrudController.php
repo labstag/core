@@ -21,7 +21,10 @@ use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\MovieAllMessage;
 use Labstag\Message\MovieMessage;
+use Labstag\Message\RecommandationMovieMessage;
 use Labstag\Repository\MovieRepository;
+use Labstag\Service\FileService;
+use Labstag\Service\JsonPaginatorService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -107,6 +110,8 @@ class MovieCrudController extends CrudControllerAbstract
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
+        $this->setShowAllRecommandations();
+        $this->setUpdateRecommandations();
 
         return $this->actionsFactory->show();
     }
@@ -247,6 +252,56 @@ class MovieCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
+    public function recommandationsAll(
+        FileService $fileService,
+        JsonPaginatorService $jsonPaginatorService,
+    ): Response
+    {
+        $file         = $fileService->getFileInAdapter('private', 'recommandations-movie.json');
+        if (!is_file($file)) {
+            return $this->redirectToRoute('admin_serie_index');
+        }
+
+        $pagination = $jsonPaginatorService->paginate($file);
+
+        return $this->render(
+            'admin/movie/recommandations.html.twig',
+            ['pagination' => $pagination]
+        );
+    }
+
+    public function setShowAllRecommandations(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('recommandationsAll', new TranslatableMessage('all recommendations'), 'fas fa-terminal');
+        $action->displayAsLink();
+        $action->linkToCrudAction('recommandationsAll');
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
+    public function setUpdateRecommandations(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new(
+            'updateRecommandations',
+            new TranslatableMessage('Update recommendations'),
+            'fas fa-terminal'
+        );
+        $action->displayAsLink();
+        $action->linkToCrudAction('updateRecommandations');
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
     public function tmdb(AdminContext $adminContext): RedirectResponse
     {
         $entityId = $adminContext->getRequest()->query->get('entityId');
@@ -279,6 +334,13 @@ class MovieCrudController extends CrudControllerAbstract
                 return $this->redirect($url);
             }
         }
+
+        return $this->redirectToRoute('admin_movie_index');
+    }
+
+    public function updateRecommandations(MessageBusInterface $messageBus): RedirectResponse
+    {
+        $messageBus->dispatch(new RecommandationMovieMessage());
 
         return $this->redirectToRoute('admin_movie_index');
     }

@@ -87,4 +87,9 @@ final class ConfigurationService
 
         return json_encode($data);
     }
+
+    public function save(Configuration $configuration): void
+    {
+        $this->configurationRepository->save($configuration);
+    }
 }

@@ -232,6 +232,23 @@ final class FileService
         return number_format($bytes, 2) . ' ' . $units[$unitIndex];
     }
 
+    public function saveFileInAdapter(string $type, string $fileName, $content): null
+    {
+        $fileSystem = null;
+        foreach ($this->fileStorages as $fileStorage) {
+            if ($fileStorage->getType() == $type) {
+                $fileSystem = $fileStorage->getFilesystem();
+            }
+        }
+
+        if (is_null($fileSystem)) {
+            return null;
+        }
+
+        $fileSystem->write($fileName, $content);
+        return null;
+    }
+
     public function setUploadedFile(string $filePath, object $entity, string|PropertyPathInterface $type): void
     {
         try {

@@ -1625,6 +1625,30 @@
         <source>Companies</source>
         <target>Entreprises</target>
       </trans-unit>
+      <trans-unit id="JNV4fsz" resname="Update recommendations">
+        <source>Update recommendations</source>
+        <target>Mettre à jour les recommandations</target>
+      </trans-unit>
+      <trans-unit id="T31caQj" resname="all recommendations">
+        <source>all recommendations</source>
+        <target>toutes les recommandations</target>
+      </trans-unit>
+      <trans-unit id="n58LRwN" resname="Production companies">
+        <source>Production companies</source>
+        <target>Sociétés de production</target>
+      </trans-unit>
+      <trans-unit id="W69bbFu" resname="TMDB page for the movie">
+        <source>TMDB page for the movie</source>
+        <target>Page TMDB du film</target>
+      </trans-unit>
+      <trans-unit id="y1pACaa" resname="Movies recommendations">
+        <source>Movies recommendations</source>
+        <target>Recommandations de films</target>
+      </trans-unit>
+      <trans-unit id="CwxYktN" resname="Series recommendations">
+        <source>Series recommendations</source>
+        <target>Recommandations de séries</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

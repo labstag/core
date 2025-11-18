@@ -2,13 +2,12 @@
 
 namespace Labstag\Twig\Runtime;
 
-use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Serie;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SerieService;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -18,10 +17,10 @@ class AdminExtensionRuntime implements RuntimeExtensionInterface
     public function __construct(
         #[AutowireIterator('labstag.admincontroller')]
         private readonly iterable $controllers,
+        private MovieService $movieService,
+        private SerieService $serieService,
         private AdminUrlGenerator $adminUrlGenerator,
-        protected TranslatorInterface $translator,
-        protected TheMovieDbApi $theMovieDbApi,
-        protected EntityManagerInterface $entityManager,
+        private TranslatorInterface $translator,
     )
     {
     }
@@ -42,31 +41,11 @@ class AdminExtensionRuntime implements RuntimeExtensionInterface
 
     public function recommandations(object $entity): array
     {
-        $recommandations     = [];
-        $jsonRecommandations = match (true) {
-            $entity instanceof Movie => $this->theMovieDbApi->getDetailsMovie($entity),
-            $entity instanceof Serie => $this->theMovieDbApi->getDetailsSerie($entity),
-            default                  => null,
+        return match (true) {
+            $entity instanceof Movie => $this->movieService->recommandations($entity),
+            $entity instanceof Serie => $this->serieService->recommandations($entity),
+            default                  => [],
         };
-
-        if (!isset($jsonRecommandations['recommandations'])) {
-            return $recommandations;
-        }
-
-        $this->entityManager->getRepository($entity::class);
-        foreach ($jsonRecommandations['recommandations']['results'] as $recommandation) {
-            $recommandation = $this->setRecommandation($recommandation, $entity);
-            if (!is_array($recommandation)) {
-                continue;
-            }
-
-            $recommandations[] = $recommandation;
-        }
-
-        $titleKey = $entity instanceof Movie ? 'title' : 'name';
-        usort($recommandations, fn (array $a, array $b): int => strcasecmp($a[$titleKey] ?? '', $b[$titleKey] ?? ''));
-
-        return $recommandations;
     }
 
     public function url(string $type, object $entity): string
@@ -77,50 +56,6 @@ class AdminExtensionRuntime implements RuntimeExtensionInterface
                 $url = $this->adminUrlGenerator->setController($controller::class);
                 $url->setAction($type);
                 $url->setEntityId($entity->getId());
-
-                return $url->generateUrl();
-            }
-        }
-
-        return '';
-    }
-
-    private function setRecommandation(array $recommandation, object $entity): ?array
-    {
-        $entityRepository = $this->entityManager->getRepository($entity::class);
-        $tmdb             = $recommandation['id'];
-        $item             = $entityRepository->findOneBy(
-            ['tmdb' => $tmdb]
-        );
-        if (is_object($item)) {
-            return null;
-        }
-
-        $recommandation['poster_path'] = $this->theMovieDbApi->images()->getPosterUrl(
-            $recommandation['poster_path'] ?? ''
-        );
-        $recommandation['backdrop_path'] = $this->theMovieDbApi->images()->getBackdropUrl(
-            $recommandation['backdrop_path'] ?? ''
-        );
-        $recommandation['links'] = $entity instanceof Movie ? 'https://www.themoviedb.org/movie/' . $recommandation['id'] : 'https://www.themoviedb.org/tv/' . $recommandation['id'];
-        $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $entity, $recommandation);
-
-        $recommandation['date'] = $entity instanceof Movie ? new DateTime(
-            $recommandation['release_date']
-        ) : new DateTime($recommandation['first_air_date']);
-
-        return $recommandation;
-    }
-
-    private function urlAddWithTmdb(string $type, object $entity, array $data): string
-    {
-        foreach ($this->controllers as $controller) {
-            $entityClass = $controller->getEntityFqcn();
-            if ($entityClass == $entity::class || $entity instanceof $entityClass) {
-                $url = $this->adminUrlGenerator->setController($controller::class);
-                $url->set('name', $data['title'] ?? $data['name']);
-                $url->set('tmdb', $data['id']);
-                $url->setAction($type);
 
                 return $url->generateUrl();
             }

@@ -1,0 +1,41 @@
+{% trans_default_domain 'EasyAdminBundle' %}
+<div class="content-panel-footer without-padding without-border">
+    <div class="list-pagination">
+        <div class="list-pagination-counter">
+        </div>
+        <nav class="pager list-pagination-paginator first-page ">
+            <ul class="pagination">
+                {% if pagination.currentPage > 1 %}
+                    <li class="page-item page-item-previous">
+                        <a class="page-link" href="/admin?{{ pagination.currentUrl }}&page={{ pagination.currentPage - 1 }}">
+                            {% if 'rtl' == ea.i18n.textDirection %}
+                                <twig:ea:Icon name="internal:chevron-right" class="mx-1" aria-hidden="true" />
+                            {% else %}
+                                <twig:ea:Icon name="internal:chevron-left" class="mx-1" aria-hidden="true" />
+                            {% endif %}
+
+                            <span class="btn-label">{{ 'paginator.previous'|trans }}</span>
+                        </a>
+                    </li>
+                {% endif %}
+                {% for i in pagination.pageRange %}
+                    <li class="page-item {{ i == pagination.currentPage ? 'active' : '' }}">
+                            <a class="page-link" href="/admin?{{ pagination.currentUrl }}&page={{ i }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+                {% if pagination.currentPage < pagination.totalPages %}
+                    <li class="page-item page-item-next">
+                        <a class="page-link" href="/admin?{{ pagination.currentUrl }}&page={{ pagination.currentPage + 1 }}">
+                            <span class="btn-label">{{ 'paginator.next'|trans }}</span>
+                            {% if 'rtl' == ea.i18n.textDirection %}
+                                <twig:ea:Icon name="internal:chevron-left" class="mx-1" aria-hidden="true" />
+                            {% else %}
+                                <twig:ea:Icon name="internal:chevron-right" class="mx-1" aria-hidden="true" />
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
