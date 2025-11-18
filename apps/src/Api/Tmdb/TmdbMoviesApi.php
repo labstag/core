@@ -231,6 +231,40 @@ class TmdbMoviesApi extends AbstractTmdbApi
     }
 
     /**
+     * Get movie recommendations.
+     *
+     * @param string               $movieId           Movie ID
+     * @param array<string, mixed> $additionalFilters Additional query parameters
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getMovieRecommendations(string $movieId, array $additionalFilters = []): ?array
+    {
+        $query    = http_build_query($additionalFilters);
+        $cacheKey = 'tmdb_movie_recommendations_' . $movieId . '_' . md5($query);
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($movieId, $query): ?array {
+                $url  = self::BASE_URL . '/movie/' . $movieId . '/recommendations?' . $query;
+                $data = $this->makeRequest($url);
+
+                if (null === $data) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+                // 24 hours cache
+
+                return $data;
+            },
+            60
+        );
+    }
+
+    /**
      * Get movie release dates.
      *
      * @param string $movieId Movie ID

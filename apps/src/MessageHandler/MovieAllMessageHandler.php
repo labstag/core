@@ -20,6 +20,7 @@ final class MovieAllMessageHandler
 
     public function __invoke(MovieAllMessage $movieAllMessage): void
     {
+        unset($movieAllMessage);
         $movies = $this->movieRepository->findAll();
         foreach ($movies as $movie) {
             $this->messageBus->dispatch(new MovieMessage($movie->getId()));

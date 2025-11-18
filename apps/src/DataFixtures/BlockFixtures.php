@@ -89,7 +89,6 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($block, 'head-chapter');
         $this->paragraphService->addParagraph($block, 'head-season');
         $this->paragraphService->addParagraph($block, 'head-saga');
-        $this->paragraphService->addParagraph($block, 'chapter-list');
         $this->paragraphService->addParagraph($block, 'season-list');
         $this->paragraphService->addParagraph($block, 'episode-list');
         $this->paragraphService->addParagraph($block, 'saga-list');
@@ -98,6 +97,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
     private function addParagraphsTest(Block $block): void
     {
         $this->paragraphService->addParagraph($block, 'chapter-lastnext');
+        $this->paragraphService->addParagraph($block, 'chapter-list');
     }
 
     /**

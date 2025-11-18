@@ -20,6 +20,7 @@ final class SerieAllMessageHandler
 
     public function __invoke(SerieAllMessage $serieAllMessage): void
     {
+        unset($serieAllMessage);
         $series                          = $this->serieRepository->findAll();
         foreach ($series as $serie) {
             $this->messageBus->dispatch(new SerieMessage($serie->getId()));

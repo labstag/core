@@ -253,6 +253,40 @@ class TmdbTvApi extends AbstractTmdbApi
     }
 
     /**
+     * Get TV series recommendations.
+     *
+     * @param string               $tvId              TV series ID
+     * @param array<string, mixed> $additionalFilters Additional query parameters
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getTvRecommendations(string $tvId, array $additionalFilters = []): ?array
+    {
+        $query    = http_build_query($additionalFilters);
+        $cacheKey = 'tmdb_tv_recommendations_' . $tvId . '_' . md5($query);
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($tvId, $query): ?array {
+                $url  = self::BASE_URL . '/tv/' . $tvId . '/recommendations?' . $query;
+                $data = $this->makeRequest($url);
+
+                if (null === $data) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+                // 24 hours cache
+
+                return $data;
+            },
+            60
+        );
+    }
+
+    /**
      * Get TV series videos/trailers.
      *
      * @param string      $seriesId TV series ID

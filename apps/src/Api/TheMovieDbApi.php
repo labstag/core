@@ -95,13 +95,16 @@ class TheMovieDbApi
             return [];
         }
 
-        $details['videos'] = $this->getVideosMovie($tmdbId);
-
+        $locale                   = $this->configurationService->getLocaleTmdb();
+        $details['videos']        = $this->getVideosMovie($tmdbId);
         $details['release_dates'] = $this->movies()->getMovieReleasesDates($tmdbId);
-
-        $details['collection'] = $this->movies()->getMovieCollection(
+        $details['collection']    = $this->movies()->getMovieCollection(
             $details['tmdb']['belongs_to_collection']['id'] ?? '',
             $locale
+        );
+        $details['recommandations'] = $this->movies()->getMovieRecommendations(
+            $tmdbId,
+            ['language' => $locale]
         );
 
         return $details;
@@ -151,7 +154,11 @@ class TheMovieDbApi
             return [];
         }
 
-        $details['videos'] = $this->getVideosSerie($tmdbId);
+        $details['videos']          = $this->getVideosSerie($tmdbId);
+        $details['recommandations'] = $this->tvserie()->getTvRecommendations(
+            $tmdbId,
+            ['language' => $locale]
+        );
 
         return $details;
     }

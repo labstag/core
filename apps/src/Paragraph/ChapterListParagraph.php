@@ -67,7 +67,7 @@ class ChapterListParagraph extends ParagraphAbstract implements ParagraphInterfa
     #[Override]
     public function getName(): string
     {
-        return 'Chapter list';
+        return (string) new TranslatableMessage('Chapter list');
     }
 
     #[Override]

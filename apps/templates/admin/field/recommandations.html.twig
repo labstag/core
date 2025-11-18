@@ -1,0 +1,30 @@
+{% set recommandations = admin_recommandations(entity.instance) %}
+<table class="table datagrid">
+    <thead>
+        <tr>
+            <th>{{ 'Title'|trans }}</th>
+            <th>{{ 'Poster'|trans }}</th>
+            <th>{{ 'Backdrop'|trans }}</th>
+            <th>{{ 'Overview'|trans }}</th>
+            <th>{{ 'Vote Average'|trans }}</th>
+            <th>{{ 'Popularity'|trans }}</th>
+            <th>{{ 'Links'|trans }}</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for recommandation in recommandations %}
+        {% set title = (recommandation.title is defined ) ? recommandation.title : recommandation.name %}
+        <tr>
+            <td>{{ title }}</td>
+            <td><img src="{{ recommandation.poster_path }}" alt="{{ title }}" style="height: 100px;"></td>
+            <td><img src="{{ recommandation.backdrop_path }}" alt="{{ title }}" style="height: 100px;"></td>
+            <td>{{ recommandation.overview }}</td>
+            <td>{{ recommandation.vote_average }}</td>
+            <td>{{ recommandation.popularity }}</td>
+            <td>
+                <a href="{{ recommandation.links }}" target="_blank">{{ 'View on TMDb'|trans }}</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

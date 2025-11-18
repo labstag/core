@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -122,6 +123,16 @@ class SerieCrudController extends CrudControllerAbstract
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);
+        if (Crud::PAGE_DETAIL === $pageName) {
+            $this->crudFieldFactory->addTab(
+                'recommandations',
+                FormField::addTab(new TranslatableMessage('Recommandations'))
+            );
+
+            $textField = TextField::new('id', new TranslatableMessage('Recommandations'));
+            $textField->setTemplatePath('admin/field/recommandations.html.twig');
+            $this->crudFieldFactory->addFieldsToTab('recommandations', [$textField]);
+        }
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }

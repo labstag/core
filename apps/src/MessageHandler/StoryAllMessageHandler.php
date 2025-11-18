@@ -20,6 +20,7 @@ final class StoryAllMessageHandler
 
     public function __invoke(StoryAllMessage $storyAllMessage): void
     {
+        unset($storyAllMessage);
         $stories                          = $this->storyRepository->findAll();
         foreach ($stories as $story) {
             $this->messageBus->dispatch(new StoryMessage($story->getId()));

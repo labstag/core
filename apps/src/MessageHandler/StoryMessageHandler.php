@@ -30,7 +30,7 @@ final class StoryMessageHandler
             return;
         }
 
-        // $this->storyService->setPdf($story);
+        $this->storyService->update($story);
 
         $this->storyRepository->save($story);
     }

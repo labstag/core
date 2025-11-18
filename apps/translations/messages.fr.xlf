@@ -1101,14 +1101,6 @@
         <source>Log in</source>
         <target>Se connecter</target>
       </trans-unit>
-      <trans-unit id="WKutWfy" resname="Update block (%type%)">
-        <source>Update block (%type%)</source>
-        <target>Mettre à jour le bloc (%type%)</target>
-      </trans-unit>
-      <trans-unit id="_60KhVg" resname="Update paragraph (%type%)">
-        <source>Update paragraph (%type%)</source>
-        <target>Mettre à jour le paragraphe (%type%)</target>
-      </trans-unit>
       <trans-unit id="UP4yleN" resname="Choose paragraph">
         <source>Choose paragraph</source>
         <target>Choisir le paragraphe</target>
@@ -1556,6 +1548,34 @@
       <trans-unit id="emV186T" resname="Training course">
         <source>Training course</source>
         <target>Formation</target>
+      </trans-unit>
+      <trans-unit id="VKUE3qO" resname="Json">
+        <source>Json</source>
+        <target>Json</target>
+      </trans-unit>
+      <trans-unit id="GuLzwNW" resname="Chapitre last next">
+        <source>Chapitre last next</source>
+        <target>Chapitre précédent et suivant</target>
+      </trans-unit>
+      <trans-unit id="hRXcb58" resname="Chapter list">
+        <source>Chapter list</source>
+        <target>Liste des chapitres</target>
+      </trans-unit>
+      <trans-unit id="t_eICwO" resname="Head movie">
+        <source>Head movie</source>
+        <target>Film principal</target>
+      </trans-unit>
+      <trans-unit id="flGM8LP" resname="Table of Contents">
+        <source>Table of Contents</source>
+        <target>Table des matières</target>
+      </trans-unit>
+      <trans-unit id="thym0A." resname="Update block (%name%) #%type%">
+        <source>Update block (%name%) #%type%</source>
+        <target>Mettre à jour le bloc (%name%) #%type%</target>
+      </trans-unit>
+      <trans-unit id="Z9PC2uT" resname="Update paragraph (%name%) #%type%">
+        <source>Update paragraph (%name%) #%type%</source>
+        <target>Mettre à jour le paragraphe (%name%) #%type%</target>
       </trans-unit>
     </body>
   </file>

@@ -20,6 +20,7 @@ final class SagaAllMessageHandler
 
     public function __invoke(SagaAllMessage $sagaAllMessage): void
     {
+        unset($sagaAllMessage);
         $sagas                           = $this->sagaRepository->findAll();
         foreach ($sagas as $saga) {
             $this->messageBus->dispatch(new SagaMessage($saga->getId()));

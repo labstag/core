@@ -114,7 +114,7 @@ class SeasonCrudController extends CrudControllerAbstract
     {
         $associationField = $this->episodesField();
         // Always safe on listing/detail pages: no AssociationField to configure
-        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
         ) {
             $associationField->hideOnForm();
 

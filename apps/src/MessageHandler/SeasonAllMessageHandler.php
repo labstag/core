@@ -20,6 +20,7 @@ final class SeasonAllMessageHandler
 
     public function __invoke(SeasonAllMessage $seasonAllMessage): void
     {
+        unset($seasonAllMessage);
         $series                          = $this->seasonRepository->findAll();
         foreach ($series as $serie) {
             $this->messageBus->dispatch(new SeasonMessage($serie->getId()));

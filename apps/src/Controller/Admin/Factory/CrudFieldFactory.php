@@ -191,7 +191,7 @@ final class CrudFieldFactory
     {
         $associationField = $this->categoriesField();
         // Always safe on listing/detail pages: no AssociationField to configure
-        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
         ) {
             $associationField->onlyOnDetail();
 
@@ -242,7 +242,7 @@ final class CrudFieldFactory
         ?string $label = null,
     ): TextField|UploadFileField
     {
-        if ('edit' === $pageName || 'new' === $pageName) {
+        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
             return UploadFileField::new($type . 'File', $label ?? new TranslatableMessage('File'));
         }
 
@@ -282,7 +282,7 @@ final class CrudFieldFactory
         ?string $label = null,
     ): ImageField|UploadImageField
     {
-        if ('edit' === $pageName || 'new' === $pageName) {
+        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
             return UploadImageField::new($type . 'File', $label ?? new TranslatableMessage('Image'));
         }
 
@@ -329,6 +329,7 @@ final class CrudFieldFactory
     {
         $this->adminContext = $adminContext;
         $this->addTab('principal', FormField::addTab(new TranslatableMessage('Principal')));
+
         $this->addFieldsToTab('principal', $this->addFieldIDShortcode());
         $this->addFieldsToTab('principal', [$this->idField()]);
     }
@@ -412,7 +413,7 @@ final class CrudFieldFactory
     {
         $associationField = $this->tagsField();
         // Always safe on listing/detail pages: no AssociationField to configure
-        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
         ) {
             $associationField->onlyOnDetail();
 
@@ -522,7 +523,7 @@ final class CrudFieldFactory
     private function setTabParagraphs(string $pageName): void
     {
         $instance = $this->getInstance();
-        if ('new' === $pageName || null == $instance) {
+        if (Crud::PAGE_NEW === $pageName || null == $instance) {
             return;
         }
 
