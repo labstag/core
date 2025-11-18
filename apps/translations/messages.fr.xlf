@@ -1617,6 +1617,10 @@
         <source>The %name% series has been added to the database</source>
         <target>La série %name% a été ajoutée à la base de données</target>
       </trans-unit>
+      <trans-unit id="u0QI45i" resname="Release Date">
+        <source>Release Date</source>
+        <target>Date de sortie</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
