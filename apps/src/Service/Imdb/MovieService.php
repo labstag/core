@@ -162,9 +162,9 @@ final class MovieService
         }
     }
 
-    private function setJsonRecommandations(array $json, Movie $movie, array $recommandations = []): array
+    private function setJsonRecommandations(?array $json, Movie $movie, array $recommandations = []): array
     {
-        if (!isset($json['recommandations'])) {
+        if (!is_array($json) || !isset($json['recommandations'])) {
             return $recommandations;
         }
 
