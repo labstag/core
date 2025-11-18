@@ -67,6 +67,9 @@ class Episode
     #[ORM\Column(name: 'vote_count', nullable: true)]
     protected ?int $voteCount = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $json = null;
+
     public function getAirDate(): ?DateTime
     {
         return $this->airDate;
@@ -219,6 +222,18 @@ class Episode
     public function setVoteCount(int $voteCount): static
     {
         $this->voteCount = $voteCount;
+
+        return $this;
+    }
+
+    public function getJson(): ?array
+    {
+        return $this->json;
+    }
+
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
 
         return $this;
     }

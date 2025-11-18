@@ -81,6 +81,9 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $tmdb = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $json = null;
+
     public function __construct()
     {
         $this->movies     = new ArrayCollection();
@@ -255,6 +258,18 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     public function setTmdb(?string $tmdb): static
     {
         $this->tmdb = $tmdb;
+
+        return $this;
+    }
+
+    public function getJson(): ?array
+    {
+        return $this->json;
+    }
+
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
 
         return $this;
     }

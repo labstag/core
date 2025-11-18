@@ -57,6 +57,9 @@ class Company
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $json = null;
+
     public function __construct()
     {
         $this->movies = new ArrayCollection();
@@ -179,6 +182,18 @@ class Company
     public function setUrl(string $url): static
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    public function getJson(): ?array
+    {
+        return $this->json;
+    }
+
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
 
         return $this;
     }

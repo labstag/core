@@ -90,6 +90,9 @@ class Season implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(name: 'vote_average', nullable: true)]
     protected ?float $voteAverage = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $json = null;
+
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
@@ -300,6 +303,18 @@ class Season implements Stringable, EntityWithParagraphsInterface
     public function setVoteAverage(?float $voteAverage): static
     {
         $this->voteAverage = $voteAverage;
+
+        return $this;
+    }
+
+    public function getJson(): ?array
+    {
+        return $this->json;
+    }
+
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
 
         return $this;
     }

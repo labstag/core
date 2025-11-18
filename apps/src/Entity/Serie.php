@@ -137,6 +137,9 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     )]
     private Collection $companies;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $json = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -517,6 +520,18 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     public function setVotes(?int $votes): static
     {
         $this->votes = $votes;
+
+        return $this;
+    }
+
+    public function getJson(): ?array
+    {
+        return $this->json;
+    }
+
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
 
         return $this;
     }
