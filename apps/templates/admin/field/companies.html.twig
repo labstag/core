@@ -3,7 +3,9 @@
 {% if ea.crud.currentAction == 'detail' %}
   <ul>
     {% for company in companies %}
-        <li>{{ company.title }}</li>
+        <li>
+          <a href="{{ path('admin_company_detail', {'entityId': company.id}) }}">{{ company.title }}</a>
+        </li>
     {% endfor %}
   </ul>
 {% else %}

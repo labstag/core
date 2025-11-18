@@ -65,7 +65,30 @@
                             {{ movie.evaluation }}
                         </li>
                     {% endif %}
+                    {% if movie.companies|length != 0 %}
+                        <li class="companies">
+                            <b>
+                                {{ 'Production companies'|trans }}
+                            </b>
+                            {% for company in movie.companies %}
+                                {% if company.url != '' %}
+                                    <a href="{{ company.url }}" target="_blank" title="{{ company.title|e('html_attr') }}">{{ company.title }}</a>
+                                {% else %}
+                                    {{ company.title }}
+                                {% endif %}
+                                {% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </li>
+                    {% endif %}
                 </ul>
+                <div class="links">
+                    <a href="https://www.imdb.com/title/{{ movie.imdb }}" target="_blank" title="{{ 'IMDB page for the movie'|trans|e('html_attr') }}">
+                        {{ 'IMDB page for the movie'|trans }}
+                    </a>
+                    <a href="https://www.themoviedb.org/movie/{{ movie.tmdb }}" target="_blank" title="{{ 'TMDB page for the movie'|trans|e('html_attr') }}">
+                        {{ 'TMDB page for the movie'|trans }}
+                    </a>
+                </div>
             </div>
         </div>
     </div>
