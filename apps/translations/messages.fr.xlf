@@ -1577,6 +1577,30 @@
         <source>Update paragraph (%name%) #%type%</source>
         <target>Mettre à jour le paragraphe (%name%) #%type%</target>
       </trans-unit>
+      <trans-unit id="vP.fzBZ" resname="Recommandations">
+        <source>Recommandations</source>
+        <target>Recommandations</target>
+      </trans-unit>
+      <trans-unit id="Z4rvQk9" resname="Poster">
+        <source>Poster</source>
+        <target>Affiche</target>
+      </trans-unit>
+      <trans-unit id="IB4vLSx" resname="Backdrop">
+        <source>Backdrop</source>
+        <target>Image de fond</target>
+      </trans-unit>
+      <trans-unit id="7P3hCJS" resname="Vote Average">
+        <source>Vote Average</source>
+        <target>Note moyenne</target>
+      </trans-unit>
+      <trans-unit id="xM51iHs" resname="Popularity">
+        <source>Popularity</source>
+        <target>Popularité</target>
+      </trans-unit>
+      <trans-unit id="qmwL0ia" resname="View on TMDb">
+        <source>View on TMDb</source>
+        <target>Voir sur TMDb</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
