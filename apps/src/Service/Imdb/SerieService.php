@@ -209,9 +209,9 @@ final class SerieService
         return true;
     }
 
-    private function setJsonRecommandations(array $json, Serie $serie, array $recommandations = []): array
+    private function setJsonRecommandations(?array $json, Serie $serie, array $recommandations = []): array
     {
-        if (!isset($json['recommandations'])) {
+        if (!is_array($json) || !isset($json['recommandations'])) {
             return $recommandations;
         }
 
