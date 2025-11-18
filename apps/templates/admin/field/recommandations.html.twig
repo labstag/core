@@ -31,7 +31,7 @@
             <td>{{ recommandation.overview }}</td>
             <td>{{ recommandation.vote_average }}</td>
             <td>{{ recommandation.popularity }}</td>
-            <td>{{ recommandation.first_air_date|format_date(locale: 'fr_FR', dateFormat: 'medium') }}
+            <td>{{ recommandation.date|format_date(locale: 'fr_FR', dateFormat: 'medium') }}
             <td>
                 <a href="{{ recommandation.links }}" target="_blank">{{ 'View on TMDb'|trans }}</a>
             </td>
