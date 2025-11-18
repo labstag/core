@@ -1601,6 +1601,22 @@
         <source>View on TMDb</source>
         <target>Voir sur TMDb</target>
       </trans-unit>
+      <trans-unit id="WNymMfT" resname="The %name% movie is already present in the database">
+        <source>The %name% movie is already present in the database</source>
+        <target>Le film %name% est déjà présent dans la base de données</target>
+      </trans-unit>
+      <trans-unit id="0PZMDI5" resname="The %name% movie has been added to the database">
+        <source>The %name% movie has been added to the database</source>
+        <target>Le film %name% a été ajouté à la base de données</target>
+      </trans-unit>
+      <trans-unit id="aTqhzQ7" resname="The %name% series is already present in the database">
+        <source>The %name% series is already present in the database</source>
+        <target>La série %name% est déjà présente dans la base de données</target>
+      </trans-unit>
+      <trans-unit id="Db9FSv6" resname="The %name% series has been added to the database">
+        <source>The %name% series has been added to the database</source>
+        <target>La série %name% a été ajoutée à la base de données</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
