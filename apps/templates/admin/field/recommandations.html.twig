@@ -9,6 +9,7 @@
             <th>{{ 'Vote Average'|trans }}</th>
             <th>{{ 'Popularity'|trans }}</th>
             <th>{{ 'Links'|trans }}</th>
+            <th>{{ 'Add'|trans }}</th>
         </tr>
     </thead>
     <tbody>
@@ -23,6 +24,9 @@
             <td>{{ recommandation.popularity }}</td>
             <td>
                 <a href="{{ recommandation.links }}" target="_blank">{{ 'View on TMDb'|trans }}</a>
+            </td>
+            <td>
+                <a href="{{ recommandation.add }}" target="_blank">{{ 'Add'|trans }}</a>
             </td>
         </tr>
     {% endfor %}

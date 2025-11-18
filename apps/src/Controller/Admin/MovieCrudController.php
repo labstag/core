@@ -25,12 +25,78 @@ use Labstag\Repository\MovieRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieCrudController extends CrudControllerAbstract
 {
+    public function addWithTmdb(
+        AdminContext $adminContext,
+        TheMovieDbApi $theMovieDbApi,
+        MessageBusInterface $messageBus,
+    ): Response
+    {
+        $tmdbId = $adminContext->getRequest()->query->get('tmdb');
+        $name = $adminContext->getRequest()->query->get('name');
+        $data = $theMovieDbApi->movies()->getMovieExternalIds($tmdbId);
+        if (is_null($data)) {
+            return $this->redirectToRoute('admin_movie_index');
+        }
+
+        $imdbId     = $data['imdb_id'];
+        $repositoryAbstract = $this->getRepository();
+        $movie      = $repositoryAbstract->findOneBy(
+            ['imdb' => $imdbId]
+        );
+        if ($movie instanceof Movie) {
+            $this->addFlash(
+                'warning',
+                new TranslatableMessage(
+                    'The %name% movie is already present in the database',
+                    [
+                        '%name%' => $movie->getTitle(),
+                    ]
+                )
+            );
+
+            return $this->redirectToRoute(
+                'admin_movie_detail',
+                [
+                    'entityId' => $movie->getId(),
+                ]
+            );
+        }
+
+        $movie = new Movie();
+        $movie->setFile(false);
+        $movie->setEnable(true);
+        $movie->setAdult(false);
+        $movie->setImdb($imdbId);
+        $movie->setTitle($name);
+        $movie->setTmdb($tmdbId);
+
+        $repositoryAbstract->save($movie);
+        $messageBus->dispatch(new MovieMessage($movie->getId()));
+        $this->addFlash(
+            'success',
+            new TranslatableMessage(
+                'The %name% movie has been added to the database',
+                [
+                    '%name%' => $movie->getTitle(),
+                ]
+            )
+        );
+
+        return $this->redirectToRoute(
+            'admin_movie_detail',
+            [
+                'entityId' => $movie->getId(),
+            ]
+        );
+    }
+
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {

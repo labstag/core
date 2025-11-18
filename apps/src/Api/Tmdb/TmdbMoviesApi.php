@@ -231,6 +231,42 @@ class TmdbMoviesApi extends AbstractTmdbApi
     }
 
     /**
+     * Get movie external IDs.
+     *
+     * @param string $movieId Movie ID
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getMovieExternalIds(string $movieId): ?array
+    {
+        if ('' === trim($movieId)) {
+            return null;
+        }
+
+        $cacheKey = 'tmdb_movie_external_ids_' . $movieId;
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($movieId): ?array {
+                $url  = self::BASE_URL . '/movie/' . $movieId . '/external_ids';
+                $data = $this->makeRequest($url);
+
+                if (null === $data) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(604800);
+                // 7 days cache (external IDs rarely change)
+
+                return $data;
+            },
+            60
+        );
+    }
+
+    /**
      * Get movie recommendations.
      *
      * @param string               $movieId           Movie ID

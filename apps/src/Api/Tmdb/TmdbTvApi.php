@@ -253,6 +253,38 @@ class TmdbTvApi extends AbstractTmdbApi
     }
 
     /**
+     * Get TV series external IDs.
+     *
+     * @param string $tvId TV series ID
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getTvExternalIds(string $tvId): ?array
+    {
+        $cacheKey = 'tmdb_tv_external_ids_' . $tvId;
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($tvId): ?array {
+                $url  = self::BASE_URL . '/tv/' . $tvId . '/external_ids';
+                $data = $this->makeRequest($url);
+
+                if (null === $data) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(604800);
+                // 7 days cache (external IDs rarely change)
+
+                return $data;
+            },
+            60
+        );
+    }
+
+    /**
      * Get TV series recommendations.
      *
      * @param string               $tvId              TV series ID

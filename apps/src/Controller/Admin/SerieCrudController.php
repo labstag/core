@@ -23,12 +23,78 @@ use Labstag\Message\SerieMessage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SerieCrudController extends CrudControllerAbstract
 {
+    public function addWithTmdb(
+        AdminContext $adminContext,
+        TheMovieDbApi $theMovieDbApi,
+        MessageBusInterface $messageBus,
+    ): Response
+    {
+        $tmdbId = $adminContext->getRequest()->query->get('tmdb');
+        $name = $adminContext->getRequest()->query->get('name');
+        $data = $theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
+        if (is_null($data)) {
+            return $this->redirectToRoute('admin_serie_index');
+        }
+
+        $imdbId     = $data['imdb_id'];
+        $repositoryAbstract = $this->getRepository();
+        $serie      = $repositoryAbstract->findOneBy(
+            ['imdb' => $imdbId]
+        );
+        if ($serie instanceof Serie) {
+            $this->addFlash(
+                'warning',
+                new TranslatableMessage(
+                    'The %name% series is already present in the database',
+                    [
+                        '%name%' => $serie->getTitle(),
+                    ]
+                )
+            );
+
+            return $this->redirectToRoute(
+                'admin_serie_detail',
+                [
+                    'entityId' => $serie->getId(),
+                ]
+            );
+        }
+
+        $serie = new Serie();
+        $serie->setFile(false);
+        $serie->setEnable(true);
+        $serie->setAdult(false);
+        $serie->setImdb($imdbId);
+        $serie->setTitle($name);
+        $serie->setTmdb($tmdbId);
+
+        $repositoryAbstract->save($serie);
+        $messageBus->dispatch(new SerieMessage($serie->getId()));
+        $this->addFlash(
+            'success',
+            new TranslatableMessage(
+                'The %name% series has been added to the database',
+                [
+                    '%name%' => $serie->getTitle(),
+                ]
+            )
+        );
+
+        return $this->redirectToRoute(
+            'admin_serie_detail',
+            [
+                'entityId' => $serie->getId(),
+            ]
+        );
+    }
+
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {

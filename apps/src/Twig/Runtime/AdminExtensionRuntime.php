@@ -102,7 +102,25 @@ class AdminExtensionRuntime implements RuntimeExtensionInterface
             $recommandation['backdrop_path'] ?? ''
         );
         $recommandation['links'] = $entity instanceof Movie ? 'https://www.themoviedb.org/movie/' . $recommandation['id'] : 'https://www.themoviedb.org/tv/' . $recommandation['id'];
+        $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $entity, $recommandation);
 
         return $recommandation;
+    }
+
+    private function urlAddWithTmdb(string $type, object $entity, array $data): string
+    {
+        foreach ($this->controllers as $controller) {
+            $entityClass = $controller->getEntityFqcn();
+            if ($entityClass == $entity::class || $entity instanceof $entityClass) {
+                $url = $this->adminUrlGenerator->setController($controller::class);
+                $url->set('name', $data['title'] ?? $data['name']);
+                $url->set('tmdb', $data['id']);
+                $url->setAction($type);
+
+                return $url->generateUrl();
+            }
+        }
+
+        return '';
     }
 }
