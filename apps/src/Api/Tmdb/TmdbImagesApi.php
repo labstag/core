@@ -24,6 +24,19 @@ class TmdbImagesApi extends AbstractTmdbApi
     }
 
     /**
+     * Get logo URL with optimal size.
+     *
+     * @param string $logoPath    The logo path from TMDB API
+     * @param int    $targetWidth Desired width (default: 185px)
+     *
+     * @return string|null Complete logo URL
+     */
+    public function getLogoUrl(string $logoPath, int $targetWidth = 185): ?string
+    {
+        return $this->getOptimizedUrl($logoPath, 'logo', $targetWidth);
+    }
+
+    /**
      * Get optimized image URL based on image type and desired width.
      *
      * @param string $imagePath   The image path from TMDB API

@@ -34,6 +34,9 @@ class Movie implements Stringable, EntityWithParagraphsInterface
      * @var Collection<int, MovieCategory>
      */
     #[ORM\ManyToMany(targetEntity: MovieCategory::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     protected Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -116,10 +119,20 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(nullable: true)]
     protected ?int $votes = null;
 
+    /**
+     * @var Collection<int, Company>
+     */
+    #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'movies')]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    private Collection $companies;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
+        $this->companies  = new ArrayCollection();
     }
 
     #[Override]
@@ -133,6 +146,16 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         if (!$this->categories->contains($movieCategory)) {
             $this->categories->add($movieCategory);
             $movieCategory->addMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function addCompany(Company $company): static
+    {
+        if (!$this->companies->contains($company)) {
+            $this->companies->add($company);
+            $company->addMovie($this);
         }
 
         return $this;
@@ -164,6 +187,14 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     public function getCitation(): ?string
     {
         return $this->citation;
+    }
+
+    /**
+     * @return Collection<int, Company>
+     */
+    public function getCompanies(): Collection
+    {
+        return $this->companies;
     }
 
     /**
@@ -276,6 +307,15 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     {
         if ($this->categories->removeElement($movieCategory)) {
             $movieCategory->removeMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompany(Company $company): static
+    {
+        if ($this->companies->removeElement($company)) {
+            $company->removeMovie($this);
         }
 
         return $this;

@@ -46,7 +46,7 @@ class ImdbCommand extends Command
             return Command::INVALID;
         }
 
-        $data         = $this->theMovieDbApi->findByImdb($imdb, $locale);
+        $data         = $this->theMovieDbApi->other()->findByImdb($imdb, $locale);
         if (is_null($data)) {
             $symfonyStyle->error("Le code IMDB n'est pas valide");
 

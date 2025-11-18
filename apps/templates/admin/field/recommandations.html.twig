@@ -39,6 +39,28 @@
                 <a href="{{ recommandation.add }}" target="_blank">{{ 'Add'|trans }}</a>
             </td>
         </tr>
+    {% else %}
+        {% for i in 1..6 %}
+            <tr class="empty-row">
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+                <td><span></span></td>
+            </tr>
+
+            {% if 3 == loop.index %}
+                <tr class="no-results">
+                    <td colspan="9">
+                        {{ t('datagrid.no_results', ea.i18n.translationParameters, 'EasyAdminBundle')|trans }}
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
     {% endfor %}
     </tbody>
 </table>

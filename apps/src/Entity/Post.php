@@ -33,6 +33,9 @@ class Post implements Stringable, EntityWithParagraphsInterface
      * @var Collection<int, PostCategory>
      */
     #[ORM\ManyToMany(targetEntity: PostCategory::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     protected Collection $categories;
 
     #[ORM\Column(
@@ -81,6 +84,9 @@ class Post implements Stringable, EntityWithParagraphsInterface
      * @var Collection<int, PostTag>
      */
     #[ORM\ManyToMany(targetEntity: PostTag::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     protected Collection $tags;
 
     #[ORM\Column(length: 255)]

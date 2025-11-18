@@ -105,7 +105,11 @@ class AdminExtensionRuntime implements RuntimeExtensionInterface
         $recommandation['links'] = $entity instanceof Movie ? 'https://www.themoviedb.org/movie/' . $recommandation['id'] : 'https://www.themoviedb.org/tv/' . $recommandation['id'];
         $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $entity, $recommandation);
 
-        $recommandation['date'] = $entity instanceof Movie ? new DateTime($recommandation['release_date']) : new DateTime($recommandation['first_air_date']);
+        $recommandation['date'] = $entity instanceof Movie ? new DateTime(
+            $recommandation['release_date']
+        ) : new DateTime(
+            $recommandation['first_air_date']
+        );
 
         return $recommandation;
     }

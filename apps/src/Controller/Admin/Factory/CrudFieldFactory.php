@@ -217,6 +217,44 @@ final class CrudFieldFactory
         return $associationField;
     }
 
+    public function companiesField(): AssociationField
+    {
+        $associationField = AssociationField::new('companies', new TranslatableMessage('Companies'));
+        $associationField->setTemplatePath('admin/field/companies.html.twig');
+
+        return $associationField;
+    }
+
+    public function companiesFieldForPage(string $entityFqcn, string $pageName): AssociationField
+    {
+        $associationField = $this->companiesField();
+        // Always safe on listing/detail pages: no AssociationField to configure
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
+        ) {
+            $associationField->onlyOnDetail();
+
+            return $associationField;
+        }
+
+        // For edit/new pages, check the real Doctrine association
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+
+        if ($metadata instanceof ClassMetadata && $metadata->hasAssociation('companies')) {
+            $associationField->autocomplete();
+            $associationField->setFormTypeOption('by_reference', false);
+
+            return $associationField;
+        }
+
+        // No association: ensure nothing is rendered on the form
+        $associationField->hideOnForm();
+
+        return $associationField;
+    }
+
     public function correctionFieldsTab(array $tabfields, string $pageName): array
     {
         $corrected = [];

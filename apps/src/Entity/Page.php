@@ -34,6 +34,9 @@ class Page implements Stringable, EntityWithParagraphsInterface
      * @var Collection<int, PageCategory>
      */
     #[ORM\ManyToMany(targetEntity: PageCategory::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     protected Collection $categories;
 
     /**
@@ -99,6 +102,9 @@ class Page implements Stringable, EntityWithParagraphsInterface
      * @var Collection<int, PageTag>
      */
     #[ORM\ManyToMany(targetEntity: PageTag::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     protected Collection $tags;
 
     #[ORM\Column(length: 255)]

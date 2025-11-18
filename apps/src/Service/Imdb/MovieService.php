@@ -28,6 +28,7 @@ final class MovieService
     public function __construct(
         private MovieRepository $movieRepository,
         private FileService $fileService,
+        private CompanyService $companyService,
         private SagaRepository $sagaRepository,
         private CategoryService $categoryService,
         private SagaService $sagaService,
@@ -99,6 +100,7 @@ final class MovieService
             $this->updateImageMovie($movie, $details),
             $this->updateSaga($movie, $details),
             $this->updateCategory($movie, $details),
+            $this->updateCompany($movie, $details),
             $this->updateTrailer($movie, $details),
         ];
 
@@ -148,6 +150,24 @@ final class MovieService
             $title    = trim((string) $genre['name']);
             $category = $this->categoryService->getType($title, MovieCategory::class);
             $movie->addCategory($category);
+        }
+
+        return true;
+    }
+
+    private function updateCompany(Movie $movie, array $details): bool
+    {
+        if (!isset($details['tmdb']['production_companies']) || 0 === count($details['tmdb']['production_companies'])) {
+            return false;
+        }
+
+        foreach ($movie->getCompanies() as $company) {
+            $movie->removeCompany($company);
+        }
+
+        foreach ($details['tmdb']['production_companies'] as $company) {
+            $company = $this->companyService->getCompany($company);
+            $movie->addCompany($company);
         }
 
         return true;

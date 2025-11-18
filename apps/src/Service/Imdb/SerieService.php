@@ -30,6 +30,7 @@ final class SerieService
     public function __construct(
         private MessageBusInterface $messageBus,
         private FileService $fileService,
+        private CompanyService $companyService,
         private SeasonService $seasonService,
         private SerieRepository $serieRepository,
         private CategoryService $categoryService,
@@ -113,6 +114,7 @@ final class SerieService
             $this->updateImageMovie($serie, $details),
             $this->updateCategory($serie, $details),
             $this->updateTrailer($serie, $details),
+            $this->updateCompany($serie, $details),
             $this->updateSeasons($serie, $details),
         ];
 
@@ -205,6 +207,24 @@ final class SerieService
             $category = $this->categoryService->getType($title, SerieCategory::class);
 
             $serie->addCategory($category);
+        }
+
+        return true;
+    }
+
+    private function updateCompany(Serie $serie, array $details): bool
+    {
+        if (!isset($details['tmdb']['production_companies']) || 0 === count($details['tmdb']['production_companies'])) {
+            return false;
+        }
+
+        foreach ($serie->getCompanies() as $company) {
+            $serie->removeCompany($company);
+        }
+
+        foreach ($details['tmdb']['production_companies'] as $company) {
+            $company = $this->companyService->getCompany($company);
+            $serie->addCompany($company);
         }
 
         return true;

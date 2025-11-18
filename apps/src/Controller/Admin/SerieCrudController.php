@@ -43,9 +43,9 @@ class SerieCrudController extends CrudControllerAbstract
             return $this->redirectToRoute('admin_serie_index');
         }
 
-        $imdbId     = $data['imdb_id'];
+        $imdbId             = $data['imdb_id'];
         $repositoryAbstract = $this->getRepository();
-        $serie      = $repositoryAbstract->findOneBy(
+        $serie              = $repositoryAbstract->findOneBy(
             ['imdb' => $imdbId]
         );
         if ($serie instanceof Serie) {
@@ -183,6 +183,7 @@ class SerieCrudController extends CrudControllerAbstract
                 $wysiwygField,
                 $descriptionField,
                 $this->crudFieldFactory->categoriesFieldForPage(self::getEntityFqcn(), $pageName),
+                $this->crudFieldFactory->companiesFieldForPage(self::getEntityFqcn(), $pageName),
                 $associationField,
                 $booleanField,
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),

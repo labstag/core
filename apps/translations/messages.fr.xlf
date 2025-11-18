@@ -1621,6 +1621,10 @@
         <source>Release Date</source>
         <target>Date de sortie</target>
       </trans-unit>
+      <trans-unit id="BSDVdh6" resname="Companies">
+        <source>Companies</source>
+        <target>Entreprises</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

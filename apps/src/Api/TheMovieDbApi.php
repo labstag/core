@@ -4,9 +4,11 @@ namespace Labstag\Api;
 
 use Labstag\Api\Tmdb\TmdbImagesApi;
 use Labstag\Api\Tmdb\TmdbMoviesApi;
+use Labstag\Api\Tmdb\TmdbOtherApi;
 use Labstag\Api\Tmdb\TmdbTvApi;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Movie;
+use Labstag\Entity\Saga;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Service\CacheService;
@@ -25,6 +27,8 @@ class TheMovieDbApi
 
     private TmdbMoviesApi $tmdbMoviesApi;
 
+    private TmdbOtherApi $tmdbOtherApi;
+
     private TmdbTvApi $tmdbTvApi;
 
     public function __construct(
@@ -34,22 +38,10 @@ class TheMovieDbApi
         string $tmdbBearerToken,
     )
     {
+        $this->tmdbOtherApi  = new TmdbOtherApi($cacheService, $httpClient, $tmdbBearerToken);
         $this->tmdbMoviesApi = new TmdbMoviesApi($cacheService, $httpClient, $tmdbBearerToken);
         $this->tmdbImagesApi = new TmdbImagesApi($cacheService, $httpClient, $tmdbBearerToken);
         $this->tmdbTvApi     = new TmdbTvApi($cacheService, $httpClient, $tmdbBearerToken);
-    }
-
-    // ============ LEGACY/COMPATIBILITY METHODS ============
-
-    /**
-     * Find content by IMDB ID (movies, TV shows).
-     *
-     * @return array<string, mixed>|null
-     */
-    public function findByImdb(string $imdbId, ?string $language = null): ?array
-    {
-        // Delegate to movies API which can handle the find endpoint
-        return $this->tmdbMoviesApi->findByImdb($imdbId, $language);
     }
 
     public function getDetailsEpisode(Episode $episode): array
@@ -80,7 +72,7 @@ class TheMovieDbApi
         $locale  = $this->configurationService->getLocaleTmdb();
         $tmdbId  = $movie->getTmdb();
         if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
-            $data = $this->findByImdb($movie->getImdb(), $locale);
+            $data = $this->other()->findByImdb($movie->getImdb(), $locale);
             if (null !== $data && isset($data['movie_results'][0]['id'])) {
                 $tmdbId = $data['movie_results'][0]['id'];
             }
@@ -106,6 +98,19 @@ class TheMovieDbApi
             $tmdbId,
             ['language' => $locale]
         );
+
+        return $details;
+    }
+
+    public function getDetailsSaga(Saga $saga): array
+    {
+        $details         = [];
+        $locale          = $this->configurationService->getLocaleTmdb();
+        $tmdbId          = $saga->getTmdb();
+        $details['tmdb'] = $this->movies()->getMovieCollection($tmdbId, $locale);
+        if (is_null($details['tmdb'])) {
+            return [];
+        }
 
         return $details;
     }
@@ -139,7 +144,7 @@ class TheMovieDbApi
         $locale  = $this->configurationService->getLocaleTmdb();
         $tmdbId  = $serie->getTmdb();
         if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
-            $data = $this->findByImdb($serie->getImdb(), $locale);
+            $data = $this->other()->findByImdb($serie->getImdb(), $locale);
             if (null !== $data && isset($data['tv_results'][0]['id'])) {
                 $tmdbId = $data['tv_results'][0]['id'];
             }
@@ -171,14 +176,17 @@ class TheMovieDbApi
         return $this->tmdbImagesApi;
     }
 
-    // ============ DIRECT API ACCESS ============
-
     /**
      * Get direct access to movies API for advanced usage.
      */
     public function movies(): TmdbMoviesApi
     {
         return $this->tmdbMoviesApi;
+    }
+
+    public function other(): TmdbOtherApi
+    {
+        return $this->tmdbOtherApi;
     }
 
     /**

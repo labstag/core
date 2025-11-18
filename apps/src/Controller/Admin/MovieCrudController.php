@@ -45,9 +45,9 @@ class MovieCrudController extends CrudControllerAbstract
             return $this->redirectToRoute('admin_movie_index');
         }
 
-        $imdbId     = $data['imdb_id'];
+        $imdbId             = $data['imdb_id'];
         $repositoryAbstract = $this->getRepository();
-        $movie      = $repositoryAbstract->findOneBy(
+        $movie              = $repositoryAbstract->findOneBy(
             ['imdb' => $imdbId]
         );
         if ($movie instanceof Movie) {

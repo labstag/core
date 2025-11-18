@@ -11,10 +11,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Saga;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\SagaAllMessage;
 use Labstag\Message\SagaMessage;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -74,6 +76,17 @@ class SagaCrudController extends CrudControllerAbstract
     public static function getEntityFqcn(): string
     {
         return Saga::class;
+    }
+
+    public function jsonSaga(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $saga                            = $repositoryAbstract->find($entityId);
+
+        $details = $theMovieDbApi->getDetailsSaga($saga);
+
+        return new JsonResponse($details);
     }
 
     public function moviesField(): AssociationField
@@ -164,6 +177,17 @@ class SagaCrudController extends CrudControllerAbstract
 
         $action = Action::new('updateSaga', new TranslatableMessage('Update'));
         $action->linkToCrudAction('updateSaga');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+
+        $action = Action::new('jsonSaga', new TranslatableMessage('Json'));
+        $action->linkToCrudAction('jsonSaga');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);

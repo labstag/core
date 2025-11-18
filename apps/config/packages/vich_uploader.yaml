@@ -2,6 +2,17 @@ vich_uploader:
   db_driver: orm
   storage: flysystem
   mappings:
+    company:
+      uri_prefix: /uploads/company
+      upload_destination: company.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: title
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
     media:
       uri_prefix: /uploads/media
       upload_destination: media.storage

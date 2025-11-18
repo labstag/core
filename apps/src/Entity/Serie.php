@@ -34,6 +34,9 @@ class Serie implements Stringable, EntityWithParagraphsInterface
      * @var Collection<int, SerieCategory>
      */
     #[ORM\ManyToMany(targetEntity: SerieCategory::class, mappedBy: 'series', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     protected Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -125,11 +128,21 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(nullable: true)]
     protected ?int $votes = null;
 
+    /**
+     * @var Collection<int, Company>
+     */
+    #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'series')]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    private Collection $companies;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->seasons    = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
+        $this->companies  = new ArrayCollection();
     }
 
     #[Override]
@@ -143,6 +156,16 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         if (!$this->categories->contains($serieCategory)) {
             $this->categories->add($serieCategory);
             $serieCategory->addSerie($this);
+        }
+
+        return $this;
+    }
+
+    public function addCompany(Company $company): static
+    {
+        if (!$this->companies->contains($company)) {
+            $this->companies->add($company);
+            $company->addSeries($this);
         }
 
         return $this;
@@ -184,6 +207,14 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     public function getCitation(): ?string
     {
         return $this->citation;
+    }
+
+    /**
+     * @return Collection<int, Company>
+     */
+    public function getCompanies(): Collection
+    {
+        return $this->companies;
     }
 
     /**
@@ -304,6 +335,15 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     {
         if ($this->categories->removeElement($serieCategory)) {
             $serieCategory->removeSerie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompany(Company $company): static
+    {
+        if ($this->companies->removeElement($company)) {
+            $company->removeSeries($this);
         }
 
         return $this;
