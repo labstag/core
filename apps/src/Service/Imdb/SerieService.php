@@ -98,7 +98,7 @@ final class SerieService
     public function update(Serie $serie): bool
     {
         $details  = $this->theMovieDbApi->getDetailsSerie($serie);
-        if ([] === $details) {
+        if (!isset($details['tmdb']) || is_null($details['tmdb'])) {
             $this->serieRepository->delete($serie);
 
             return false;
@@ -299,6 +299,7 @@ final class SerieService
         $serie->setCountries($details['tmdb']['origin_country']);
 
         $serie->setTmdb($details['tmdb']['id']);
+        $serie->setJson($details);
 
         return true;
     }

@@ -43,8 +43,8 @@ final class CompanyService
 
     public function update(Company $company): bool
     {
-        $details = $this->theMovieDbApi->other()->getCompanyDetails($company->getTmdb());
-        if (is_null($details)) {
+        $details = $this->theMovieDbApi->getDetailsCompany($company);
+        if (is_null($details['tmdb'])) {
             $this->companyRepository->delete($company);
             $this->logger->error('Company not found TMDB id ' . $company->getTmdb());
 
@@ -61,15 +61,16 @@ final class CompanyService
 
     private function updateCompany(Company $company, array $data): bool
     {
-        $company->setTitle($data['name']);
-        $company->setUrl($data['homepage'] ?? null);
+        $company->setTitle($data['tmdb']['name']);
+        $company->setUrl($data['tmdb']['homepage'] ?? null);
+        $company->setJson($data);
 
         return true;
     }
 
     private function updateImageCompany(Company $company, array $data): bool
     {
-        $poster = $this->theMovieDbApi->images()->getLogoUrl($data['logo_path'] ?? '');
+        $poster = $this->theMovieDbApi->images()->getLogoUrl($data['tmdb']['logo_path'] ?? '');
         if (is_null($poster)) {
             return false;
         }

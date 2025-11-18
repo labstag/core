@@ -107,9 +107,7 @@ class AdminExtensionRuntime implements RuntimeExtensionInterface
 
         $recommandation['date'] = $entity instanceof Movie ? new DateTime(
             $recommandation['release_date']
-        ) : new DateTime(
-            $recommandation['first_air_date']
-        );
+        ) : new DateTime($recommandation['first_air_date']);
 
         return $recommandation;
     }

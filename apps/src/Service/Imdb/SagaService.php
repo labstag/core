@@ -18,7 +18,6 @@ final class SagaService
         private LoggerInterface $logger,
         private MessageBusInterface $messageBus,
         private SagaRepository $sagaRepository,
-        private ConfigurationService $configurationService,
         private FileService $fileService,
         private TheMovieDbApi $theMovieDbApi,
     )
@@ -35,7 +34,7 @@ final class SagaService
         if (!$saga instanceof Saga) {
             $saga = new Saga();
             $saga->setEnable(true);
-            $saga->setTitle($data['name']);
+            $saga->setTitle($this->setName($data));
             $saga->setTmdb($data['id']);
             $this->sagaRepository->save($saga);
             $this->messageBus->dispatch(new SagaMessage($saga->getId()));
@@ -65,24 +64,27 @@ final class SagaService
 
     public function update(Saga $saga): bool
     {
-        $locale   = $this->configurationService->getLocaleTmdb();
-        $details  = $this->theMovieDbApi->movies()->getMovieCollection($saga->getTmdb(), $locale);
-        if (is_null($details)) {
+        $details  = $this->theMovieDbApi->getDetailsSaga($saga);
+        if (!isset($details['tmdb']) || is_null($details['tmdb'])) {
             $this->sagaRepository->delete($saga);
             $this->logger->error('Saga not found TMDB id ' . $saga->getTmdb());
 
             return false;
         }
 
-        $name = trim(str_replace('- Saga', '', $details['name']));
-        $name = trim(str_replace('- Saga', '', $name));
+        $statuses = [
+            $this->updateSaga($saga, $details),
+            $this->updateImageSaga($saga, $details),
+        ];
 
-        $saga->setTitle($name);
-        $saga->setDescription($details['overview']);
-        $this->updateImageSaga($saga, $details);
+        return in_array(true, $statuses, true);
+    }
 
-        // Update logic here
-        return true;
+    private function setName(array $data): string
+    {
+        $name = trim(str_replace('- Saga', '', $data['name']));
+
+        return trim(str_replace('- Saga', '', $name));
     }
 
     private function updateImageSaga(Saga $saga, array $data): bool
@@ -107,5 +109,14 @@ final class SagaService
         } catch (Exception) {
             return false;
         }
+    }
+
+    private function updateSaga(Saga $saga, array $details): bool
+    {
+        $saga->setTitle($this->setName($details));
+        $saga->setDescription($details['overview']);
+        $saga->setJson($details);
+
+        return true;
     }
 }

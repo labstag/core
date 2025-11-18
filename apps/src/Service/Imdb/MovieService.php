@@ -89,7 +89,7 @@ final class MovieService
     public function update(Movie $movie): bool
     {
         $details  = $this->theMovieDbApi->getDetailsMovie($movie);
-        if ([] === $details) {
+        if (!isset($details['tmdb']) || is_null($details['tmdb'])) {
             $this->movieRepository->delete($movie);
 
             return false;
@@ -238,6 +238,7 @@ final class MovieService
 
         $movie->setReleaseDate(new DateTime($details['tmdb']['release_date']));
         $movie->setDuration((int) $details['tmdb']['runtime']);
+        $movie->setJson($details);
 
         return true;
     }

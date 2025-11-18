@@ -136,6 +136,11 @@ class Saga implements Stringable, EntityWithParagraphsInterface
         return $this->imgFile;
     }
 
+    public function getJson(): ?array
+    {
+        return $this->json;
+    }
+
     public function getMeta(): ?Meta
     {
         return $this->meta;
@@ -234,6 +239,13 @@ class Saga implements Stringable, EntityWithParagraphsInterface
         }
     }
 
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
+
+        return $this;
+    }
+
     public function setMeta(Meta $meta): static
     {
         $this->meta = $meta;
@@ -258,18 +270,6 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     public function setTmdb(?string $tmdb): static
     {
         $this->tmdb = $tmdb;
-
-        return $this;
-    }
-
-    public function getJson(): ?array
-    {
-        return $this->json;
-    }
-
-    public function setJson(?array $json): static
-    {
-        $this->json = $json;
 
         return $this;
     }

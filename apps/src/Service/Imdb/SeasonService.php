@@ -91,7 +91,7 @@ final class SeasonService
     public function update(Season $season): bool
     {
         $details = $this->theMovieDbApi->getDetailsSeason($season);
-        if ([] === $details) {
+        if (!isset($details['tmdb']) || is_null($details['tmdb'])) {
             $this->seasonRepository->delete($season);
 
             return false;
@@ -170,6 +170,8 @@ final class SeasonService
         if (isset($details['tmdb']['overview']) && '' != $details['tmdb']['overview']) {
             $season->setOverview($details['tmdb']['overview']);
         }
+
+        $season->setJson($details);
 
         return true;
     }

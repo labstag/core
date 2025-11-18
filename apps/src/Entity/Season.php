@@ -152,6 +152,11 @@ class Season implements Stringable, EntityWithParagraphsInterface
         return $this->imgFile;
     }
 
+    public function getJson(): ?array
+    {
+        return $this->json;
+    }
+
     public function getMeta(): ?Meta
     {
         return $this->meta;
@@ -251,6 +256,13 @@ class Season implements Stringable, EntityWithParagraphsInterface
         }
     }
 
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
+
+        return $this;
+    }
+
     public function setMeta(Meta $meta): static
     {
         $this->meta = $meta;
@@ -303,18 +315,6 @@ class Season implements Stringable, EntityWithParagraphsInterface
     public function setVoteAverage(?float $voteAverage): static
     {
         $this->voteAverage = $voteAverage;
-
-        return $this;
-    }
-
-    public function getJson(): ?array
-    {
-        return $this->json;
-    }
-
-    public function setJson(?array $json): static
-    {
-        $this->json = $json;
 
         return $this;
     }

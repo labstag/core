@@ -2,10 +2,12 @@
 
 namespace Labstag\Api;
 
+use DateTime;
 use Labstag\Api\Tmdb\TmdbImagesApi;
 use Labstag\Api\Tmdb\TmdbMoviesApi;
 use Labstag\Api\Tmdb\TmdbOtherApi;
 use Labstag\Api\Tmdb\TmdbTvApi;
+use Labstag\Entity\Company;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Saga;
@@ -44,21 +46,38 @@ class TheMovieDbApi
         $this->tmdbTvApi     = new TmdbTvApi($cacheService, $httpClient, $tmdbBearerToken);
     }
 
+    public function getDetailsCompany(Company $company): array
+    {
+        $json = $company->getJson();
+        if ($this->isCorrectDate($json)) {
+            return $json;
+        }
+
+        $details                = [];
+        $details['tmdb']        = $this->other()->getCompanyDetails($company->getTmdb() ?? '');
+        $details['json_import'] = new DateTime()->format('Y-m-d H:i:s');
+
+        return $details;
+    }
+
     public function getDetailsEpisode(Episode $episode): array
     {
-        $details = [];
-        $tmdb    = $episode->getRefseason()->getRefserie()->getTmdb();
+        $json = $episode->getJson();
+        if ($this->isCorrectDate($json)) {
+            return $json;
+        }
+
+        $details                = [];
+        $details['json_import'] = new DateTime()->format('Y-m-d H:i:s');
+        $tmdb                   = $episode->getRefseason()->getRefserie()->getTmdb();
         if (in_array($tmdb, [null, '', '0'], true)) {
-            return [];
+            return $details;
         }
 
         $seasonNumber = $episode->getRefseason()->getNumber();
         $episodeNumber   = $episode->getNumber();
         $locale          = $this->configurationService->getLocaleTmdb();
         $details['tmdb'] = $this->tvserie()->getEpisodeDetails($tmdb, $seasonNumber, $episodeNumber, $locale);
-        if (is_null($details['tmdb'])) {
-            return [];
-        }
 
         return $details;
     }
@@ -68,9 +87,15 @@ class TheMovieDbApi
      */
     public function getDetailsMovie(Movie $movie): array
     {
-        $details = [];
-        $locale  = $this->configurationService->getLocaleTmdb();
-        $tmdbId  = $movie->getTmdb();
+        $json = $movie->getJson();
+        if ($this->isCorrectDate($json)) {
+            return $json;
+        }
+
+        $details                = [];
+        $details['json_import'] = new DateTime()->format('Y-m-d H:i:s');
+        $locale                 = $this->configurationService->getLocaleTmdb();
+        $tmdbId                 = $movie->getTmdb();
         if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
             $data = $this->other()->findByImdb($movie->getImdb(), $locale);
             if (null !== $data && isset($data['movie_results'][0]['id'])) {
@@ -79,12 +104,12 @@ class TheMovieDbApi
         }
 
         if (empty($tmdbId)) {
-            return [];
+            return $details;
         }
 
         $details['tmdb'] = $this->movies()->getDetails($tmdbId, $locale);
         if (is_null($details['tmdb'])) {
-            return [];
+            return $details;
         }
 
         $locale                   = $this->configurationService->getLocaleTmdb();
@@ -104,30 +129,39 @@ class TheMovieDbApi
 
     public function getDetailsSaga(Saga $saga): array
     {
-        $details         = [];
-        $locale          = $this->configurationService->getLocaleTmdb();
-        $tmdbId          = $saga->getTmdb();
-        $details['tmdb'] = $this->movies()->getMovieCollection($tmdbId, $locale);
-        if (is_null($details['tmdb'])) {
-            return [];
+        $json = $saga->getJson();
+        if ($this->isCorrectDate($json)) {
+            return $json;
         }
+
+        $details                = [];
+        $details['json_import'] = new DateTime()->format('Y-m-d H:i:s');
+        $locale                 = $this->configurationService->getLocaleTmdb();
+        $tmdbId                 = $saga->getTmdb();
+        $details['tmdb']        = $this->movies()->getMovieCollection($tmdbId, $locale);
 
         return $details;
     }
 
     public function getDetailsSeason(Season $season): array
     {
-        $details = [];
-        $tmdb    = $season->getRefserie()->getTmdb();
+        $json = $season->getJson();
+        if ($this->isCorrectDate($json)) {
+            return $json;
+        }
+
+        $details                = [];
+        $details['json_import'] = new DateTime()->format('Y-m-d H:i:s');
+        $tmdb                   = $season->getRefserie()->getTmdb();
         if (in_array($tmdb, [null, '', '0'], true)) {
-            return [];
+            return $details;
         }
 
         $numberSeason    = $season->getNumber();
         $locale          = $this->configurationService->getLocaleTmdb();
         $details['tmdb'] = $this->tvserie()->getSeasonDetails($tmdb, $numberSeason, $locale);
         if (is_null($details['tmdb'])) {
-            return [];
+            return $details;
         }
 
         $details['videos'] = $this->getVideosSeason($tmdb, $numberSeason);
@@ -140,9 +174,15 @@ class TheMovieDbApi
      */
     public function getDetailsSerie(Serie $serie): array
     {
-        $details = [];
-        $locale  = $this->configurationService->getLocaleTmdb();
-        $tmdbId  = $serie->getTmdb();
+        $json = $serie->getJson();
+        if ($this->isCorrectDate($json)) {
+            return $json;
+        }
+
+        $details                = [];
+        $details['json_import'] = new DateTime()->format('Y-m-d H:i:s');
+        $locale                 = $this->configurationService->getLocaleTmdb();
+        $tmdbId                 = $serie->getTmdb();
         if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
             $data = $this->other()->findByImdb($serie->getImdb(), $locale);
             if (null !== $data && isset($data['tv_results'][0]['id'])) {
@@ -151,12 +191,12 @@ class TheMovieDbApi
         }
 
         if (empty($tmdbId)) {
-            return [];
+            return $details;
         }
 
         $details['tmdb'] = $this->tvserie()->getDetails($tmdbId, $locale);
         if (is_null($details['tmdb'])) {
-            return [];
+            return $details;
         }
 
         $details['videos']          = $this->getVideosSerie($tmdbId);
@@ -228,5 +268,20 @@ class TheMovieDbApi
         }
 
         return $videos;
+    }
+
+    private function isCorrectDate(?array $json): bool
+    {
+        if (is_array($json) && isset($json['json_import'])) {
+            $importDate = new DateTime($json['json_import']);
+            $now        = new DateTime();
+            $daysDiff   = $now->diff($importDate)->days;
+
+            if (7 > $daysDiff) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

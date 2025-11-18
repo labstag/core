@@ -258,6 +258,11 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         return $this->imgFile;
     }
 
+    public function getJson(): ?array
+    {
+        return $this->json;
+    }
+
     public function getLastreleaseDate(): ?DateTime
     {
         return $this->lastreleaseDate;
@@ -468,6 +473,13 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
+
+        return $this;
+    }
+
     public function setLastreleaseDate(?DateTime $lastreleaseDate): static
     {
         $this->lastreleaseDate = $lastreleaseDate;
@@ -520,18 +532,6 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     public function setVotes(?int $votes): static
     {
         $this->votes = $votes;
-
-        return $this;
-    }
-
-    public function getJson(): ?array
-    {
-        return $this->json;
-    }
-
-    public function setJson(?array $json): static
-    {
-        $this->json = $json;
 
         return $this;
     }

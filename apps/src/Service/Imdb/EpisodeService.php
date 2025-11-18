@@ -58,7 +58,7 @@ final class EpisodeService
     public function update(Episode $episode): bool
     {
         $details = $this->theMovieDbApi->getDetailsEpisode($episode);
-        if ([] === $details) {
+        if (!isset($details['tmdb']) || is_null($details['tmdb'])) {
             $this->episodeRepository->delete($episode);
 
             return false;
@@ -87,6 +87,7 @@ final class EpisodeService
             $details['tmdb']['air_date']
         );
         $episode->setAirDate($airDate);
+        $episode->setJson($details);
 
         return true;
     }

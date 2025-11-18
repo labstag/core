@@ -90,6 +90,11 @@ class Episode
         return $this->imgFile;
     }
 
+    public function getJson(): ?array
+    {
+        return $this->json;
+    }
+
     public function getNumber(): ?int
     {
         return $this->number;
@@ -170,6 +175,13 @@ class Episode
         }
     }
 
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
+
+        return $this;
+    }
+
     public function setNumber(int $number): static
     {
         $this->number = $number;
@@ -222,18 +234,6 @@ class Episode
     public function setVoteCount(int $voteCount): static
     {
         $this->voteCount = $voteCount;
-
-        return $this;
-    }
-
-    public function getJson(): ?array
-    {
-        return $this->json;
-    }
-
-    public function setJson(?array $json): static
-    {
-        $this->json = $json;
 
         return $this;
     }

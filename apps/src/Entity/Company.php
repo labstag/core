@@ -36,6 +36,9 @@ class Company
     #[Vich\UploadableField(mapping: 'company', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $json = null;
+
     /**
      * @var Collection<int, Movie>
      */
@@ -56,9 +59,6 @@ class Company
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?array $json = null;
 
     public function __construct()
     {
@@ -97,6 +97,11 @@ class Company
     public function getImgFile(): ?File
     {
         return $this->imgFile;
+    }
+
+    public function getJson(): ?array
+    {
+        return $this->json;
     }
 
     /**
@@ -165,6 +170,13 @@ class Company
         }
     }
 
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
+
+        return $this;
+    }
+
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -182,18 +194,6 @@ class Company
     public function setUrl(string $url): static
     {
         $this->url = $url;
-
-        return $this;
-    }
-
-    public function getJson(): ?array
-    {
-        return $this->json;
-    }
-
-    public function setJson(?array $json): static
-    {
-        $this->json = $json;
 
         return $this;
     }

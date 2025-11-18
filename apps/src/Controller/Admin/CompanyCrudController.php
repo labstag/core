@@ -91,7 +91,7 @@ class CompanyCrudController extends CrudControllerAbstract
         $repositoryAbstract                = $this->getRepository();
         $company                           = $repositoryAbstract->find($entityId);
 
-        $details = $theMovieDbApi->other()->getCompanyDetails($company->getTmdb() ?? '');
+        $details = $theMovieDbApi->getDetailsCompany($company);
 
         return new JsonResponse($details);
     }
