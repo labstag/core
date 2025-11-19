@@ -88,7 +88,7 @@ final class SagaService
 
     private function updateImageSaga(Saga $saga, array $data): bool
     {
-        $poster = $this->theMovieDbApi->images()->getPosterUrl($data['poster_path'] ?? '');
+        $poster = $this->theMovieDbApi->images()->getPosterUrl($data['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
             return false;
         }
