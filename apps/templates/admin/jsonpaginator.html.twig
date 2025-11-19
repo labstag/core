@@ -2,7 +2,7 @@
 <div class="content-panel-footer without-padding without-border">
     <div class="list-pagination">
         <div class="list-pagination-counter">
-            {{ pagination.total }}
+            {{ 'paginator.results'|trans({'%count%': pagination.total|format})|raw }}
         </div>
         <nav class="pager list-pagination-paginator first-page ">
             <ul class="pagination">
