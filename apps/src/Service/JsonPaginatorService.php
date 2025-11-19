@@ -62,8 +62,10 @@ class JsonPaginatorService
         $end       = min($totalPages, $page + 4);
 
         for ($i = $start; $i <= $end; ++$i) {
-            $pageRange[] = $i;
+            $pageRange[$i] = $i;
         }
+
+        $pageRange[$totalPages] = $totalPages;
 
         return [
             'assets'      => [$assets->getAsDto()],

@@ -21,7 +21,7 @@
                 {% endif %}
                 {% for i in pagination.pageRange %}
                     <li class="page-item {{ i == pagination.currentPage ? 'active' : '' }}">
-                            <a class="page-link" href="/admin?{{ pagination.currentUrl }}&page={{ i }}">{{ i }}</a>
+                        <a class="page-link" href="/admin?{{ pagination.currentUrl }}&page={{ i }}">{{ i }}</a>
                     </li>
                 {% endfor %}
                 {% if pagination.currentPage < pagination.totalPages %}
