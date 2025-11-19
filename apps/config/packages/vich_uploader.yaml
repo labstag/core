@@ -69,7 +69,7 @@ vich_uploader:
       namer:
         service: Vich\UploaderBundle\Naming\PropertyNamer
         options:
-          property: imdb
+          property: tmdb
           transliterate: true
       inject_on_load: false
       delete_on_update: true
@@ -91,7 +91,7 @@ vich_uploader:
       namer:
         service: Vich\UploaderBundle\Naming\PropertyNamer
         options:
-          property: imdb
+          property: tmdb
           transliterate: true
       inject_on_load: false
       delete_on_update: true
