@@ -260,6 +260,9 @@ final class SerieService
         $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $serie, $recommandation);
 
         $recommandation['date'] = new DateTime($recommandation['first_air_date']);
+        if ($recommandation['date'] > new DateTime()) {
+            return null;
+        }
 
         return $recommandation;
     }

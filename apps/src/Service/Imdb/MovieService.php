@@ -203,6 +203,9 @@ final class MovieService
         $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $movie, $recommandation);
 
         $recommandation['date'] = new DateTime($recommandation['release_date']);
+        if ($recommandation['date'] > new DateTime()) {
+            return null;
+        }
 
         return $recommandation;
     }
