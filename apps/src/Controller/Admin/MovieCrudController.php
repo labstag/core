@@ -260,8 +260,8 @@ class MovieCrudController extends CrudControllerAbstract
             return $this->redirectToRoute('admin_serie_index');
         }
 
-        $pagination = $jsonPaginatorService->paginate($file);
-
+        $pagination = $jsonPaginatorService->paginate($file, 'title');
+        
         return $this->render(
             'admin/movie/recommandations.html.twig',
             ['pagination' => $pagination]

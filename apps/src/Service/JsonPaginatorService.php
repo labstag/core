@@ -18,7 +18,7 @@ class JsonPaginatorService
      *
      * @return array ['data' => array, 'totalPages' => int, 'currentPage' => int]
      */
-    public function paginate(string $path): array
+    public function paginate(string $path, string $field): array
     {
         $request = $this->requestStack->getCurrentRequest();
 
@@ -36,11 +36,14 @@ class JsonPaginatorService
         $json = file_get_contents($path);
         $data = json_decode($json, true);
 
+        usort($data, function ($a, $b) use ($field) {
+            return strcmp($a[$field], $b[$field]);
+        });
+
         $totalItems = count($data);
         $totalPages = (int) ceil($totalItems / $perPage);
 
         $offset   = ($page - 1) * $perPage;
-        $total    = count($data);
         $pageData = array_slice($data, $offset, $perPage);
 
         foreach ($pageData as $key => $data) {
@@ -63,7 +66,7 @@ class JsonPaginatorService
         }
 
         return [
-            'total'       => $total,
+            'total'       => $totalItems,
             'currentUrl'  => http_build_query($params),
             'data'        => $pageData,
             'totalPages'  => $totalPages,

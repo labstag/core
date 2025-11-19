@@ -259,7 +259,7 @@ class SerieCrudController extends CrudControllerAbstract
             return $this->redirectToRoute('admin_serie_index');
         }
 
-        $pagination = $jsonPaginatorService->paginate($file);
+        $pagination = $jsonPaginatorService->paginate($file, 'name');
 
         return $this->render(
             'admin/serie/recommandations.html.twig',
