@@ -115,6 +115,7 @@ final class MovieService
 
         $statuses = [
             $this->updateMovie($movie, $details),
+            $this->updateOther($movie, $details),
             $this->updateImageMovie($movie, $details),
             $this->updateSaga($movie, $details),
             $this->updateCategory($movie, $details),
@@ -280,6 +281,17 @@ final class MovieService
         }
     }
 
+    private function updateOther(Movie $movie, array $details): bool
+    {
+        if (!isset($details['other']) || is_null($details['other'])) {
+            return false;
+        }
+        
+        $movie->setImdb((string) $details['other']['imdb_id']);
+
+        return true;
+    }
+
     /**
      * @param array<string, mixed> $details
      */
@@ -290,7 +302,6 @@ final class MovieService
         }
 
         $movie->setSlug(null);
-        $movie->setImdb((string) $details['other']['imdb_id']);
         $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
         $movie->setAdult($adult);
         $movie->setTitle((string) $details['tmdb']['title']);

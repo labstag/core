@@ -135,6 +135,7 @@ final class SerieService
 
         $statuses = [
             $this->updateSerie($serie, $details),
+            $this->updateOther($serie, $details),
             $this->setCertification($details, $serie),
             $this->setCitation($serie, $details),
             $this->setDescription($serie, $details),
@@ -367,6 +368,17 @@ final class SerieService
         return true;
     }
 
+    private function updateOther(Serie $serie, array $details): bool
+    {
+        if (!isset($details['other']) || is_null($details['other'])) {
+            return false;
+        }
+
+        $serie->setImdb((string) $details['other']['imdb_id']);
+
+        return true;
+    }
+
     /**
      * @param array<string, mixed> $details
      */
@@ -376,7 +388,6 @@ final class SerieService
             return false;
         }
 
-        $serie->setImdb((string) $details['other']['imdb_id']);
         $serie->setInProduction((bool) $details['tmdb']['in_production']);
         $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
         $serie->setAdult($adult);
