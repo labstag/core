@@ -5,8 +5,6 @@
                 <th>{{ 'Title'|trans }}</th>
                 <th>{{ 'Poster'|trans }}</th>
                 <th>{{ 'Overview'|trans }}</th>
-                <th>{{ 'Vote Average'|trans }}</th>
-                <th>{{ 'Popularity'|trans }}</th>
                 <th>{{ 'Date'|trans }}</th>
                 <th>{{ 'Links'|trans }}</th>
                 <th>{{ 'Release Date'|trans }}</th>
@@ -31,8 +29,6 @@
                 {% endif %}
             </td>
             <td>{{ recommandation.overview }}</td>
-            <td>{{ recommandation.vote_average }}</td>
-            <td>{{ recommandation.popularity }}</td>
             <td>{{ recommandation.date|format_date(locale: 'fr_FR', dateFormat: 'medium') }}
             <td>
                 <a href="{{ recommandation.links }}" target="_blank">{{ 'View on TMDb'|trans }}</a>
