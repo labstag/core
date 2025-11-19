@@ -17,9 +17,12 @@ use Labstag\Entity\Saga;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\SagaAllMessage;
 use Labstag\Message\SagaMessage;
+use Labstag\Service\FileService;
+use Labstag\Service\JsonPaginatorService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -32,6 +35,7 @@ class SagaCrudController extends CrudControllerAbstract
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
+        $this->setShowAllRecommandations();
 
         return $this->actionsFactory->show();
     }
@@ -142,6 +146,38 @@ class SagaCrudController extends CrudControllerAbstract
         $associationField->hideOnForm();
 
         return $associationField;
+    }
+
+    public function recommandationsAll(
+        FileService $fileService,
+        JsonPaginatorService $jsonPaginatorService,
+    ): Response
+    {
+        $file         = $fileService->getFileInAdapter('private', 'recommandations-saga.json');
+        if (!is_file($file)) {
+            return $this->redirectToRoute('admin_saga_index');
+        }
+
+        $pagination = $jsonPaginatorService->paginate($file, 'title');
+
+        return $this->render(
+            'admin/saga/recommandations.html.twig',
+            ['pagination' => $pagination]
+        );
+    }
+
+    public function setShowAllRecommandations(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('recommandationsAll', new TranslatableMessage('all recommendations'), 'fas fa-terminal');
+        $action->displayAsLink();
+        $action->linkToCrudAction('recommandationsAll');
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
     public function tmdb(AdminContext $adminContext): RedirectResponse

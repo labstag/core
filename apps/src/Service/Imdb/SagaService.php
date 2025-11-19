@@ -3,6 +3,7 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Api\TheMovieDbApi;
@@ -30,9 +31,27 @@ final class SagaService
         private SagaRepository $sagaRepository,
         private MovieRepository $movieRepository,
         private FileService $fileService,
+        private EntityManagerInterface $entityManager,
         private TheMovieDbApi $theMovieDbApi,
     )
     {
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getAllRecommandations(): array
+    {
+        $rows = $this->entityManager->getConnection()->fetchAllAssociative('SELECT json FROM saga');
+
+        $results         = array_column($rows, 'json');
+        $recommandations = [];
+        foreach ($results as $result) {
+            $data            = json_decode((string) $result, true);
+            $recommandations = $this->setJsonRecommandations($data, $recommandations);
+        }
+
+        return $recommandations;
     }
 
     public function getSaga(array $data): Saga
