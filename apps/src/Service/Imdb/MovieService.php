@@ -201,6 +201,9 @@ final class MovieService
         );
         $recommandation['links'] = 'https://www.themoviedb.org/movie/' . $recommandation['id'];
         $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $movie, $recommandation);
+        if ($recommandation['release_date'] === '') {
+            return null;
+        }
 
         $recommandation['date'] = new DateTime($recommandation['release_date']);
         if ($recommandation['date'] > new DateTime()) {

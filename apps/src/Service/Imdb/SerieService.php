@@ -258,6 +258,9 @@ final class SerieService
         );
         $recommandation['links'] = 'https://www.themoviedb.org/tv/' . $recommandation['id'];
         $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $serie, $recommandation);
+        if ($recommandation['first_air_date'] === '') {
+            return null;
+        }
 
         $recommandation['date'] = new DateTime($recommandation['first_air_date']);
         if ($recommandation['date'] > new DateTime()) {
