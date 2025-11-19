@@ -2,21 +2,33 @@
 
 namespace Labstag\Service\Imdb;
 
+use DateTime;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Api\TheMovieDbApi;
+use Labstag\Entity\Movie;
 use Labstag\Entity\Saga;
 use Labstag\Message\SagaMessage;
+use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
 use Labstag\Service\FileService;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SagaService
 {
+
+    private ?array $jsonTmdb = null;
+
     public function __construct(
+        #[AutowireIterator('labstag.admincontroller')]
+        private readonly iterable $controllers,
         private LoggerInterface $logger,
+        private AdminUrlGenerator $adminUrlGenerator,
         private MessageBusInterface $messageBus,
         private SagaRepository $sagaRepository,
+        private MovieRepository $movieRepository,
         private FileService $fileService,
         private TheMovieDbApi $theMovieDbApi,
     )
@@ -61,6 +73,13 @@ final class SagaService
         return $sagas;
     }
 
+    public function recommandations(Saga $saga, array $recommandations = []): array
+    {
+        $jsonRecommandations = $this->theMovieDbApi->getDetailsSaga($saga);
+
+        return $this->setJsonRecommandations($jsonRecommandations, $recommandations);
+    }
+
     public function update(Saga $saga): bool
     {
         $details  = $this->theMovieDbApi->getDetailsSaga($saga);
@@ -79,11 +98,70 @@ final class SagaService
         return in_array(true, $statuses, true);
     }
 
+    private function getAllJsonTmdb(): array
+    {
+        if (!is_null($this->jsonTmdb)) {
+            return $this->jsonTmdb;
+        }
+
+        $this->jsonTmdb = $this->movieRepository->getAllJsonTmdb();
+
+        return $this->jsonTmdb;
+    }
+
+    private function setJsonRecommandations(?array $json, array $recommandations = []): array
+    {
+        if (!is_array($json) || !isset($json['tmdb']['parts'])) {
+            return $recommandations;
+        }
+
+        foreach ($json['tmdb']['parts'] as $recommandation) {
+            $tmdb              = $recommandation['id'];
+            if (isset($recommandations[$tmdb])) {
+                continue;
+            }
+
+            $recommandation = $this->setRecommandation($recommandation);
+            if (!is_array($recommandation)) {
+                continue;
+            }
+
+            $recommandations[$tmdb] = $recommandation;
+        }
+
+        return $recommandations;
+    }
+
     private function setName(array $data): string
     {
         $name = trim(str_replace('- Saga', '', $data['tmdb']['name']));
 
         return trim(str_replace('- Saga', '', $name));
+    }
+
+    private function setRecommandation(array $recommandation): ?array
+    {
+        $tmdbs            = $this->getAllJsonTmdb();
+        $tmdb             = $recommandation['id'];
+        if (in_array($tmdb, $tmdbs)) {
+            return null;
+        }
+
+        $recommandation['poster_path'] = $this->theMovieDbApi->images()->getPosterUrl(
+            $recommandation['poster_path'] ?? ''
+        );
+        $recommandation['backdrop_path'] = $this->theMovieDbApi->images()->getBackdropUrl(
+            $recommandation['backdrop_path'] ?? ''
+        );
+        $recommandation['links'] = 'https://www.themoviedb.org/movie/' . $recommandation['id'];
+        $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $recommandation);
+
+        $recommandation['date'] = new DateTime($recommandation['release_date']);
+        if ($recommandation['date'] > new DateTime()) {
+            return null;
+        }
+
+        return $recommandation;
     }
 
     private function updateImageSaga(Saga $saga, array $data): bool
@@ -117,5 +195,23 @@ final class SagaService
         $saga->setJson($details);
 
         return true;
+    }
+
+    private function urlAddWithTmdb(string $type, array $data): string
+    {
+        $movie = new Movie();
+        foreach ($this->controllers as $controller) {
+            $entityClass = $controller->getEntityFqcn();
+            if ($entityClass == $movie::class || $movie instanceof $entityClass) {
+                $url = $this->adminUrlGenerator->setController($controller::class);
+                $url->set('name', $data['title'] ?? $data['name']);
+                $url->set('tmdb', $data['id']);
+                $url->setAction($type);
+
+                return str_replace('http://localhost', '', $url->generateUrl());
+            }
+        }
+
+        return '';
     }
 }

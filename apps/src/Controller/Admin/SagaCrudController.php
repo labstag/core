@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Saga;
@@ -69,6 +70,16 @@ class SagaCrudController extends CrudControllerAbstract
                 $this->moviesFieldForPage(self::getEntityFqcn(), $pageName),
             ]
         );
+        if (Crud::PAGE_DETAIL === $pageName) {
+            $this->crudFieldFactory->addTab(
+                'recommandations',
+                FormField::addTab(new TranslatableMessage('Recommandations'))
+            );
+
+            $textField = TextField::new('id', new TranslatableMessage('Recommandations'));
+            $textField->setTemplatePath('admin/field/recommandations.html.twig');
+            $this->crudFieldFactory->addFieldsToTab('recommandations', [$textField]);
+        }
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
