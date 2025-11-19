@@ -290,6 +290,7 @@ final class MovieService
         }
 
         $movie->setSlug(null);
+        $movie->setImdb((string) $details['other']['imdb_id']);
         $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
         $movie->setAdult($adult);
         $movie->setTitle((string) $details['tmdb']['title']);

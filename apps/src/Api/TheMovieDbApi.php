@@ -124,6 +124,8 @@ class TheMovieDbApi
             ['language' => $locale]
         );
 
+        $details['other'] = $this->movies()->getMovieExternalIds($tmdbId);
+
         return $details;
     }
 
@@ -165,6 +167,7 @@ class TheMovieDbApi
         }
 
         $details['videos'] = $this->getVideosSeason($tmdb, $numberSeason);
+        $details['other'] = $this->tvserie()->getTvExternalIds($tmdb);
 
         return $details;
     }

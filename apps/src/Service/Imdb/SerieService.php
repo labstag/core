@@ -376,6 +376,7 @@ final class SerieService
             return false;
         }
 
+        $serie->setImdb((string) $details['other']['imdb_id']);
         $serie->setInProduction((bool) $details['tmdb']['in_production']);
         $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
         $serie->setAdult($adult);
