@@ -25,13 +25,18 @@ class SeriesRecommandationsCommand extends Command
 
     protected function configure(): void
     {
-        $this->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')->addOption('option1', null, InputOption::VALUE_NONE, 'Option description');
+        $this->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')->addOption(
+            'option1',
+            null,
+            InputOption::VALUE_NONE,
+            'Option description'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle              = new SymfonyStyle($input, $output);
-        $recommandations = $this->serieService->getAllRecommandations();
+        $recommandations           = $this->serieService->getAllRecommandations();
 
         $filename = 'recommandations-serie.json';
         $this->fileService->saveFileInAdapter(

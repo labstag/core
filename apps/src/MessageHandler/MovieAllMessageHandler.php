@@ -2,6 +2,7 @@
 
 namespace Labstag\MessageHandler;
 
+use DateTime;
 use Labstag\Message\MovieAllMessage;
 use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
@@ -23,7 +24,25 @@ final class MovieAllMessageHandler
         unset($movieAllMessage);
         $movies = $this->movieRepository->findAll();
         foreach ($movies as $movie) {
-            $this->messageBus->dispatch(new MovieMessage($movie->getId()));
+            $json = $movie->getJson();
+            if (!$this->isCorrectDate($json)) {
+                $this->messageBus->dispatch(new MovieMessage($movie->getId()));
+            }
         }
+    }
+
+    private function isCorrectDate(?array $json): bool
+    {
+        if (is_array($json) && isset($json['json_import'])) {
+            $importDate = new DateTime($json['json_import']);
+            $now        = new DateTime();
+            $daysDiff   = $now->diff($importDate)->days;
+
+            if (7 > $daysDiff) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
