@@ -20,7 +20,14 @@
             <td>{{ title }}</td>
             <td>
                 {% if recommandation.poster_path != null %}
-                    <img src="{{ recommandation.poster_path }}" alt="{{ title }}" style="height: 100px;">
+                    {% set html_id = 'ea-lightbox-' ~ recommandation.id %}
+                    <a href="#" class="ea-lightbox-thumbnail" data-ea-lightbox-content-selector="#{{ html_id }}">
+                        <img src="{{ recommandation.poster_path }}" class="img-fluid">
+                    </a>
+
+                    <div id="{{ html_id }}" class="ea-lightbox">
+                        <img src="{{ recommandation.poster_path }}">
+                    </div>
                 {% endif %}
             </td>
             <td>{{ recommandation.overview }}</td>
