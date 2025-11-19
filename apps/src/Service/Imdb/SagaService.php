@@ -81,7 +81,7 @@ final class SagaService
 
     private function setName(array $data): string
     {
-        $name = trim(str_replace('- Saga', '', $data['name']));
+        $name = trim(str_replace('- Saga', '', $data['tmdb']['name']));
 
         return trim(str_replace('- Saga', '', $name));
     }
@@ -113,7 +113,7 @@ final class SagaService
     private function updateSaga(Saga $saga, array $details): bool
     {
         $saga->setTitle($this->setName($details));
-        $saga->setDescription($details['overview']);
+        $saga->setDescription($details['tmdb']['overview']);
         $saga->setJson($details);
 
         return true;
