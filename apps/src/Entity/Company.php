@@ -19,7 +19,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[Vich\Uploadable]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class Company
+class Company implements \Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
@@ -64,6 +64,12 @@ class Company
     {
         $this->movies = new ArrayCollection();
         $this->series = new ArrayCollection();
+    }
+
+    #[Override]
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
     }
 
     public function addMovie(Movie $movie): static
