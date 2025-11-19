@@ -221,6 +221,7 @@ class MovieCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
         $this->addFilterSaga($filters);
+        $this->addFilterCompanies($filters);
 
         return $filters;
     }
@@ -325,6 +326,12 @@ class MovieCrudController extends CrudControllerAbstract
         $associationField->setSortProperty('title');
 
         return $associationField;
+    }
+
+    protected function addFilterCompanies(Filters $filters): void
+    {
+        $entityFilter = EntityFilter::new('companies', new TranslatableMessage('Companies'));
+        $filters->add($entityFilter);
     }
 
     protected function addFilterSaga(Filters $filters): void

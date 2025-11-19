@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
@@ -217,6 +218,7 @@ class SerieCrudController extends CrudControllerAbstract
         $filters->add('inProduction');
 
         $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
+        $this->addFilterCompanies($filters);
 
         return $filters;
     }
@@ -315,6 +317,12 @@ class SerieCrudController extends CrudControllerAbstract
         }
 
         return $this->redirectToRoute('admin_serie_index');
+    }
+
+    protected function addFilterCompanies(Filters $filters): void
+    {
+        $entityFilter = EntityFilter::new('companies', new TranslatableMessage('Companies'));
+        $filters->add($entityFilter);
     }
 
     private function setUpdateAction(): void

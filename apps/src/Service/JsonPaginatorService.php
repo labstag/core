@@ -65,7 +65,7 @@ class JsonPaginatorService
             $pageRange[$i] = $i;
         }
 
-        $pageRange[1] = 1;
+        $pageRange[1]           = 1;
         $pageRange[$totalPages] = $totalPages;
 
         ksort($pageRange);
