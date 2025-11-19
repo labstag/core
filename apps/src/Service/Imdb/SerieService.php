@@ -259,7 +259,7 @@ final class SerieService
         );
         $recommandation['links'] = 'https://www.themoviedb.org/tv/' . $recommandation['id'];
         $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $serie, $recommandation);
-        if ($recommandation['first_air_date'] === '') {
+        if ('' === $recommandation['first_air_date']) {
             return null;
         }
 
@@ -349,6 +349,17 @@ final class SerieService
         }
     }
 
+    private function updateOther(Serie $serie, array $details): bool
+    {
+        if (!isset($details['other']) || is_null($details['other'])) {
+            return false;
+        }
+
+        $serie->setImdb((string) $details['other']['imdb_id']);
+
+        return true;
+    }
+
     private function updateSeasons(Serie $serie, array $details): bool
     {
         if (isset($details['tmdb']['seasons']) && is_array($details['tmdb']['seasons'])) {
@@ -364,17 +375,6 @@ final class SerieService
         foreach ($seasons as $season) {
             $this->messageBus->dispatch(new SeasonMessage($season->getId()));
         }
-
-        return true;
-    }
-
-    private function updateOther(Serie $serie, array $details): bool
-    {
-        if (!isset($details['other']) || is_null($details['other'])) {
-            return false;
-        }
-
-        $serie->setImdb((string) $details['other']['imdb_id']);
 
         return true;
     }

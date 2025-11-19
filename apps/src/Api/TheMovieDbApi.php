@@ -167,7 +167,7 @@ class TheMovieDbApi
         }
 
         $details['videos'] = $this->getVideosSeason($tmdb, $numberSeason);
-        $details['other'] = $this->tvserie()->getTvExternalIds($tmdb);
+        $details['other']  = $this->tvserie()->getTvExternalIds($tmdb);
 
         return $details;
     }

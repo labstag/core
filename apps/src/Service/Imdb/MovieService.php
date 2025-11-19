@@ -202,7 +202,7 @@ final class MovieService
         );
         $recommandation['links'] = 'https://www.themoviedb.org/movie/' . $recommandation['id'];
         $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $movie, $recommandation);
-        if ($recommandation['release_date'] === '') {
+        if ('' === $recommandation['release_date']) {
             return null;
         }
 
@@ -281,17 +281,6 @@ final class MovieService
         }
     }
 
-    private function updateOther(Movie $movie, array $details): bool
-    {
-        if (!isset($details['other']) || is_null($details['other'])) {
-            return false;
-        }
-        
-        $movie->setImdb((string) $details['other']['imdb_id']);
-
-        return true;
-    }
-
     /**
      * @param array<string, mixed> $details
      */
@@ -331,6 +320,17 @@ final class MovieService
         $movie->setReleaseDate(new DateTime($details['tmdb']['release_date']));
         $movie->setDuration((int) $details['tmdb']['runtime']);
         $movie->setJson($details);
+
+        return true;
+    }
+
+    private function updateOther(Movie $movie, array $details): bool
+    {
+        if (!isset($details['other']) || is_null($details['other'])) {
+            return false;
+        }
+
+        $movie->setImdb((string) $details['other']['imdb_id']);
 
         return true;
     }

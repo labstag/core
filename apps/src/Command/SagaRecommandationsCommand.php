@@ -24,7 +24,7 @@ class SagaRecommandationsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle                        = new SymfonyStyle($input, $output);
-        $recommandations           = $this->sagaService->getAllRecommandations();
+        $recommandations                     = $this->sagaService->getAllRecommandations();
 
         $filename = 'recommandations-saga.json';
         $this->fileService->saveFileInAdapter(

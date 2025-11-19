@@ -12,17 +12,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(
-    name: 'labstag:all:recommandations',
-    description: 'Add a short description for your command',
-)]
+#[AsCommand(name: 'labstag:all:recommandations', description: 'Add a short description for your command',)]
 class AllRecommandationsCommand extends Command
 {
     public function __construct(
         private SerieService $serieService,
         private SagaService $sagaService,
         private MovieService $movieService,
-        private FileService $fileService
+        private FileService $fileService,
     )
     {
         parent::__construct();
@@ -30,7 +27,7 @@ class AllRecommandationsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $symfonyStyle = new SymfonyStyle($input, $output);
+        $symfonyStyle              = new SymfonyStyle($input, $output);
         $recommandations           = $this->movieService->getAllRecommandations();
 
         $filename = 'recommandations-movie.json';
