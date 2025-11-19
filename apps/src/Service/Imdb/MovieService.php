@@ -368,7 +368,7 @@ final class MovieService
                 $url->set('tmdb', $data['id']);
                 $url->setAction($type);
 
-                return $url->generateUrl();
+                return str_replace('http://localhost', '', $url->generateUrl());
             }
         }
 
