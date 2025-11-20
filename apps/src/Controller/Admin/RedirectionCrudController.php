@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -22,7 +23,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 use ZipArchive;
 
@@ -168,11 +168,11 @@ class RedirectionCrudController extends CrudControllerAbstract
         );
     }
 
-    #[Route('/admin/redirection/{entity}/test', name: 'admin_redirection_test')]
-    public function testSource(string $entity): RedirectResponse
+    public function testSource(AdminContext $adminContext): RedirectResponse
     {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
-        $redirection                     = $repositoryAbstract->find($entity);
+        $redirection                     = $repositoryAbstract->find($entityId);
 
         return $this->redirect($redirection->getSource());
     }
@@ -268,14 +268,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
-        $action->linkToUrl(
-            fn ($entity): string => $this->generateUrl(
-                'admin_redirection_test',
-                [
-                    'entity' => $entity->getId(),
-                ]
-            )
-        );
+        $action->linkToCrudAction('testSource');
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
         $this->actionsFactory->add(Crud::PAGE_EDIT, $action);

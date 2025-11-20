@@ -1,0 +1,13 @@
+{% block content_title 'Series recommendations'|trans %}
+{% block page_title 'Series recommendations'|trans %}
+{% block page_actions %}
+{% endblock %}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+{% block configured_javascripts %}
+	{{ parent() }}
+	{{ include('@EasyAdmin/includes/_js_assets.html.twig', {assets: pagination.assets ?? []}, with_context: false) }}
+{% endblock %}
+{% block main %}
+	{% include "admin/recommandations.html.twig" with {'recommandations': pagination.data} %}
+	{% include "admin/jsonpaginator.html.twig" with {'pagination': pagination} %}
+{% endblock %}

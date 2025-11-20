@@ -38,6 +38,25 @@
                 <div class="duration">
                     {{ time_runtime(runtime) }}
                 </div>
+                <div>
+                    <ul>
+                    {% if serie.companies|length != 0 %}
+                        <li class="companies">
+                            <b>
+                                {{ 'Production companies'|trans }}
+                            </b>
+                            {% for company in serie.companies %}
+                                {% if company.url != '' %}
+                                    <a href="{{ company.url }}" target="_blank" title="{{ company.title|e('html_attr') }}">{{ company.title }}</a>
+                                {% else %}
+                                    {{ company.title }}
+                                {% endif %}
+                                {% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </li>
+                    {% endif %}
+                    </ul>
+                </div>
                 <div class="links">
                     <a href="https://www.imdb.com/title/{{ serie.imdb }}" target="_blank" title="{{ 'IMDB page for the serie'|trans|e('html_attr') }}">
                         {{ 'IMDB page for the serie'|trans }}

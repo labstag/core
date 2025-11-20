@@ -34,6 +34,9 @@ class Serie implements Stringable, EntityWithParagraphsInterface
      * @var Collection<int, SerieCategory>
      */
     #[ORM\ManyToMany(targetEntity: SerieCategory::class, mappedBy: 'series', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     protected Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -125,11 +128,24 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(nullable: true)]
     protected ?int $votes = null;
 
+    /**
+     * @var Collection<int, Company>
+     */
+    #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'series')]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    private Collection $companies;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $json = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->seasons    = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
+        $this->companies  = new ArrayCollection();
     }
 
     #[Override]
@@ -143,6 +159,16 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         if (!$this->categories->contains($serieCategory)) {
             $this->categories->add($serieCategory);
             $serieCategory->addSerie($this);
+        }
+
+        return $this;
+    }
+
+    public function addCompany(Company $company): static
+    {
+        if (!$this->companies->contains($company)) {
+            $this->companies->add($company);
+            $company->addSeries($this);
         }
 
         return $this;
@@ -187,6 +213,14 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     }
 
     /**
+     * @return Collection<int, Company>
+     */
+    public function getCompanies(): Collection
+    {
+        return $this->companies;
+    }
+
+    /**
      * @return string[]|null
      */
     public function getCountries(): ?array
@@ -222,6 +256,11 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     public function getImgFile(): ?File
     {
         return $this->imgFile;
+    }
+
+    public function getJson(): ?array
+    {
+        return $this->json;
     }
 
     public function getLastreleaseDate(): ?DateTime
@@ -304,6 +343,15 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     {
         if ($this->categories->removeElement($serieCategory)) {
             $serieCategory->removeSerie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompany(Company $company): static
+    {
+        if ($this->companies->removeElement($company)) {
+            $company->removeSeries($this);
         }
 
         return $this;
@@ -421,6 +469,13 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     public function setInProduction(?bool $inProduction): static
     {
         $this->inProduction = $inProduction;
+
+        return $this;
+    }
+
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
 
         return $this;
     }

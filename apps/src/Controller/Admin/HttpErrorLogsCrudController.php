@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -15,16 +16,15 @@ use Labstag\Field\HttpLogs\IsBotField;
 use Labstag\Field\HttpLogs\SameField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class HttpErrorLogsCrudController extends CrudControllerAbstract
 {
-    #[Route('/admin/http-error-logs/{entity}/banip', name: 'admin_http_error_logs_banip')]
-    public function banIp(string $entity, Request $request): RedirectResponse
+    public function banIp(AdminContext $adminContext, Request $request): RedirectResponse
     {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
-        $httpErrorLogs                   = $repositoryAbstract->find($entity);
+        $httpErrorLogs                   = $repositoryAbstract->find($entityId);
         $internetProtocol                = $httpErrorLogs->getInternetProtocol();
 
         $redirectToRoute = $this->redirectToRoute('admin_http_error_logs_index');
@@ -175,14 +175,7 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
     private function setLinkBanAction(): Action
     {
         $action = Action::new('banIp', new TranslatableMessage('Ban Ip'));
-        $action->linkToUrl(
-            fn ($entity): string => $this->generateUrl(
-                'admin_http_error_logs_banip',
-                [
-                    'entity' => $entity->getId(),
-                ]
-            )
-        );
+        $action->linkToCrudAction('banIp');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         return $action;

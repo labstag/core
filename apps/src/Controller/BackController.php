@@ -11,6 +11,7 @@ use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
+use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -111,10 +112,18 @@ class BackController extends AbstractController
         return $this->redirect($referer);
     }
 
-    protected function adminEmpty(string $entity): void
+    protected function adminEmpty(string $object): void
     {
-        $repositoryAbstract              = $this->getRepository($entity);
-        $all                             = $repositoryAbstract->findDeleted();
+        $reflectionClass    = new ReflectionClass($object);
+        $parentClass        = $reflectionClass->getParentClass();
+        $repositoryAbstract = $this->getRepository($object);
+        $class              = null;
+        if ($parentClass instanceof ReflectionClass) {
+            $repositoryAbstract = $this->getRepository($parentClass->getName());
+            $class              = $object;
+        }
+
+        $all = $repositoryAbstract->findDeleted($class);
         foreach ($all as $row) {
             $repositoryAbstract->remove($row);
         }

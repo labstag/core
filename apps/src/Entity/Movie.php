@@ -12,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\MovieRepository;
+use Labstag\SlugHandler\MovieSlugHandler;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -34,6 +35,9 @@ class Movie implements Stringable, EntityWithParagraphsInterface
      * @var Collection<int, MovieCategory>
      */
     #[ORM\ManyToMany(targetEntity: MovieCategory::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     protected Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -100,8 +104,9 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     #[ORM\ManyToOne(inversedBy: 'movies')]
     protected ?Saga $saga = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
+    #[Gedmo\SlugHandler(class: MovieSlugHandler::class)]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
@@ -116,10 +121,23 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(nullable: true)]
     protected ?int $votes = null;
 
+    /**
+     * @var Collection<int, Company>
+     */
+    #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'movies')]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    private Collection $companies;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $json = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
+        $this->companies  = new ArrayCollection();
     }
 
     #[Override]
@@ -133,6 +151,16 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         if (!$this->categories->contains($movieCategory)) {
             $this->categories->add($movieCategory);
             $movieCategory->addMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function addCompany(Company $company): static
+    {
+        if (!$this->companies->contains($company)) {
+            $this->companies->add($company);
+            $company->addMovie($this);
         }
 
         return $this;
@@ -164,6 +192,14 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     public function getCitation(): ?string
     {
         return $this->citation;
+    }
+
+    /**
+     * @return Collection<int, Company>
+     */
+    public function getCompanies(): Collection
+    {
+        return $this->companies;
     }
 
     /**
@@ -207,6 +243,11 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     public function getImgFile(): ?File
     {
         return $this->imgFile;
+    }
+
+    public function getJson(): ?array
+    {
+        return $this->json;
     }
 
     public function getMeta(): ?Meta
@@ -281,12 +322,21 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
+    public function removeCompany(Company $company): static
+    {
+        if ($this->companies->removeElement($company)) {
+            $company->removeMovie($this);
+        }
+
+        return $this;
+    }
+
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
         if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this
         ) {
-            $paragraph->setPage(null);
+            $paragraph->setMovie(null);
         }
 
         return $this;
@@ -384,6 +434,13 @@ class Movie implements Stringable, EntityWithParagraphsInterface
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
+
+        return $this;
     }
 
     public function setMeta(Meta $meta): static

@@ -25,11 +25,12 @@ use Labstag\Service\BlockService;
 use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
 use Labstag\Service\FormService;
-use Labstag\Service\MovieService;
+use Labstag\Service\Imdb\EpisodeService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SeasonService;
+use Labstag\Service\Imdb\SerieService;
 use Labstag\Service\ParagraphService;
-use Labstag\Service\SeasonService;
 use Labstag\Service\SecurityService;
-use Labstag\Service\SerieService;
 use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
 use Labstag\Service\UserService;
@@ -61,6 +62,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         protected SeasonService $seasonService,
         protected SecurityService $securityService,
         protected BlockService $blockService,
+        protected EpisodeService $episodeService,
         protected MovieService $movieService,
         protected ParagraphService $paragraphService,
         protected WorkflowService $workflowService,

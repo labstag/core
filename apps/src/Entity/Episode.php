@@ -67,6 +67,9 @@ class Episode
     #[ORM\Column(name: 'vote_count', nullable: true)]
     protected ?int $voteCount = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $json = null;
+
     public function getAirDate(): ?DateTime
     {
         return $this->airDate;
@@ -85,6 +88,11 @@ class Episode
     public function getImgFile(): ?File
     {
         return $this->imgFile;
+    }
+
+    public function getJson(): ?array
+    {
+        return $this->json;
     }
 
     public function getNumber(): ?int
@@ -165,6 +173,13 @@ class Episode
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
+
+        return $this;
     }
 
     public function setNumber(int $number): static

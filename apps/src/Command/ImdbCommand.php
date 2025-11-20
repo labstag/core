@@ -2,15 +2,16 @@
 
 namespace Labstag\Command;
 
-use Labstag\Api\TmdbApi;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Serie;
 use Labstag\Message\MovieMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SerieRepository;
-use Labstag\Service\MovieService;
-use Labstag\Service\SerieService;
+use Labstag\Service\ConfigurationService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SerieService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,7 +24,8 @@ class ImdbCommand extends Command
 {
     public function __construct(
         protected SerieService $serieService,
-        protected TmdbApi $tmdbApi,
+        protected TheMovieDbApi $theMovieDbApi,
+        protected ConfigurationService $configurationService,
         protected MovieService $movieService,
         protected MessageBusInterface $messageBus,
         protected SerieRepository $serieRepository,
@@ -35,6 +37,7 @@ class ImdbCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $locale       = $this->configurationService->getLocaleTmdb();
         $symfonyStyle = new SymfonyStyle($input, $output);
         $imdb         = $symfonyStyle->ask('Quel est le code IMDb ?');
         if (empty($imdb)) {
@@ -43,7 +46,7 @@ class ImdbCommand extends Command
             return Command::INVALID;
         }
 
-        $data         = $this->tmdbApi->findByImdb($imdb);
+        $data         = $this->theMovieDbApi->other()->findByImdb($imdb, $locale);
         if (is_null($data)) {
             $symfonyStyle->error("Le code IMDB n'est pas valide");
 

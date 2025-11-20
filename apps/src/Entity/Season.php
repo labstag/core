@@ -12,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\SeasonRepository;
+use Labstag\SlugHandler\SeasonSlugHandler;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
@@ -78,6 +79,8 @@ class Season implements Stringable, EntityWithParagraphsInterface
     #[ORM\JoinColumn(name: 'refserie_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     protected ?Serie $refserie = null;
 
+    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
+    #[Gedmo\SlugHandler(class: SeasonSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $slug = null;
 
@@ -89,6 +92,9 @@ class Season implements Stringable, EntityWithParagraphsInterface
 
     #[ORM\Column(name: 'vote_average', nullable: true)]
     protected ?float $voteAverage = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $json = null;
 
     public function __construct()
     {
@@ -147,6 +153,11 @@ class Season implements Stringable, EntityWithParagraphsInterface
     public function getImgFile(): ?File
     {
         return $this->imgFile;
+    }
+
+    public function getJson(): ?array
+    {
+        return $this->json;
     }
 
     public function getMeta(): ?Meta
@@ -246,6 +257,13 @@ class Season implements Stringable, EntityWithParagraphsInterface
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
+
+        return $this;
     }
 
     public function setMeta(Meta $meta): static

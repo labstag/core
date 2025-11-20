@@ -12,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\SagaRepository;
+use Labstag\SlugHandler\SagaSlugHandler;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -71,7 +72,8 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     )]
     protected Collection $paragraphs;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
+    #[Gedmo\SlugHandler(class: SagaSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     protected ?string $slug = null;
 
@@ -80,6 +82,9 @@ class Saga implements Stringable, EntityWithParagraphsInterface
 
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $tmdb = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $json = null;
 
     public function __construct()
     {
@@ -131,6 +136,11 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     public function getImgFile(): ?File
     {
         return $this->imgFile;
+    }
+
+    public function getJson(): ?array
+    {
+        return $this->json;
     }
 
     public function getMeta(): ?Meta
@@ -229,6 +239,13 @@ class Saga implements Stringable, EntityWithParagraphsInterface
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setJson(?array $json): static
+    {
+        $this->json = $json;
+
+        return $this;
     }
 
     public function setMeta(Meta $meta): static

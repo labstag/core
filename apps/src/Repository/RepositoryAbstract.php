@@ -17,9 +17,14 @@ abstract class RepositoryAbstract extends ServiceEntityRepository
         $this->flush();
     }
 
-    public function findDeleted(): mixed
+    public function findDeleted(?string $class = null): mixed
     {
         $queryBuilder = $this->createQueryBuilder('entity');
+        if (!is_null($class)) {
+            $queryBuilder->resetDQLPart('from');
+            $queryBuilder->from($class, 'entity');
+        }
+
         $queryBuilder->andWhere('entity.deletedAt IS NOT NULL');
 
         $query = $queryBuilder->getQuery();

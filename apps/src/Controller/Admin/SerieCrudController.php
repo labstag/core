@@ -6,33 +6,107 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
+use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
+use Labstag\Service\FileService;
+use Labstag\Service\JsonPaginatorService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SerieCrudController extends CrudControllerAbstract
 {
+    public function addWithTmdb(
+        AdminContext $adminContext,
+        TheMovieDbApi $theMovieDbApi,
+        MessageBusInterface $messageBus,
+    ): Response
+    {
+        $tmdbId = $adminContext->getRequest()->query->get('tmdb');
+        $name = $adminContext->getRequest()->query->get('name');
+        $data = $theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
+        if (is_null($data)) {
+            return $this->redirectToRoute('admin_serie_index');
+        }
+
+        $imdbId             = $data['imdb_id'];
+        $repositoryAbstract = $this->getRepository();
+        $serie              = $repositoryAbstract->findOneBy(
+            ['imdb' => $imdbId]
+        );
+        if ($serie instanceof Serie) {
+            $this->addFlash(
+                'warning',
+                new TranslatableMessage(
+                    'The %name% series is already present in the database',
+                    [
+                        '%name%' => $serie->getTitle(),
+                    ]
+                )
+            );
+
+            return $this->redirectToRoute(
+                'admin_serie_detail',
+                [
+                    'entityId' => $serie->getId(),
+                ]
+            );
+        }
+
+        $serie = new Serie();
+        $serie->setFile(false);
+        $serie->setEnable(true);
+        $serie->setAdult(false);
+        $serie->setImdb($imdbId);
+        $serie->setTitle($name);
+        $serie->setTmdb($tmdbId);
+
+        $repositoryAbstract->save($serie);
+        $messageBus->dispatch(new SerieMessage($serie->getId()));
+        $this->addFlash(
+            'success',
+            new TranslatableMessage(
+                'The %name% series has been added to the database',
+                [
+                    '%name%' => $serie->getTitle(),
+                ]
+            )
+        );
+
+        return $this->redirectToRoute(
+            'admin_serie_detail',
+            [
+                'entityId' => $serie->getId(),
+            ]
+        );
+    }
+
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
-        $this->setLinkImdbAction();
-        $this->setLinkTmdbAction();
+        $this->actionsFactory->setLinkImdbAction();
+        $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
+        $this->setShowAllRecommandations();
 
         return $this->actionsFactory->show();
     }
@@ -113,12 +187,23 @@ class SerieCrudController extends CrudControllerAbstract
                 $wysiwygField,
                 $descriptionField,
                 $this->crudFieldFactory->categoriesFieldForPage(self::getEntityFqcn(), $pageName),
+                $this->crudFieldFactory->companiesFieldForPage(self::getEntityFqcn(), $pageName),
                 $associationField,
                 $booleanField,
                 $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);
+        if (Crud::PAGE_DETAIL === $pageName) {
+            $this->crudFieldFactory->addTab(
+                'recommandations',
+                FormField::addTab(new TranslatableMessage('Recommandations'))
+            );
+
+            $textField = TextField::new('id', new TranslatableMessage('Recommandations'));
+            $textField->setTemplatePath('admin/field/recommandations.html.twig');
+            $this->crudFieldFactory->addFieldsToTab('recommandations', [$textField]);
+        }
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
@@ -133,6 +218,7 @@ class SerieCrudController extends CrudControllerAbstract
         $filters->add('inProduction');
 
         $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
+        $this->addFilterCompanies($filters);
 
         return $filters;
     }
@@ -142,11 +228,11 @@ class SerieCrudController extends CrudControllerAbstract
         return Serie::class;
     }
 
-    #[Route('/admin/serie/{entity}/imdb', name: 'admin_serie_imdb')]
-    public function imdb(string $entity): RedirectResponse
+    public function imdb(AdminContext $adminContext): RedirectResponse
     {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
-        $serie                           = $repositoryAbstract->find($entity);
+        $serie                           = $repositoryAbstract->find($entityId);
         if (empty($serie->getImdb())) {
             return $this->redirectToRoute('admin_serie_index');
         }
@@ -154,20 +240,74 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.imdb.com/title/' . $serie->getImdb() . '/');
     }
 
-    #[Route('/admin/serie/{entity}/tmdb', name: 'admin_serie_tmdb')]
-    public function tmdb(string $entity): RedirectResponse
+    public function jsonSerie(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
     {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
-        $serie                           = $repositoryAbstract->find($entity);
+        $serie                           = $repositoryAbstract->find($entityId);
+
+        $details = $theMovieDbApi->getDetailsSerie($serie);
+
+        return new JsonResponse($details);
+    }
+
+    public function recommandationsAll(
+        FileService $fileService,
+        JsonPaginatorService $jsonPaginatorService,
+    ): Response
+    {
+        $file         = $fileService->getFileInAdapter('private', 'recommandations-serie.json');
+        if (!is_file($file)) {
+            return $this->redirectToRoute('admin_serie_index');
+        }
+
+        $pagination = $jsonPaginatorService->paginate($file, 'name');
+
+        return $this->render(
+            'admin/serie/recommandations.html.twig',
+            ['pagination' => $pagination]
+        );
+    }
+
+    public function setShowAllRecommandations(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('recommandationsAll', new TranslatableMessage('all recommendations'), 'fas fa-terminal');
+        $action->displayAsLink();
+        $action->linkToCrudAction('recommandationsAll');
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
+    public function tmdb(AdminContext $adminContext): RedirectResponse
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $serie                           = $repositoryAbstract->find($entityId);
 
         return $this->redirect('https://www.themoviedb.org/tv/' . $serie->getTmdb());
     }
 
-    #[Route('/admin/serie/{entity}/update', name: 'admin_serie_update')]
-    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
+    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
+        $messageBus->dispatch(new SerieAllMessage());
+
+        return $this->redirectToRoute('admin_serie_index');
+    }
+
+    public function updateSerie(
+        AdminContext $adminContext,
+        Request $request,
+        MessageBusInterface $messageBus,
+    ): RedirectResponse
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
-        $serie                           = $repositoryAbstract->find($entity);
+        $serie                           = $repositoryAbstract->find($entityId);
         $messageBus->dispatch(new SerieMessage($serie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -179,63 +319,10 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_serie_index');
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    protected function addFilterCompanies(Filters $filters): void
     {
-        $repositoryAbstract              = $this->getRepository();
-        $series                          = $repositoryAbstract->findAll();
-        foreach ($series as $serie) {
-            $messageBus->dispatch(new SerieMessage($serie->getId()));
-        }
-
-        return $this->redirectToRoute('admin_serie_index');
-    }
-
-    private function setLinkImdbAction(): void
-    {
-        if (!$this->actionsFactory->isTrash()) {
-            return;
-        }
-
-        $action = Action::new('imdb', new TranslatableMessage('IMDB Page'));
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
-        $action->linkToUrl(
-            fn (Serie $serie): string => $this->generateUrl(
-                'admin_serie_imdb',
-                [
-                    'entity' => $serie->getId(),
-                ]
-            )
-        );
-        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
-
-        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
-        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
-    }
-
-    private function setLinkTmdbAction(): void
-    {
-        if (!$this->actionsFactory->isTrash()) {
-            return;
-        }
-
-        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
-        $action->linkToUrl(
-            fn (Serie $serie): string => $this->generateUrl(
-                'admin_serie_tmdb',
-                [
-                    'entity' => $serie->getId(),
-                ]
-            )
-        );
-        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
-        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+        $entityFilter = EntityFilter::new('companies', new TranslatableMessage('Companies'));
+        $filters->add($entityFilter);
     }
 
     private function setUpdateAction(): void
@@ -244,14 +331,18 @@ class SerieCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('update', new TranslatableMessage('Update'));
-        $action->linkToUrl(
-            fn (Serie $serie): string => $this->generateUrl(
-                'admin_serie_update',
-                [
-                    'entity' => $serie->getId(),
-                ]
-            )
+        $action = Action::new('updateSerie', new TranslatableMessage('Update'));
+        $action->linkToCrudAction('updateSerie');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+
+        $action = Action::new('jsonSerie', new TranslatableMessage('Json'));
+        $action->linkToCrudAction('jsonSerie');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

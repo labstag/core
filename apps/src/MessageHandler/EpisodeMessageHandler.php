@@ -5,7 +5,7 @@ namespace Labstag\MessageHandler;
 use Labstag\Entity\Episode;
 use Labstag\Message\EpisodeMessage;
 use Labstag\Repository\EpisodeRepository;
-use Labstag\Service\EpisodeService;
+use Labstag\Service\Imdb\EpisodeService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
