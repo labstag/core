@@ -171,8 +171,6 @@ final class SeasonService
             $season->setOverview($details['tmdb']['overview']);
         }
 
-        $season->setJson($details);
-
         return true;
     }
 }

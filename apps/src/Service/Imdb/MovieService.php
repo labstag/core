@@ -324,7 +324,6 @@ final class MovieService
 
         $movie->setReleaseDate(new DateTime($details['tmdb']['release_date']));
         $movie->setDuration((int) $details['tmdb']['runtime']);
-        $movie->setJson($details);
 
         return true;
     }

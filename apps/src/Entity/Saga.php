@@ -83,9 +83,6 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $tmdb = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?array $json = null;
-
     public function __construct()
     {
         $this->movies     = new ArrayCollection();
@@ -136,11 +133,6 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     public function getImgFile(): ?File
     {
         return $this->imgFile;
-    }
-
-    public function getJson(): ?array
-    {
-        return $this->json;
     }
 
     public function getMeta(): ?Meta
@@ -239,13 +231,6 @@ class Saga implements Stringable, EntityWithParagraphsInterface
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
-    }
-
-    public function setJson(?array $json): static
-    {
-        $this->json = $json;
-
-        return $this;
     }
 
     public function setMeta(Meta $meta): static

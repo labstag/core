@@ -63,7 +63,6 @@ final class CompanyService
     {
         $company->setTitle($data['tmdb']['name']);
         $company->setUrl($data['tmdb']['homepage'] ?? null);
-        $company->setJson($data);
 
         return true;
     }

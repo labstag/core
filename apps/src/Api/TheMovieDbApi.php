@@ -48,10 +48,10 @@ class TheMovieDbApi
 
     public function getDetailsCompany(Company $company): array
     {
-        $json = $company->getJson();
-        if ($this->isCorrectDate($json)) {
-            return $json;
-        }
+        // $json = $company->getJson();
+        // if ($this->isCorrectDate($json)) {
+        //     return $json;
+        // }
 
         $details                = [];
         $details['tmdb']        = $this->other()->getCompanyDetails($company->getTmdb() ?? '');
@@ -63,10 +63,10 @@ class TheMovieDbApi
 
     public function getDetailsEpisode(Episode $episode): array
     {
-        $json = $episode->getJson();
-        if ($this->isCorrectDate($json)) {
-            return $json;
-        }
+        // $json = $episode->getJson();
+        // if ($this->isCorrectDate($json)) {
+        //     return $json;
+        // }
 
         $details                = [];
         $date                   = new DateTime();
@@ -89,10 +89,10 @@ class TheMovieDbApi
      */
     public function getDetailsMovie(Movie $movie): array
     {
-        $json = $movie->getJson();
-        if ($this->isCorrectDate($json)) {
-            return $json;
-        }
+        // $json = $movie->getJson();
+        // if ($this->isCorrectDate($json)) {
+        //     return $json;
+        // }
 
         $details                = [];
         $date                   = new DateTime();
@@ -134,10 +134,10 @@ class TheMovieDbApi
 
     public function getDetailsSaga(Saga $saga): array
     {
-        $json = $saga->getJson();
-        if ($this->isCorrectDate($json)) {
-            return $json;
-        }
+        // $json = $saga->getJson();
+        // if ($this->isCorrectDate($json)) {
+        //     return $json;
+        // }
 
         $details                = [];
         $date                   = new DateTime();
@@ -151,10 +151,10 @@ class TheMovieDbApi
 
     public function getDetailsSeason(Season $season): array
     {
-        $json = $season->getJson();
-        if ($this->isCorrectDate($json)) {
-            return $json;
-        }
+        // $json = $season->getJson();
+        // if ($this->isCorrectDate($json)) {
+        //     return $json;
+        // }
 
         $details                = [];
         $date                   = new DateTime();
@@ -182,10 +182,10 @@ class TheMovieDbApi
      */
     public function getDetailsSerie(Serie $serie): array
     {
-        $json = $serie->getJson();
-        if ($this->isCorrectDate($json)) {
-            return $json;
-        }
+        // $json = $serie->getJson();
+        // if ($this->isCorrectDate($json)) {
+        //     return $json;
+        // }
 
         $details                = [];
         $date                   = new DateTime();

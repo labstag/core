@@ -402,7 +402,6 @@ final class SerieService
         $serie->setCountries($details['tmdb']['origin_country']);
 
         $serie->setTmdb($details['tmdb']['id']);
-        $serie->setJson($details);
 
         return true;
     }

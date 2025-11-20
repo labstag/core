@@ -93,9 +93,6 @@ class Season implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(name: 'vote_average', nullable: true)]
     protected ?float $voteAverage = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?array $json = null;
-
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
@@ -153,11 +150,6 @@ class Season implements Stringable, EntityWithParagraphsInterface
     public function getImgFile(): ?File
     {
         return $this->imgFile;
-    }
-
-    public function getJson(): ?array
-    {
-        return $this->json;
     }
 
     public function getMeta(): ?Meta
@@ -257,13 +249,6 @@ class Season implements Stringable, EntityWithParagraphsInterface
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
-    }
-
-    public function setJson(?array $json): static
-    {
-        $this->json = $json;
-
-        return $this;
     }
 
     public function setMeta(Meta $meta): static

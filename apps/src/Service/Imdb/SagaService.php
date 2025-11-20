@@ -214,7 +214,6 @@ final class SagaService
     {
         $saga->setTitle($this->setName($details['tmdb']['name']));
         $saga->setDescription($details['tmdb']['overview']);
-        $saga->setJson($details);
 
         return true;
     }

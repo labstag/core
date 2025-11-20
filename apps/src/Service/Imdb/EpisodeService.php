@@ -87,7 +87,6 @@ final class EpisodeService
             $details['tmdb']['air_date']
         );
         $episode->setAirDate($airDate);
-        $episode->setJson($details);
 
         return true;
     }

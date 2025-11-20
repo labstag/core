@@ -36,9 +36,6 @@ class Company implements \Stringable
     #[Vich\UploadableField(mapping: 'company', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?array $json = null;
-
     /**
      * @var Collection<int, Movie>
      */
@@ -105,11 +102,6 @@ class Company implements \Stringable
         return $this->imgFile;
     }
 
-    public function getJson(): ?array
-    {
-        return $this->json;
-    }
-
     /**
      * @return Collection<int, Movie>
      */
@@ -174,13 +166,6 @@ class Company implements \Stringable
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
-    }
-
-    public function setJson(?array $json): static
-    {
-        $this->json = $json;
-
-        return $this;
     }
 
     public function setTitle(string $title): static
