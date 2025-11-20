@@ -72,7 +72,7 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     )]
     protected Collection $paragraphs;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
     #[Gedmo\SlugHandler(class: SagaSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     protected ?string $slug = null;

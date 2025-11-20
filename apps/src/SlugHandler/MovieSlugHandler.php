@@ -21,14 +21,16 @@ class MovieSlugHandler implements SlugHandlerInterface
         return false;
     }
 
-    public function onChangeDecision(SluggableAdapter $ea, array &$config, $object, &$slug, &$needToChangeSlug): void
+    public function onChangeDecision(SluggableAdapter $sluggableAdapter, array &$config, $object, &$slug, &$needToChangeSlug): void
     {
+        unset($sluggableAdapter, $config, $object, $slug);
         $needToChangeSlug = true;
     }
 
-    public function onSlugCompletion(SluggableAdapter $ea, array &$config, $object, &$slug): void
+    public function onSlugCompletion(SluggableAdapter $sluggableAdapter, array &$config, $object, &$slug): void
     {
-        $objectManager    = $ea->getObjectManager();
+        unset($config);
+        $objectManager    = $sluggableAdapter->getObjectManager();
         $classMetadata    = $objectManager->getClassMetadata($object::class);
         $objectRepository = $objectManager->getRepository($classMetadata->getName());
 
@@ -57,19 +59,17 @@ class MovieSlugHandler implements SlugHandlerInterface
             $objectManager->persist($existingMovie);
         }
 
-        if (0 < count($existingMovies)) {
-            $date = $object->getReleaseDate();
-            $slug = $date ? $originalSlug . '-' . $date->format('Y') : $originalSlug . '-' . uniqid();
-        } else {
-            $slug = $originalSlug;
-        }
+        $date = $object->getReleaseDate();
+        $slug = (0 < count($existingMovies)) ? ($date ? $originalSlug . '-' . $date->format('Y') : $originalSlug . '-' . uniqid()) : $originalSlug;
     }
 
-    public function postSlugBuild(SluggableAdapter $ea, array &$config, $object, &$slug)
+    public function postSlugBuild(SluggableAdapter $sluggableAdapter, array &$config, $object, &$slug)
     {
+        unset($sluggableAdapter, $config, $object, $slug);
     }
 
     public static function validate(array $options, ClassMetadata $meta)
     {
+        unset($options, $meta);
     }
 }

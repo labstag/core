@@ -6,10 +6,9 @@ use Doctrine\Persistence\Mapping\ClassMetadata;
 use Gedmo\Sluggable\Handler\SlugHandlerInterface;
 use Gedmo\Sluggable\Mapping\Event\SluggableAdapter;
 use Gedmo\Sluggable\SluggableListener;
-use Labstag\Entity\Saga;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
-class SagaSlugHandler implements SlugHandlerInterface
+class SeasonSlugHandler implements SlugHandlerInterface
 {
     public function __construct(
         private SluggableListener $sluggableListener,
@@ -31,21 +30,10 @@ class SagaSlugHandler implements SlugHandlerInterface
     public function onSlugCompletion(SluggableAdapter $sluggableAdapter, array &$config, $object, &$slug): void
     {
         unset($config);
-        $objectManager    = $sluggableAdapter->getObjectManager();
-        $objectRepository = $objectManager->getRepository(Saga::class);
+        $sluggableAdapter->getObjectManager();
 
         $asciiSlugger = new AsciiSlugger();
         $slug         = $asciiSlugger->slug((string) $object->getTitle())->lower();
-
-        $originalSlug = $slug;
-
-        $existingMovies = $objectRepository->findBy(
-            ['slug' => $slug]
-        );
-
-        if ($existingMovies) {
-            $slug = $originalSlug . '-saga';
-        }
     }
 
     public function postSlugBuild(SluggableAdapter $sluggableAdapter, array &$config, $object, &$slug)

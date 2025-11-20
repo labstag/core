@@ -5,7 +5,6 @@ namespace Labstag\Event\Abstract;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\BanIp;
 use Labstag\Entity\Block;
-use Labstag\Entity\Chapter;
 use Labstag\Entity\HttpErrorLogs;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
@@ -13,7 +12,6 @@ use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Redirection;
 use Labstag\Entity\Saga;
-use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
@@ -28,7 +26,6 @@ use Labstag\Service\WorkflowService;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Workflow\Registry;
 
 abstract class EventEntityLib
@@ -98,7 +95,7 @@ abstract class EventEntityLib
         $this->updateEntityMovie($object);
         $this->updateEntitySerie($object);
         $this->updateEntitySaga($object);
-        $this->updateSlug($object);
+        $this->updateEntityPage($object);
 
         $entityManager->flush();
     }
@@ -111,7 +108,7 @@ abstract class EventEntityLib
         $this->updateEntityRedirection($object);
         $this->updateEntityParagraph($object);
         $this->initEntityMeta($object);
-        $this->updateSlug($object);
+        $this->updateEntityPage($object);
     }
 
     protected function updateEntityBanIp(object $instance, EntityManagerInterface $entityManager): void
@@ -140,50 +137,6 @@ abstract class EventEntityLib
         $this->blockService->update($instance);
     }
 
-    protected function updateEntityChapterSlug(object $instance): void
-    {
-        if (!$instance instanceof Chapter) {
-            return;
-        }
-
-        $entityRepository    = $this->entityManager->getRepository(Chapter::class);
-        $asciiSlugger        = new AsciiSlugger();
-        $unicodeString       = $asciiSlugger->slug((string) $instance->getTitle())->lower();
-        $slug      = $unicodeString;
-        $find      = false;
-        $number    = 1;
-        while (false === $find) {
-            $testChapter = $entityRepository->findOneBy(
-                [
-                    'refstory' => $instance->getRefstory(),
-                    'slug'     => $slug,
-                ]
-            );
-            if (!$testChapter instanceof Story) {
-                $find = true;
-                break;
-            }
-
-            if ($testChapter->getId() === $instance->getId()) {
-                $find = true;
-                break;
-            }
-
-            $slug = $unicodeString . '-' . $number;
-            ++$number;
-        }
-
-        $instance->setSlug($slug);
-
-        if (0 < $instance->getPosition()) {
-            return;
-        }
-
-        $story    = $instance->getRefstory();
-        $chapters = $story->getChapters();
-        $instance->setPosition(count($chapters) + 1);
-    }
-
     protected function updateEntityMovie(object $instance): void
     {
         if (!$instance instanceof Movie) {
@@ -193,33 +146,23 @@ abstract class EventEntityLib
         $this->messageBus->dispatch(new MovieMessage($instance->getId()));
     }
 
-    protected function updateEntityPageSlug(object $instance): void
+    protected function updateEntityPage(object $instance): void
     {
         if (!$instance instanceof Page) {
             return;
         }
 
-        $entityRepository = $this->entityManager->getRepository(Page::class);
+        if (PageEnum::HOME->value == $instance->getType()) {
+            $instance->setPage(null);
+
+            return;
+        }
+
         if (PageEnum::HOME->value != $instance->getType()) {
             $code = (PageEnum::CV->value == $instance->getType()) ? 'head-cv' : 'head';
             $this->addParagraph($instance, $code, 0);
 
             return;
-        }
-
-        $oldHome = $entityRepository->getOneByType(PageEnum::HOME->value);
-        if (PageEnum::HOME->value == $instance->getType()) {
-            $instance->setSlug('');
-        }
-
-        if ($oldHome instanceof Page && $oldHome->getId() === $instance->getId()) {
-            return;
-        }
-
-        if ($oldHome instanceof Page) {
-            $oldHome->setType(PageEnum::PAGE->value);
-            $oldHome->setSlug(null);
-            $entityRepository->save($oldHome);
         }
     }
 
@@ -250,46 +193,6 @@ abstract class EventEntityLib
         $this->messageBus->dispatch(new SagaMessage($instance->getId()));
     }
 
-    protected function updateEntitySeasonSlug(object $instance): void
-    {
-        if (!$instance instanceof Season) {
-            return;
-        }
-
-        $entityRepository    = $this->entityManager->getRepository(Season::class);
-        $asciiSlugger        = new AsciiSlugger();
-        $unicodeString       = $asciiSlugger->slug((string) $instance->getTitle())->lower();
-        if ('' === trim($unicodeString)) {
-            return;
-        }
-
-        $slug      = $unicodeString;
-        $find      = false;
-        $number    = 1;
-        while (false === $find) {
-            $testSeason = $entityRepository->findOneBy(
-                [
-                    'refserie' => $instance->getRefserie(),
-                    'slug'     => $slug,
-                ]
-            );
-            if (!$testSeason instanceof Season) {
-                $find = true;
-                break;
-            }
-
-            if ($testSeason->getId() === $instance->getId()) {
-                $find = true;
-                break;
-            }
-
-            $slug = $unicodeString . '-' . $number;
-            ++$number;
-        }
-
-        $instance->setSlug($slug);
-    }
-
     protected function updateEntitySerie(object $instance): void
     {
         if (!$instance instanceof Serie) {
@@ -306,12 +209,5 @@ abstract class EventEntityLib
         }
 
         $this->messageBus->dispatch(new StoryMessage($instance->getId()));
-    }
-
-    protected function updateSlug(object $object)
-    {
-        $this->updateEntityPageSlug($object);
-        $this->updateEntityChapterSlug($object);
-        // $this->updateEntitySeasonSlug($object);
     }
 }

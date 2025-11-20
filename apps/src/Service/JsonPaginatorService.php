@@ -38,7 +38,7 @@ class JsonPaginatorService
         $json = file_get_contents($path);
         $data = json_decode($json, true);
 
-        usort($data, fn (array $a, array $b): int => strcmp((string) $a[$field], (string) $b[$field]));
+        usort($data, fn (array $var1, array $var2): int => strcmp((string) $var1[$field], (string) $var2[$field]));
 
         $totalItems = count($data);
         $totalPages = (int) ceil($totalItems / $perPage);

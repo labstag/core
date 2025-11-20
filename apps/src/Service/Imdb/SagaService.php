@@ -64,7 +64,7 @@ final class SagaService
         if (!$saga instanceof Saga) {
             $saga = new Saga();
             $saga->setEnable(true);
-            $saga->setTitle($this->setName($data));
+            $saga->setTitle($this->setName($data['name']));
             $saga->setTmdb($data['id']);
             $this->sagaRepository->save($saga);
             $this->messageBus->dispatch(new SagaMessage($saga->getId()));
@@ -151,9 +151,9 @@ final class SagaService
         return $recommandations;
     }
 
-    private function setName(array $data): string
+    private function setName(string $name): string
     {
-        $name = trim(str_replace('- Saga', '', $data['tmdb']['name'] ?: $data['name']));
+        $name = trim(str_replace('- Saga', '', $name));
 
         return trim(str_replace('- Saga', '', $name));
     }
@@ -212,7 +212,7 @@ final class SagaService
 
     private function updateSaga(Saga $saga, array $details): bool
     {
-        $saga->setTitle($this->setName($details));
+        $saga->setTitle($this->setName($details['tmdb']['name']));
         $saga->setDescription($details['tmdb']['overview']);
         $saga->setJson($details);
 

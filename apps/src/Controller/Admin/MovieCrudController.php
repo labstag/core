@@ -254,8 +254,7 @@ class MovieCrudController extends CrudControllerAbstract
 
     public function recommandationsAll(
         FileService $fileService,
-        JsonPaginatorService $jsonPaginatorService,
-        MovieService $movieService,
+        JsonPaginatorService $jsonPaginatorService
     ): Response
     {
         $file         = $fileService->getFileInAdapter('private', 'recommandations-movie.json');
