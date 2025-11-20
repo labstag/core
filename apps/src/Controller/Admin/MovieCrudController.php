@@ -23,6 +23,7 @@ use Labstag\Message\MovieAllMessage;
 use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
 use Labstag\Service\FileService;
+use Labstag\Service\Imdb\MovieService;
 use Labstag\Service\JsonPaginatorService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -254,6 +255,7 @@ class MovieCrudController extends CrudControllerAbstract
     public function recommandationsAll(
         FileService $fileService,
         JsonPaginatorService $jsonPaginatorService,
+        MovieService $movieService,
     ): Response
     {
         $file         = $fileService->getFileInAdapter('private', 'recommandations-movie.json');

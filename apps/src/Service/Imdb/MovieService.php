@@ -9,7 +9,6 @@ use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
-use Labstag\Repository\MovieRepository;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
@@ -33,7 +32,6 @@ final class MovieService
         #[AutowireIterator('labstag.admincontroller')]
         private readonly iterable $controllers,
         private AdminUrlGenerator $adminUrlGenerator,
-        private MovieRepository $movieRepository,
         private FileService $fileService,
         private CompanyService $companyService,
         private CategoryService $categoryService,
@@ -70,7 +68,9 @@ final class MovieService
             return $this->country;
         }
 
-        $country    = $this->movieRepository->findAllUniqueCountries();
+        $entityRepository = $this->entityManager->getRepository(Movie::class);
+
+        $country    = $entityRepository->findAllUniqueCountries();
 
         $this->country = $country;
 
@@ -86,7 +86,9 @@ final class MovieService
             return $this->year;
         }
 
-        $data = $this->movieRepository->findAllUniqueYear();
+        $entityRepository = $this->entityManager->getRepository(Movie::class);
+
+        $data = $entityRepository->findAllUniqueYear();
         $year = [];
         foreach ($data as $value) {
             $year[$value] = $value;
@@ -106,9 +108,10 @@ final class MovieService
 
     public function update(Movie $movie): bool
     {
-        $details  = $this->theMovieDbApi->getDetailsMovie($movie);
+        $entityRepository = $this->entityManager->getRepository(Movie::class);
+        $details          = $this->theMovieDbApi->getDetailsMovie($movie);
         if (!isset($details['tmdb']) || is_null($details['tmdb'])) {
-            $this->movieRepository->delete($movie);
+            $entityRepository->delete($movie);
 
             return false;
         }
@@ -132,7 +135,9 @@ final class MovieService
             return $this->jsonTmdb;
         }
 
-        $this->jsonTmdb = $this->movieRepository->getAllJsonTmdb();
+        $entityRepository = $this->entityManager->getRepository(Movie::class);
+
+        $this->jsonTmdb = $entityRepository->getAllJsonTmdb();
 
         return $this->jsonTmdb;
     }

@@ -153,7 +153,7 @@ final class SagaService
 
     private function setName(array $data): string
     {
-        $name = trim(str_replace('- Saga', '', $data['tmdb']['name']));
+        $name = trim(str_replace('- Saga', '', $data['tmdb']['name'] ?: $data['name']));
 
         return trim(str_replace('- Saga', '', $name));
     }

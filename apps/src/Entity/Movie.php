@@ -12,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\MovieRepository;
+use Labstag\SlugHandler\MovieSlugHandler;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -104,6 +105,7 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     protected ?Saga $saga = null;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[Gedmo\SlugHandler(class: MovieSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
     protected ?string $slug = null;
 

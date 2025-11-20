@@ -12,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\SagaRepository;
+use Labstag\SlugHandler\SagaSlugHandler;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -72,6 +73,7 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     protected Collection $paragraphs;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[Gedmo\SlugHandler(class: SagaSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     protected ?string $slug = null;
 

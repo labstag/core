@@ -55,7 +55,8 @@ class TheMovieDbApi
 
         $details                = [];
         $details['tmdb']        = $this->other()->getCompanyDetails($company->getTmdb() ?? '');
-        $details['json_import'] = new DateTime()->format('Y-m-d H:i:s');
+        $date                   = new DateTime();
+        $details['json_import'] = $date->format('Y-m-d H:i:s');
 
         return $details;
     }
@@ -68,7 +69,8 @@ class TheMovieDbApi
         }
 
         $details                = [];
-        $details['json_import'] = new DateTime()->format('Y-m-d H:i:s');
+        $date                   = new DateTime();
+        $details['json_import'] = $date->format('Y-m-d H:i:s');
         $tmdb                   = $episode->getRefseason()->getRefserie()->getTmdb();
         if (in_array($tmdb, [null, '', '0'], true)) {
             return $details;
@@ -93,7 +95,8 @@ class TheMovieDbApi
         }
 
         $details                = [];
-        $details['json_import'] = new DateTime()->format('Y-m-d H:i:s');
+        $date                   = new DateTime();
+        $details['json_import'] = $date->format('Y-m-d H:i:s');
         $locale                 = $this->configurationService->getLocaleTmdb();
         $tmdbId                 = $movie->getTmdb();
         if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
@@ -137,7 +140,8 @@ class TheMovieDbApi
         }
 
         $details                = [];
-        $details['json_import'] = new DateTime()->format('Y-m-d H:i:s');
+        $date                   = new DateTime();
+        $details['json_import'] = $date->format('Y-m-d H:i:s');
         $locale                 = $this->configurationService->getLocaleTmdb();
         $tmdbId                 = $saga->getTmdb();
         $details['tmdb']        = $this->movies()->getMovieCollection($tmdbId, $locale);
@@ -153,7 +157,8 @@ class TheMovieDbApi
         }
 
         $details                = [];
-        $details['json_import'] = new DateTime()->format('Y-m-d H:i:s');
+        $date                   = new DateTime();
+        $details['json_import'] = $date->format('Y-m-d H:i:s');
         $tmdb                   = $season->getRefserie()->getTmdb();
         if (in_array($tmdb, [null, '', '0'], true)) {
             return $details;
@@ -183,7 +188,8 @@ class TheMovieDbApi
         }
 
         $details                = [];
-        $details['json_import'] = new DateTime()->format('Y-m-d H:i:s');
+        $date                   = new DateTime();
+        $details['json_import'] = $date->format('Y-m-d H:i:s');
         $locale                 = $this->configurationService->getLocaleTmdb();
         $tmdbId                 = $serie->getTmdb();
         if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
@@ -277,7 +283,8 @@ class TheMovieDbApi
     {
         if (is_array($json) && isset($json['json_import'])) {
             $importDate = new DateTime($json['json_import']);
-            $now        = new DateTime();
+            $date       = new DateTime();
+            $now        = $date;
             $daysDiff   = $now->diff($importDate)->days;
 
             if (7 > $daysDiff) {

@@ -2,7 +2,6 @@
 
 namespace Labstag\Event\Abstract;
 
-use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\BanIp;
 use Labstag\Entity\Block;
@@ -23,6 +22,7 @@ use Labstag\Message\SagaMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Message\StoryMessage;
 use Labstag\Service\BlockService;
+use Labstag\Service\Imdb\MovieService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\WorkflowService;
 use ReflectionClass;
@@ -40,6 +40,7 @@ abstract class EventEntityLib
         protected WorkflowService $workflowService,
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
+        protected MovieService $movieService,
         protected BlockService $blockService,
     )
     {
@@ -192,53 +193,6 @@ abstract class EventEntityLib
         $this->messageBus->dispatch(new MovieMessage($instance->getId()));
     }
 
-    protected function updateEntityMovieSlug(object $instance): void
-    {
-        if (!$instance instanceof Movie) {
-            return;
-        }
-
-        $slug = $instance->getSlug();
-        if (preg_match('/^\d+$/', (string) $slug)) {
-            $instance->setSlug($slug . '-film');
-
-            return;
-        }
-
-        $entityRepository = $this->entityManager->getRepository(Movie::class);
-
-        $asciiSlugger  = new AsciiSlugger();
-        $unicodeString = $asciiSlugger->slug((string) $instance->getTitle())->lower();
-        if ('' === trim($unicodeString)) {
-            return;
-        }
-
-        if (preg_match('/^\d+$/', (string) $unicodeString)) {
-            $unicodeString .= '-film';
-        }
-
-        $test = $entityRepository->findOneBy(
-            ['slug' => $unicodeString]
-        );
-        if (!$test instanceof Movie) {
-            $instance->setSlug($unicodeString);
-
-            return;
-        }
-
-        if ($test->getId() === $instance->getId()) {
-            return;
-        }
-
-        $date = $instance->getReleaseDate();
-        if ($date instanceof DateTimeInterface) {
-            $year = $date->format('Y');
-            $instance->setSlug($unicodeString . '-' . $year);
-
-            return;
-        }
-    }
-
     protected function updateEntityPageSlug(object $instance): void
     {
         if (!$instance instanceof Page) {
@@ -294,23 +248,6 @@ abstract class EventEntityLib
         }
 
         $this->messageBus->dispatch(new SagaMessage($instance->getId()));
-    }
-
-    protected function updateEntitySagaSlug(object $instance): void
-    {
-        if (!$instance instanceof Saga) {
-            return;
-        }
-
-        $entityRepository = $this->entityManager->getRepository(Movie::class);
-        $movie            = $entityRepository->findOneBy(
-            [
-                'slug' => $instance->getSlug(),
-            ]
-        );
-        if ($movie instanceof Movie) {
-            $instance->setSlug($instance->getSlug() . '-saga');
-        }
     }
 
     protected function updateEntitySeasonSlug(object $instance): void
@@ -373,10 +310,8 @@ abstract class EventEntityLib
 
     protected function updateSlug(object $object)
     {
-        $this->updateEntityMovieSlug($object);
-        $this->updateEntitySagaSlug($object);
         $this->updateEntityPageSlug($object);
         $this->updateEntityChapterSlug($object);
-        $this->updateEntitySeasonSlug($object);
+        // $this->updateEntitySeasonSlug($object);
     }
 }
