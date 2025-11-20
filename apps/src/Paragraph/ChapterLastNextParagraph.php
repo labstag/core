@@ -8,6 +8,7 @@ use Labstag\Entity\ChapterLastNextParagraph as EntityChapterLastNextParagraph;
 use Labstag\Entity\Paragraph;
 use Labstag\Repository\ChapterRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class ChapterLastNextParagraph extends ParagraphAbstract implements ParagraphInterface
 {
@@ -52,7 +53,7 @@ class ChapterLastNextParagraph extends ParagraphAbstract implements ParagraphInt
     #[Override]
     public function getName(): string
     {
-        return 'Chapitre last next';
+        return (string) new TranslatableMessage('Chapitre last next');
     }
 
     #[Override]

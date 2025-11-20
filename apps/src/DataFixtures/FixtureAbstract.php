@@ -73,7 +73,10 @@ abstract class FixtureAbstract extends Fixture
             return;
         }
 
-        $paragraph->setContent($generator->text(500));
+        $text = $generator->paragraphs(random_int(3, 7), true);
+        $text = str_replace("\n", '<br/>', $text);
+
+        $paragraph->setContent($text);
     }
 
     protected function addTagToEntity(object $entity, string $class): void

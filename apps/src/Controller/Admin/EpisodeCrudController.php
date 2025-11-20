@@ -6,19 +6,21 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Episode;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\SeasonEpisodeFilter;
 use Labstag\Filter\SerieEpisodeFilter;
 use Labstag\Message\EpisodeMessage;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class EpisodeCrudController extends CrudControllerAbstract
@@ -131,11 +133,26 @@ class EpisodeCrudController extends CrudControllerAbstract
         return Episode::class;
     }
 
-    #[Route('/admin/episode/{entity}/update', name: 'admin_episode_update')]
-    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
+    public function jsonEpisode(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
     {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
         $repositoryAbstract                = $this->getRepository();
-        $episode                           = $repositoryAbstract->find($entity);
+        $episode                           = $repositoryAbstract->find($entityId);
+
+        $details = $theMovieDbApi->getDetailsEpisode($episode);
+
+        return new JsonResponse($details);
+    }
+
+    public function updateEpisode(
+        AdminContext $adminContext,
+        Request $request,
+        MessageBusInterface $messageBus,
+    ): RedirectResponse
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $repositoryAbstract                = $this->getRepository();
+        $episode                           = $repositoryAbstract->find($entityId);
         $messageBus->dispatch(new EpisodeMessage($episode->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -153,14 +170,18 @@ class EpisodeCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('update', new TranslatableMessage('Update'));
-        $action->linkToUrl(
-            fn (Episode $episode): string => $this->generateUrl(
-                'admin_episode_update',
-                [
-                    'entity' => $episode->getId(),
-                ]
-            )
+        $action = Action::new('updateEpisode', new TranslatableMessage('Update'));
+        $action->linkToCrudAction('updateEpisode');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+
+        $action = Action::new('jsonEpisode', new TranslatableMessage('Json'));
+        $action->linkToCrudAction('jsonEpisode');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

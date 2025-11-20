@@ -35,8 +35,9 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
 
         $data['data-context_url']  = $urlAdmin;
         $data['data-context_text'] = $this->translator->trans(
-            new TranslatableMessage('Update paragraph (%type%)'),
+            new TranslatableMessage('Update paragraph (%name%) #%type%'),
             [
+                '%name%' => $this->paragraphService->getName($paragraph),
                 '%type%' => $this->paragraphService->getType($paragraph),
             ]
         );

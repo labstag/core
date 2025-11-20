@@ -8,19 +8,22 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Season;
 use Labstag\Field\WysiwygField;
+use Labstag\Message\SeasonAllMessage;
 use Labstag\Message\SeasonMessage;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SeasonCrudController extends CrudControllerAbstract
@@ -30,7 +33,8 @@ class SeasonCrudController extends CrudControllerAbstract
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->setUpdateAction();
-        $this->setLinkTmdbAction();
+        $this->actionsFactory->setLinkTmdbAction();
+        $this->actionsFactory->setActionUpdateAll();
 
         return $this->actionsFactory->show();
     }
@@ -110,7 +114,7 @@ class SeasonCrudController extends CrudControllerAbstract
     {
         $associationField = $this->episodesField();
         // Always safe on listing/detail pages: no AssociationField to configure
-        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
         ) {
             $associationField->hideOnForm();
 
@@ -141,22 +145,44 @@ class SeasonCrudController extends CrudControllerAbstract
         return Season::class;
     }
 
-    #[Route('/admin/season/{entity}/tmdb', name: 'admin_season_tmdb')]
-    public function tmdb(string $entity): RedirectResponse
+    public function jsonSeason(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
     {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
         $repositoryAbstract               = $this->getRepository();
-        $season                           = $repositoryAbstract->find($entity);
+        $season                           = $repositoryAbstract->find($entityId);
+
+        $details = $theMovieDbApi->getDetailsSeason($season);
+
+        return new JsonResponse($details);
+    }
+
+    public function tmdb(AdminContext $adminContext): RedirectResponse
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $repositoryAbstract               = $this->getRepository();
+        $season                           = $repositoryAbstract->find($entityId);
 
         return $this->redirect(
             'https://www.themoviedb.org/tv/' . $season->getRefserie()->getTmdb() . '/season/' . $season->getNumber()
         );
     }
 
-    #[Route('/admin/season/{entity}/update', name: 'admin_season_update')]
-    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
+    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
+        $messageBus->dispatch(new SeasonAllMessage());
+
+        return $this->redirectToRoute('admin_season_index');
+    }
+
+    public function updateSeason(
+        AdminContext $adminContext,
+        Request $request,
+        MessageBusInterface $messageBus,
+    ): RedirectResponse
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
         $repositoryAbstract               = $this->getRepository();
-        $season                           = $repositoryAbstract->find($entity);
+        $season                           = $repositoryAbstract->find($entityId);
         $messageBus->dispatch(new SeasonMessage($season->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -168,43 +194,24 @@ class SeasonCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_season_index');
     }
 
-    private function setLinkTmdbAction(): void
-    {
-        if (!$this->actionsFactory->isTrash()) {
-            return;
-        }
-
-        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
-        $action->linkToUrl(
-            fn (Season $season): string => $this->generateUrl(
-                'admin_season_tmdb',
-                [
-                    'entity' => $season->getId(),
-                ]
-            )
-        );
-        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
-        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
-    }
-
     private function setUpdateAction(): void
     {
         if (!$this->actionsFactory->isTrash()) {
             return;
         }
 
-        $action = Action::new('update', new TranslatableMessage('Update'));
-        $action->linkToUrl(
-            fn (Season $season): string => $this->generateUrl(
-                'admin_season_update',
-                [
-                    'entity' => $season->getId(),
-                ]
-            )
+        $action = Action::new('updateSeason', new TranslatableMessage('Update'));
+        $action->linkToCrudAction('updateSeason');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+
+        $action = Action::new('jsonSeason', new TranslatableMessage('Json'));
+        $action->linkToCrudAction('jsonSeason');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

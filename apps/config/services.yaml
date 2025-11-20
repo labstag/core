@@ -20,8 +20,8 @@ services:
     - '../src/DependencyInjection/'
     - '../src/Entity/'
     - '../src/Kernel.php'
-  Labstag\Api\TmdbApi:
+  Labstag\Api\TheMovieDbApi:
     arguments:
-      $tmdbapiKey: '%env(TMDB_API_KEY)%'
+      $tmdbBearerToken: '%env(TMDB_API_KEY)%'
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones

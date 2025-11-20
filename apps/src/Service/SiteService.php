@@ -29,16 +29,19 @@ final class SiteService
             return ($placeholder) ? 'https://picsum.photos/1200/1200?md5=' . bin2hex(random_bytes(16)) : '';
         }
 
-        $file        = $data->asset($entity, $field);
-        $placeholder = $data->placeholder();
+        $file = $data->asset($entity, $field);
 
         if ('' !== $file) {
             return $absolute ? $configuration->getUrl() . $file : $file;
         }
 
-        $placeholder = $data->placeholder();
-        if ('' !== $placeholder) {
-            return $absolute ? $configuration->getUrl() . $placeholder : $placeholder;
+        if (!$placeholder) {
+            return '';
+        }
+
+        $dataPlaceholder = $data->placeholder();
+        if ('' !== $dataPlaceholder) {
+            return $absolute ? $configuration->getUrl() . $dataPlaceholder : $dataPlaceholder;
         }
 
         return 'https://picsum.photos/1200/1200?md5=' . md5((string) $entity->getId());

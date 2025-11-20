@@ -126,6 +126,26 @@ class MovieRepository extends RepositoryAbstract
         return $query->getResult();
     }
 
+    public function getAllJsonFields(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->select('m.json');
+
+        $rows = $queryBuilder->getQuery()->getScalarResult();
+
+        return array_column($rows, 'json');
+    }
+
+    public function getAllJsonTmdb(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->select('m.tmdb');
+
+        $rows = $queryBuilder->getQuery()->getScalarResult();
+
+        return array_column($rows, 'tmdb');
+    }
+
     public function getCertifications(): array
     {
         $queryBuilder = $this->createQueryBuilder('m');

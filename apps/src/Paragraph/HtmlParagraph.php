@@ -6,14 +6,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Block;
-use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
 use Labstag\Entity\HtmlParagraph as EntityHtmlParagraph;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
-use Labstag\Entity\Story;
 use Labstag\Field\WysiwygField;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -77,9 +75,7 @@ class HtmlParagraph extends ParagraphAbstract implements ParagraphInterface
             $object::class,
             [
                 Block::class,
-                Chapter::class,
                 Edito::class,
-                Story::class,
                 Memo::class,
                 Page::class,
                 Post::class,

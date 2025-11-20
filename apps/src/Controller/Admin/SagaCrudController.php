@@ -7,16 +7,23 @@ use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Saga;
 use Labstag\Field\WysiwygField;
+use Labstag\Message\SagaAllMessage;
 use Labstag\Message\SagaMessage;
+use Labstag\Service\FileService;
+use Labstag\Service\JsonPaginatorService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaCrudController extends CrudControllerAbstract
@@ -25,9 +32,10 @@ class SagaCrudController extends CrudControllerAbstract
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
-        $this->setLinkTmdbAction();
+        $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
+        $this->setShowAllRecommandations();
 
         return $this->actionsFactory->show();
     }
@@ -66,6 +74,16 @@ class SagaCrudController extends CrudControllerAbstract
                 $this->moviesFieldForPage(self::getEntityFqcn(), $pageName),
             ]
         );
+        if (Crud::PAGE_DETAIL === $pageName) {
+            $this->crudFieldFactory->addTab(
+                'recommandations',
+                FormField::addTab(new TranslatableMessage('Recommandations'))
+            );
+
+            $textField = TextField::new('id', new TranslatableMessage('Recommandations'));
+            $textField->setTemplatePath('admin/field/recommandations.html.twig');
+            $this->crudFieldFactory->addFieldsToTab('recommandations', [$textField]);
+        }
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
@@ -73,6 +91,17 @@ class SagaCrudController extends CrudControllerAbstract
     public static function getEntityFqcn(): string
     {
         return Saga::class;
+    }
+
+    public function jsonSaga(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $saga                            = $repositoryAbstract->find($entityId);
+
+        $details = $theMovieDbApi->getDetailsSaga($saga);
+
+        return new JsonResponse($details);
     }
 
     public function moviesField(): AssociationField
@@ -93,7 +122,7 @@ class SagaCrudController extends CrudControllerAbstract
     {
         $associationField = $this->moviesField();
         // Always safe on listing/detail pages: no AssociationField to configure
-        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
         ) {
             $associationField->hideOnForm();
 
@@ -119,20 +148,63 @@ class SagaCrudController extends CrudControllerAbstract
         return $associationField;
     }
 
-    #[Route('/admin/saga/{entity}/imdb', name: 'admin_saga_tmdb')]
-    public function tmdb(string $entity): RedirectResponse
+    public function recommandationsAll(
+        FileService $fileService,
+        JsonPaginatorService $jsonPaginatorService,
+    ): Response
     {
+        $file         = $fileService->getFileInAdapter('private', 'recommandations-saga.json');
+        if (!is_file($file)) {
+            return $this->redirectToRoute('admin_saga_index');
+        }
+
+        $pagination = $jsonPaginatorService->paginate($file, 'title');
+
+        return $this->render(
+            'admin/saga/recommandations.html.twig',
+            ['pagination' => $pagination]
+        );
+    }
+
+    public function setShowAllRecommandations(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('recommandationsAll', new TranslatableMessage('all recommendations'), 'fas fa-terminal');
+        $action->displayAsLink();
+        $action->linkToCrudAction('recommandationsAll');
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
+    public function tmdb(AdminContext $adminContext): RedirectResponse
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
-        $saga                            = $repositoryAbstract->find($entity);
+        $saga                            = $repositoryAbstract->find($entityId);
 
         return $this->redirect('https://www.themoviedb.org/collection/' . $saga->getTmdb());
     }
 
-    #[Route('/admin/saga/{entity}/update', name: 'admin_saga_update')]
-    public function update(string $entity, Request $request, MessageBusInterface $messageBus): RedirectResponse
+    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
     {
+        $messageBus->dispatch(new SagaAllMessage());
+
+        return $this->redirectToRoute('admin_saga_index');
+    }
+
+    public function updateSaga(
+        AdminContext $adminContext,
+        Request $request,
+        MessageBusInterface $messageBus,
+    ): RedirectResponse
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
-        $saga                            = $repositoryAbstract->find($entity);
+        $saga                            = $repositoryAbstract->find($entityId);
         $messageBus->dispatch(new SagaMessage($saga->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -144,55 +216,24 @@ class SagaCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_saga_index');
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
-    {
-        $repositoryAbstract              = $this->getRepository();
-        $sagas                           = $repositoryAbstract->findAll();
-        foreach ($sagas as $saga) {
-            $messageBus->dispatch(new SagaMessage($saga->getId()));
-        }
-
-        return $this->redirectToRoute('admin_saga_index');
-    }
-
-    private function setLinkTmdbAction(): void
-    {
-        if (!$this->actionsFactory->isTrash()) {
-            return;
-        }
-
-        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
-        $action->linkToUrl(
-            fn (Saga $saga): string => $this->generateUrl(
-                'admin_saga_tmdb',
-                [
-                    'entity' => $saga->getId(),
-                ]
-            )
-        );
-
-        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
-        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
-    }
-
     private function setUpdateAction(): void
     {
         if (!$this->actionsFactory->isTrash()) {
             return;
         }
 
-        $action = Action::new('update', new TranslatableMessage('Update'));
-        $action->linkToUrl(
-            fn (Saga $saga): string => $this->generateUrl(
-                'admin_saga_update',
-                [
-                    'entity' => $saga->getId(),
-                ]
-            )
+        $action = Action::new('updateSaga', new TranslatableMessage('Update'));
+        $action->linkToCrudAction('updateSaga');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+
+        $action = Action::new('jsonSaga', new TranslatableMessage('Json'));
+        $action->linkToCrudAction('jsonSaga');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

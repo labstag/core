@@ -33,6 +33,9 @@ class Story implements Stringable, EntityWithParagraphsInterface
      * @var Collection<int, StoryCategory>
      */
     #[ORM\ManyToMany(targetEntity: StoryCategory::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     protected Collection $categories;
 
     /**
@@ -104,6 +107,9 @@ class Story implements Stringable, EntityWithParagraphsInterface
      * @var Collection<int, StoryTag>
      */
     #[ORM\ManyToMany(targetEntity: StoryTag::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     protected Collection $tags;
 
     #[ORM\Column(length: 255)]

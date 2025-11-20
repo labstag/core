@@ -21,11 +21,11 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
 #[ORM\DiscriminatorMap(
     [
+        'movie' => MovieCategory::class,
         'page'  => PageCategory::class,
         'post'  => PostCategory::class,
         'serie' => SerieCategory::class,
         'story' => StoryCategory::class,
-        'movie' => MovieCategory::class,
     ]
 )]
 abstract class Category implements Stringable

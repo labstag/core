@@ -13,6 +13,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Entity\Traits\WorkflowTrait;
 use Labstag\Repository\ChapterRepository;
+use Labstag\SlugHandler\ChapterSlugHandler;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -71,6 +72,8 @@ class Chapter implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $resume = null;
 
+    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
+    #[Gedmo\SlugHandler(class: ChapterSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $slug = null;
 

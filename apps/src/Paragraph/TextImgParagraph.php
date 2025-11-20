@@ -6,13 +6,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use Generator;
 use Labstag\Entity\Block;
-use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
-use Labstag\Entity\Story;
 use Labstag\Entity\TextImgParagraph as EntityTextImgParagraph;
 use Labstag\Field\WysiwygField;
 use Override;
@@ -88,9 +86,7 @@ class TextImgParagraph extends ParagraphAbstract implements ParagraphInterface
             $object::class,
             [
                 Block::class,
-                Chapter::class,
                 Edito::class,
-                Story::class,
                 Memo::class,
                 Page::class,
                 Post::class,

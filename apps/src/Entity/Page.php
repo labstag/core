@@ -9,11 +9,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Gedmo\Sluggable\Handler\TreeSlugHandler;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Entity\Traits\WorkflowTrait;
 use Labstag\Repository\PageRepository;
+use Labstag\SlugHandler\PageSlugHandler;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
@@ -34,6 +34,9 @@ class Page implements Stringable, EntityWithParagraphsInterface
      * @var Collection<int, PageCategory>
      */
     #[ORM\ManyToMany(targetEntity: PageCategory::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     protected Collection $categories;
 
     /**
@@ -86,7 +89,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
 
     #[Gedmo\Slug(fields: ['title'])]
     #[Gedmo\SlugHandler(
-        class: TreeSlugHandler::class,
+        class: PageSlugHandler::class,
         options: [
             'parentRelationField' => 'page',
             'separator'           => '/',
@@ -99,6 +102,9 @@ class Page implements Stringable, EntityWithParagraphsInterface
      * @var Collection<int, PageTag>
      */
     #[ORM\ManyToMany(targetEntity: PageTag::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     protected Collection $tags;
 
     #[ORM\Column(length: 255)]

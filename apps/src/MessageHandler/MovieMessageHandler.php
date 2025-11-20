@@ -5,7 +5,7 @@ namespace Labstag\MessageHandler;
 use Labstag\Entity\Movie;
 use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
-use Labstag\Service\MovieService;
+use Labstag\Service\Imdb\MovieService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

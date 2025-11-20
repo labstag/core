@@ -7,6 +7,7 @@ use Labstag\Entity\Story;
 use Labstag\Entity\TextParagraph;
 use Mpdf\Mpdf;
 use RuntimeException;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class StoryService
@@ -44,7 +45,7 @@ final class StoryService
         return $this->stories;
     }
 
-    public function setPdf(Story $story): bool
+    public function update(Story $story): bool
     {
         $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug() . '.pdf';
 
@@ -61,9 +62,10 @@ final class StoryService
             return false;
         }
 
+        $translatableMessage = new TranslatableMessage('Table of Contents');
         $mpdf->TOCpagebreakByArray(
             [
-                'toc-preHTML' => '<h1>Table des matières</h1>',
+                'toc-preHTML' => '<h1>' . $this->translator->trans($translatableMessage) . '</h1>',
                 'links'       => true,
             ]
         );

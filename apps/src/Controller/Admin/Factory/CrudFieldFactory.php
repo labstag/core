@@ -191,7 +191,7 @@ final class CrudFieldFactory
     {
         $associationField = $this->categoriesField();
         // Always safe on listing/detail pages: no AssociationField to configure
-        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
         ) {
             $associationField->onlyOnDetail();
 
@@ -205,6 +205,44 @@ final class CrudFieldFactory
         ) : null;
 
         if ($metadata instanceof ClassMetadata && $metadata->hasAssociation('categories')) {
+            $associationField->autocomplete();
+            $associationField->setFormTypeOption('by_reference', false);
+
+            return $associationField;
+        }
+
+        // No association: ensure nothing is rendered on the form
+        $associationField->hideOnForm();
+
+        return $associationField;
+    }
+
+    public function companiesField(): AssociationField
+    {
+        $associationField = AssociationField::new('companies', new TranslatableMessage('Companies'));
+        $associationField->setTemplatePath('admin/field/companies.html.twig');
+
+        return $associationField;
+    }
+
+    public function companiesFieldForPage(string $entityFqcn, string $pageName): AssociationField
+    {
+        $associationField = $this->companiesField();
+        // Always safe on listing/detail pages: no AssociationField to configure
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
+        ) {
+            $associationField->onlyOnDetail();
+
+            return $associationField;
+        }
+
+        // For edit/new pages, check the real Doctrine association
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+
+        if ($metadata instanceof ClassMetadata && $metadata->hasAssociation('companies')) {
             $associationField->autocomplete();
             $associationField->setFormTypeOption('by_reference', false);
 
@@ -242,7 +280,7 @@ final class CrudFieldFactory
         ?string $label = null,
     ): TextField|UploadFileField
     {
-        if ('edit' === $pageName || 'new' === $pageName) {
+        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
             return UploadFileField::new($type . 'File', $label ?? new TranslatableMessage('File'));
         }
 
@@ -282,7 +320,7 @@ final class CrudFieldFactory
         ?string $label = null,
     ): ImageField|UploadImageField
     {
-        if ('edit' === $pageName || 'new' === $pageName) {
+        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
             return UploadImageField::new($type . 'File', $label ?? new TranslatableMessage('Image'));
         }
 
@@ -329,6 +367,7 @@ final class CrudFieldFactory
     {
         $this->adminContext = $adminContext;
         $this->addTab('principal', FormField::addTab(new TranslatableMessage('Principal')));
+
         $this->addFieldsToTab('principal', $this->addFieldIDShortcode());
         $this->addFieldsToTab('principal', [$this->idField()]);
     }
@@ -412,7 +451,7 @@ final class CrudFieldFactory
     {
         $associationField = $this->tagsField();
         // Always safe on listing/detail pages: no AssociationField to configure
-        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL, 'index', 'detail'], true)
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
         ) {
             $associationField->onlyOnDetail();
 
@@ -522,7 +561,7 @@ final class CrudFieldFactory
     private function setTabParagraphs(string $pageName): void
     {
         $instance = $this->getInstance();
-        if ('new' === $pageName || null == $instance) {
+        if (Crud::PAGE_NEW === $pageName || null == $instance) {
             return;
         }
 

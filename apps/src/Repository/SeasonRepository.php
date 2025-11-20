@@ -29,7 +29,7 @@ class SeasonRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->where('s.enable = :enable');
         $queryBuilder->andWhere('s.refserie = :refserie');
-        $queryBuilder->andWhere('s.airDate <= :now');
+        $queryBuilder->andWhere('(s.airDate <= :now OR s.airDate IS NULL)');
         $queryBuilder->setParameters($data);
         $queryBuilder->orderBy('s.number', 'ASC');
 

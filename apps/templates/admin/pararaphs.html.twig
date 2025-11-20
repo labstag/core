@@ -6,9 +6,6 @@
 				<th>
 					<i class="fas fa-arrows-alt"></i>
 				</th>
-				{# <th class="header-for-field-select text-left" dir="ltr">
-                    Fond
-                </th> #}
 				<th class="header-for-field-text text-left" dir="ltr">
 					{{ 'Type'|trans }}
 				</th>
@@ -32,13 +29,6 @@
 				<td class="batch-actions-selector">
 					<i class="fas fa-arrows-alt"></i>
 				</td>
-				{# <td data-label="Fond" class=" text-left field-select" dir="ltr">
-                    {% if fond != null %}
-                    <span title="{{ fond|e('html_attr') }}">{{ fond }}</span>
-                    {% else %}
-                    <span class="badge badge-secondary">{{ 'label.null'|trans(domain = 'EasyAdminBundle') }}</span>
-                    {% endif %}
-                </td> #}
 				<td data-label="Type" class=" text-left field-text" dir="ltr">
 					<span title="{{ paragraph_name(row)|e('html_attr') }}">{{ paragraph_name(row) }}</span>
 				</td>
@@ -60,7 +50,6 @@
         {% else %}
             {% for i in 1..6 %}
                 <tr class="empty-row">
-                    <td><span></span></td>
                     <td><span></span></td>
                     <td><span></span></td>
                     <td><span></span></td>

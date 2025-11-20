@@ -4,20 +4,16 @@ namespace Labstag\MessageHandler;
 
 use Labstag\Entity\Story;
 use Labstag\Message\StoryMessage;
-use Labstag\Repository\ChapterRepository;
 use Labstag\Repository\StoryRepository;
 use Labstag\Service\StoryService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class StoryMessageHandler
 {
     public function __construct(
         private StoryService $storyService,
-        private MessageBusInterface $messageBus,
         private StoryRepository $storyRepository,
-        private ChapterRepository $chapterRepository,
     )
     {
     }
@@ -30,7 +26,7 @@ final class StoryMessageHandler
             return;
         }
 
-        // $this->storyService->setPdf($story);
+        $this->storyService->update($story);
 
         $this->storyRepository->save($story);
     }

@@ -1101,14 +1101,6 @@
         <source>Log in</source>
         <target>Se connecter</target>
       </trans-unit>
-      <trans-unit id="WKutWfy" resname="Update block (%type%)">
-        <source>Update block (%type%)</source>
-        <target>Mettre à jour le bloc (%type%)</target>
-      </trans-unit>
-      <trans-unit id="_60KhVg" resname="Update paragraph (%type%)">
-        <source>Update paragraph (%type%)</source>
-        <target>Mettre à jour le paragraphe (%type%)</target>
-      </trans-unit>
       <trans-unit id="UP4yleN" resname="Choose paragraph">
         <source>Choose paragraph</source>
         <target>Choisir le paragraphe</target>
@@ -1556,6 +1548,106 @@
       <trans-unit id="emV186T" resname="Training course">
         <source>Training course</source>
         <target>Formation</target>
+      </trans-unit>
+      <trans-unit id="VKUE3qO" resname="Json">
+        <source>Json</source>
+        <target>Json</target>
+      </trans-unit>
+      <trans-unit id="GuLzwNW" resname="Chapitre last next">
+        <source>Chapitre last next</source>
+        <target>Chapitre précédent et suivant</target>
+      </trans-unit>
+      <trans-unit id="hRXcb58" resname="Chapter list">
+        <source>Chapter list</source>
+        <target>Liste des chapitres</target>
+      </trans-unit>
+      <trans-unit id="t_eICwO" resname="Head movie">
+        <source>Head movie</source>
+        <target>Film principal</target>
+      </trans-unit>
+      <trans-unit id="flGM8LP" resname="Table of Contents">
+        <source>Table of Contents</source>
+        <target>Table des matières</target>
+      </trans-unit>
+      <trans-unit id="thym0A." resname="Update block (%name%) #%type%">
+        <source>Update block (%name%) #%type%</source>
+        <target>Mettre à jour le bloc (%name%) #%type%</target>
+      </trans-unit>
+      <trans-unit id="Z9PC2uT" resname="Update paragraph (%name%) #%type%">
+        <source>Update paragraph (%name%) #%type%</source>
+        <target>Mettre à jour le paragraphe (%name%) #%type%</target>
+      </trans-unit>
+      <trans-unit id="vP.fzBZ" resname="Recommandations">
+        <source>Recommandations</source>
+        <target>Recommandations</target>
+      </trans-unit>
+      <trans-unit id="Z4rvQk9" resname="Poster">
+        <source>Poster</source>
+        <target>Affiche</target>
+      </trans-unit>
+      <trans-unit id="IB4vLSx" resname="Backdrop">
+        <source>Backdrop</source>
+        <target>Image de fond</target>
+      </trans-unit>
+      <trans-unit id="7P3hCJS" resname="Vote Average">
+        <source>Vote Average</source>
+        <target>Note moyenne</target>
+      </trans-unit>
+      <trans-unit id="xM51iHs" resname="Popularity">
+        <source>Popularity</source>
+        <target>Popularité</target>
+      </trans-unit>
+      <trans-unit id="qmwL0ia" resname="View on TMDb">
+        <source>View on TMDb</source>
+        <target>Voir sur TMDb</target>
+      </trans-unit>
+      <trans-unit id="WNymMfT" resname="The %name% movie is already present in the database">
+        <source>The %name% movie is already present in the database</source>
+        <target>Le film %name% est déjà présent dans la base de données</target>
+      </trans-unit>
+      <trans-unit id="0PZMDI5" resname="The %name% movie has been added to the database">
+        <source>The %name% movie has been added to the database</source>
+        <target>Le film %name% a été ajouté à la base de données</target>
+      </trans-unit>
+      <trans-unit id="aTqhzQ7" resname="The %name% series is already present in the database">
+        <source>The %name% series is already present in the database</source>
+        <target>La série %name% est déjà présente dans la base de données</target>
+      </trans-unit>
+      <trans-unit id="Db9FSv6" resname="The %name% series has been added to the database">
+        <source>The %name% series has been added to the database</source>
+        <target>La série %name% a été ajoutée à la base de données</target>
+      </trans-unit>
+      <trans-unit id="u0QI45i" resname="Release Date">
+        <source>Release Date</source>
+        <target>Date de sortie</target>
+      </trans-unit>
+      <trans-unit id="BSDVdh6" resname="Companies">
+        <source>Companies</source>
+        <target>Entreprises</target>
+      </trans-unit>
+      <trans-unit id="JNV4fsz" resname="Update recommendations">
+        <source>Update recommendations</source>
+        <target>Mettre à jour les recommandations</target>
+      </trans-unit>
+      <trans-unit id="T31caQj" resname="all recommendations">
+        <source>all recommendations</source>
+        <target>toutes les recommandations</target>
+      </trans-unit>
+      <trans-unit id="n58LRwN" resname="Production companies">
+        <source>Production companies</source>
+        <target>Sociétés de production</target>
+      </trans-unit>
+      <trans-unit id="W69bbFu" resname="TMDB page for the movie">
+        <source>TMDB page for the movie</source>
+        <target>Page TMDB du film</target>
+      </trans-unit>
+      <trans-unit id="y1pACaa" resname="Movies recommendations">
+        <source>Movies recommendations</source>
+        <target>Recommandations de films</target>
+      </trans-unit>
+      <trans-unit id="CwxYktN" resname="Series recommendations">
+        <source>Series recommendations</source>
+        <target>Recommandations de séries</target>
       </trans-unit>
     </body>
   </file>
