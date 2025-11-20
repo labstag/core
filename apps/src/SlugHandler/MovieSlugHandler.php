@@ -60,7 +60,7 @@ class MovieSlugHandler implements SlugHandlerInterface
         }
 
         $date = $object->getReleaseDate();
-        $slug = (0 < count($existingMovies)) ? ($date ? $originalSlug . '-' . $date->format('Y') : $originalSlug . '-' . uniqid()) : $originalSlug;
+        $slug = $date ? $originalSlug . '-' . $date->format('Y') : $originalSlug . '-' . uniqid();
     }
 
     public function postSlugBuild(SluggableAdapter $sluggableAdapter, array &$config, $object, &$slug)

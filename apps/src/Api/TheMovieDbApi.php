@@ -281,6 +281,10 @@ class TheMovieDbApi
 
     private function isCorrectDate(?array $json): bool
     {
+        if (!isset($json['tmdb']) || is_null($json['tmdb'])) {
+            return false;
+        }
+
         if (is_array($json) && isset($json['json_import'])) {
             $importDate = new DateTime($json['json_import']);
             $date       = new DateTime();
