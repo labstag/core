@@ -24,25 +24,7 @@ final class SeasonAllMessageHandler
         unset($seasonAllMessage);
         $seasons                          = $this->seasonRepository->findAll();
         foreach ($seasons as $season) {
-            $json = $season->getJson();
-            if (!$this->isCorrectDate($json)) {
-                $this->messageBus->dispatch(new SeasonMessage($season->getId()));
-            }
+            $this->messageBus->dispatch(new SeasonMessage($season->getId()));
         }
-    }
-
-    private function isCorrectDate(?array $json): bool
-    {
-        if (is_array($json) && isset($json['json_import'])) {
-            $importDate = new DateTime($json['json_import']);
-            $now        = new DateTime();
-            $daysDiff   = $now->diff($importDate)->days;
-
-            if (7 > $daysDiff) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

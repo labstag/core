@@ -24,25 +24,7 @@ final class SerieAllMessageHandler
         unset($serieAllMessage);
         $series                          = $this->serieRepository->findAll();
         foreach ($series as $serie) {
-            $json = $serie->getJson();
-            if (!$this->isCorrectDate($json)) {
-                $this->messageBus->dispatch(new SerieMessage($serie->getId()));
-            }
+            $this->messageBus->dispatch(new SerieMessage($serie->getId()));
         }
-    }
-
-    private function isCorrectDate(?array $json): bool
-    {
-        if (is_array($json) && isset($json['json_import'])) {
-            $importDate = new DateTime($json['json_import']);
-            $now        = new DateTime();
-            $daysDiff   = $now->diff($importDate)->days;
-
-            if (7 > $daysDiff) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
