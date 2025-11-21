@@ -2,7 +2,6 @@
 
 namespace Labstag\MessageHandler;
 
-use DateTime;
 use Labstag\Message\SeasonAllMessage;
 use Labstag\Message\SeasonMessage;
 use Labstag\Repository\SeasonRepository;

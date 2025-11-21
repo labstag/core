@@ -125,6 +125,32 @@ class SerieRepository extends RepositoryAbstract
         return array_column($rows, 'tmdb');
     }
 
+    public function getCountries(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->select('DISTINCT s.countries');
+        $queryBuilder->orderBy('s.countries', 'ASC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'series-unique-countries');
+
+        $data           = $query->getSingleColumnResult();
+        $countries      = [];
+        foreach ($data as $value) {
+            if (!is_null($value) && '' !== $value) {
+                $decoded = json_decode((string) $value);
+                foreach ($decoded as $country) {
+                    $name             = Countries::getName($country);
+                    $countries[$name] = $country;
+                }
+            }
+        }
+
+        ksort($countries);
+
+        return $countries;
+    }
+
     public function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('s');

@@ -2,7 +2,6 @@
 
 namespace Labstag\MessageHandler;
 
-use DateTime;
 use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Repository\SerieRepository;

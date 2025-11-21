@@ -19,11 +19,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
+use Labstag\Filter\CountriesFilter;
 use Labstag\Message\MovieAllMessage;
 use Labstag\Message\MovieMessage;
-use Labstag\Repository\MovieRepository;
 use Labstag\Service\FileService;
-use Labstag\Service\Imdb\MovieService;
 use Labstag\Service\JsonPaginatorService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -207,17 +206,30 @@ class MovieCrudController extends CrudControllerAbstract
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
-        $movieRepository = $this->getMovieRepository();
-        $certifications  = $movieRepository->getCertifications();
-
+        $repositoryAbstract = $this->getRepository();
+        $certifications  = $repositoryAbstract->getCertifications();
         $filters->add('releaseDate');
-        $filters->add('countries');
+        $countries = $repositoryAbstract->getCountries();
+        if ([] != $countries) {
+            $countriesFilter = CountriesFilter::new('countries', new TranslatableMessage('Countries'));
+            $countriesFilter->setChoices(
+                array_merge(
+                    ['' => ''],
+                    $countries
+                )
+            );
+            $filters->add($countriesFilter);
+        }
+
         if ([] !== $certifications) {
-            $filters->add(
-                ChoiceFilter::new('certification', new TranslatableMessage('Certification'))->setChoices(
+            $certificationFilter = ChoiceFilter::new('certification', new TranslatableMessage('Certification'));
+            $certificationFilter->setChoices(
+                array_merge(
+                    ['' => ''],
                     $certifications
                 )
             );
+            $filters->add($certificationFilter);
         }
 
         $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
@@ -254,7 +266,7 @@ class MovieCrudController extends CrudControllerAbstract
 
     public function recommandationsAll(
         FileService $fileService,
-        JsonPaginatorService $jsonPaginatorService
+        JsonPaginatorService $jsonPaginatorService,
     ): Response
     {
         $file         = $fileService->getFileInAdapter('private', 'recommandations-movie.json');
@@ -339,17 +351,6 @@ class MovieCrudController extends CrudControllerAbstract
     {
         $entityFilter = EntityFilter::new('saga', new TranslatableMessage('Sagas'));
         $filters->add($entityFilter);
-    }
-
-    /**
-     * Get the MovieRepository with proper typing for PHPStan.
-     */
-    private function getMovieRepository(): MovieRepository
-    {
-        $repositoryAbstract = $this->getRepository();
-        assert($repositoryAbstract instanceof MovieRepository);
-
-        return $repositoryAbstract;
     }
 
     private function setUpdateAction(): void

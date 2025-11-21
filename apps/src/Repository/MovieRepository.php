@@ -168,6 +168,32 @@ class MovieRepository extends RepositoryAbstract
         return $certifications;
     }
 
+    public function getCountries(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->select('DISTINCT m.countries');
+        $queryBuilder->orderBy('m.countries', 'ASC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-unique-countries');
+
+        $data           = $query->getSingleColumnResult();
+        $countries      = [];
+        foreach ($data as $value) {
+            if (!is_null($value) && '' !== $value) {
+                $decoded = json_decode((string) $value);
+                foreach ($decoded as $country) {
+                    $name             = Countries::getName($country);
+                    $countries[$name] = $country;
+                }
+            }
+        }
+
+        ksort($countries);
+
+        return $countries;
+    }
+
     /**
      * @param array<string, mixed> $query
      */

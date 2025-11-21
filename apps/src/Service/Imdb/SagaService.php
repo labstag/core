@@ -31,7 +31,6 @@ final class SagaService
         private SagaRepository $sagaRepository,
         private MovieRepository $movieRepository,
         private FileService $fileService,
-        private EntityManagerInterface $entityManager,
         private TheMovieDbApi $theMovieDbApi,
     )
     {
@@ -42,10 +41,10 @@ final class SagaService
      */
     public function getAllRecommandations(): array
     {
-        $sagas = $this->sagaRepository->findAll();
+        $sagas           = $this->sagaRepository->findAll();
         $recommandations = [];
         foreach ($sagas as $saga) {
-            $result = $this->theMovieDbApi->getDetailsSaga($saga);
+            $result          = $this->theMovieDbApi->getDetailsSaga($saga);
             $recommandations = $this->setJsonRecommandations($result, $recommandations);
         }
 

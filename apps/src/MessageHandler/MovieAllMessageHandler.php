@@ -2,7 +2,6 @@
 
 namespace Labstag\MessageHandler;
 
-use DateTime;
 use Labstag\Message\MovieAllMessage;
 use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;

@@ -2,7 +2,6 @@
 
 namespace Labstag\Api;
 
-use DateTime;
 use Labstag\Api\Tmdb\TmdbImagesApi;
 use Labstag\Api\Tmdb\TmdbMoviesApi;
 use Labstag\Api\Tmdb\TmdbOtherApi;
@@ -26,6 +25,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class TheMovieDbApi
 {
 
+    private FilesystemAdapter $filesystemAdapter;
+
     private TmdbImagesApi $tmdbImagesApi;
 
     private TmdbMoviesApi $tmdbMoviesApi;
@@ -34,8 +35,6 @@ class TheMovieDbApi
 
     private TmdbTvApi $tmdbTvApi;
 
-    private FilesystemAdapter $cache;
-
     public function __construct(
         private ConfigurationService $configurationService,
         CacheService $cacheService,
@@ -43,39 +42,17 @@ class TheMovieDbApi
         string $tmdbBearerToken,
     )
     {
-        $this->cache = new FilesystemAdapter(namespace: 'api_cache', defaultLifetime: 0);
+        $this->filesystemAdapter         = new FilesystemAdapter(namespace: 'api_cache', defaultLifetime: 0);
         $this->tmdbOtherApi  = new TmdbOtherApi($cacheService, $httpClient, $tmdbBearerToken);
         $this->tmdbMoviesApi = new TmdbMoviesApi($cacheService, $httpClient, $tmdbBearerToken);
         $this->tmdbImagesApi = new TmdbImagesApi($cacheService, $httpClient, $tmdbBearerToken);
         $this->tmdbTvApi     = new TmdbTvApi($cacheService, $httpClient, $tmdbBearerToken);
     }
 
-
-    private function getJson(object $object)
-    {
-        $cacheKey = 'api_tmdb_'.$object->getId();
-        $item = $this->cache->getItem($cacheKey);
-        if ($item->isHit()) {
-            return $item->get();
-        }
-
-        return [];
-    }
-
-    private function setJson(object $object, array $data, int $ttl = 3600): void
-    {
-        $cacheKey = 'api_tmdb_'.$object->getId();
-        $item = $this->cache->getItem($cacheKey);
-        $item->set($data);
-        $item->expiresAfter($ttl);
-        $this->cache->save($item);
-
-    }
-
     public function getDetailsCompany(Company $company): array
     {
         $json = $this->getJson($company);
-        if (count($json) != 0) {
+        if (0 !== count($json)) {
             return $json;
         }
 
@@ -90,7 +67,7 @@ class TheMovieDbApi
     public function getDetailsEpisode(Episode $episode): array
     {
         $json = $this->getJson($episode);
-        if (count($json) != 0) {
+        if (0 !== count($json)) {
             return $json;
         }
 
@@ -112,7 +89,7 @@ class TheMovieDbApi
     public function getDetailsMovie(Movie $movie): array
     {
         $json = $this->getJson($movie);
-        if (count($json) != 0) {
+        if (0 !== count($json)) {
             return $json;
         }
 
@@ -130,7 +107,7 @@ class TheMovieDbApi
             return $details;
         }
 
-        $details['tmdb'] = $this->movies()->getDetails($tmdbId, $locale);
+        $details['tmdb']          = $this->movies()->getDetails($tmdbId, $locale);
         $locale                   = $this->configurationService->getLocaleTmdb();
         $details['videos']        = $this->getVideosMovie($tmdbId);
         $details['release_dates'] = $this->movies()->getMovieReleasesDates($tmdbId);
@@ -152,7 +129,7 @@ class TheMovieDbApi
     public function getDetailsSaga(Saga $saga): array
     {
         $json = $this->getJson($saga);
-        if (count($json) != 0) {
+        if (0 !== count($json)) {
             return $json;
         }
 
@@ -168,15 +145,15 @@ class TheMovieDbApi
     public function getDetailsSeason(Season $season): array
     {
         $json = $this->getJson($season);
-        if (count($json) != 0) {
+        if (0 !== count($json)) {
             return $json;
         }
 
         $details                = [];
         $tmdb                   = $season->getRefserie()->getTmdb();
-        $numberSeason    = $season->getNumber();
-        $locale          = $this->configurationService->getLocaleTmdb();
-        $details['tmdb'] = $this->tvserie()->getSeasonDetails($tmdb, $numberSeason, $locale);
+        $numberSeason      = $season->getNumber();
+        $locale            = $this->configurationService->getLocaleTmdb();
+        $details['tmdb']   = $this->tvserie()->getSeasonDetails($tmdb, $numberSeason, $locale);
         $details['videos'] = $this->getVideosSeason($tmdb, $numberSeason);
         $details['other']  = $this->tvserie()->getTvExternalIds($tmdb);
         $this->setJson($season, $details);
@@ -190,7 +167,7 @@ class TheMovieDbApi
     public function getDetailsSerie(Serie $serie): array
     {
         $json = $this->getJson($serie);
-        if (count($json) != 0) {
+        if (0 !== count($json)) {
             return $json;
         }
 
@@ -208,7 +185,7 @@ class TheMovieDbApi
             return $details;
         }
 
-        $details['tmdb'] = $this->tvserie()->getDetails($tmdbId, $locale);
+        $details['tmdb']            = $this->tvserie()->getDetails($tmdbId, $locale);
         $details['videos']          = $this->getVideosSerie($tmdbId);
         $details['recommandations'] = $this->tvserie()->getTvRecommendations(
             $tmdbId,
@@ -248,6 +225,17 @@ class TheMovieDbApi
         return $this->tmdbTvApi;
     }
 
+    private function getJson(object $object)
+    {
+        $cacheKey = 'api_tmdb_' . $object->getId();
+        $item     = $this->filesystemAdapter->getItem($cacheKey);
+        if ($item->isHit()) {
+            return $item->get();
+        }
+
+        return [];
+    }
+
     private function getVideosMovie(string $tmdbId): ?array
     {
         $locale = $this->configurationService->getLocaleTmdb();
@@ -279,5 +267,15 @@ class TheMovieDbApi
         }
 
         return $videos;
+    }
+
+    private function setJson(object $object, array $data, int $ttl = 3600): void
+    {
+        $cacheKey = 'api_tmdb_' . $object->getId();
+        $item     = $this->filesystemAdapter->getItem($cacheKey);
+        $item->set($data);
+        $item->expiresAfter($ttl);
+
+        $this->filesystemAdapter->save($item);
     }
 }

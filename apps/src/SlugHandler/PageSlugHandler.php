@@ -74,11 +74,17 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
         return false;
     }
 
-    public function onChangeDecision(SluggableAdapter $sluggableAdapter, array &$config, $object, &$slug, &$needToChangeSlug): void
+    public function onChangeDecision(
+        SluggableAdapter $sluggableAdapter,
+        array &$config,
+        $object,
+        &$slug,
+        &$needToChangeSlug,
+    ): void
     {
         unset($slug);
         $this->objectManager       = $sluggableAdapter->getObjectManager();
-        $this->isInsert = $this->objectManager->getUnitOfWork()->isScheduledForInsert($object);
+        $this->isInsert            = $this->objectManager->getUnitOfWork()->isScheduledForInsert($object);
         $options = $config['handlers'][static::class];
 
         $this->usedPathSeparator = $options['separator'] ?? self::SEPARATOR;
@@ -93,30 +99,6 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
         }
     }
 
-    private function setHome($sluggableAdapter, $object)
-    {
-        $objectManager    = $sluggableAdapter->getObjectManager();
-        $classMetadata    = $objectManager->getClassMetadata($object::class);
-        $objectRepository = $objectManager->getRepository($classMetadata->getName());
-
-        $existingPages = $objectRepository->findBy(
-            [
-                'type' => $object->getType(),
-            ]
-        );
-
-        foreach ($existingPages as $existingPage) {
-            if ($existingPage === $object) {
-                continue;
-            }
-
-            $existingPage->setPage(PageEnum::PAGE->value);
-            $asciiSlugger = new AsciiSlugger();
-            $existingPage->setPage($asciiSlugger->slug((string) $object->getTitle())->lower());
-            $objectManager->persist($existingPage);
-        }
-    }
-
     public function onSlugCompletion(SluggableAdapter $sluggableAdapter, array &$config, $object, &$slug): void
     {
         if (PageEnum::HOME->value == $object->getType()) {
@@ -128,41 +110,20 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
             return;
         }
 
-        $wrapped                 = AbstractWrapper::wrap($object, $this->objectManager);
-        $meta                    = $wrapped->getMetadata();
-        $target                  = $wrapped->getPropertyValue($config['slug']);
+        $wrapper                 = AbstractWrapper::wrap($object, $this->objectManager);
+        $classMetadata                    = $wrapper->getMetadata();
+        $target                  = $wrapper->getPropertyValue($config['slug']);
         $config['pathSeparator'] = $this->usedPathSeparator;
         $sluggableAdapter->replaceRelative($object, $config, $target . $config['pathSeparator'], $slug);
         $uow = $this->objectManager->getUnitOfWork();
         // update in memory objects
         foreach ($uow->getIdentityMap() as $className => $objects) {
             // for inheritance mapped classes, only root is always in the identity map
-            if ($className !== $wrapped->getRootObjectName()) {
-                continue;
-            }
-            
-            $this->otherObjects($sluggableAdapter, $objects, $meta, $config, $target, $slug, $uow);
-        }
-    }
-
-    private function otherObjects(SluggableAdapter $sluggableAdapter, $objects, $meta, $config, $target, &$slug, $uow)
-    {
-        foreach ($objects as $object) {
-            // @todo: Remove the check against `method_exists()` in the next major release.
-            if (($object instanceof Proxy || method_exists(
-                $object,
-                '__isInitialized'
-            )) && !$object->__isInitialized()
-            ) {
+            if ($className !== $wrapper->getRootObjectName()) {
                 continue;
             }
 
-            $objectSlug = (string) $meta->getFieldValue($object, $config['slug']);
-            if (preg_match(sprintf('@^%s%s@smi', $target, $config['pathSeparator']), $objectSlug)) {
-                $objectSlug = str_replace($target, $slug, $objectSlug);
-                $meta->setFieldValue($object, $config['slug'], $objectSlug);
-                $sluggableAdapter->setOriginalObjectProperty($uow, $object, $config['slug'], $objectSlug);
-            }
+            $this->otherObjects($sluggableAdapter, $objects, $classMetadata, $config, $target, $slug, $uow);
         }
     }
 
@@ -173,7 +134,7 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
         $this->parentSlug = '';
 
         $wrapper = AbstractWrapper::wrap($object, $this->objectManager);
-        $parent = $wrapper->getPropertyValue($options['parentRelationField']);
+        $parent  = $wrapper->getPropertyValue($options['parentRelationField']);
         if ($parent) {
             $parent           = AbstractWrapper::wrap($parent, $this->objectManager);
             $this->parentSlug = $parent->getPropertyValue($config['slug']);
@@ -217,6 +178,51 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
                     $meta->getName()
                 )
             );
+        }
+    }
+
+    private function otherObjects(SluggableAdapter $sluggableAdapter, $objects, $meta, array $config, $target, &$slug, $uow): void
+    {
+        foreach ($objects as $object) {
+            // @todo: Remove the check against `method_exists()` in the next major release.
+            if (($object instanceof Proxy || method_exists(
+                $object,
+                '__isInitialized'
+            )) && !$object->__isInitialized()
+            ) {
+                continue;
+            }
+
+            $objectSlug = (string) $meta->getFieldValue($object, $config['slug']);
+            if (preg_match(sprintf('@^%s%s@smi', $target, $config['pathSeparator']), $objectSlug)) {
+                $objectSlug = str_replace($target, $slug, $objectSlug);
+                $meta->setFieldValue($object, $config['slug'], $objectSlug);
+                $sluggableAdapter->setOriginalObjectProperty($uow, $object, $config['slug'], $objectSlug);
+            }
+        }
+    }
+
+    private function setHome(\Gedmo\Sluggable\Mapping\Event\SluggableAdapter $sluggableAdapter, $object): void
+    {
+        $objectManager    = $sluggableAdapter->getObjectManager();
+        $classMetadata    = $objectManager->getClassMetadata($object::class);
+        $objectRepository = $objectManager->getRepository($classMetadata->getName());
+
+        $existingPages = $objectRepository->findBy(
+            [
+                'type' => $object->getType(),
+            ]
+        );
+
+        foreach ($existingPages as $existingPage) {
+            if ($existingPage === $object) {
+                continue;
+            }
+
+            $existingPage->setPage(PageEnum::PAGE->value);
+            $asciiSlugger = new AsciiSlugger();
+            $existingPage->setPage($asciiSlugger->slug((string) $object->getTitle())->lower());
+            $objectManager->persist($existingPage);
         }
     }
 }

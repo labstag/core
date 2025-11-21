@@ -19,6 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
+use Labstag\Filter\CountriesFilter;
 use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Service\FileService;
@@ -214,7 +215,18 @@ class SerieCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterEnable($filters);
 
         $filters->add('releaseDate');
-        $filters->add('countries');
+        $countries = $this->getRepository()->getCountries();
+        if ([] != $countries) {
+            $countriesFilter = CountriesFilter::new('countries', new TranslatableMessage('Countries'));
+            $countriesFilter->setChoices(
+                array_merge(
+                    ['' => ''],
+                    $countries
+                )
+            );
+            $filters->add($countriesFilter);
+        }
+
         $filters->add('inProduction');
 
         $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
