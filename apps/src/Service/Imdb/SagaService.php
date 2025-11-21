@@ -46,7 +46,7 @@ final class SagaService
         $recommandations = [];
         foreach ($sagas as $saga) {
             $result = $this->theMovieDbApi->getDetailsSaga($saga);
-            $recommandations = $this->setJsonRecommandations($data, $recommandations);
+            $recommandations = $this->setJsonRecommandations($result, $recommandations);
         }
 
         return $recommandations;

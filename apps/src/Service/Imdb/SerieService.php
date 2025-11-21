@@ -54,8 +54,8 @@ final class SerieService
         $series = $this->serieRepository->findAll();
         $recommandations = [];
         foreach ($series as $serie) {
-            $data            = $this->theMovieDbApi->getDetailsSerie($serie);
-            $recommandations = $this->setJsonRecommandations($data, new Serie(), $recommandations);
+            $result            = $this->theMovieDbApi->getDetailsSerie($serie);
+            $recommandations = $this->setJsonRecommandations($result, $serie, $recommandations);
         }
 
         return $recommandations;

@@ -51,7 +51,7 @@ final class MovieService
         $recommandations = [];
         foreach ($movies as $movie) {
             $result = $this->theMovieDbApi->getDetailsMovie($movie);
-            $recommandations = $this->setJsonRecommandations($data, new Movie(), $recommandations);
+            $recommandations = $this->setJsonRecommandations($result, $movie, $recommandations);
         }
 
         return $recommandations;
