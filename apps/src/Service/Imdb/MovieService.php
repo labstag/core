@@ -47,11 +47,10 @@ final class MovieService
      */
     public function getAllRecommandations(): array
     {
-        $rows = $this->entityManager->getConnection()->fetchAllAssociative('SELECT json FROM movie');
-
-        $results         = array_column($rows, 'json');
+        $movies = $this->entityManager->getRepository(Movie::class)->findAll();
         $recommandations = [];
-        foreach ($results as $result) {
+        foreach ($movies as $movie) {
+            $result = $this->theMovieDbApi->getDetailsMovie($movie);
             $data            = json_decode((string) $result, true);
             $recommandations = $this->setJsonRecommandations($data, new Movie(), $recommandations);
         }

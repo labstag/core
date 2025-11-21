@@ -42,11 +42,10 @@ final class SagaService
      */
     public function getAllRecommandations(): array
     {
-        $rows = $this->entityManager->getConnection()->fetchAllAssociative('SELECT json FROM saga');
-
-        $results         = array_column($rows, 'json');
+        $sagas = $this->sagaRepository->findAll();
         $recommandations = [];
-        foreach ($results as $result) {
+        foreach ($sagas as $saga) {
+            $result = $this->theMovieDbApi->getDetailsSaga($saga);
             $data            = json_decode((string) $result, true);
             $recommandations = $this->setJsonRecommandations($data, $recommandations);
         }

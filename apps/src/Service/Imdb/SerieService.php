@@ -51,10 +51,10 @@ final class SerieService
      */
     public function getAllRecommandations(): array
     {
-        $results         = $this->serieRepository->getAllJsonFields();
+        $series = $this->serieRepository->findAll();
         $recommandations = [];
-        foreach ($results as $result) {
-            $data            = json_decode((string) $result, true);
+        foreach ($series as $serie) {
+            $data            = $this->theMovieDbApi->getDetailsSerie($serie);
             $recommandations = $this->setJsonRecommandations($data, new Serie(), $recommandations);
         }
 
