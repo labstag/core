@@ -15,6 +15,7 @@ use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Service\CacheService;
 use Labstag\Service\ConfigurationService;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
@@ -33,6 +34,8 @@ class TheMovieDbApi
 
     private TmdbTvApi $tmdbTvApi;
 
+    private FilesystemAdapter $cache;
+
     public function __construct(
         private ConfigurationService $configurationService,
         CacheService $cacheService,
@@ -40,46 +43,65 @@ class TheMovieDbApi
         string $tmdbBearerToken,
     )
     {
+        $this->cache = new FilesystemAdapter(namespace: 'api_cache', defaultLifetime: 0);
         $this->tmdbOtherApi  = new TmdbOtherApi($cacheService, $httpClient, $tmdbBearerToken);
         $this->tmdbMoviesApi = new TmdbMoviesApi($cacheService, $httpClient, $tmdbBearerToken);
         $this->tmdbImagesApi = new TmdbImagesApi($cacheService, $httpClient, $tmdbBearerToken);
         $this->tmdbTvApi     = new TmdbTvApi($cacheService, $httpClient, $tmdbBearerToken);
     }
 
+
+    private function getJson(object $object)
+    {
+        $cacheKey = 'api_tmdb_'.$object->getId();
+        $item = $this->cache->getItem($cacheKey);
+        if ($item->isHit()) {
+            return $item->get();
+        }
+
+        return [];
+    }
+
+    private function setJson(object $object, array $data, int $ttl = 3600): void
+    {
+        $cacheKey = 'api_tmdb_'.$object->getId();
+        $item = $this->cache->getItem($cacheKey);
+        $item->set($data);
+        $item->expiresAfter($ttl);
+        $this->cache->save($item);
+
+    }
+
     public function getDetailsCompany(Company $company): array
     {
-        // $json = $company->getJson();
-        // if ($this->isCorrectDate($json)) {
-        //     return $json;
-        // }
+        $json = $this->getJson($company);
+        if (count($json) != 0) {
+            return $json;
+        }
 
         $details                = [];
         $details['tmdb']        = $this->other()->getCompanyDetails($company->getTmdb() ?? '');
-        $date                   = new DateTime();
-        $details['json_import'] = $date->format('Y-m-d H:i:s');
+
+        $this->setJson($company, $details);
 
         return $details;
     }
 
     public function getDetailsEpisode(Episode $episode): array
     {
-        // $json = $episode->getJson();
-        // if ($this->isCorrectDate($json)) {
-        //     return $json;
-        // }
-
-        $details                = [];
-        $date                   = new DateTime();
-        $details['json_import'] = $date->format('Y-m-d H:i:s');
-        $tmdb                   = $episode->getRefseason()->getRefserie()->getTmdb();
-        if (in_array($tmdb, [null, '', '0'], true)) {
-            return $details;
+        $json = $this->getJson($episode);
+        if (count($json) != 0) {
+            return $json;
         }
 
+        $details                = [];
+        $tmdb                   = $episode->getRefseason()->getRefserie()->getTmdb();
         $seasonNumber = $episode->getRefseason()->getNumber();
         $episodeNumber   = $episode->getNumber();
         $locale          = $this->configurationService->getLocaleTmdb();
         $details['tmdb'] = $this->tvserie()->getEpisodeDetails($tmdb, $seasonNumber, $episodeNumber, $locale);
+
+        $this->setJson($episode, $details);
 
         return $details;
     }
@@ -89,14 +111,12 @@ class TheMovieDbApi
      */
     public function getDetailsMovie(Movie $movie): array
     {
-        // $json = $movie->getJson();
-        // if ($this->isCorrectDate($json)) {
-        //     return $json;
-        // }
+        $json = $this->getJson($movie);
+        if (count($json) != 0) {
+            return $json;
+        }
 
         $details                = [];
-        $date                   = new DateTime();
-        $details['json_import'] = $date->format('Y-m-d H:i:s');
         $locale                 = $this->configurationService->getLocaleTmdb();
         $tmdbId                 = $movie->getTmdb();
         if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
@@ -111,10 +131,6 @@ class TheMovieDbApi
         }
 
         $details['tmdb'] = $this->movies()->getDetails($tmdbId, $locale);
-        if (is_null($details['tmdb'])) {
-            return $details;
-        }
-
         $locale                   = $this->configurationService->getLocaleTmdb();
         $details['videos']        = $this->getVideosMovie($tmdbId);
         $details['release_dates'] = $this->movies()->getMovieReleasesDates($tmdbId);
@@ -128,51 +144,42 @@ class TheMovieDbApi
         );
 
         $details['other'] = $this->movies()->getMovieExternalIds($tmdbId);
+        $this->setJson($movie, $details);
 
         return $details;
     }
 
     public function getDetailsSaga(Saga $saga): array
     {
-        // $json = $saga->getJson();
-        // if ($this->isCorrectDate($json)) {
-        //     return $json;
-        // }
+        $json = $this->getJson($saga);
+        if (count($json) != 0) {
+            return $json;
+        }
 
         $details                = [];
-        $date                   = new DateTime();
-        $details['json_import'] = $date->format('Y-m-d H:i:s');
         $locale                 = $this->configurationService->getLocaleTmdb();
         $tmdbId                 = $saga->getTmdb();
         $details['tmdb']        = $this->movies()->getMovieCollection($tmdbId, $locale);
+        $this->setJson($saga, $details);
 
         return $details;
     }
 
     public function getDetailsSeason(Season $season): array
     {
-        // $json = $season->getJson();
-        // if ($this->isCorrectDate($json)) {
-        //     return $json;
-        // }
-
-        $details                = [];
-        $date                   = new DateTime();
-        $details['json_import'] = $date->format('Y-m-d H:i:s');
-        $tmdb                   = $season->getRefserie()->getTmdb();
-        if (in_array($tmdb, [null, '', '0'], true)) {
-            return $details;
+        $json = $this->getJson($season);
+        if (count($json) != 0) {
+            return $json;
         }
 
+        $details                = [];
+        $tmdb                   = $season->getRefserie()->getTmdb();
         $numberSeason    = $season->getNumber();
         $locale          = $this->configurationService->getLocaleTmdb();
         $details['tmdb'] = $this->tvserie()->getSeasonDetails($tmdb, $numberSeason, $locale);
-        if (is_null($details['tmdb'])) {
-            return $details;
-        }
-
         $details['videos'] = $this->getVideosSeason($tmdb, $numberSeason);
         $details['other']  = $this->tvserie()->getTvExternalIds($tmdb);
+        $this->setJson($season, $details);
 
         return $details;
     }
@@ -182,14 +189,12 @@ class TheMovieDbApi
      */
     public function getDetailsSerie(Serie $serie): array
     {
-        // $json = $serie->getJson();
-        // if ($this->isCorrectDate($json)) {
-        //     return $json;
-        // }
+        $json = $this->getJson($serie);
+        if (count($json) != 0) {
+            return $json;
+        }
 
         $details                = [];
-        $date                   = new DateTime();
-        $details['json_import'] = $date->format('Y-m-d H:i:s');
         $locale                 = $this->configurationService->getLocaleTmdb();
         $tmdbId                 = $serie->getTmdb();
         if (null === $tmdbId || '' === $tmdbId || '0' === $tmdbId) {
@@ -204,15 +209,12 @@ class TheMovieDbApi
         }
 
         $details['tmdb'] = $this->tvserie()->getDetails($tmdbId, $locale);
-        if (is_null($details['tmdb'])) {
-            return $details;
-        }
-
         $details['videos']          = $this->getVideosSerie($tmdbId);
         $details['recommandations'] = $this->tvserie()->getTvRecommendations(
             $tmdbId,
             ['language' => $locale]
         );
+        $this->setJson($serie, $details);
 
         return $details;
     }
@@ -277,25 +279,5 @@ class TheMovieDbApi
         }
 
         return $videos;
-    }
-
-    private function isCorrectDate(?array $json): bool
-    {
-        if (!isset($json['tmdb']) || is_null($json['tmdb'])) {
-            return false;
-        }
-
-        if (is_array($json) && isset($json['json_import'])) {
-            $importDate = new DateTime($json['json_import']);
-            $date       = new DateTime();
-            $now        = $date;
-            $daysDiff   = $now->diff($importDate)->days;
-
-            if (7 > $daysDiff) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
