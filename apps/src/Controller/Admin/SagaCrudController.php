@@ -74,16 +74,7 @@ class SagaCrudController extends CrudControllerAbstract
                 $this->moviesFieldForPage(self::getEntityFqcn(), $pageName),
             ]
         );
-        if (Crud::PAGE_DETAIL === $pageName) {
-            $this->crudFieldFactory->addTab(
-                'recommandations',
-                FormField::addTab(new TranslatableMessage('Recommandations'))
-            );
-
-            $textField = TextField::new('id', new TranslatableMessage('Recommandations'));
-            $textField->setTemplatePath('admin/field/recommandations.html.twig');
-            $this->crudFieldFactory->addFieldsToTab('recommandations', [$textField]);
-        }
+        $this->addRecommandationTab($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
@@ -214,6 +205,29 @@ class SagaCrudController extends CrudControllerAbstract
         }
 
         return $this->redirectToRoute('admin_saga_index');
+    }
+
+    private function addRecommandationTab(string $pageName): void
+    {
+        if (Crud::PAGE_DETAIL !== $pageName) {
+            return;
+        }
+
+        $entity = $this->getContext()->getEntity()->getInstance();
+        $recommandations = $this->sagaService->recommandations($entity);
+        if ([] === $recommandations) {
+            return;
+        }
+
+        $this->crudFieldFactory->addTab(
+            'recommandations',
+            FormField::addTab(new TranslatableMessage('Recommandations'))
+        );
+
+        $textField = TextField::new('id', new TranslatableMessage('Recommandations'));
+        $textField->setTemplatePath('admin/field/recommandations.html.twig');
+
+        $this->crudFieldFactory->addFieldsToTab('recommandations', [$textField]);
     }
 
     private function setUpdateAction(): void

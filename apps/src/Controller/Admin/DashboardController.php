@@ -221,7 +221,10 @@ class DashboardController extends AbstractDashboardController
         $generator->setController(ConfigurationCrudController::class);
         $generator->setEntityId($configuration->getId());
 
-        return MenuItem::linkToUrl(new TranslatableMessage('Options'), 'fas fa-cog', $generator->generateUrl());
+        $linkToUrl = MenuItem::linkToUrl(new TranslatableMessage('Options'), 'fas fa-cog', $generator->generateUrl());
+        $linkToUrl->setPermission('ROLE_SUPER_ADMIN');
+
+        return $linkToUrl;
     }
 
     /**

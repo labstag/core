@@ -188,16 +188,7 @@ class MovieCrudController extends CrudControllerAbstract
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);
-        if (Crud::PAGE_DETAIL === $pageName) {
-            $this->crudFieldFactory->addTab(
-                'recommandations',
-                FormField::addTab(new TranslatableMessage('Recommandations'))
-            );
-
-            $textField = TextField::new('id', new TranslatableMessage('Recommandations'));
-            $textField->setTemplatePath('admin/field/recommandations.html.twig');
-            $this->crudFieldFactory->addFieldsToTab('recommandations', [$textField]);
-        }
+        $this->addRecommandationTab($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
@@ -207,7 +198,7 @@ class MovieCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->addFilterEnable($filters);
         $repositoryAbstract = $this->getRepository();
-        $certifications  = $repositoryAbstract->getCertifications();
+        $certifications     = $repositoryAbstract->getCertifications();
         $filters->add('releaseDate');
         $countries = $repositoryAbstract->getCountries();
         if ([] != $countries) {
@@ -351,6 +342,29 @@ class MovieCrudController extends CrudControllerAbstract
     {
         $entityFilter = EntityFilter::new('saga', new TranslatableMessage('Sagas'));
         $filters->add($entityFilter);
+    }
+
+    private function addRecommandationTab(string $pageName): void
+    {
+        if (Crud::PAGE_DETAIL !== $pageName) {
+            return;
+        }
+
+        $entity = $this->getContext()->getEntity()->getInstance();
+        $recommandations = $this->movieService->recommandations($entity);
+        if ([] === $recommandations) {
+            return;
+        }
+
+        $this->crudFieldFactory->addTab(
+            'recommandations',
+            FormField::addTab(new TranslatableMessage('Recommandations'))
+        );
+
+        $textField = TextField::new('id', new TranslatableMessage('Recommandations'));
+        $textField->setTemplatePath('admin/field/recommandations.html.twig');
+
+        $this->crudFieldFactory->addFieldsToTab('recommandations', [$textField]);
     }
 
     private function setUpdateAction(): void

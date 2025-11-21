@@ -3,7 +3,6 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Api\TheMovieDbApi;

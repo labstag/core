@@ -43,10 +43,10 @@ class TheMovieDbApi
     )
     {
         $this->filesystemAdapter         = new FilesystemAdapter(namespace: 'api_cache', defaultLifetime: 0);
-        $this->tmdbOtherApi  = new TmdbOtherApi($cacheService, $httpClient, $tmdbBearerToken);
-        $this->tmdbMoviesApi = new TmdbMoviesApi($cacheService, $httpClient, $tmdbBearerToken);
-        $this->tmdbImagesApi = new TmdbImagesApi($cacheService, $httpClient, $tmdbBearerToken);
-        $this->tmdbTvApi     = new TmdbTvApi($cacheService, $httpClient, $tmdbBearerToken);
+        $this->tmdbOtherApi              = new TmdbOtherApi($cacheService, $httpClient, $tmdbBearerToken);
+        $this->tmdbMoviesApi             = new TmdbMoviesApi($cacheService, $httpClient, $tmdbBearerToken);
+        $this->tmdbImagesApi             = new TmdbImagesApi($cacheService, $httpClient, $tmdbBearerToken);
+        $this->tmdbTvApi                 = new TmdbTvApi($cacheService, $httpClient, $tmdbBearerToken);
     }
 
     public function getDetailsCompany(Company $company): array
@@ -227,10 +227,10 @@ class TheMovieDbApi
 
     private function getJson(object $object)
     {
-        $cacheKey = 'api_tmdb_' . $object->getId();
-        $item     = $this->filesystemAdapter->getItem($cacheKey);
-        if ($item->isHit()) {
-            return $item->get();
+        $cacheKey      = 'api_tmdb_' . $object->getId();
+        $cacheItem     = $this->filesystemAdapter->getItem($cacheKey);
+        if ($cacheItem->isHit()) {
+            return $cacheItem->get();
         }
 
         return [];
@@ -271,11 +271,11 @@ class TheMovieDbApi
 
     private function setJson(object $object, array $data, int $ttl = 3600): void
     {
-        $cacheKey = 'api_tmdb_' . $object->getId();
-        $item     = $this->filesystemAdapter->getItem($cacheKey);
-        $item->set($data);
-        $item->expiresAfter($ttl);
+        $cacheKey      = 'api_tmdb_' . $object->getId();
+        $cacheItem     = $this->filesystemAdapter->getItem($cacheKey);
+        $cacheItem->set($data);
+        $cacheItem->expiresAfter($ttl);
 
-        $this->filesystemAdapter->save($item);
+        $this->filesystemAdapter->save($cacheItem);
     }
 }
