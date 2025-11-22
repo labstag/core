@@ -26,7 +26,7 @@
                             {% endfor %}
                         </div>
                     {% endif %}
-                    {% if firstEpisode.airDate is defined %}
+                    {% if firstEpisode.airDate is defined and firstEpisode.airDate != '' %}
                         <div class="dates">
                             {{ "From %start% to %end%"|trans({'%start%': firstEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full'), '%end%' : lastEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
                         </div>

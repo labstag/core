@@ -255,7 +255,7 @@ class SagaCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('jsonSaga', new TranslatableMessage('Json'));
+        $action = Action::new('jsonSaga', new TranslatableMessage('Json'), 'fas fa-server');
         $action->linkToCrudAction('jsonSaga');
         $action->setHtmlAttributes(
             ['target' => '_blank']

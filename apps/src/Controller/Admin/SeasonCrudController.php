@@ -213,7 +213,7 @@ class SeasonCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('jsonSeason', new TranslatableMessage('Json'));
+        $action = Action::new('jsonSeason', new TranslatableMessage('Json'), 'fas fa-server');
         $action->linkToCrudAction('jsonSeason');
         $action->setHtmlAttributes(
             ['target' => '_blank']

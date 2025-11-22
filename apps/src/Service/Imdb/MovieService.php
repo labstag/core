@@ -263,8 +263,8 @@ final class MovieService
      */
     private function updateImageBackdrop(Movie $movie, array $details): bool
     {
-        $poster = $this->theMovieDbApi->images()->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
-        if (is_null($poster)) {
+        $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
+        if (is_null($backdrop)) {
             return false;
         }
 
@@ -272,7 +272,7 @@ final class MovieService
             $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
+            file_put_contents($tempPath, file_get_contents($backdrop));
             $this->fileService->setUploadedFile($tempPath, $movie, 'backdropFile');
 
             return true;

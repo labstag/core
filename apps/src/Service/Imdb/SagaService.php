@@ -185,8 +185,8 @@ final class SagaService
 
     private function updateImageBackdrop(Saga $saga, array $data): bool
     {
-        $poster = $this->theMovieDbApi->images()->getBackdropUrl($data['tmdb']['backdrop_path'] ?? '');
-        if (is_null($poster)) {
+        $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($data['tmdb']['backdrop_path'] ?? '');
+        if (is_null($backdrop)) {
             return false;
         }
 
@@ -194,7 +194,7 @@ final class SagaService
             $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
+            file_put_contents($tempPath, file_get_contents($backdrop));
             $this->fileService->setUploadedFile($tempPath, $saga, 'backdropFile');
 
             return true;

@@ -23,10 +23,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 class Season implements Stringable, EntityWithParagraphsInterface
 {
-    public $backdrop;
-    public $backdropFile;
     use SoftDeleteableEntity;
     use TimestampableTrait;
+
+    public $backdrop;
+
+    public $backdropFile;
 
     #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
     protected ?DateTime $airDate = null;

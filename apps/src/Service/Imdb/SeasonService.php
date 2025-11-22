@@ -100,7 +100,6 @@ final class SeasonService
         $statuses = [
             $this->updateSeason($season, $details),
             $this->updateImagePoster($season, $details),
-            $this->updateImageBackdrop($season, $details),
             $this->updateEpisodes($season, $details),
         ];
 

@@ -56,7 +56,7 @@ final class EasyadminVoter extends Voter
         $actionSubject = $subject['action'];
 
         if (is_string($actionSubject)) {
-            $entityClass = $subject['entityFqcn'] ?? $subject['entity'] instanceof EntityDto ? $subject['entity']->getFqcn() : null;
+            $entityClass = $this->getEntityClass($subject);
             if (is_null($entityClass)) {
                 return true;
             }
@@ -92,6 +92,19 @@ final class EasyadminVoter extends Voter
         }
 
         return true;
+    }
+
+    private function getEntityClass(mixed $subject): ?string
+    {
+        if (isset($subject['entityFqcn'])) {
+            return $subject['entityFqcn'];
+        }
+
+        if (isset($subject['entity']) && $subject['entity'] instanceof EntityDto) {
+            return $subject['entity']->getFqcn();
+        }
+
+        return null;
     }
 
     private function getPermission(UserInterface $user): bool

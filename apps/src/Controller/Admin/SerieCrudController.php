@@ -376,7 +376,7 @@ class SerieCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('jsonSerie', new TranslatableMessage('Json'));
+        $action = Action::new('jsonSerie', new TranslatableMessage('Json'), 'fas fa-server');
         $action->linkToCrudAction('jsonSerie');
         $action->setHtmlAttributes(
             ['target' => '_blank']
