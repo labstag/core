@@ -11,6 +11,21 @@ use Symfony\Component\Routing\RouterInterface;
 class SerieData extends PageData implements DataInterface
 {
     #[\Override]
+    public function asset(mixed $entity, string $field): string
+    {
+        $asset = $this->fileService->asset($entity, $field);
+        if ('' !== $asset) {
+            return $asset;
+        }
+
+        if ('backdrop' === $field) {
+            return $this->fileService->asset($entity, 'poster');
+        }
+
+        return $this->fileService->asset($entity, $field);
+    }
+
+    #[\Override]
     public function generateSlug(object $entity): string
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(

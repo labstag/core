@@ -17,6 +17,10 @@ class SeasonData extends SerieData implements DataInterface
             return $asset;
         }
 
+        if ('backdrop' === $field) {
+            return $this->fileService->asset($entity, 'poster');
+        }
+
         return parent::asset($entity->getRefserie(), $field);
     }
 
