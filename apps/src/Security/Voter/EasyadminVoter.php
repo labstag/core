@@ -55,8 +55,10 @@ final class EasyadminVoter extends Voter
     {
         $actionSubject = $subject['action'];
         if (is_string($actionSubject)) {
-            $entityClass = $subject['entityFqcn'] ?? $subject['entity'] instanceof EntityDto ? $subject['entity']->getFqcn() : null;
+            $entityClass = ($subject['entityFqcn'] ?? $subject['entity'] instanceof EntityDto ? $subject['entity']->getFqcn() : null);
             if (is_null($entityClass)) {
+                dump($subject);
+
                 return true;
             }
 
