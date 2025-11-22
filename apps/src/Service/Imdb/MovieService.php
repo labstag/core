@@ -32,6 +32,7 @@ final class MovieService
         #[AutowireIterator('labstag.admincontroller')]
         private readonly iterable $controllers,
         private AdminUrlGenerator $adminUrlGenerator,
+        private RecommendationService $recommendationService,
         private FileService $fileService,
         private CompanyService $companyService,
         private CategoryService $categoryService,
@@ -115,6 +116,7 @@ final class MovieService
         }
 
         $statuses = [
+            $this->updateRecommendations($movie, $details),
             $this->updateMovie($movie, $details),
             $this->updateOther($movie, $details),
             $this->updateImagePoster($movie, $details),
@@ -353,6 +355,20 @@ final class MovieService
         }
 
         $movie->setImdb((string) $details['other']['imdb_id']);
+
+        return true;
+    }
+
+    private function updateRecommendations(Movie $movie, array $details): bool
+    {
+        $recommandations = $details['recommendations']['results'] ?? null;
+        if (is_null($recommandations) || !is_array($recommandations)) {
+            foreach ($movie->getRecommendations() as $recommendation) {
+                $movie->removeRecommendation($recommendation);
+            }
+        }
+
+        $this->recommendationService->setRecommendations($movie, $recommandations);
 
         return true;
     }

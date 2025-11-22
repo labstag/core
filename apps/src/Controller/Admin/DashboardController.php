@@ -335,6 +335,11 @@ class DashboardController extends AbstractDashboardController
     {
         $items = [
             [
+                new TranslatableMessage('Recommendations'),
+                'fas fa-comment-medical',
+                RecommendationCrudController::getEntityFqcn(),
+            ],
+            [
                 new TranslatableMessage('Company'),
                 'fas fa-building',
                 CompanyCrudController::getEntityFqcn(),

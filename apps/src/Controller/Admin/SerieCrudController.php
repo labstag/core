@@ -11,7 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -22,83 +21,15 @@ use Labstag\Field\WysiwygField;
 use Labstag\Filter\CountriesFilter;
 use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
-use Labstag\Service\FileService;
-use Labstag\Service\JsonPaginatorService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SerieCrudController extends CrudControllerAbstract
 {
-    public function addWithTmdb(
-        AdminContext $adminContext,
-        TheMovieDbApi $theMovieDbApi,
-        MessageBusInterface $messageBus,
-    ): Response
-    {
-        $tmdbId = $adminContext->getRequest()->query->get('tmdb');
-        $name = $adminContext->getRequest()->query->get('name');
-        $data = $theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
-        if (is_null($data)) {
-            return $this->redirectToRoute('admin_serie_index');
-        }
-
-        $imdbId             = $data['imdb_id'];
-        $repositoryAbstract = $this->getRepository();
-        $serie              = $repositoryAbstract->findOneBy(
-            ['imdb' => $imdbId]
-        );
-        if ($serie instanceof Serie) {
-            $this->addFlash(
-                'warning',
-                new TranslatableMessage(
-                    'The %name% series is already present in the database',
-                    [
-                        '%name%' => $serie->getTitle(),
-                    ]
-                )
-            );
-
-            return $this->redirectToRoute(
-                'admin_serie_detail',
-                [
-                    'entityId' => $serie->getId(),
-                ]
-            );
-        }
-
-        $serie = new Serie();
-        $serie->setFile(false);
-        $serie->setEnable(true);
-        $serie->setAdult(false);
-        $serie->setImdb($imdbId);
-        $serie->setTitle($name);
-        $serie->setTmdb($tmdbId);
-
-        $repositoryAbstract->save($serie);
-        $messageBus->dispatch(new SerieMessage($serie->getId()));
-        $this->addFlash(
-            'success',
-            new TranslatableMessage(
-                'The %name% series has been added to the database',
-                [
-                    '%name%' => $serie->getTitle(),
-                ]
-            )
-        );
-
-        return $this->redirectToRoute(
-            'admin_serie_detail',
-            [
-                'entityId' => $serie->getId(),
-            ]
-        );
-    }
-
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -107,7 +38,6 @@ class SerieCrudController extends CrudControllerAbstract
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
-        $this->setShowAllRecommendations();
 
         return $this->actionsFactory->show();
     }
@@ -206,7 +136,6 @@ class SerieCrudController extends CrudControllerAbstract
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);
-        $this->addRecommendationTab($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
@@ -265,38 +194,6 @@ class SerieCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
-    public function recommendationsAll(
-        FileService $fileService,
-        JsonPaginatorService $jsonPaginatorService,
-    ): Response
-    {
-        $file         = $fileService->getFileInAdapter('private', 'recommendations-serie.json');
-        if (!is_file($file)) {
-            return $this->redirectToRoute('admin_serie_index');
-        }
-
-        $pagination = $jsonPaginatorService->paginate($file, 'name');
-
-        return $this->render(
-            'admin/serie/recommendations.html.twig',
-            ['pagination' => $pagination]
-        );
-    }
-
-    public function setShowAllRecommendations(): void
-    {
-        if (!$this->actionsFactory->isTrash()) {
-            return;
-        }
-
-        $action = Action::new('recommendationsAll', new TranslatableMessage('all recommendations'), 'fas fa-terminal');
-        $action->displayAsLink();
-        $action->linkToCrudAction('recommendationsAll');
-        $action->createAsGlobalAction();
-
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
-    }
-
     public function tmdb(AdminContext $adminContext): RedirectResponse
     {
         $entityId = $adminContext->getRequest()->query->get('entityId');
@@ -337,29 +234,6 @@ class SerieCrudController extends CrudControllerAbstract
     {
         $entityFilter = EntityFilter::new('companies', new TranslatableMessage('Companies'));
         $filters->add($entityFilter);
-    }
-
-    private function addRecommendationTab(string $pageName): void
-    {
-        if (Crud::PAGE_DETAIL !== $pageName) {
-            return;
-        }
-
-        $entity = $this->getContext()->getEntity()->getInstance();
-        $recommendations = $this->serieService->recommendations($entity);
-        if ([] === $recommendations) {
-            return;
-        }
-
-        $this->crudFieldFactory->addTab(
-            'recommendations',
-            FormField::addTab(new TranslatableMessage('Recommendations'))
-        );
-
-        $textField = TextField::new('id', new TranslatableMessage('Recommendations'));
-        $textField->setTemplatePath('admin/field/recommendations.html.twig');
-
-        $this->crudFieldFactory->addFieldsToTab('recommendations', [$textField]);
     }
 
     private function setUpdateAction(): void

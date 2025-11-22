@@ -25,6 +25,7 @@ final class SagaService
         #[AutowireIterator('labstag.admincontroller')]
         private readonly iterable $controllers,
         private LoggerInterface $logger,
+        private RecommendationService $recommendationService,
         private AdminUrlGenerator $adminUrlGenerator,
         private MessageBusInterface $messageBus,
         private SagaRepository $sagaRepository,
@@ -106,6 +107,7 @@ final class SagaService
         }
 
         $statuses = [
+            $this->updateRecommendations($saga, $details),
             $this->updateSaga($saga, $details),
             $this->updateImagePoster($saga, $details),
             $this->updateImageBackdrop($saga, $details),
@@ -221,6 +223,20 @@ final class SagaService
         } catch (Exception) {
             return false;
         }
+    }
+
+    private function updateRecommendations(Saga $saga, array $details): bool
+    {
+        $recommandations = $details['tmdb']['parts'] ?? null;
+        if (is_null($recommandations) || !is_array($recommandations)) {
+            foreach ($saga->getRecommendations() as $recommendation) {
+                $saga->removeRecommendation($recommendation);
+            }
+        }
+
+        $this->recommendationService->setRecommendations($saga, $recommandations);
+
+        return true;
     }
 
     private function updateSaga(Saga $saga, array $details): bool

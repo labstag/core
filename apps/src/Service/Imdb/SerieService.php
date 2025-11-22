@@ -34,6 +34,7 @@ final class SerieService
     public function __construct(
         #[AutowireIterator('labstag.admincontroller')]
         private readonly iterable $controllers,
+        private RecommendationService $recommendationService,
         private AdminUrlGenerator $adminUrlGenerator,
         private MessageBusInterface $messageBus,
         private FileService $fileService,
@@ -135,6 +136,7 @@ final class SerieService
 
         $statuses = [
             $this->updateSerie($serie, $details),
+            $this->updateRecommendations($serie, $details),
             $this->updateOther($serie, $details),
             $this->setCertification($details, $serie),
             $this->setCitation($serie, $details),
@@ -376,6 +378,20 @@ final class SerieService
         }
 
         $serie->setImdb((string) $details['other']['imdb_id']);
+
+        return true;
+    }
+
+    private function updateRecommendations(Serie $serie, array $details): bool
+    {
+        $recommandations = $details['recommendations']['results'] ?? null;
+        if (is_null($recommandations) || !is_array($recommandations)) {
+            foreach ($serie->getRecommendations() as $recommendation) {
+                $serie->removeRecommendation($recommendation);
+            }
+        }
+
+        $this->recommendationService->setRecommendations($serie, $recommandations);
 
         return true;
     }

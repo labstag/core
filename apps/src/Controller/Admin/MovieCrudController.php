@@ -10,7 +10,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -22,83 +21,15 @@ use Labstag\Field\WysiwygField;
 use Labstag\Filter\CountriesFilter;
 use Labstag\Message\MovieAllMessage;
 use Labstag\Message\MovieMessage;
-use Labstag\Service\FileService;
-use Labstag\Service\JsonPaginatorService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieCrudController extends CrudControllerAbstract
 {
-    public function addWithTmdb(
-        AdminContext $adminContext,
-        TheMovieDbApi $theMovieDbApi,
-        MessageBusInterface $messageBus,
-    ): Response
-    {
-        $tmdbId = $adminContext->getRequest()->query->get('tmdb');
-        $name = $adminContext->getRequest()->query->get('name');
-        $data = $theMovieDbApi->movies()->getMovieExternalIds($tmdbId);
-        if (is_null($data)) {
-            return $this->redirectToRoute('admin_movie_index');
-        }
-
-        $imdbId             = $data['imdb_id'];
-        $repositoryAbstract = $this->getRepository();
-        $movie              = $repositoryAbstract->findOneBy(
-            ['imdb' => $imdbId]
-        );
-        if ($movie instanceof Movie) {
-            $this->addFlash(
-                'warning',
-                new TranslatableMessage(
-                    'The %name% movie is already present in the database',
-                    [
-                        '%name%' => $movie->getTitle(),
-                    ]
-                )
-            );
-
-            return $this->redirectToRoute(
-                'admin_movie_detail',
-                [
-                    'entityId' => $movie->getId(),
-                ]
-            );
-        }
-
-        $movie = new Movie();
-        $movie->setFile(false);
-        $movie->setEnable(true);
-        $movie->setAdult(false);
-        $movie->setImdb($imdbId);
-        $movie->setTitle($name);
-        $movie->setTmdb($tmdbId);
-
-        $repositoryAbstract->save($movie);
-        $messageBus->dispatch(new MovieMessage($movie->getId()));
-        $this->addFlash(
-            'success',
-            new TranslatableMessage(
-                'The %name% movie has been added to the database',
-                [
-                    '%name%' => $movie->getTitle(),
-                ]
-            )
-        );
-
-        return $this->redirectToRoute(
-            'admin_movie_detail',
-            [
-                'entityId' => $movie->getId(),
-            ]
-        );
-    }
-
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -109,7 +40,6 @@ class MovieCrudController extends CrudControllerAbstract
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
-        $this->setShowAllRecommendations();
 
         return $this->actionsFactory->show();
     }
@@ -199,7 +129,6 @@ class MovieCrudController extends CrudControllerAbstract
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);
-        $this->addRecommendationTab($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
@@ -266,38 +195,6 @@ class MovieCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
-    public function recommendationsAll(
-        FileService $fileService,
-        JsonPaginatorService $jsonPaginatorService,
-    ): Response
-    {
-        $file         = $fileService->getFileInAdapter('private', 'recommendations-movie.json');
-        if (!is_file($file)) {
-            return $this->redirectToRoute('admin_serie_index');
-        }
-
-        $pagination = $jsonPaginatorService->paginate($file, 'title');
-
-        return $this->render(
-            'admin/movie/recommendations.html.twig',
-            ['pagination' => $pagination]
-        );
-    }
-
-    public function setShowAllRecommendations(): void
-    {
-        if (!$this->actionsFactory->isTrash()) {
-            return;
-        }
-
-        $action = Action::new('recommendationsAll', new TranslatableMessage('all recommendations'), 'fas fa-terminal');
-        $action->displayAsLink();
-        $action->linkToCrudAction('recommendationsAll');
-        $action->createAsGlobalAction();
-
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
-    }
-
     public function tmdb(AdminContext $adminContext): RedirectResponse
     {
         $entityId = $adminContext->getRequest()->query->get('entityId');
@@ -353,29 +250,6 @@ class MovieCrudController extends CrudControllerAbstract
     {
         $entityFilter = EntityFilter::new('saga', new TranslatableMessage('Sagas'));
         $filters->add($entityFilter);
-    }
-
-    private function addRecommendationTab(string $pageName): void
-    {
-        if (Crud::PAGE_DETAIL !== $pageName) {
-            return;
-        }
-
-        $entity = $this->getContext()->getEntity()->getInstance();
-        $recommendations = $this->movieService->recommendations($entity);
-        if ([] === $recommendations) {
-            return;
-        }
-
-        $this->crudFieldFactory->addTab(
-            'recommendations',
-            FormField::addTab(new TranslatableMessage('Recommendations'))
-        );
-
-        $textField = TextField::new('id', new TranslatableMessage('Recommendations'));
-        $textField->setTemplatePath('admin/field/recommendations.html.twig');
-
-        $this->crudFieldFactory->addFieldsToTab('recommendations', [$textField]);
     }
 
     private function setUpdateAction(): void
