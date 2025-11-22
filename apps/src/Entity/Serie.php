@@ -30,6 +30,12 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column]
     protected ?bool $adult = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $backdrop = null;
+
+    #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'backdrop')]
+    protected ?File $backdropFile = null;
+
     /**
      * @var Collection<int, SerieCategory>
      */
@@ -75,12 +81,6 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $imdb = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    protected ?string $img = null;
-
-    #[Vich\UploadableField(mapping: 'serie', fileNameProperty: 'img')]
-    protected ?File $imgFile = null;
-
     #[ORM\Column(nullable: true)]
     protected ?bool $inProduction = null;
 
@@ -99,6 +99,12 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         ['position' => 'ASC']
     )]
     protected Collection $paragraphs;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $poster = null;
+
+    #[Vich\UploadableField(mapping: 'serie', fileNameProperty: 'poster')]
+    protected ?File $posterFile = null;
 
     #[ORM\Column(name: 'release_date', type: Types::DATE_MUTABLE, nullable: true)]
     protected ?DateTime $releaseDate = null;
@@ -137,12 +143,19 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     )]
     private Collection $companies;
 
+    /**
+     * @var Collection<int, Recommendation>
+     */
+    #[ORM\OneToMany(targetEntity: Recommendation::class, mappedBy: 'refserie')]
+    private Collection $recommendations;
+
     public function __construct()
     {
-        $this->categories = new ArrayCollection();
-        $this->seasons    = new ArrayCollection();
-        $this->paragraphs = new ArrayCollection();
-        $this->companies  = new ArrayCollection();
+        $this->categories      = new ArrayCollection();
+        $this->seasons         = new ArrayCollection();
+        $this->paragraphs      = new ArrayCollection();
+        $this->companies       = new ArrayCollection();
+        $this->recommendations = new ArrayCollection();
     }
 
     #[Override]
@@ -181,6 +194,16 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
+    public function addRecommendation(Recommendation $recommendation): static
+    {
+        if (!$this->recommendations->contains($recommendation)) {
+            $this->recommendations->add($recommendation);
+            $recommendation->setRefserie($this);
+        }
+
+        return $this;
+    }
+
     public function addSeason(Season $season): static
     {
         if (!$this->seasons->contains($season)) {
@@ -189,6 +212,16 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         }
 
         return $this;
+    }
+
+    public function getBackdrop(): ?string
+    {
+        return $this->backdrop;
+    }
+
+    public function getBackdropFile(): ?File
+    {
+        return $this->backdropFile;
     }
 
     /**
@@ -245,16 +278,6 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         return $this->imdb;
     }
 
-    public function getImg(): ?string
-    {
-        return $this->img;
-    }
-
-    public function getImgFile(): ?File
-    {
-        return $this->imgFile;
-    }
-
     public function getLastreleaseDate(): ?DateTime
     {
         return $this->lastreleaseDate;
@@ -271,6 +294,24 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     public function getParagraphs(): Collection
     {
         return $this->paragraphs;
+    }
+
+    public function getPoster(): ?string
+    {
+        return $this->poster;
+    }
+
+    public function getPosterFile(): ?File
+    {
+        return $this->posterFile;
+    }
+
+    /**
+     * @return Collection<int, Recommendation>
+     */
+    public function getRecommendations(): Collection
+    {
+        return $this->recommendations;
     }
 
     public function getReleaseDate(): ?DateTime
@@ -360,6 +401,16 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
+    public function removeRecommendation(Recommendation $recommendation): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->recommendations->removeElement($recommendation) && $recommendation->getRefserie() === $this) {
+            $recommendation->setRefserie(null);
+        }
+
+        return $this;
+    }
+
     public function removeSeason(Season $season): static
     {
         // set the owning side to null (unless already changed)
@@ -376,6 +427,27 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         $this->adult = $adult;
 
         return $this;
+    }
+
+    public function setBackdrop(?string $backdrop): void
+    {
+        $this->backdrop = $backdrop;
+
+        // Si l'image est supprimée (poster devient null), on force la mise à jour
+        if (null === $backdrop) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setBackdropFile(?File $backdropFile = null): void
+    {
+        $this->backdropFile = $backdropFile;
+
+        if ($backdropFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setCertification(?string $certification): static
@@ -437,27 +509,6 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
-    public function setImg(?string $img): void
-    {
-        $this->img = $img;
-
-        // Si l'image est supprimée (img devient null), on force la mise à jour
-        if (null === $img) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
-    }
-
-    public function setImgFile(?File $imgFile = null): void
-    {
-        $this->imgFile = $imgFile;
-
-        if ($imgFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
-    }
-
     public function setInProduction(?bool $inProduction): static
     {
         $this->inProduction = $inProduction;
@@ -477,6 +528,27 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         $this->meta = $meta;
 
         return $this;
+    }
+
+    public function setPoster(?string $poster): void
+    {
+        $this->poster = $poster;
+
+        // Si l'image est supprimée (poster devient null), on force la mise à jour
+        if (null === $poster) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setPosterFile(?File $posterFile = null): void
+    {
+        $this->posterFile = $posterFile;
+
+        if ($posterFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setReleaseDate(?DateTime $releaseDate): static

@@ -12,8 +12,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'labstag:all:recommandations', description: 'Add a short description for your command',)]
-class AllRecommandationsCommand extends Command
+#[AsCommand(name: 'labstag:all:recommendations', description: 'Add a short description for your command',)]
+class AllRecommendationsCommand extends Command
 {
     public function __construct(
         private SerieService $serieService,
@@ -28,38 +28,38 @@ class AllRecommandationsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle              = new SymfonyStyle($input, $output);
-        $recommandations           = $this->movieService->getAllRecommandations();
+        $recommendations           = $this->movieService->getAllRecommendations();
 
-        $filename = 'recommandations-movie.json';
+        $filename = 'recommendations-movie.json';
         $this->fileService->saveFileInAdapter(
             'private',
             $filename,
-            json_encode($recommandations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            json_encode($recommendations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
 
-        $symfonyStyle->success('Movie recommandations have been saved successfully.');
+        $symfonyStyle->success('Movie recommendations have been saved successfully.');
 
-        $recommandations           = $this->sagaService->getAllRecommandations();
+        $recommendations           = $this->sagaService->getAllRecommendations();
 
-        $filename = 'recommandations-saga.json';
+        $filename = 'recommendations-saga.json';
         $this->fileService->saveFileInAdapter(
             'private',
             $filename,
-            json_encode($recommandations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            json_encode($recommendations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
 
-        $symfonyStyle->success('Saga recommandations have been saved successfully.');
+        $symfonyStyle->success('Saga recommendations have been saved successfully.');
 
-        $recommandations           = $this->serieService->getAllRecommandations();
+        $recommendations           = $this->serieService->getAllRecommendations();
 
-        $filename = 'recommandations-serie.json';
+        $filename = 'recommendations-serie.json';
         $this->fileService->saveFileInAdapter(
             'private',
             $filename,
-            json_encode($recommandations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            json_encode($recommendations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
 
-        $symfonyStyle->success('Serie recommandations have been saved successfully.');
+        $symfonyStyle->success('Serie recommendations have been saved successfully.');
 
         return Command::SUCCESS;
     }

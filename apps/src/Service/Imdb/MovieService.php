@@ -32,6 +32,7 @@ final class MovieService
         #[AutowireIterator('labstag.admincontroller')]
         private readonly iterable $controllers,
         private AdminUrlGenerator $adminUrlGenerator,
+        private RecommendationService $recommendationService,
         private FileService $fileService,
         private CompanyService $companyService,
         private CategoryService $categoryService,
@@ -45,16 +46,16 @@ final class MovieService
     /**
      * @return mixed[]
      */
-    public function getAllRecommandations(): array
+    public function getAllRecommendations(): array
     {
         $movies          = $this->entityManager->getRepository(Movie::class)->findAll();
-        $recommandations = [];
+        $recommendations = [];
         foreach ($movies as $movie) {
             $result          = $this->theMovieDbApi->getDetailsMovie($movie);
-            $recommandations = $this->setJsonRecommandations($result, $movie, $recommandations);
+            $recommendations = $this->setJsonRecommendations($result, $movie, $recommendations);
         }
 
-        return $recommandations;
+        return $recommendations;
     }
 
     /**
@@ -97,11 +98,11 @@ final class MovieService
         return $year;
     }
 
-    public function recommandations(Movie $movie, array $recommandations = []): array
+    public function recommendations(Movie $movie, array $recommendations = []): array
     {
-        $jsonRecommandations = $this->theMovieDbApi->getDetailsMovie($movie);
+        $jsonRecommendations = $this->theMovieDbApi->getDetailsMovie($movie);
 
-        return $this->setJsonRecommandations($jsonRecommandations, $movie, $recommandations);
+        return $this->setJsonRecommendations($jsonRecommendations, $movie, $recommendations);
     }
 
     public function update(Movie $movie): bool
@@ -115,9 +116,11 @@ final class MovieService
         }
 
         $statuses = [
+            $this->updateRecommendations($movie, $details),
             $this->updateMovie($movie, $details),
             $this->updateOther($movie, $details),
-            $this->updateImageMovie($movie, $details),
+            $this->updateImagePoster($movie, $details),
+            $this->updateImageBackdrop($movie, $details),
             $this->updateSaga($movie, $details),
             $this->updateCategory($movie, $details),
             $this->updateCompany($movie, $details),
@@ -166,55 +169,55 @@ final class MovieService
         }
     }
 
-    private function setJsonRecommandations(?array $json, Movie $movie, array $recommandations = []): array
+    private function setJsonRecommendations(?array $json, Movie $movie, array $recommendations = []): array
     {
-        if (!is_array($json) || !isset($json['recommandations'])) {
-            return $recommandations;
+        if (!is_array($json) || !isset($json['recommendations'])) {
+            return $recommendations;
         }
 
-        foreach ($json['recommandations']['results'] as $recommandation) {
-            $tmdb              = $recommandation['id'];
-            if (isset($recommandations[$tmdb])) {
+        foreach ($json['recommendations']['results'] as $recommendation) {
+            $tmdb              = $recommendation['id'];
+            if (isset($recommendations[$tmdb])) {
                 continue;
             }
 
-            $recommandation = $this->setRecommandation($recommandation, $movie);
-            if (!is_array($recommandation)) {
+            $recommendation = $this->setRecommendation($recommendation, $movie);
+            if (!is_array($recommendation)) {
                 continue;
             }
 
-            $recommandations[$tmdb] = $recommandation;
+            $recommendations[$tmdb] = $recommendation;
         }
 
-        return $recommandations;
+        return $recommendations;
     }
 
-    private function setRecommandation(array $recommandation, Movie $movie): ?array
+    private function setRecommendation(array $recommendation, Movie $movie): ?array
     {
         $tmdbs            = $this->getAllJsonTmdb();
-        $tmdb             = $recommandation['id'];
+        $tmdb             = $recommendation['id'];
         if (in_array($tmdb, $tmdbs)) {
             return null;
         }
 
-        $recommandation['poster_path'] = $this->theMovieDbApi->images()->getPosterUrl(
-            $recommandation['poster_path'] ?? ''
+        $recommendation['poster_path'] = $this->theMovieDbApi->images()->getPosterUrl(
+            $recommendation['poster_path'] ?? ''
         );
-        $recommandation['backdrop_path'] = $this->theMovieDbApi->images()->getBackdropUrl(
-            $recommandation['backdrop_path'] ?? ''
+        $recommendation['backdrop_path'] = $this->theMovieDbApi->images()->getBackdropUrl(
+            $recommendation['backdrop_path'] ?? ''
         );
-        $recommandation['links'] = 'https://www.themoviedb.org/movie/' . $recommandation['id'];
-        $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $movie, $recommandation);
-        if ('' === $recommandation['release_date']) {
+        $recommendation['links'] = 'https://www.themoviedb.org/movie/' . $recommendation['id'];
+        $recommendation['add']   = $this->urlAddWithTmdb('addWithTmdb', $movie, $recommendation);
+        if ('' === $recommendation['release_date']) {
             return null;
         }
 
-        $recommandation['date'] = new DateTime($recommandation['release_date']);
-        if ($recommandation['date'] > new DateTime()) {
+        $recommendation['date'] = new DateTime($recommendation['release_date']);
+        if ($recommendation['date'] > new DateTime()) {
             return null;
         }
 
-        return $recommandation;
+        return $recommendation;
     }
 
     /**
@@ -260,14 +263,33 @@ final class MovieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateImageMovie(Movie $movie, array $details): bool
+    private function updateImageBackdrop(Movie $movie, array $details): bool
     {
-        $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
-        if (is_null($poster)) {
+        $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
+        if (is_null($backdrop)) {
             return false;
         }
 
-        if ('' !== (string) $movie->getImg()) {
+        try {
+            $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
+
+            // Télécharger l'image et l'écrire dans le fichier temporaire
+            file_put_contents($tempPath, file_get_contents($backdrop));
+            $this->fileService->setUploadedFile($tempPath, $movie, 'backdropFile');
+
+            return true;
+        } catch (Exception) {
+            return false;
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $details
+     */
+    private function updateImagePoster(Movie $movie, array $details): bool
+    {
+        $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
+        if (is_null($poster)) {
             return false;
         }
 
@@ -276,7 +298,7 @@ final class MovieService
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $movie, 'imgFile');
+            $this->fileService->setUploadedFile($tempPath, $movie, 'posterFile');
 
             return true;
         } catch (Exception) {
@@ -333,6 +355,20 @@ final class MovieService
         }
 
         $movie->setImdb((string) $details['other']['imdb_id']);
+
+        return true;
+    }
+
+    private function updateRecommendations(Movie $movie, array $details): bool
+    {
+        $recommandations = $details['recommendations']['results'] ?? null;
+        if (is_null($recommandations) || !is_array($recommandations)) {
+            foreach ($movie->getRecommendations() as $recommendation) {
+                $movie->removeRecommendation($recommendation);
+            }
+        }
+
+        $this->recommendationService->setRecommendations($movie, $recommandations);
 
         return true;
     }

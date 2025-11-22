@@ -34,6 +34,7 @@ final class SerieService
     public function __construct(
         #[AutowireIterator('labstag.admincontroller')]
         private readonly iterable $controllers,
+        private RecommendationService $recommendationService,
         private AdminUrlGenerator $adminUrlGenerator,
         private MessageBusInterface $messageBus,
         private FileService $fileService,
@@ -49,16 +50,16 @@ final class SerieService
     /**
      * @return mixed[]
      */
-    public function getAllRecommandations(): array
+    public function getAllRecommendations(): array
     {
         $series          = $this->serieRepository->findAll();
-        $recommandations = [];
+        $recommendations = [];
         foreach ($series as $serie) {
             $result            = $this->theMovieDbApi->getDetailsSerie($serie);
-            $recommandations   = $this->setJsonRecommandations($result, $serie, $recommandations);
+            $recommendations   = $this->setJsonRecommendations($result, $serie, $recommendations);
         }
 
-        return $recommandations;
+        return $recommendations;
     }
 
     /**
@@ -117,11 +118,11 @@ final class SerieService
         return $year;
     }
 
-    public function recommandations(Serie $serie, array $recommandations = []): array
+    public function recommendations(Serie $serie, array $recommendations = []): array
     {
-        $jsonRecommandations = $this->theMovieDbApi->getDetailsSerie($serie);
+        $jsonRecommendations = $this->theMovieDbApi->getDetailsSerie($serie);
 
-        return $this->setJsonRecommandations($jsonRecommandations, $serie, $recommandations);
+        return $this->setJsonRecommendations($jsonRecommendations, $serie, $recommendations);
     }
 
     public function update(Serie $serie): bool
@@ -135,13 +136,15 @@ final class SerieService
 
         $statuses = [
             $this->updateSerie($serie, $details),
+            $this->updateRecommendations($serie, $details),
             $this->updateOther($serie, $details),
             $this->setCertification($details, $serie),
             $this->setCitation($serie, $details),
             $this->setDescription($serie, $details),
             $this->setReleaseDate($serie, $details),
             $this->setLastreleaseDate($serie, $details),
-            $this->updateImageMovie($serie, $details),
+            $this->updateImageBackdrop($serie, $details),
+            $this->updateImagePoster($serie, $details),
             $this->updateCategory($serie, $details),
             $this->updateTrailer($serie, $details),
             $this->updateCompany($serie, $details),
@@ -210,27 +213,27 @@ final class SerieService
         return true;
     }
 
-    private function setJsonRecommandations(?array $json, Serie $serie, array $recommandations = []): array
+    private function setJsonRecommendations(?array $json, Serie $serie, array $recommendations = []): array
     {
-        if (!is_array($json) || !isset($json['recommandations'])) {
-            return $recommandations;
+        if (!is_array($json) || !isset($json['recommendations'])) {
+            return $recommendations;
         }
 
-        foreach ($json['recommandations']['results'] as $recommandation) {
-            $tmdb              = $recommandation['id'];
-            if (isset($recommandations[$tmdb])) {
+        foreach ($json['recommendations']['results'] as $recommendation) {
+            $tmdb              = $recommendation['id'];
+            if (isset($recommendations[$tmdb])) {
                 continue;
             }
 
-            $recommandation = $this->setRecommandation($recommandation, $serie);
-            if (!is_array($recommandation)) {
+            $recommendation = $this->setRecommendation($recommendation, $serie);
+            if (!is_array($recommendation)) {
                 continue;
             }
 
-            $recommandations[$tmdb] = $recommandation;
+            $recommendations[$tmdb] = $recommendation;
         }
 
-        return $recommandations;
+        return $recommendations;
     }
 
     private function setLastreleaseDate(Serie $serie, array $details): bool
@@ -243,32 +246,32 @@ final class SerieService
         return true;
     }
 
-    private function setRecommandation(array $recommandation, Serie $serie): ?array
+    private function setRecommendation(array $recommendation, Serie $serie): ?array
     {
         $tmdbs            = $this->getAllJsonTmdb();
-        $tmdb             = $recommandation['id'];
+        $tmdb             = $recommendation['id'];
         if (in_array($tmdb, $tmdbs)) {
             return null;
         }
 
-        $recommandation['poster_path'] = $this->theMovieDbApi->images()->getPosterUrl(
-            $recommandation['poster_path'] ?? ''
+        $recommendation['poster_path'] = $this->theMovieDbApi->images()->getPosterUrl(
+            $recommendation['poster_path'] ?? ''
         );
-        $recommandation['backdrop_path'] = $this->theMovieDbApi->images()->getBackdropUrl(
-            $recommandation['backdrop_path'] ?? ''
+        $recommendation['backdrop_path'] = $this->theMovieDbApi->images()->getBackdropUrl(
+            $recommendation['backdrop_path'] ?? ''
         );
-        $recommandation['links'] = 'https://www.themoviedb.org/tv/' . $recommandation['id'];
-        $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $serie, $recommandation);
-        if ('' === $recommandation['first_air_date']) {
+        $recommendation['links'] = 'https://www.themoviedb.org/tv/' . $recommendation['id'];
+        $recommendation['add']   = $this->urlAddWithTmdb('addWithTmdb', $serie, $recommendation);
+        if ('' === $recommendation['first_air_date']) {
             return null;
         }
 
-        $recommandation['date'] = new DateTime($recommandation['first_air_date']);
-        if ($recommandation['date'] > new DateTime()) {
+        $recommendation['date'] = new DateTime($recommendation['first_air_date']);
+        if ($recommendation['date'] > new DateTime()) {
             return null;
         }
 
-        return $recommandation;
+        return $recommendation;
     }
 
     private function setReleaseDate(Serie $serie, array $details): bool
@@ -325,14 +328,33 @@ final class SerieService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateImageMovie(Serie $serie, array $details): bool
+    private function updateImageBackdrop(Serie $serie, array $details): bool
     {
-        $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
-        if (is_null($poster)) {
+        $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
+        if (is_null($backdrop)) {
             return false;
         }
 
-        if ('' !== (string) $serie->getImg()) {
+        try {
+            $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
+
+            // Télécharger l'image et l'écrire dans le fichier temporaire
+            file_put_contents($tempPath, file_get_contents($backdrop));
+            $this->fileService->setUploadedFile($tempPath, $serie, 'backdropFile');
+
+            return true;
+        } catch (Exception) {
+            return false;
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $details
+     */
+    private function updateImagePoster(Serie $serie, array $details): bool
+    {
+        $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
+        if (is_null($poster)) {
             return false;
         }
 
@@ -341,7 +363,7 @@ final class SerieService
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $serie, 'imgFile');
+            $this->fileService->setUploadedFile($tempPath, $serie, 'posterFile');
 
             return true;
         } catch (Exception) {
@@ -356,6 +378,20 @@ final class SerieService
         }
 
         $serie->setImdb((string) $details['other']['imdb_id']);
+
+        return true;
+    }
+
+    private function updateRecommendations(Serie $serie, array $details): bool
+    {
+        $recommandations = $details['recommendations']['results'] ?? null;
+        if (is_null($recommandations) || !is_array($recommandations)) {
+            foreach ($serie->getRecommendations() as $recommendation) {
+                $serie->removeRecommendation($recommendation);
+            }
+        }
+
+        $this->recommendationService->setRecommendations($serie, $recommandations);
 
         return true;
     }

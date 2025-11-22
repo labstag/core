@@ -7,11 +7,11 @@
 {% endfor %}
 <a href="{{ site_path(season) }}">
     <div class="img">
-        <div class="background spoiler" data-bg="{{ site_asset(season, 'img') }}"></div>
+        <div class="background spoiler" data-bg="{{ site_asset(season, 'poster') }}"></div>
     </div>
     <div class="wrapper">
         <h3 class="title">{{ season.title }}</h3>
-        {% if firstEpisode.airDate is not null %}
+        {% if firstEpisode.airDate is defined and firstEpisode.airDate != '' %}
             <div class="dates">
                 {{ "From %start% to %end%"|trans({'%start%': firstEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full'), '%end%' : lastEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
             </div>

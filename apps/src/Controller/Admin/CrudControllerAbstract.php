@@ -27,6 +27,7 @@ use Labstag\Service\FileService;
 use Labstag\Service\FormService;
 use Labstag\Service\Imdb\EpisodeService;
 use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SagaService;
 use Labstag\Service\Imdb\SeasonService;
 use Labstag\Service\Imdb\SerieService;
 use Labstag\Service\ParagraphService;
@@ -64,6 +65,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         protected BlockService $blockService,
         protected EpisodeService $episodeService,
         protected MovieService $movieService,
+        protected SagaService $sagaService,
         protected ParagraphService $paragraphService,
         protected WorkflowService $workflowService,
         protected RequestStack $requestStack,

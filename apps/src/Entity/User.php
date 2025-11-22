@@ -114,6 +114,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     #[ORM\Column(length: 255, unique: true)]
     protected ?string $username = null;
 
+    /**
+     * @var Collection<int, Group>
+     */
+    #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'users')]
+    private Collection $groups;
+
     public function __construct()
     {
         $this->stories       = new ArrayCollection();
@@ -122,6 +128,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         $this->pages         = new ArrayCollection();
         $this->posts         = new ArrayCollection();
         $this->httpErrorLogs = new ArrayCollection();
+        $this->groups        = new ArrayCollection();
     }
 
     /**
@@ -164,6 +171,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         if (!$this->editos->contains($edito)) {
             $this->editos->add($edito);
             $edito->setRefuser($this);
+        }
+
+        return $this;
+    }
+
+    public function addGroup(Group $group): static
+    {
+        if (!$this->groups->contains($group)) {
+            $this->groups->add($group);
+            $group->addUser($this);
         }
 
         return $this;
@@ -250,6 +267,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function getEmail(): ?string
     {
         return $this->email;
+    }
+
+    /**
+     * @return Collection<int, Group>
+     */
+    public function getGroups(): Collection
+    {
+        return $this->groups;
     }
 
     /**
@@ -353,6 +378,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         if ($this->editos->removeElement($edito) && $edito->getRefuser() === $this
         ) {
             $edito->setRefuser(null);
+        }
+
+        return $this;
+    }
+
+    public function removeGroup(Group $group): static
+    {
+        if ($this->groups->removeElement($group)) {
+            $group->removeUser($this);
         }
 
         return $this;

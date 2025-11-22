@@ -178,7 +178,7 @@ class EpisodeCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('jsonEpisode', new TranslatableMessage('Json'));
+        $action = Action::new('jsonEpisode', new TranslatableMessage('Json'), 'fas fa-server');
         $action->linkToCrudAction('jsonEpisode');
         $action->setHtmlAttributes(
             ['target' => '_blank']

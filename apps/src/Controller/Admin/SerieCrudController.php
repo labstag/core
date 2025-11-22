@@ -11,7 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -22,83 +21,15 @@ use Labstag\Field\WysiwygField;
 use Labstag\Filter\CountriesFilter;
 use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
-use Labstag\Service\FileService;
-use Labstag\Service\JsonPaginatorService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SerieCrudController extends CrudControllerAbstract
 {
-    public function addWithTmdb(
-        AdminContext $adminContext,
-        TheMovieDbApi $theMovieDbApi,
-        MessageBusInterface $messageBus,
-    ): Response
-    {
-        $tmdbId = $adminContext->getRequest()->query->get('tmdb');
-        $name = $adminContext->getRequest()->query->get('name');
-        $data = $theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
-        if (is_null($data)) {
-            return $this->redirectToRoute('admin_serie_index');
-        }
-
-        $imdbId             = $data['imdb_id'];
-        $repositoryAbstract = $this->getRepository();
-        $serie              = $repositoryAbstract->findOneBy(
-            ['imdb' => $imdbId]
-        );
-        if ($serie instanceof Serie) {
-            $this->addFlash(
-                'warning',
-                new TranslatableMessage(
-                    'The %name% series is already present in the database',
-                    [
-                        '%name%' => $serie->getTitle(),
-                    ]
-                )
-            );
-
-            return $this->redirectToRoute(
-                'admin_serie_detail',
-                [
-                    'entityId' => $serie->getId(),
-                ]
-            );
-        }
-
-        $serie = new Serie();
-        $serie->setFile(false);
-        $serie->setEnable(true);
-        $serie->setAdult(false);
-        $serie->setImdb($imdbId);
-        $serie->setTitle($name);
-        $serie->setTmdb($tmdbId);
-
-        $repositoryAbstract->save($serie);
-        $messageBus->dispatch(new SerieMessage($serie->getId()));
-        $this->addFlash(
-            'success',
-            new TranslatableMessage(
-                'The %name% series has been added to the database',
-                [
-                    '%name%' => $serie->getTitle(),
-                ]
-            )
-        );
-
-        return $this->redirectToRoute(
-            'admin_serie_detail',
-            [
-                'entityId' => $serie->getId(),
-            ]
-        );
-    }
-
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -107,7 +38,6 @@ class SerieCrudController extends CrudControllerAbstract
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
-        $this->setShowAllRecommandations();
 
         return $this->actionsFactory->show();
     }
@@ -170,7 +100,18 @@ class SerieCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
-                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $this->crudFieldFactory->imageField(
+                    'poster',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    new TranslatableMessage('Poster')
+                ),
+                $this->crudFieldFactory->imageField(
+                    'backdrop',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    new TranslatableMessage('Backdrop')
+                ),
                 $this->crudFieldFactory->booleanField(
                     'inProduction',
                     (string) new TranslatableMessage('in Production')
@@ -195,16 +136,6 @@ class SerieCrudController extends CrudControllerAbstract
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);
-        if (Crud::PAGE_DETAIL === $pageName) {
-            $this->crudFieldFactory->addTab(
-                'recommandations',
-                FormField::addTab(new TranslatableMessage('Recommandations'))
-            );
-
-            $textField = TextField::new('id', new TranslatableMessage('Recommandations'));
-            $textField->setTemplatePath('admin/field/recommandations.html.twig');
-            $this->crudFieldFactory->addFieldsToTab('recommandations', [$textField]);
-        }
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
@@ -263,38 +194,6 @@ class SerieCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
-    public function recommandationsAll(
-        FileService $fileService,
-        JsonPaginatorService $jsonPaginatorService,
-    ): Response
-    {
-        $file         = $fileService->getFileInAdapter('private', 'recommandations-serie.json');
-        if (!is_file($file)) {
-            return $this->redirectToRoute('admin_serie_index');
-        }
-
-        $pagination = $jsonPaginatorService->paginate($file, 'name');
-
-        return $this->render(
-            'admin/serie/recommandations.html.twig',
-            ['pagination' => $pagination]
-        );
-    }
-
-    public function setShowAllRecommandations(): void
-    {
-        if (!$this->actionsFactory->isTrash()) {
-            return;
-        }
-
-        $action = Action::new('recommandationsAll', new TranslatableMessage('all recommendations'), 'fas fa-terminal');
-        $action->displayAsLink();
-        $action->linkToCrudAction('recommandationsAll');
-        $action->createAsGlobalAction();
-
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
-    }
-
     public function tmdb(AdminContext $adminContext): RedirectResponse
     {
         $entityId = $adminContext->getRequest()->query->get('entityId');
@@ -351,7 +250,7 @@ class SerieCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('jsonSerie', new TranslatableMessage('Json'));
+        $action = Action::new('jsonSerie', new TranslatableMessage('Json'), 'fas fa-server');
         $action->linkToCrudAction('jsonSerie');
         $action->setHtmlAttributes(
             ['target' => '_blank']

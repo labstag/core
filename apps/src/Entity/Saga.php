@@ -28,6 +28,12 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $backdrop = null;
+
+    #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'backdrop')]
+    protected ?File $backdropFile = null;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $description = null;
 
@@ -42,12 +48,6 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    protected ?string $img = null;
-
-    #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'img')]
-    protected ?File $imgFile = null;
 
     #[ORM\OneToOne(inversedBy: 'saga', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
@@ -72,6 +72,12 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     )]
     protected Collection $paragraphs;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $poster = null;
+
+    #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'poster')]
+    protected ?File $posterFile = null;
+
     #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
     #[Gedmo\SlugHandler(class: SagaSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
@@ -83,10 +89,17 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $tmdb = null;
 
+    /**
+     * @var Collection<int, Recommendation>
+     */
+    #[ORM\OneToMany(targetEntity: Recommendation::class, mappedBy: 'refsaga')]
+    private Collection $recommendations;
+
     public function __construct()
     {
-        $this->movies     = new ArrayCollection();
-        $this->paragraphs = new ArrayCollection();
+        $this->movies          = new ArrayCollection();
+        $this->paragraphs      = new ArrayCollection();
+        $this->recommendations = new ArrayCollection();
     }
 
     #[Override]
@@ -115,6 +128,26 @@ class Saga implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
+    public function addRecommendation(Recommendation $recommendation): static
+    {
+        if (!$this->recommendations->contains($recommendation)) {
+            $this->recommendations->add($recommendation);
+            $recommendation->setRefsaga($this);
+        }
+
+        return $this;
+    }
+
+    public function getBackdrop(): ?string
+    {
+        return $this->backdrop;
+    }
+
+    public function getBackdropFile(): ?File
+    {
+        return $this->backdropFile;
+    }
+
     public function getDescription(): ?string
     {
         return $this->description;
@@ -123,16 +156,6 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    public function getImg(): ?string
-    {
-        return $this->img;
-    }
-
-    public function getImgFile(): ?File
-    {
-        return $this->imgFile;
     }
 
     public function getMeta(): ?Meta
@@ -154,6 +177,24 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     public function getParagraphs(): Collection
     {
         return $this->paragraphs;
+    }
+
+    public function getPoster(): ?string
+    {
+        return $this->poster;
+    }
+
+    public function getPosterFile(): ?File
+    {
+        return $this->posterFile;
+    }
+
+    /**
+     * @return Collection<int, Recommendation>
+     */
+    public function getRecommendations(): Collection
+    {
+        return $this->recommendations;
     }
 
     public function getSlug(): ?string
@@ -198,6 +239,37 @@ class Saga implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
+    public function removeRecommendation(Recommendation $recommendation): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->recommendations->removeElement($recommendation) && $recommendation->getRefsaga() === $this) {
+            $recommendation->setRefsaga(null);
+        }
+
+        return $this;
+    }
+
+    public function setBackdrop(?string $backdrop): void
+    {
+        $this->backdrop = $backdrop;
+
+        // Si l'image est supprimée (poster devient null), on force la mise à jour
+        if (null === $backdrop) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setBackdropFile(?File $backdropFile = null): void
+    {
+        $this->backdropFile = $backdropFile;
+
+        if ($backdropFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
     public function setDescription(?string $description): static
     {
         $this->description = $description;
@@ -212,32 +284,32 @@ class Saga implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
-    public function setImg(?string $img): void
-    {
-        $this->img = $img;
-
-        // Si l'image est supprimée (img devient null), on force la mise à jour
-        if (null === $img) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
-    }
-
-    public function setImgFile(?File $imgFile = null): void
-    {
-        $this->imgFile = $imgFile;
-
-        if ($imgFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
-    }
-
     public function setMeta(Meta $meta): static
     {
         $this->meta = $meta;
 
         return $this;
+    }
+
+    public function setPoster(?string $poster): void
+    {
+        $this->poster = $poster;
+
+        // Si l'image est supprimée (poster devient null), on force la mise à jour
+        if (null === $poster) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setPosterFile(?File $posterFile = null): void
+    {
+        $this->posterFile = $posterFile;
+
+        if ($posterFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setSlug(?string $slug): static

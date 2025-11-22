@@ -3,7 +3,6 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
-use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Api\TheMovieDbApi;
@@ -26,6 +25,7 @@ final class SagaService
         #[AutowireIterator('labstag.admincontroller')]
         private readonly iterable $controllers,
         private LoggerInterface $logger,
+        private RecommendationService $recommendationService,
         private AdminUrlGenerator $adminUrlGenerator,
         private MessageBusInterface $messageBus,
         private SagaRepository $sagaRepository,
@@ -39,16 +39,16 @@ final class SagaService
     /**
      * @return mixed[]
      */
-    public function getAllRecommandations(): array
+    public function getAllRecommendations(): array
     {
         $sagas           = $this->sagaRepository->findAll();
-        $recommandations = [];
+        $recommendations = [];
         foreach ($sagas as $saga) {
             $result          = $this->theMovieDbApi->getDetailsSaga($saga);
-            $recommandations = $this->setJsonRecommandations($result, $recommandations);
+            $recommendations = $this->setJsonRecommendations($result, $recommendations);
         }
 
-        return $recommandations;
+        return $recommendations;
     }
 
     public function getSaga(array $data): Saga
@@ -89,11 +89,11 @@ final class SagaService
         return $sagas;
     }
 
-    public function recommandations(Saga $saga, array $recommandations = []): array
+    public function recommendations(Saga $saga, array $recommendations = []): array
     {
-        $jsonRecommandations = $this->theMovieDbApi->getDetailsSaga($saga);
+        $jsonRecommendations = $this->theMovieDbApi->getDetailsSaga($saga);
 
-        return $this->setJsonRecommandations($jsonRecommandations, $recommandations);
+        return $this->setJsonRecommendations($jsonRecommendations, $recommendations);
     }
 
     public function update(Saga $saga): bool
@@ -107,8 +107,10 @@ final class SagaService
         }
 
         $statuses = [
+            $this->updateRecommendations($saga, $details),
             $this->updateSaga($saga, $details),
-            $this->updateImageSaga($saga, $details),
+            $this->updateImagePoster($saga, $details),
+            $this->updateImageBackdrop($saga, $details),
         ];
 
         return in_array(true, $statuses, true);
@@ -125,27 +127,27 @@ final class SagaService
         return $this->jsonTmdb;
     }
 
-    private function setJsonRecommandations(?array $json, array $recommandations = []): array
+    private function setJsonRecommendations(?array $json, array $recommendations = []): array
     {
         if (!is_array($json) || !isset($json['tmdb']['parts'])) {
-            return $recommandations;
+            return $recommendations;
         }
 
-        foreach ($json['tmdb']['parts'] as $recommandation) {
-            $tmdb              = $recommandation['id'];
-            if (isset($recommandations[$tmdb])) {
+        foreach ($json['tmdb']['parts'] as $recommendation) {
+            $tmdb              = $recommendation['id'];
+            if (isset($recommendations[$tmdb])) {
                 continue;
             }
 
-            $recommandation = $this->setRecommandation($recommandation);
-            if (!is_array($recommandation)) {
+            $recommendation = $this->setRecommendation($recommendation);
+            if (!is_array($recommendation)) {
                 continue;
             }
 
-            $recommandations[$tmdb] = $recommandation;
+            $recommendations[$tmdb] = $recommendation;
         }
 
-        return $recommandations;
+        return $recommendations;
     }
 
     private function setName(string $name): string
@@ -155,42 +157,58 @@ final class SagaService
         return trim(str_replace('- Saga', '', $name));
     }
 
-    private function setRecommandation(array $recommandation): ?array
+    private function setRecommendation(array $recommendation): ?array
     {
         $tmdbs            = $this->getAllJsonTmdb();
-        $tmdb             = $recommandation['id'];
+        $tmdb             = $recommendation['id'];
         if (in_array($tmdb, $tmdbs)) {
             return null;
         }
 
-        $recommandation['poster_path'] = $this->theMovieDbApi->images()->getPosterUrl(
-            $recommandation['poster_path'] ?? ''
+        $recommendation['poster_path'] = $this->theMovieDbApi->images()->getPosterUrl(
+            $recommendation['poster_path'] ?? ''
         );
-        $recommandation['backdrop_path'] = $this->theMovieDbApi->images()->getBackdropUrl(
-            $recommandation['backdrop_path'] ?? ''
+        $recommendation['backdrop_path'] = $this->theMovieDbApi->images()->getBackdropUrl(
+            $recommendation['backdrop_path'] ?? ''
         );
-        $recommandation['links'] = 'https://www.themoviedb.org/movie/' . $recommandation['id'];
-        $recommandation['add']   = $this->urlAddWithTmdb('addWithTmdb', $recommandation);
-        if ('' === $recommandation['release_date']) {
+        $recommendation['links'] = 'https://www.themoviedb.org/movie/' . $recommendation['id'];
+        $recommendation['add']   = $this->urlAddWithTmdb('addWithTmdb', $recommendation);
+        if ('' === $recommendation['release_date']) {
             return null;
         }
 
-        $recommandation['date'] = new DateTime($recommandation['release_date']);
-        if ($recommandation['date'] > new DateTime()) {
+        $recommendation['date'] = new DateTime($recommendation['release_date']);
+        if ($recommendation['date'] > new DateTime()) {
             return null;
         }
 
-        return $recommandation;
+        return $recommendation;
     }
 
-    private function updateImageSaga(Saga $saga, array $data): bool
+    private function updateImageBackdrop(Saga $saga, array $data): bool
     {
-        $poster = $this->theMovieDbApi->images()->getPosterUrl($data['tmdb']['poster_path'] ?? '');
-        if (is_null($poster)) {
+        $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($data['tmdb']['backdrop_path'] ?? '');
+        if (is_null($backdrop)) {
             return false;
         }
 
-        if ('' !== (string) $saga->getImg()) {
+        try {
+            $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
+
+            // Télécharger l'image et l'écrire dans le fichier temporaire
+            file_put_contents($tempPath, file_get_contents($backdrop));
+            $this->fileService->setUploadedFile($tempPath, $saga, 'backdropFile');
+
+            return true;
+        } catch (Exception) {
+            return false;
+        }
+    }
+
+    private function updateImagePoster(Saga $saga, array $data): bool
+    {
+        $poster = $this->theMovieDbApi->images()->getPosterUrl($data['tmdb']['poster_path'] ?? '');
+        if (is_null($poster)) {
             return false;
         }
 
@@ -199,12 +217,26 @@ final class SagaService
 
             // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $saga, 'imgFile');
+            $this->fileService->setUploadedFile($tempPath, $saga, 'posterFile');
 
             return true;
         } catch (Exception) {
             return false;
         }
+    }
+
+    private function updateRecommendations(Saga $saga, array $details): bool
+    {
+        $recommandations = $details['tmdb']['parts'] ?? null;
+        if (is_null($recommandations) || !is_array($recommandations)) {
+            foreach ($saga->getRecommendations() as $recommendation) {
+                $saga->removeRecommendation($recommendation);
+            }
+        }
+
+        $this->recommendationService->setRecommendations($saga, $recommandations);
+
+        return true;
     }
 
     private function updateSaga(Saga $saga, array $details): bool

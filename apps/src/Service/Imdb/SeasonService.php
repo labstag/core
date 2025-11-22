@@ -99,7 +99,7 @@ final class SeasonService
 
         $statuses = [
             $this->updateSeason($season, $details),
-            $this->updateImage($season, $details),
+            $this->updateImagePoster($season, $details),
             $this->updateEpisodes($season, $details),
         ];
 
@@ -132,14 +132,10 @@ final class SeasonService
     /**
      * @param array<string, mixed> $details
      */
-    private function updateImage(Season $season, array $details): bool
+    private function updateImagePoster(Season $season, array $details): bool
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
-            return false;
-        }
-
-        if ('' !== (string) $season->getImg()) {
             return false;
         }
 
@@ -149,7 +145,7 @@ final class SeasonService
             // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($poster));
 
-            $this->fileService->setUploadedFile($tempPath, $season, 'imgFile');
+            $this->fileService->setUploadedFile($tempPath, $season, 'posterFile');
 
             return true;
         } catch (Exception) {

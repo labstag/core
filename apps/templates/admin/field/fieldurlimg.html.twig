@@ -1,0 +1,8 @@
+{% set html_id = 'ea-lightbox-' ~ entity.instance.id %}
+<a href="#" class="ea-lightbox-thumbnail" data-ea-lightbox-content-selector="#{{ html_id }}">
+    <img src="{{ field.value }}" class="img-fluid">
+</a>
+
+<div id="{{ html_id }}" class="ea-lightbox">
+    <img src="{{ field.value }}">
+</div>

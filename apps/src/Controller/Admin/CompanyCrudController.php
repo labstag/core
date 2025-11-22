@@ -137,7 +137,7 @@ class CompanyCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('jsonCompany', new TranslatableMessage('Json'));
+        $action = Action::new('jsonCompany', new TranslatableMessage('Json'), 'fas fa-server');
         $action->linkToCrudAction('jsonCompany');
         $action->setHtmlAttributes(
             ['target' => '_blank']
