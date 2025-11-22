@@ -1,7 +1,7 @@
 {% use "elements.html.twig" %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
 	<div class="first">
-        <div class="background" style="--image-url: url('{{ site_asset(movie, 'img') }}')"></div>
+        <div class="background" style="--image-url: url('{{ site_asset(movie, 'backdrop') }}')"></div>
         <div class="content">
             <div class="wrapper">
                 <h3 class="title">
@@ -104,7 +104,7 @@
                 <div class="trailer">
                     {% include "embed/video.html.twig" with {
                         'btntitle': 'Watch the trailer'|trans,
-                        'image': site_asset(movie, 'img'),
+                        'image': site_asset(movie, 'backdrop'),
                         'provider': oembed.provider,
                         'trailer': oembed.oembed
                     } %}

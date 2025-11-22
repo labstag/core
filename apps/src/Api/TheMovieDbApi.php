@@ -115,7 +115,7 @@ class TheMovieDbApi
             $details['tmdb']['belongs_to_collection']['id'] ?? '',
             $locale
         );
-        $details['recommandations'] = $this->movies()->getMovieRecommendations(
+        $details['recommendations'] = $this->movies()->getMovieRecommendations(
             $tmdbId,
             ['language' => $locale]
         );
@@ -187,7 +187,7 @@ class TheMovieDbApi
 
         $details['tmdb']            = $this->tvserie()->getDetails($tmdbId, $locale);
         $details['videos']          = $this->getVideosSerie($tmdbId);
-        $details['recommandations'] = $this->tvserie()->getTvRecommendations(
+        $details['recommendations'] = $this->tvserie()->getTvRecommendations(
             $tmdbId,
             ['language' => $locale]
         );

@@ -23,6 +23,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 class Season implements Stringable, EntityWithParagraphsInterface
 {
+    public $backdrop;
+    public $backdropFile;
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
@@ -50,12 +52,6 @@ class Season implements Stringable, EntityWithParagraphsInterface
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    protected ?string $img = null;
-
-    #[Vich\UploadableField(mapping: 'season', fileNameProperty: 'img')]
-    protected ?File $imgFile = null;
-
     #[ORM\OneToOne(inversedBy: 'season', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
@@ -74,6 +70,12 @@ class Season implements Stringable, EntityWithParagraphsInterface
         ['position' => 'ASC']
     )]
     protected Collection $paragraphs;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $poster = null;
+
+    #[Vich\UploadableField(mapping: 'season', fileNameProperty: 'poster')]
+    protected ?File $posterFile = null;
 
     #[ORM\ManyToOne(inversedBy: 'seasons')]
     #[ORM\JoinColumn(name: 'refserie_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
@@ -129,6 +131,16 @@ class Season implements Stringable, EntityWithParagraphsInterface
         return $this->airDate;
     }
 
+    public function getBackdrop(): ?string
+    {
+        return $this->backdrop;
+    }
+
+    public function getBackdropFile(): ?File
+    {
+        return $this->backdropFile;
+    }
+
     /**
      * @return Collection<int, Episode>
      */
@@ -140,16 +152,6 @@ class Season implements Stringable, EntityWithParagraphsInterface
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    public function getImg(): ?string
-    {
-        return $this->img;
-    }
-
-    public function getImgFile(): ?File
-    {
-        return $this->imgFile;
     }
 
     public function getMeta(): ?Meta
@@ -173,6 +175,16 @@ class Season implements Stringable, EntityWithParagraphsInterface
     public function getParagraphs(): Collection
     {
         return $this->paragraphs;
+    }
+
+    public function getPoster(): ?string
+    {
+        return $this->poster;
+    }
+
+    public function getPosterFile(): ?File
+    {
+        return $this->posterFile;
     }
 
     public function getRefserie(): ?Serie
@@ -230,27 +242,6 @@ class Season implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
-    public function setImg(?string $img): void
-    {
-        $this->img = $img;
-
-        // Si l'image est supprimée (img devient null), on force la mise à jour
-        if (null === $img) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
-    }
-
-    public function setImgFile(?File $imgFile = null): void
-    {
-        $this->imgFile = $imgFile;
-
-        if ($imgFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
-    }
-
     public function setMeta(Meta $meta): static
     {
         $this->meta = $meta;
@@ -270,6 +261,27 @@ class Season implements Stringable, EntityWithParagraphsInterface
         $this->overview = $overview;
 
         return $this;
+    }
+
+    public function setPoster(?string $poster): void
+    {
+        $this->poster = $poster;
+
+        // Si l'image est supprimée (poster devient null), on force la mise à jour
+        if (null === $poster) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setPosterFile(?File $posterFile = null): void
+    {
+        $this->posterFile = $posterFile;
+
+        if ($posterFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setRefserie(?Serie $serie): static

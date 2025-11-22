@@ -1,5 +1,5 @@
-<table class="table datagrid {{ (recommandations|length != 0) ? 'datagrid-empty' }}">
-    {% if recommandations|length != 0 %}
+<table class="table datagrid {{ (recommendations|length != 0) ? 'datagrid-empty' }}">
+    {% if recommendations|length != 0 %}
         <thead>
             <tr>
                 <th>{{ 'Title'|trans }}</th>
@@ -12,7 +12,7 @@
         </thead>
     {% endif %}
     <tbody>
-    {% for recommandation in recommandations %}
+    {% for recommandation in recommendations %}
         {% set title = (recommandation.title is defined ) ? recommandation.title : recommandation.name %}
         <tr>
             <td>{{ title }}</td>

@@ -33,7 +33,7 @@ class SerieData extends PageData implements DataInterface
         $tvSeries = Schema::tvSeries();
         $tvSeries->name($entity->getTitle());
 
-        $img = $this->siteService->asset($entity, 'img', true, true);
+        $img = $this->siteService->asset($entity, 'backdrop', true, true);
         if ('' !== $img) {
             $tvSeries->image($img);
         }

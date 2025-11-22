@@ -36,7 +36,7 @@ class SeasonData extends SerieData implements DataInterface
     public function getJsonLd(object $entity): object
     {
         $schema = $this->getJsonLdSeason($entity);
-        $img    = $this->siteService->asset($entity, 'img', true, true);
+        $img    = $this->siteService->asset($entity, 'backdrop', true, true);
         if ('' !== $img) {
             $schema->image($img);
         }
@@ -158,7 +158,7 @@ class SeasonData extends SerieData implements DataInterface
         $description = (string) $episode->getOverview();
         $clean       = trim(html_entity_decode(strip_tags($description), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
         $tvepisode->description($clean);
-        $img = $this->siteService->asset($episode, 'img', true, true);
+        $img = $this->siteService->asset($episode, 'backdrop', true, true);
         if ('' !== $img) {
             $tvepisode->image($img);
         }

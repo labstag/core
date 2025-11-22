@@ -54,11 +54,10 @@ final class EasyadminVoter extends Voter
     private function canExecuteAction(mixed $subject, UserInterface $user): bool
     {
         $actionSubject = $subject['action'];
-        if (is_string($actionSubject)) {
-            $entityClass = ($subject['entityFqcn'] ?? $subject['entity'] instanceof EntityDto ? $subject['entity']->getFqcn() : null);
-            if (is_null($entityClass)) {
-                dump($subject);
 
+        if (is_string($actionSubject)) {
+            $entityClass = $subject['entityFqcn'] ?? $subject['entity'] instanceof EntityDto ? $subject['entity']->getFqcn() : null;
+            if (is_null($entityClass)) {
                 return true;
             }
 

@@ -72,7 +72,12 @@ class SeasonCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->titleField(),
-                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $this->crudFieldFactory->imageField(
+                    'poster',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    new TranslatableMessage('Poster')
+                ),
                 $textField,
                 AssociationField::new('refserie', new TranslatableMessage('Serie')),
                 IntegerField::new('number', new TranslatableMessage('Number')),

@@ -35,7 +35,7 @@ class SagaCrudController extends CrudControllerAbstract
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
-        $this->setShowAllRecommandations();
+        $this->setShowAllRecommendations();
 
         return $this->actionsFactory->show();
     }
@@ -68,13 +68,24 @@ class SagaCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->titleField(),
-                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $this->crudFieldFactory->imageField(
+                    'poster',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    new TranslatableMessage('Poster')
+                ),
+                $this->crudFieldFactory->imageField(
+                    'backdrop',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    new TranslatableMessage('Backdrop')
+                ),
                 $textField,
                 $wysiwygField,
                 $this->moviesFieldForPage(self::getEntityFqcn(), $pageName),
             ]
         );
-        $this->addRecommandationTab($pageName);
+        $this->addRecommendationTab($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
@@ -139,12 +150,12 @@ class SagaCrudController extends CrudControllerAbstract
         return $associationField;
     }
 
-    public function recommandationsAll(
+    public function recommendationsAll(
         FileService $fileService,
         JsonPaginatorService $jsonPaginatorService,
     ): Response
     {
-        $file         = $fileService->getFileInAdapter('private', 'recommandations-saga.json');
+        $file         = $fileService->getFileInAdapter('private', 'recommendations-saga.json');
         if (!is_file($file)) {
             return $this->redirectToRoute('admin_saga_index');
         }
@@ -152,20 +163,20 @@ class SagaCrudController extends CrudControllerAbstract
         $pagination = $jsonPaginatorService->paginate($file, 'title');
 
         return $this->render(
-            'admin/saga/recommandations.html.twig',
+            'admin/saga/recommendations.html.twig',
             ['pagination' => $pagination]
         );
     }
 
-    public function setShowAllRecommandations(): void
+    public function setShowAllRecommendations(): void
     {
         if (!$this->actionsFactory->isTrash()) {
             return;
         }
 
-        $action = Action::new('recommandationsAll', new TranslatableMessage('all recommendations'), 'fas fa-terminal');
+        $action = Action::new('recommendationsAll', new TranslatableMessage('all recommendations'), 'fas fa-terminal');
         $action->displayAsLink();
-        $action->linkToCrudAction('recommandationsAll');
+        $action->linkToCrudAction('recommendationsAll');
         $action->createAsGlobalAction();
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
@@ -207,27 +218,27 @@ class SagaCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_saga_index');
     }
 
-    private function addRecommandationTab(string $pageName): void
+    private function addRecommendationTab(string $pageName): void
     {
         if (Crud::PAGE_DETAIL !== $pageName) {
             return;
         }
 
         $entity = $this->getContext()->getEntity()->getInstance();
-        $recommandations = $this->sagaService->recommandations($entity);
-        if ([] === $recommandations) {
+        $recommendations = $this->sagaService->recommendations($entity);
+        if ([] === $recommendations) {
             return;
         }
 
         $this->crudFieldFactory->addTab(
-            'recommandations',
-            FormField::addTab(new TranslatableMessage('Recommandations'))
+            'recommendations',
+            FormField::addTab(new TranslatableMessage('Recommendations'))
         );
 
-        $textField = TextField::new('id', new TranslatableMessage('Recommandations'));
-        $textField->setTemplatePath('admin/field/recommandations.html.twig');
+        $textField = TextField::new('id', new TranslatableMessage('Recommendations'));
+        $textField->setTemplatePath('admin/field/recommendations.html.twig');
 
-        $this->crudFieldFactory->addFieldsToTab('recommandations', [$textField]);
+        $this->crudFieldFactory->addFieldsToTab('recommendations', [$textField]);
     }
 
     private function setUpdateAction(): void

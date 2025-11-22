@@ -9,7 +9,7 @@
                 <div class="swiper-wrapper">
                     {% for movie in movies %}
                         <div class="swiper-slide teaser teaser-movie">
-                            <div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}" title="{{ movie.title|e('html_attr') }}"></div>
+                            <div class="background spoiler" data-bg="{{ site_asset(movie, 'poster') }}" title="{{ movie.title|e('html_attr') }}"></div>
                         </div>
                     {% endfor %}
                 </div>
