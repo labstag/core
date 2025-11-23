@@ -390,6 +390,11 @@ class DashboardController extends AbstractDashboardController
                 UserCrudController::getEntityFqcn(),
             ],
             [
+                new TranslatableMessage('Group'),
+                'fa fa-users',
+                GroupCrudController::getEntityFqcn(),
+            ],
+            [
                 new TranslatableMessage('Ban IP'),
                 'fas fa-ban',
                 BanIpCrudController::getEntityFqcn(),
@@ -414,6 +419,12 @@ class DashboardController extends AbstractDashboardController
         foreach ($items as [$label, $icon, $fqcn]) {
             yield MenuItem::linkToCrud($label, $icon, $fqcn);
         }
+        
+        yield MenuItem::linkToRoute(
+                new TranslatableMessage('Permissions'),
+                'fa fa-user-shield',
+                'admin_permission'
+        );
     }
 
     /**

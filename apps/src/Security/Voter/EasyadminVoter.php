@@ -6,6 +6,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\ActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\MenuItemDto;
 use EasyCorp\Bundle\EasyAdminBundle\Security\Permission;
+use Labstag\Entity\Permission as EntityPermission;
+use Labstag\Entity\User;
+use Labstag\Repository\PermissionRepository;
 use ReflectionClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -16,6 +19,7 @@ final class EasyadminVoter extends Voter
 {
     public function __construct(
         private Security $security,
+        private PermissionRepository $permissionRepository,
     )
     {
     }
@@ -63,18 +67,18 @@ final class EasyadminVoter extends Voter
 
             $reflectionClass = new ReflectionClass($entityClass);
 
-            return $this->getPermission($user);
+            return $this->getPermission($actionSubject, $reflectionClass->getShortName(), $user);
         }
 
         if ($actionSubject instanceof ActionDto) {
             $entityClass = $subject['entity'] instanceof EntityDto ? $subject['entity']->getFqcn() : null;
             if (is_null($entityClass)) {
-                return $this->getPermission($user);
+                return $this->getPermission($subject['action']->getName(), $subject['action']->getType(), $user);
             }
 
             $reflectionClass = new ReflectionClass($entityClass);
 
-            return $this->getPermission($user);
+            return $this->getPermission($subject['action']->getName(), $reflectionClass->getShortName(), $user);
         }
 
         return true;
@@ -107,16 +111,48 @@ final class EasyadminVoter extends Voter
         return null;
     }
 
-    private function getPermission(UserInterface $user): bool
+    private function getPermission($entityClass, $shortname, UserInterface $user): bool
     {
-        return $this->security->isGrantedForUser($user, 'ROLE_ADMIN');
+        $codes =[$shortname, $entityClass];
+        $code = strtoupper(implode('_', $codes));
+
+        $permission = $this->permissionRepository->findOneBy(
+            [
+                'title' => $code,
+            ]
+        );
+        if (!$permission instanceof EntityPermission) {
+            $permission = new EntityPermission();
+            $permission->setTitle($code);
+            $this->permissionRepository->save($permission);
+        }
+
+        if (!$this->security->isGrantedForUser($user, 'ROLE_ADMIN')) {
+            return false;
+        }
+
+        if ($this->security->isGrantedForUser($user, 'ROLE_SUPER_ADMIN')) {
+            return true;
+        }
+        
+        if ($user instanceof User) {
+            return false;
+        }
+
+        $groups = $user->getGroups();
+
+        foreach ($groups as $group) {
+            if ($group->getPermissions()->contains($permission)) {
+                return true;
+            }
+        }
+
     }
 
     private function menuCrud(MenuItemDto $menuItemDto, UserInterface $user): bool
     {
         $routeParams     = $menuItemDto->getRouteParameters();
-        new ReflectionClass($routeParams['entityFqcn']);
-
-        return $this->getPermission($user);
+        $reflectionClass = new ReflectionClass($routeParams['entityFqcn']);
+        return $this->getPermission($reflectionClass->getShortName(), 'CRUD', $user);
     }
 }

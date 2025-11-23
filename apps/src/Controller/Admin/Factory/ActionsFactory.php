@@ -275,13 +275,18 @@ class ActionsFactory
         $this->add(Crud::PAGE_INDEX, $action);
     }
 
+    public function disableDelete(): void
+    {
+        $this->actions->disable(Action::BATCH_DELETE);
+    }
+
     private function addTrashMode(): void
     {
         if ($this->isTrash()) {
             return;
         }
 
-        $this->actions->disable(Action::BATCH_DELETE);
+        $this->disableDelete();
         $this->actions->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE);
         $this->actions->disable(Action::DELETE);
 

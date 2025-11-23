@@ -15,6 +15,20 @@ class SagaRepository extends RepositoryAbstract
         parent::__construct($managerRegistry, Saga::class);
     }
 
+    public function getAllActivate(): mixed
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->where('s.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        $queryBuilder->setParameter('hide', false);
+        $queryBuilder->orderBy('s.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'page-activate');
+
+        return $query->getResult();
+    }
+
     /**
      * @return array<Saga>
      */

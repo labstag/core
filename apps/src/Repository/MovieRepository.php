@@ -19,6 +19,20 @@ class MovieRepository extends RepositoryAbstract
         parent::__construct($managerRegistry, Movie::class);
     }
 
+    public function getAllActivate(): mixed
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->where('m.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        $queryBuilder->setParameter('hide', false);
+        $queryBuilder->orderBy('m.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'page-activate');
+
+        return $query->getResult();
+    }
+
     /**
      * @return array<string, mixed>
      */

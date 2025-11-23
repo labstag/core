@@ -5,15 +5,16 @@ namespace Labstag\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\RecommendationRepository;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: RecommendationRepository::class)]
 class Recommendation
 {
-
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::GUID, unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    protected ?string $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $overview = null;
@@ -39,7 +40,7 @@ class Recommendation
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tmdb = null;
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
     }

@@ -5,8 +5,10 @@ namespace Labstag\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
+use Labstag\Entity\Saga;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
@@ -46,6 +48,10 @@ final class SitemapService
 
         if ($all) {
             $tabs = array_merge($tabs, $this->getDataSerie());
+        }
+
+        if ($all) {
+            $tabs = array_merge($tabs, $this->getDataMovie());
         }
 
         $this->parent = [];
@@ -126,6 +132,22 @@ final class SitemapService
         }
 
         return array_merge($this->setTabs($series), $this->setTabs($seasons));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getDataMovie(): array
+    {
+        $listing = $this->slugService->getPageByType(PageEnum::MOVIES->value);
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
+
+        $movies           = $this->getDataFromRepository(Movie::class);
+        $sagas = $this->getDataFromRepository(Saga::class);
+
+        return array_merge($this->setTabs($movies), $this->setTabs($sagas));
     }
 
     /**

@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
@@ -89,7 +90,7 @@ class RecommendationCrudController extends CrudControllerAbstract
             );
 
             return $this->redirectToRoute(
-                'admin_serie_edit',
+                'admin_serie_detail',
                 [
                     'entityId' => $serie->getId(),
                 ]
@@ -164,6 +165,7 @@ class RecommendationCrudController extends CrudControllerAbstract
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->actionsFactory->setReadOnly(true);
         $this->setAddToBdd();
+        $this->actionsFactory->disableDelete();
 
         return $this->actionsFactory->show();
     }
@@ -203,6 +205,7 @@ class RecommendationCrudController extends CrudControllerAbstract
                 $imgField,
                 TextField::new('title', new TranslatableMessage('Title')),
                 TextField::new('overview', new TranslatableMessage('Overview')),
+                DateField::new('releaseDate', new TranslatableMessage('Release date')),
             ]
         );
 
