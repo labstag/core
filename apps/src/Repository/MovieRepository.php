@@ -24,11 +24,10 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->setParameter('hide', false);
         $queryBuilder->orderBy('m.createdAt', 'DESC');
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'page-activate');
+        $query->enableResultCache(3600, 'movies-activate');
 
         return $query->getResult();
     }

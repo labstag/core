@@ -20,11 +20,10 @@ class SagaRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->where('s.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->setParameter('hide', false);
         $queryBuilder->orderBy('s.createdAt', 'DESC');
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'page-activate');
+        $query->enableResultCache(3600, 'sagas-activate');
 
         return $query->getResult();
     }
