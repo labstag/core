@@ -1625,11 +1625,11 @@
         <source>Companies</source>
         <target>Entreprises</target>
       </trans-unit>
-      <trans-unit id="JNV4fsz" resname="Update recommendations">
+      <trans-unit id="qoy9Hfw" resname="Update recommendations">
         <source>Update recommendations</source>
         <target>Mettre à jour les recommandations</target>
       </trans-unit>
-      <trans-unit id="T31caQj" resname="all recommendations">
+      <trans-unit id="Zsyeyyf" resname="all recommendations">
         <source>all recommendations</source>
         <target>toutes les recommandations</target>
       </trans-unit>
@@ -1641,13 +1641,49 @@
         <source>TMDB page for the movie</source>
         <target>Page TMDB du film</target>
       </trans-unit>
-      <trans-unit id="y1pACaa" resname="Movies recommendations">
+      <trans-unit id="1JMzW_6" resname="Movies recommendations">
         <source>Movies recommendations</source>
         <target>Recommandations de films</target>
       </trans-unit>
-      <trans-unit id="CwxYktN" resname="Series recommendations">
+      <trans-unit id="9rUdeJB" resname="Series recommendations">
         <source>Series recommendations</source>
         <target>Recommandations de séries</target>
+      </trans-unit>
+      <trans-unit id="tfHGWb6" resname="Groups">
+        <source>Groups</source>
+        <target>Groupes</target>
+      </trans-unit>
+      <trans-unit id="52xWFcB" resname="Recommendation">
+        <source>Recommendation</source>
+        <target>Recommandation</target>
+      </trans-unit>
+      <trans-unit id="FKBV_N9" resname="Recommendations">
+        <source>Recommendations</source>
+        <target>Recommandations</target>
+      </trans-unit>
+      <trans-unit id="AH_z5.u" resname="addToBdd">
+        <source>addToBdd</source>
+        <target>Ajouter à la base de données</target>
+      </trans-unit>
+      <trans-unit id="ZqmQ97D" resname="Group">
+        <source>Group</source>
+        <target>Groupe</target>
+      </trans-unit>
+      <trans-unit id="Pb977EF" resname="Permissions">
+        <source>Permissions</source>
+        <target>Permissions</target>
+      </trans-unit>
+      <trans-unit id="LsBYlrB" resname="Permission Management">
+        <source>Permission Management</source>
+        <target>Gestion des permissions</target>
+      </trans-unit>
+      <trans-unit id="FO0mWWn" resname="Import redirections">
+        <source>Import redirections</source>
+        <target>Importer les redirections</target>
+      </trans-unit>
+      <trans-unit id="MrWrNW9" resname="Position Management">
+        <source>Position Management</source>
+        <target>Gestion des positions</target>
       </trans-unit>
     </body>
   </file>
