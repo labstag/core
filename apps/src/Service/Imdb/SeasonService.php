@@ -111,6 +111,10 @@ final class SeasonService
         if (isset($details['tmdb']['episodes']) && is_array($details['tmdb']['episodes'])) {
             foreach ($details['tmdb']['episodes'] as $episodeData) {
                 $episode = $this->episodeService->getEpisode($season, $episodeData);
+                if (is_null($episode)) {
+                    continue;
+                }
+
                 $this->episodeService->save($episode);
             }
         }

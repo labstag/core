@@ -39,6 +39,12 @@ final class EpisodeService
         $episode->setTitle($data['name']);
         $episode->setNumber($data['episode_number']);
 
+        
+        $details = $this->theMovieDbApi->getDetailsEpisode($episode);
+        if (isset($details['tmdb']) && !is_null($details['tmdb'])) {
+            return null;
+        }
+
         return $episode;
     }
 
@@ -55,11 +61,16 @@ final class EpisodeService
         $this->episodeRepository->save($episode);
     }
 
+    public function delete(Episode $episode): void
+    {
+        $this->episodeRepository->delete($episode);
+    }
+
     public function update(Episode $episode): bool
     {
         $details = $this->theMovieDbApi->getDetailsEpisode($episode);
         if (!isset($details['tmdb']) || is_null($details['tmdb'])) {
-            $this->episodeRepository->delete($episode);
+            $this->delete($episode);
 
             return false;
         }
