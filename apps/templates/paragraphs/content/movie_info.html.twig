@@ -14,17 +14,17 @@
             {% if movie.trailer != '' %}
                 {% set oembed = oembed(movie.trailer) %}
                 {% if oembed.oembed == '' %}
-                    <div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}"></div>
+                    <div class="background spoiler" data-bg="{{ site_asset(movie, 'backdrop') }}"></div>
                 {% else %}
                     {% include "embed/video.html.twig" with {
                         'btntitle': 'Watch the trailer'|trans,
-                        'image': site_asset(movie, 'img'),
+                        'image': site_asset(movie, 'backdrop'),
                         'provider': oembed.provider,
                         'trailer': oembed.oembed
                     } %}
                 {% endif %}
             {% else %}
-                <div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}"></div>
+                <div class="background spoiler" data-bg="{{ site_asset(movie, 'backdrop') }}"></div>
             {% endif %}
             <div class="info">
                 <div class="description html-content">{{ movie.description|raw }}</div>

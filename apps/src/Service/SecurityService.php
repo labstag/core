@@ -264,16 +264,13 @@ final class SecurityService
                 if ((str_starts_with((string) $destination, 'http://') || str_starts_with(
                     (string) $destination,
                     'https://'
-                )) && str_starts_with(
-                    $pathinfo,
-                    '/'
-                )
+                )) && str_starts_with($pathinfo, '/')
                 ) {
                     $pathinfo = substr($pathinfo, 1);
                 }
 
                 $newUrl = preg_replace('#' . $redirection->getSource() . '#', (string) $destination, $pathinfo);
-                if (str_starts_with($newUrl, '/')) {
+                if (str_starts_with((string) $newUrl, '/')) {
                     $request = $this->requestStack->getCurrentRequest();
                     if (!is_null($request)) {
                         $newUrl = $request->getSchemeAndHttpHost() . $newUrl;
