@@ -42,12 +42,12 @@ class AdminExtensionRuntime implements RuntimeExtensionInterface
         return '';
     }
 
-    public function recommandations(object $entity): array
+    public function recommendations(object $entity): array
     {
         return match (true) {
-            $entity instanceof Movie => $this->movieService->recommandations($entity),
-            $entity instanceof Serie => $this->serieService->recommandations($entity),
-            $entity instanceof Saga  => $this->sagaService->recommandations($entity),
+            $entity instanceof Movie => $this->movieService->recommendations($entity),
+            $entity instanceof Serie => $this->serieService->recommendations($entity),
+            $entity instanceof Saga  => $this->sagaService->recommendations($entity),
             default                  => [],
         };
     }

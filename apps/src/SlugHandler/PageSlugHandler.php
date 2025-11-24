@@ -110,10 +110,10 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
             return;
         }
 
-        $wrapper                 = AbstractWrapper::wrap($object, $this->objectManager);
+        $wrapper                          = AbstractWrapper::wrap($object, $this->objectManager);
         $classMetadata                    = $wrapper->getMetadata();
-        $target                  = $wrapper->getPropertyValue($config['slug']);
-        $config['pathSeparator'] = $this->usedPathSeparator;
+        $target                           = $wrapper->getPropertyValue($config['slug']);
+        $config['pathSeparator']          = $this->usedPathSeparator;
         $sluggableAdapter->replaceRelative($object, $config, $target . $config['pathSeparator'], $slug);
         $uow = $this->objectManager->getUnitOfWork();
         // update in memory objects
@@ -181,7 +181,15 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
         }
     }
 
-    private function otherObjects(SluggableAdapter $sluggableAdapter, $objects, $meta, array $config, $target, &$slug, $uow): void
+    private function otherObjects(
+        SluggableAdapter $sluggableAdapter,
+        $objects,
+        $meta,
+        array $config,
+        $target,
+        &$slug,
+        $uow,
+    ): void
     {
         foreach ($objects as $object) {
             // @todo: Remove the check against `method_exists()` in the next major release.
@@ -202,7 +210,7 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
         }
     }
 
-    private function setHome(\Gedmo\Sluggable\Mapping\Event\SluggableAdapter $sluggableAdapter, $object): void
+    private function setHome(SluggableAdapter $sluggableAdapter, $object): void
     {
         $objectManager    = $sluggableAdapter->getObjectManager();
         $classMetadata    = $objectManager->getClassMetadata($object::class);

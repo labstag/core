@@ -10,6 +10,17 @@
   width: 100%;
 }
 
+.table-permissions{
+  tbody{
+    tr:first-child {
+      th {
+        background-color: #eef;
+        color: #000;
+      }
+    }
+  }
+}
+
 .form-group:has(textarea) {
   display: flex;
   flex-direction: column;

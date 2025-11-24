@@ -23,7 +23,7 @@
     {% set title_icon_title = 'Not in production'|trans %}
 {% endif %}
 <a href="{{ site_path(serie) }}">
-    <div class="background spoiler" data-bg="{{ site_asset(serie, 'img') }}">
+    <div class="background spoiler" data-bg="{{ site_asset(serie, 'poster') }}">
         {% if serie.releaseDate != '' %}
             <span class="year">
                 {{ serie.releaseDate|date('Y') }}

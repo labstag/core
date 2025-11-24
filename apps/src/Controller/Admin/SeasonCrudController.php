@@ -72,7 +72,12 @@ class SeasonCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->titleField(),
-                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $this->crudFieldFactory->imageField(
+                    'poster',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    new TranslatableMessage('Poster')
+                ),
                 $textField,
                 AssociationField::new('refserie', new TranslatableMessage('Serie')),
                 IntegerField::new('number', new TranslatableMessage('Number')),
@@ -208,7 +213,7 @@ class SeasonCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('jsonSeason', new TranslatableMessage('Json'));
+        $action = Action::new('jsonSeason', new TranslatableMessage('Json'), 'fas fa-server');
         $action->linkToCrudAction('jsonSeason');
         $action->setHtmlAttributes(
             ['target' => '_blank']

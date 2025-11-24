@@ -46,6 +46,19 @@ class SagaRepository extends RepositoryAbstract
         return $query->getResult();
     }
 
+    public function getAllActivate(): mixed
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->where('s.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        $queryBuilder->orderBy('s.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'sagas-activate');
+
+        return $query->getResult();
+    }
+
     /**
      * @return array<Saga>
      */

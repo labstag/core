@@ -13,7 +13,7 @@ class AdminExtension extends AbstractExtension
     {
         return [
             new TwigFunction('admin_url', [AdminExtensionRuntime::class, 'url']),
-            new TwigFunction('admin_recommandations', [AdminExtensionRuntime::class, 'recommandations']),
+            new TwigFunction('admin_recommendations', [AdminExtensionRuntime::class, 'recommendations']),
             new TwigFunction('admin_name', [AdminExtensionRuntime::class, 'name']),
         ];
     }

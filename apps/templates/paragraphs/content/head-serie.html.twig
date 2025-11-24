@@ -14,7 +14,7 @@
 {% endif %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
     <div class="first">
-        <div class="background" style="--image-url: url('{{ site_asset(serie, 'img') }}')"></div>
+        <div class="background" style="--image-url: url('{{ site_asset(serie, 'backdrop') }}')"></div>
         <div class="content">
             <div class="wrapper">
                 <h3 class="title {{ title_icon }}" title="{{ title_icon_title|e('html_attr') }}">{{ serie.title }}</h3>
@@ -80,7 +80,7 @@
                 <div class="trailer">
                     {% include "embed/video.html.twig" with {
                         'btntitle': 'Watch the trailer'|trans,
-                        'image': site_asset(serie, 'img'),
+                        'image': site_asset(serie, 'backdrop'),
                         'provider': oembed.provider,
                         'trailer': oembed.oembed
                     } %}

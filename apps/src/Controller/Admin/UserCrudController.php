@@ -69,6 +69,9 @@ class UserCrudController extends CrudControllerAbstract
         $textField->setRequired(false);
         $textField->onlyOnForms();
 
+        $associationField = AssociationField::new('groups', new TranslatableMessage('Groups'));
+        $associationField->setFormTypeOption('by_reference', false);
+
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
@@ -77,6 +80,7 @@ class UserCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $choiceField,
                 $textField,
+                $associationField,
             ]
         );
         if (Crud::PAGE_NEW === $pageName) {

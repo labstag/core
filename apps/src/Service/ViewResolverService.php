@@ -36,11 +36,13 @@ final class ViewResolverService
             return $this->requestCache[$cacheKey];
         }
 
-        $data = [
+        $reflectionClass = new ReflectionClass($entity);
+        $data            = [
             'entity'     => $entity,
             'paragraphs' => $entity->getParagraphs()->getValues(),
-            'img'        => $entity->getImg(),
         ];
+
+        $data['img'] = $reflectionClass->hasMethod('getImg') ? $entity->getImg() : $entity->getPoster();
 
         if (method_exists($entity, 'getTags')) {
             $data['tags'] = $entity->getTags();

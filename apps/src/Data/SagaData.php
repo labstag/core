@@ -12,6 +12,21 @@ use Symfony\Component\Routing\RouterInterface;
 class SagaData extends PageData implements DataInterface
 {
     #[\Override]
+    public function asset(mixed $entity, string $field): string
+    {
+        $asset = $this->fileService->asset($entity, $field);
+        if ('' !== $asset) {
+            return $asset;
+        }
+
+        if ('backdrop' === $field) {
+            return $this->fileService->asset($entity, 'poster');
+        }
+
+        return $this->fileService->asset($entity, $field);
+    }
+
+    #[\Override]
     public function generateSlug(object $entity): string
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
@@ -36,7 +51,7 @@ class SagaData extends PageData implements DataInterface
         $clean       = trim(html_entity_decode(strip_tags($description), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
         $movieSeries->description($clean);
 
-        $img = $this->siteService->asset($entity, 'img', true, true);
+        $img = $this->siteService->asset($entity, 'backdrop', true, true);
         if ('' !== $img) {
             $movieSeries->image($img);
         }
@@ -58,7 +73,7 @@ class SagaData extends PageData implements DataInterface
         $movie = Schema::movie();
         $movie->name($entity->getTitle());
 
-        $img = $this->siteService->asset($entity, 'img', true, true);
+        $img = $this->siteService->asset($entity, 'backdrop', true, true);
         if ('' !== $img) {
             $movie->image($img);
         }

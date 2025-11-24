@@ -12,8 +12,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'labstag:series:recommandations', description: 'Add a short description for your command',)]
-class SeriesRecommandationsCommand extends Command
+#[AsCommand(name: 'labstag:series:recommendations', description: 'Add a short description for your command',)]
+class SeriesRecommendationsCommand extends Command
 {
     public function __construct(
         private SerieService $serieService,
@@ -36,16 +36,16 @@ class SeriesRecommandationsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle              = new SymfonyStyle($input, $output);
-        $recommandations           = $this->serieService->getAllRecommandations();
+        $recommendations           = $this->serieService->getAllRecommendations();
 
-        $filename = 'recommandations-serie.json';
+        $filename = 'recommendations-serie.json';
         $this->fileService->saveFileInAdapter(
             'private',
             $filename,
-            json_encode($recommandations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            json_encode($recommendations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
 
-        $symfonyStyle->success('Serie recommandations have been saved successfully.');
+        $symfonyStyle->success('Serie recommendations have been saved successfully.');
 
         return Command::SUCCESS;
     }

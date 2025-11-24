@@ -101,10 +101,6 @@ final class EpisodeService
             return false;
         }
 
-        if ('' !== (string) $episode->getImg()) {
-            return false;
-        }
-
         try {
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 

@@ -5,7 +5,7 @@
     {% endif %}
 {% endfor %}
 <a href="{{ site_path(saga) }}" title="{{ saga.title|e('html_attr') }}">
-    <div class="background spoiler" data-bg="{{ site_asset(saga, 'img') }}">
+    <div class="background spoiler" data-bg="{{ site_asset(saga, 'poster') }}">
         {% if total != 0 %}
             <span class="movies">
                 {{ '%count% movies'|trans({'%count%': total}) }}

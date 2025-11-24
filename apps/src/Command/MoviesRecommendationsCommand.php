@@ -10,8 +10,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'labstag:movies:recommandations', description: 'Add a short description for your command',)]
-class MoviesRecommandationsCommand extends Command
+#[AsCommand(name: 'labstag:movies:recommendations', description: 'Add a short description for your command',)]
+class MoviesRecommendationsCommand extends Command
 {
     public function __construct(
         private MovieService $movieService,
@@ -24,16 +24,16 @@ class MoviesRecommandationsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle              = new SymfonyStyle($input, $output);
-        $recommandations           = $this->movieService->getAllRecommandations();
+        $recommendations           = $this->movieService->getAllRecommendations();
 
-        $filename = 'recommandations-movie.json';
+        $filename = 'recommendations-movie.json';
         $this->fileService->saveFileInAdapter(
             'private',
             $filename,
-            json_encode($recommandations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            json_encode($recommendations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
 
-        $symfonyStyle->success('Movie recommandations have been saved successfully.');
+        $symfonyStyle->success('Movie recommendations have been saved successfully.');
 
         return Command::SUCCESS;
     }

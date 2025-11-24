@@ -3,9 +3,12 @@
 namespace Labstag\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use Exception;
 use Labstag\Message\ClearCacheMessage;
 use Labstag\Message\DeleteOldFileMessage;
+use Labstag\Repository\GroupRepository;
+use Labstag\Repository\PermissionRepository;
 use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
@@ -89,6 +92,72 @@ class BackController extends AbstractController
         };
 
         return $this->redirect($referer);
+    }
+
+    #[Route(
+        '/admin/{_locale}/permission',
+        name: 'admin_permission',
+        defaults: ['_locale' => 'fr']
+    )]
+    public function permission(
+        Request $request,
+        PermissionRepository $permissionRepository,
+        GroupRepository $groupRepository,
+    ): Response
+    {
+        if ($request->isMethod('POST')) {
+            $groupId      = $request->query->get('groupId');
+            $permissionId = $request->query->get('permissionId');
+
+            $group      = $groupRepository->find($groupId);
+            $permission = $permissionRepository->find($permissionId);
+
+            if (!$group || !$permission) {
+                return $this->json(
+                    [
+                        'success' => false,
+                        'message' => 'Group or Permission not found',
+                    ],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+
+            $permissions = $group->getPermissions();
+            match ($permissions->contains($permission)) {
+                true  => $group->removePermission($permission),
+                false => $group->addPermission($permission),
+            };
+
+            $groupRepository->save($group);
+
+            return $this->json(
+                ['success' => true]
+            );
+        }
+
+        $permissions = $permissionRepository->findBy(
+            [],
+            ['title' => 'ASC']
+        );
+        $groups = $groupRepository->findAll();
+        // Sinon affiche un formulaire simple de sélection
+        $data = [];
+        foreach ($permissions as $permission) {
+            [
+                $group,
+                $code,
+            ]                    = explode('_', (string) $permission->getTitle(), 2);
+            $data[$group][$code] = $permission;
+        }
+
+        return $this->render(
+            'admin/permission.html.twig',
+            [
+                'assets' => Asset::fromEasyAdminAssetPackage('field-boolean.js'),
+                'data'   => $data,
+                'groups' => $groups,
+            ]
+        );
     }
 
     #[Route(
