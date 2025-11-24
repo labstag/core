@@ -56,11 +56,7 @@ final class SecurityService
         }
 
         $redirections = $this->getRedirections(false);
-        if ([] === $redirections) {
-            return null;
-        }
-
-        $redirect = $this->testRedirect($pathinfo, $redirections);
+        $redirect     = $this->testRedirect($pathinfo, $redirections);
         if (is_null($redirect)) {
             $redirections = $this->getRedirections(true);
             $redirect     = $this->testRedirectRegex($pathinfo, $redirections);
@@ -236,14 +232,6 @@ final class SecurityService
         return null;
     }
 
-    private function setRedirectResponse(Redirection $redirection): RedirectResponse
-    {
-        $redirection->incrementLastCount();
-        $this->redirectionRepository->save($redirection);
-
-        return new RedirectResponse($redirection->getDestination(), $redirection->getActionCode());
-    }
-
     /**
      * @param Redirection[] $redirections
      */
@@ -252,9 +240,10 @@ final class SecurityService
         $redirect = null;
         foreach ($redirections as $redirection) {
             if ($redirection->getSource() == $pathinfo) {
-                $redirect = $this->setRedirectResponse($redirection);
+                $redirection->incrementLastCount();
+                $this->redirectionRepository->save($redirection);
 
-                break;
+                return new RedirectResponse($redirection->getDestination(), $redirection->getActionCode());
             }
         }
 
@@ -268,10 +257,24 @@ final class SecurityService
     {
         $redirect = null;
         foreach ($redirections as $redirection) {
-            if (preg_match($redirection->getSource(), $pathinfo)) {
-                $redirect = $this->setRedirectResponse($redirection);
+            if (preg_match('#' . $redirection->getSource() . '#', $pathinfo, $matches)) {
+                $redirection->incrementLastCount();
+                $this->redirectionRepository->save($redirection);
+                $destination = $redirection->getDestination();
+                if ((str_starts_with((string) $destination, 'http://') || str_starts_with(
+                    (string) $destination,
+                    'https://'
+                )) && str_starts_with(
+                    $pathinfo,
+                    '/'
+                )
+                ) {
+                    $pathinfo = substr($pathinfo, 1);
+                }
 
-                break;
+                $newUrl = preg_replace('#' . $redirection->getSource() . '#', (string) $destination, $pathinfo);
+
+                return new RedirectResponse($newUrl, $redirection->getActionCode());
             }
         }
 
