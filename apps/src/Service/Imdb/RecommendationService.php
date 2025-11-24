@@ -63,9 +63,9 @@ class RecommendationService
         $search = [
             'tmdb' => (string) trim($row['id']),
         ];
-        $recommendations = $recommendationRepository->findBy($search);
-        if (count($recommendations) != 0) {
-            return null;
+        $recommendation = $recommendationRepository->findOneBy($search);
+        if ($recommendation instanceof Recommendation) {
+            return $recommendation;
         }
 
         $entity         = match ($field) {
