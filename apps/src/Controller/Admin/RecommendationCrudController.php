@@ -60,6 +60,7 @@ class RecommendationCrudController extends CrudControllerAbstract
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->actionsFactory->setReadOnly(true);
         $this->setAddToBdd();
+        $this->actionsFactory->setLinkTmdbAction();
         $this->actionsFactory->disableDelete();
 
         return $this->actionsFactory->show();
@@ -121,6 +122,18 @@ class RecommendationCrudController extends CrudControllerAbstract
             ['target' => '_blank']
         );
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
+    public function tmdb(AdminContext $adminContext): RedirectResponse
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $repositoryAbstract                       = $this->getRepository();
+        $recommendation                           = $repositoryAbstract->find($entityId);
+        if ($recommendation->getRefserie() instanceof Serie) {
+            return $this->redirect('https://www.themoviedb.org/tv/' . $recommendation->getTmdb());
+        }
+
+        return $this->redirect('https://www.themoviedb.org/movie/' . $recommendation->getTmdb());
     }
 
     private function addToBddMovie(

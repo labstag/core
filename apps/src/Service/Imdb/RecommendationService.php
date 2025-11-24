@@ -61,32 +61,30 @@ class RecommendationService
     ): ?object
     {
         $search = [
-            'tmdb' => (string) trim($row['id']),
+            'tmdb' => trim((string) $row['id']),
         ];
         $recommendation = $recommendationRepository->findOneBy($search);
         if ($recommendation instanceof Recommendation) {
             return $recommendation;
         }
 
-        $entity         = match ($field) {
+        return match ($field) {
             'refmovie' => $movieRepository->findOneBy(
                 [
-                    'tmdb' => (string) trim($row['id']),
+                    'tmdb' => trim((string) $row['id']),
                 ]
             ),
             'refserie' => $serieRepository->findOneBy(
                 [
-                    'tmdb' => (string) trim($row['id']),
+                    'tmdb' => trim((string) $row['id']),
                 ]
             ),
             'refsaga'  => $movieRepository->findOneBy(
                 [
-                    'tmdb' => (string) trim($row['id']),
+                    'tmdb' => trim((string) $row['id']),
                 ]
             ),
         };
-
-        return $entity;
     }
 
     private function setRecommendation(
@@ -112,7 +110,7 @@ class RecommendationService
             'refsaga'  => $recommendation->setRefsaga($object),
         };
 
-        $recommendation->setTmdb((string) trim($row['id']));
+        $recommendation->setTmdb(trim((string) $row['id']));
         $recommendation->setTitle($row['title'] ?? $row['name']);
         $recommendation->setReleaseDate($date);
         $recommendation->setOverview($row['overview']);
