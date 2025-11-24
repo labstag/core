@@ -63,7 +63,11 @@ class RecommendationService
         $search = [
             'tmdb' => $row['id'],
         ];
-        $recommendation = $recommendationRepository->findOneBy($search);
+        $recommendations = $recommendationRepository->findBy($search);
+        if (count($recommendations) != 0) {
+            return null;
+        }
+
         $entity         = match ($field) {
             'refmovie' => $movieRepository->findOneBy(
                 [
@@ -81,10 +85,6 @@ class RecommendationService
                 ]
             ),
         };
-
-        if ($recommendation instanceof Recommendation) {
-            return null;
-        }
 
         return $entity;
     }
