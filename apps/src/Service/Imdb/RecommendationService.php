@@ -61,7 +61,7 @@ class RecommendationService
     ): ?object
     {
         $search = [
-            'tmdb' => $row['id'],
+            'tmdb' => (string) trim($row['id']),
         ];
         $recommendations = $recommendationRepository->findBy($search);
         if (count($recommendations) != 0) {
@@ -71,17 +71,17 @@ class RecommendationService
         $entity         = match ($field) {
             'refmovie' => $movieRepository->findOneBy(
                 [
-                    'tmdb' => $row['id'],
+                    'tmdb' => (string) trim($row['id']),
                 ]
             ),
             'refserie' => $serieRepository->findOneBy(
                 [
-                    'tmdb' => $row['id'],
+                    'tmdb' => (string) trim($row['id']),
                 ]
             ),
             'refsaga'  => $movieRepository->findOneBy(
                 [
-                    'tmdb' => $row['id'],
+                    'tmdb' => (string) trim($row['id']),
                 ]
             ),
         };
@@ -112,7 +112,7 @@ class RecommendationService
             'refsaga'  => $recommendation->setRefsaga($object),
         };
 
-        $recommendation->setTmdb($row['id']);
+        $recommendation->setTmdb((string) trim($row['id']));
         $recommendation->setTitle($row['title'] ?? $row['name']);
         $recommendation->setReleaseDate($date);
         $recommendation->setOverview($row['overview']);
