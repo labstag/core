@@ -273,6 +273,12 @@ final class SecurityService
                 }
 
                 $newUrl = preg_replace('#' . $redirection->getSource() . '#', (string) $destination, $pathinfo);
+                if (str_starts_with($newUrl, '/')) {
+                    $request = $this->requestStack->getCurrentRequest();
+                    if (!is_null($request)) {
+                        $newUrl = $request->getSchemeAndHttpHost() . $newUrl;
+                    }
+                }
 
                 return new RedirectResponse($newUrl, $redirection->getActionCode());
             }
