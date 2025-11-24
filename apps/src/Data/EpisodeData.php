@@ -14,7 +14,7 @@ class EpisodeData extends SeasonData implements DataInterface
             return $asset;
         }
 
-        return parent::asset($entity->getRefseason(), $field);
+        return parent::asset($entity->getRefseason(), 'backdrop');
     }
 
     #[\Override]
