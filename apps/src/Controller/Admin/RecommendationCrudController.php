@@ -18,6 +18,7 @@ use Labstag\Message\MovieMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SerieRepository;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -29,7 +30,7 @@ class RecommendationCrudController extends CrudControllerAbstract
         MovieRepository $movieRepository,
         SerieRepository $serieRepository,
         MessageBusInterface $messageBus,
-    ): ?\Symfony\Component\HttpFoundation\RedirectResponse
+    ): ?RedirectResponse
     {
         $request            = $adminContext->getRequest();
         $repositoryAbstract = $this->getRepository();
@@ -41,122 +42,16 @@ class RecommendationCrudController extends CrudControllerAbstract
         $tmdbId   = $entity->getTmdb();
         $refserie = $entity->getRefserie();
         if ($refserie instanceof Serie) {
-            $details = $theMovieDbApi->tvserie()->getDetails($tmdbId);
-            if (0 === count($details)) {
-                return $this->redirectToRoute('admin_recommendation_index');
-            }
-
-            $serie = $serieRepository->findOneBy(
-                ['tmdb' => $tmdbId]
-            );
-            if ($serie instanceof Serie) {
-                $this->addFlash(
-                    'warning',
-                    new TranslatableMessage(
-                        'The %name% series is already present in the database',
-                        [
-                            '%name%' => $serie->getTitle(),
-                        ]
-                    )
-                );
-
-                return $this->redirectToRoute(
-                    'admin_serie_detail',
-                    [
-                        'entityId' => $serie->getId(),
-                    ]
-                );
-            }
-
-            $data = $theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
-            $serie = new Serie();
-            $serie->setFile(false);
-            $serie->setEnable(true);
-            $serie->setAdult(false);
-            $serie->setImdb($data['imdb_id'] ?? '');
-            $serie->setTmdb($tmdbId);
-            $serie->setTitle($entity->getTitle() ?? '');
-
-            $serieRepository->save($serie);
-            $messageBus->dispatch(new SerieMessage($serie->getId()));
-            $this->addFlash(
-                'success',
-                new TranslatableMessage(
-                    'The %name% series has been added to the database',
-                    [
-                        '%name%' => $serie->getTitle(),
-                    ]
-                )
-            );
-
-            return $this->redirectToRoute(
-                'admin_serie_detail',
-                [
-                    'entityId' => $serie->getId(),
-                ]
-            );
+            return $this->addToBddSerie($serieRepository, $theMovieDbApi, $entity, $messageBus, $tmdbId);
         }
 
         $refmovie = $entity->getRefmovie();
         $refsaga  = $entity->getRefsaga();
         if ($refmovie instanceof Movie || $refsaga instanceof Saga) {
-            $details = $theMovieDbApi->movies()->getDetails($tmdbId);
-            if (0 === count($details)) {
-                return $this->redirectToRoute('admin_recommendation_index');
-            }
-
-            $movie = $movieRepository->findOneBy(
-                ['tmdb' => $tmdbId]
-            );
-            if ($movie instanceof Movie) {
-                $this->addFlash(
-                    'warning',
-                    new TranslatableMessage(
-                        'The %name% movie is already present in the database',
-                        [
-                            '%name%' => $movie->getTitle(),
-                        ]
-                    )
-                );
-
-                return $this->redirectToRoute(
-                    'admin_movie_detail',
-                    [
-                        'entityId' => $movie->getId(),
-                    ]
-                );
-            }
-
-            $data = $theMovieDbApi->movies()->getMovieExternalIds($tmdbId);
-            $movie = new Movie();
-            $movie->setFile(false);
-            $movie->setEnable(true);
-            $movie->setAdult(false);
-            $movie->setImdb($data['imdb_id'] ?? '');
-            $movie->setTmdb($tmdbId);
-            $movie->setTitle($entity->getTitle() ?? '');
-
-            $movieRepository->save($movie);
-            $messageBus->dispatch(new MovieMessage($movie->getId()));
-            $this->addFlash(
-                'success',
-                new TranslatableMessage(
-                    'The %name% movie has been added to the database',
-                    [
-                        '%name%' => $movie->getTitle(),
-                    ]
-                )
-            );
-
-            return $this->redirectToRoute(
-                'admin_movie_detail',
-                [
-                    'entityId' => $movie->getId(),
-                ]
-            );
+            return $this->addToBddMovie($movieRepository, $theMovieDbApi, $entity, $messageBus, $tmdbId);
         }
 
-        return null;
+        return $this->redirectToRoute('admin_recommendation_index');
     }
 
     #[\Override]
@@ -226,5 +121,133 @@ class RecommendationCrudController extends CrudControllerAbstract
             ['target' => '_blank']
         );
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function addToBddMovie(
+        MovieRepository $movieRepository,
+        TheMovieDbApi $theMovieDbApi,
+        Recommendation $recommendation,
+        MessageBusInterface $messageBus,
+        string $tmdbId,
+    ): RedirectResponse
+    {
+        $details = $theMovieDbApi->movies()->getDetails($tmdbId);
+        if (0 === count($details)) {
+            return $this->redirectToRoute('admin_recommendation_index');
+        }
+
+        $movie = $movieRepository->findOneBy(
+            ['tmdb' => $tmdbId]
+        );
+        if ($movie instanceof Movie) {
+            $this->addFlash(
+                'warning',
+                new TranslatableMessage(
+                    'The %name% movie is already present in the database',
+                    [
+                        '%name%' => $movie->getTitle(),
+                    ]
+                )
+            );
+
+            return $this->redirectToRoute(
+                'admin_movie_detail',
+                [
+                    'entityId' => $movie->getId(),
+                ]
+            );
+        }
+
+        $data = $theMovieDbApi->movies()->getMovieExternalIds($tmdbId);
+        $movie = new Movie();
+        $movie->setFile(false);
+        $movie->setEnable(true);
+        $movie->setAdult(false);
+        $movie->setImdb($data['imdb_id'] ?? '');
+        $movie->setTmdb($tmdbId);
+        $movie->setTitle($recommendation->getTitle() ?? '');
+
+        $movieRepository->save($movie);
+        $messageBus->dispatch(new MovieMessage($movie->getId()));
+        $this->addFlash(
+            'success',
+            new TranslatableMessage(
+                'The %name% movie has been added to the database',
+                [
+                    '%name%' => $movie->getTitle(),
+                ]
+            )
+        );
+
+        return $this->redirectToRoute(
+            'admin_movie_detail',
+            [
+                'entityId' => $movie->getId(),
+            ]
+        );
+    }
+
+    private function addToBddSerie(
+        SerieRepository $serieRepository,
+        TheMovieDbApi $theMovieDbApi,
+        Recommendation $recommendation,
+        MessageBusInterface $messageBus,
+        string $tmdbId,
+    ): RedirectResponse
+    {
+        $details = $theMovieDbApi->tvserie()->getDetails($tmdbId);
+        if (0 === count($details)) {
+            return $this->redirectToRoute('admin_recommendation_index');
+        }
+
+        $serie = $serieRepository->findOneBy(
+            ['tmdb' => $tmdbId]
+        );
+        if ($serie instanceof Serie) {
+            $this->addFlash(
+                'warning',
+                new TranslatableMessage(
+                    'The %name% series is already present in the database',
+                    [
+                        '%name%' => $serie->getTitle(),
+                    ]
+                )
+            );
+
+            return $this->redirectToRoute(
+                'admin_serie_detail',
+                [
+                    'entityId' => $serie->getId(),
+                ]
+            );
+        }
+
+        $data = $theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
+        $serie = new Serie();
+        $serie->setFile(false);
+        $serie->setEnable(true);
+        $serie->setAdult(false);
+        $serie->setImdb($data['imdb_id'] ?? '');
+        $serie->setTmdb($tmdbId);
+        $serie->setTitle($recommendation->getTitle() ?? '');
+
+        $serieRepository->save($serie);
+        $messageBus->dispatch(new SerieMessage($serie->getId()));
+        $this->addFlash(
+            'success',
+            new TranslatableMessage(
+                'The %name% series has been added to the database',
+                [
+                    '%name%' => $serie->getTitle(),
+                ]
+            )
+        );
+
+        return $this->redirectToRoute(
+            'admin_serie_detail',
+            [
+                'entityId' => $serie->getId(),
+            ]
+        );
     }
 }

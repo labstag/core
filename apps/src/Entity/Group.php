@@ -4,14 +4,14 @@ namespace Labstag\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\GroupRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: GroupRepository::class)]
 #[ORM\Table(name: '`group`')]
-class Group
+class Group implements \Stringable
 {
 
     #[ORM\Id]
@@ -39,6 +39,11 @@ class Group
     {
         $this->users       = new ArrayCollection();
         $this->permissions = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
     }
 
     public function addPermission(Permission $permission): static

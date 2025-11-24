@@ -113,13 +113,14 @@ final class EasyadminVoter extends Voter
 
     private function getPermission($entityClass, $shortname, UserInterface $user): bool
     {
-        $codes =[$shortname, $entityClass];
-        $code = strtoupper(implode('_', $codes));
+        $codes = [
+            $shortname,
+            $entityClass,
+        ];
+        $code  = strtoupper(implode('_', $codes));
 
         $permission = $this->permissionRepository->findOneBy(
-            [
-                'title' => $code,
-            ]
+            ['title' => $code]
         );
         if (!$permission instanceof EntityPermission) {
             $permission = new EntityPermission();
@@ -134,7 +135,7 @@ final class EasyadminVoter extends Voter
         if ($this->security->isGrantedForUser($user, 'ROLE_SUPER_ADMIN')) {
             return true;
         }
-        
+
         if ($user instanceof User) {
             return false;
         }
@@ -146,13 +147,13 @@ final class EasyadminVoter extends Voter
                 return true;
             }
         }
-
     }
 
     private function menuCrud(MenuItemDto $menuItemDto, UserInterface $user): bool
     {
         $routeParams     = $menuItemDto->getRouteParameters();
         $reflectionClass = new ReflectionClass($routeParams['entityFqcn']);
+
         return $this->getPermission($reflectionClass->getShortName(), 'CRUD', $user);
     }
 }

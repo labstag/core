@@ -87,6 +87,22 @@ final class SitemapService
     /**
      * @return mixed[]
      */
+    private function getDataMovie(): array
+    {
+        $listing = $this->slugService->getPageByType(PageEnum::MOVIES->value);
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
+
+        $movies           = $this->getDataFromRepository(Movie::class);
+        $sagas            = $this->getDataFromRepository(Saga::class);
+
+        return array_merge($this->setTabs($movies), $this->setTabs($sagas));
+    }
+
+    /**
+     * @return mixed[]
+     */
     private function getDataPages(): array
     {
         $pages = $this->getDataFromRepository(Page::class);
@@ -132,22 +148,6 @@ final class SitemapService
         }
 
         return array_merge($this->setTabs($series), $this->setTabs($seasons));
-    }
-
-    /**
-     * @return mixed[]
-     */
-    private function getDataMovie(): array
-    {
-        $listing = $this->slugService->getPageByType(PageEnum::MOVIES->value);
-        if (!is_object($listing) || !$listing->isEnable()) {
-            return [];
-        }
-
-        $movies           = $this->getDataFromRepository(Movie::class);
-        $sagas = $this->getDataFromRepository(Saga::class);
-
-        return array_merge($this->setTabs($movies), $this->setTabs($sagas));
     }
 
     /**

@@ -4,8 +4,8 @@ namespace Labstag\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\PermissionRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
@@ -13,18 +13,17 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 class Permission
 {
 
-    /**
-     * @var Collection<int, Group>
-     */
-    #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'permissions')]
-    private Collection $groups;
-
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
+
+    /**
+     * @var Collection<int, Group>
+     */
+    #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'permissions')]
+    private Collection $groups;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;

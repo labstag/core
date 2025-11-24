@@ -56,6 +56,11 @@ class ActionsFactory
         $this->add(Crud::PAGE_EDIT, Crud::PAGE_DETAIL);
     }
 
+    public function disableDelete(): void
+    {
+        $this->actions->disable(Action::BATCH_DELETE);
+    }
+
     public function getDefaultActions(): void
     {
         $this->actionsDefault = [
@@ -273,11 +278,6 @@ class ActionsFactory
         $action->createAsGlobalAction();
 
         $this->add(Crud::PAGE_INDEX, $action);
-    }
-
-    public function disableDelete(): void
-    {
-        $this->actions->disable(Action::BATCH_DELETE);
     }
 
     private function addTrashMode(): void

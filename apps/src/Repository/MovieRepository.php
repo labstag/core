@@ -19,19 +19,6 @@ class MovieRepository extends RepositoryAbstract
         parent::__construct($managerRegistry, Movie::class);
     }
 
-    public function getAllActivate(): mixed
-    {
-        $queryBuilder = $this->createQueryBuilder('m');
-        $queryBuilder->where('m.enable = :enable');
-        $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('m.createdAt', 'DESC');
-
-        $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'movies-activate');
-
-        return $query->getResult();
-    }
-
     /**
      * @return array<string, mixed>
      */
@@ -120,6 +107,19 @@ class MovieRepository extends RepositoryAbstract
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'movies-not-in-imdb-list');
+
+        return $query->getResult();
+    }
+
+    public function getAllActivate(): mixed
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->where('m.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        $queryBuilder->orderBy('m.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-activate');
 
         return $query->getResult();
     }
