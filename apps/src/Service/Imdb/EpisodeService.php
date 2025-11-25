@@ -20,6 +20,11 @@ final class EpisodeService
     {
     }
 
+    public function delete(Episode $episode): void
+    {
+        $this->episodeRepository->delete($episode);
+    }
+
     public function getEpisode(Season $season, array $data): Episode
     {
         $episode = $this->episodeRepository->findOneBy(
@@ -38,7 +43,7 @@ final class EpisodeService
         $episode->setRefseason($season);
         $episode->setTitle($data['name']);
         $episode->setNumber($data['episode_number']);
-        
+
         return $episode;
     }
 
@@ -53,11 +58,6 @@ final class EpisodeService
     public function save(Episode $episode): void
     {
         $this->episodeRepository->save($episode);
-    }
-
-    public function delete(Episode $episode): void
-    {
-        $this->episodeRepository->delete($episode);
     }
 
     public function update(Episode $episode): bool

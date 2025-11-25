@@ -384,14 +384,8 @@ final class SerieService
 
     private function updateRecommendations(Serie $serie, array $details): bool
     {
-        $recommandations = $details['recommendations']['results'] ?? null;
-        if (is_null($recommandations) || !is_array($recommandations)) {
-            foreach ($serie->getRecommendations() as $recommendation) {
-                $serie->removeRecommendation($recommendation);
-            }
-        }
-
-        $this->recommendationService->setRecommendations($serie, $recommandations);
+        $this->recommendationService->setRecommendations($serie, $details['recommendations']['results'] ?? null);
+        $this->recommendationService->setRecommendations($serie, $details['similar']['results'] ?? null);
 
         return true;
     }

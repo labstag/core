@@ -361,14 +361,8 @@ final class MovieService
 
     private function updateRecommendations(Movie $movie, array $details): bool
     {
-        $recommandations = $details['recommendations']['results'] ?? null;
-        if (is_null($recommandations) || !is_array($recommandations)) {
-            foreach ($movie->getRecommendations() as $recommendation) {
-                $movie->removeRecommendation($recommendation);
-            }
-        }
-
-        $this->recommendationService->setRecommendations($movie, $recommandations);
+        $this->recommendationService->setRecommendations($movie, $details['recommendations']['results'] ?? null);
+        $this->recommendationService->setRecommendations($movie, $details['similar']['results'] ?? null);
 
         return true;
     }

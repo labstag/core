@@ -291,6 +291,40 @@ class TmdbMoviesApi extends AbstractTmdbApi
     }
 
     /**
+     * Get similar movies.
+     *
+     * @param string               $movieId           Movie ID
+     * @param array<string, mixed> $additionalFilters Additional query parameters (language, page)
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getMovieSimilar(string $movieId, array $additionalFilters = []): ?array
+    {
+        $query    = http_build_query($additionalFilters);
+        $cacheKey = 'tmdb_movie_similar_' . $movieId . '_' . md5($query);
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($movieId, $query): ?array {
+                $url  = self::BASE_URL . '/movie/' . $movieId . '/similar?' . $query;
+                $data = $this->makeRequest($url);
+
+                if (null === $data) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+                // 24 hours cache
+
+                return $data;
+            },
+            60
+        );
+    }
+
+    /**
      * Get popular movies.
      *
      * @param int         $page     Page number

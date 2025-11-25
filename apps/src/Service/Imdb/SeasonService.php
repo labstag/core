@@ -5,7 +5,6 @@ namespace Labstag\Service\Imdb;
 use DateTime;
 use Exception;
 use Labstag\Api\TheMovieDbApi;
-use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Message\EpisodeMessage;
@@ -112,9 +111,7 @@ final class SeasonService
         if (isset($details['tmdb']['episodes']) && is_array($details['tmdb']['episodes'])) {
             foreach ($details['tmdb']['episodes'] as $episodeData) {
                 $episode = $this->episodeService->getEpisode($season, $episodeData);
-                if ($episode instanceof Episode) {
-                    $this->episodeService->save($episode);
-                }
+                $this->episodeService->save($episode);
             }
         }
 

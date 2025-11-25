@@ -16,4 +16,9 @@
     <div class="overview html-content">
         {{ episode.overview|raw }}
     </div>
+    <div class="links">
+        <a href="https://www.themoviedb.org/tv/{{ episode.refseason.refserie.tmdb }}/season/{{ episode.refseason.number }}/episode/{{ episode.number }}" target="_blank" title="{{ 'TMDB page for the serie'|trans|e('html_attr') }}">
+            {{ 'TMDB page for the episode'|trans }}
+        </a>
+    </div>
 </div>

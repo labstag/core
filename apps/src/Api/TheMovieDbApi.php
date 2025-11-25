@@ -74,10 +74,11 @@ class TheMovieDbApi
         $details                = [];
         $tmdb                   = $episode->getRefseason()->getRefserie()->getTmdb();
         $seasonNumber = $episode->getRefseason()->getNumber();
-        $episodeNumber   = $episode->getNumber();
-        $locale          = $this->configurationService->getLocaleTmdb();
-        $details['tmdb'] = $this->tvserie()->getEpisodeDetails($tmdb, $seasonNumber, $episodeNumber, $locale);
-
+        $episodeNumber     = $episode->getNumber();
+        $locale            = $this->configurationService->getLocaleTmdb();
+        $details['tmdb']   = $this->tvserie()->getEpisodeDetails($tmdb, $seasonNumber, $episodeNumber, $locale);
+        $details['other']  = $this->tvserie()->getEpisodeExternalIds($tmdb, $seasonNumber, $episodeNumber);
+        $details['images'] = $this->tvserie()->getEpisodeImages($tmdb, $seasonNumber, $episodeNumber, $locale);
         $this->setJson($episode, $details);
 
         return $details;
@@ -120,7 +121,13 @@ class TheMovieDbApi
             ['language' => $locale]
         );
 
-        $details['other'] = $this->movies()->getMovieExternalIds($tmdbId);
+        $details['similar'] = $this->movies()->getMovieSimilar(
+            $tmdbId,
+            ['language' => $locale]
+        );
+
+        $details['other']  = $this->movies()->getMovieExternalIds($tmdbId);
+        $details['images'] = $this->movies()->getImages($tmdbId, $locale);
         $this->setJson($movie, $details);
 
         return $details;
@@ -188,6 +195,11 @@ class TheMovieDbApi
         $details['tmdb']            = $this->tvserie()->getDetails($tmdbId, $locale);
         $details['videos']          = $this->getVideosSerie($tmdbId);
         $details['recommendations'] = $this->tvserie()->getTvRecommendations(
+            $tmdbId,
+            ['language' => $locale]
+        );
+
+        $details['similar'] = $this->tvserie()->getTvSimilar(
             $tmdbId,
             ['language' => $locale]
         );

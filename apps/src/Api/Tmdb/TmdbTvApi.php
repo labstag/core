@@ -96,6 +96,87 @@ class TmdbTvApi extends AbstractTmdbApi
     }
 
     /**
+     * Get episode external IDs.
+     *
+     * @param string $seriesId      TV series ID
+     * @param int    $seasonNumber  Season number
+     * @param int    $episodeNumber Episode number
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getEpisodeExternalIds(string $seriesId, int $seasonNumber, int $episodeNumber): ?array
+    {
+        $cacheKey = 'tmdb_tv_episode_external_ids_' . $seriesId . '_s' . $seasonNumber . 'e' . $episodeNumber;
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($seriesId, $seasonNumber, $episodeNumber): ?array {
+                $url  = self::BASE_URL . '/tv/' . $seriesId . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '/external_ids';
+                $data = $this->makeRequest($url);
+
+                if (null === $data) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(604800);
+                // 7 days cache (external IDs rarely change)
+
+                return $data;
+            },
+            604800
+        );
+    }
+
+    /**
+     * Get episode images.
+     *
+     * @param string      $seriesId             TV series ID
+     * @param int         $seasonNumber         Season number
+     * @param int         $episodeNumber        Episode number
+     * @param string|null $includeImageLanguage Comma-separated list of languages
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getEpisodeImages(
+        string $seriesId,
+        int $seasonNumber,
+        int $episodeNumber,
+        ?string $includeImageLanguage = null,
+    ): ?array
+    {
+        $params = array_filter(
+            ['include_image_language' => $includeImageLanguage]
+        );
+
+        $query    = $this->buildQueryParams($params);
+        $cacheKey = 'tmdb_tv_episode_images_' . $seriesId . '_s' . $seasonNumber . 'e' . $episodeNumber . '_' . md5(
+            $query
+        );
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($seriesId, $seasonNumber, $episodeNumber, $query): ?array {
+                $url  = self::BASE_URL . '/tv/' . $seriesId . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '/images' . $query;
+                $data = $this->makeRequest($url);
+
+                if (null === $data || empty($data['stills'])) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+                // 24 hours cache
+
+                return $data;
+            },
+            86400
+        );
+    }
+
+    /**
      * Get TV series images.
      *
      * @param string      $seriesId             TV series ID
@@ -301,6 +382,40 @@ class TmdbTvApi extends AbstractTmdbApi
             $cacheKey,
             function (ItemInterface $item) use ($tvId, $query): ?array {
                 $url  = self::BASE_URL . '/tv/' . $tvId . '/recommendations?' . $query;
+                $data = $this->makeRequest($url);
+
+                if (null === $data) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+                // 24 hours cache
+
+                return $data;
+            },
+            60
+        );
+    }
+
+    /**
+     * Get similar TV series.
+     *
+     * @param string               $tvId              TV series ID
+     * @param array<string, mixed> $additionalFilters Additional query parameters (language, page)
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getTvSimilar(string $tvId, array $additionalFilters = []): ?array
+    {
+        $query    = http_build_query($additionalFilters);
+        $cacheKey = 'tmdb_tv_similar_' . $tvId . '_' . md5($query);
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($tvId, $query): ?array {
+                $url  = self::BASE_URL . '/tv/' . $tvId . '/similar?' . $query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data) {

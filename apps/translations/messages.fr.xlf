@@ -1685,6 +1685,18 @@
         <source>Position Management</source>
         <target>Gestion des positions</target>
       </trans-unit>
+      <trans-unit id="3iPqhUA" resname="TMDB page for the episode">
+        <source>TMDB page for the episode</source>
+        <target>Page TMDB de l'épisode</target>
+      </trans-unit>
+      <trans-unit id="3Ke7B6W" resname="IMDB page for the season">
+        <source>IMDB page for the season</source>
+        <target>Page IMDB de la saison</target>
+      </trans-unit>
+      <trans-unit id="JMRaSf0" resname="TMDB page for the season">
+        <source>TMDB page for the season</source>
+        <target>Page TMDB de la saison</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
