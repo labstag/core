@@ -20,7 +20,7 @@ final class EpisodeService
     {
     }
 
-    public function getEpisode(Season $season, array $data): ?Episode
+    public function getEpisode(Season $season, array $data): Episode
     {
         $episode = $this->episodeRepository->findOneBy(
             [
@@ -38,13 +38,7 @@ final class EpisodeService
         $episode->setRefseason($season);
         $episode->setTitle($data['name']);
         $episode->setNumber($data['episode_number']);
-
         
-        $details = $this->theMovieDbApi->getDetailsEpisode($episode);
-        if (isset($details['tmdb']) && !is_null($details['tmdb'])) {
-            return null;
-        }
-
         return $episode;
     }
 
