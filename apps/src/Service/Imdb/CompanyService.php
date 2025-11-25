@@ -71,6 +71,9 @@ final class CompanyService
     {
         $poster = $this->theMovieDbApi->images()->getLogoUrl($data['tmdb']['logo_path'] ?? '');
         if (is_null($poster)) {
+            $company->setImgFile();
+            $company->setImg(null);
+
             return false;
         }
 

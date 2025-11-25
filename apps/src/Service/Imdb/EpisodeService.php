@@ -103,6 +103,9 @@ final class EpisodeService
     {
         $poster = $this->theMovieDbApi->images()->getStillUrl($details['tmdb']['still_path'] ?? '');
         if (is_null($poster)) {
+            $episode->setImgFile();
+            $episode->setImg(null);
+
             return false;
         }
 

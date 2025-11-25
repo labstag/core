@@ -267,6 +267,9 @@ final class MovieService
     {
         $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
         if (is_null($backdrop)) {
+            $movie->setBackdropFile();
+            $movie->setBackdrop(null);
+
             return false;
         }
 
@@ -290,6 +293,9 @@ final class MovieService
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
+            $movie->setPosterFile();
+            $movie->setPoster(null);
+
             return false;
         }
 

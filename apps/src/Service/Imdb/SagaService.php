@@ -189,6 +189,9 @@ final class SagaService
     {
         $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($data['tmdb']['backdrop_path'] ?? '');
         if (is_null($backdrop)) {
+            $saga->setBackdropFile();
+            $saga->setBackdrop(null);
+
             return false;
         }
 
@@ -209,6 +212,9 @@ final class SagaService
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($data['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
+            $saga->setPosterFile();
+            $saga->setPoster(null);
+
             return false;
         }
 
