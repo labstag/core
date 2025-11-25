@@ -332,6 +332,9 @@ final class SerieService
     {
         $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
         if (is_null($backdrop)) {
+            $serie->setBackdropFile();
+            $serie->setBackdrop(null);
+
             return false;
         }
 
@@ -355,6 +358,9 @@ final class SerieService
     {
         $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
+            $serie->setPosterFile();
+            $serie->setPoster(null);
+
             return false;
         }
 
