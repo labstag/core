@@ -65,16 +65,7 @@ class ImageParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $inArray = in_array(
-            $object::class,
-            [
-                Block::class,
-                Edito::class,
-                Memo::class,
-                Page::class,
-                Post::class,
-            ]
-        );
+        $inArray = in_array($object::class, [Block::class, Edito::class, Memo::class, Page::class, Post::class]);
 
         return $inArray || $object instanceof Block;
     }

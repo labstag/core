@@ -2,11 +2,11 @@
 
 namespace Labstag\Service;
 
-use DateTime;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Labstag\Controller\Admin\ParagraphCrudController;
+use Labstag\Entity\EntityWithParagraphsInterface;
 use Labstag\Entity\Paragraph;
 use Labstag\Repository\ParagraphRepository;
 use ReflectionClass;
@@ -219,7 +219,7 @@ final class ParagraphService
                 continue;
             }
 
-            if (!$this->isClass($value)) {
+            if (!$this->isClass($paragraph, $value)) {
                 continue;
             }
 
@@ -382,18 +382,21 @@ final class ParagraphService
         return $header;
     }
 
-    private function isClass(object $value): bool
+    private function isClass(Paragraph $paragraph, object $value): bool
     {
-        if ($value instanceof DateTime) {
-            return false;
-        }
-
         $reflectionClass = new ReflectionClass($value);
-        if ('Labstag\Entity' !== $reflectionClass->getNamespaceName()) {
+        if (!$reflectionClass->implementsInterface(
+            EntityWithParagraphsInterface::class
+        ) || !$reflectionClass->hasMethod(
+            'getParagraphs'
+        )
+        ) {
             return false;
         }
 
-        return $reflectionClass->hasMethod('getParagraphs');
+        $paragraphs = $value->getParagraphs();
+
+        return (bool) $paragraphs->contains($paragraph);
     }
 
     /**
