@@ -86,13 +86,13 @@ class ParagraphCrudController extends CrudControllerAbstract
         $choiceField->setChoices($this->paragraphService->getFonds());
 
         $textField = TextField::new('id', new TranslatableMessage('Type'))->formatValue(
-            function (?string $value) {
+            function (?string $value): ?string {
                 $paragraph = $this->paragraphService->getParagraph($value);
                 if (is_null($paragraph)) {
                     return $value;
                 }
 
-                return $paragraph->getName();
+                return $this->translator->trans($paragraph->getName());
             }
         );
         $textField->setDisabled(true);

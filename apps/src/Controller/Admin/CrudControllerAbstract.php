@@ -42,6 +42,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AutoconfigureTag('labstag.admincontroller')]
 /**
@@ -74,6 +75,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         protected CrudFieldFactory $crudFieldFactory,
         protected AdminUrlGenerator $adminUrlGenerator,
         protected ManagerRegistry $managerRegistry,
+        protected TranslatorInterface $translator,
     )
     {
     }

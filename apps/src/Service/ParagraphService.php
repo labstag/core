@@ -387,9 +387,7 @@ final class ParagraphService
         $reflectionClass = new ReflectionClass($value);
         if (!$reflectionClass->implementsInterface(
             EntityWithParagraphsInterface::class
-        ) || !$reflectionClass->hasMethod(
-            'getParagraphs'
-        )
+        ) || !$reflectionClass->hasMethod('getParagraphs')
         ) {
             return false;
         }
