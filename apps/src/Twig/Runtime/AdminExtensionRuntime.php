@@ -4,9 +4,6 @@ namespace Labstag\Twig\Runtime;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Labstag\Entity\Movie;
-use Labstag\Entity\Saga;
-use Labstag\Entity\Serie;
 use Labstag\Service\Imdb\MovieService;
 use Labstag\Service\Imdb\SagaService;
 use Labstag\Service\Imdb\SerieService;
@@ -19,9 +16,6 @@ class AdminExtensionRuntime implements RuntimeExtensionInterface
     public function __construct(
         #[AutowireIterator('labstag.admincontroller')]
         private readonly iterable $controllers,
-        private MovieService $movieService,
-        private SerieService $serieService,
-        private SagaService $sagaService,
         private AdminUrlGenerator $adminUrlGenerator,
         private TranslatorInterface $translator,
     )
@@ -40,16 +34,6 @@ class AdminExtensionRuntime implements RuntimeExtensionInterface
         }
 
         return '';
-    }
-
-    public function recommendations(object $entity): array
-    {
-        return match (true) {
-            $entity instanceof Movie => $this->movieService->recommendations($entity),
-            $entity instanceof Serie => $this->serieService->recommendations($entity),
-            $entity instanceof Saga  => $this->sagaService->recommendations($entity),
-            default                  => [],
-        };
     }
 
     public function url(string $type, object $entity): string

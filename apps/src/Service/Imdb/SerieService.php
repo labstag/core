@@ -24,18 +24,13 @@ final class SerieService
      */
     private array $country = [];
 
-    private ?array $jsonTmdb = null;
-
     /**
      * @var array<string, mixed>
      */
     private array $year = [];
 
     public function __construct(
-        #[AutowireIterator('labstag.admincontroller')]
-        private readonly iterable $controllers,
         private RecommendationService $recommendationService,
-        private AdminUrlGenerator $adminUrlGenerator,
         private MessageBusInterface $messageBus,
         private FileService $fileService,
         private CompanyService $companyService,
@@ -45,21 +40,6 @@ final class SerieService
         private TheMovieDbApi $theMovieDbApi,
     )
     {
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getAllRecommendations(): array
-    {
-        $series          = $this->serieRepository->findAll();
-        $recommendations = [];
-        foreach ($series as $serie) {
-            $result            = $this->theMovieDbApi->getDetailsSerie($serie);
-            $recommendations   = $this->setJsonRecommendations($result, $serie, $recommendations);
-        }
-
-        return $recommendations;
     }
 
     /**
@@ -118,13 +98,6 @@ final class SerieService
         return $year;
     }
 
-    public function recommendations(Serie $serie, array $recommendations = []): array
-    {
-        $jsonRecommendations = $this->theMovieDbApi->getDetailsSerie($serie);
-
-        return $this->setJsonRecommendations($jsonRecommendations, $serie, $recommendations);
-    }
-
     public function update(Serie $serie): bool
     {
         $details  = $this->theMovieDbApi->getDetailsSerie($serie);
@@ -152,17 +125,6 @@ final class SerieService
         ];
 
         return in_array(true, $statuses, true);
-    }
-
-    private function getAllJsonTmdb(): array
-    {
-        if (!is_null($this->jsonTmdb)) {
-            return $this->jsonTmdb;
-        }
-
-        $this->jsonTmdb = $this->serieRepository->getAllJsonTmdb();
-
-        return $this->jsonTmdb;
     }
 
     /**
@@ -213,29 +175,6 @@ final class SerieService
         return true;
     }
 
-    private function setJsonRecommendations(?array $json, Serie $serie, array $recommendations = []): array
-    {
-        if (!is_array($json) || !isset($json['recommendations'])) {
-            return $recommendations;
-        }
-
-        foreach ($json['recommendations']['results'] as $recommendation) {
-            $tmdb              = $recommendation['id'];
-            if (isset($recommendations[$tmdb])) {
-                continue;
-            }
-
-            $recommendation = $this->setRecommendation($recommendation, $serie);
-            if (!is_array($recommendation)) {
-                continue;
-            }
-
-            $recommendations[$tmdb] = $recommendation;
-        }
-
-        return $recommendations;
-    }
-
     private function setLastreleaseDate(Serie $serie, array $details): bool
     {
         $lastReleaseDate = (is_null(
@@ -244,34 +183,6 @@ final class SerieService
         $serie->setLastreleaseDate($lastReleaseDate);
 
         return true;
-    }
-
-    private function setRecommendation(array $recommendation, Serie $serie): ?array
-    {
-        $tmdbs            = $this->getAllJsonTmdb();
-        $tmdb             = $recommendation['id'];
-        if (in_array($tmdb, $tmdbs)) {
-            return null;
-        }
-
-        $recommendation['poster_path'] = $this->theMovieDbApi->images()->getPosterUrl(
-            $recommendation['poster_path'] ?? ''
-        );
-        $recommendation['backdrop_path'] = $this->theMovieDbApi->images()->getBackdropUrl(
-            $recommendation['backdrop_path'] ?? ''
-        );
-        $recommendation['links'] = 'https://www.themoviedb.org/tv/' . $recommendation['id'];
-        $recommendation['add']   = $this->urlAddWithTmdb('addWithTmdb', $serie, $recommendation);
-        if ('' === $recommendation['first_air_date']) {
-            return null;
-        }
-
-        $recommendation['date'] = new DateTime($recommendation['first_air_date']);
-        if ($recommendation['date'] > new DateTime()) {
-            return null;
-        }
-
-        return $recommendation;
     }
 
     private function setReleaseDate(Serie $serie, array $details): bool
@@ -465,22 +376,5 @@ final class SerieService
         }
 
         return $find;
-    }
-
-    private function urlAddWithTmdb(string $type, Serie $serie, array $data): string
-    {
-        foreach ($this->controllers as $controller) {
-            $entityClass = $controller->getEntityFqcn();
-            if ($entityClass == $serie::class || $serie instanceof $entityClass) {
-                $url = $this->adminUrlGenerator->setController($controller::class);
-                $url->set('name', $data['title'] ?? $data['name']);
-                $url->set('tmdb', $data['id']);
-                $url->setAction($type);
-
-                return str_replace('http://localhost', '', $url->generateUrl());
-            }
-        }
-
-        return '';
     }
 }

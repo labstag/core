@@ -21,17 +21,12 @@ final class MovieService
      */
     private array $country = [];
 
-    private ?array $jsonTmdb = null;
-
     /**
      * @var array<string, mixed>
      */
     private array $year = [];
 
     public function __construct(
-        #[AutowireIterator('labstag.admincontroller')]
-        private readonly iterable $controllers,
-        private AdminUrlGenerator $adminUrlGenerator,
         private RecommendationService $recommendationService,
         private FileService $fileService,
         private CompanyService $companyService,
@@ -41,21 +36,6 @@ final class MovieService
         private TheMovieDbApi $theMovieDbApi,
     )
     {
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public function getAllRecommendations(): array
-    {
-        $movies          = $this->entityManager->getRepository(Movie::class)->findAll();
-        $recommendations = [];
-        foreach ($movies as $movie) {
-            $result          = $this->theMovieDbApi->getDetailsMovie($movie);
-            $recommendations = $this->setJsonRecommendations($result, $movie, $recommendations);
-        }
-
-        return $recommendations;
     }
 
     /**
@@ -98,13 +78,6 @@ final class MovieService
         return $year;
     }
 
-    public function recommendations(Movie $movie, array $recommendations = []): array
-    {
-        $jsonRecommendations = $this->theMovieDbApi->getDetailsMovie($movie);
-
-        return $this->setJsonRecommendations($jsonRecommendations, $movie, $recommendations);
-    }
-
     public function update(Movie $movie): bool
     {
         $entityRepository = $this->entityManager->getRepository(Movie::class);
@@ -128,19 +101,6 @@ final class MovieService
         ];
 
         return in_array(true, $statuses, true);
-    }
-
-    private function getAllJsonTmdb(): array
-    {
-        if (!is_null($this->jsonTmdb)) {
-            return $this->jsonTmdb;
-        }
-
-        $entityRepository = $this->entityManager->getRepository(Movie::class);
-
-        $this->jsonTmdb = $entityRepository->getAllJsonTmdb();
-
-        return $this->jsonTmdb;
     }
 
     /**
@@ -167,57 +127,6 @@ final class MovieService
                 return;
             }
         }
-    }
-
-    private function setJsonRecommendations(?array $json, Movie $movie, array $recommendations = []): array
-    {
-        if (!is_array($json) || !isset($json['recommendations'])) {
-            return $recommendations;
-        }
-
-        foreach ($json['recommendations']['results'] as $recommendation) {
-            $tmdb              = $recommendation['id'];
-            if (isset($recommendations[$tmdb])) {
-                continue;
-            }
-
-            $recommendation = $this->setRecommendation($recommendation, $movie);
-            if (!is_array($recommendation)) {
-                continue;
-            }
-
-            $recommendations[$tmdb] = $recommendation;
-        }
-
-        return $recommendations;
-    }
-
-    private function setRecommendation(array $recommendation, Movie $movie): ?array
-    {
-        $tmdbs            = $this->getAllJsonTmdb();
-        $tmdb             = $recommendation['id'];
-        if (in_array($tmdb, $tmdbs)) {
-            return null;
-        }
-
-        $recommendation['poster_path'] = $this->theMovieDbApi->images()->getPosterUrl(
-            $recommendation['poster_path'] ?? ''
-        );
-        $recommendation['backdrop_path'] = $this->theMovieDbApi->images()->getBackdropUrl(
-            $recommendation['backdrop_path'] ?? ''
-        );
-        $recommendation['links'] = 'https://www.themoviedb.org/movie/' . $recommendation['id'];
-        $recommendation['add']   = $this->urlAddWithTmdb('addWithTmdb', $movie, $recommendation);
-        if ('' === $recommendation['release_date']) {
-            return null;
-        }
-
-        $recommendation['date'] = new DateTime($recommendation['release_date']);
-        if ($recommendation['date'] > new DateTime()) {
-            return null;
-        }
-
-        return $recommendation;
     }
 
     /**
@@ -412,22 +321,5 @@ final class MovieService
         }
 
         return $find;
-    }
-
-    private function urlAddWithTmdb(string $type, Movie $movie, array $data): string
-    {
-        foreach ($this->controllers as $controller) {
-            $entityClass = $controller->getEntityFqcn();
-            if ($entityClass == $movie::class || $movie instanceof $entityClass) {
-                $url = $this->adminUrlGenerator->setController($controller::class);
-                $url->set('name', $data['title'] ?? $data['name']);
-                $url->set('tmdb', $data['id']);
-                $url->setAction($type);
-
-                return str_replace('http://localhost', '', $url->generateUrl());
-            }
-        }
-
-        return '';
     }
 }
