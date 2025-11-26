@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\SubMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use Labstag\Controller\Admin\GameCategoryCrudController;
 use Labstag\Controller\Admin\MovieCategoryCrudController;
 use Labstag\Controller\Admin\PageCategoryCrudController;
 use Labstag\Controller\Admin\PageTagCrudController;
@@ -35,6 +36,10 @@ final class MenuItemFactory
                 'crud'       => PageCategoryCrudController::getEntityFqcn(),
                 'controller' => PageCategoryCrudController::class,
             ],
+            'game'  => [
+                'crud'       => GameCategoryCrudController::getEntityFqcn(),
+                'controller' => GameCategoryCrudController::class,
+            ],
             'post'  => [
                 'crud'       => PostCategoryCrudController::getEntityFqcn(),
                 'controller' => PostCategoryCrudController::class,
@@ -62,6 +67,7 @@ final class MenuItemFactory
         string $label,
         string $icon,
         string $controllerClass,
+        $disableAdd = false,
         ?array $categories = null,
         ?array $tags = null,
         array $additionalItems = [],
@@ -69,12 +75,17 @@ final class MenuItemFactory
     {
         $items = [
             MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', $controllerClass::getEntityFqcn()),
-            MenuItem::linkToCrud(
+        ];
+
+        if (!$disableAdd) {
+            $menuItem = MenuItem::linkToCrud(
                 new TranslatableMessage('New'),
                 'fas fa-plus',
                 $controllerClass::getEntityFqcn()
-            )->setAction(Action::NEW),
-        ];
+            );
+            $menuItem->setAction(Action::NEW);
+            $items[] = $menuItem;
+        }
 
         // Add additional items (like Sagas for movies)
         foreach ($additionalItems as $additionalItem) {

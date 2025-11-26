@@ -9,9 +9,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
+use Labstag\Api\IgdbApi;
 use Labstag\Controller\Admin\Factory\MenuItemFactory;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
@@ -19,11 +21,14 @@ use Labstag\Repository\ConfigurationRepository;
 use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Labstag\Service\Igdb\GameService;
+use Labstag\Service\Igdb\PlatformService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -42,6 +47,52 @@ class DashboardController extends AbstractDashboardController
         protected MenuItemFactory $menuItemFactory,
     )
     {
+    }
+
+    #[Route(
+        '/api/game/find/games',
+        name: 'admin_api_game_find_games',
+        defaults: ['_locale' => 'fr']
+    )]
+    public function apiGameFindGames(
+        AdminContext $adminContext,
+        IgdbApi $igdbApi,
+        GameService $gameService,
+    ): Response
+    {
+        $request            = $adminContext->getRequest();
+        $games              = $gameService->getGameApi($request);
+
+        return $this->render(
+            'admin/api/game/game.html.twig',
+            [
+                'platform'   => isset($platform) ? $platform->getId() : '',
+                'controller' => GameCrudController::class,
+                'ea'         => $adminContext,
+                'games'      => $games,
+            ]
+        );
+    }
+
+    #[Route(
+        '/api/game/find/platforms',
+        name: 'admin_api_game_find_platforms',
+        defaults: ['_locale' => 'fr']
+    )]
+    public function apiGameFindPlatforms(AdminContext $adminContext, PlatformService $platformService): Response
+    {
+        $request            = $adminContext->getRequest();
+
+        $platforms = $platformService->getPlatformApi($request);
+
+        return $this->render(
+            'admin/api/game/platform.html.twig',
+            [
+                'controller' => PlatformCrudController::class,
+                'ea'         => $adminContext,
+                'platforms'  => $platforms,
+            ]
+        );
     }
 
     #[\Override]
@@ -247,6 +298,7 @@ class DashboardController extends AbstractDashboardController
                 $categories,
                 $tags,
                 [],
+                false,
             ],
             [
                 'chapter',
@@ -256,6 +308,7 @@ class DashboardController extends AbstractDashboardController
                 null,
                 null,
                 [],
+                false,
             ],
             [
                 'movie',
@@ -271,6 +324,7 @@ class DashboardController extends AbstractDashboardController
                         SagaCrudController::getEntityFqcn()
                     ),
                 ],
+                false,
             ],
             [
                 'serie',
@@ -291,6 +345,28 @@ class DashboardController extends AbstractDashboardController
                         EpisodeCrudController::getEntityFqcn()
                     ),
                 ],
+                false,
+            ],
+            [
+                'game',
+                new TranslatableMessage('Game'),
+                'fas fa-gamepad',
+                GameCrudController::class,
+                $categories,
+                null,
+                [
+                    MenuItem::linkToCrud(
+                        new TranslatableMessage('Platform'),
+                        'fas fa-desktop',
+                        PlatformCrudController::getEntityFqcn()
+                    ),
+                    MenuItem::linkToCrud(
+                        new TranslatableMessage('Franchise'),
+                        'fas fa-th-large',
+                        FranchiseCrudController::getEntityFqcn()
+                    ),
+                ],
+                true,
             ],
             [
                 'page',
@@ -300,6 +376,7 @@ class DashboardController extends AbstractDashboardController
                 $categories,
                 $tags,
                 [],
+                false,
             ],
             [
                 'post',
@@ -309,15 +386,17 @@ class DashboardController extends AbstractDashboardController
                 $categories,
                 $tags,
                 [],
+                false,
             ],
         ];
 
-        foreach ($definitions as [$code, $label, $icon, $controller, $cats, $tgs, $children]) {
+        foreach ($definitions as [$code, $label, $icon, $controller, $cats, $tgs, $children, $disableAdd]) {
             yield $this->menuItemFactory->createContentSubMenu(
                 $code,
                 $label,
                 $icon,
                 $controller,
+                $disableAdd,
                 $cats,
                 $tgs,
                 $children

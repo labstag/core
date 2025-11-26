@@ -2,22 +2,17 @@
 
 namespace Labstag\Service\Imdb;
 
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Api\TheMovieDbApi;
-use Labstag\Entity\Movie;
 use Labstag\Entity\Saga;
 use Labstag\Message\SagaMessage;
-use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
 use Labstag\Service\FileService;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SagaService
 {
-
     public function __construct(
         private LoggerInterface $logger,
         private RecommendationService $recommendationService,

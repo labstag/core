@@ -5,6 +5,7 @@ namespace Labstag\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use Exception;
+use Labstag\Api\IgdbApi;
 use Labstag\Message\ClearCacheMessage;
 use Labstag\Message\DeleteOldFileMessage;
 use Labstag\Repository\GroupRepository;
@@ -30,6 +31,7 @@ class BackController extends AbstractController
         protected FileService $fileService,
         protected WorkflowService $workflowService,
         protected SiteService $siteService,
+        protected IgdbApi $igdbApi,
     )
     {
     }

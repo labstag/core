@@ -21,6 +21,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
 #[ORM\DiscriminatorMap(
     [
+        'game'  => GameCategory::class,
         'movie' => MovieCategory::class,
         'page'  => PageCategory::class,
         'post'  => PostCategory::class,

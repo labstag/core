@@ -15,7 +15,6 @@ export class Modal {
       const modalContent = document.getElementById('easyadmin-modal-content');
       if (!modalContent) return; // sécuriser
       modalContent.innerHTML = html;
-      console.log(modalContent.innerHTML);
       const modal = new bootstrap.Modal(document.getElementById('easyadmin-modal'));
       modal.show();
     });

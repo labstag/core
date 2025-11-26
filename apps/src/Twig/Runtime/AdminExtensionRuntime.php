@@ -4,9 +4,6 @@ namespace Labstag\Twig\Runtime;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Labstag\Service\Imdb\MovieService;
-use Labstag\Service\Imdb\SagaService;
-use Labstag\Service\Imdb\SerieService;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\RuntimeExtensionInterface;

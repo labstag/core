@@ -13,10 +13,18 @@ flysystem:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/assets'
+    game.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/game'
     company.storage:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/uploads/company'
+    platform.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/platform'
     media.storage:
       adapter: 'local'
       options:

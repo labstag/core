@@ -1,0 +1,13 @@
+{% form_theme form with '@EasyAdmin/crud/form_theme.html.twig' only %}
+<div class="modal-header">
+	<h5 class="modal-title">{{ 'Search a new game'|trans }}</h5>
+	<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body">
+	{{ form(form) }}
+	<div class="results"></div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-primary searchgame-modal" data-url="{{ path('admin_api_game_find_games', {'_locale': app.request.locale}) }}">{{ 'Search'|trans }}</button>
+	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Close'|trans }}</button>
+</div>

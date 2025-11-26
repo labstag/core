@@ -8,15 +8,17 @@
   <script src="{{ asset('field-boolean.js', ea.assets.defaultAssetPackageName) }}"></script>
 {% endblock %}
 {% block main %}
-  <table class="table datagrid datagrid-empty table-permissions">
-    <thead>
-      <tr>
-        <th>Permission</th>
-        {% for group in groups %}
-          <th>{{ group.title }}</th>
-        {% endfor %}
-      </tr>
-    </thead>
+  <table class="table datagrid table-permissions{% if data|length == 0 %} datagrid-empty{% endif %}">
+    {% if data|length != 0 %}
+      <thead>
+        <tr>
+          <th>Permission</th>
+          {% for group in groups %}
+            <th>{{ group.title }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+    {% endif %}
     {% for group, permissions in data %}
       <tbody>
         <tr>
@@ -44,6 +46,26 @@
           </tr>
 
         {% endfor %}
+      </tbody>
+    {% else %}
+      <tbody>
+          {% for i in 1..6 %}
+              <tr class="empty-row">
+                  <td><span></span></td>
+                  <td><span></span></td>
+                  <td><span></span></td>
+                  <td><span></span></td>
+                  <td><span></span></td>
+              </tr>
+
+              {% if 3 == loop.index %}
+                  <tr class="no-results">
+                      <td colspan="100">
+                          {{ t('datagrid.no_results', ea.i18n.translationParameters, 'EasyAdminBundle')|trans }}
+                      </td>
+                  </tr>
+              {% endif %}
+          {% endfor %}
       </tbody>
     {% endfor %}
   </table>

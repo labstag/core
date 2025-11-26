@@ -1,0 +1,65 @@
+<table class="table datagrid{% if games|length == 0 %} datagrid-empty{% endif %}">
+    {% if games|length != 0 %}
+        <thead>
+            <tr>
+                <th>
+                    {{ 'Name'|trans }}
+                </th>
+                <th>
+                    {{ 'Release date'|trans }}
+                </th>
+                <th>
+                    {{ 'Url'|trans }}
+                </th>
+                <th>
+                    {{ 'Action'|trans }}
+                </th>
+            </tr>
+        </thead>
+    {% endif %}
+    <tbody>
+        {% for game in games %}
+            <tr data-id="{{ game.id }}">
+                <td class="text-left" dir="ltr">
+                    <span title="{{ game.name|e('html_attr') }}">{{ game.name }}</span>
+                </td>
+                <td>
+                    {% if game.first_release_date is defined %}
+                        {{ game.first_release_date|date('d/m/Y') }}
+                    {% endif %}
+                </td>
+                <td class="text-left" dir="ltr">
+                    <a href="{{ game.url }}" target="_blank">
+                        {{ 'Link igdb'|trans }}
+                    </a>
+                </td>
+                <td>
+                    <a href="{{ ea_url().setController(controller).setAction('addByApi').set('id', game.id).set('platform', platform) }}" target="_blank">
+                        {{ 'Select'|trans }}
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            {% block table_body_empty %}
+				{% for i in 1..14 %}
+					<tr class="empty-row">
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+					</tr>
+
+					{% if 3 == loop.index %}
+						<tr class="no-results">
+							<td colspan="100">
+								{{ t('datagrid.no_results', ea.i18n.translationParameters, 'EasyAdminBundle')|trans }}
+							</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			{% endblock table_body_empty %}
+        {% endfor %}
+    </tbody>
+</table>

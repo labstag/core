@@ -4,14 +4,12 @@ namespace Labstag\Service\Imdb;
 
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;
-use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 final class MovieService
 {

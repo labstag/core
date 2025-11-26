@@ -247,6 +247,8 @@ class ActionsFactory
             $this->addTrashMode();
         }
 
+        $this->applyRead();
+
         $this->addDetailMode();
         $this->addActions();
         $this->applyReadOnly();
@@ -316,6 +318,16 @@ class ActionsFactory
 
         $this->remove(Crud::PAGE_INDEX, Action::NEW);
         $this->remove(Crud::PAGE_INDEX, Action::EDIT);
+    }
+
+    private function applyRead(): void
+    {
+        if ($this->readOnly) {
+            return;
+        }
+
+        $this->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
+        $this->add(Crud::PAGE_NEW, Action::INDEX);
     }
 
     private function applyReadOnly(): void
