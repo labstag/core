@@ -56,7 +56,6 @@ class DashboardController extends AbstractDashboardController
     )]
     public function apiGameFindGames(
         AdminContext $adminContext,
-        IgdbApi $igdbApi,
         GameService $gameService,
     ): Response
     {

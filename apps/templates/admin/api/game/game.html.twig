@@ -6,6 +6,9 @@
                     {{ 'Name'|trans }}
                 </th>
                 <th>
+                    {{ 'Cover'|trans }}
+                </th>
+                <th>
                     {{ 'Release date'|trans }}
                 </th>
                 <th>
@@ -24,6 +27,10 @@
                     <span title="{{ game.name|e('html_attr') }}">{{ game.name }}</span>
                 </td>
                 <td>
+                    {% if game.cover is defined %}
+                        <img src="{{ game.cover.url }}" alt="{{ game.name|e('html_attr') }}">
+                    {% endif %}
+                <td>
                     {% if game.first_release_date is defined %}
                         {{ game.first_release_date|date('d/m/Y') }}
                     {% endif %}
@@ -34,14 +41,23 @@
                     </a>
                 </td>
                 <td>
-                    <a href="{{ ea_url().setController(controller).setAction('addByApi').set('id', game.id).set('platform', platform) }}" target="_blank">
+                    {% set url = ea_url().setController(controller).setAction('addByApi') %}
+                    {% if game.version_parent is defined %}
+                        {% set url = url.set('id', game.version_parent) %}
+                    {% else %}
+                        {% set url = url.set('id', game.id) %}
+                    {% endif %}
+                    {% if platform != '' %}
+                        {% set url = url.set('platform', platform) %}
+                    {% endif %}
+                    <a href="{{ url }}" target="_blank">
                         {{ 'Select'|trans }}
                     </a>
                 </td>
             </tr>
         {% else %}
             {% block table_body_empty %}
-				{% for i in 1..14 %}
+				{% for i in 1..7 %}
 					<tr class="empty-row">
 						<td><span></span></td>
 						<td><span></span></td>

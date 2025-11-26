@@ -10,6 +10,26 @@
   width: 100%;
 }
 
+.modal-body {
+	table {
+		tbody {
+			display: block;
+			max-height: 350px;
+			overflow-y: auto;
+			tr {
+				display: table;
+				width: 100%;
+				table-layout: fixed;
+			}
+		}
+		thead {
+			display: table;
+			width: 100%;
+			table-layout: fixed;
+		}
+	}
+}
+
 .table-permissions{
   tbody{
     tr:first-child {

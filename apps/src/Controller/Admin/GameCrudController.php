@@ -22,7 +22,7 @@ class GameCrudController extends CrudControllerAbstract
     {
         $request  = $adminContext->getRequest();
         $id       = $request->query->get('id');
-        $platform = $request->query->get('platform');
+        $platform = $request->query->get('platform', '');
         $messageBus->dispatch(new AddGameMessage($id, 'game', $platform));
 
         return $this->redirectToRoute('admin_game_index');
@@ -33,6 +33,7 @@ class GameCrudController extends CrudControllerAbstract
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
+        $this->setLinkIgdb();
 
         $action = Action::new('showModal', new TranslatableMessage('New game'));
         $action->linkToCrudAction('showModal');
@@ -93,6 +94,38 @@ class GameCrudController extends CrudControllerAbstract
     public static function getEntityFqcn(): string
     {
         return Game::class;
+    }
+
+    public function igdb(AdminContext $adminContext): Response
+    {
+        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $game                            = $repositoryAbstract->find($entityId);
+
+        $url = $game->getUrl();
+        if (empty($url)) {
+            return $this->redirectToRoute('admin_game_index');
+        }
+
+        return $this->redirect($url);
+    }
+
+    public function setLinkIgdb(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('igdb', new TranslatableMessage('IGDB Page'));
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->linkToCrudAction('igdb');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
     public function showModal(AdminContext $adminContext): Response

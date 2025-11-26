@@ -12,12 +12,21 @@ class PlatformType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        unset($options);
         $builder->add(
             'title',
             TextType::class,
             [
                 'required' => false,
-                'label'    => new TranslatableMessage('Platform title'),
+                'label'    => new TranslatableMessage('Title'),
+            ]
+        );
+        $builder->add(
+            'family',
+            TextType::class,
+            [
+                'required' => false,
+                'label'    => new TranslatableMessage('Family'),
             ]
         );
     }

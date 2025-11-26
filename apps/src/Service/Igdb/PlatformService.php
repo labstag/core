@@ -51,13 +51,23 @@ final class PlatformService extends AbstractIgdb
 
     public function getPlatformApi(Request $request): array
     {
-        $entityRepository = $this->entityManager->getRepository(Platform::class);
+        $entityRepository   = $this->entityManager->getRepository(Platform::class);
         $igbds              = $entityRepository->getAllIgdb();
         $all                = $request->query->all();
         $platforms          = [];
         if (isset($all['platform'])) {
             $search    = $all['platform']['title'] ?? '';
-            $body      = $this->igdbApi->setBody(search: $search, limit: 20);
+            $where     = '';
+            if (isset($all['platform']['family'])) {
+                $family = $all['platform']['family'];
+                if ('' !== $where && '0' !== $where) {
+                    $where .= ' & ';
+                }
+
+                $where .= 'platform_family.name ~ "' . $family . '"';
+            }
+
+            $body      = $this->igdbApi->setBody(search: $search, where: $where, limit: 20);
             $platforms = $this->igdbApi->setUrl('platforms', $body);
             if (is_null($platforms)) {
                 $platforms = [];
@@ -105,6 +115,10 @@ final class PlatformService extends AbstractIgdb
 
     private function getApiPlatformLogosId(array $data): ?array
     {
+        if (!isset($data['platform_logo'])) {
+            return null;
+        }
+
         $body = $this->igdbApi->setBody(where: 'id = ' . $data['platform_logo'], limit: 1);
 
         $results = $this->igdbApi->setUrl('platform_logos', $body);

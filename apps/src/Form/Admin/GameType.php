@@ -21,11 +21,12 @@ class GameType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        unset($options);
         $builder->add(
             'number',
             IntegerType::class,
             [
-                'label'    => new TranslatableMessage('Game IGDB ID'),
+                'label'    => new TranslatableMessage('IGDB ID'),
                 'required' => false,
             ]
         );
@@ -33,7 +34,15 @@ class GameType extends AbstractType
             'title',
             TextType::class,
             [
-                'label'    => new TranslatableMessage('Game title'),
+                'label'    => new TranslatableMessage('Title'),
+                'required' => false,
+            ]
+        );
+        $builder->add(
+            'franchise',
+            TextType::class,
+            [
+                'label'    => new TranslatableMessage('Franchise'),
                 'required' => false,
             ]
         );
@@ -41,6 +50,7 @@ class GameType extends AbstractType
             'platform',
             ChoiceType::class,
             [
+                'label'    => new TranslatableMessage('Platform'),
                 'required' => false,
                 'choices'  => array_merge(
                     ['' => ''],

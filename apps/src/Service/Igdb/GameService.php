@@ -49,41 +49,44 @@ final class GameService extends AbstractIgdb
     public function getGameApi(Request $request): array
     {
         $entityRepository     = $this->entityManager->getRepository(Game::class);
-        $platformRepository = $this->entityManager->getRepository(Platform::class);
-        $igbds              = $entityRepository->getAllIgdb();
-        $all                = $request->query->all();
-        $games              = [];
+        $platformRepository   = $this->entityManager->getRepository(Platform::class);
+        $igbds                = $entityRepository->getAllIgdb();
+        $all                  = $request->query->all();
+        $games                = [];
         if (isset($all['game'])) {
-            $where  = '';
+            $where  = 'game_type = 0';
             $search = $all['game']['title'] ?? '';
             if (isset($all['game']['platform'])) {
                 $platform = $platformRepository->find($all['game']['platform']);
                 if ($platform instanceof Platform) {
-                    if ('' !== $where) {
-                        $where .= ' and ';
-                    }
+                    $where .= ' & ';
 
                     $where .= 'platforms = (' . $platform->getIgdb() . ')';
                 }
             }
 
+            if (isset($all['game']['franchise'])) {
+                $where .= ' & ';
+
+                $where .= ' franchises.name ~ "' . $all['game']['franchise'] . '"';
+            }
+
             if (isset($all['game']['number'])) {
-                if ('' !== $where) {
-                    $where .= ' and ';
-                }
+                $where .= ' & ';
 
                 $where .= ' id = ' . $all['game']['number'];
             }
 
-            $body = $this->igdbApi->setBody(search: $search, where: $where, limit: 20);
-
+            $body  = $this->igdbApi->setBody(search: $search, fields: ['*', 'cover.*'], where: $where, limit: 20);
             $games = $this->igdbApi->setUrl('games', $body);
             if (is_null($games)) {
                 $games = [];
             }
         }
 
-        return array_filter($games, fn (array $game): bool => !in_array($game['id'], $igbds));
+        $games = array_filter($games, fn (array $game): bool => !in_array($game['id'], $igbds));
+
+        return array_filter($games, fn (array $game): bool => isset($game['first_release_date']));
     }
 
     public function update(Game $game): bool
