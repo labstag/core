@@ -56,7 +56,7 @@ final class GameService extends AbstractIgdb
         if (isset($all['game'])) {
             $where  = 'game_type = 0';
             $search = $all['game']['title'] ?? '';
-            if (isset($all['game']['platform'])) {
+            if (isset($all['game']['platform']) && !empty($all['game']['platform'])) {
                 $platform = $platformRepository->find($all['game']['platform']);
                 if ($platform instanceof Platform) {
                     $where .= ' & ';
@@ -65,13 +65,13 @@ final class GameService extends AbstractIgdb
                 }
             }
 
-            if (isset($all['game']['franchise'])) {
+            if (isset($all['game']['franchise']) && !empty($all['game']['franchise'])) {
                 $where .= ' & ';
 
                 $where .= ' franchises.name ~ "' . $all['game']['franchise'] . '"';
             }
 
-            if (isset($all['game']['number'])) {
+            if (isset($all['game']['number']) && !empty($all['game']['number'])) {
                 $where .= ' & ';
 
                 $where .= ' id = ' . $all['game']['number'];
