@@ -1,4 +1,4 @@
-<table class="table datagrid{% if platforms|length == 0 %} datagrid-empty{% endif %}">
+<table class="table datagrid{% if platforms|length == 0 %} datagrid-empty{% endif %} data-ajax">
     {% if platforms|length != 0 %}
         <thead>
             <tr>
@@ -28,7 +28,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{{ ea_url().setController(controller).setAction('addByApi').set('id', platform.id) }}" target="_blank">
+                    <a href="{{ ea_url().setController(controller).setAction('addByApi').set('id', platform.id) }}" class="addtobdd">
                         {{ 'Select'|trans }}
                     </a>
                 </td>

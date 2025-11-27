@@ -1,7 +1,8 @@
-export class Game {
+export class Search {
   constructor() {
     this.searchModal()
     this.disableFormSubmit()
+    this.addToBdd()
   }
 
   async executeAjax(modalContent, button)
@@ -35,7 +36,7 @@ export class Game {
     document.body.addEventListener('submit', (event) => {
       const form = event.target;
       const modalContent = form.closest('.modal-content');
-      const button = modalContent ? modalContent.querySelector('.searchgame-modal') : null;
+      const button = modalContent ? modalContent.querySelector('.searchdata-modal') : null;
       if (modalContent && button) {
         event.preventDefault();
         this.executeAjax(modalContent, button);
@@ -45,10 +46,44 @@ export class Game {
 
   async searchModal() {
     document.body.addEventListener('click', async (event) => {
-      const button = event.target.closest('.searchgame-modal');
+      const button = event.target.closest('.searchdata-modal');
       if (button) {
         event.preventDefault();
         this.executeAjax(button.closest('.modal-content'), button);
+      }
+    });
+  }
+
+  addToBdd() {
+    document.body.addEventListener('click', async (event) => {
+      const button = event.target.closest('.addtobdd');
+      if (button) {
+        event.preventDefault();
+        const url = button.getAttribute('href');
+        try {
+          const response = await fetch(url, {
+            method: 'GET'
+          });
+          if (response.ok) {
+            // Optionally handle success response
+            const data = await response.json();
+            if (data.status === 'success') {
+              const rows = document.querySelectorAll(`tr[data-id="${data.id}"]`);
+              if (rows.length > 0) {
+                const firstRow = rows[0];
+                const tdCount = firstRow.querySelectorAll('td').length;
+                const message = typeof data.message === 'object' ? JSON.stringify(data.message) : data.message;
+                firstRow.innerHTML = `<td colspan="${tdCount}" class="text-center">${message}</td>`;
+                // Remove other rows except the first one
+                for (let i = 1; i < rows.length; i++) {
+                  rows[i].remove();
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
       }
     });
   }

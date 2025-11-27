@@ -12,20 +12,32 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Game;
 use Labstag\Form\Admin\GameType;
 use Labstag\Message\AddGameMessage;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GameCrudController extends CrudControllerAbstract
 {
-    public function addByApi(AdminContext $adminContext, MessageBusInterface $messageBus): Response
+    public function addByApi(
+        AdminContext $adminContext,
+        MessageBusInterface $messageBus,
+        TranslatorInterface $translator,
+    ): JsonResponse
     {
         $request  = $adminContext->getRequest();
         $id       = $request->query->get('id');
         $platform = $request->query->get('platform', '');
         $messageBus->dispatch(new AddGameMessage($id, 'game', $platform));
 
-        return $this->redirectToRoute('admin_game_index');
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'id'      => $id,
+                'message' => $translator->trans(new TranslatableMessage('Game is being added')),
+            ]
+        );
     }
 
     #[\Override]

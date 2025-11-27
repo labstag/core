@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SerieCrudController extends CrudControllerAbstract
 {
@@ -40,7 +41,8 @@ class SerieCrudController extends CrudControllerAbstract
         TheMovieDbApi $theMovieDbApi,
         ConfigurationService $configurationService,
         SerieRepository $serieRepository,
-    ): Response
+        TranslatorInterface $translator,
+    ): JsonResponse
     {
         $request      = $adminContext->getRequest();
         $tmdbId       = $request->query->get('id');
@@ -48,20 +50,11 @@ class SerieCrudController extends CrudControllerAbstract
             ['tmdb' => $tmdbId]
         );
         if ($serie instanceof Serie) {
-            $this->addFlash(
-                'warning',
-                new TranslatableMessage(
-                    'The %name% series is already present in the database',
-                    [
-                        '%name%' => $serie->getTitle(),
-                    ]
-                )
-            );
-
-            return $this->redirectToRoute(
-                'admin_serie_detail',
+            return new JsonResponse(
                 [
-                    'entityId' => $serie->getId(),
+                    'status'  => 'warning',
+                    'id'      => $tmdbId,
+                    'message' => $translator->trans(new TranslatableMessage('Serie already exists')),
                 ]
             );
         }
@@ -69,28 +62,29 @@ class SerieCrudController extends CrudControllerAbstract
         $locale = $configurationService->getLocaleTmdb();
         $tmdb   = $theMovieDbApi->tvserie()->getDetails($tmdbId, $locale);
         if (is_null($tmdb)) {
-            $this->addFlash(
-                'danger',
-                new TranslatableMessage(
-                    'The series with the TMDB id %id% does not exist',
-                    ['%id%' => $tmdbId]
-                )
+            return new JsonResponse(
+                [
+                    'status'  => 'warning',
+                    'id'      => $tmdbId,
+                    'message' => $translator->trans(
+                        new TranslatableMessage(
+                            'The series with the TMDB id %id% does not exist',
+                            ['%id%' => $tmdbId]
+                        )
+                    ),
+                ]
             );
-
-            return $this->redirectToRoute('admin_serie_index');
         }
 
         $other  = $theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
         if (!isset($other['imdb_id'])) {
-            $this->addFlash(
-                'danger',
-                new TranslatableMessage(
-                    'The series with the TMDB id %id% does not exist',
-                    ['%id%' => $tmdbId]
-                )
+            return new JsonResponse(
+                [
+                    'status'  => 'warning',
+                    'id'      => $tmdbId,
+                    'message' => $translator->trans(new TranslatableMessage('No Imdb id for this series')),
+                ]
             );
-
-            return $this->redirectToRoute('admin_serie_index');
         }
 
         $serie = new Serie();
@@ -104,20 +98,11 @@ class SerieCrudController extends CrudControllerAbstract
         $serieRepository->save($serie);
         $messageBus->dispatch(new SerieMessage($serie->getId()));
 
-        $this->addFlash(
-            'success',
-            new TranslatableMessage(
-                'The %name% series has been added to the database',
-                [
-                    '%name%' => $serie->getTitle(),
-                ]
-            )
-        );
-
-        return $this->redirectToRoute(
-            'admin_serie_detail',
+        return new JsonResponse(
             [
-                'entityId' => $serie->getId(),
+                'status'  => 'success',
+                'id'      => $tmdbId,
+                'message' => $translator->trans(new TranslatableMessage('Serie added successfully')),
             ]
         );
     }

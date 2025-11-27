@@ -1,4 +1,4 @@
-<table class="table datagrid{% if movies|length == 0 %} datagrid-empty{% endif %}">
+<table class="table datagrid{% if movies|length == 0 %} datagrid-empty{% endif %} data-ajax">
     {% if movies|length != 0 %}
         <thead>
             <tr>
@@ -45,7 +45,7 @@
                     </a>
                 </td>
                 <td>
-                    <a href="{{ ea_url().setController(controller).setAction('addByApi').set('id', movie.id) }}" target="_blank">
+                    <a href="{{ ea_url().setController(controller).setAction('addByApi').set('id', movie.id) }}" class="addtobdd">
                         {{ 'Select'|trans }}
                     </a>
                 </td>

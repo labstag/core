@@ -58,12 +58,13 @@ class DashboardController extends AbstractDashboardController
     public function apiGameFindGames(AdminContext $adminContext, GameService $gameService): Response
     {
         $request            = $adminContext->getRequest();
+        $all                = $request->query->all();
         $games              = $gameService->getGameApi($request);
 
         return $this->render(
             'admin/api/game/list.html.twig',
             [
-                'platform'   => isset($platform) ? $platform->getId() : '',
+                'platform'   => $all['game']['platform'] ?? '',
                 'controller' => GameCrudController::class,
                 'ea'         => $adminContext,
                 'games'      => $games,

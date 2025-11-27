@@ -12,19 +12,31 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Platform;
 use Labstag\Form\Admin\PlatformType;
 use Labstag\Message\AddGameMessage;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PlatformCrudController extends CrudControllerAbstract
 {
-    public function addByApi(AdminContext $adminContext, MessageBusInterface $messageBus): Response
+    public function addByApi(
+        AdminContext $adminContext,
+        MessageBusInterface $messageBus,
+        TranslatorInterface $translator,
+    ): JsonResponse
     {
         $request = $adminContext->getRequest();
         $id      = $request->query->get('id');
         $messageBus->dispatch(new AddGameMessage($id, 'platform'));
 
-        return $this->redirectToRoute('admin_platform_index');
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'id'      => $id,
+                'message' => $translator->trans(new TranslatableMessage('Platform is being added')),
+            ]
+        );
     }
 
     #[\Override]

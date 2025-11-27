@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MovieCrudController extends CrudControllerAbstract
 {
@@ -40,7 +41,8 @@ class MovieCrudController extends CrudControllerAbstract
         TheMovieDbApi $theMovieDbApi,
         ConfigurationService $configurationService,
         MovieRepository $movieRepository,
-    ): Response
+        TranslatorInterface $translator,
+    ): JsonResponse
     {
         $request      = $adminContext->getRequest();
         $tmdbId       = $request->query->get('id');
@@ -48,20 +50,11 @@ class MovieCrudController extends CrudControllerAbstract
             ['tmdb' => $tmdbId]
         );
         if ($movie instanceof Movie) {
-            $this->addFlash(
-                'warning',
-                new TranslatableMessage(
-                    'The %name% movie is already present in the database',
-                    [
-                        '%name%' => $movie->getTitle(),
-                    ]
-                )
-            );
-
-            return $this->redirectToRoute(
-                'admin_movie_detail',
+            return new JsonResponse(
                 [
-                    'entityId' => $movie->getId(),
+                    'status'  => 'warning',
+                    'id'      => $tmdbId,
+                    'message' => $translator->trans(new TranslatableMessage('Movie already exists')),
                 ]
             );
         }
@@ -69,28 +62,29 @@ class MovieCrudController extends CrudControllerAbstract
         $locale = $configurationService->getLocaleTmdb();
         $tmdb   = $theMovieDbApi->movies()->getDetails($tmdbId, $locale);
         if (is_null($tmdb)) {
-            $this->addFlash(
-                'danger',
-                new TranslatableMessage(
-                    'The movie with the TMDB id %id% does not exist',
-                    ['%id%' => $tmdbId]
-                )
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'id'      => $tmdbId,
+                    'message' => $translator->trans(
+                        new TranslatableMessage(
+                            'The movie with the TMDB id %id% does not exist',
+                            ['%id%' => $tmdbId]
+                        )
+                    ),
+                ]
             );
-
-            return $this->redirectToRoute('admin_movie_index');
         }
 
         $other  = $theMovieDbApi->movies()->getMovieExternalIds($tmdbId);
         if (!isset($other['imdb_id'])) {
-            $this->addFlash(
-                'danger',
-                new TranslatableMessage(
-                    'The movie with the TMDB id %id% does not exist',
-                    ['%id%' => $tmdbId]
-                )
+            return new JsonResponse(
+                [
+                    'status'  => 'warning',
+                    'id'      => $tmdbId,
+                    'message' => $translator->trans(new TranslatableMessage('No Imdb id for this movie')),
+                ]
             );
-
-            return $this->redirectToRoute('admin_movie_index');
         }
 
         $movie = new Movie();
@@ -104,20 +98,11 @@ class MovieCrudController extends CrudControllerAbstract
         $movieRepository->save($movie);
         $messageBus->dispatch(new MovieMessage($movie->getId()));
 
-        $this->addFlash(
-            'success',
-            new TranslatableMessage(
-                'The %name% movie has been added to the database',
-                [
-                    '%name%' => $movie->getTitle(),
-                ]
-            )
-        );
-
-        return $this->redirectToRoute(
-            'admin_movie_detail',
+        return new JsonResponse(
             [
-                'entityId' => $movie->getId(),
+                'status'  => 'success',
+                'id'      => $tmdbId,
+                'message' => $translator->trans(new TranslatableMessage('Movie is being added')),
             ]
         );
     }

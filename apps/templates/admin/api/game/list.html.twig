@@ -1,4 +1,4 @@
-<table class="table datagrid{% if games|length == 0 %} datagrid-empty{% endif %}">
+<table class="table datagrid{% if games|length == 0 %} datagrid-empty{% endif %} data-ajax">
     {% if games|length != 0 %}
         <thead>
             <tr>
@@ -22,7 +22,7 @@
     {% endif %}
     <tbody>
         {% for game in games %}
-            <tr data-id="{{ game.id }}">
+            <tr data-id="{{ (game.version_parent is defined) ? game.version_parent : game.id }}">
                 <td class="text-left" dir="ltr">
                     <span title="{{ game.name|e('html_attr') }}">{{ game.name }}</span>
                 </td>
@@ -52,7 +52,7 @@
                     {% if platform != '' %}
                         {% set url = url.set('platform', platform) %}
                     {% endif %}
-                    <a href="{{ url }}" target="_blank">
+                    <a href="{{ url }}" class="addtobdd">
                         {{ 'Select'|trans }}
                     </a>
                 </td>
