@@ -7,24 +7,18 @@ export class Search {
 
   async executeAjax(modalContent, button) {
     const url = button.dataset.url;
-    const formData = new FormData();
-    // Récupérer tous les inputs et selects du formulaire
-    const inputs = modalContent ? modalContent.querySelectorAll('input, select') : [];
-    inputs.forEach(element => {
-      if (element.name && element.value) {
-      formData.append(element.name, element.value);
-      }
-    });
+    const form = modalContent ? modalContent.querySelector('form') : null;
+    const formData = form ? new FormData(form) : new FormData();
 
     try {
       const response = await fetch(url, {
-      method: 'POST',
-      body: formData
+        method: 'POST',
+        body: formData
       });
       const data = await response.text();
       const resultsContainer = modalContent ? modalContent.querySelector('.results') : null;
       if (resultsContainer) {
-      resultsContainer.innerHTML = data;
+        resultsContainer.innerHTML = data;
       }
     } catch (error) {
       console.error('Error:', error);
