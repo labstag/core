@@ -9,6 +9,13 @@
 .accordion-item {
   width: 100%;
 }
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  25%, 75% { opacity: 0; }
+}
+.blink {
+  animation: blink 1s infinite;
+}
 
 .modal-body {
 	table {

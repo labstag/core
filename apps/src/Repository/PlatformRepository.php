@@ -3,6 +3,7 @@
 namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Labstag\Entity\Game;
 use Labstag\Entity\Platform;
 
 /**
@@ -23,5 +24,15 @@ class PlatformRepository extends RepositoryAbstract
         $result = $queryBuilder->getQuery()->getArrayResult();
 
         return array_column($result, 'igdb');
+    }
+
+    public function notInGame(Game $game): array
+    {
+        $queryBuilder = $this->createQueryBuilder('p');
+        $queryBuilder->where(':game NOT MEMBER OF p.games');
+        $queryBuilder->setParameter('game', $game);
+        $queryBuilder->orderBy('p.title', 'ASC');
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

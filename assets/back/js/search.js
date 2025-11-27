@@ -5,27 +5,26 @@ export class Search {
     this.addToBdd()
   }
 
-  async executeAjax(modalContent, button)
-  {
+  async executeAjax(modalContent, button) {
     const url = button.dataset.url;
-    const params = new URLSearchParams();
+    const formData = new FormData();
     // Récupérer tous les inputs et selects du formulaire
     const inputs = modalContent ? modalContent.querySelectorAll('input, select') : [];
     inputs.forEach(element => {
       if (element.name && element.value) {
-        params.append(element.name, element.value);
+      formData.append(element.name, element.value);
       }
     });
-    
-    const urlWithParams = `${url}?${params.toString()}`;
+
     try {
-      const response = await fetch(urlWithParams, {
-        method: 'GET'
+      const response = await fetch(url, {
+      method: 'POST',
+      body: formData
       });
       const data = await response.text();
       const resultsContainer = modalContent ? modalContent.querySelector('.results') : null;
       if (resultsContainer) {
-        resultsContainer.innerHTML = data;
+      resultsContainer.innerHTML = data;
       }
     } catch (error) {
       console.error('Error:', error);
@@ -50,6 +49,15 @@ export class Search {
       if (button) {
         event.preventDefault();
         this.executeAjax(button.closest('.modal-content'), button);
+        const modal = button.closest('.modal');
+        if (modal) {
+          const bsModal = bootstrap.Modal.getInstance(modal);
+          if (bsModal) {
+            modal.addEventListener('hidden.bs.modal', () => {
+              window.location.reload();
+            }, { once: true });
+          }
+        }
       }
     });
   }
@@ -65,6 +73,7 @@ export class Search {
             method: 'GET'
           });
           if (response.ok) {
+
             // Optionally handle success response
             const data = await response.json();
             if (data.status === 'success') {
@@ -73,8 +82,10 @@ export class Search {
                 const firstRow = rows[0];
                 const tdCount = firstRow.querySelectorAll('td').length;
                 const message = typeof data.message === 'object' ? JSON.stringify(data.message) : data.message;
-                firstRow.innerHTML = `<td colspan="${tdCount}" class="text-center">${message}</td>`;
-                // Remove other rows except the first one
+                firstRow.innerHTML = `<td colspan="${tdCount}" class="text-center blink">${message}</td>`;
+                setTimeout(() => {
+                  firstRow.remove();
+                }, 10000);
                 for (let i = 1; i < rows.length; i++) {
                   rows[i].remove();
                 }

@@ -1,0 +1,15 @@
+{% form_theme form with '@EasyAdmin/crud/form_theme.html.twig' only %}
+{% set controllers = ea.getRequest().get('_controller') %}
+{% set url = ea_url().setController(controllers[0]).setAction('addAnotherPlatform').set('game', game.id) %}
+<div class="modal-header">
+	<h5 class="modal-title">{{ 'Add to another platform'|trans }}</h5>
+	<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body">
+	{{ form(form) }}
+	<div class="info"></div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-primary another_platforms" data-url="{{ url }}">{{ 'Add'|trans }}</button>
+	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Close'|trans }}</button>
+</div>

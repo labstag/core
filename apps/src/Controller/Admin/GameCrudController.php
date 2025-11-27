@@ -10,6 +10,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Game;
+use Labstag\Entity\Platform;
+use Labstag\Form\Admin\GameOtherPlatformType;
 use Labstag\Form\Admin\GameType;
 use Labstag\Message\AddGameMessage;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,6 +22,59 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GameCrudController extends CrudControllerAbstract
 {
+    public function addAnotherPlatform(AdminContext $adminContext, TranslatorInterface $translator): JsonResponse
+    {
+        $request        = $adminContext->getRequest();
+        $entityId       = $request->query->get('entityId');
+        $repositoryAbstract = $this->getRepository();
+        $game           = $repositoryAbstract->find($entityId);
+        if (!$game instanceof Game) {
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'message' => $translator->trans(new TranslatableMessage('Game not found')),
+                ]
+            );
+        }
+
+        $post = $request->request->all();
+        if (!isset($post['game_other_platform'])) {
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'message' => $translator->trans(new TranslatableMessage('No data found')),
+                ]
+            );
+        }
+
+        if (!isset($post['game_other_platform']['platforms'])) {
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'message' => $translator->trans(new TranslatableMessage('No platform selected')),
+                ]
+            );
+        }
+
+        $platforms          = $post['game_other_platform']['platforms'];
+        $platformRepository = $this->getRepository(Platform::class);
+        foreach ($platforms as $platform) {
+            $platformEntity = $platformRepository->find($platform);
+            if ($platformEntity instanceof Platform) {
+                $game->addPlatform($platformEntity);
+            }
+        }
+
+        $repositoryAbstract->save($game);
+
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'message' => $translator->trans(new TranslatableMessage('Platforms added successfully')),
+            ]
+        );
+    }
+
     public function addByApi(
         AdminContext $adminContext,
         MessageBusInterface $messageBus,
@@ -36,6 +91,31 @@ class GameCrudController extends CrudControllerAbstract
                 'status'  => 'success',
                 'id'      => $id,
                 'message' => $translator->trans(new TranslatableMessage('Game is being added')),
+            ]
+        );
+    }
+
+    public function addToAnotherPlatform(AdminContext $adminContext): Response
+    {
+        $request            = $adminContext->getRequest();
+        $entityId           = $request->query->get('entityId');
+        $repositoryAbstract     = $this->getRepository();
+        $platformRepository = $this->getRepository(Platform::class);
+        $game               = $repositoryAbstract->find($entityId);
+        $platforms          = $platformRepository->notInGame($game);
+
+        $form    = $this->createForm(
+            type: GameOtherPlatformType::class,
+            options: ['platforms' => $platforms]
+        );
+        $form->handleRequest($request);
+
+        return $this->render(
+            'admin/game/other_platforms.html.twig',
+            [
+                'game' => $game,
+                'ea'   => $adminContext,
+                'form' => $form->createView(),
             ]
         );
     }
@@ -134,6 +214,16 @@ class GameCrudController extends CrudControllerAbstract
         );
         $action->linkToCrudAction('igdb');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+
+        $action = Action::new('addToAnotherPlatform', new TranslatableMessage('Add to another platform'));
+        $action->linkToCrudAction('addToAnotherPlatform');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
         $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
