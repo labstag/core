@@ -62,7 +62,7 @@ final class MovieService
     public function getMovieApi(Request $request): array
     {
         $movies             = [];
-        $all                = $request->query->all();
+        $all                = $request->request->all();
         $tmdbs              = $this->movieRepository->getAllTmdb();
         if (isset($all['movie']['title'])) {
             $locale            = $this->configurationService->getLocaleTmdb();

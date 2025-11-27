@@ -51,7 +51,7 @@ final class GameService extends AbstractIgdb
         $entityRepository     = $this->entityManager->getRepository(Game::class);
         $platformRepository   = $this->entityManager->getRepository(Platform::class);
         $igbds                = $entityRepository->getAllIgdb();
-        $all                  = $request->query->all();
+        $all                  = $request->request->all();
         $games                = [];
         if (isset($all['game'])) {
             $where  = 'game_type = 0';

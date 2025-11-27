@@ -53,7 +53,7 @@ final class PlatformService extends AbstractIgdb
     {
         $entityRepository   = $this->entityManager->getRepository(Platform::class);
         $igbds              = $entityRepository->getAllIgdb();
-        $all                = $request->query->all();
+        $all                = $request->request->all();
         $platforms          = [];
         if (isset($all['platform'])) {
             $search    = $all['platform']['title'] ?? '';

@@ -62,7 +62,7 @@ final class SerieService
     public function getSerieApi(Request $request): array
     {
         $series             = [];
-        $all                = $request->query->all();
+        $all                = $request->request->all();
         $tmdbs              = $this->serieRepository->getAllTmdb();
         if (isset($all['serie']['title'])) {
             $locale            = $this->configurationService->getLocaleTmdb();
