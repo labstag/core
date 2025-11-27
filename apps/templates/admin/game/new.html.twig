@@ -8,7 +8,9 @@
 		<div class="col-md-6">
 			{{ form(form) }}
 		</div>
-		<div class="col-md-6 results"></div>
+		<div class="col-md-6 results">
+			{% include "admin/api/game/list.html.twig" with {'games': []} %}
+		</div>
 	</div>
 </div>
 <div class="modal-footer">

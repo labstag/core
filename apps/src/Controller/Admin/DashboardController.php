@@ -13,7 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
-use Labstag\Api\IgdbApi;
 use Labstag\Controller\Admin\Factory\MenuItemFactory;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
@@ -23,6 +22,8 @@ use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\Igdb\GameService;
 use Labstag\Service\Igdb\PlatformService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SerieService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
@@ -54,16 +55,13 @@ class DashboardController extends AbstractDashboardController
         name: 'admin_api_game_find_games',
         defaults: ['_locale' => 'fr']
     )]
-    public function apiGameFindGames(
-        AdminContext $adminContext,
-        GameService $gameService,
-    ): Response
+    public function apiGameFindGames(AdminContext $adminContext, GameService $gameService): Response
     {
         $request            = $adminContext->getRequest();
         $games              = $gameService->getGameApi($request);
 
         return $this->render(
-            'admin/api/game/game.html.twig',
+            'admin/api/game/list.html.twig',
             [
                 'platform'   => isset($platform) ? $platform->getId() : '',
                 'controller' => GameCrudController::class,
@@ -90,6 +88,48 @@ class DashboardController extends AbstractDashboardController
                 'controller' => PlatformCrudController::class,
                 'ea'         => $adminContext,
                 'platforms'  => $platforms,
+            ]
+        );
+    }
+
+    #[Route(
+        '/api/movie/find',
+        name: 'admin_api_find_movie',
+        defaults: ['_locale' => 'fr']
+    )]
+    public function apiMovieFind(AdminContext $adminContext, MovieService $movieService): Response
+    {
+        $request            = $adminContext->getRequest();
+
+        $movies = $movieService->getMovieApi($request);
+
+        return $this->render(
+            'admin/api/movie/list.html.twig',
+            [
+                'controller' => MovieCrudController::class,
+                'ea'         => $adminContext,
+                'movies'     => $movies,
+            ]
+        );
+    }
+
+    #[Route(
+        '/api/serie/find',
+        name: 'admin_api_find_serie',
+        defaults: ['_locale' => 'fr']
+    )]
+    public function apiSerieFind(AdminContext $adminContext, SerieService $serieService): Response
+    {
+        $request            = $adminContext->getRequest();
+
+        $series = $serieService->getSerieApi($request);
+
+        return $this->render(
+            'admin/api/serie/list.html.twig',
+            [
+                'controller' => SerieCrudController::class,
+                'ea'         => $adminContext,
+                'series'     => $series,
             ]
         );
     }
@@ -323,7 +363,7 @@ class DashboardController extends AbstractDashboardController
                         SagaCrudController::getEntityFqcn()
                     ),
                 ],
-                false,
+                true,
             ],
             [
                 'serie',
@@ -344,7 +384,7 @@ class DashboardController extends AbstractDashboardController
                         EpisodeCrudController::getEntityFqcn()
                     ),
                 ],
-                false,
+                true,
             ],
             [
                 'game',

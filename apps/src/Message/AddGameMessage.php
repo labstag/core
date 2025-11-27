@@ -4,7 +4,7 @@ namespace Labstag\Message;
 
 use Symfony\Component\Messenger\Attribute\AsMessage;
 
-#[AsMessage('sync')]
+#[AsMessage('async')]
 final class AddGameMessage
 {
     public function __construct(

@@ -1,6 +1,6 @@
 {% form_theme form with '@EasyAdmin/crud/form_theme.html.twig' only %}
 <div class="modal-header">
-	<h5 class="modal-title">{{ 'Search a new platform'|trans }}</h5>
+	<h5 class="modal-title">{{ 'Search a new movie'|trans }}</h5>
 	<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 <div class="modal-body">
@@ -9,10 +9,11 @@
 			{{ form(form) }}
 		</div>
 		<div class="col-md-6 results">
-			{% include "admin/api/game/platform.html.twig" with {'platforms': []} %}
+			{% include "admin/api/movie/list.html.twig" with {'movies': []} %}
+		</div>
 	</div>
 </div>
 <div class="modal-footer">
-	<button type="button" class="btn btn-primary searchgame-modal" data-url="{{ path('admin_api_game_find_platforms', {'_locale': app.request.locale}) }}">{{ 'Search'|trans }}</button>
+	<button type="button" class="btn btn-primary searchgame-modal" data-url="{{ path('admin_api_find_movie', {'_locale': app.request.locale}) }}">{{ 'Search'|trans }}</button>
 	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Close'|trans }}</button>
 </div>

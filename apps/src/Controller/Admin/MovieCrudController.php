@@ -19,27 +19,127 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\CountriesFilter;
+use Labstag\Form\Admin\MovieType;
 use Labstag\Message\MovieAllMessage;
 use Labstag\Message\MovieMessage;
+use Labstag\Repository\MovieRepository;
+use Labstag\Service\ConfigurationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieCrudController extends CrudControllerAbstract
 {
+    public function addByApi(
+        AdminContext $adminContext,
+        MessageBusInterface $messageBus,
+        TheMovieDbApi $theMovieDbApi,
+        ConfigurationService $configurationService,
+        MovieRepository $movieRepository,
+    ): Response
+    {
+        $request      = $adminContext->getRequest();
+        $tmdbId       = $request->query->get('id');
+        $movie        = $movieRepository->findOneBy(
+            ['tmdb' => $tmdbId]
+        );
+        if ($movie instanceof Movie) {
+            $this->addFlash(
+                'warning',
+                new TranslatableMessage(
+                    'The %name% movie is already present in the database',
+                    [
+                        '%name%' => $movie->getTitle(),
+                    ]
+                )
+            );
+
+            return $this->redirectToRoute(
+                'admin_movie_detail',
+                [
+                    'entityId' => $movie->getId(),
+                ]
+            );
+        }
+
+        $locale = $configurationService->getLocaleTmdb();
+        $tmdb   = $theMovieDbApi->movies()->getDetails($tmdbId, $locale);
+        if (is_null($tmdb)) {
+            $this->addFlash(
+                'danger',
+                new TranslatableMessage(
+                    'The movie with the TMDB id %id% does not exist',
+                    ['%id%' => $tmdbId]
+                )
+            );
+
+            return $this->redirectToRoute('admin_movie_index');
+        }
+
+        $other  = $theMovieDbApi->movies()->getMovieExternalIds($tmdbId);
+        if (!isset($other['imdb_id'])) {
+            $this->addFlash(
+                'danger',
+                new TranslatableMessage(
+                    'The movie with the TMDB id %id% does not exist',
+                    ['%id%' => $tmdbId]
+                )
+            );
+
+            return $this->redirectToRoute('admin_movie_index');
+        }
+
+        $movie = new Movie();
+        $movie->setEnable(true);
+        $movie->setAdult(false);
+        $movie->setFile(false);
+        $movie->setTmdb($tmdbId);
+        $movie->setImdb($other['imdb_id']);
+        $movie->setTitle($tmdb['title']);
+
+        $movieRepository->save($movie);
+        $messageBus->dispatch(new MovieMessage($movie->getId()));
+
+        $this->addFlash(
+            'success',
+            new TranslatableMessage(
+                'The %name% movie has been added to the database',
+                [
+                    '%name%' => $movie->getTitle(),
+                ]
+            )
+        );
+
+        return $this->redirectToRoute(
+            'admin_movie_detail',
+            [
+                'entityId' => $movie->getId(),
+            ]
+        );
+    }
+
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
-        $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
-
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
         $this->actionsFactory->setLinkImdbAction();
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
+
+        $action = Action::new('showModal', new TranslatableMessage('New movie'));
+        $action->linkToCrudAction('showModal');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
         return $this->actionsFactory->show();
     }
@@ -193,6 +293,21 @@ class MovieCrudController extends CrudControllerAbstract
         $details = $theMovieDbApi->getDetailsMovie($movie);
 
         return new JsonResponse($details);
+    }
+
+    public function showModal(AdminContext $adminContext): Response
+    {
+        $request = $adminContext->getRequest();
+        $form    = $this->createForm(MovieType::class);
+        $form->handleRequest($request);
+
+        return $this->render(
+            'admin/movie/new.html.twig',
+            [
+                'ea'   => $adminContext,
+                'form' => $form->createView(),
+            ]
+        );
     }
 
     public function tmdb(AdminContext $adminContext): RedirectResponse

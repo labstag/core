@@ -19,25 +19,127 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\CountriesFilter;
+use Labstag\Form\Admin\SerieType;
 use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
+use Labstag\Repository\SerieRepository;
+use Labstag\Service\ConfigurationService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SerieCrudController extends CrudControllerAbstract
 {
+    public function addByApi(
+        AdminContext $adminContext,
+        MessageBusInterface $messageBus,
+        TheMovieDbApi $theMovieDbApi,
+        ConfigurationService $configurationService,
+        SerieRepository $serieRepository,
+    ): Response
+    {
+        $request      = $adminContext->getRequest();
+        $tmdbId       = $request->query->get('id');
+        $serie        = $serieRepository->findOneBy(
+            ['tmdb' => $tmdbId]
+        );
+        if ($serie instanceof Serie) {
+            $this->addFlash(
+                'warning',
+                new TranslatableMessage(
+                    'The %name% series is already present in the database',
+                    [
+                        '%name%' => $serie->getTitle(),
+                    ]
+                )
+            );
+
+            return $this->redirectToRoute(
+                'admin_serie_detail',
+                [
+                    'entityId' => $serie->getId(),
+                ]
+            );
+        }
+
+        $locale = $configurationService->getLocaleTmdb();
+        $tmdb   = $theMovieDbApi->tvserie()->getDetails($tmdbId, $locale);
+        if (is_null($tmdb)) {
+            $this->addFlash(
+                'danger',
+                new TranslatableMessage(
+                    'The series with the TMDB id %id% does not exist',
+                    ['%id%' => $tmdbId]
+                )
+            );
+
+            return $this->redirectToRoute('admin_serie_index');
+        }
+
+        $other  = $theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
+        if (!isset($other['imdb_id'])) {
+            $this->addFlash(
+                'danger',
+                new TranslatableMessage(
+                    'The series with the TMDB id %id% does not exist',
+                    ['%id%' => $tmdbId]
+                )
+            );
+
+            return $this->redirectToRoute('admin_serie_index');
+        }
+
+        $serie = new Serie();
+        $serie->setFile(false);
+        $serie->setEnable(true);
+        $serie->setAdult(false);
+        $serie->setTmdb($tmdbId);
+        $serie->setImdb($other['imdb_id']);
+        $serie->setTitle($tmdb['name']);
+
+        $serieRepository->save($serie);
+        $messageBus->dispatch(new SerieMessage($serie->getId()));
+
+        $this->addFlash(
+            'success',
+            new TranslatableMessage(
+                'The %name% series has been added to the database',
+                [
+                    '%name%' => $serie->getTitle(),
+                ]
+            )
+        );
+
+        return $this->redirectToRoute(
+            'admin_serie_detail',
+            [
+                'entityId' => $serie->getId(),
+            ]
+        );
+    }
+
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
         $this->actionsFactory->setLinkImdbAction();
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
+
+        $action = Action::new('showModal', new TranslatableMessage('New serie'));
+        $action->linkToCrudAction('showModal');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
         return $this->actionsFactory->show();
     }
@@ -192,6 +294,21 @@ class SerieCrudController extends CrudControllerAbstract
         $details = $theMovieDbApi->getDetailsSerie($serie);
 
         return new JsonResponse($details);
+    }
+
+    public function showModal(AdminContext $adminContext): Response
+    {
+        $request = $adminContext->getRequest();
+        $form    = $this->createForm(SerieType::class);
+        $form->handleRequest($request);
+
+        return $this->render(
+            'admin/serie/new.html.twig',
+            [
+                'ea'   => $adminContext,
+                'form' => $form->createView(),
+            ]
+        );
     }
 
     public function tmdb(AdminContext $adminContext): RedirectResponse

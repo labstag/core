@@ -67,7 +67,11 @@ final class PlatformService extends AbstractIgdb
                 $where .= 'platform_family.name ~ "' . $family . '"';
             }
 
-            $body      = $this->igdbApi->setBody(search: $search, where: $where, limit: 20);
+            $fields    = [
+                '*',
+                'platform_family.*',
+            ];
+            $body      = $this->igdbApi->setBody(search: $search, fields: $fields, where: $where, limit: 20);
             $platforms = $this->igdbApi->setUrl('platforms', $body);
             if (is_null($platforms)) {
                 $platforms = [];

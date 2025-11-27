@@ -1697,6 +1697,118 @@
         <source>TMDB page for the season</source>
         <target>Page TMDB de la saison</target>
       </trans-unit>
+      <trans-unit id="nh0Ghrw" resname="New game">
+        <source>New game</source>
+        <target>Nouveau jeu</target>
+      </trans-unit>
+      <trans-unit id="D6T_ooP" resname="Game">
+        <source>Game</source>
+        <target>Jeu</target>
+      </trans-unit>
+      <trans-unit id="TfHPH8U" resname="Games">
+        <source>Games</source>
+        <target>Jeux</target>
+      </trans-unit>
+      <trans-unit id="qTyvHnV" resname="Igdb">
+        <source>Igdb</source>
+        <target>IGDB</target>
+      </trans-unit>
+      <trans-unit id="YTeXRKE" resname="Platforms">
+        <source>Platforms</source>
+        <target>Plateformes</target>
+      </trans-unit>
+      <trans-unit id="cJ6vB5W" resname="IGDB Page">
+        <source>IGDB Page</source>
+        <target>Page IGDB</target>
+      </trans-unit>
+      <trans-unit id="6Lq470S" resname="New movie">
+        <source>New movie</source>
+        <target>Nouveau film</target>
+      </trans-unit>
+      <trans-unit id="9WTHohM" resname="The movie with the TMDB id %id% does not exist">
+        <source>The movie with the TMDB id %id% does not exist</source>
+        <target>Le film avec l'identifiant TMDB %id% n'existe pas</target>
+      </trans-unit>
+      <trans-unit id="GrkAosC" resname="New serie">
+        <source>New serie</source>
+        <target>Nouvelle série</target>
+      </trans-unit>
+      <trans-unit id="NwVzZMf" resname="The series with the TMDB id %id% does not exist">
+        <source>The series with the TMDB id %id% does not exist</source>
+        <target>La série avec l'identifiant TMDB %id% n'existe pas</target>
+      </trans-unit>
+      <trans-unit id="x2Zym9S" resname="New platform">
+        <source>New platform</source>
+        <target>Nouvelle plateforme</target>
+      </trans-unit>
+      <trans-unit id="oYU53RL" resname="Platform">
+        <source>Platform</source>
+        <target>Plateforme</target>
+      </trans-unit>
+      <trans-unit id="Zq4_5xf" resname="Family">
+        <source>Family</source>
+        <target>Famille</target>
+      </trans-unit>
+      <trans-unit id="QOCXiok" resname="Generation">
+        <source>Generation</source>
+        <target>Génération</target>
+      </trans-unit>
+      <trans-unit id="KNRiz0N" resname="Abbreviation">
+        <source>Abbreviation</source>
+        <target>Abréviation</target>
+      </trans-unit>
+      <trans-unit id="69OW9C2" resname="Franchise">
+        <source>Franchise</source>
+        <target>Franchise</target>
+      </trans-unit>
+      <trans-unit id="7X65_IG" resname="Franchises">
+        <source>Franchises</source>
+        <target>Franchises</target>
+      </trans-unit>
+      <trans-unit id="crAI1jT" resname="IGDB ID">
+        <source>IGDB ID</source>
+        <target>Identifiant IGDB</target>
+      </trans-unit>
+      <trans-unit id="F_k2krt" resname="Cover">
+        <source>Cover</source>
+        <target>Couverture</target>
+      </trans-unit>
+      <trans-unit id="BUIQ..a" resname="Action">
+        <source>Action</source>
+        <target>Action</target>
+      </trans-unit>
+      <trans-unit id="kAx.1At" resname="Link Tmdb">
+        <source>Link Tmdb</source>
+        <target>Lier à TMDB</target>
+      </trans-unit>
+      <trans-unit id="l_d5jYJ" resname="Select">
+        <source>Select</source>
+        <target>Sélectionner</target>
+      </trans-unit>
+      <trans-unit id="SVBWqlB" resname="Link igdb">
+        <source>Link igdb</source>
+        <target>Lier à IGDB</target>
+      </trans-unit>
+      <trans-unit id="i8XHUot" resname="Search a new movie">
+        <source>Search a new movie</source>
+        <target>Rechercher un nouveau film</target>
+      </trans-unit>
+      <trans-unit id="VAp4flC" resname="Search a new serie">
+        <source>Search a new serie</source>
+        <target>Rechercher une nouvelle série</target>
+      </trans-unit>
+      <trans-unit id="FboJG3Q" resname="Choose the type of Platform to create">
+        <source>Choose the type of Platform to create</source>
+        <target>Choisissez le type de plateforme à créer</target>
+      </trans-unit>
+      <trans-unit id="Liu4Rwu" resname="Search a new game">
+        <source>Search a new game</source>
+        <target>Rechercher un nouveau jeu</target>
+      </trans-unit>
+      <trans-unit id="AOlqz3s" resname="Search a new platform">
+        <source>Search a new platform</source>
+        <target>Rechercher une nouvelle plateforme</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -8,8 +8,11 @@ use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
+use Labstag\Repository\MovieRepository;
 use Labstag\Service\CategoryService;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Symfony\Component\HttpFoundation\Request;
 
 final class MovieService
 {
@@ -25,12 +28,14 @@ final class MovieService
     private array $year = [];
 
     public function __construct(
+        private ConfigurationService $configurationService,
         private RecommendationService $recommendationService,
         private FileService $fileService,
         private CompanyService $companyService,
         private CategoryService $categoryService,
         private SagaService $sagaService,
         private EntityManagerInterface $entityManager,
+        private MovieRepository $movieRepository,
         private TheMovieDbApi $theMovieDbApi,
     )
     {
@@ -52,6 +57,31 @@ final class MovieService
         $this->country = $country;
 
         return $country;
+    }
+
+    public function getMovieApi(Request $request): array
+    {
+        $movies             = [];
+        $all                = $request->query->all();
+        $tmdbs              = $this->movieRepository->getAllTmdb();
+        if (isset($all['movie']['title'])) {
+            $locale            = $this->configurationService->getLocaleTmdb();
+            $search            = $this->theMovieDbApi->movies()->search(searchQuery: $all['movie']['title'], page: 1, language: $locale);
+            if (isset($search['results'])) {
+                $movies = $search['results'];
+                foreach ($movies as &$movie) {
+                    $movie['release_date'] = empty($movie['release_date']) ? null : new DateTime(
+                        $movie['release_date']
+                    );
+                    $movie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
+                        $movie['poster_path'] ?? '',
+                        100
+                    );
+                }
+            }
+        }
+
+        return array_filter($movies, fn (array $movie): bool => !in_array($movie['id'], $tmdbs));
     }
 
     /**

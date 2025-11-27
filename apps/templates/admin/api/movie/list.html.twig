@@ -1,5 +1,5 @@
-<table class="table datagrid{% if games|length == 0 %} datagrid-empty{% endif %}">
-    {% if games|length != 0 %}
+<table class="table datagrid{% if movies|length == 0 %} datagrid-empty{% endif %}">
+    {% if movies|length != 0 %}
         <thead>
             <tr>
                 <th>
@@ -21,43 +21,38 @@
         </thead>
     {% endif %}
     <tbody>
-        {% for game in games %}
-            <tr data-id="{{ game.id }}">
+        {% for movie in movies %}
+            <tr data-id="{{ movie.id }}">
                 <td class="text-left" dir="ltr">
-                    <span title="{{ game.name|e('html_attr') }}">{{ game.name }}</span>
+                    <span title="{{ movie.title|e('html_attr') }}">{{ movie.title }}</span>
                 </td>
                 <td>
-                    {% if game.cover is defined %}
-                        <img src="{{ game.cover.url }}" alt="{{ game.name|e('html_attr') }}">
+                    {% if movie.poster_path != '' %}
+                        <img src="{{ movie.poster_path }}" alt="{{ movie.title|e('html_attr') }}">
+                    {% else %}
+                        <span title="N/A">N/A</span>
                     {% endif %}
                 <td>
-                    {% if game.first_release_date is defined %}
-                        {{ game.first_release_date|date('d/m/Y') }}
+                    {% if movie.release_date is defined %}
+                        {{ movie.release_date|date('d/m/Y') }}
+                    {% else %}
+                        <span title="N/A">N/A</span>
                     {% endif %}
                 </td>
                 <td class="text-left" dir="ltr">
-                    <a href="{{ game.url }}" target="_blank">
-                        {{ 'Link igdb'|trans }}
+                    <a href="https://www.themoviedb.org/title/{{ movie.id }}" target="_blank">
+                        {{ 'Link Tmdb'|trans }}
                     </a>
                 </td>
                 <td>
-                    {% set url = ea_url().setController(controller).setAction('addByApi') %}
-                    {% if game.version_parent is defined %}
-                        {% set url = url.set('id', game.version_parent) %}
-                    {% else %}
-                        {% set url = url.set('id', game.id) %}
-                    {% endif %}
-                    {% if platform != '' %}
-                        {% set url = url.set('platform', platform) %}
-                    {% endif %}
-                    <a href="{{ url }}" target="_blank">
+                    <a href="{{ ea_url().setController(controller).setAction('addByApi').set('id', movie.id) }}" target="_blank">
                         {{ 'Select'|trans }}
                     </a>
                 </td>
             </tr>
         {% else %}
             {% block table_body_empty %}
-				{% for i in 1..7 %}
+				{% for i in 1..6 %}
 					<tr class="empty-row">
 						<td><span></span></td>
 						<td><span></span></td>

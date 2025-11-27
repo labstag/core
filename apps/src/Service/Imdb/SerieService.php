@@ -11,7 +11,9 @@ use Labstag\Entity\SerieCategory;
 use Labstag\Message\SeasonMessage;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\CategoryService;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SerieService
@@ -30,6 +32,7 @@ final class SerieService
     public function __construct(
         private RecommendationService $recommendationService,
         private MessageBusInterface $messageBus,
+        private ConfigurationService $configurationService,
         private FileService $fileService,
         private CompanyService $companyService,
         private SeasonService $seasonService,
@@ -54,6 +57,31 @@ final class SerieService
         $this->country = $country;
 
         return $country;
+    }
+
+    public function getSerieApi(Request $request): array
+    {
+        $series             = [];
+        $all                = $request->query->all();
+        $tmdbs              = $this->serieRepository->getAllTmdb();
+        if (isset($all['serie']['title'])) {
+            $locale            = $this->configurationService->getLocaleTmdb();
+            $search            = $this->theMovieDbApi->tvserie()->search(searchQuery: $all['serie']['title'], page: 1, language: $locale);
+            if (isset($search['results'])) {
+                $series = $search['results'];
+                foreach ($series as &$serie) {
+                    $serie['first_air_date'] = empty($serie['first_air_date']) ? null : new DateTime(
+                        $serie['first_air_date']
+                    );
+                    $serie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
+                        $serie['poster_path'] ?? '',
+                        100
+                    );
+                }
+            }
+        }
+
+        return array_filter($series, fn (array $serie): bool => !in_array($serie['id'], $tmdbs));
     }
 
     /**
