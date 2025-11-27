@@ -1809,6 +1809,58 @@
         <source>Search a new platform</source>
         <target>Rechercher une nouvelle plateforme</target>
       </trans-unit>
+      <trans-unit id="NQTH1iy" resname="Game not found">
+        <source>Game not found</source>
+        <target>Jeu introuvable</target>
+      </trans-unit>
+      <trans-unit id="iqe7Mdf" resname="No data found">
+        <source>No data found</source>
+        <target>Aucune donnée trouvée</target>
+      </trans-unit>
+      <trans-unit id="8wdS5_C" resname="No platform selected">
+        <source>No platform selected</source>
+        <target>Aucune plateforme sélectionnée</target>
+      </trans-unit>
+      <trans-unit id="PMUZKKt" resname="Platforms added successfully">
+        <source>Platforms added successfully</source>
+        <target>Plateformes ajoutées avec succès</target>
+      </trans-unit>
+      <trans-unit id="3U3dIsT" resname="Game is being added">
+        <source>Game is being added</source>
+        <target>Le jeu est en cours d'ajout</target>
+      </trans-unit>
+      <trans-unit id="ZoBSxlJ" resname="Add to another platform">
+        <source>Add to another platform</source>
+        <target>Ajouter à une autre plateforme</target>
+      </trans-unit>
+      <trans-unit id="jo3KTiT" resname="Movie already exists">
+        <source>Movie already exists</source>
+        <target>Le film existe déjà</target>
+      </trans-unit>
+      <trans-unit id="MWtb46o" resname="No Imdb id for this movie">
+        <source>No Imdb id for this movie</source>
+        <target>Aucun identifiant IMDB pour ce film</target>
+      </trans-unit>
+      <trans-unit id="X49EcUx" resname="Movie is being added">
+        <source>Movie is being added</source>
+        <target>Le film est en cours d'ajout</target>
+      </trans-unit>
+      <trans-unit id="XLSvmi8" resname="Serie already exists">
+        <source>Serie already exists</source>
+        <target>La série existe déjà</target>
+      </trans-unit>
+      <trans-unit id="gL9xepk" resname="No Imdb id for this series">
+        <source>No Imdb id for this series</source>
+        <target>Aucun identifiant IMDB pour cette série</target>
+      </trans-unit>
+      <trans-unit id="vwah4Nh" resname="Serie added successfully">
+        <source>Serie added successfully</source>
+        <target>Série ajoutée avec succès</target>
+      </trans-unit>
+      <trans-unit id="28YPj2W" resname="Platform is being added">
+        <source>Platform is being added</source>
+        <target>La plateforme est en cours d'ajout</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
