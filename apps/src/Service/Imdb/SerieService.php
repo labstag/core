@@ -69,21 +69,11 @@ final class SerieService
             $results = $this->theMovieDbApi->other()->findByImdb($all['serie']['imdb']);
             if (isset($results['tv_results'])) {
                 $series = $results['tv_results'];
-                foreach ($series as &$serie) {
-                    $serie['first_air_date'] = empty($serie['first_air_date']) ? null : new DateTime(
-                        $serie['first_air_date']
-                    );
-                    $serie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
-                        $serie['poster_path'] ?? '',
-                        100
-                    );
-                }
             }
 
-            return array_filter($series, fn (array $serie): bool => !in_array($serie['id'], $tmdbs));
+            return $this->updateResult($series, $tmdbs);
         }
-        
-        
+
         if (isset($all['serie']['title'])) {
             $search = $all['serie']['title'];
         }
@@ -92,18 +82,9 @@ final class SerieService
         $results            = $this->theMovieDbApi->tvserie()->search(searchQuery: $search, page: $page, language: $locale);
         if (isset($results['results'])) {
             $series = $results['results'];
-            foreach ($series as &$serie) {
-                $serie['first_air_date'] = empty($serie['first_air_date']) ? null : new DateTime(
-                    $serie['first_air_date']
-                );
-                $serie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
-                    $serie['poster_path'] ?? '',
-                    100
-                );
-            }
         }
 
-        return array_filter($series, fn (array $serie): bool => !in_array($serie['id'], $tmdbs));
+        return $this->updateResult($series, $tmdbs);
     }
 
     /**
@@ -353,6 +334,21 @@ final class SerieService
         $this->recommendationService->setRecommendations($serie, $details['similar']['results'] ?? null);
 
         return true;
+    }
+
+    private function updateResult($series, array $tmdbs): array
+    {
+        foreach ($series as &$serie) {
+            $serie['first_air_date'] = empty($serie['first_air_date']) ? null : new DateTime(
+                $serie['first_air_date']
+            );
+            $serie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
+                $serie['poster_path'] ?? '',
+                100
+            );
+        }
+
+        return array_filter($series, fn (array $serie): bool => !in_array($serie['id'], $tmdbs));
     }
 
     private function updateSeasons(Serie $serie, array $details): bool

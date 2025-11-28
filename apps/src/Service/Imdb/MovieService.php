@@ -69,21 +69,11 @@ final class MovieService
             $results = $this->theMovieDbApi->other()->findByImdb($all['movie']['imdb']);
             if (isset($results['movie_results'])) {
                 $movies = $results['movie_results'];
-                foreach ($movies as &$movie) {
-                    $movie['release_date'] = empty($movie['release_date']) ? null : new DateTime(
-                        $movie['release_date']
-                    );
-                    $movie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
-                        $movie['poster_path'] ?? '',
-                        100
-                    );
-                }
             }
 
-            return array_filter($movies, fn (array $movie): bool => !in_array($movie['id'], $tmdbs));
+            return $this->updateResult($movies, $tmdbs);
         }
 
-        
         if (isset($all['movie']['title'])) {
             $search = $all['movie']['title'];
         }
@@ -92,18 +82,9 @@ final class MovieService
         $results            = $this->theMovieDbApi->movies()->search(searchQuery: $search, page: $page, language: $locale);
         if (isset($results['results'])) {
             $movies = $results['results'];
-            foreach ($movies as &$movie) {
-                $movie['release_date'] = empty($movie['release_date']) ? null : new DateTime(
-                    $movie['release_date']
-                );
-                $movie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
-                    $movie['poster_path'] ?? '',
-                    100
-                );
-            }
         }
 
-        return array_filter($movies, fn (array $movie): bool => !in_array($movie['id'], $tmdbs));
+        return $this->updateResult($movies, $tmdbs);
     }
 
     /**
@@ -330,6 +311,19 @@ final class MovieService
         $this->recommendationService->setRecommendations($movie, $details['similar']['results'] ?? null);
 
         return true;
+    }
+
+    private function updateResult($movies, array $tmdbs): array
+    {
+        foreach ($movies as &$movie) {
+            $movie['release_date']   = empty($movie['release_date']) ? null : new DateTime($movie['release_date']);
+            $movie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
+                $movie['poster_path'] ?? '',
+                100
+            );
+        }
+
+        return array_filter($movies, fn (array $movie): bool => !in_array($movie['id'], $tmdbs));
     }
 
     /**

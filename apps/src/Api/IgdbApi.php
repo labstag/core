@@ -108,11 +108,11 @@ class IgdbApi
     {
         $body = [];
         if ('' !== $search && '0' !== $search) {
-            $body[] = sprintf('search "%s"', addslashes($search));
+            $body[] = sprintf('search "%s"', $search);
         }
 
         $body[] = ([] === $fields) ? 'fields *' : 'fields ' . implode(',', $fields);
-        if (count($where) > 0) {
+        if ([] !== $where) {
             $body[] = 'where ' . implode(' & ', $where);
         }
 
@@ -121,7 +121,7 @@ class IgdbApi
             $body[] = 'offset ' . $offset;
         }
 
-        return implode(";", $body).";";
+        return implode(';', $body) . ';';
     }
 
     public function setUrl(string $url, string $body): mixed
