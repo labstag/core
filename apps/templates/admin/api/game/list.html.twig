@@ -9,6 +9,9 @@
                     {{ 'Cover'|trans }}
                 </th>
                 <th>
+                    {{ 'Type'|trans }}
+                </th>
+                <th>
                     {{ 'Release date'|trans }}
                 </th>
                 <th>
@@ -31,6 +34,11 @@
                         <img src="{{ game.cover.url }}" alt="{{ game.name|e('html_attr') }}">
                     {% else %}
                         <span title="N/A">N/A</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if game.game_type.type is defined %}
+                        {{ game.game_type.type|capitalize }}
                     {% endif %}
                 <td>
                     {% if game.first_release_date is defined %}
