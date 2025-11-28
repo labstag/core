@@ -62,13 +62,7 @@ class DashboardController extends AbstractDashboardController
         $page    = $request->query->get('page', 1);
         $limit   = $request->query->get('limit', 20);
         $offset  = ($page - 1) * $limit;
-        $games   = [];
-        while (count($games) < $limit) {
-            $result              = $gameService->getGameApi($request, $limit, $offset);
-            $games               = array_merge($games, $result);
-            ++$page;
-            $offset += $limit;
-        }
+        $games   = $gameService->getGameApi($request, $limit, $offset);
 
         return $this->render(
             'admin/api/game/list.html.twig',
@@ -93,13 +87,7 @@ class DashboardController extends AbstractDashboardController
         $page      = $request->query->get('page', 1);
         $limit     = $request->query->get('limit', 20);
         $offset    = ($page - 1) * $limit;
-        $platforms = [];
-        while (count($platforms) < $limit) {
-            $result    = $platformService->getPlatformApi($request, $limit, $offset);
-            $platforms = array_merge($platforms, $result);
-            ++$page;
-            $offset += $limit;
-        }
+        $platforms = $platformService->getPlatformApi($request, $limit, $offset);
 
         return $this->render(
             'admin/api/game/platform.html.twig',
