@@ -65,6 +65,25 @@ final class SerieService
         $all                = $request->request->all();
         $tmdbs              = $this->serieRepository->getAllTmdb();
         $search             = '';
+        if (isset($all['serie']['imdb'])) {
+            $results = $this->theMovieDbApi->other()->findByImdb($all['serie']['imdb']);
+            if (isset($results['tv_results'])) {
+                $series = $results['tv_results'];
+                foreach ($series as &$serie) {
+                    $serie['first_air_date'] = empty($serie['first_air_date']) ? null : new DateTime(
+                        $serie['first_air_date']
+                    );
+                    $serie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
+                        $serie['poster_path'] ?? '',
+                        100
+                    );
+                }
+            }
+
+            return array_filter($series, fn (array $serie): bool => !in_array($serie['id'], $tmdbs));
+        }
+        
+        
         if (isset($all['serie']['title'])) {
             $search = $all['serie']['title'];
         }

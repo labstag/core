@@ -101,27 +101,27 @@ class IgdbApi
     public function setBody(
         string $search = '',
         array $fields = [],
-        string $where = '',
+        array $where = [],
         int $limit = 10,
         int $offset = 0,
     ): string
     {
         $body = [];
         if ('' !== $search && '0' !== $search) {
-            $body[] = sprintf('search "%s"; ', addslashes($search));
+            $body[] = sprintf('search "%s"', addslashes($search));
         }
 
-        $body[] = ([] === $fields) ? 'fields *;' : 'fields ' . implode(',', $fields) . '; ';
-        if ('' !== $where && '0' !== $where) {
-            $body[] = 'where ' . $where . ';';
+        $body[] = ([] === $fields) ? 'fields *' : 'fields ' . implode(',', $fields);
+        if (count($where) > 0) {
+            $body[] = 'where ' . implode(' & ', $where);
         }
 
-        $body[] = 'limit ' . min($limit, 500) . '; ';
+        $body[] = 'limit ' . min($limit, 500);
         if (0 !== $offset) {
-            $body[] = 'offset ' . $offset . '; ';
+            $body[] = 'offset ' . $offset;
         }
 
-        return implode("\n", $body);
+        return implode(";", $body).";";
     }
 
     public function setUrl(string $url, string $body): mixed

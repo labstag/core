@@ -14,6 +14,14 @@ class SerieType extends AbstractType
     {
         unset($options);
         $builder->add(
+            'imdb',
+            TextType::class,
+            [
+                'label'    => new TranslatableMessage('IMDB ID'),
+                'required' => false,
+            ]
+        );
+        $builder->add(
             'title',
             TextType::class,
             [

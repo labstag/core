@@ -59,14 +59,11 @@ final class PlatformService extends AbstractIgdb
         $search             = '';
         if (isset($all['platform'])) {
             $search    = $all['platform']['title'] ?? '';
-            $where     = '';
+            $where     = [];
             if (isset($all['platform']['family']) && !empty($all['platform']['family'])) {
                 $family = $all['platform']['family'];
-                if ('' !== $where && '0' !== $where) {
-                    $where .= ' & ';
-                }
 
-                $where .= 'platform_family.name ~ "' . $family . '"';
+                $where[] = 'platform_family.name ~ "' . $family . '"';
             }
         }
 
