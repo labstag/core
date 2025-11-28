@@ -116,15 +116,7 @@ class MovieCrudController extends CrudControllerAbstract
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
-
-        $action = Action::new('showModal', new TranslatableMessage('New movie'));
-        $action->linkToCrudAction('showModal');
-        $action->setHtmlAttributes(
-            ['data-action' => 'show-modal']
-        );
-        $action->createAsGlobalAction();
-
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+        $this->addActionNewMovie();
 
         return $this->actionsFactory->show();
     }
@@ -350,6 +342,22 @@ class MovieCrudController extends CrudControllerAbstract
     {
         $entityFilter = EntityFilter::new('saga', new TranslatableMessage('Sagas'));
         $filters->add($entityFilter);
+    }
+
+    private function addActionNewMovie(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('showModal', new TranslatableMessage('New movie'));
+        $action->linkToCrudAction('showModal');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
     private function setUpdateAction(): void

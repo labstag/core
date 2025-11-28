@@ -9,11 +9,11 @@
 			{{ form(form) }}
 		</div>
 		<div class="col-md-8 results">
-			{% include "admin/api/game/list.html.twig" with {'games': []} %}
+			{% include "admin/api/game/list.html.twig" with {'games': [], 'page': 1} %}
 		</div>
 	</div>
 </div>
 <div class="modal-footer">
-	<button type="button" class="btn btn-primary searchdata-modal" data-url="{{ path('admin_api_game_find_games', {'_locale': app.request.locale}) }}">{{ 'Search'|trans }}</button>
+	<button type="button" class="btn btn-primary searchdata-modal" data-page="1" data-url="{{ path('admin_api_game_find_games', {'_locale': app.request.locale}) }}">{{ 'Search'|trans }}</button>
 	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Close'|trans }}</button>
 </div>

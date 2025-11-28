@@ -46,13 +46,14 @@ final class GameService extends AbstractIgdb
         return $game;
     }
 
-    public function getGameApi(Request $request): array
+    public function getGameApi(Request $request, int $limit, int $offset): array
     {
         $entityRepository     = $this->entityManager->getRepository(Game::class);
         $platformRepository   = $this->entityManager->getRepository(Platform::class);
         $igbds                = $entityRepository->getAllIgdb();
         $all                  = $request->request->all();
         $games                = [];
+        $where                = '';
         if (isset($all['game'])) {
             $where  = 'game_type = 0';
             $search = $all['game']['title'] ?? '';
@@ -76,12 +77,21 @@ final class GameService extends AbstractIgdb
 
                 $where .= ' id = ' . $all['game']['number'];
             }
+        }
 
-            $body  = $this->igdbApi->setBody(search: $search, fields: ['*', 'cover.*'], where: $where, limit: 20);
-            $games = $this->igdbApi->setUrl('games', $body);
-            if (is_null($games)) {
-                $games = [];
-            }
+        $body  = $this->igdbApi->setBody(
+            search: $search,
+            fields: [
+                '*',
+                'cover.*',
+            ],
+            where: $where,
+            limit: $limit,
+            offset: $offset
+        );
+        $games = $this->igdbApi->setUrl('games', $body);
+        if (is_null($games)) {
+            $games = [];
         }
 
         $games = array_filter($games, fn (array $game): bool => !in_array($game['id'], $igbds));

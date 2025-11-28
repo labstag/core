@@ -1,4 +1,4 @@
-<table class="table datagrid{% if platforms|length == 0 %} datagrid-empty{% endif %} data-ajax">
+<table class="table datagrid{% if platforms|length == 0 %} datagrid-empty{% endif %} data-ajax" data-page="{{ page }}">
     {% if platforms|length != 0 %}
         <thead>
             <tr>

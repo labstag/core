@@ -116,15 +116,7 @@ class SerieCrudController extends CrudControllerAbstract
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll();
-
-        $action = Action::new('showModal', new TranslatableMessage('New serie'));
-        $action->linkToCrudAction('showModal');
-        $action->setHtmlAttributes(
-            ['data-action' => 'show-modal']
-        );
-        $action->createAsGlobalAction();
-
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+        $this->addActionNewSerie();
 
         return $this->actionsFactory->show();
     }
@@ -336,6 +328,22 @@ class SerieCrudController extends CrudControllerAbstract
     {
         $entityFilter = EntityFilter::new('companies', new TranslatableMessage('Companies'));
         $filters->add($entityFilter);
+    }
+
+    private function addActionNewSerie(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('showModal', new TranslatableMessage('New serie'));
+        $action->linkToCrudAction('showModal');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
     private function setUpdateAction(): void

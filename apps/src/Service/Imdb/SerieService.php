@@ -59,25 +59,28 @@ final class SerieService
         return $country;
     }
 
-    public function getSerieApi(Request $request): array
+    public function getSerieApi(Request $request, int $page = 1): array
     {
         $series             = [];
         $all                = $request->request->all();
         $tmdbs              = $this->serieRepository->getAllTmdb();
+        $search             = '';
         if (isset($all['serie']['title'])) {
-            $locale            = $this->configurationService->getLocaleTmdb();
-            $search            = $this->theMovieDbApi->tvserie()->search(searchQuery: $all['serie']['title'], page: 1, language: $locale);
-            if (isset($search['results'])) {
-                $series = $search['results'];
-                foreach ($series as &$serie) {
-                    $serie['first_air_date'] = empty($serie['first_air_date']) ? null : new DateTime(
-                        $serie['first_air_date']
-                    );
-                    $serie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
-                        $serie['poster_path'] ?? '',
-                        100
-                    );
-                }
+            $search = $all['serie']['title'];
+        }
+
+        $locale             = $this->configurationService->getLocaleTmdb();
+        $results            = $this->theMovieDbApi->tvserie()->search(searchQuery: $search, page: $page, language: $locale);
+        if (isset($results['results'])) {
+            $series = $results['results'];
+            foreach ($series as &$serie) {
+                $serie['first_air_date'] = empty($serie['first_air_date']) ? null : new DateTime(
+                    $serie['first_air_date']
+                );
+                $serie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
+                    $serie['poster_path'] ?? '',
+                    100
+                );
             }
         }
 

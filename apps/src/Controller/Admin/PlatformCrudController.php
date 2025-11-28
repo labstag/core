@@ -44,15 +44,7 @@ class PlatformCrudController extends CrudControllerAbstract
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
-
-        $action = Action::new('showModal', new TranslatableMessage('New platform'));
-        $action->linkToCrudAction('showModal');
-        $action->setHtmlAttributes(
-            ['data-action' => 'show-modal']
-        );
-        $action->createAsGlobalAction();
-
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+        $this->addActionNewPlatform();
 
         return $this->actionsFactory->show();
     }
@@ -124,5 +116,21 @@ class PlatformCrudController extends CrudControllerAbstract
                 'form' => $form->createView(),
             ]
         );
+    }
+
+    private function addActionNewPlatform(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('showModal', new TranslatableMessage('New platform'));
+        $action->linkToCrudAction('showModal');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 }

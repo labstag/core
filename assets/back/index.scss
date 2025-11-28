@@ -30,6 +30,8 @@
 #game_other_platform_platforms {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+  max-height: 350px;
+  overflow-y: auto;
   gap: 1rem;
 }
 

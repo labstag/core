@@ -59,25 +59,28 @@ final class MovieService
         return $country;
     }
 
-    public function getMovieApi(Request $request): array
+    public function getMovieApi(Request $request, int $page = 1): array
     {
         $movies             = [];
         $all                = $request->request->all();
         $tmdbs              = $this->movieRepository->getAllTmdb();
+        $search             = '';
         if (isset($all['movie']['title'])) {
-            $locale            = $this->configurationService->getLocaleTmdb();
-            $search            = $this->theMovieDbApi->movies()->search(searchQuery: $all['movie']['title'], page: 1, language: $locale);
-            if (isset($search['results'])) {
-                $movies = $search['results'];
-                foreach ($movies as &$movie) {
-                    $movie['release_date'] = empty($movie['release_date']) ? null : new DateTime(
-                        $movie['release_date']
-                    );
-                    $movie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
-                        $movie['poster_path'] ?? '',
-                        100
-                    );
-                }
+            $search = $all['movie']['title'];
+        }
+
+        $locale             = $this->configurationService->getLocaleTmdb();
+        $results            = $this->theMovieDbApi->movies()->search(searchQuery: $search, page: $page, language: $locale);
+        if (isset($results['results'])) {
+            $movies = $results['results'];
+            foreach ($movies as &$movie) {
+                $movie['release_date'] = empty($movie['release_date']) ? null : new DateTime(
+                    $movie['release_date']
+                );
+                $movie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
+                    $movie['poster_path'] ?? '',
+                    100
+                );
             }
         }
 

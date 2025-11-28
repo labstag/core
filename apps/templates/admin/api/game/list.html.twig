@@ -1,4 +1,4 @@
-<table class="table datagrid{% if games|length == 0 %} datagrid-empty{% endif %} data-ajax">
+<table class="table datagrid{% if games|length == 0 %} datagrid-empty{% endif %} data-ajax" data-page="{{ page }}">
     {% if games|length != 0 %}
         <thead>
             <tr>
@@ -27,7 +27,7 @@
                     <span title="{{ game.name|e('html_attr') }}">{{ game.name }}</span>
                 </td>
                 <td>
-                    {% if game.cover is defined %}
+                    {% if game.cover is defined and game.cover != '' %}
                         <img src="{{ game.cover.url }}" alt="{{ game.name|e('html_attr') }}">
                     {% else %}
                         <span title="N/A">N/A</span>

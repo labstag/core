@@ -49,12 +49,14 @@ final class PlatformService extends AbstractIgdb
         return $platform;
     }
 
-    public function getPlatformApi(Request $request): array
+    public function getPlatformApi(Request $request, int $limit, int $offset): array
     {
         $entityRepository   = $this->entityManager->getRepository(Platform::class);
         $igbds              = $entityRepository->getAllIgdb();
         $all                = $request->request->all();
         $platforms          = [];
+        $where              = '';
+        $search             = '';
         if (isset($all['platform'])) {
             $search    = $all['platform']['title'] ?? '';
             $where     = '';
@@ -66,16 +68,22 @@ final class PlatformService extends AbstractIgdb
 
                 $where .= 'platform_family.name ~ "' . $family . '"';
             }
+        }
 
-            $fields    = [
-                '*',
-                'platform_family.*',
-            ];
-            $body      = $this->igdbApi->setBody(search: $search, fields: $fields, where: $where, limit: 20);
-            $platforms = $this->igdbApi->setUrl('platforms', $body);
-            if (is_null($platforms)) {
-                $platforms = [];
-            }
+        $fields    = [
+            '*',
+            'platform_family.*',
+        ];
+        $body      = $this->igdbApi->setBody(
+            search: $search,
+            fields: $fields,
+            where: $where,
+            limit: $limit,
+            offset: $offset
+        );
+        $platforms = $this->igdbApi->setUrl('platforms', $body);
+        if (is_null($platforms)) {
+            $platforms = [];
         }
 
         return array_filter($platforms, fn (array $platform): bool => !in_array($platform['id'], $igbds));

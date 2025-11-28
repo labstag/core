@@ -24,10 +24,10 @@ class GameCrudController extends CrudControllerAbstract
 {
     public function addAnotherPlatform(AdminContext $adminContext, TranslatorInterface $translator): JsonResponse
     {
-        $request        = $adminContext->getRequest();
-        $entityId       = $request->query->get('entityId');
+        $request            = $adminContext->getRequest();
+        $entityId           = $request->query->get('entityId');
         $repositoryAbstract = $this->getRepository();
-        $game           = $repositoryAbstract->find($entityId);
+        $game               = $repositoryAbstract->find($entityId);
         if (!$game instanceof Game) {
             return new JsonResponse(
                 [
@@ -97,12 +97,12 @@ class GameCrudController extends CrudControllerAbstract
 
     public function addToAnotherPlatform(AdminContext $adminContext): Response
     {
-        $request            = $adminContext->getRequest();
-        $entityId           = $request->query->get('entityId');
+        $request                = $adminContext->getRequest();
+        $entityId               = $request->query->get('entityId');
         $repositoryAbstract     = $this->getRepository();
-        $platformRepository = $this->getRepository(Platform::class);
-        $game               = $repositoryAbstract->find($entityId);
-        $platforms          = $platformRepository->notInGame($game);
+        $platformRepository     = $this->getRepository(Platform::class);
+        $game                   = $repositoryAbstract->find($entityId);
+        $platforms              = $platformRepository->notInGame($game);
 
         $form    = $this->createForm(
             type: GameOtherPlatformType::class,
@@ -126,15 +126,7 @@ class GameCrudController extends CrudControllerAbstract
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
         $this->setLinkIgdb();
-
-        $action = Action::new('showModal', new TranslatableMessage('New game'));
-        $action->linkToCrudAction('showModal');
-        $action->setHtmlAttributes(
-            ['data-action' => 'show-modal']
-        );
-        $action->createAsGlobalAction();
-
-        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+        $this->addActionNewGame();
 
         return $this->actionsFactory->show();
     }
@@ -243,5 +235,21 @@ class GameCrudController extends CrudControllerAbstract
                 'form' => $form->createView(),
             ]
         );
+    }
+
+    private function addActionNewGame(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('showModal', new TranslatableMessage('New game'));
+        $action->linkToCrudAction('showModal');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 }

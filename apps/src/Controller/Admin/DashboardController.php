@@ -57,13 +57,23 @@ class DashboardController extends AbstractDashboardController
     )]
     public function apiGameFindGames(AdminContext $adminContext, GameService $gameService): Response
     {
-        $request            = $adminContext->getRequest();
-        $all                = $request->query->all();
-        $games              = $gameService->getGameApi($request);
+        $request = $adminContext->getRequest();
+        $all     = $request->request->all();
+        $page    = $request->query->get('page', 1);
+        $limit   = $request->query->get('limit', 20);
+        $offset  = ($page - 1) * $limit;
+        $games   = [];
+        while (count($games) < $limit) {
+            $result              = $gameService->getGameApi($request, $limit, $offset);
+            $games               = array_merge($games, $result);
+            ++$page;
+            $offset += $limit;
+        }
 
         return $this->render(
             'admin/api/game/list.html.twig',
             [
+                'page'       => $page,
                 'platform'   => $all['game']['platform'] ?? '',
                 'controller' => GameCrudController::class,
                 'ea'         => $adminContext,
@@ -79,13 +89,22 @@ class DashboardController extends AbstractDashboardController
     )]
     public function apiGameFindPlatforms(AdminContext $adminContext, PlatformService $platformService): Response
     {
-        $request            = $adminContext->getRequest();
-
-        $platforms = $platformService->getPlatformApi($request);
+        $request   = $adminContext->getRequest();
+        $page      = $request->query->get('page', 1);
+        $limit     = $request->query->get('limit', 20);
+        $offset    = ($page - 1) * $limit;
+        $platforms = [];
+        while (count($platforms) < $limit) {
+            $result    = $platformService->getPlatformApi($request, $limit, $offset);
+            $platforms = array_merge($platforms, $result);
+            ++$page;
+            $offset += $limit;
+        }
 
         return $this->render(
             'admin/api/game/platform.html.twig',
             [
+                'page'       => $page,
                 'controller' => PlatformCrudController::class,
                 'ea'         => $adminContext,
                 'platforms'  => $platforms,
@@ -100,13 +119,15 @@ class DashboardController extends AbstractDashboardController
     )]
     public function apiMovieFind(AdminContext $adminContext, MovieService $movieService): Response
     {
-        $request            = $adminContext->getRequest();
+        $request   = $adminContext->getRequest();
+        $page      = $request->query->get('page', 1);
 
-        $movies = $movieService->getMovieApi($request);
+        $movies = $movieService->getMovieApi($request, $page);
 
         return $this->render(
             'admin/api/movie/list.html.twig',
             [
+                'page'       => $page,
                 'controller' => MovieCrudController::class,
                 'ea'         => $adminContext,
                 'movies'     => $movies,
@@ -122,12 +143,14 @@ class DashboardController extends AbstractDashboardController
     public function apiSerieFind(AdminContext $adminContext, SerieService $serieService): Response
     {
         $request            = $adminContext->getRequest();
+        $page               = $request->query->get('page', 1);
 
-        $series = $serieService->getSerieApi($request);
+        $series = $serieService->getSerieApi($request, $page);
 
         return $this->render(
             'admin/api/serie/list.html.twig',
             [
+                'page'       => $page,
                 'controller' => SerieCrudController::class,
                 'ea'         => $adminContext,
                 'series'     => $series,

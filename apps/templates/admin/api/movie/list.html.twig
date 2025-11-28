@@ -1,4 +1,4 @@
-<table class="table datagrid{% if movies|length == 0 %} datagrid-empty{% endif %} data-ajax">
+<table class="table datagrid{% if movies|length == 0 %} datagrid-empty{% endif %} data-ajax" data-page="{{ page }}">
     {% if movies|length != 0 %}
         <thead>
             <tr>
@@ -27,7 +27,7 @@
                     <span title="{{ movie.title|e('html_attr') }}">{{ movie.title }}</span>
                 </td>
                 <td>
-                    {% if movie.poster_path != '' %}
+                    {% if movie.poster_path is defined and movie.poster_path != '' %}
                         <img src="{{ movie.poster_path }}" alt="{{ movie.title|e('html_attr') }}">
                     {% else %}
                         <span title="N/A">N/A</span>

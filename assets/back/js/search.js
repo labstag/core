@@ -5,8 +5,81 @@ export class Search {
     this.addToBdd()
   }
 
-  async executeAjax(modalContent, button) {
-    const url = button.dataset.url;
+  initData(modalContent) {
+    if (typeof this.isInitialized !== 'undefined') {
+      modalContent.querySelector('.results').innerHTML = this.isInitialized;
+      return;
+    }
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = modalContent.querySelector('.results').innerHTML;
+
+    this.isInitialized = tempDiv.innerHTML;
+
+  }
+
+  addInResult(resultsContainer, data) {
+    if (resultsContainer) {
+      const table = resultsContainer.querySelector('table');
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = data;
+      const newTable = tempDiv.querySelector('table');
+      // Si newTable contient .datagrid-empty, on stoppe le traitement
+      if (newTable.classList.contains('datagrid-empty')) {
+        return;
+      }
+
+      // Mise à jour de l'attribut data-page
+      const newPage = newTable.getAttribute('data-page');
+      if (newPage) {
+        table.setAttribute('data-page', newPage);
+      }
+
+      if (table.classList.contains('datagrid-empty')) {
+        table.classList.remove('datagrid-empty');
+        if (!table.querySelector('thead')) {
+          table.appendChild(newTable.querySelector('thead'));
+          const existingTbody = table.querySelector('tbody');
+          if (existingTbody) {
+            existingTbody.remove();
+          }
+          table.appendChild(newTable.querySelector('tbody'));
+        }
+      } else {
+        // Ajouter les nouvelles lignes au tbody existant
+        const newTbody = newTable.querySelector('tbody');
+        const existingTbody = table.querySelector('tbody');
+        if (newTbody && existingTbody) {
+          existingTbody.append(...newTbody.children);
+        }
+      }
+
+      const tbody = table.querySelector('tbody');
+      if (tbody.dataset.scrollListenerAttached === 'true') {
+        return;
+      }
+
+      tbody.dataset.scrollListenerAttached = 'true';
+      tbody.addEventListener("scroll", () => {
+        const scrollPosition = tbody.scrollTop + tbody.clientHeight;
+
+        // Hauteur totale du contenu
+        const scrollHeight = tbody.scrollHeight;
+
+        console.log('scrollPosition:', scrollPosition, 'scrollHeight:', scrollHeight);
+
+        // Marge d’erreur (évite les micro-décalages)
+        if (scrollPosition >= scrollHeight - 5) {
+          const currentPage = parseInt(table.getAttribute('data-page')) || 1;
+          const button = resultsContainer.closest('.modal-content').querySelector('.searchdata-modal');
+          this.executeAjax(resultsContainer.closest('.modal-content'), button, currentPage + 1);
+        }
+      });
+    }
+  }
+
+  async executeAjax(modalContent, button, page) {
+    const url = new URL(button.dataset.url, window.location.origin);
+    url.searchParams.set('page', page);
     const form = modalContent ? modalContent.querySelector('form') : null;
     const formData = form ? new FormData(form) : new FormData();
 
@@ -17,9 +90,7 @@ export class Search {
       });
       const data = await response.text();
       const resultsContainer = modalContent ? modalContent.querySelector('.results') : null;
-      if (resultsContainer) {
-        resultsContainer.innerHTML = data;
-      }
+      this.addInResult(resultsContainer, data);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -32,7 +103,7 @@ export class Search {
       const button = modalContent ? modalContent.querySelector('.searchdata-modal') : null;
       if (modalContent && button) {
         event.preventDefault();
-        this.executeAjax(modalContent, button);
+        this.executeAjax(modalContent, button, 1);
       }
     });
   }
@@ -42,7 +113,8 @@ export class Search {
       const button = event.target.closest('.searchdata-modal');
       if (button) {
         event.preventDefault();
-        this.executeAjax(button.closest('.modal-content'), button);
+        this.initData(button.closest('.modal-content'));
+        this.executeAjax(button.closest('.modal-content'), button, 1);
         const modal = button.closest('.modal');
         if (modal) {
           const bsModal = bootstrap.Modal.getInstance(modal);

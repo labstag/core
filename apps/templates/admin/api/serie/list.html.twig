@@ -1,4 +1,4 @@
-<table class="table datagrid{% if series|length == 0 %} datagrid-empty{% endif %} data-ajax">
+<table class="table datagrid{% if series|length == 0 %} datagrid-empty{% endif %} data-ajax" data-page="{{ page }}">
     {% if series|length != 0 %}
         <thead>
             <tr>
@@ -27,7 +27,7 @@
                     <span title="{{ serie.name|e('html_attr') }}">{{ serie.name }}</span>
                 </td>
                 <td>
-                    {% if serie.poster_path is defined %}
+                    {% if serie.poster_path is defined and serie.poster_path != ''%}
                         <img src="{{ serie.poster_path }}" alt="{{ serie.name|e('html_attr') }}">
                     {% else %}
                         <span title="N/A">N/A</span>
