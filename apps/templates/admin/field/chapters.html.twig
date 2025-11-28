@@ -10,5 +10,5 @@
     {% endfor %}
   </ul>
 {% else %}
-  {{ instance.chapters|length }}
+  <span class="badge badge-secondary">{{ instance.chapters|length }}</span>
 {% endif %}

@@ -10,6 +10,10 @@
   width: 100%;
 }
 
+.ts-dropdown {
+    z-index: 9999 !important; /* Une valeur très élevée pour être sûr */
+}
+
 @keyframes blink {
 
   0%,

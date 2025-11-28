@@ -153,10 +153,7 @@ class GameCrudController extends CrudControllerAbstract
         $textField->hideOnIndex();
 
         $associationField = AssociationField::new('platforms', new TranslatableMessage('Platforms'));
-        $associationField->formatValue(fn ($entity): int => count($entity));
-
-        $categoryField = AssociationField::new('categories', new TranslatableMessage('Categories'));
-        $categoryField->formatValue(fn ($entity): int => count($entity));
+        $associationField->setTemplatePath('admin/field/game-platforms.html.twig');
 
         $this->crudFieldFactory->setTabDate($pageName);
         $this->crudFieldFactory->addFieldsToTab(
@@ -168,7 +165,7 @@ class GameCrudController extends CrudControllerAbstract
                 DateField::new('releaseDate', new TranslatableMessage('Release date')),
                 $textField,
                 $associationField,
-                $categoryField,
+                $this->crudFieldFactory->categoriesFieldForPage(self::getEntityFqcn(), $pageName),
             ]
         );
 

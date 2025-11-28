@@ -65,8 +65,6 @@ export class Search {
         // Hauteur totale du contenu
         const scrollHeight = tbody.scrollHeight;
 
-        console.log('scrollPosition:', scrollPosition, 'scrollHeight:', scrollHeight);
-
         // Marge d’erreur (évite les micro-décalages)
         if (scrollPosition >= scrollHeight - 5) {
           const currentPage = parseInt(table.getAttribute('data-page')) || 1;

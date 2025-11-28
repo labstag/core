@@ -48,12 +48,18 @@ class Game
      * @var Collection<int, GameCategory>
      */
     #[ORM\ManyToMany(targetEntity: GameCategory::class, inversedBy: 'games')]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     private Collection $categories;
 
     /**
      * @var Collection<int, Franchise>
      */
     #[ORM\ManyToMany(targetEntity: Franchise::class, inversedBy: 'games')]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     private Collection $franchises;
 
     #[ORM\Column(length: 255)]
@@ -63,6 +69,9 @@ class Game
      * @var Collection<int, Platform>
      */
     #[ORM\ManyToMany(targetEntity: Platform::class, inversedBy: 'games')]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
     private Collection $platforms;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
