@@ -24,13 +24,14 @@ final class SearchGameMessageHandler
     public function __invoke(SearchGameMessage $searchGameMessage): void
     {
         $data = $searchGameMessage->getData();
+        $name = trim($data['Nom']);
         if ($this->getGameByData($data) instanceof Game) {
             return;
         }
 
         $platform = $searchGameMessage->getPlatform();
 
-        $body    = $this->igdbApi->setBody(search: $data['Nom'], fields: ['*', 'cover.*', 'game_type.*']);
+        $body    = $this->igdbApi->setBody(search: $name, fields: ['*', 'cover.*', 'game_type.*']);
         $results = $this->igdbApi->setUrl('games', $body);
         if (is_null($results)) {
             return;
@@ -45,7 +46,7 @@ final class SearchGameMessageHandler
         }
 
         foreach ($results as $result) {
-            if ($result['name'] == $data['Nom']) {
+            if ($result['name'] == $name || strtolower($result['name']) == strtolower($name)) {
                 $this->messageBus->dispatch(new AddGameMessage($result['id'], 'game', $platform));
 
                 break;
