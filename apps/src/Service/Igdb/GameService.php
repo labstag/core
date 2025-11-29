@@ -9,10 +9,12 @@ use Labstag\Api\IgdbApi;
 use Labstag\Entity\Game;
 use Labstag\Entity\GameCategory;
 use Labstag\Entity\Platform;
+use Labstag\Message\SearchGameMessage;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 final class GameService extends AbstractIgdb
 {
@@ -20,6 +22,7 @@ final class GameService extends AbstractIgdb
         IgdbApi $igdbApi,
         EntityManagerInterface $entityManager,
         FileService $fileService,
+        private MessageBusInterface $messageBus,
         private FranchiseService $franchiseService,
         private CategoryService $categoryService,
     )
@@ -95,10 +98,22 @@ final class GameService extends AbstractIgdb
         return array_filter($games, fn (array $game): bool => isset($game['first_release_date']));
     }
 
-    public function importFile($file): bool
+    public function getimportCsvFile(string $path): array
+    {
+        $csv = new Csv();
+        $csv->setDelimiter(',');
+        $csv->setSheetIndex(0);
+
+        $spreadsheet = $csv->load($path);
+        $worksheet   = $spreadsheet->getActiveSheet();
+
+        return $this->generateJsonCSV($worksheet);
+    }
+
+    public function importFile($file, string $platform): bool
     {
         if ('text/csv' == $file->getMimeType()) {
-            return $this->importCsv($file->getPathname());
+            return $this->importCsvFile($file->getPathname(), $platform);
         }
 
         return true;
@@ -167,6 +182,10 @@ final class GameService extends AbstractIgdb
 
     private function getApiGameCoverId(array $data): ?array
     {
+        if (!isset($data['cover'])) {
+            return null;
+        }
+
         $where = ['id = ' . $data['cover']];
         $body  = $this->igdbApi->setBody(where: $where, limit: 1);
 
@@ -246,23 +265,20 @@ final class GameService extends AbstractIgdb
         $game->setIgdb($data['id']);
         $game->setTitle($data['name']);
         $game->setUrl($data['url']);
-
-        $datetime = new DateTime();
-        $game->setReleaseDate($datetime->setTimestamp($data['first_release_date']));
+        if (isset($data['first_release_date'])) {
+            $datetime = new DateTime();
+            $game->setReleaseDate($datetime->setTimestamp($data['first_release_date']));
+        }
 
         return $game;
     }
 
-    private function importCsv(string $path): bool
+    private function importCsvFile(string $path, string $platform): bool
     {
-        $csv = new Csv();
-        $csv->setDelimiter(';');
-        $csv->setSheetIndex(0);
-
-        $spreadsheet = $csv->load($path);
-        $worksheet   = $spreadsheet->getActiveSheet();
-        $dataJson    = $this->generateJsonCSV($worksheet);
-        dump($dataJson);
+        $data = $this->getimportCsvFile($path);
+        foreach ($data as $row) {
+            $this->messageBus->dispatch(new SearchGameMessage($row, $platform));
+        }
 
         return true;
     }
@@ -296,9 +312,7 @@ final class GameService extends AbstractIgdb
             foreach ($game->getFranchises() as $franchise) {
                 $game->removeFranchise($franchise);
             }
-        }
 
-        if (!isset($data['franchises'])) {
             return true;
         }
 
@@ -320,6 +334,8 @@ final class GameService extends AbstractIgdb
             foreach ($game->getCategories() as $genre) {
                 $game->removeCategory($genre);
             }
+
+            return true;
         }
 
         foreach ($data['genres'] as $genreId) {
@@ -357,6 +373,8 @@ final class GameService extends AbstractIgdb
     {
         if (!isset($data['screenshots']) || !is_array($data['screenshots'])) {
             $game->setScreenshots([]);
+
+            return true;
         }
 
         $results     = $this->getApiGameScreenshotsIds($data['screenshots']);

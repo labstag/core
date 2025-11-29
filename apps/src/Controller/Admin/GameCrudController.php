@@ -227,8 +227,9 @@ class GameCrudController extends CrudControllerAbstract
     {
         $request = $adminContext->getRequest();
         $files   = $request->files->all();
+        $all     = $request->request->all();
         $file    = $files['game_import']['file'] ?? null;
-        $gameService->importFile($file);
+        $gameService->importFile($file, $all['game_import']['platform'] ?? '');
 
         return new JsonResponse(
             [

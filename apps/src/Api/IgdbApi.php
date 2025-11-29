@@ -88,12 +88,7 @@ class IgdbApi
             return null;
         }
 
-        $body = sprintf(
-            'search "%s"; fields *; limit %d; offset %d;',
-            addslashes($query),
-            min($limit, 500),
-            $offset
-        );
+        $body = sprintf('search "%s"; fields *; limit %d; offset %d;', $query, min($limit, 500), $offset);
 
         return $this->makeRequest('games', $body);
     }
