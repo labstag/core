@@ -51,13 +51,6 @@ final class SerieService
     {
     }
 
-    private function getFlashBag(): FlashBagInterface
-    {
-        $session = $this->requestStack->getSession();
-
-        return $session->getFlashBag();
-    }
-
     public function addToBddSerie(Recommendation $recommendation, string $tmdbId): RedirectResponse
     {
         $details = $this->theMovieDbApi->tvserie()->getDetails($tmdbId);
@@ -230,6 +223,13 @@ final class SerieService
         ];
 
         return in_array(true, $statuses, true);
+    }
+
+    private function getFlashBag(): FlashBagInterface
+    {
+        $session = $this->requestStack->getSession();
+
+        return $session->getFlashBag();
     }
 
     /**

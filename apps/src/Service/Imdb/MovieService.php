@@ -51,13 +51,6 @@ final class MovieService
     {
     }
 
-    private function getFlashBag(): FlashBagInterface
-    {
-        $session = $this->requestStack->getSession();
-
-        return $session->getFlashBag();
-    }
-
     public function addToBddMovie(Recommendation $recommendation, string $tmdbId): RedirectResponse
     {
         $details = $this->theMovieDbApi->movies()->getDetails($tmdbId);
@@ -210,6 +203,13 @@ final class MovieService
         ];
 
         return in_array(true, $statuses, true);
+    }
+
+    private function getFlashBag(): FlashBagInterface
+    {
+        $session = $this->requestStack->getSession();
+
+        return $session->getFlashBag();
     }
 
     /**

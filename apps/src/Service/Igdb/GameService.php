@@ -51,20 +51,23 @@ final class GameService extends AbstractIgdb
         $platformRepository   = $this->entityManager->getRepository(Platform::class);
         $igbds                = $entityRepository->getAllIgdb();
         $games                = [];
-        $where  = [];
-        $search = $data['title'] ?? '';
+        $where                = [];
+        $search               = $data['title'] ?? '';
         if (isset($data['platform']) && !empty($data['platform'])) {
             $platform = $platformRepository->find($data['platform']);
             if ($platform instanceof Platform) {
                 $where[] = 'platforms = (' . $platform->getIgdb() . ')';
             }
         }
+
         if (isset($data['franchise']) && !empty($data['franchise'])) {
             $where[] = 'franchises.name ~ "' . $data['franchise'] . '"';
         }
+
         if (isset($data['type']) && !empty($data['type'])) {
             $where[] = 'game_type = ' . $data['type'];
         }
+
         if (isset($data['number']) && !empty($data['number'])) {
             $where[] = 'id = ' . $data['number'];
         }
