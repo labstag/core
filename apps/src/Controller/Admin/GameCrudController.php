@@ -15,6 +15,8 @@ use Labstag\Form\Admin\GameImportType;
 use Labstag\Form\Admin\GameOtherPlatformType;
 use Labstag\Form\Admin\GameType;
 use Labstag\Message\AddGameMessage;
+use Labstag\Message\ImportMessage;
+use Labstag\Service\FileService;
 use Labstag\Service\Igdb\GameService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -223,13 +225,30 @@ class GameCrudController extends CrudControllerAbstract
         return $this->redirect($url);
     }
 
-    public function importFile(AdminContext $adminContext, GameService $gameService): JsonResponse
+    public function importFile(AdminContext $adminContext, MessageBusInterface $messageBus, FileService $fileService): JsonResponse
     {
+
         $request = $adminContext->getRequest();
         $files   = $request->files->all();
         $all     = $request->request->all();
         $file    = $files['game_import']['file'] ?? null;
-        $gameService->importFile($file, $all['game_import']['platform'] ?? '');
+        $data = [
+            'platform' => $all['game_import']['platform'] ?? '',
+        ];
+
+        if (null === $file) {
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'message' => 'No file uploaded',
+                ]
+            );
+        }
+
+        $content = file_get_contents($file->getPathname());
+        $fileService->saveFileInAdapter('private', $file->getClientOriginalName().'-'.time(), $content);
+
+        $messageBus->dispatch(new ImportMessage($file->getClientOriginalName().'-'.time(), 'game', $data));
 
         return new JsonResponse(
             [

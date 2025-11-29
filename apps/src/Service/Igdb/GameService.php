@@ -110,11 +110,51 @@ final class GameService extends AbstractIgdb
         return $this->generateJsonCSV($worksheet);
     }
 
+    public function getResultApiForData(array $data): ?array
+    {
+        $name = trim((string) $data['Nom']);
+        $body    = $this->igdbApi->setBody(search: $name, fields: ['*', 'cover.*', 'game_type.*', 'alternative_name.*']);
+        $results = $this->igdbApi->setUrl('games', $body);
+        if (is_null($results)) {
+            return null;
+        }
+
+        if (0 === count($results)) {
+            return null;
+        }
+
+        if (1 === count($results)) {
+            return $results[0];
+        }
+
+        foreach ($results as $result) {
+            $alternativeNames = isset($result['alternative_names']) && is_array($result['alternative_names']) ? $result['alternative_names'] : [];
+            foreach ($alternativeNames ?? [] as $alternativeName) {
+                if ($alternativeName['name'] == $name || strtolower((string) $alternativeName['name']) === strtolower($name)) {
+                    return $result;
+                }
+            }
+
+            if ($result['name'] == $name || strtolower((string) $result['name']) === strtolower($name)) {
+                return $result;
+            }
+        }
+        return null;
+    }
+
     public function importFile($file, string $platform): bool
     {
-        if ('text/csv' == $file->getMimeType()) {
-            return $this->importCsvFile($file->getPathname(), $platform);
+        $file = $this->fileService->getFileInAdapter('private', $file);
+        if (is_null($file)) {
+            return false;
         }
+
+        $mimeType = mime_content_type($file);
+        if ('text/csv' == $mimeType) {
+            return $this->importCsvFile($file, $platform);
+        }
+
+        unlink($file);
 
         return true;
     }

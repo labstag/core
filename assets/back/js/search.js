@@ -20,6 +20,10 @@ export class Search {
   addInResult(resultsContainer, data) {
     if (resultsContainer) {
       const table = resultsContainer.querySelector('table');
+      if (!table) {
+        return;
+      }
+
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = data;
       const newTable = tempDiv.querySelector('table');
@@ -75,7 +79,24 @@ export class Search {
     }
   }
 
+  ajaxState(state, button) {
+    try {
+      const elements = document.querySelectorAll('.ajax-enable, .ajax-disable');
+      elements.forEach((el) => {
+        const isEnable = el.classList.contains('ajax-enable');
+        el.classList.toggle('d-none', isEnable ? !state : state);
+      });
+    }
+    catch (e) {
+      console.log('Error:', e);
+    }
+    if (button) {
+      button.disabled = state;
+    }
+  }
+
   async executeAjax(modalContent, button, page) {
+    this.ajaxState(true, button);
     const url = new URL(button.dataset.url, window.location.origin);
     url.searchParams.set('page', page);
     const form = modalContent ? modalContent.querySelector('form') : null;
@@ -89,6 +110,7 @@ export class Search {
       const data = await response.text();
       const resultsContainer = modalContent ? modalContent.querySelector('.results') : null;
       this.addInResult(resultsContainer, data);
+      this.ajaxState(false, button);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -99,7 +121,7 @@ export class Search {
       const button = event.target.closest('.searchdata-modal');
       if (button) {
         event.preventDefault();
-        this.initData(button.closest('.modal-content'));
+        this.initData(button.closest('.modal-content')),
         this.executeAjax(button.closest('.modal-content'), button, 1);
         const modal = button.closest('.modal');
         if (modal) {

@@ -10,6 +10,12 @@
 	<div class="info"></div>
 </div>
 <div class="modal-footer">
+	<div class="d-none ajax-enable">
+		{{ 'Traitement in progress...'|trans }}
+	</div>
+	<div class="d-none ajax-disable">
+		{{ 'Traitement finished'|trans }}
+	</div>	
 	<button type="button" class="btn btn-primary another_platforms" data-url="{{ url }}">{{ 'Add'|trans }}</button>
 	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Close'|trans }}</button>
 </div>

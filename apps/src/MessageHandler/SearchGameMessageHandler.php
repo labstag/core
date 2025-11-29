@@ -7,6 +7,7 @@ use Labstag\Api\IgdbApi;
 use Labstag\Entity\Game;
 use Labstag\Message\AddGameMessage;
 use Labstag\Message\SearchGameMessage;
+use Labstag\Service\Igdb\GameService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -16,6 +17,7 @@ final class SearchGameMessageHandler
     public function __construct(
         private IgdbApi $igdbApi,
         private MessageBusInterface $messageBus,
+        private GameService $gameService,
         private EntityManagerInterface $entityManager,
     )
     {
@@ -31,35 +33,12 @@ final class SearchGameMessageHandler
 
         $platform = $searchGameMessage->getPlatform();
 
-        $body    = $this->igdbApi->setBody(search: $name, fields: ['*', 'cover.*', 'game_type.*']);
-        $results = $this->igdbApi->setUrl('games', $body);
-        if (is_null($results)) {
+        $result = $this->gameService->getResultApiForData($data);
+        if (is_null($result)) {
             return;
         }
-
-        if (0 === count($results)) {
-            return;
-        }
-
-        if (1 === count($results)) {
-            $this->messageBus->dispatch(new AddGameMessage($results[0]['id'], 'game', $platform));
-        }
-
-        foreach ($results as $result) {
-            foreach ($result['alternative_names'] ?? [] as $alternativeName) {
-                if ($alternativeName['name'] == $name || strtolower((string) $alternativeName['name']) === strtolower($name)) {
-                    $this->messageBus->dispatch(new AddGameMessage($result['id'], 'game', $platform));
-
-                    break;
-                }
-            }
-
-            if ($result['name'] == $name || strtolower((string) $result['name']) === strtolower($name)) {
-                $this->messageBus->dispatch(new AddGameMessage($result['id'], 'game', $platform));
-
-                break;
-            }
-        }
+        
+        $this->messageBus->dispatch(new AddGameMessage($result['id'], 'game', $platform));
     }
 
     private function getGameByData(array $row): ?Game

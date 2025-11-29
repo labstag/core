@@ -25,6 +25,15 @@ final class FileService
     {
     }
 
+    public function saveTemporaryFile($file): string
+    {
+        $tempDir  = sys_get_temp_dir();
+        $filePath = tempnam($tempDir, 'upload_');
+        file_put_contents($filePath, file_get_contents($file));
+
+        return $filePath;
+    }
+
     public function asset(mixed $entity, string $field): string
     {
         $mappings         = $this->getMappingForEntity($entity);

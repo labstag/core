@@ -14,6 +14,12 @@
 	</div>
 </div>
 <div class="modal-footer">
+	<div class="d-none ajax-enable">
+		{{ 'Traitement in progress...'|trans }}
+	</div>
+	<div class="d-none ajax-disable">
+		{{ 'Traitement finished'|trans }}
+	</div>	
 	<button type="button" class="btn btn-primary searchdata-modal" data-url="{{ ea_url().setController(controller).setAction('apiMovie') }}">{{ 'Search'|trans }}</button>
 	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Close'|trans }}</button>
 </div>
