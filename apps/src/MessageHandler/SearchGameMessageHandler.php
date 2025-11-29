@@ -24,7 +24,7 @@ final class SearchGameMessageHandler
     public function __invoke(SearchGameMessage $searchGameMessage): void
     {
         $data = $searchGameMessage->getData();
-        $name = trim($data['Nom']);
+        $name = trim((string) $data['Nom']);
         if ($this->getGameByData($data) instanceof Game) {
             return;
         }
@@ -46,7 +46,15 @@ final class SearchGameMessageHandler
         }
 
         foreach ($results as $result) {
-            if ($result['name'] == $name || strtolower($result['name']) == strtolower($name)) {
+            foreach ($result['alternative_names'] ?? [] as $alternativeName) {
+                if ($alternativeName['name'] == $name || strtolower((string) $alternativeName['name']) === strtolower($name)) {
+                    $this->messageBus->dispatch(new AddGameMessage($result['id'], 'game', $platform));
+
+                    break;
+                }
+            }
+
+            if ($result['name'] == $name || strtolower((string) $result['name']) === strtolower($name)) {
                 $this->messageBus->dispatch(new AddGameMessage($result['id'], 'game', $platform));
 
                 break;
@@ -57,6 +65,7 @@ final class SearchGameMessageHandler
     private function getGameByData(array $row): ?Game
     {
         $entityRepository = $this->entityManager->getRepository(Game::class);
+
         return $entityRepository->findOneBy(
             [
                 'title' => $row['Nom'],
