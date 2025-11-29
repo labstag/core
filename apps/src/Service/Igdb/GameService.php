@@ -11,6 +11,8 @@ use Labstag\Entity\GameCategory;
 use Labstag\Entity\Platform;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 final class GameService extends AbstractIgdb
 {
@@ -95,7 +97,6 @@ final class GameService extends AbstractIgdb
 
     public function importFile($file): bool
     {
-        dump(get_class_methods($file));
         if ('text/csv' == $file->getMimeType()) {
             return $this->importCsv($file->getPathname());
         }
@@ -122,12 +123,39 @@ final class GameService extends AbstractIgdb
         return in_array(true, $statuses, true);
     }
 
+    /**
+     * @return list<array>
+     */
+    private function generateJsonCSV(Worksheet $worksheet): array
+    {
+        $dataJson    = [];
+        $headers     = [];
+        foreach ($worksheet->getRowIterator() as $i => $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+            if (1 === $i) {
+                foreach ($cellIterator as $cell) {
+                    $headers[] = trim((string) $cell->getValue());
+                }
+
+                continue;
+            }
+
+            $columns = [];
+            foreach ($cellIterator as $cell) {
+                $columns[] = trim((string) $cell->getValue());
+            }
+
+            $dataJson[] = array_combine($headers, $columns);
+        }
+
+        return $dataJson;
+    }
+
     private function getApiGameArtworksIds(array $artworkIds): ?array
     {
-        $body = $this->igdbApi->setBody(
-            where: 'id = (' . implode(',', $artworkIds) . ')',
-            limit: count($artworkIds)
-        );
+        $where = ['id = (' . implode(',', $artworkIds) . ')'];
+        $body  = $this->igdbApi->setBody(where: $where, limit: count($artworkIds));
 
         $results = $this->igdbApi->setUrl('artworks', $body);
         if (is_null($results)) {
@@ -139,7 +167,8 @@ final class GameService extends AbstractIgdb
 
     private function getApiGameCoverId(array $data): ?array
     {
-        $body = $this->igdbApi->setBody(where: 'id = ' . $data['cover'], limit: 1);
+        $where = ['id = ' . $data['cover']];
+        $body  = $this->igdbApi->setBody(where: $where, limit: 1);
 
         $results = $this->igdbApi->setUrl('covers', $body);
         if (is_null($results)) {
@@ -151,7 +180,8 @@ final class GameService extends AbstractIgdb
 
     private function getApiGameId(string $id): ?array
     {
-        $body = $this->igdbApi->setBody(where: 'id = ' . $id, limit: 1);
+        $where = ['id = ' . $id];
+        $body  = $this->igdbApi->setBody(where: $where, limit: 1);
 
         $results = $this->igdbApi->setUrl('games', $body);
         if (is_null($results)) {
@@ -163,10 +193,8 @@ final class GameService extends AbstractIgdb
 
     private function getApiGameScreenshotsIds(array $screenshotIds): ?array
     {
-        $body = $this->igdbApi->setBody(
-            where: 'id = (' . implode(',', $screenshotIds) . ')',
-            limit: count($screenshotIds)
-        );
+        $where = ['id = (' . implode(',', $screenshotIds) . ')'];
+        $body  = $this->igdbApi->setBody(where: $where, limit: count($screenshotIds));
 
         $results = $this->igdbApi->setUrl('screenshots', $body);
         if (is_null($results)) {
@@ -178,10 +206,8 @@ final class GameService extends AbstractIgdb
 
     private function getApiGameVideosIds(array $artworkIds): ?array
     {
-        $body = $this->igdbApi->setBody(
-            where: 'id = (' . implode(',', $artworkIds) . ')',
-            limit: count($artworkIds)
-        );
+        $where = ['id = (' . implode(',', $artworkIds) . ')'];
+        $body  = $this->igdbApi->setBody(where: $where, limit: count($artworkIds));
 
         $results = $this->igdbApi->setUrl('game_videos', $body);
         if (is_null($results)) {
@@ -193,7 +219,8 @@ final class GameService extends AbstractIgdb
 
     private function getApiGenreId(int $id): ?array
     {
-        $body = $this->igdbApi->setBody(where: 'id = ' . $id, limit: 1);
+        $where = ['id = ' . $id];
+        $body  = $this->igdbApi->setBody(where: $where, limit: 1);
 
         $results = $this->igdbApi->setUrl('genres', $body);
         if (is_null($results)) {
@@ -228,7 +255,14 @@ final class GameService extends AbstractIgdb
 
     private function importCsv(string $path): bool
     {
-        dump($path);
+        $csv = new Csv();
+        $csv->setDelimiter(';');
+        $csv->setSheetIndex(0);
+
+        $spreadsheet = $csv->load($path);
+        $worksheet   = $spreadsheet->getActiveSheet();
+        $dataJson    = $this->generateJsonCSV($worksheet);
+        dump($dataJson);
 
         return true;
     }

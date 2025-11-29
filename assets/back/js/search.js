@@ -1,3 +1,4 @@
+/* global bootstrap */
 export class Search {
   constructor() {
     this.searchModal()

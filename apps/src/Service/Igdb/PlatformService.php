@@ -94,7 +94,8 @@ final class PlatformService extends AbstractIgdb
 
     private function getApiPlatformFamilyId(string $id): ?array
     {
-        $body = $this->igdbApi->setBody(where: 'id = ' . $id, limit: 1);
+        $where = ['id = ' . $id];
+        $body  = $this->igdbApi->setBody(where: $where, limit: 1);
 
         $results = $this->igdbApi->setUrl('platform_families', $body);
         if (is_null($results)) {
@@ -106,7 +107,8 @@ final class PlatformService extends AbstractIgdb
 
     private function getApiPlatformId(string $id): ?array
     {
-        $body = $this->igdbApi->setBody(where: 'id = ' . $id, limit: 1);
+        $where = ['id = ' . $id];
+        $body  = $this->igdbApi->setBody(where: $where, limit: 1);
 
         $results = $this->igdbApi->setUrl('platforms', $body);
         if (is_null($results)) {
@@ -122,7 +124,9 @@ final class PlatformService extends AbstractIgdb
             return null;
         }
 
-        $body = $this->igdbApi->setBody(where: 'id = ' . $data['platform_logo'], limit: 1);
+        $where = ['id = ' . $data['platform_logo']];
+
+        $body = $this->igdbApi->setBody(where: $where, limit: 1);
 
         $results = $this->igdbApi->setUrl('platform_logos', $body);
         if (is_null($results)) {

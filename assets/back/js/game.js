@@ -1,3 +1,4 @@
+/* global bootstrap */
 export class Game {
   constructor() {
     this.searchModal()

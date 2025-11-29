@@ -49,7 +49,8 @@ final class FranchiseService extends AbstractIgdb
 
     private function getApiFranchiseId(string $id): ?array
     {
-        $body = $this->igdbApi->setBody(where: 'id = ' . $id, limit: 1);
+        $where = ['id = ' . $id];
+        $body  = $this->igdbApi->setBody(where: $where, limit: 1);
 
         $results = $this->igdbApi->setUrl('franchises', $body);
         if (is_null($results)) {
