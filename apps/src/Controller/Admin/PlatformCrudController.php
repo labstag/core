@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Platform;
 use Labstag\Form\Admin\PlatformType;
 use Labstag\Message\AddGameMessage;
+use Labstag\Service\Igdb\PlatformService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -35,6 +36,30 @@ class PlatformCrudController extends CrudControllerAbstract
                 'status'  => 'success',
                 'id'      => $id,
                 'message' => $translator->trans(new TranslatableMessage('Platform is being added')),
+            ]
+        );
+    }
+
+    public function apiPlatform(AdminContext $adminContext, PlatformService $platformService): Response
+    {
+        $request            = $adminContext->getRequest();
+        $page               = $request->query->get('page', 1);
+        $limit              = $request->query->get('limit', 20);
+        $offset             = ($page - 1) * $limit;
+        $all                = $request->request->all();
+        $data               = [
+            'title'  => $all['platform']['title'] ?? '',
+            'family' => $all['platform']['family'] ?? '',
+        ];
+        $platforms = $platformService->getPlatformApi($data, $limit, $offset);
+
+        return $this->render(
+            'admin/api/game/platform.html.twig',
+            [
+                'page'       => $page,
+                'controller' => self::class,
+                'ea'         => $adminContext,
+                'platforms'  => $platforms,
             ]
         );
     }
@@ -103,7 +128,7 @@ class PlatformCrudController extends CrudControllerAbstract
         return Platform::class;
     }
 
-    public function showModal(AdminContext $adminContext): Response
+    public function showModalPlatform(AdminContext $adminContext): Response
     {
         $request = $adminContext->getRequest();
         $form    = $this->createForm(PlatformType::class);
@@ -112,8 +137,9 @@ class PlatformCrudController extends CrudControllerAbstract
         return $this->render(
             'admin/platform/new.html.twig',
             [
-                'ea'   => $adminContext,
-                'form' => $form->createView(),
+                'controller' => self::class,
+                'ea'         => $adminContext,
+                'form'       => $form->createView(),
             ]
         );
     }
@@ -124,8 +150,8 @@ class PlatformCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('showModal', new TranslatableMessage('New platform'));
-        $action->linkToCrudAction('showModal');
+        $action = Action::new('showModalPlatform', new TranslatableMessage('New platform'));
+        $action->linkToCrudAction('showModalPlatform');
         $action->setHtmlAttributes(
             ['data-action' => 'show-modal']
         );

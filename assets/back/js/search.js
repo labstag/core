@@ -1,7 +1,6 @@
 export class Search {
   constructor() {
     this.searchModal()
-    this.disableFormSubmit()
     this.addToBdd()
   }
 
@@ -92,18 +91,6 @@ export class Search {
     } catch (error) {
       console.error('Error:', error);
     }
-  }
-
-  disableFormSubmit() {
-    document.body.addEventListener('submit', (event) => {
-      const form = event.target;
-      const modalContent = form.closest('.modal-content');
-      const button = modalContent ? modalContent.querySelector('.searchdata-modal') : null;
-      if (modalContent && button) {
-        event.preventDefault();
-        this.executeAjax(modalContent, button, 1);
-      }
-    });
   }
 
   async searchModal() {

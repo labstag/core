@@ -24,6 +24,7 @@ use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\ConfigurationService;
+use Labstag\Service\Imdb\SerieService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -107,6 +108,29 @@ class SerieCrudController extends CrudControllerAbstract
         );
     }
 
+    public function apiSerie(AdminContext $adminContext, SerieService $serieService): Response
+    {
+        $request            = $adminContext->getRequest();
+        $page               = $request->query->get('page', 1);
+        $all                = $request->request->all();
+        $data               = [
+            'imdb'  => $all['serie']['imdb'] ?? '',
+            'title' => $all['serie']['title'] ?? '',
+        ];
+
+        $series = $serieService->getSerieApi($data, $page);
+
+        return $this->render(
+            'admin/api/serie/list.html.twig',
+            [
+                'page'       => $page,
+                'controller' => self::class,
+                'ea'         => $adminContext,
+                'series'     => $series,
+            ]
+        );
+    }
+
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -115,7 +139,7 @@ class SerieCrudController extends CrudControllerAbstract
         $this->actionsFactory->setLinkImdbAction();
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
-        $this->actionsFactory->setActionUpdateAll();
+        $this->actionsFactory->setActionUpdateAll('updateAllSerie');
         $this->addActionNewSerie();
 
         return $this->actionsFactory->show();
@@ -273,7 +297,7 @@ class SerieCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
-    public function showModal(AdminContext $adminContext): Response
+    public function showModalSerie(AdminContext $adminContext): Response
     {
         $request = $adminContext->getRequest();
         $form    = $this->createForm(SerieType::class);
@@ -282,8 +306,9 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->render(
             'admin/serie/new.html.twig',
             [
-                'ea'   => $adminContext,
-                'form' => $form->createView(),
+                'controller' => self::class,
+                'ea'         => $adminContext,
+                'form'       => $form->createView(),
             ]
         );
     }
@@ -297,7 +322,7 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.themoviedb.org/tv/' . $serie->getTmdb());
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllSerie(MessageBusInterface $messageBus): RedirectResponse
     {
         $messageBus->dispatch(new SerieAllMessage());
 
@@ -336,8 +361,8 @@ class SerieCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('showModal', new TranslatableMessage('New serie'));
-        $action->linkToCrudAction('showModal');
+        $action = Action::new('showModalSerie', new TranslatableMessage('New serie'));
+        $action->linkToCrudAction('showModalSerie');
         $action->setHtmlAttributes(
             ['data-action' => 'show-modal']
         );

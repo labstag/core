@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
@@ -20,16 +19,11 @@ use Labstag\Repository\ConfigurationRepository;
 use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
-use Labstag\Service\Igdb\GameService;
-use Labstag\Service\Igdb\PlatformService;
-use Labstag\Service\Imdb\MovieService;
-use Labstag\Service\Imdb\SerieService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -48,102 +42,6 @@ class DashboardController extends AbstractDashboardController
         protected MenuItemFactory $menuItemFactory,
     )
     {
-    }
-
-    #[Route(
-        '/api/game/find/games',
-        name: 'admin_api_game_find_games',
-        defaults: ['_locale' => 'fr']
-    )]
-    public function apiGameFindGames(AdminContext $adminContext, GameService $gameService): Response
-    {
-        $request = $adminContext->getRequest();
-        $all     = $request->request->all();
-        $page    = $request->query->get('page', 1);
-        $limit   = $request->query->get('limit', 20);
-        $offset  = ($page - 1) * $limit;
-        $games   = $gameService->getGameApi($request, $limit, $offset);
-
-        return $this->render(
-            'admin/api/game/list.html.twig',
-            [
-                'page'       => $page,
-                'platform'   => $all['game']['platform'] ?? '',
-                'controller' => GameCrudController::class,
-                'ea'         => $adminContext,
-                'games'      => $games,
-            ]
-        );
-    }
-
-    #[Route(
-        '/api/game/find/platforms',
-        name: 'admin_api_game_find_platforms',
-        defaults: ['_locale' => 'fr']
-    )]
-    public function apiGameFindPlatforms(AdminContext $adminContext, PlatformService $platformService): Response
-    {
-        $request   = $adminContext->getRequest();
-        $page      = $request->query->get('page', 1);
-        $limit     = $request->query->get('limit', 20);
-        $offset    = ($page - 1) * $limit;
-        $platforms = $platformService->getPlatformApi($request, $limit, $offset);
-
-        return $this->render(
-            'admin/api/game/platform.html.twig',
-            [
-                'page'       => $page,
-                'controller' => PlatformCrudController::class,
-                'ea'         => $adminContext,
-                'platforms'  => $platforms,
-            ]
-        );
-    }
-
-    #[Route(
-        '/api/movie/find',
-        name: 'admin_api_find_movie',
-        defaults: ['_locale' => 'fr']
-    )]
-    public function apiMovieFind(AdminContext $adminContext, MovieService $movieService): Response
-    {
-        $request   = $adminContext->getRequest();
-        $page      = $request->query->get('page', 1);
-
-        $movies = $movieService->getMovieApi($request, $page);
-
-        return $this->render(
-            'admin/api/movie/list.html.twig',
-            [
-                'page'       => $page,
-                'controller' => MovieCrudController::class,
-                'ea'         => $adminContext,
-                'movies'     => $movies,
-            ]
-        );
-    }
-
-    #[Route(
-        '/api/serie/find',
-        name: 'admin_api_find_serie',
-        defaults: ['_locale' => 'fr']
-    )]
-    public function apiSerieFind(AdminContext $adminContext, SerieService $serieService): Response
-    {
-        $request            = $adminContext->getRequest();
-        $page               = $request->query->get('page', 1);
-
-        $series = $serieService->getSerieApi($request, $page);
-
-        return $this->render(
-            'admin/api/serie/list.html.twig',
-            [
-                'page'       => $page,
-                'controller' => SerieCrudController::class,
-                'ea'         => $adminContext,
-                'series'     => $series,
-            ]
-        );
     }
 
     #[\Override]

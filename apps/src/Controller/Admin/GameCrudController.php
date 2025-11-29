@@ -11,9 +11,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Game;
 use Labstag\Entity\Platform;
+use Labstag\Form\Admin\GameImportType;
 use Labstag\Form\Admin\GameOtherPlatformType;
 use Labstag\Form\Admin\GameType;
 use Labstag\Message\AddGameMessage;
+use Labstag\Service\Igdb\GameService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -120,6 +122,35 @@ class GameCrudController extends CrudControllerAbstract
         );
     }
 
+    public function apiGame(AdminContext $adminContext, GameService $gameService): Response
+    {
+        $request = $adminContext->getRequest();
+        $all     = $request->request->all();
+        $page    = $request->query->get('page', 1);
+        $limit   = $request->query->get('limit', 50);
+        $offset  = ($page - 1) * $limit;
+        $all     = $request->request->all();
+        $data    = [
+            'title'     => $all['game']['title'] ?? '',
+            'platform'  => $all['game']['platform'] ?? '',
+            'franchise' => $all['game']['franchise'] ?? '',
+            'type'      => $all['game']['type'] ?? '',
+            'number'    => $all['game']['number'] ?? '',
+        ];
+        $games   = $gameService->getGameApi($data, $limit, $offset);
+
+        return $this->render(
+            'admin/api/game/list.html.twig',
+            [
+                'page'       => $page,
+                'platform'   => $all['game']['platform'] ?? '',
+                'controller' => self::class,
+                'ea'         => $adminContext,
+                'games'      => $games,
+            ]
+        );
+    }
+
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -127,6 +158,7 @@ class GameCrudController extends CrudControllerAbstract
         $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
         $this->setLinkIgdb();
         $this->addActionNewGame();
+        $this->addActionImportGame();
 
         return $this->actionsFactory->show();
     }
@@ -191,6 +223,21 @@ class GameCrudController extends CrudControllerAbstract
         return $this->redirect($url);
     }
 
+    public function importFile(AdminContext $adminContext, GameService $gameService): JsonResponse
+    {
+        $request = $adminContext->getRequest();
+        $files   = $request->files->all();
+        $file    = $files['game_import']['file'] ?? null;
+        $gameService->importFile($file);
+
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'message' => 'Import started',
+            ]
+        );
+    }
+
     public function setLinkIgdb(): void
     {
         if (!$this->actionsFactory->isTrash()) {
@@ -219,7 +266,7 @@ class GameCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    public function showModal(AdminContext $adminContext): Response
+    public function showModalGame(AdminContext $adminContext): Response
     {
         $request = $adminContext->getRequest();
         $form    = $this->createForm(GameType::class);
@@ -228,10 +275,43 @@ class GameCrudController extends CrudControllerAbstract
         return $this->render(
             'admin/game/new.html.twig',
             [
-                'ea'   => $adminContext,
-                'form' => $form->createView(),
+                'controller' => self::class,
+                'ea'         => $adminContext,
+                'form'       => $form->createView(),
             ]
         );
+    }
+
+    public function showModalImportGame(AdminContext $adminContext): Response
+    {
+        $request = $adminContext->getRequest();
+        $form    = $this->createForm(GameImportType::class);
+        $form->handleRequest($request);
+
+        return $this->render(
+            'admin/game/import.html.twig',
+            [
+                'controller' => self::class,
+                'ea'         => $adminContext,
+                'form'       => $form->createView(),
+            ]
+        );
+    }
+
+    private function addActionImportGame(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('showModalImportGame', new TranslatableMessage('Import'));
+        $action->linkToCrudAction('showModalImportGame');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
     private function addActionNewGame(): void
@@ -240,8 +320,8 @@ class GameCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('showModal', new TranslatableMessage('New game'));
-        $action->linkToCrudAction('showModal');
+        $action = Action::new('showModalGame', new TranslatableMessage('New game'));
+        $action->linkToCrudAction('showModalGame');
         $action->setHtmlAttributes(
             ['data-action' => 'show-modal']
         );

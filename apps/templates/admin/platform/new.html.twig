@@ -13,6 +13,6 @@
 	</div>
 </div>
 <div class="modal-footer">
-	<button type="button" class="btn btn-primary searchdata-modal" data-page="1" data-url="{{ path('admin_api_game_find_platforms', {'_locale': app.request.locale}) }}">{{ 'Search'|trans }}</button>
+	<button type="button" class="btn btn-primary searchdata-modal" data-url="{{ ea_url().setController(controller).setAction('apiPlatform') }}">{{ 'Search'|trans }}</button>
 	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Close'|trans }}</button>
 </div>

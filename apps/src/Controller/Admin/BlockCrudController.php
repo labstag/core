@@ -44,8 +44,8 @@ class BlockCrudController extends CrudControllerAbstract
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('showModal', new TranslatableMessage('New block'));
-        $action->linkToCrudAction('showModal');
+        $action = Action::new('showModalBlock', new TranslatableMessage('New block'));
+        $action->linkToCrudAction('showModalBlock');
         $action->setHtmlAttributes(
             ['data-action' => 'show-modal']
         );
@@ -304,7 +304,7 @@ class BlockCrudController extends CrudControllerAbstract
         );
     }
 
-    public function showModal(AdminContext $adminContext): Response
+    public function showModalBlock(AdminContext $adminContext): Response
     {
         unset($adminContext);
         $blocks = $this->blockService->getAll(null);

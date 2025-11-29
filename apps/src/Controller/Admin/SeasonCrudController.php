@@ -34,7 +34,7 @@ class SeasonCrudController extends CrudControllerAbstract
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->setUpdateAction();
         $this->actionsFactory->setLinkTmdbAction();
-        $this->actionsFactory->setActionUpdateAll();
+        $this->actionsFactory->setActionUpdateAll('updateAllSeason');
 
         return $this->actionsFactory->show();
     }
@@ -172,7 +172,7 @@ class SeasonCrudController extends CrudControllerAbstract
         );
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllSeason(MessageBusInterface $messageBus): RedirectResponse
     {
         $messageBus->dispatch(new SeasonAllMessage());
 

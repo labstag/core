@@ -8,11 +8,18 @@ use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
+use Labstag\Entity\Recommendation;
+use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
 use Labstag\Service\CategoryService;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
 final class MovieService
 {
@@ -36,9 +43,81 @@ final class MovieService
         private SagaService $sagaService,
         private EntityManagerInterface $entityManager,
         private MovieRepository $movieRepository,
+        private MessageBusInterface $messageBus,
         private TheMovieDbApi $theMovieDbApi,
+        private RequestStack $requestStack,
+        private RouterInterface $router,
     )
     {
+    }
+
+    private function getFlashBag(): FlashBagInterface
+    {
+        $session = $this->requestStack->getSession();
+
+        return $session->getFlashBag();
+    }
+
+    public function addToBddMovie(Recommendation $recommendation, string $tmdbId): RedirectResponse
+    {
+        $details = $this->theMovieDbApi->movies()->getDetails($tmdbId);
+        if (0 === count($details)) {
+            return new RedirectResponse($this->router->generate('admin_recommendation_index'));
+        }
+
+        $movie = $this->movieRepository->findOneBy(
+            ['tmdb' => $tmdbId]
+        );
+        if ($movie instanceof Movie) {
+            $this->getFlashBag()->add(
+                'warning',
+                new TranslatableMessage(
+                    'The %name% movie is already present in the database',
+                    [
+                        '%name%' => $movie->getTitle(),
+                    ]
+                )
+            );
+
+            return new RedirectResponse(
+                $this->router->generate(
+                    'admin_movie_detail',
+                    [
+                        'entityId' => $movie->getId(),
+                    ]
+                )
+            );
+        }
+
+        $data = $this->theMovieDbApi->movies()->getMovieExternalIds($tmdbId);
+        $movie = new Movie();
+        $movie->setFile(false);
+        $movie->setEnable(true);
+        $movie->setAdult(false);
+        $movie->setImdb($data['imdb_id'] ?? '');
+        $movie->setTmdb($tmdbId);
+        $movie->setTitle($recommendation->getTitle() ?? '');
+
+        $this->movieRepository->save($movie);
+        $this->messageBus->dispatch(new MovieMessage($movie->getId()));
+        $this->getFlashBag()->add(
+            'success',
+            new TranslatableMessage(
+                'The %name% movie has been added to the database',
+                [
+                    '%name%' => $movie->getTitle(),
+                ]
+            )
+        );
+
+        return new RedirectResponse(
+            $this->router->generate(
+                'admin_movie_detail',
+                [
+                    'entityId' => $movie->getId(),
+                ]
+            )
+        );
     }
 
     /**
@@ -59,14 +138,12 @@ final class MovieService
         return $country;
     }
 
-    public function getMovieApi(Request $request, int $page = 1): array
+    public function getMovieApi(array $data, int $page = 1): array
     {
         $movies             = [];
-        $all                = $request->request->all();
         $tmdbs              = $this->movieRepository->getAllTmdb();
-        $search             = '';
-        if (isset($all['movie']['imdb'])) {
-            $results = $this->theMovieDbApi->other()->findByImdb($all['movie']['imdb']);
+        if (isset($data['imdb']) && !empty($data['imdb'])) {
+            $results = $this->theMovieDbApi->other()->findByImdb($data['imdb']);
             if (isset($results['movie_results'])) {
                 $movies = $results['movie_results'];
             }
@@ -74,8 +151,9 @@ final class MovieService
             return $this->updateResult($movies, $tmdbs);
         }
 
-        if (isset($all['movie']['title'])) {
-            $search = $all['movie']['title'];
+        $search             = '';
+        if (isset($data['title'])) {
+            $search = $data['title'];
         }
 
         $locale             = $this->configurationService->getLocaleTmdb();

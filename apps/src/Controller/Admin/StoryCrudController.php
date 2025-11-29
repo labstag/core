@@ -76,7 +76,7 @@ class StoryCrudController extends CrudControllerAbstract
         $this->setActionMoveChapter();
         $this->setActionNewChapter();
         $this->setUpdateAction();
-        $this->actionsFactory->setActionUpdateAll();
+        $this->actionsFactory->setActionUpdateAll('updateAllStory');
 
         return $this->actionsFactory->show();
     }
@@ -174,7 +174,7 @@ class StoryCrudController extends CrudControllerAbstract
         );
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllStory(MessageBusInterface $messageBus): RedirectResponse
     {
         $messageBus->dispatch(new StoryAllMessage());
 

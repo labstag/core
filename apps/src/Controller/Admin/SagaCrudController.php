@@ -30,7 +30,7 @@ class SagaCrudController extends CrudControllerAbstract
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
-        $this->actionsFactory->setActionUpdateAll();
+        $this->actionsFactory->setActionUpdateAll('updateAllSaga');
 
         return $this->actionsFactory->show();
     }
@@ -153,7 +153,7 @@ class SagaCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.themoviedb.org/collection/' . $saga->getTmdb());
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllSaga(MessageBusInterface $messageBus): RedirectResponse
     {
         $messageBus->dispatch(new SagaAllMessage());
 

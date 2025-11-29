@@ -11,7 +11,6 @@ use Labstag\Entity\GameCategory;
 use Labstag\Entity\Platform;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;
-use Symfony\Component\HttpFoundation\Request;
 
 final class GameService extends AbstractIgdb
 {
@@ -46,35 +45,28 @@ final class GameService extends AbstractIgdb
         return $game;
     }
 
-    public function getGameApi(Request $request, int $limit, int $offset): array
+    public function getGameApi(array $data, int $limit, int $offset): array
     {
         $entityRepository     = $this->entityManager->getRepository(Game::class);
         $platformRepository   = $this->entityManager->getRepository(Platform::class);
         $igbds                = $entityRepository->getAllIgdb();
-        $all                  = $request->request->all();
         $games                = [];
-        $where                = '';
-        if (isset($all['game'])) {
-            $where  = [];
-            $search = $all['game']['title'] ?? '';
-            if (isset($all['game']['platform']) && !empty($all['game']['platform'])) {
-                $platform = $platformRepository->find($all['game']['platform']);
-                if ($platform instanceof Platform) {
-                    $where[] = 'platforms = (' . $platform->getIgdb() . ')';
-                }
+        $where  = [];
+        $search = $data['title'] ?? '';
+        if (isset($data['platform']) && !empty($data['platform'])) {
+            $platform = $platformRepository->find($data['platform']);
+            if ($platform instanceof Platform) {
+                $where[] = 'platforms = (' . $platform->getIgdb() . ')';
             }
-
-            if (isset($all['game']['franchise']) && !empty($all['game']['franchise'])) {
-                $where[] = 'franchises.name ~ "' . $all['game']['franchise'] . '"';
-            }
-
-            if (isset($all['game']['type']) && !empty($all['game']['type'])) {
-                $where[] = 'game_type = ' . $all['game']['type'];
-            }
-
-            if (isset($all['game']['number']) && !empty($all['game']['number'])) {
-                $where[] = 'id = ' . $all['game']['number'];
-            }
+        }
+        if (isset($data['franchise']) && !empty($data['franchise'])) {
+            $where[] = 'franchises.name ~ "' . $data['franchise'] . '"';
+        }
+        if (isset($data['type']) && !empty($data['type'])) {
+            $where[] = 'game_type = ' . $data['type'];
+        }
+        if (isset($data['number']) && !empty($data['number'])) {
+            $where[] = 'id = ' . $data['number'];
         }
 
         $body  = $this->igdbApi->setBody(
@@ -96,6 +88,16 @@ final class GameService extends AbstractIgdb
         $games = array_filter($games, fn (array $game): bool => !in_array($game['id'], $igbds));
 
         return array_filter($games, fn (array $game): bool => isset($game['first_release_date']));
+    }
+
+    public function importFile($file): bool
+    {
+        dump(get_class_methods($file));
+        if ('text/csv' == $file->getMimeType()) {
+            return $this->importCsv($file->getPathname());
+        }
+
+        return true;
     }
 
     public function update(Game $game): bool
@@ -219,6 +221,13 @@ final class GameService extends AbstractIgdb
         $game->setReleaseDate($datetime->setTimestamp($data['first_release_date']));
 
         return $game;
+    }
+
+    private function importCsv(string $path): bool
+    {
+        dump($path);
+
+        return true;
     }
 
     private function updateArtworks(Game $game, array $data): bool

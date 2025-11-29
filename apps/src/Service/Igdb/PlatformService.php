@@ -4,7 +4,6 @@ namespace Labstag\Service\Igdb;
 
 use Exception;
 use Labstag\Entity\Platform;
-use Symfony\Component\HttpFoundation\Request;
 
 final class PlatformService extends AbstractIgdb
 {
@@ -49,22 +48,17 @@ final class PlatformService extends AbstractIgdb
         return $platform;
     }
 
-    public function getPlatformApi(Request $request, int $limit, int $offset): array
+    public function getPlatformApi(array $data, int $limit, int $offset): array
     {
         $entityRepository   = $this->entityManager->getRepository(Platform::class);
         $igbds              = $entityRepository->getAllIgdb();
-        $all                = $request->request->all();
         $platforms          = [];
-        $where              = '';
-        $search             = '';
-        if (isset($all['platform'])) {
-            $search    = $all['platform']['title'] ?? '';
-            $where     = [];
-            if (isset($all['platform']['family']) && !empty($all['platform']['family'])) {
-                $family = $all['platform']['family'];
+        $search             = $data['title'] ?? '';
+        $where              = [];
+        if (isset($data['family']) && !empty($data['family'])) {
+            $family = $data['family'];
 
-                $where[] = 'platform_family.name ~ "' . $family . '"';
-            }
+            $where[] = 'platform_family.name ~ "' . $family . '"';
         }
 
         $fields    = [

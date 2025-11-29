@@ -24,6 +24,7 @@ use Labstag\Message\MovieAllMessage;
 use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
 use Labstag\Service\ConfigurationService;
+use Labstag\Service\Imdb\MovieService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -107,6 +108,30 @@ class MovieCrudController extends CrudControllerAbstract
         );
     }
 
+    public function apiMovie(AdminContext $adminContext, MovieService $movieService): Response
+    {
+        $request            = $adminContext->getRequest();
+        $page               = $request->query->get('page', 1);
+        $all                = $request->request->all();
+
+        $data = [
+            'imdb'  => $all['movie']['imdb'] ?? '',
+            'title' => $all['movie']['title'] ?? '',
+        ];
+
+        $movies = $movieService->getMovieApi($data, $page);
+
+        return $this->render(
+            'admin/api/movie/list.html.twig',
+            [
+                'page'       => $page,
+                'controller' => self::class,
+                'ea'         => $adminContext,
+                'movies'     => $movies,
+            ]
+        );
+    }
+
     #[\Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -115,7 +140,7 @@ class MovieCrudController extends CrudControllerAbstract
         $this->actionsFactory->setLinkImdbAction();
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
-        $this->actionsFactory->setActionUpdateAll();
+        $this->actionsFactory->setActionUpdateAll('updateAllMovie');
         $this->addActionNewMovie();
 
         return $this->actionsFactory->show();
@@ -272,7 +297,7 @@ class MovieCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
-    public function showModal(AdminContext $adminContext): Response
+    public function showModalMovie(AdminContext $adminContext): Response
     {
         $request = $adminContext->getRequest();
         $form    = $this->createForm(MovieType::class);
@@ -281,8 +306,9 @@ class MovieCrudController extends CrudControllerAbstract
         return $this->render(
             'admin/movie/new.html.twig',
             [
-                'ea'   => $adminContext,
-                'form' => $form->createView(),
+                'controller' => self::class,
+                'ea'         => $adminContext,
+                'form'       => $form->createView(),
             ]
         );
     }
@@ -296,7 +322,7 @@ class MovieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.themoviedb.org/movie/' . $movie->getTmdb());
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllMovie(MessageBusInterface $messageBus): RedirectResponse
     {
         $messageBus->dispatch(new MovieAllMessage());
 
@@ -350,8 +376,8 @@ class MovieCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('showModal', new TranslatableMessage('New movie'));
-        $action->linkToCrudAction('showModal');
+        $action = Action::new('showModalMovie', new TranslatableMessage('New movie'));
+        $action->linkToCrudAction('showModalMovie');
         $action->setHtmlAttributes(
             ['data-action' => 'show-modal']
         );

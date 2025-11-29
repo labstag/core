@@ -181,15 +181,15 @@ class ActionsFactory
         $this->add(Crud::PAGE_INDEX, $w3cAction);
     }
 
-    public function setActionUpdateAll(): void
+    public function setActionUpdateAll(string $type): void
     {
         if (!$this->isTrash()) {
             return;
         }
 
-        $action = Action::new('updateAll', new TranslatableMessage('Update all'), 'fas fa-sync-alt');
+        $action = Action::new($type, new TranslatableMessage('Update all'), 'fas fa-sync-alt');
         $action->displayAsLink();
-        $action->linkToCrudAction('updateAll');
+        $action->linkToCrudAction($type);
         $action->createAsGlobalAction();
         $this->add(Crud::PAGE_INDEX, $action);
     }
@@ -292,7 +292,7 @@ class ActionsFactory
         $this->actions->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE);
         $this->actions->disable(Action::DELETE);
 
-        $action = Action::new('list', new TranslatableMessage('List'), 'fa fa-list');
+        $action = Action::new(Crud::PAGE_INDEX, new TranslatableMessage('List'), 'fa fa-list');
         $action->linkToCrudAction(Crud::PAGE_INDEX)->createAsGlobalAction();
         $this->add(Crud::PAGE_INDEX, $action);
 

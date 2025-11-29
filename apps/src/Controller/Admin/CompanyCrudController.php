@@ -26,7 +26,7 @@ class CompanyCrudController extends CrudControllerAbstract
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->actionsFactory->setReadOnly(true);
         $this->setUpdateAction();
-        $this->actionsFactory->setActionUpdateAll();
+        $this->actionsFactory->setActionUpdateAll('updateAllCompany');
 
         return $this->actionsFactory->show();
     }
@@ -96,7 +96,7 @@ class CompanyCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllCompany(MessageBusInterface $messageBus): RedirectResponse
     {
         $messageBus->dispatch(new CompanyAllMessage());
 
