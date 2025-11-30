@@ -3,6 +3,7 @@
 namespace Labstag\MessageHandler;
 
 use Labstag\Message\ImportMessage;
+use Labstag\Service\FileService;
 use Labstag\Service\Igdb\GameService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -11,6 +12,7 @@ final class ImportMessageHandler
 {
     public function __construct(
         private GameService $gameService,
+        private FileService $fileService,
     )
     {
     }
@@ -24,8 +26,8 @@ final class ImportMessageHandler
             'game'  => $this->importGame($file, $data),
             default => null,
         };
-        
 
+        $file = $this->fileService->getFileInAdapter('private', $file);
         unlink($file);
     }
 

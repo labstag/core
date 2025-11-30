@@ -18,9 +18,9 @@ export class Search {
   }
 
   addInResult(resultsContainer, data) {
-    if (resultsContainer) {
+    if (resultsContainer != 'undefined') {
       const table = resultsContainer.querySelector('table');
-      if (!table) {
+      if (table == 'undefined') {
         return;
       }
 
