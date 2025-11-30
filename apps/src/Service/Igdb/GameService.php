@@ -112,8 +112,8 @@ final class GameService extends AbstractIgdb
 
     public function getResultApiForData(array $data): ?array
     {
-        $name = trim((string) $data['Nom']);
-        $body    = $this->igdbApi->setBody(search: $name, fields: ['*', 'cover.*', 'game_type.*', 'alternative_name.*']);
+        $name = (string) $data['Nom'];
+        $body    = $this->igdbApi->setBody(search: $name, fields: ['*', 'alternative_names.*']);
         $results = $this->igdbApi->setUrl('games', $body);
         if (is_null($results)) {
             return null;
@@ -128,17 +128,18 @@ final class GameService extends AbstractIgdb
         }
 
         foreach ($results as $result) {
-            $alternativeNames = isset($result['alternative_names']) && is_array($result['alternative_names']) ? $result['alternative_names'] : [];
-            foreach ($alternativeNames ?? [] as $alternativeName) {
+            $alternativeNames = (isset($result['alternative_names']) && is_array($result['alternative_names'])) ? $result['alternative_names'] : [];
+            if ($result['name'] == $name || strtolower((string) $result['name']) === strtolower($name)) {
+                return $result;
+            }
+
+            foreach ($alternativeNames as $alternativeName) {
                 if ($alternativeName['name'] == $name || strtolower((string) $alternativeName['name']) === strtolower($name)) {
                     return $result;
                 }
             }
-
-            if ($result['name'] == $name || strtolower((string) $result['name']) === strtolower($name)) {
-                return $result;
-            }
         }
+        
         return null;
     }
 
