@@ -34,7 +34,14 @@ final class SearchGameMessageHandler
 
         $result = $this->gameService->getResultApiForData($data);
         if (is_null($result)) {
-            $this->logger->info('Game not found', ['data' => $data, 'platform' => $platform]);
+            $this->logger->info(
+                'Game not found',
+                [
+                    'data'     => $data,
+                    'platform' => $platform,
+                ]
+            );
+
             return;
         }
 

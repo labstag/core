@@ -149,7 +149,12 @@ final class GameService extends AbstractIgdb
         $nameLower = strtolower($name);
 
         foreach ($results as $result) {
-            if (isset($result['game_type']['id']) && 0 === $result['game_type']['id'] && $this->matchesGameName($result, $name, $nameLower)) {
+            if (isset($result['game_type']['id']) && 0 === $result['game_type']['id'] && $this->matchesGameName(
+                $result,
+                $name,
+                $nameLower
+            )
+            ) {
                 return $result;
             }
         }
@@ -176,6 +181,11 @@ final class GameService extends AbstractIgdb
         }
 
         return true;
+    }
+
+    public function setAnotherName($name): string
+    {
+        return preg_replace('/[^a-zA-Z0-9\s]/', '', (string) $name);
     }
 
     public function update(Game $game): bool
@@ -286,8 +296,23 @@ final class GameService extends AbstractIgdb
 
     private function matchesGameName(array $result, string $name, string $nameLower): bool
     {
+        // Pré-calculer les versions nettoyées pour éviter les appels répétés
+        $cleanName      = $this->setAnotherName($name);
+        $cleanNameLower = strtolower($cleanName);
+
+        // Helper pour vérifier un nom
+        $checkName = function (string $gameName) use ($name, $nameLower, $cleanName, $cleanNameLower): bool {
+            if ($gameName === $name || strtolower($gameName) === $nameLower) {
+                return true;
+            }
+
+            $cleanGameName = $this->setAnotherName($gameName);
+
+            return $cleanGameName === $cleanName || strtolower($cleanGameName) === $cleanNameLower;
+        };
+
         // Vérifier le nom principal
-        if ($result['name'] === $name || strtolower((string) $result['name']) === $nameLower) {
+        if ($checkName($result['name'])) {
             return true;
         }
 
@@ -296,18 +321,7 @@ final class GameService extends AbstractIgdb
         if (!is_array($alternativeNames)) {
             return false;
         }
-
-        foreach ($alternativeNames as $alternativeName) {
-            if (!isset($alternativeName['name'])) {
-                continue;
-            }
-
-            if ($alternativeName['name'] === $name || strtolower((string) $alternativeName['name']) === $nameLower) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($alternativeNames, fn($alternativeName): bool => isset($alternativeName['name']) && $checkName($alternativeName['name']));
     }
 
     private function updateArtworks(Game $game, array $data): bool
