@@ -10,20 +10,23 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final class ImportMessageHandler
 {
     public function __construct(
-        protected GameService $gameService
+        private GameService $gameService,
     )
     {
     }
 
-    public function __invoke(ImportMessage $message): void
+    public function __invoke(ImportMessage $importMessage): void
     {
-        $file = $message->getFile();
-        $type = $message->getType();
-        $data = $message->getData();
+        $file = $importMessage->getFile();
+        $type = $importMessage->getType();
+        $data = $importMessage->getData();
         match ($type) {
-            'game' => $this->importGame($file, $data),
+            'game'  => $this->importGame($file, $data),
             default => null,
         };
+        
+
+        unlink($file);
     }
 
     private function importGame(string $file, array $data): void

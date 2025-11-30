@@ -225,14 +225,17 @@ class GameCrudController extends CrudControllerAbstract
         return $this->redirect($url);
     }
 
-    public function importFile(AdminContext $adminContext, MessageBusInterface $messageBus, FileService $fileService): JsonResponse
+    public function importFile(
+        AdminContext $adminContext,
+        MessageBusInterface $messageBus,
+        FileService $fileService,
+    ): JsonResponse
     {
-
         $request = $adminContext->getRequest();
         $files   = $request->files->all();
         $all     = $request->request->all();
         $file    = $files['game_import']['file'] ?? null;
-        $data = [
+        $data    = [
             'platform' => $all['game_import']['platform'] ?? '',
         ];
 
@@ -246,9 +249,9 @@ class GameCrudController extends CrudControllerAbstract
         }
 
         $content = file_get_contents($file->getPathname());
-        $fileService->saveFileInAdapter('private', $file->getClientOriginalName().'-'.time(), $content);
+        $fileService->saveFileInAdapter('private', $file->getClientOriginalName() . '-' . time(), $content);
 
-        $messageBus->dispatch(new ImportMessage($file->getClientOriginalName().'-'.time(), 'game', $data));
+        $messageBus->dispatch(new ImportMessage($file->getClientOriginalName() . '-' . time(), 'game', $data));
 
         return new JsonResponse(
             [

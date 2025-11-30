@@ -6,6 +6,7 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Labstag\Api\IgdbApi;
+use Labstag\Entity\Franchise;
 use Labstag\Entity\Game;
 use Labstag\Entity\GameCategory;
 use Labstag\Entity\Platform;
@@ -23,7 +24,6 @@ final class GameService extends AbstractIgdb
         EntityManagerInterface $entityManager,
         FileService $fileService,
         private MessageBusInterface $messageBus,
-        private FranchiseService $franchiseService,
         private CategoryService $categoryService,
     )
     {
@@ -37,8 +37,9 @@ final class GameService extends AbstractIgdb
             return null;
         }
 
-        $game = $this->getGame($result);
+        $game = $this->getGameByRow($result);
         $this->update($game);
+        $this->entityManager->getRepository(Game::class)->save($game);
 
         $platform = $this->entityManager->getRepository(Platform::class)->find($platformId);
         if ($platform instanceof Platform) {
@@ -48,6 +49,27 @@ final class GameService extends AbstractIgdb
         $this->entityManager->getRepository(Game::class)->save($game);
 
         return $game;
+    }
+
+    public function getFranchise(array $data): Franchise
+    {
+        $entityRepository = $this->entityManager->getRepository(Franchise::class);
+        $franchise        = $entityRepository->findOneBy(
+            [
+                'igdb' => $data['id'],
+            ]
+        );
+        if ($franchise instanceof Franchise) {
+            return $franchise;
+        }
+
+        $franchise = new Franchise();
+        $franchise->setTitle($data['name']);
+        $franchise->setIgdb($data['id']);
+
+        $entityRepository->save($franchise);
+
+        return $franchise;
     }
 
     public function getGameApi(array $data, int $limit, int $offset): array
@@ -112,14 +134,11 @@ final class GameService extends AbstractIgdb
 
     public function getResultApiForData(array $data): ?array
     {
-        $name = (string) $data['Nom'];
-        $body    = $this->igdbApi->setBody(search: $name, fields: ['*', 'alternative_names.*']);
+        $name    = (string) $data['Nom'];
+        $body    = $this->igdbApi->setBody(search: $name, fields: ['*', 'game_type.*', 'alternative_names.*']);
         $results = $this->igdbApi->setUrl('games', $body);
-        if (is_null($results)) {
-            return null;
-        }
 
-        if (0 === count($results)) {
+        if (is_null($results) || 0 === count($results)) {
             return null;
         }
 
@@ -127,19 +146,20 @@ final class GameService extends AbstractIgdb
             return $results[0];
         }
 
+        $nameLower = strtolower($name);
+
         foreach ($results as $result) {
-            $alternativeNames = (isset($result['alternative_names']) && is_array($result['alternative_names'])) ? $result['alternative_names'] : [];
-            if ($result['name'] == $name || strtolower((string) $result['name']) === strtolower($name)) {
+            if (isset($result['game_type']['id']) && 0 === $result['game_type']['id'] && $this->matchesGameName($result, $name, $nameLower)) {
                 return $result;
             }
+        }
 
-            foreach ($alternativeNames as $alternativeName) {
-                if ($alternativeName['name'] == $name || strtolower((string) $alternativeName['name']) === strtolower($name)) {
-                    return $result;
-                }
+        foreach ($results as $result) {
+            if ($this->matchesGameName($result, $name, $nameLower)) {
+                return $result;
             }
         }
-        
+
         return null;
     }
 
@@ -154,8 +174,6 @@ final class GameService extends AbstractIgdb
         if ('text/csv' == $mimeType) {
             return $this->importCsvFile($file, $platform);
         }
-
-        unlink($file);
 
         return true;
     }
@@ -208,40 +226,19 @@ final class GameService extends AbstractIgdb
         return $dataJson;
     }
 
-    private function getApiGameArtworksIds(array $artworkIds): ?array
-    {
-        $where = ['id = (' . implode(',', $artworkIds) . ')'];
-        $body  = $this->igdbApi->setBody(where: $where, limit: count($artworkIds));
-
-        $results = $this->igdbApi->setUrl('artworks', $body);
-        if (is_null($results)) {
-            return null;
-        }
-
-        return $results;
-    }
-
-    private function getApiGameCoverId(array $data): ?array
-    {
-        if (!isset($data['cover'])) {
-            return null;
-        }
-
-        $where = ['id = ' . $data['cover']];
-        $body  = $this->igdbApi->setBody(where: $where, limit: 1);
-
-        $results = $this->igdbApi->setUrl('covers', $body);
-        if (is_null($results)) {
-            return null;
-        }
-
-        return $results;
-    }
-
     private function getApiGameId(string $id): ?array
     {
-        $where = ['id = ' . $id];
-        $body  = $this->igdbApi->setBody(where: $where, limit: 1);
+        $where  = ['id = ' . $id];
+        $fields = [
+            '*',
+            'cover.*',
+            'genres.*',
+            'franchises.*',
+            'screenshots.*',
+            'artworks.*',
+            'videos.*',
+        ];
+        $body   = $this->igdbApi->setBody(fields: $fields, where: $where, limit: 1);
 
         $results = $this->igdbApi->setUrl('games', $body);
         if (is_null($results)) {
@@ -251,46 +248,7 @@ final class GameService extends AbstractIgdb
         return $results[0];
     }
 
-    private function getApiGameScreenshotsIds(array $screenshotIds): ?array
-    {
-        $where = ['id = (' . implode(',', $screenshotIds) . ')'];
-        $body  = $this->igdbApi->setBody(where: $where, limit: count($screenshotIds));
-
-        $results = $this->igdbApi->setUrl('screenshots', $body);
-        if (is_null($results)) {
-            return null;
-        }
-
-        return $results;
-    }
-
-    private function getApiGameVideosIds(array $artworkIds): ?array
-    {
-        $where = ['id = (' . implode(',', $artworkIds) . ')'];
-        $body  = $this->igdbApi->setBody(where: $where, limit: count($artworkIds));
-
-        $results = $this->igdbApi->setUrl('game_videos', $body);
-        if (is_null($results)) {
-            return null;
-        }
-
-        return $results;
-    }
-
-    private function getApiGenreId(int $id): ?array
-    {
-        $where = ['id = ' . $id];
-        $body  = $this->igdbApi->setBody(where: $where, limit: 1);
-
-        $results = $this->igdbApi->setUrl('genres', $body);
-        if (is_null($results)) {
-            return null;
-        }
-
-        return $results;
-    }
-
-    private function getGame(array $data): Game
+    private function getGameByRow(array $data): Game
     {
         $entityRepository = $this->entityManager->getRepository(Game::class);
         $game             = $entityRepository->findOneBy(
@@ -311,6 +269,8 @@ final class GameService extends AbstractIgdb
             $game->setReleaseDate($datetime->setTimestamp($data['first_release_date']));
         }
 
+        $entityRepository->save($game);
+
         return $game;
     }
 
@@ -324,6 +284,32 @@ final class GameService extends AbstractIgdb
         return true;
     }
 
+    private function matchesGameName(array $result, string $name, string $nameLower): bool
+    {
+        // Vérifier le nom principal
+        if ($result['name'] === $name || strtolower((string) $result['name']) === $nameLower) {
+            return true;
+        }
+
+        // Vérifier les noms alternatifs
+        $alternativeNames = $result['alternative_names'] ?? [];
+        if (!is_array($alternativeNames)) {
+            return false;
+        }
+
+        foreach ($alternativeNames as $alternativeName) {
+            if (!isset($alternativeName['name'])) {
+                continue;
+            }
+
+            if ($alternativeName['name'] === $name || strtolower((string) $alternativeName['name']) === $nameLower) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function updateArtworks(Game $game, array $data): bool
     {
         if (!isset($data['artworks']) || !is_array($data['artworks'])) {
@@ -332,9 +318,8 @@ final class GameService extends AbstractIgdb
             return true;
         }
 
-        $results  = $this->getApiGameArtworksIds($data['artworks']);
         $artworks = [];
-        foreach ($results as $result) {
+        foreach ($data['artworks'] as $result) {
             if (is_null($result)) {
                 continue;
             }
@@ -357,8 +342,8 @@ final class GameService extends AbstractIgdb
             return true;
         }
 
-        foreach ($data['franchises'] as $franchiseId) {
-            $franchise = $this->franchiseService->addByApi((string) $franchiseId);
+        foreach ($data['franchises'] as $franchiseData) {
+            $franchise = $this->getFranchise($franchiseData);
             if (is_null($franchise)) {
                 continue;
             }
@@ -379,9 +364,8 @@ final class GameService extends AbstractIgdb
             return true;
         }
 
-        foreach ($data['genres'] as $genreId) {
-            $result   = $this->getApiGenreId($genreId);
-            $category = $this->categoryService->getType($result[0]['name'], GameCategory::class);
+        foreach ($data['genres'] as $result) {
+            $category = $this->categoryService->getType($result['name'], GameCategory::class);
 
             $game->addCategory($category);
         }
@@ -391,12 +375,11 @@ final class GameService extends AbstractIgdb
 
     private function updateImage(Game $game, array $data): bool
     {
-        $result = $this->getApiGameCoverId($data);
-        if (is_null($result)) {
+        if (!isset($data['cover']['image_id']) || empty($data['cover']['image_id'])) {
             return false;
         }
 
-        $imageUrl = $this->igdbApi->buildImageUrl($result[0]['image_id'], 'original');
+        $imageUrl = $this->igdbApi->buildImageUrl($data['cover']['image_id'], 'original');
         try {
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 
@@ -418,9 +401,8 @@ final class GameService extends AbstractIgdb
             return true;
         }
 
-        $results     = $this->getApiGameScreenshotsIds($data['screenshots']);
         $screenshots = [];
-        foreach ($results as $result) {
+        foreach ($data['screenshots'] as $result) {
             if (is_null($result)) {
                 continue;
             }
@@ -441,9 +423,8 @@ final class GameService extends AbstractIgdb
             return true;
         }
 
-        $results = $this->getApiGameVideosIds($data['videos']);
         $videos  = [];
-        foreach ($results as $result) {
+        foreach ($data['videos'] as $result) {
             if (is_null($result)) {
                 continue;
             }
