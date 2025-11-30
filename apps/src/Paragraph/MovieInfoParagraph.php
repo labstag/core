@@ -60,9 +60,7 @@ class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
     {
         unset($paragraph);
         $entityRepository = $this->entityManager->getRepository(Movie::class);
-
-        // Récupération manuelle des films pour éviter les problèmes d'association
-        $movies = $entityRepository->findBy(
+        $movies           = $entityRepository->findBy(
             [],
             ['title' => 'ASC']
         );

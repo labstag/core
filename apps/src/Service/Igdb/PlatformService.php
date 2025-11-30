@@ -147,7 +147,6 @@ final class PlatformService extends AbstractIgdb
         try {
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($imageUrl));
             $this->fileService->setUploadedFile($tempPath, $platform, 'imgFile');
 

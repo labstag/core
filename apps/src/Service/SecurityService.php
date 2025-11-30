@@ -100,12 +100,8 @@ final class SecurityService
 
         foreach ($headers as $header) {
             if (!empty($server->get($header))) {
-                $ipList = explode(',', (string) $server->get($header));
-                // Si plusieurs IPs sont présentes (cas d'un proxy chainé)
+                $ipList           = explode(',', (string) $server->get($header));
                 $internetProtocol = trim(end($ipList));
-                // On prend la dernière IP de la liste (client réel)
-
-                // Valider que c'est une IP valide (IPv4 ou IPv6)
                 if (filter_var(
                     $internetProtocol,
                     FILTER_VALIDATE_IP,

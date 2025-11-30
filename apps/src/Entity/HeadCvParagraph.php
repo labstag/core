@@ -41,7 +41,6 @@ class HeadCvParagraph extends Paragraph
     {
         $this->pdf = $pdf;
 
-        // Si le PDF est supprimé (pdf devient null), on force la mise à jour
         if (null === $pdf) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

@@ -93,7 +93,6 @@ class Media
     {
         $this->name = $name;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
         if (null === $name) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

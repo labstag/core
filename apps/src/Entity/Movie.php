@@ -396,7 +396,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     {
         $this->backdrop = $backdrop;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $backdrop) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
@@ -490,7 +489,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     {
         $this->poster = $poster;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $poster) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

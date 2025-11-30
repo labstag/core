@@ -46,7 +46,6 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     #[Override]
     public function authenticate(Request $request): Passport
     {
-        // Récupération des données du formulaire login
         $loginData = $request->request->all('login');
         $username  = $loginData['username'] ?? '';
         $password  = $loginData['password'] ?? '';
@@ -69,7 +68,6 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             new PasswordCredentials($password),
             [
                 new CsrfTokenBadge('login', $csrfToken),
-                // Le nom doit correspondre au nom du formulaire
                 new RememberMeBadge(),
             ]
         );

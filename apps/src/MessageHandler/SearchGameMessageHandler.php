@@ -32,7 +32,7 @@ final class SearchGameMessageHandler
 
         $platform = $searchGameMessage->getPlatform();
 
-        $result = $this->gameService->getResultApiForData($data);
+        $result = $this->getResultApiForData($data['Nom']);
         if (is_null($result)) {
             $this->logger->info(
                 'Game not found',
@@ -57,5 +57,24 @@ final class SearchGameMessageHandler
                 'title' => $row['Nom'],
             ]
         );
+    }
+
+    private function getResultApiForData(string $name): ?array
+    {
+        $result = $this->gameService->getResultApiForData($name);
+        if (!is_null($result)) {
+            return $result;
+        }
+
+        $parts = preg_split('/\s*[-:]\s*/', $name);
+        for ($i = count($parts) - 1; 0 < $i; --$i) {
+            $shortenedName = implode(' - ', array_slice($parts, 0, $i));
+            $result        = $this->gameService->getResultApiForData($shortenedName);
+            if (!is_null($result)) {
+                return $result;
+            }
+        }
+
+        return null;
     }
 }

@@ -65,7 +65,6 @@ class TextMediaParagraph extends Paragraph
     {
         $this->img = $img;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
         if (null === $img) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

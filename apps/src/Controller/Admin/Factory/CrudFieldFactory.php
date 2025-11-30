@@ -616,7 +616,6 @@ final class CrudFieldFactory
 
         $fqcn            = $this->getFqcn();
         $reflectionClass = new ReflectionClass($fqcn);
-        // if ($reflectionClass->isAbstract() || !$isSuperAdmin || !$reflectionClass->hasMethod('getRefuser')) {
         if ($reflectionClass->isAbstract() || !$reflectionClass->hasMethod('getRefuser')) {
             return;
         }

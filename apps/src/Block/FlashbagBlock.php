@@ -13,8 +13,6 @@ class FlashbagBlock extends SimpleBlockAbstract
         return EntityFlashbagBlock::class;
     }
 
-    // Utilise l'implémentation par défaut d'SimpleBlockAbstract
-
     #[Override]
     public function getName(): string
     {

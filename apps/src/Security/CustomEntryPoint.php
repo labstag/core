@@ -38,7 +38,6 @@ class CustomEntryPoint implements AuthenticationEntryPointInterface
 
         $slug = $this->slugService->forEntity($page);
 
-        // Page à afficher si non connecté
         return new RedirectResponse(
             $this->urlGenerator->generate(
                 'front',

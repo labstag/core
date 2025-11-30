@@ -147,7 +147,6 @@ final class EtagCacheService
     {
         $baseHeaders = $this->getCacheHeaders($entity);
 
-        // Personnaliser la durée de cache selon le type d'entité
         $maxAge                                  = $this->getOptimalCacheTime($entity);
         $baseHeaders['headers']['Cache-Control'] = sprintf('public, max-age=%d, must-revalidate', $maxAge);
 
@@ -290,7 +289,6 @@ final class EtagCacheService
             }
         } catch (ReflectionException) {
             throw new Exception('Reflection error on entity: ' . $entity::class);
-            // En cas d'erreur de réflection, continuer sans les propriétés
         }
 
         return $properties;

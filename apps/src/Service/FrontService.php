@@ -113,7 +113,6 @@ class FrontService extends AbstractController
         // 304 Not Modified support
         if ($response->isNotModified($request)) {
             return $response;
-            // Symfony ajuste automatiquement le contenu pour 304
         }
 
         return $response;

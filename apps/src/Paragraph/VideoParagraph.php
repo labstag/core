@@ -126,7 +126,6 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
         $thumbnailUrl = $media->get('thumbnailUrl');
         $tempPath     = tempnam(sys_get_temp_dir(), 'poster_');
 
-        // Télécharger l'image et l'écrire dans le fichier temporaire
         file_put_contents($tempPath, file_get_contents($thumbnailUrl));
         $this->fileService->setUploadedFile($tempPath, $paragraph, 'imgFile');
     }

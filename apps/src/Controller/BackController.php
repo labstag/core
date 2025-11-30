@@ -142,8 +142,7 @@ class BackController extends AbstractController
             ['title' => 'ASC']
         );
         $groups = $groupRepository->findAll();
-        // Sinon affiche un formulaire simple de sélection
-        $data = [];
+        $data   = [];
         foreach ($permissions as $permission) {
             [
                 $group,

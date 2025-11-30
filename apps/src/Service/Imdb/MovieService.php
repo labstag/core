@@ -294,7 +294,6 @@ final class MovieService
         try {
             $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($backdrop));
             $this->fileService->setUploadedFile($tempPath, $movie, 'backdropFile');
 
@@ -320,7 +319,6 @@ final class MovieService
         try {
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($poster));
             $this->fileService->setUploadedFile($tempPath, $movie, 'posterFile');
 

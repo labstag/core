@@ -245,7 +245,6 @@ class BlockCrudController extends CrudControllerAbstract
     {
         $blocks = $this->blockService->getAll(null);
 
-        // Sinon affiche un formulaire simple de sélection
         return $this->render(
             'admin/block/new.html.twig',
             [

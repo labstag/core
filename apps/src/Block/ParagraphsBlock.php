@@ -13,8 +13,6 @@ class ParagraphsBlock extends ParagraphBlockAbstract
         return EntityParagraphsBlock::class;
     }
 
-    // Utilise l'implémentation par défaut d'ParagraphBlockAbstract
-
     #[Override]
     public function getName(): string
     {

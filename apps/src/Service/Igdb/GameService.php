@@ -132,9 +132,8 @@ final class GameService extends AbstractIgdb
         return $this->generateJsonCSV($worksheet);
     }
 
-    public function getResultApiForData(array $data): ?array
+    public function getResultApiForData(string $name): ?array
     {
-        $name    = (string) $data['Nom'];
         $body    = $this->igdbApi->setBody(search: $name, fields: ['*', 'game_type.*', 'alternative_names.*']);
         $results = $this->igdbApi->setUrl('games', $body);
 
@@ -185,7 +184,10 @@ final class GameService extends AbstractIgdb
 
     public function setAnotherName($name): string
     {
-        return preg_replace('/[^a-zA-Z0-9\s]/', '', (string) $name);
+        $name = preg_replace('/[^a-zA-Z0-9\s]/', '', (string) $name);
+        $name = preg_replace('/\s+/', ' ', (string) $name);
+
+        return trim((string) $name);
     }
 
     public function update(Game $game): bool
@@ -296,7 +298,6 @@ final class GameService extends AbstractIgdb
 
     private function matchesGameName(array $result, string $name, string $nameLower): bool
     {
-        // Pré-calculer les versions nettoyées pour éviter les appels répétés
         $cleanName      = $this->setAnotherName($name);
         $cleanNameLower = strtolower($cleanName);
 
@@ -321,7 +322,11 @@ final class GameService extends AbstractIgdb
         if (!is_array($alternativeNames)) {
             return false;
         }
-        return array_any($alternativeNames, fn($alternativeName): bool => isset($alternativeName['name']) && $checkName($alternativeName['name']));
+
+        return array_any(
+            $alternativeNames,
+            fn ($alternativeName): bool => isset($alternativeName['name']) && $checkName($alternativeName['name'])
+        );
     }
 
     private function updateArtworks(Game $game, array $data): bool
@@ -397,7 +402,6 @@ final class GameService extends AbstractIgdb
         try {
             $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
             file_put_contents($tempPath, file_get_contents($imageUrl));
             $this->fileService->setUploadedFile($tempPath, $game, 'imgFile');
 
