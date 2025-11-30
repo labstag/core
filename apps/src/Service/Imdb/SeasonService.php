@@ -133,17 +133,9 @@ final class SeasonService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $this->fileService->setUploadedFile($poster, $season, 'posterFile');
 
-            file_put_contents($tempPath, file_get_contents($poster));
-
-            $this->fileService->setUploadedFile($tempPath, $season, 'posterFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     private function updateSeason(Season $season, array $details): bool

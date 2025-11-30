@@ -99,16 +99,9 @@ final class SagaService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
+        $this->fileService->setUploadedFile($backdrop, $saga, 'backdropFile');
 
-            file_put_contents($tempPath, file_get_contents($backdrop));
-            $this->fileService->setUploadedFile($tempPath, $saga, 'backdropFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     private function updateImagePoster(Saga $saga, array $data): bool
@@ -121,16 +114,9 @@ final class SagaService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $this->fileService->setUploadedFile($poster, $saga, 'posterFile');
 
-            file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $saga, 'posterFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     private function updateRecommendations(Saga $saga, array $details): bool

@@ -44,19 +44,14 @@ final class StarMessageHandler
     /**
      * @param array<string, mixed> $data
      */
-    private function setImage(Star $star, array $data): void
+    private function setImage(Star $star, array $data): bool
     {
         if (!isset($data['owner']['avatar_url'])) {
-            return;
+            return false;
         }
 
-        try {
-            $file     = $data['owner']['avatar_url'];
-            $tempPath = tempnam(sys_get_temp_dir(), 'star_');
-            file_put_contents($tempPath, file_get_contents($file));
-            $this->fileService->setUploadedFile($tempPath, $star, 'imgFile');
-        } catch (Exception $exception) {
-            echo $exception->getMessage();
-        }
+        $this->fileService->setUploadedFile($data['owner']['avatar_url'], $star, 'imgFile');
+
+        return true;
     }
 }

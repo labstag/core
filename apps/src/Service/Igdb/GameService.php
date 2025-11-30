@@ -399,16 +399,9 @@ final class GameService extends AbstractIgdb
         }
 
         $imageUrl = $this->igdbApi->buildImageUrl($data['cover']['image_id'], 'original');
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
-
-            file_put_contents($tempPath, file_get_contents($imageUrl));
-            $this->fileService->setUploadedFile($tempPath, $game, 'imgFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        $this->fileService->setUploadedFile($imageUrl, $game, 'imgFile');
+        
+        return true;
     }
 
     private function updateScreenshots(Game $game, array $data): bool

@@ -290,17 +290,10 @@ final class MovieService
 
             return false;
         }
+        
+        $this->fileService->setUploadedFile($backdrop, $movie, 'backdropFile');
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
-
-            file_put_contents($tempPath, file_get_contents($backdrop));
-            $this->fileService->setUploadedFile($tempPath, $movie, 'backdropFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     /**
@@ -316,16 +309,9 @@ final class MovieService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $this->fileService->setUploadedFile($poster, $movie, 'posterFile');
 
-            file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $movie, 'posterFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     /**

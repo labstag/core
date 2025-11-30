@@ -108,7 +108,12 @@ final class PlatformService extends AbstractIgdb
     private function getApiPlatformId(string $id): ?array
     {
         $where = ['id = ' . $id];
-        $body  = $this->igdbApi->setBody(where: $where, limit: 1);
+        $fields = [
+            '*',
+            'platform_logo.*',
+            'platform_family.*',
+        ];
+        $body  = $this->igdbApi->setBody(where: $where, limit: 1, fields: $fields);
 
         $results = $this->igdbApi->setUrl('platforms', $body);
         if (is_null($results)) {
@@ -138,21 +143,13 @@ final class PlatformService extends AbstractIgdb
 
     private function updateImage(Platform $platform, array $data): bool
     {
-        $result = $this->getApiPlatformLogosId($data);
-        if (is_null($result)) {
+        if (!isset($data['platform_logo']['image_id']) || empty($data['platform_logo']['image_id'])) {
             return false;
         }
 
-        $imageUrl = $this->igdbApi->buildImageUrl($result[0]['image_id'], 'original');
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $imageUrl = $this->igdbApi->buildImageUrl($data['platform_logo']['image_id'], 'original');
+        $this->fileService->setUploadedFile($imageUrl, $platform, 'imgFile');
 
-            file_put_contents($tempPath, file_get_contents($imageUrl));
-            $this->fileService->setUploadedFile($tempPath, $platform, 'imgFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 }

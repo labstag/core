@@ -2,11 +2,17 @@
 
 namespace Labstag\Service;
 
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Labstag\Message\FileDeleteMessage;
+use Labstag\Stamp\ExpireAtStamp;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
@@ -18,8 +24,11 @@ final class FileService
     public function __construct(
         #[AutowireIterator('labstag.filestorage')]
         private readonly iterable $fileStorages,
+        private MessageBusInterface $messageBus,
+        private LoggerInterface $logger,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag,
+
         private PropertyMappingFactory $propertyMappingFactory,
     )
     {
@@ -250,18 +259,24 @@ final class FileService
         return null;
     }
 
-    public function saveTemporaryFile($file): string
-    {
-        $tempDir  = sys_get_temp_dir();
-        $filePath = tempnam($tempDir, 'upload_');
-        file_put_contents($filePath, file_get_contents($file));
-
-        return $filePath;
-    }
-
     public function setUploadedFile(string $filePath, object $entity, string|PropertyPathInterface $type): void
     {
         try {
+            // Si c'est une URL, télécharger le fichier localement
+            if (filter_var($filePath, FILTER_VALIDATE_URL)) {
+                $tempPath = tempnam(sys_get_temp_dir(), 'download_');
+                $content = file_get_contents($filePath);
+                if (false === $content) {
+                    $this->logger->error('Failed to download file from URL: ' . $filePath);
+                    throw new Exception('Failed to download file from URL: ' . $filePath);
+                }
+
+                file_put_contents($tempPath, $content);
+                $filePath = $tempPath;
+            }
+            
+            $this->messageBus->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(60_000)]);
+
             $uploadedFile = new UploadedFile(
                 path: $filePath,
                 originalName: basename($filePath),
@@ -272,7 +287,8 @@ final class FileService
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $propertyAccessor->setValue($entity, $type, $uploadedFile);
         } catch (Exception $exception) {
-            echo $exception->getMessage();
+            $this->logger->error('Error setting uploaded file: ' . $exception->getMessage());
+            throw new Exception('Error setting uploaded file: ' . $exception->getMessage());
         }
     }
 
