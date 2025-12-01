@@ -3,7 +3,6 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
-use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;

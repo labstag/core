@@ -8,9 +8,9 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 final class FileDeleteMessageHandler
 {
-    public function __invoke(FileDeleteMessage $message): void
+    public function __invoke(FileDeleteMessage $fileDeleteMessage): void
     {
-        $filePath = $message->getFilePath();
+        $filePath = $fileDeleteMessage->getFilePath();
         if (file_exists($filePath)) {
             unlink($filePath);
         }

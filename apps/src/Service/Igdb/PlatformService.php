@@ -2,7 +2,6 @@
 
 namespace Labstag\Service\Igdb;
 
-use Exception;
 use Labstag\Entity\Platform;
 
 final class PlatformService extends AbstractIgdb
@@ -107,13 +106,13 @@ final class PlatformService extends AbstractIgdb
 
     private function getApiPlatformId(string $id): ?array
     {
-        $where = ['id = ' . $id];
+        $where  = ['id = ' . $id];
         $fields = [
             '*',
             'platform_logo.*',
             'platform_family.*',
         ];
-        $body  = $this->igdbApi->setBody(where: $where, limit: 1, fields: $fields);
+        $body   = $this->igdbApi->setBody(fields: $fields, where: $where, limit: 1);
 
         $results = $this->igdbApi->setUrl('platforms', $body);
         if (is_null($results)) {
@@ -121,24 +120,6 @@ final class PlatformService extends AbstractIgdb
         }
 
         return $results[0];
-    }
-
-    private function getApiPlatformLogosId(array $data): ?array
-    {
-        if (!isset($data['platform_logo'])) {
-            return null;
-        }
-
-        $where = ['id = ' . $data['platform_logo']];
-
-        $body = $this->igdbApi->setBody(where: $where, limit: 1);
-
-        $results = $this->igdbApi->setUrl('platform_logos', $body);
-        if (is_null($results)) {
-            return null;
-        }
-
-        return $results;
     }
 
     private function updateImage(Platform $platform, array $data): bool

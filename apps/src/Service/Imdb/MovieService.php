@@ -4,7 +4,6 @@ namespace Labstag\Service\Imdb;
 
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
@@ -290,7 +289,7 @@ final class MovieService
 
             return false;
         }
-        
+
         $this->fileService->setUploadedFile($backdrop, $movie, 'backdropFile');
 
         return true;

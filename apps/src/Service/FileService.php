@@ -2,11 +2,9 @@
 
 namespace Labstag\Service;
 
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Labstag\Message\FileDeleteMessage;
-use Labstag\Stamp\ExpireAtStamp;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -265,7 +263,7 @@ final class FileService
             // Si c'est une URL, télécharger le fichier localement
             if (filter_var($filePath, FILTER_VALIDATE_URL)) {
                 $tempPath = tempnam(sys_get_temp_dir(), 'download_');
-                $content = file_get_contents($filePath);
+                $content  = file_get_contents($filePath);
                 if (false === $content) {
                     $this->logger->error('Failed to download file from URL: ' . $filePath);
                     throw new Exception('Failed to download file from URL: ' . $filePath);
@@ -274,7 +272,7 @@ final class FileService
                 file_put_contents($tempPath, $content);
                 $filePath = $tempPath;
             }
-            
+
             $this->messageBus->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(60_000)]);
 
             $uploadedFile = new UploadedFile(
@@ -288,7 +286,7 @@ final class FileService
             $propertyAccessor->setValue($entity, $type, $uploadedFile);
         } catch (Exception $exception) {
             $this->logger->error('Error setting uploaded file: ' . $exception->getMessage());
-            throw new Exception('Error setting uploaded file: ' . $exception->getMessage());
+            throw new Exception('Error setting uploaded file: ' . $exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 

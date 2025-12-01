@@ -2,7 +2,6 @@
 
 namespace Labstag\Service\Imdb;
 
-use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Company;
 use Labstag\Message\CompanyMessage;

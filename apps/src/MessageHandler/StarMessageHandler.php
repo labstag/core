@@ -2,7 +2,6 @@
 
 namespace Labstag\MessageHandler;
 
-use Exception;
 use Labstag\Entity\Star;
 use Labstag\Message\StarMessage;
 use Labstag\Repository\StarRepository;

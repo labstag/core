@@ -17,5 +17,4 @@ final class FileDeleteMessage
     {
         return $this->filePath;
     }
-
 }

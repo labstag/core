@@ -4,7 +4,6 @@ namespace Labstag\Service\Igdb;
 
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Labstag\Api\IgdbApi;
 use Labstag\Entity\Franchise;
 use Labstag\Entity\Game;
@@ -400,7 +399,7 @@ final class GameService extends AbstractIgdb
 
         $imageUrl = $this->igdbApi->buildImageUrl($data['cover']['image_id'], 'original');
         $this->fileService->setUploadedFile($imageUrl, $game, 'imgFile');
-        
+
         return true;
     }
 
