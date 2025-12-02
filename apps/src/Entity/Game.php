@@ -20,10 +20,16 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Index(name: 'IDX_GAME_SLUG', columns: ['slug'])]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Game
+class Game implements EntityWithParagraphsInterface
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
+
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    protected ?bool $enable = true;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -36,6 +42,19 @@ class Game
 
     #[Vich\UploadableField(mapping: 'game', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
+
+    #[ORM\OneToOne(inversedBy: 'game', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?Meta $meta = null;
+
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'game', cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    protected Collection $paragraphs;
 
     #[Gedmo\Slug(updatable: true, fields: ['title'])]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
@@ -93,6 +112,7 @@ class Game
     {
         $this->franchises = new ArrayCollection();
         $this->platforms  = new ArrayCollection();
+        $this->paragraphs = new ArrayCollection();
         $this->categories = new ArrayCollection();
     }
 
@@ -109,6 +129,16 @@ class Game
     {
         if (!$this->franchises->contains($franchise)) {
             $this->franchises->add($franchise);
+        }
+
+        return $this;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setGame($this);
         }
 
         return $this;
@@ -164,6 +194,16 @@ class Game
         return $this->imgFile;
     }
 
+    public function getMeta(): ?Meta
+    {
+        return $this->meta;
+    }
+
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
     /**
      * @return Collection<int, Platform>
      */
@@ -202,6 +242,11 @@ class Game
         return $this->videos;
     }
 
+    public function isEnable(): ?bool
+    {
+        return $this->enable;
+    }
+
     public function removeCategory(GameCategory $gameCategory): static
     {
         $this->categories->removeElement($gameCategory);
@@ -216,6 +261,17 @@ class Game
         return $this;
     }
 
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getGame() === $this
+        ) {
+            $paragraph->setGame(null);
+        }
+
+        return $this;
+    }
+
     public function removePlatform(Platform $platform): static
     {
         $this->platforms->removeElement($platform);
@@ -226,6 +282,13 @@ class Game
     public function setArtworks(?array $artworks): static
     {
         $this->artworks = $artworks;
+
+        return $this;
+    }
+
+    public function setEnable(bool $enable): static
+    {
+        $this->enable = $enable;
 
         return $this;
     }
@@ -255,6 +318,13 @@ class Game
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setMeta(Meta $meta): static
+    {
+        $this->meta = $meta;
+
+        return $this;
     }
 
     public function setReleaseDate(?DateTime $release_date): static

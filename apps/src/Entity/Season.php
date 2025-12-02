@@ -230,6 +230,17 @@ class Season implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getSeason() === $this
+        ) {
+            $paragraph->setSeason(null);
+        }
+
+        return $this;
+    }
+
     public function setAirDate(?DateTime $airDate): static
     {
         $this->airDate = $airDate;

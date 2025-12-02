@@ -194,6 +194,7 @@ class GameCrudController extends CrudControllerAbstract
             'principal',
             [
                 $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 DateField::new('releaseDate', new TranslatableMessage('Release date')),
@@ -267,7 +268,7 @@ class GameCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('igdb', new TranslatableMessage('IGDB Page'));
+        $action = Action::new('igdb', new TranslatableMessage('IGDB Page'), 'fas fa-external-link-alt');
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
@@ -278,7 +279,11 @@ class GameCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('addToAnotherPlatform', new TranslatableMessage('Add to another platform'));
+        $action = Action::new(
+            'addToAnotherPlatform',
+            new TranslatableMessage('Add to another platform'),
+            'fas fa-plus-circle'
+        );
         $action->linkToCrudAction('addToAnotherPlatform');
         $action->setHtmlAttributes(
             ['data-action' => 'show-modal']

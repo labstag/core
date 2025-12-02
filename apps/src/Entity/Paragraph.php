@@ -86,6 +86,9 @@ abstract class Paragraph implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $fond = null;
 
+    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    protected ?Game $game = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
@@ -148,6 +151,11 @@ abstract class Paragraph implements Stringable
     public function getFond(): ?string
     {
         return $this->fond;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
     }
 
     public function getId(): ?string
@@ -243,6 +251,13 @@ abstract class Paragraph implements Stringable
     public function setFond(?string $fond): static
     {
         $this->fond = $fond;
+
+        return $this;
+    }
+
+    public function setGame(?Game $game): static
+    {
+        $this->game = $game;
 
         return $this;
     }

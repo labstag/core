@@ -425,6 +425,15 @@ final class MovieService
             }
         }
 
+        if (false === $find && 1 === count(
+            $details['videos']['results']
+        ) && 'YouTube' == $details['videos']['results'][0]['site']
+        ) {
+            $url = 'https://www.youtube.com/watch?v=' . $result['key'];
+            $movie->setTrailer($url);
+            $find = true;
+        }
+
         return $find;
     }
 }

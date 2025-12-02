@@ -376,7 +376,7 @@ class MovieCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('showModalMovie', new TranslatableMessage('New movie'));
+        $action = Action::new('showModalMovie', new TranslatableMessage('New movie'), 'fas fa-plus-circle');
         $action->linkToCrudAction('showModalMovie');
         $action->setHtmlAttributes(
             ['data-action' => 'show-modal']
@@ -392,7 +392,7 @@ class MovieCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('updateMovie', new TranslatableMessage('Update'));
+        $action = Action::new('updateMovie', new TranslatableMessage('Update'), 'fas fa-sync-alt');
         $action->linkToCrudAction('updateMovie');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

@@ -25,6 +25,9 @@ class Meta implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $description = null;
 
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
+    protected ?Game $game = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
@@ -72,6 +75,11 @@ class Meta implements Stringable
     public function getDescription(): ?string
     {
         return $this->description;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
     }
 
     public function getId(): ?string
@@ -139,6 +147,18 @@ class Meta implements Stringable
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function setGame(Game $game): static
+    {
+        // set the owning side of the relation if necessary
+        if ($game->getMeta() !== $this) {
+            $game->setMeta($this);
+        }
+
+        $this->game = $game;
 
         return $this;
     }

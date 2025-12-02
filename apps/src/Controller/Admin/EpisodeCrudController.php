@@ -170,7 +170,7 @@ class EpisodeCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('updateEpisode', new TranslatableMessage('Update'));
+        $action = Action::new('updateEpisode', new TranslatableMessage('Update'), 'fas fa-sync-alt');
         $action->linkToCrudAction('updateEpisode');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

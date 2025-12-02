@@ -361,7 +361,7 @@ class SerieCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('showModalSerie', new TranslatableMessage('New serie'));
+        $action = Action::new('showModalSerie', new TranslatableMessage('New serie'), 'fas fa-plus');
         $action->linkToCrudAction('showModalSerie');
         $action->setHtmlAttributes(
             ['data-action' => 'show-modal']
@@ -377,7 +377,7 @@ class SerieCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('updateSerie', new TranslatableMessage('Update'));
+        $action = Action::new('updateSerie', new TranslatableMessage('Update'), 'fas fa-sync-alt');
         $action->linkToCrudAction('updateSerie');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

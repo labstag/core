@@ -286,7 +286,11 @@ final class FileService
             $propertyAccessor->setValue($entity, $type, $uploadedFile);
         } catch (Exception $exception) {
             $this->logger->error('Error setting uploaded file: ' . $exception->getMessage());
-            throw new Exception('Error setting uploaded file: ' . $exception->getMessage(), $exception->getCode(), $exception);
+            throw new Exception(
+                'Error setting uploaded file: ' . $exception->getMessage(),
+                $exception->getCode(),
+                $exception
+            );
         }
     }
 

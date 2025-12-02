@@ -140,7 +140,8 @@ class ActionsFactory
             return;
         }
 
-        $action = Action::new('linkPublic', new TranslatableMessage('View Page'))->setHtmlAttributes(
+        $action = Action::new('linkPublic', new TranslatableMessage('View Page'), 'fas fa-external-link-alt');
+        $action->setHtmlAttributes(
             ['target' => '_blank']
         );
         $action->linkToCrudAction('linkPublic');
@@ -171,7 +172,8 @@ class ActionsFactory
             return;
         }
 
-        $w3cAction = Action::new('linkw3CValidator', new TranslatableMessage('W3C Validator'))->setHtmlAttributes(
+        $w3cAction = Action::new('linkw3CValidator', new TranslatableMessage('W3C Validator'), 'fas fa-check-circle');
+        $w3cAction->setHtmlAttributes(
             ['target' => '_blank']
         );
         $w3cAction->linkToCrudAction('linkw3CValidator');
@@ -200,7 +202,7 @@ class ActionsFactory
             return;
         }
 
-        $action = Action::new('imdb', new TranslatableMessage('IMDB Page'));
+        $action = Action::new('imdb', new TranslatableMessage('IMDB Page'), 'fas fa-film');
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
@@ -218,7 +220,7 @@ class ActionsFactory
             return;
         }
 
-        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
+        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'), 'fas fa-database');
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );

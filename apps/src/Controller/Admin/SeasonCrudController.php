@@ -205,7 +205,7 @@ class SeasonCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('updateSeason', new TranslatableMessage('Update'));
+        $action = Action::new('updateSeason', new TranslatableMessage('Update'), 'fas fa-sync-alt');
         $action->linkToCrudAction('updateSeason');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
