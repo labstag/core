@@ -6,6 +6,7 @@ enum PageEnum: string
 {
     case CHANGEPASSWORD = 'changepassword';
     case CV             = 'cv';
+    case GAMES          = 'game';
     case HOME           = 'home';
     case LOGIN          = 'login';
     case LOSTPASSWORD   = 'lostpassword';

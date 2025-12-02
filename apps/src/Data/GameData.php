@@ -3,13 +3,22 @@
 namespace Labstag\Data;
 
 use Labstag\Entity\Game;
+use Labstag\Entity\Page;
+use Labstag\Enum\PageEnum;
 
-class GameData extends HomeData implements DataInterface
+class GameData extends PageData implements DataInterface
 {
     #[\Override]
     public function generateSlug(object $entity): string
     {
-        return parent::generateSlug($entity) . $entity->getSlug();
+        $entityRepository = $this->entityManager->getRepository(Page::class);
+        $page             = $entityRepository->findOneBy(
+            [
+                'type' => PageEnum::GAMES->value,
+            ]
+        );
+
+        return parent::generateSlugPage($page) . '/' . $entity->getSlug();
     }
 
     #[\Override]
@@ -30,6 +39,7 @@ class GameData extends HomeData implements DataInterface
         return $entity->getTitle();
     }
 
+    #[\Override]
     public function getTitleMeta(object $entity): string
     {
         return $this->getTitle($entity);
@@ -55,6 +65,12 @@ class GameData extends HomeData implements DataInterface
     }
 
     #[\Override]
+    public function supportsAsset(object $entity): bool
+    {
+        return $entity instanceof Game;
+    }
+
+    #[\Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Game;
@@ -62,8 +78,26 @@ class GameData extends HomeData implements DataInterface
 
     protected function getEntityBySlugGame(?string $slug): ?object
     {
+        if (0 === substr_count((string) $slug, '/')) {
+            return null;
+        }
+
+        $slugSecond = basename((string) $slug);
+        $slugFirst  = dirname((string) $slug);
+
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
+            ['slug' => $slugFirst]
+        );
+        if (!$page instanceof Page) {
+            return null;
+        }
+
+        if ($page->getType() != PageEnum::GAMES->value) {
+            return null;
+        }
+
         return $this->entityManager->getRepository(Game::class)->findOneBy(
-            ['slug' => $slug]
+            ['slug' => $slugSecond]
         );
     }
 }

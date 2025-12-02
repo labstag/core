@@ -3,6 +3,7 @@
 namespace Labstag\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Entity\Game;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
@@ -32,10 +33,11 @@ class RegenerateMetaCommand extends Command
         $symfonyStyle = new SymfonyStyle($input, $output);
 
         $entities = [
+            Game::class,
+            Movie::class,
             Page::class,
             Post::class,
             Saga::class,
-            Movie::class,
             Season::class,
             Serie::class,
             Story::class,

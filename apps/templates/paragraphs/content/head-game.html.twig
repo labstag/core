@@ -1,0 +1,58 @@
+{% use "elements.html.twig" %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
+	<div class="first">
+        <div class="background" style="--image-url: url('{{ site_asset(game, 'img') }}')"></div>
+        <div class="content">
+            <div class="wrapper">
+                <h3 class="title">
+                    {{ game.title }}
+                </h3>
+                {% if game.categories|length > 0 %}
+                    <div class="categories">
+                        {% for category in game.categories %}
+                            <span class="categorie-{{ category.slug }}">
+                                <a href="{{ site_path(category) }}">
+                                    {{ category.title }}
+                                </a>
+                            </span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <ul>
+                    <li>
+                        {{ 'Platforms'|trans }}: 
+                        {% for platform in game.platforms %}
+                            <span class="platform">{{ platform }}</span>{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                    </li> 
+                </ul>
+                <div class="links">
+                    <a href="{{ game.url }}" target="_blank" title="{{ 'IGDB Page'|trans|e('html_attr') }}">
+                        {{ 'IGDB Page'|trans }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="second">
+        {# <div class="description">
+            <div class="wrapper html-content">
+                {{ game.description|raw }}
+            </div>
+        </div> #}
+        {% for codeVideo in game.videos %}
+            {% set trailer = 'https://www.youtube.com/watch?v=' ~ codeVideo %}
+            {% set oembed = oembed(trailer) %}
+            {% if oembed.oembed != '' %}
+                <div class="video">
+                    {% include "embed/video.html.twig" with {
+                        'btntitle': oembed.title,
+                        'image': site_asset(game, 'img'),
+                        'provider': oembed.provider,
+                        'trailer': oembed.oembed
+                    } %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>

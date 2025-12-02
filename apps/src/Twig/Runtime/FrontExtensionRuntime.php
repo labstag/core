@@ -117,6 +117,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         }
 
         return [
+            'title'    => $media->has('title') ? (string) $media->get('title') : '',
             'provider' => $media->has('providerName') ? strtolower((string) $media->get('providerName')) : '',
             'oembed'   => $this->parseUrlAndAddAutoplay($oembed),
         ];

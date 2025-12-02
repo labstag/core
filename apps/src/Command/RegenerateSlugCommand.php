@@ -4,8 +4,8 @@ namespace Labstag\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Category;
+use Labstag\Entity\Game;
 use Labstag\Entity\Media;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Post;
 use Labstag\Entity\Saga;
@@ -35,6 +35,7 @@ class RegenerateSlugCommand extends Command
 
         $entities = [
             Category::class,
+            Game::class,
             Media::class,
             Movie::class,
             Post::class,
@@ -54,14 +55,6 @@ class RegenerateSlugCommand extends Command
 
             $count = 0;
             foreach ($items as $item) {
-                if ($reflectionClass->hasMethod('getMeta')) {
-                    $meta = $item->getMeta();
-                    if (!$meta instanceof Meta) {
-                        $meta = new Meta();
-                        $item->setMeta($meta);
-                    }
-                }
-
                 $title = $item->getTitle();
                 $item->setTitle($title . ' ');
                 $this->entityManager->persist($item);
