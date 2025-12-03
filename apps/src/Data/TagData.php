@@ -12,7 +12,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 class TagData extends DataAbstract implements DataInterface
 {
     #[\Override]
-    public function generateSlug(object $entity): string
+    public function generateSlug(object $entity): array
     {
         $entityRepository = $this->entityManager->getRepository(Page::class);
         $page             = match ($entity::class) {
@@ -30,13 +30,19 @@ class TagData extends DataAbstract implements DataInterface
         };
 
         if (!$page instanceof Page) {
-            return '';
+            return ['slug' => ''];
         }
 
         return match ($entity::class) {
-            PostTag::class  => $page->getSlug() . '/tag-' . $entity->getSlug(),
-            StoryTag::class => $page->getSlug() . '/tag-' . $entity->getSlug(),
-            default         => '',
+            PostTag::class  => [
+                'slug' => $page->getSlug(),
+                'tag'  => $entity->getSlug(),
+            ],
+            StoryTag::class => [
+                'slug' => $page->getSlug(),
+                'tag'  => $entity->getSlug(),
+            ],
+            default         => ['slug' => ''],
         };
     }
 

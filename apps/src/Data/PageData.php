@@ -8,14 +8,20 @@ use Labstag\Shortcode\PageUrlShortcode;
 class PageData extends HomeData implements DataInterface
 {
     #[\Override]
-    public function generateSlug(object $entity): string
+    public function generateSlug(object $entity): array
     {
-        return parent::generateSlug($entity) . $entity->getSlug();
+        $slug = parent::generateSlug($entity);
+        $slug['slug'] .= $entity->getSlug();
+
+        return $slug;
     }
 
-    public function generateSlugPage(object $entity): string
+    public function generateSlugPage(object $entity): array
     {
-        return parent::generateSlug($entity) . $entity->getSlug();
+        $slug = parent::generateSlug($entity);
+        $slug['slug'] .= $entity->getSlug();
+
+        return $slug;
     }
 
     #[\Override]

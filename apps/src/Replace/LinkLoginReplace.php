@@ -20,12 +20,9 @@ class LinkLoginReplace extends ReplaceAbstract
             return '#disableurl';
         }
 
-        $slug = $this->slugService->forEntity($login);
+        $params = $this->slugService->forEntity($login);
 
-        return $configuration->getUrl() . $this->router->generate(
-            'front',
-            ['slug' => $slug]
-        );
+        return $configuration->getUrl() . $this->router->generate('front', $params);
     }
 
     public function getCode(): string

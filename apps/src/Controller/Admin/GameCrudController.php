@@ -186,9 +186,11 @@ class GameCrudController extends CrudControllerAbstract
         $textField = TextField::new('igdb', new TranslatableMessage('Igdb'));
         $textField->hideOnIndex();
 
-        $associationField = AssociationField::new('platforms', new TranslatableMessage('Platforms'));
-        $associationField->setTemplatePath('admin/field/game-platforms.html.twig');
+        $platformsField = AssociationField::new('platforms', new TranslatableMessage('Platforms'));
+        $platformsField->setTemplatePath('admin/field/game-platforms.html.twig');
 
+        $franchisesField = AssociationField::new('franchises', new TranslatableMessage('Franchises'));
+        $franchisesField->setTemplatePath('admin/field/game-franchises.html.twig');
         $this->crudFieldFactory->setTabDate($pageName);
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -199,7 +201,8 @@ class GameCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 DateField::new('releaseDate', new TranslatableMessage('Release date')),
                 $textField,
-                $associationField,
+                $platformsField,
+                $franchisesField,
                 $this->crudFieldFactory->categoriesFieldForPage(self::getEntityFqcn(), $pageName),
             ]
         );

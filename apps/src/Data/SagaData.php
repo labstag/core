@@ -27,7 +27,7 @@ class SagaData extends PageData implements DataInterface
     }
 
     #[\Override]
-    public function generateSlug(object $entity): string
+    public function generateSlug(object $entity): array
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
             [
@@ -35,7 +35,10 @@ class SagaData extends PageData implements DataInterface
             ]
         );
 
-        return parent::generateSlug($page) . '/' . $entity->getSlug();
+        $slug = parent::generateSlug($page);
+        $slug['slug'] .= '/' . $entity->getSlug();
+
+        return $slug;
     }
 
     #[\Override]
@@ -86,14 +89,8 @@ class SagaData extends PageData implements DataInterface
         $movieSeries = Schema::movieSeries();
         $movieSeries->name($saga->getTitle());
 
-        $slug = $this->slugService->forEntity($saga);
-        $movieSeries->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                RouterInterface::ABSOLUTE_URL
-            )
-        );
+        $params = $this->slugService->forEntity($saga);
+        $movieSeries->url($this->router->generate('front', $params, RouterInterface::ABSOLUTE_URL));
 
         return $movieSeries;
     }

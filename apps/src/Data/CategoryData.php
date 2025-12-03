@@ -3,6 +3,7 @@
 namespace Labstag\Data;
 
 use Labstag\Entity\Category;
+use Labstag\Entity\GameCategory;
 use Labstag\Entity\MovieCategory;
 use Labstag\Entity\Page;
 use Labstag\Entity\PostCategory;
@@ -14,20 +15,36 @@ use Symfony\Component\Translation\TranslatableMessage;
 class CategoryData extends DataAbstract implements DataInterface
 {
     #[\Override]
-    public function generateSlug(object $entity): string
+    public function generateSlug(object $entity): array
     {
         $page = $this->getPage($entity::class);
 
         if (!$page instanceof Page) {
-            return '';
+            return ['slug' => ''];
         }
 
         return match ($entity::class) {
-            MovieCategory::class => $page->getSlug() . '/category-' . $entity->getSlug(),
-            PostCategory::class  => $page->getSlug() . '/category-' . $entity->getSlug(),
-            SerieCategory::class => $page->getSlug() . '/category-' . $entity->getSlug(),
-            StoryCategory::class => $page->getSlug() . '/category-' . $entity->getSlug(),
-            default              => '',
+            GameCategory::class => [
+                'slug'     => $page->getSlug(),
+                'category' => $entity->getSlug(),
+            ],
+            MovieCategory::class => [
+                'slug'     => $page->getSlug(),
+                'category' => $entity->getSlug(),
+            ],
+            PostCategory::class  => [
+                'slug'     => $page->getSlug(),
+                'category' => $entity->getSlug(),
+            ],
+            SerieCategory::class => [
+                'slug'     => $page->getSlug(),
+                'category' => $entity->getSlug(),
+            ],
+            StoryCategory::class => [
+                'slug'     => $page->getSlug(),
+                'category' => $entity->getSlug(),
+            ],
+            default              => ['slug' => ''],
         };
     }
 
@@ -101,6 +118,7 @@ class CategoryData extends DataAbstract implements DataInterface
     protected function getClass(string $type): ?string
     {
         return match ($type) {
+            PageEnum::GAMES->value   => GameCategory::class,
             PageEnum::MOVIES->value  => MovieCategory::class,
             PageEnum::POSTS->value   => PostCategory::class,
             PageEnum::SERIES->value  => SerieCategory::class,
@@ -158,6 +176,11 @@ class CategoryData extends DataAbstract implements DataInterface
             PostCategory::class => $entityRepository->findOneBy(
                 [
                     'type' => PageEnum::POSTS->value,
+                ]
+            ),
+            GameCategory::class => $entityRepository->findOneBy(
+                [
+                    'type' => PageEnum::GAMES->value,
                 ]
             ),
             SerieCategory::class => $entityRepository->findOneBy(

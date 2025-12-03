@@ -20,9 +20,12 @@ class ChapterData extends StoryData implements DataInterface
     }
 
     #[\Override]
-    public function generateSlug(object $entity): string
+    public function generateSlug(object $entity): array
     {
-        return parent::generateSlug($entity->getRefstory()) . '/' . $entity->getSlug();
+        $slug = parent::generateSlug($entity->getRefstory());
+        $slug['slug'] .= '/' . $entity->getSlug();
+
+        return $slug;
     }
 
     #[\Override]
@@ -39,14 +42,8 @@ class ChapterData extends StoryData implements DataInterface
         $creativeWorkSeries = Schema::creativeWorkSeries();
         $creativeWorkSeries->name($entity->getRefstory()->getTitle());
 
-        $slug = $this->slugService->forEntity($entity->getRefstory());
-        $creativeWorkSeries->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            )
-        );
+        $params = $this->slugService->forEntity($entity->getRefstory());
+        $creativeWorkSeries->url($this->router->generate('front', $params, UrlGeneratorInterface::ABSOLUTE_URL));
         $schema->isPartOf($creativeWorkSeries);
 
         return $schema;

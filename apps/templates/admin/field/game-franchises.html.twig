@@ -1,0 +1,11 @@
+{% set instance = entity.instance %}
+{% if ea.crud.currentAction == 'detail' %}
+  <ul>
+    {% for franchise in instance.franchises %}
+        <li>{{ franchise.title }}
+        </li>
+    {% endfor %}
+  </ul>
+{% else %}
+    <span class="badge badge-secondary">{{ field.formattedValue }}</span>
+{% endif %}

@@ -13,7 +13,7 @@ use Symfony\Component\Routing\RouterInterface;
 class StoryData extends PageData implements DataInterface
 {
     #[\Override]
-    public function generateSlug(object $entity): string
+    public function generateSlug(object $entity): array
     {
         $page  = $this->entityManager->getRepository(Page::class)->findOneBy(
             [
@@ -21,7 +21,10 @@ class StoryData extends PageData implements DataInterface
             ]
         );
 
-        return parent::generateSlug($page) . '/' . $entity->getSlug();
+        $slug = parent::generateSlug($page);
+        $slug['slug'] .= '/' . $entity->getSlug();
+
+        return $slug;
     }
 
     #[\Override]
@@ -38,14 +41,8 @@ class StoryData extends PageData implements DataInterface
         $resume      = $entity->getResume();
         $clean       = trim(html_entity_decode(strip_tags($resume), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
         $creativeWorkSeries->description($clean);
-        $slug = $this->slugService->forEntity($entity);
-        $creativeWorkSeries->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                RouterInterface::ABSOLUTE_URL
-            )
-        );
+        $params = $this->slugService->forEntity($entity);
+        $creativeWorkSeries->url($this->router->generate('front', $params, RouterInterface::ABSOLUTE_URL));
         $chapters = [];
         foreach ($entity->getChapters() as $chapter) {
             if ($chapter->isEnable()) {
@@ -149,14 +146,8 @@ class StoryData extends PageData implements DataInterface
         $schema = Schema::chapter();
         $schema->name($chapter->getTitle());
 
-        $slug = $this->slugService->forEntity($chapter);
-        $schema->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                RouterInterface::ABSOLUTE_URL
-            )
-        );
+        $params = $this->slugService->forEntity($chapter);
+        $schema->url($this->router->generate('front', $params, RouterInterface::ABSOLUTE_URL));
         $schema->position($chapter->getPosition());
 
         return $schema;

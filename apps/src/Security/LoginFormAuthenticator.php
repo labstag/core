@@ -99,11 +99,8 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             return '#linkdisabled';
         }
 
-        $slug = $this->slugService->forEntity($login);
+        $params = $this->slugService->forEntity($login);
 
-        return $this->urlGenerator->generate(
-            'front',
-            ['slug' => $slug]
-        );
+        return $this->urlGenerator->generate('front', $params);
     }
 }

@@ -125,12 +125,9 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
 
     public function path(object $entity): string
     {
-        $slug = $this->slugService->forEntity($entity);
+        $params = $this->slugService->forEntity($entity);
 
-        return $this->router->generate(
-            'front',
-            ['slug' => $slug]
-        );
+        return $this->router->generate('front', $params);
     }
 
     public function tarteaucitron(): string

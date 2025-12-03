@@ -13,6 +13,7 @@ use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class SitemapService
 {
@@ -25,6 +26,7 @@ final class SitemapService
     public function __construct(
         private ConfigurationService $configurationService,
         private SlugService $slugService,
+        private UrlGeneratorInterface $urlGenerator,
         private EntityManagerInterface $entityManager,
     )
     {
@@ -64,7 +66,8 @@ final class SitemapService
      */
     private function formatData(object $entity): array
     {
-        $url = $this->slugService->forEntity($entity);
+        $params = $this->slugService->forEntity($entity);
+        $url    = $this->urlGenerator->generate('front', $params);
 
         return [
             '/' . $url => ['entity' => $entity],

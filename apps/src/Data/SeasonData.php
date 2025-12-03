@@ -25,9 +25,12 @@ class SeasonData extends SerieData implements DataInterface
     }
 
     #[\Override]
-    public function generateSlug(object $entity): string
+    public function generateSlug(object $entity): array
     {
-        return parent::generateSlug($entity->getRefserie()) . '/' . $entity->getSlug();
+        $slug = parent::generateSlug($entity->getRefserie());
+        $slug['slug'] .= '/' . $entity->getSlug();
+
+        return $slug;
     }
 
     #[\Override]
@@ -54,14 +57,8 @@ class SeasonData extends SerieData implements DataInterface
         $tvSeries = Schema::tvSeries();
         $tvSeries->name($entity->getRefserie()->getTitle());
 
-        $slug = $this->slugService->forEntity($entity->getRefserie());
-        $tvSeries->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            )
-        );
+        $params = $this->slugService->forEntity($entity->getRefserie());
+        $tvSeries->url($this->router->generate('front', $params, UrlGeneratorInterface::ABSOLUTE_URL));
         $schema->partOfSeries($tvSeries);
 
         return $schema;

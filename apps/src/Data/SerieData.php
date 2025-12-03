@@ -26,7 +26,7 @@ class SerieData extends PageData implements DataInterface
     }
 
     #[\Override]
-    public function generateSlug(object $entity): string
+    public function generateSlug(object $entity): array
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
             [
@@ -34,7 +34,10 @@ class SerieData extends PageData implements DataInterface
             ]
         );
 
-        return parent::generateSlug($page) . '/' . $entity->getSlug();
+        $slug = parent::generateSlug($page);
+        $slug['slug'] .= '/' . $entity->getSlug();
+
+        return $slug;
     }
 
     #[\Override]
@@ -65,14 +68,8 @@ class SerieData extends PageData implements DataInterface
         $description = (string) $entity->getDescription();
         $clean       = trim(html_entity_decode(strip_tags($description), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
         $tvSeries->description($clean);
-        $slug = $this->slugService->forEntity($entity);
-        $tvSeries->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                RouterInterface::ABSOLUTE_URL
-            )
-        );
+        $params = $this->slugService->forEntity($entity);
+        $tvSeries->url($this->router->generate('front', $params, RouterInterface::ABSOLUTE_URL));
         $tvSeries->numberOfSeasons(count($entity->getSeasons()));
 
         $seasons = [];
@@ -165,14 +162,8 @@ class SerieData extends PageData implements DataInterface
         $tvseason->name($entity->getTitle());
         $tvseason->seasonNumber($entity->getNumber());
 
-        $slug = $this->slugService->forEntity($entity);
-        $tvseason->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                RouterInterface::ABSOLUTE_URL
-            )
-        );
+        $params = $this->slugService->forEntity($entity);
+        $tvseason->url($this->router->generate('front', $params, RouterInterface::ABSOLUTE_URL));
 
         return $tvseason;
     }

@@ -5,11 +5,13 @@ namespace Labstag\Shortcode;
 use Labstag\Entity\Post;
 use Labstag\Repository\PostRepository;
 use Labstag\Service\SlugService;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PostUrlShortcode extends ShortcodeAbstract
 {
     public function __construct(
         protected PostRepository $postRepository,
+        protected UrlGeneratorInterface $urlGenerator,
         protected SlugService $slugService,
     )
     {
@@ -26,7 +28,9 @@ class PostUrlShortcode extends ShortcodeAbstract
             return null;
         }
 
-        return '/' . $this->slugService->forEntity($entity);
+        $params = $this->slugService->forEntity($entity);
+
+        return $this->urlGenerator->generate('front', $params);
     }
 
     public function generate(string $id): string

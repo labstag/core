@@ -31,15 +31,10 @@ class LinkChangePasswordReplace extends ReplaceAbstract
             return '#linkdisabled';
         }
 
-        $slug = $this->slugService->forEntity($page);
+        $params        = $this->slugService->forEntity($page);
+        $params['uid'] = $entity->getId();
 
-        return $configuration->getUrl() . $this->router->generate(
-            'front',
-            [
-                'slug' => $slug,
-                'uid'  => $entity->getId(),
-            ]
-        );
+        return $configuration->getUrl() . $this->router->generate('front', $params);
     }
 
     public function getCode(): string

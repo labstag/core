@@ -130,16 +130,13 @@ abstract class CrudControllerAbstract extends AbstractCrudController
 
     public function linkPublic(AdminContext $adminContext): RedirectResponse
     {
-        $request            = $adminContext->getRequest();
-        $entityId           = $request->query->get('entityId');
-        $repositoryAbstract = $this->getRepository();
-        $entity             = $repositoryAbstract->find($entityId);
-        $slug               = $this->slugService->forEntity($entity);
+        $request              = $adminContext->getRequest();
+        $entityId             = $request->query->get('entityId');
+        $repositoryAbstract   = $this->getRepository();
+        $entity               = $repositoryAbstract->find($entityId);
+        $params               = $this->slugService->forEntity($entity);
 
-        return $this->redirectToRoute(
-            'front',
-            ['slug' => $slug]
-        );
+        return $this->redirectToRoute('front', $params);
     }
 
     public function linkw3CValidator(AdminContext $adminContext): RedirectResponse
@@ -151,12 +148,12 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         $repositoryAbstract              = $this->getRepository();
         $repositoryAbstract->find($entity);
 
-        $slug                            = $this->slugService->forEntity($entity);
+        $params                            = $this->slugService->forEntity($entity);
 
         return $this->redirect(
             'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
                 'front',
-                ['slug' => $slug],
+                $params,
                 UrlGeneratorInterface::ABSOLUTE_URL
             )
         );

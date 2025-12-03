@@ -9,7 +9,7 @@ use Labstag\Enum\PageEnum;
 class GameData extends PageData implements DataInterface
 {
     #[\Override]
-    public function generateSlug(object $entity): string
+    public function generateSlug(object $entity): array
     {
         $entityRepository = $this->entityManager->getRepository(Page::class);
         $page             = $entityRepository->findOneBy(
@@ -18,7 +18,10 @@ class GameData extends PageData implements DataInterface
             ]
         );
 
-        return parent::generateSlugPage($page) . '/' . $entity->getSlug();
+        $slug = parent::generateSlugPage($page);
+        $slug['slug'] .= '/' . $entity->getSlug();
+
+        return $slug;
     }
 
     #[\Override]

@@ -36,13 +36,8 @@ class CustomEntryPoint implements AuthenticationEntryPointInterface
             return new RedirectResponse($this->urlGenerator->generate('front'));
         }
 
-        $slug = $this->slugService->forEntity($page);
+        $params = $this->slugService->forEntity($page);
 
-        return new RedirectResponse(
-            $this->urlGenerator->generate(
-                'front',
-                ['slug' => $slug]
-            )
-        );
+        return new RedirectResponse($this->urlGenerator->generate('front', $params));
     }
 }

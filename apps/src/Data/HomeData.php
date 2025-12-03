@@ -5,11 +5,11 @@ namespace Labstag\Data;
 class HomeData extends DataAbstract implements DataInterface
 {
     #[\Override]
-    public function generateSlug(object $entity): string
+    public function generateSlug(object $entity): array
     {
         unset($entity);
 
-        return '';
+        return ['slug' => ''];
     }
 
     #[\Override]

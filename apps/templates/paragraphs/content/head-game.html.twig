@@ -19,6 +19,14 @@
                     </div>
                 {% endif %}
                 <ul>
+                    {% if game.franchises|length != 0 %}
+                        <li>
+                            {{ 'Franchise'|trans }}: 
+                            {% for franchise in game.franchises %}
+                                <span class="franchise">{{ franchise.title }}</span>{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                        </li>
+                    {% endif %}
                     <li>
                         {{ 'Platforms'|trans }}: 
                         {% for platform in game.platforms %}

@@ -13,7 +13,7 @@ use Symfony\Component\Routing\RouterInterface;
 class PostData extends PageData implements DataInterface
 {
     #[\Override]
-    public function generateSlug(object $entity): string
+    public function generateSlug(object $entity): array
     {
         $page  = $this->entityManager->getRepository(Page::class)->findOneBy(
             [
@@ -21,7 +21,10 @@ class PostData extends PageData implements DataInterface
             ]
         );
 
-        return parent::generateSlug($page) . '/' . $entity->getSlug();
+        $slug = parent::generateSlug($page);
+        $slug['slug'] .= '/' . $entity->getSlug();
+
+        return $slug;
     }
 
     #[\Override]
@@ -54,15 +57,9 @@ class PostData extends PageData implements DataInterface
             $blogPosting->dateModified($entity->getUpdatedAt()->format('c'));
         }
 
-        $slug = $this->slugService->forEntity($entity);
+        $params = $this->slugService->forEntity($entity);
         $blogPosting->mainEntityOfPage(
-            Schema::webPage()->id(
-                $this->router->generate(
-                    'front',
-                    ['slug' => $slug],
-                    RouterInterface::ABSOLUTE_URL
-                )
-            )
+            Schema::webPage()->id($this->router->generate('front', $params, RouterInterface::ABSOLUTE_URL))
         );
 
         return $blogPosting;
