@@ -5,6 +5,8 @@ namespace Labstag\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Labstag\Message\FileDeleteMessage;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -178,6 +180,18 @@ final class FileService
         return $this->parameterBag->get('kernel.project_dir') . '/public' . $basePath;
     }
 
+    public function getimportCsvFile(string $path): array
+    {
+        $csv = new Csv();
+        $csv->setDelimiter(',');
+        $csv->setSheetIndex(0);
+
+        $spreadsheet = $csv->load($path);
+        $worksheet   = $spreadsheet->getActiveSheet();
+
+        return $this->generateJsonCSV($worksheet);
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -292,6 +306,35 @@ final class FileService
                 $exception
             );
         }
+    }
+
+    /**
+     * @return list<array>
+     */
+    private function generateJsonCSV(Worksheet $worksheet): array
+    {
+        $dataJson    = [];
+        $headers     = [];
+        foreach ($worksheet->getRowIterator() as $i => $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+            if (1 === $i) {
+                foreach ($cellIterator as $cell) {
+                    $headers[] = trim((string) $cell->getValue());
+                }
+
+                continue;
+            }
+
+            $columns = [];
+            foreach ($cellIterator as $cell) {
+                $columns[] = trim((string) $cell->getValue());
+            }
+
+            $dataJson[] = array_combine($headers, $columns);
+        }
+
+        return $dataJson;
     }
 
     /**

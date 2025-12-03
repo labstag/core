@@ -12,8 +12,6 @@ use Labstag\Entity\Platform;
 use Labstag\Message\SearchGameMessage;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;
-use PhpOffice\PhpSpreadsheet\Reader\Csv;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class GameService extends AbstractIgdb
@@ -119,18 +117,6 @@ final class GameService extends AbstractIgdb
         return array_filter($games, fn (array $game): bool => isset($game['first_release_date']));
     }
 
-    public function getimportCsvFile(string $path): array
-    {
-        $csv = new Csv();
-        $csv->setDelimiter(',');
-        $csv->setSheetIndex(0);
-
-        $spreadsheet = $csv->load($path);
-        $worksheet   = $spreadsheet->getActiveSheet();
-
-        return $this->generateJsonCSV($worksheet);
-    }
-
     public function getResultApiForData(string $name): ?array
     {
         $body    = $this->igdbApi->setBody(search: $name, fields: ['*', 'game_type.*', 'alternative_names.*']);
@@ -208,35 +194,6 @@ final class GameService extends AbstractIgdb
         return in_array(true, $statuses, true);
     }
 
-    /**
-     * @return list<array>
-     */
-    private function generateJsonCSV(Worksheet $worksheet): array
-    {
-        $dataJson    = [];
-        $headers     = [];
-        foreach ($worksheet->getRowIterator() as $i => $row) {
-            $cellIterator = $row->getCellIterator();
-            $cellIterator->setIterateOnlyExistingCells(false);
-            if (1 === $i) {
-                foreach ($cellIterator as $cell) {
-                    $headers[] = trim((string) $cell->getValue());
-                }
-
-                continue;
-            }
-
-            $columns = [];
-            foreach ($cellIterator as $cell) {
-                $columns[] = trim((string) $cell->getValue());
-            }
-
-            $dataJson[] = array_combine($headers, $columns);
-        }
-
-        return $dataJson;
-    }
-
     private function getApiGameId(string $id): ?array
     {
         $where  = ['id = ' . $id];
@@ -287,7 +244,7 @@ final class GameService extends AbstractIgdb
 
     private function importCsvFile(string $path, string $platform): bool
     {
-        $data = $this->getimportCsvFile($path);
+        $data = $this->fileService->getimportCsvFile($path);
         foreach ($data as $row) {
             $this->messageBus->dispatch(new SearchGameMessage($row, $platform));
         }

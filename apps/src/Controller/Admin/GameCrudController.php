@@ -336,7 +336,7 @@ class GameCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('showModalImportGame', new TranslatableMessage('Import'));
+        $action = Action::new('showModalImportGame', new TranslatableMessage('Import'), 'fas fa-file-import');
         $action->linkToCrudAction('showModalImportGame');
         $action->setHtmlAttributes(
             ['data-action' => 'show-modal']
@@ -352,7 +352,7 @@ class GameCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('showModalGame', new TranslatableMessage('New game'));
+        $action = Action::new('showModalGame', new TranslatableMessage('New game'), 'fas fa-plus-circle');
         $action->linkToCrudAction('showModalGame');
         $action->setHtmlAttributes(
             ['data-action' => 'show-modal']

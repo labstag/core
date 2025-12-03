@@ -19,11 +19,14 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\CountriesFilter;
+use Labstag\Form\Admin\SerieImportType;
 use Labstag\Form\Admin\SerieType;
+use Labstag\Message\ImportMessage;
 use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\ConfigurationService;
+use Labstag\Service\FileService;
 use Labstag\Service\Imdb\SerieService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -141,6 +144,7 @@ class SerieCrudController extends CrudControllerAbstract
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll('updateAllSerie');
         $this->addActionNewSerie();
+        $this->addActionImportSerie();
 
         return $this->actionsFactory->show();
     }
@@ -286,6 +290,38 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.imdb.com/title/' . $serie->getImdb() . '/');
     }
 
+    public function importFile(
+        AdminContext $adminContext,
+        MessageBusInterface $messageBus,
+        FileService $fileService,
+    ): JsonResponse
+    {
+        $request = $adminContext->getRequest();
+        $files   = $request->files->all();
+        $file    = $files['serie_import']['file'] ?? null;
+
+        if (null === $file) {
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'message' => 'No file uploaded',
+                ]
+            );
+        }
+
+        $content = file_get_contents($file->getPathname());
+        $fileService->saveFileInAdapter('private', $file->getClientOriginalName() . '-' . time(), $content);
+
+        $messageBus->dispatch(new ImportMessage($file->getClientOriginalName() . '-' . time(), 'serie', []));
+
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'message' => 'Import started',
+            ]
+        );
+    }
+
     public function jsonSerie(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
     {
         $entityId = $adminContext->getRequest()->query->get('entityId');
@@ -295,6 +331,22 @@ class SerieCrudController extends CrudControllerAbstract
         $details = $theMovieDbApi->getDetailsSerie($serie);
 
         return new JsonResponse($details);
+    }
+
+    public function showModalImportSerie(AdminContext $adminContext): Response
+    {
+        $request = $adminContext->getRequest();
+        $form    = $this->createForm(SerieImportType::class);
+        $form->handleRequest($request);
+
+        return $this->render(
+            'admin/serie/import.html.twig',
+            [
+                'controller' => self::class,
+                'ea'         => $adminContext,
+                'form'       => $form->createView(),
+            ]
+        );
     }
 
     public function showModalSerie(AdminContext $adminContext): Response
@@ -353,6 +405,22 @@ class SerieCrudController extends CrudControllerAbstract
     {
         $entityFilter = EntityFilter::new('companies', new TranslatableMessage('Companies'));
         $filters->add($entityFilter);
+    }
+
+    private function addActionImportSerie(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('showModalImportSerie', new TranslatableMessage('Import'), 'fas fa-file-import');
+        $action->linkToCrudAction('showModalImportSerie');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
     private function addActionNewSerie(): void

@@ -8,6 +8,7 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
 use Labstag\Entity\Recommendation;
+use Labstag\Message\AddMovieMessage;
 use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
 use Labstag\Service\CategoryService;
@@ -179,6 +180,21 @@ final class MovieService
         return $year;
     }
 
+    public function importFile($file): bool
+    {
+        $file = $this->fileService->getFileInAdapter('private', $file);
+        if (is_null($file)) {
+            return false;
+        }
+
+        $mimeType = mime_content_type($file);
+        if ('text/csv' == $mimeType) {
+            return $this->importCsvFile($file);
+        }
+
+        return true;
+    }
+
     public function update(Movie $movie): bool
     {
         $entityRepository = $this->entityManager->getRepository(Movie::class);
@@ -209,6 +225,16 @@ final class MovieService
         $session = $this->requestStack->getSession();
 
         return $session->getFlashBag();
+    }
+
+    private function importCsvFile(string $path): bool
+    {
+        $data = $this->fileService->getimportCsvFile($path);
+        foreach ($data as $row) {
+            $this->messageBus->dispatch(new AddMovieMessage($row));
+        }
+
+        return true;
     }
 
     /**
