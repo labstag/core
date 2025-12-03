@@ -462,38 +462,6 @@ tasks:
       vars:
         CMD: "lint:twig templates"
 
-  labstag:movies:add:
-    desc: "Add demonstration movies"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:movies:add"
-
-  labstag:movies:update:
-    desc: "Update demonstration movies"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:movies:update"
-
-  labstag:series:add:
-    desc: "Add demonstration series"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:series:add"
-
-  labstag:series:update:
-    desc: "Update demonstration series"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:series:update"
-
   messenger:consume:
     desc: "Start Messenger message consumer"
     silent: true
@@ -719,8 +687,6 @@ tasks:
     - task: doctrine:fixtures
     - task: labstag:delete-oldfiles
     - task: star:add
-    - task: labstag:movies:add
-    - task: labstag:series:add
 
   labstag:set-env-ids:
     desc: "Update UID/GID in .env file"
