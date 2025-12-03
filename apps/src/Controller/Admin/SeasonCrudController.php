@@ -69,7 +69,7 @@ class SeasonCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField(

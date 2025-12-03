@@ -77,7 +77,7 @@ class UserCrudController extends CrudControllerAbstract
             [
                 TextField::new('username', new TranslatableMessage('Username')),
                 EmailField::new('email', new TranslatableMessage('Email')),
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $choiceField,
                 $textField,
                 $associationField,
@@ -86,7 +86,7 @@ class UserCrudController extends CrudControllerAbstract
         if (Crud::PAGE_NEW === $pageName) {
             $generatePasswordField = $this->crudFieldFactory->booleanField(
                 'generatepassword',
-                (string) new TranslatableMessage('generate Password')
+                new TranslatableMessage('generate Password')
             );
             $generatePasswordField->setFormTypeOptions(
                 ['mapped' => false]

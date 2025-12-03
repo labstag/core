@@ -5,7 +5,7 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 {% block head_javascript %}
   {{ parent() }}
-  <script src="{{ asset('field-boolean.js', ea.assets.defaultAssetPackageName) }}"></script>
+  <script src="{{ asset('field-boolean.js', ea().assets.defaultAssetPackageName) }}"></script>
 {% endblock %}
 {% block main %}
   <table class="table datagrid table-permissions{% if data|length == 0 %} datagrid-empty{% endif %}">
@@ -61,7 +61,7 @@
               {% if 3 == loop.index %}
                   <tr class="no-results">
                       <td colspan="100">
-                          {{ t('datagrid.no_results', ea.i18n.translationParameters, 'EasyAdminBundle')|trans }}
+                          {{ t('datagrid.no_results', ea().i18n.translationParameters, 'EasyAdminBundle')|trans }}
                       </td>
                   </tr>
               {% endif %}

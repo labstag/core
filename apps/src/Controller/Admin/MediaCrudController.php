@@ -47,6 +47,10 @@ class MediaCrudController extends CrudControllerAbstract
         );
         $integerField->hideOnForm();
 
+        $uploadFileField = UploadFileField::new('file', new TranslatableMessage('File'));
+        $uploadFileField->setTranslator($this->translator);
+        $uploadFileField->onlyOnForms();
+
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
@@ -54,7 +58,7 @@ class MediaCrudController extends CrudControllerAbstract
                 TextField::new('name', new TranslatableMessage('Name')),
                 TextField::new('mimeType', new TranslatableMessage('Mime type'))->hideOnForm(),
                 $integerField,
-                UploadFileField::new('file', new TranslatableMessage('File'))->onlyOnForms(),
+                $uploadFileField,
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);

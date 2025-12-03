@@ -198,14 +198,14 @@ class SerieCrudController extends CrudControllerAbstract
         $descriptionField = WysiwygField::new('description', new TranslatableMessage('Description'));
         $descriptionField->hideOnIndex();
 
-        $booleanField = $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'));
+        $booleanField = $this->crudFieldFactory->booleanField('file', new TranslatableMessage('File'));
         $booleanField->hideOnIndex();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
                 $this->crudFieldFactory->slugField(),
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField(
                     'poster',
@@ -221,7 +221,7 @@ class SerieCrudController extends CrudControllerAbstract
                 ),
                 $this->crudFieldFactory->booleanField(
                     'inProduction',
-                    (string) new TranslatableMessage('in Production')
+                    new TranslatableMessage('in Production')
                 ),
                 $textField,
                 $tmdField,
@@ -239,7 +239,7 @@ class SerieCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->companiesFieldForPage(self::getEntityFqcn(), $pageName),
                 $associationField,
                 $booleanField,
-                $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
+                $this->crudFieldFactory->booleanField('adult', new TranslatableMessage('Adult')),
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);

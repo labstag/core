@@ -22,7 +22,7 @@ class LoginForm extends FrontFormAbstract
 
     public function getName(): string
     {
-        return (string) new TranslatableMessage('Form login');
+        return new TranslatableMessage('Form login');
     }
 
     #[\Override]

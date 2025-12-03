@@ -38,7 +38,7 @@ class BlockCrudController extends CrudControllerAbstract
         $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
 
         $action = Action::new('positionBlock', new TranslatableMessage('Change Position'), 'fas fa-arrows-alt');
-        $action->displayAsLink();
+        $action->renderAsLink();
         $action->linkToCrudAction('positionBlock');
         $action->createAsGlobalAction();
 
@@ -113,7 +113,7 @@ class BlockCrudController extends CrudControllerAbstract
         $numberField->hideOnForm();
 
         $fields      = [
-            $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+            $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
             $regionField,
             $numberField,
@@ -141,8 +141,8 @@ class BlockCrudController extends CrudControllerAbstract
         $requestPathField->setRequired(true);
         $requestPathField->setChoices(
             [
-                (string) new TranslatableMessage('Show for listed pages') => '0',
-                (string) new TranslatableMessage('Hide for listed pages') => '1',
+                new TranslatableMessage('Show for listed pages') => '0',
+                new TranslatableMessage('Hide for listed pages') => '1',
             ]
         );
         $this->crudFieldFactory->addFieldsToTab(

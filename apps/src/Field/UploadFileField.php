@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Contracts\Translation\TranslatableInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 
 final class UploadFileField implements FieldInterface
@@ -20,36 +21,40 @@ final class UploadFileField implements FieldInterface
      */
     public static function new(string $propertyName, $label = null): self
     {
-        $deleteLabel      = new TranslatableMessage('Delete file');
-        $downloadLabel    = new TranslatableMessage('Download');
-        $maxSizeMessage   = new TranslatableMessage(
-            'The file is too large. Its size should not exceed {{ limit }}.'
-        );
 
         $uploadFileField = (new self());
         $uploadFileField->setProperty($propertyName);
         $uploadFileField->setTemplatePath('');
         $uploadFileField->setLabel($label);
         $uploadFileField->setFormType(VichFileType::class);
-        $uploadFileField->setFormTypeOptions(
+
+        return $uploadFileField;
+    }
+
+    public function setTranslator(TranslatorInterface $translator)
+    {
+        $deleteLabel      = new TranslatableMessage('Delete file');
+        $downloadLabel    = new TranslatableMessage('Download');
+        $maxSizeMessage   = new TranslatableMessage(
+            'The file is too large. Its size should not exceed {{ limit }}.'
+        );
+        $this->setFormTypeOptions(
             [
                 'required'       => false,
                 'allow_delete'   => true,
-                'delete_label'   => $deleteLabel->__toString(),
-                'download_label' => $downloadLabel->__toString(),
+                'delete_label'   => $translator->trans($deleteLabel),
+                'download_label' => $translator->trans($downloadLabel),
                 'download_uri'   => true,
                 'asset_helper'   => true,
                 'constraints'    => [
                     new File(
                         [
                             'maxSize'          => ini_get('upload_max_filesize'),
-                            'maxSizeMessage'   => $maxSizeMessage->__toString(),
+                            'maxSizeMessage'   => $translator->trans($maxSizeMessage),
                         ]
                     ),
                 ],
             ]
-        );
-
-        return $uploadFileField;
+        ); 
     }
 }

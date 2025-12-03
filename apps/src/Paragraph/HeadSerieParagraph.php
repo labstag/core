@@ -40,9 +40,9 @@ class HeadSerieParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Head serie');
+        return new TranslatableMessage('Head serie');
     }
 
     #[Override]

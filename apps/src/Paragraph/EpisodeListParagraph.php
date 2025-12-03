@@ -73,9 +73,9 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Episode list');
+        return new TranslatableMessage('Episode list');
     }
 
     #[Override]

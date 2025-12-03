@@ -69,9 +69,9 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Video');
+        return new TranslatableMessage('Video');
     }
 
     #[Override]

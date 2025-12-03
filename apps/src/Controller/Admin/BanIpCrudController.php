@@ -38,7 +38,7 @@ class BanIpCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $fields = [
-            $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+            $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
             TextField::new('InternetProtocol', new TranslatableMessage('IP')),
             WysiwygField::new('reason', new TranslatableMessage('Raison')),
         ];

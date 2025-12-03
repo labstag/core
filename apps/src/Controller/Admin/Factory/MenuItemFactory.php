@@ -64,7 +64,7 @@ final class MenuItemFactory
      */
     public function createContentSubMenu(
         string $type,
-        string $label,
+        $label,
         string $icon,
         string $controllerClass,
         $disableAdd = false,
@@ -133,7 +133,7 @@ final class MenuItemFactory
      *
      * @return array<string, CrudMenuItem>
      */
-    private function createMenuItems(array $controllers, string $label, string $icon): array
+    private function createMenuItems(array $controllers, $label, string $icon): array
     {
         $menuItems = [];
         foreach ($controllers as $key => $data) {

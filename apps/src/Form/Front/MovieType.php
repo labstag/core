@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @extends AbstractType<mixed>
@@ -27,6 +28,7 @@ class MovieType extends AbstractType
         protected CategoryService $categoryService,
         protected SagaService $sagaService,
         protected RouterInterface $router,
+        protected TranslatorInterface $translator,
         protected RequestStack $requestStack,
     )
     {
@@ -83,9 +85,9 @@ class MovieType extends AbstractType
                 'required' => false,
                 'label'    => new TranslatableMessage('Order'),
                 'choices'  => [
-                    $title->__toString()       => 'title',
-                    $releaseDate->__toString() => 'releaseDate',
-                    $dateAdded->__toString()   => 'createdAt',
+                    $this->translator->trans($title)       => 'title',
+                    $this->translator->trans($releaseDate) => 'releaseDate',
+                    $this->translator->trans($dateAdded)   => 'createdAt',
                 ],
             ]
         );
@@ -98,8 +100,8 @@ class MovieType extends AbstractType
                 'required' => false,
                 'label'    => new TranslatableMessage('Sort'),
                 'choices'  => [
-                    $ascending->__toString()  => 'ASC',
-                    $descending->__toString() => 'DESC',
+                    $this->translator->trans($ascending)  => 'ASC',
+                    $this->translator->trans($descending) => 'DESC',
                 ],
             ]
         );

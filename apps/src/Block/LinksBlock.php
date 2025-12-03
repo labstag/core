@@ -100,9 +100,9 @@ class LinksBlock extends BlockAbstract
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Links');
+        return new TranslatableMessage('Links');
     }
 
     #[Override]

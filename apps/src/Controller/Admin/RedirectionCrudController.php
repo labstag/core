@@ -59,14 +59,14 @@ class RedirectionCrudController extends CrudControllerAbstract
 
         $booleanField = $this->crudFieldFactory->booleanField(
             'regex',
-            (string) new TranslatableMessage('Regex'),
+            new TranslatableMessage('Regex'),
             false
         );
         $booleanField->hideOnForm();
 
         $regexField2 = $this->crudFieldFactory->booleanField(
             'regex',
-            (string) new TranslatableMessage('Regex'),
+            new TranslatableMessage('Regex'),
             false
         );
         $regexField2->hideOnIndex();
@@ -81,7 +81,7 @@ class RedirectionCrudController extends CrudControllerAbstract
                 IntegerField::new('action_code', new TranslatableMessage('Action code')),
                 $booleanField,
                 $regexField2,
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $integerField,
             ]
         );

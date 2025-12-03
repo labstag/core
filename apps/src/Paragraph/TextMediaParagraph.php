@@ -88,9 +88,9 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Text media');
+        return new TranslatableMessage('Text media');
     }
 
     #[Override]

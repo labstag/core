@@ -197,7 +197,7 @@ class GameCrudController extends CrudControllerAbstract
             'principal',
             [
                 $this->crudFieldFactory->slugField(),
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 DateField::new('releaseDate', new TranslatableMessage('Release date')),

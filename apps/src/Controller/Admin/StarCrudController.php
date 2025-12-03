@@ -52,7 +52,7 @@ class StarCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 TextField::new('language', new TranslatableMessage('Language')),

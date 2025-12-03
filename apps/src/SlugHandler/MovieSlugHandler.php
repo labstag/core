@@ -16,7 +16,7 @@ class MovieSlugHandler implements SlugHandlerInterface
     {
     }
 
-    public function handlesUrlization()
+    public function handlesUrlization(): bool
     {
         return false;
     }

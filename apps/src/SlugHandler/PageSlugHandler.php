@@ -69,7 +69,7 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
         $slug = $this->transliterate($slug, $config['separator'], $object);
     }
 
-    public function handlesUrlization()
+    public function handlesUrlization(): bool
     {
         return false;
     }

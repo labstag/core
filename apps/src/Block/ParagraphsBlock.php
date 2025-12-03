@@ -14,9 +14,9 @@ class ParagraphsBlock extends ParagraphBlockAbstract
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Paragraphs');
+        return new TranslatableMessage('Paragraphs');
     }
 
     #[Override]

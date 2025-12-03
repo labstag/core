@@ -63,9 +63,9 @@ class SiblingParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Sibling pages');
+        return new TranslatableMessage('Sibling pages');
     }
 
     #[Override]

@@ -21,7 +21,7 @@ class LostPasswordForm extends FrontFormAbstract
 
     public function getName(): string
     {
-        return (string) new TranslatableMessage('Form lost password');
+        return new TranslatableMessage('Form lost password');
     }
 
     #[\Override]

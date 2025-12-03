@@ -103,9 +103,9 @@ class BreadcrumbBlock extends BlockAbstract
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Breadcrumb');
+        return new TranslatableMessage('Breadcrumb');
     }
 
     #[Override]
@@ -164,7 +164,7 @@ class BreadcrumbBlock extends BlockAbstract
         }
 
         $urls[] = [
-            'title' => (string) new TranslatableMessage('Home'),
+            'title' => new TranslatableMessage('Home'),
             'url'   => '',
         ];
 

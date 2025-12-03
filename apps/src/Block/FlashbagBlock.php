@@ -14,9 +14,9 @@ class FlashbagBlock extends SimpleBlockAbstract
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Flashbag');
+        return new TranslatableMessage('Flashbag');
     }
 
     #[Override]

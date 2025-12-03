@@ -31,6 +31,7 @@ use RuntimeException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Centralized factory for fields (EasyAdmin Fields) to reduce
@@ -52,6 +53,7 @@ final class CrudFieldFactory
         private Security $security,
         private ManagerRegistry $managerRegistry,
         private WorkflowService $workflowService,
+        private TranslatorInterface $translator,
     )
     {
     }
@@ -163,7 +165,7 @@ final class CrudFieldFactory
         ];
     }
 
-    public function booleanField(string $propertyName, string $label, bool $asSwitch = true): BooleanField
+    public function booleanField(string $propertyName, $label, bool $asSwitch = true): BooleanField
     {
         $booleanField = BooleanField::new($propertyName, $label);
         if ($asSwitch) {
@@ -321,7 +323,9 @@ final class CrudFieldFactory
     ): ImageField|UploadImageField
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            return UploadImageField::new($type . 'File', $label ?? new TranslatableMessage('Image'));
+            $uploadImageField = UploadImageField::new($type . 'File', $label ?? new TranslatableMessage('Image'));
+            $uploadImageField->setTranslator($this->translator);
+            return $uploadImageField;
         }
 
         $basePath = $this->fileService->getBasePath($entityFqcn, $type . 'File');

@@ -102,15 +102,15 @@ abstract class ParagraphAbstract extends AbstractController
                 [
                     'required'       => false,
                     'allow_delete'   => true,
-                    'delete_label'   => $deleteLabel->__toString(),
-                    'download_label' => $downloadLabel->__toString(),
+                    'delete_label'   => $this->translator->trans($deleteLabel),
+                    'download_label' => $this->translator->trans($downloadLabel),
                     'download_uri'   => true,
                     'asset_helper'   => true,
                     'constraints'    => [
                         new File(
                             [
                                 'maxSize'        => ini_get('upload_max_filesize'),
-                                'maxSizeMessage' => $maxSizeMessage->__toString(),
+                                'maxSizeMessage' => $this->translator->trans($maxSizeMessage),
                             ]
                         ),
                     ],
@@ -143,8 +143,8 @@ abstract class ParagraphAbstract extends AbstractController
                 [
                     'required'       => false,
                     'allow_delete'   => true,
-                    'delete_label'   => $deleteLabel->__toString(),
-                    'download_label' => $downloadLabel->__toString(),
+                    'delete_label'   => $this->translator->trans($deleteLabel),
+                    'download_label' => $this->translator->trans($downloadLabel),
                     'download_uri'   => true,
                     'image_uri'      => true,
                     'asset_helper'   => true,
@@ -158,8 +158,8 @@ abstract class ParagraphAbstract extends AbstractController
                                     'image/gif',
                                     'image/webp',
                                 ],
-                                'mimeTypesMessage' => $mimeTypesMessage->__toString(),
-                                'maxSizeMessage'   => $maxSizeMessage->__toString(),
+                                'mimeTypesMessage' => $this->translator->trans($mimeTypesMessage),
+                                'maxSizeMessage'   => $this->translator->trans($maxSizeMessage),
                             ]
                         ),
                     ],
@@ -243,7 +243,7 @@ abstract class ParagraphAbstract extends AbstractController
         return $this->header[$paragraphId] ?? null;
     }
 
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
         return '';
     }

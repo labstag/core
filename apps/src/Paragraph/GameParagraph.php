@@ -68,9 +68,9 @@ class GameParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Game');
+        return new TranslatableMessage('Game');
     }
 
     #[Override]

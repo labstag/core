@@ -190,7 +190,7 @@ class ActionsFactory
         }
 
         $action = Action::new($type, new TranslatableMessage('Update all'), 'fas fa-sync-alt');
-        $action->displayAsLink();
+        $action->renderAsLink();
         $action->linkToCrudAction($type);
         $action->createAsGlobalAction();
         $this->add(Crud::PAGE_INDEX, $action);
@@ -277,7 +277,7 @@ class ActionsFactory
         $this->adminUrlGenerator->setAction(Crud::PAGE_INDEX);
         $this->adminUrlGenerator->setController($this->controller);
         $this->adminUrlGenerator->set('action', 'trash');
-
+        
         $action->linkToUrl($this->adminUrlGenerator->generateUrl());
         $action->createAsGlobalAction();
 

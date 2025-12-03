@@ -36,7 +36,7 @@ class EditoCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $fields   = [
-            $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+            $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
             $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
         ];

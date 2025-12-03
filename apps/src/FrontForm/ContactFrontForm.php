@@ -64,6 +64,6 @@ class ContactFrontForm extends FrontFormAbstract
 
     public function getName(): string
     {
-        return (string) new TranslatableMessage('Form contact');
+        return new TranslatableMessage('Form contact');
     }
 }

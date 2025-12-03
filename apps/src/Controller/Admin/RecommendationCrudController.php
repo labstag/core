@@ -104,7 +104,7 @@ class RecommendationCrudController extends CrudControllerAbstract
     public function setAddToBdd(): void
     {
         $action = Action::new('addToBdd', new TranslatableMessage('addToBdd'), 'fas fa-terminal');
-        $action->displayAsLink();
+        $action->renderAsLink();
         $action->linkToCrudAction('addToBdd');
         $action->setHtmlAttributes(
             ['target' => '_blank']
