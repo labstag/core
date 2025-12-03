@@ -23,6 +23,23 @@
       }
     }
   }
+  .artworks{
+    padding-top: 1rem;
+    .artwork {
+      aspect-ratio: 16/9;
+      width: 80%;
+      margin: auto;
+      height: auto;
+      margin-bottom: 1rem;
+      background-image: var(--image-url);
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
   .trailer {
     width: 50%;
     margin: auto;
@@ -32,4 +49,16 @@
     margin-bottom: 11px;
     @extend %video;
   }
+
+  .videos {
+    padding-top: 1rem;
+  }
+
+  .swiper-game-video {}
+
+  .swiper-wrapper {}
+
+  .swiper-game-video-button-next {}
+
+  .swiper-game-video-button-prev {}
 }

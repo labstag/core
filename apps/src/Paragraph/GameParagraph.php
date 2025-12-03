@@ -24,10 +24,14 @@ class GameParagraph extends ParagraphAbstract implements ParagraphInterface
         /** @var GameRepository $entityRepository */
         $entityRepository = $this->getRepository(Game::class);
 
-        $request = $this->requestStack->getCurrentRequest();
-        $query   = $this->setQuery($request->query->all());
+        $request      = $this->requestStack->getCurrentRequest();
+        $query        = $this->setQuery($request->query->all());
+        $categorySlug = $this->getCategorySlug();
 
-        $pagination = $this->getPaginator($entityRepository->getQueryPaginator($query), $paragraph->getNbr());
+        $pagination = $this->getPaginator(
+            $entityRepository->getQueryPaginator($query, $categorySlug),
+            $paragraph->getNbr()
+        );
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(

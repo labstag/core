@@ -278,19 +278,8 @@ abstract class ParagraphAbstract extends AbstractController
     protected function getCategorySlug(): ?string
     {
         $request = $this->requestStack->getCurrentRequest();
-        $slug    = $request->attributes->get('slug');
 
-        if (0 === substr_count((string) $slug, '/')) {
-            return null;
-        }
-
-        $slugSecond = basename((string) $slug);
-
-        if (0 === substr_count($slugSecond, 'category-')) {
-            return null;
-        }
-
-        return str_replace('category-', '', $slugSecond);
+        return $request->query->get('categories');
     }
 
     protected function getOEmbedUrl(string $html): ?string
@@ -329,19 +318,8 @@ abstract class ParagraphAbstract extends AbstractController
     protected function getTagSlug(): ?string
     {
         $request = $this->requestStack->getCurrentRequest();
-        $slug    = $request->attributes->get('slug');
 
-        if (0 === substr_count((string) $slug, '/')) {
-            return null;
-        }
-
-        $slugSecond = basename((string) $slug);
-
-        if (0 === substr_count($slugSecond, 'tag-')) {
-            return null;
-        }
-
-        return str_replace('tag-', '', $slugSecond);
+        return $request->query->get('tag');
     }
 
     /**

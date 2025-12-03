@@ -43,24 +43,45 @@
         </div>
     </div>
     <div class="second">
-        {# <div class="description">
-            <div class="wrapper html-content">
-                {{ game.description|raw }}
-            </div>
-        </div> #}
-        {% for codeVideo in game.videos %}
-            {% set trailer = 'https://www.youtube.com/watch?v=' ~ codeVideo %}
-            {% set oembed = oembed(trailer) %}
-            {% if oembed.oembed != '' %}
-                <div class="video">
-                    {% include "embed/video.html.twig" with {
-                        'btntitle': oembed.title,
-                        'image': site_asset(game, 'img'),
-                        'provider': oembed.provider,
-                        'trailer': oembed.oembed
-                    } %}
+        {% set images = game.artworks %}
+        {% set images = images|merge(game.screenshots) %}
+        <div class="artworks">
+            <div class="swiper swiper-game-artworks">
+                <div class="swiper-wrapper">
+                    {% for artwork in images %}
+                        <div class="swiper-slide">
+                            <div class="artwork" style="--image-url: url('{{ artwork }}')"></div>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endif %}
-        {% endfor %}
+                <div class="swiper-button-next swiper-game-artworks-button-next"></div>
+                <div class="swiper-button-prev swiper-game-artworks-button-prev"></div>
+            </div>
+        </div>
+        <div class="videos">
+            <div class="swiper swiper-game-video">
+                <div class="swiper-wrapper">
+                    {% for codeVideo in game.videos %}
+                        {% set trailer = 'https://www.youtube.com/watch?v=' ~ codeVideo %}
+                        {% set oembed = oembed(trailer) %}
+                        {% if oembed.oembed != '' %}
+                            <div class="swiper-slide">
+                                <div class="video">
+                                    {% include "embed/video.html.twig" with {
+                                        'btntitle': oembed.title,
+                                        'image': site_asset(game, 'img'),
+                                        'provider': oembed.provider,
+                                        'trailer': oembed.oembed
+                                    } %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="swiper-button-next swiper-game-video-button-next"></div>
+                <div class="swiper-button-prev swiper-game-video-button-prev"></div>
+            </div>
+        </div>
+
     </div>
 </section>

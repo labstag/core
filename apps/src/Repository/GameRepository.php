@@ -45,9 +45,14 @@ class GameRepository extends RepositoryAbstract
      *
      * @return Query<mixed, mixed>
      */
-    public function getQueryPaginator(array $query): Query
+    public function getQueryPaginator(array $query, ?string $categorySlug): Query
     {
         $queryBuilder = $this->getQueryBuilder($query);
+        if ('' != $categorySlug) {
+            $queryBuilder->andWhere('c.slug = :categorySlug');
+            $queryBuilder->setParameter('categorySlug', $categorySlug);
+        }
+
         $query        = $queryBuilder->getQuery();
         $dql          = $query->getDQL();
         $query->enableResultCache(3600, 'movies-query-paginator-' . md5((string) $dql));

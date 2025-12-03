@@ -25,7 +25,20 @@ document.addEventListener('DOMContentLoaded', function () {
   new Slider(
     '.swiper-movie',
     '.swiper-movie-button-next',
-    '.swiper-movie-button-prev'
+    '.swiper-movie-button-prev',
+    3
+  );
+  new Slider(
+    '.swiper-game-video',
+    '.swiper-game-video-button-next',
+    '.swiper-game-video-button-prev',
+    1
+  );
+  new Slider(
+    '.swiper-game-artworks',
+    '.swiper-game-artworks-button-next',
+    '.swiper-game-artworks-button-prev',
+    3
   );
   new Movie();
 });

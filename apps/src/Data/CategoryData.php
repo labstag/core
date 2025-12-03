@@ -25,24 +25,24 @@ class CategoryData extends DataAbstract implements DataInterface
 
         return match ($entity::class) {
             GameCategory::class => [
-                'slug'     => $page->getSlug(),
-                'category' => $entity->getSlug(),
+                'slug'       => $page->getSlug(),
+                'categories' => $entity->getSlug(),
             ],
             MovieCategory::class => [
-                'slug'     => $page->getSlug(),
-                'category' => $entity->getSlug(),
+                'slug'       => $page->getSlug(),
+                'categories' => $entity->getSlug(),
             ],
             PostCategory::class  => [
-                'slug'     => $page->getSlug(),
-                'category' => $entity->getSlug(),
+                'slug'       => $page->getSlug(),
+                'categories' => $entity->getSlug(),
             ],
             SerieCategory::class => [
-                'slug'     => $page->getSlug(),
-                'category' => $entity->getSlug(),
+                'slug'       => $page->getSlug(),
+                'categories' => $entity->getSlug(),
             ],
             StoryCategory::class => [
-                'slug'     => $page->getSlug(),
-                'category' => $entity->getSlug(),
+                'slug'       => $page->getSlug(),
+                'categories' => $entity->getSlug(),
             ],
             default              => ['slug' => ''],
         };
