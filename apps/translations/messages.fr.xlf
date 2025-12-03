@@ -1861,6 +1861,78 @@
         <source>Platform is being added</source>
         <target>La plateforme est en cours d'ajout</target>
       </trans-unit>
+      <trans-unit id="oPzjCWg" resname="Import">
+        <source>Import</source>
+        <target>Importer</target>
+      </trans-unit>
+      <trans-unit id="Qb03LUA" resname="IMDB ID">
+        <source>IMDB ID</source>
+        <target>ID IMDB</target>
+      </trans-unit>
+      <trans-unit id="ePv7uFD" resname="Main Game">
+        <source>Main Game</source>
+        <target>Jeu principal</target>
+      </trans-unit>
+      <trans-unit id="ep6sr0m" resname="DLC">
+        <source>DLC</source>
+        <target>DLC</target>
+      </trans-unit>
+      <trans-unit id="p65D6wp" resname="Expansion">
+        <source>Expansion</source>
+        <target>Extension</target>
+      </trans-unit>
+      <trans-unit id="an7jS.4" resname="Bundle">
+        <source>Bundle</source>
+        <target>Pack</target>
+      </trans-unit>
+      <trans-unit id="OoCDNff" resname="Standalone Expansion">
+        <source>Standalone Expansion</source>
+        <target>Extension autonome</target>
+      </trans-unit>
+      <trans-unit id="9dbIdDO" resname="Mod">
+        <source>Mod</source>
+        <target>Mod</target>
+      </trans-unit>
+      <trans-unit id="Ev_fHcX" resname="Remake">
+        <source>Remake</source>
+        <target>Remake</target>
+      </trans-unit>
+      <trans-unit id="y3mlg16" resname="Remaster">
+        <source>Remaster</source>
+        <target>Remaster</target>
+      </trans-unit>
+      <trans-unit id="nPfEOqY" resname="Expanded Game">
+        <source>Expanded Game</source>
+        <target>Jeu étendu</target>
+      </trans-unit>
+      <trans-unit id="6202NhQ" resname="Port">
+        <source>Port</source>
+        <target>Portage</target>
+      </trans-unit>
+      <trans-unit id="LjiD8FQ" resname="Fork">
+        <source>Fork</source>
+        <target>Fork</target>
+      </trans-unit>
+      <trans-unit id="0yXaz1G" resname="Pack / Addon">
+        <source>Pack / Addon</source>
+        <target>Pack / Extension</target>
+      </trans-unit>
+      <trans-unit id="jVOF1aU" resname="Head game">
+        <source>Head game</source>
+        <target>Jeu principal</target>
+      </trans-unit>
+      <trans-unit id="EHqrclp" resname="No games match your search.">
+        <source>No games match your search.</source>
+        <target>Aucun jeu ne correspond à votre recherche.</target>
+      </trans-unit>
+      <trans-unit id="slsym1u" resname="Traitement in progress...">
+        <source>Traitement in progress...</source>
+        <target>Traitement en cours...</target>
+      </trans-unit>
+      <trans-unit id="5th_a2V" resname="Traitement finished">
+        <source>Traitement finished</source>
+        <target>Traitement terminé</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
