@@ -13,7 +13,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class FrontController extends AbstractController
 {
     public function __construct(
-        protected SiteService $siteService, private readonly FrontService $frontService,
+        protected SiteService $siteService,
+        private readonly FrontService $frontService,
     )
     {
     }
@@ -56,7 +57,12 @@ class FrontController extends AbstractController
         return $this->frontService->getSitemapJs();
     }
 
-    #[Route('/sitemap.xml', name: 'sitemap.xml', defaults: ['_format' => 'xml'], priority: 1)]
+    #[Route(
+        '/sitemap.xml',
+        name: 'sitemap.xml',
+        defaults: ['_format' => 'xml'],
+        priority: 1
+    )]
     public function sitemapXml(): mixed
     {
         return $this->frontService->getSitemapXml();

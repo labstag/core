@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Performance;
 
-use Override;
 use Labstag\Entity\Post;
 use Labstag\Entity\User;
 use Labstag\Service\EtagCacheService;
 use Labstag\Tests\AbstractTestCase;
+use Override;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Stopwatch\Stopwatch;

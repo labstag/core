@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -41,6 +40,7 @@ use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
+use Override;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RedirectResponse;

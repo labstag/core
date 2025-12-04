@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -23,6 +22,7 @@ use Labstag\Form\Admin\SerieType;
 use Labstag\Message\ImportMessage;
 use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
+use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +32,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class SerieCrudController extends CrudControllerAbstract
 {
-
     public function addByApi(Request $request): JsonResponse
     {
         $tmdbId       = $request->query->get('id');
@@ -87,6 +86,7 @@ class SerieCrudController extends CrudControllerAbstract
 
         $this->getRepository(Serie::class)->save($serie);
         $this->messageBus->dispatch(new SerieMessage($serie->getId()));
+
         return new JsonResponse(
             [
                 'status'  => 'success',
@@ -105,6 +105,7 @@ class SerieCrudController extends CrudControllerAbstract
             'title' => $all['serie']['title'] ?? '',
         ];
         $series = $this->serieService->getSerieApi($data, $page);
+
         return $this->render(
             'admin/api/serie/list.html.twig',
             [
@@ -258,7 +259,7 @@ class SerieCrudController extends CrudControllerAbstract
 
     public function imdb(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
         if (empty($serie->getImdb())) {
@@ -286,6 +287,7 @@ class SerieCrudController extends CrudControllerAbstract
         $filename  = uniqid('import_', true) . '.' . $extension;
         $this->fileService->saveFileInAdapter('private', $filename, $content);
         $this->messageBus->dispatch(new ImportMessage($filename, 'serie', []));
+
         return new JsonResponse(
             [
                 'status'  => 'success',
@@ -296,10 +298,11 @@ class SerieCrudController extends CrudControllerAbstract
 
     public function jsonSerie(Request $request): JsonResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
-        $details = $this->theMovieDbApi->getDetailsSerie($serie);
+        $details                         = $this->theMovieDbApi->getDetailsSerie($serie);
+
         return new JsonResponse($details);
     }
 
@@ -307,6 +310,7 @@ class SerieCrudController extends CrudControllerAbstract
     {
         $form    = $this->createForm(SerieImportType::class);
         $form->handleRequest($request);
+
         return $this->render(
             'admin/serie/import.html.twig',
             [
@@ -320,6 +324,7 @@ class SerieCrudController extends CrudControllerAbstract
     {
         $form    = $this->createForm(SerieType::class);
         $form->handleRequest($request);
+
         return $this->render(
             'admin/serie/new.html.twig',
             [
@@ -331,23 +336,23 @@ class SerieCrudController extends CrudControllerAbstract
 
     public function tmdb(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
+
         return $this->redirect('https://www.themoviedb.org/tv/' . $serie->getTmdb());
     }
 
     public function updateAllSerie(): RedirectResponse
     {
         $this->messageBus->dispatch(new SerieAllMessage());
+
         return $this->redirectToRoute('admin_serie_index');
     }
 
-    public function updateSerie(
-        Request $request,
-    ): RedirectResponse
+    public function updateSerie(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
         $this->messageBus->dispatch(new SerieMessage($serie->getId()));

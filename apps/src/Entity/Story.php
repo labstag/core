@@ -41,10 +41,15 @@ class Story implements Stringable, EntityWithParagraphsInterface
     /**
      * @var Collection<int, Chapter>
      */
-    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'refstory', cascade: [
-        'persist',
-        'remove',
-    ], orphanRemoval: true)]
+    #[ORM\OneToMany(
+        targetEntity: Chapter::class,
+        mappedBy: 'refstory',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]

@@ -2,8 +2,8 @@
 
 namespace Labstag\Twig\Extension;
 
-use Override;
 use Labstag\Twig\Runtime\AdminExtensionRuntime;
+use Override;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -11,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Company;
 use Labstag\Message\CompanyAllMessage;
 use Labstag\Message\CompanyMessage;
+use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +18,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class CompanyCrudController extends CrudControllerAbstract
 {
-
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -86,24 +85,24 @@ class CompanyCrudController extends CrudControllerAbstract
 
     public function jsonCompany(Request $request): JsonResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                          = $request->query->get('entityId');
         $repositoryAbstract                = $this->getRepository();
         $company                           = $repositoryAbstract->find($entityId);
-        $details = $this->theMovieDbApi->getDetailsCompany($company);
+        $details                           = $this->theMovieDbApi->getDetailsCompany($company);
+
         return new JsonResponse($details);
     }
 
     public function updateAllCompany(): RedirectResponse
     {
         $this->messageBus->dispatch(new CompanyAllMessage());
+
         return $this->redirectToRoute('admin_company_index');
     }
 
-    public function updateCompany(
-        Request $request,
-    ): RedirectResponse
+    public function updateCompany(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                          = $request->query->get('entityId');
         $repositoryAbstract                = $this->getRepository();
         $episode                           = $repositoryAbstract->find($entityId);
         $this->messageBus->dispatch(new CompanyMessage($episode->getId()));

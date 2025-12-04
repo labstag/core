@@ -2,8 +2,8 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Episode;
+use Override;
 
 class EpisodeData extends SeasonData implements DataInterface
 {

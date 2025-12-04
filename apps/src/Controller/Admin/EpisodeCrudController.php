@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -16,6 +15,7 @@ use Labstag\Field\WysiwygField;
 use Labstag\Filter\SeasonEpisodeFilter;
 use Labstag\Filter\SerieEpisodeFilter;
 use Labstag\Message\EpisodeMessage;
+use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +23,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class EpisodeCrudController extends CrudControllerAbstract
 {
-
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -134,18 +133,17 @@ class EpisodeCrudController extends CrudControllerAbstract
 
     public function jsonEpisode(Request $request): JsonResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                          = $request->query->get('entityId');
         $repositoryAbstract                = $this->getRepository();
         $episode                           = $repositoryAbstract->find($entityId);
-        $details = $this->theMovieDbApi->getDetailsEpisode($episode);
+        $details                           = $this->theMovieDbApi->getDetailsEpisode($episode);
+
         return new JsonResponse($details);
     }
 
-    public function updateEpisode(
-        Request $request,
-    ): RedirectResponse
+    public function updateEpisode(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                          = $request->query->get('entityId');
         $repositoryAbstract                = $this->getRepository();
         $episode                           = $repositoryAbstract->find($entityId);
         $this->messageBus->dispatch(new EpisodeMessage($episode->getId()));

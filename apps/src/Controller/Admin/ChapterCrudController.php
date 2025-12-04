@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -15,13 +14,13 @@ use Labstag\Entity\Story;
 use Labstag\Entity\User;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\StoryMessage;
+use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ChapterCrudController extends CrudControllerAbstract
 {
-
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -93,11 +92,9 @@ class ChapterCrudController extends CrudControllerAbstract
         return Chapter::class;
     }
 
-    public function updateChapter(
-        Request $request,
-    ): RedirectResponse
+    public function updateChapter(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $chapter                         = $repositoryAbstract->find($entityId);
         $this->messageBus->dispatch(new StoryMessage($chapter->getRefstory()->getId()));

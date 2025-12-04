@@ -2,9 +2,9 @@
 
 namespace Labstag\FrontForm;
 
-use Override;
 use Labstag\Entity\User;
 use Labstag\Form\Front\ChangePasswordType;
+use Override;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 

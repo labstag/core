@@ -2,12 +2,12 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Page;
 use Labstag\Entity\PostTag;
 use Labstag\Entity\StoryTag;
 use Labstag\Entity\Tag;
 use Labstag\Enum\PageEnum;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class TagData extends DataAbstract implements DataInterface

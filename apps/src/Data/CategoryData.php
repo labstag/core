@@ -2,7 +2,6 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Category;
 use Labstag\Entity\GameCategory;
 use Labstag\Entity\MovieCategory;
@@ -11,6 +10,7 @@ use Labstag\Entity\PostCategory;
 use Labstag\Entity\SerieCategory;
 use Labstag\Entity\StoryCategory;
 use Labstag\Enum\PageEnum;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class CategoryData extends DataAbstract implements DataInterface

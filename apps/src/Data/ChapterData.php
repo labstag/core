@@ -2,8 +2,8 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Chapter;
+use Override;
 use Spatie\SchemaOrg\Schema;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

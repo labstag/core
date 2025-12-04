@@ -2,8 +2,8 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Star;
+use Override;
 
 class StarData extends DataAbstract implements DataInterface
 {

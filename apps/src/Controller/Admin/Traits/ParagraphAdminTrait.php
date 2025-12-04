@@ -43,10 +43,7 @@ trait ParagraphAdminTrait
         return $this->redirect($urlGenerator->generateUrl());
     }
 
-    public function deleteParagraph(
-        AdminContext $adminContext,
-        AdminUrlGenerator $urlGenerator,
-    ): RedirectResponse
+    public function deleteParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator): RedirectResponse
     {
         $request  = $adminContext->getRequest();
         $entityId = $request->query->get('entityId');
@@ -78,10 +75,7 @@ trait ParagraphAdminTrait
         );
     }
 
-    public function updateParagraph(
-        AdminContext $adminContext,
-        AdminUrlGenerator $urlGenerator,
-    ): RedirectResponse
+    public function updateParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator): RedirectResponse
     {
         $request    = $adminContext->getRequest();
         $entityId   = $request->query->get('entityId');

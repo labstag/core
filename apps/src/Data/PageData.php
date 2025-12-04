@@ -2,9 +2,9 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Page;
 use Labstag\Shortcode\PageUrlShortcode;
+use Override;
 
 class PageData extends HomeData implements DataInterface
 {

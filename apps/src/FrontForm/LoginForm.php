@@ -2,10 +2,10 @@
 
 namespace Labstag\FrontForm;
 
-use Override;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Form\Front\LoginType;
+use Override;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 

@@ -2,8 +2,8 @@
 
 namespace Labstag\Service;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Exception;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Movie;

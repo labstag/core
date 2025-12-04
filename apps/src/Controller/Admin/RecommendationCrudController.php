@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
@@ -13,13 +12,13 @@ use Labstag\Entity\Movie;
 use Labstag\Entity\Recommendation;
 use Labstag\Entity\Saga;
 use Labstag\Entity\Serie;
+use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class RecommendationCrudController extends CrudControllerAbstract
 {
-
     public function addToBdd(Request $request): ?RedirectResponse
     {
         $repositoryAbstract = $this->getRepository();
@@ -115,7 +114,7 @@ class RecommendationCrudController extends CrudControllerAbstract
 
     public function tmdb(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                                 = $request->query->get('entityId');
         $repositoryAbstract                       = $this->getRepository();
         $recommendation                           = $repositoryAbstract->find($entityId);
         if ($recommendation->getRefserie() instanceof Serie) {

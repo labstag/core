@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -12,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
 use Labstag\Filter\DiscriminatorTypeFilter;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ParagraphCrudController extends CrudControllerAbstract

@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -13,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use Labstag\Entity\GeoCode;
 use Labstag\Repository\GeoCodeRepository;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class GeoCodeCrudController extends CrudControllerAbstract

@@ -2,13 +2,13 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Meta;
 use Labstag\Field\MetaParentField;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MetaCrudController extends CrudControllerAbstract

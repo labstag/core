@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
@@ -10,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Email\EmailAbstract;
 use Labstag\Entity\Template;
 use Labstag\Field\WysiwygField;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class TemplateCrudController extends CrudControllerAbstract

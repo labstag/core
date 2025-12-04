@@ -2,11 +2,11 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Saga;
 use Labstag\Enum\PageEnum;
+use Override;
 use Spatie\SchemaOrg\Schema;
 use Symfony\Component\Routing\RouterInterface;
 

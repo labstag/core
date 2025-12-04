@@ -2,9 +2,9 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Labstag\Entity\StoryCategory;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryCategoryCrudController extends CategoryCrudControllerAbstract

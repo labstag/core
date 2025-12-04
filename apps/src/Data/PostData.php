@@ -2,12 +2,12 @@
 
 namespace Labstag\Data;
 
-use Override;
 use DateTime;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
 use Labstag\Enum\PageEnum;
 use Labstag\Shortcode\PostUrlShortcode;
+use Override;
 use Spatie\SchemaOrg\Schema;
 use Symfony\Component\Routing\RouterInterface;
 

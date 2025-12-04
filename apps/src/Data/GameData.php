@@ -2,10 +2,10 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Game;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
+use Override;
 
 class GameData extends PageData implements DataInterface
 {

@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -17,6 +16,7 @@ use Labstag\Entity\Story;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\StoryAllMessage;
 use Labstag\Message\StoryMessage;
+use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,7 +24,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryCrudController extends CrudControllerAbstract
 {
-
     public function chaptersField(): AssociationField
     {
         $associationField = AssociationField::new('chapters', new TranslatableMessage('Chapters'));
@@ -174,14 +173,13 @@ class StoryCrudController extends CrudControllerAbstract
     public function updateAllStory(): RedirectResponse
     {
         $this->messageBus->dispatch(new StoryAllMessage());
+
         return $this->redirectToRoute('admin_story_index');
     }
 
-    public function updateStory(
-        Request $request,
-    ): RedirectResponse
+    public function updateStory(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $story                           = $repositoryAbstract->find($entityId);
         $this->messageBus->dispatch(new StoryMessage($story->getId()));

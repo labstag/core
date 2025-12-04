@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -12,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Platform;
 use Labstag\Form\Admin\PlatformType;
 use Labstag\Message\AddGameMessage;
+use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,11 +19,11 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class PlatformCrudController extends CrudControllerAbstract
 {
-
     public function addByApi(Request $request): JsonResponse
     {
         $id      = $request->query->get('id');
         $this->messageBus->dispatch(new AddGameMessage($id, 'platform'));
+
         return new JsonResponse(
             [
                 'status'  => 'success',
@@ -44,6 +44,7 @@ class PlatformCrudController extends CrudControllerAbstract
             'family' => $all['platform']['family'] ?? '',
         ];
         $platforms = $this->platformService->getPlatformApi($data, $limit, $offset);
+
         return $this->render(
             'admin/api/game/platform.html.twig',
             [
@@ -122,6 +123,7 @@ class PlatformCrudController extends CrudControllerAbstract
     {
         $form    = $this->createForm(PlatformType::class);
         $form->handleRequest($request);
+
         return $this->render(
             'admin/platform/new.html.twig',
             [

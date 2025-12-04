@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -19,6 +18,7 @@ use Labstag\Entity\Season;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\SeasonAllMessage;
 use Labstag\Message\SeasonMessage;
+use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +26,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class SeasonCrudController extends CrudControllerAbstract
 {
-
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -151,18 +150,20 @@ class SeasonCrudController extends CrudControllerAbstract
 
     public function jsonSeason(Request $request): JsonResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                         = $request->query->get('entityId');
         $repositoryAbstract               = $this->getRepository();
         $season                           = $repositoryAbstract->find($entityId);
-        $details = $this->theMovieDbApi->getDetailsSeason($season);
+        $details                          = $this->theMovieDbApi->getDetailsSeason($season);
+
         return new JsonResponse($details);
     }
 
     public function tmdb(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                         = $request->query->get('entityId');
         $repositoryAbstract               = $this->getRepository();
         $season                           = $repositoryAbstract->find($entityId);
+
         return $this->redirect(
             'https://www.themoviedb.org/tv/' . $season->getRefserie()->getTmdb() . '/season/' . $season->getNumber()
         );
@@ -171,14 +172,13 @@ class SeasonCrudController extends CrudControllerAbstract
     public function updateAllSeason(): RedirectResponse
     {
         $this->messageBus->dispatch(new SeasonAllMessage());
+
         return $this->redirectToRoute('admin_season_index');
     }
 
-    public function updateSeason(
-        Request $request,
-    ): RedirectResponse
+    public function updateSeason(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                         = $request->query->get('entityId');
         $repositoryAbstract               = $this->getRepository();
         $season                           = $repositoryAbstract->find($entityId);
         $this->messageBus->dispatch(new SeasonMessage($season->getId()));

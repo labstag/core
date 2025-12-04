@@ -2,8 +2,8 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Configuration;
+use Override;
 
 class ConfigurationData extends DataAbstract implements DataInterface
 {

@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -15,6 +14,7 @@ use Labstag\Entity\Saga;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\SagaAllMessage;
 use Labstag\Message\SagaMessage;
+use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +22,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaCrudController extends CrudControllerAbstract
 {
-
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -90,10 +89,11 @@ class SagaCrudController extends CrudControllerAbstract
 
     public function jsonSaga(Request $request): JsonResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
-        $details = $this->theMovieDbApi->getDetailsSaga($saga);
+        $details                         = $this->theMovieDbApi->getDetailsSaga($saga);
+
         return new JsonResponse($details);
     }
 
@@ -143,23 +143,23 @@ class SagaCrudController extends CrudControllerAbstract
 
     public function tmdb(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
+
         return $this->redirect('https://www.themoviedb.org/collection/' . $saga->getTmdb());
     }
 
     public function updateAllSaga(): RedirectResponse
     {
         $this->messageBus->dispatch(new SagaAllMessage());
+
         return $this->redirectToRoute('admin_saga_index');
     }
 
-    public function updateSaga(
-        Request $request,
-    ): RedirectResponse
+    public function updateSaga(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
         $this->messageBus->dispatch(new SagaMessage($saga->getId()));

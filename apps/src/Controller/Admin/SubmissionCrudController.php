@@ -2,13 +2,13 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Submission;
 use Labstag\FrontForm\FrontFormAbstract;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SubmissionCrudController extends CrudControllerAbstract

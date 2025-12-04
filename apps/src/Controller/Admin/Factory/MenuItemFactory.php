@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin\Factory;
 
-use Symfony\Contracts\Translation\TranslatableInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\SubMenuItem;
@@ -17,6 +16,7 @@ use Labstag\Controller\Admin\SerieCategoryCrudController;
 use Labstag\Controller\Admin\StoryCategoryCrudController;
 use Labstag\Controller\Admin\StoryTagCrudController;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 /**
  * Factory for generating dashboard menu items to reduce duplication in DashboardController.

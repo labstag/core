@@ -2,8 +2,8 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Edito;
+use Override;
 
 class EditoData extends DataAbstract implements DataInterface
 {

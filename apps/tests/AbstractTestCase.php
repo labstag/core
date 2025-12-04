@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Labstag\Tests;
 
-use Override;
 use Doctrine\ORM\EntityManagerInterface;
+use Override;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;

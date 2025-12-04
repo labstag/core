@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use DateTime;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -14,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\Redirection;
 use Labstag\Form\Admin\RedirectionImportType;
+use Override;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -160,9 +160,10 @@ class RedirectionCrudController extends CrudControllerAbstract
 
     public function testSource(Request $request): RedirectResponse
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $redirection                     = $repositoryAbstract->find($entityId);
+
         return $this->redirect($redirection->getSource());
     }
 

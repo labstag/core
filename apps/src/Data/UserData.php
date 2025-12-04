@@ -2,8 +2,8 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\User;
+use Override;
 
 class UserData extends DataAbstract implements DataInterface
 {

@@ -2,12 +2,12 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Page;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
 use Labstag\Shortcode\StoryUrlShortcode;
+use Override;
 use Spatie\SchemaOrg\Schema;
 use Symfony\Component\Routing\RouterInterface;
 

@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -24,6 +23,7 @@ use Labstag\Entity\Block;
 use Labstag\Filter\DiscriminatorTypeFilter;
 use Labstag\Repository\BlockRepository;
 use LogicException;
+use Override;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -33,7 +33,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class BlockCrudController extends CrudControllerAbstract
 {
-
     #[Override]
     public function configureActions(Actions $actions): Actions
     {
@@ -307,6 +306,7 @@ class BlockCrudController extends CrudControllerAbstract
     public function showModalBlock(): Response
     {
         $blocks = $this->blockService->getAll(null);
+
         return $this->render(
             'admin/block/new.html.twig',
             [

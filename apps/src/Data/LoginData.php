@@ -2,9 +2,9 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
+use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;

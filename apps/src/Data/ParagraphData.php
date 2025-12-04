@@ -2,8 +2,8 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Paragraph;
+use Override;
 
 class ParagraphData extends DataAbstract implements DataInterface
 {

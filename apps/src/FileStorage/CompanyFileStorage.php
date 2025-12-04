@@ -2,9 +2,9 @@
 
 namespace Labstag\FileStorage;
 
-use Override;
 use Labstag\Entity\Company;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Override;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 

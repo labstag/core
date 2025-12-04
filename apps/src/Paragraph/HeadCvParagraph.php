@@ -2,8 +2,8 @@
 
 namespace Labstag\Paragraph;
 
-use Generator;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Generator;
 use Labstag\Entity\HeadCvParagraph as EntityHeadCvParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;

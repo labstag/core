@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -16,6 +15,7 @@ use Labstag\Form\Admin\GameOtherPlatformType;
 use Labstag\Form\Admin\GameType;
 use Labstag\Message\AddGameMessage;
 use Labstag\Message\ImportMessage;
+use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +23,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class GameCrudController extends CrudControllerAbstract
 {
-
     public function addAnotherPlatform(Request $request): JsonResponse
     {
         $entityId           = $request->query->get('entityId');
@@ -66,6 +65,7 @@ class GameCrudController extends CrudControllerAbstract
         }
 
         $repositoryAbstract->save($game);
+
         return new JsonResponse(
             [
                 'status'  => 'success',
@@ -79,6 +79,7 @@ class GameCrudController extends CrudControllerAbstract
         $id       = $request->query->get('id');
         $platform = $request->query->get('platform', '');
         $this->messageBus->dispatch(new AddGameMessage($id, 'game', $platform));
+
         return new JsonResponse(
             [
                 'status'  => 'success',
@@ -93,11 +94,12 @@ class GameCrudController extends CrudControllerAbstract
         $entityId               = $request->query->get('entityId');
         $game                   = $this->getRepository(Game::class)->find($entityId);
         $platforms              = $this->getRepository(Platform::class)->notInGame($game);
-        $form    = $this->createForm(
+        $form                   = $this->createForm(
             type: GameOtherPlatformType::class,
             options: ['platforms' => $platforms]
         );
         $form->handleRequest($request);
+
         return $this->render(
             'admin/game/other_platforms.html.twig',
             [
@@ -122,6 +124,7 @@ class GameCrudController extends CrudControllerAbstract
             'number'    => $all['game']['number'] ?? '',
         ];
         $games   = $this->gameService->getGameApi($data, $limit, $offset);
+
         return $this->render(
             'admin/api/game/list.html.twig',
             [
@@ -198,10 +201,10 @@ class GameCrudController extends CrudControllerAbstract
 
     public function igdb(Request $request): Response
     {
-        $entityId = $request->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $game                            = $repositoryAbstract->find($entityId);
-        $url = $game->getUrl();
+        $url                             = $game->getUrl();
         if (empty($url)) {
             return $this->redirectToRoute('admin_game_index');
         }
@@ -231,6 +234,7 @@ class GameCrudController extends CrudControllerAbstract
         $filename  = uniqid('import_', true) . '.' . $extension;
         $this->fileService->saveFileInAdapter('private', $filename, $content);
         $this->messageBus->dispatch(new ImportMessage($filename, 'game', $data));
+
         return new JsonResponse(
             [
                 'status'  => 'success',
@@ -275,6 +279,7 @@ class GameCrudController extends CrudControllerAbstract
     {
         $form    = $this->createForm(GameType::class);
         $form->handleRequest($request);
+
         return $this->render(
             'admin/game/new.html.twig',
             [
@@ -288,6 +293,7 @@ class GameCrudController extends CrudControllerAbstract
     {
         $form    = $this->createForm(GameImportType::class);
         $form->handleRequest($request);
+
         return $this->render(
             'admin/game/import.html.twig',
             [

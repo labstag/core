@@ -2,8 +2,8 @@
 
 namespace Labstag\Data;
 
-use Override;
 use Labstag\Entity\Memo;
+use Override;
 
 class MemoData extends DataAbstract implements DataInterface
 {

@@ -2,9 +2,9 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 abstract class CategoryCrudControllerAbstract extends CrudControllerAbstract
