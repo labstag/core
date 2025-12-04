@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -21,7 +22,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class UserCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -29,7 +30,7 @@ class UserCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -42,7 +43,7 @@ class UserCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -124,7 +125,7 @@ class UserCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -135,7 +136,7 @@ class UserCrudController extends CrudControllerAbstract
     /**
      * @return FormBuilderInterface<mixed>
      */
-    #[\Override]
+    #[Override]
     public function createEditFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
@@ -147,7 +148,7 @@ class UserCrudController extends CrudControllerAbstract
         return $this->addPasswordEventListener($formBuilder);
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): User
     {
         $user = parent::createEntity($entityFqcn);
@@ -162,7 +163,7 @@ class UserCrudController extends CrudControllerAbstract
     /**
      * @return FormBuilderInterface<mixed>
      */
-    #[\Override]
+    #[Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,

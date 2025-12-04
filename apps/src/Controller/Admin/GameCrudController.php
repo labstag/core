@@ -2,6 +2,26 @@
 
 namespace Labstag\Controller\Admin;
 
+use Labstag\Service\EmailService;
+use Labstag\Service\Imdb\SerieService;
+use Labstag\Service\FormService;
+use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
+use Labstag\Service\Imdb\SeasonService;
+use Labstag\Service\SecurityService;
+use Labstag\Service\BlockService;
+use Labstag\Service\Imdb\EpisodeService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SagaService;
+use Labstag\Service\ParagraphService;
+use Labstag\Service\WorkflowService;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Labstag\Service\UserService;
+use Labstag\Controller\Admin\Factory\ActionsFactory;
+use Labstag\Controller\Admin\Factory\CrudFieldFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Doctrine\Persistence\ManagerRegistry;
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -19,6 +39,7 @@ use Labstag\Message\ImportMessage;
 use Labstag\Service\FileService;
 use Labstag\Service\Igdb\GameService;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -26,9 +47,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GameCrudController extends CrudControllerAbstract
 {
-    public function addAnotherPlatform(AdminContext $adminContext, TranslatorInterface $translator): JsonResponse
+
+    public function addAnotherPlatform(Request $request): JsonResponse
     {
-        $request            = $adminContext->getRequest();
         $entityId           = $request->query->get('entityId');
         $repositoryAbstract = $this->getRepository();
         $game               = $repositoryAbstract->find($entityId);
@@ -36,7 +57,7 @@ class GameCrudController extends CrudControllerAbstract
             return new JsonResponse(
                 [
                     'status'  => 'error',
-                    'message' => $translator->trans(new TranslatableMessage('Game not found')),
+                    'message' => $this->translator->trans(new TranslatableMessage('Game not found')),
                 ]
             );
         }
@@ -46,7 +67,7 @@ class GameCrudController extends CrudControllerAbstract
             return new JsonResponse(
                 [
                     'status'  => 'error',
-                    'message' => $translator->trans(new TranslatableMessage('No data found')),
+                    'message' => $this->translator->trans(new TranslatableMessage('No data found')),
                 ]
             );
         }
@@ -55,78 +76,63 @@ class GameCrudController extends CrudControllerAbstract
             return new JsonResponse(
                 [
                     'status'  => 'error',
-                    'message' => $translator->trans(new TranslatableMessage('No platform selected')),
+                    'message' => $this->translator->trans(new TranslatableMessage('No platform selected')),
                 ]
             );
         }
 
         $platforms          = $post['game_other_platform']['platforms'];
-        $platformRepository = $this->getRepository(Platform::class);
         foreach ($platforms as $platform) {
-            $platformEntity = $platformRepository->find($platform);
+            $platformEntity = $this->getRepository(Platform::class)->find($platform);
             if ($platformEntity instanceof Platform) {
                 $game->addPlatform($platformEntity);
             }
         }
 
         $repositoryAbstract->save($game);
-
         return new JsonResponse(
             [
                 'status'  => 'success',
-                'message' => $translator->trans(new TranslatableMessage('Platforms added successfully')),
+                'message' => $this->translator->trans(new TranslatableMessage('Platforms added successfully')),
             ]
         );
     }
 
-    public function addByApi(
-        AdminContext $adminContext,
-        MessageBusInterface $messageBus,
-        TranslatorInterface $translator,
-    ): JsonResponse
+    public function addByApi(Request $request): JsonResponse
     {
-        $request  = $adminContext->getRequest();
         $id       = $request->query->get('id');
         $platform = $request->query->get('platform', '');
-        $messageBus->dispatch(new AddGameMessage($id, 'game', $platform));
-
+        $this->messageBus->dispatch(new AddGameMessage($id, 'game', $platform));
         return new JsonResponse(
             [
                 'status'  => 'success',
                 'id'      => $id,
-                'message' => $translator->trans(new TranslatableMessage('Game is being added')),
+                'message' => $this->translator->trans(new TranslatableMessage('Game is being added')),
             ]
         );
     }
 
-    public function addToAnotherPlatform(AdminContext $adminContext): Response
+    public function addToAnotherPlatform(Request $request): Response
     {
-        $request                = $adminContext->getRequest();
         $entityId               = $request->query->get('entityId');
-        $repositoryAbstract     = $this->getRepository();
-        $platformRepository     = $this->getRepository(Platform::class);
-        $game                   = $repositoryAbstract->find($entityId);
-        $platforms              = $platformRepository->notInGame($game);
-
+        $game                   = $this->getRepository(Game::class)->find($entityId);
+        $platforms              = $this->getRepository(Platform::class)->notInGame($game);
         $form    = $this->createForm(
             type: GameOtherPlatformType::class,
             options: ['platforms' => $platforms]
         );
         $form->handleRequest($request);
-
         return $this->render(
             'admin/game/other_platforms.html.twig',
             [
                 'game' => $game,
-                'ea'   => $adminContext,
                 'form' => $form->createView(),
             ]
         );
     }
 
-    public function apiGame(AdminContext $adminContext, GameService $gameService): Response
+    public function apiGame(Request $request): Response
     {
-        $request = $adminContext->getRequest();
         $all     = $request->request->all();
         $page    = $request->query->get('page', 1);
         $limit   = $request->query->get('limit', 50);
@@ -139,21 +145,19 @@ class GameCrudController extends CrudControllerAbstract
             'type'      => $all['game']['type'] ?? '',
             'number'    => $all['game']['number'] ?? '',
         ];
-        $games   = $gameService->getGameApi($data, $limit, $offset);
-
+        $games   = $this->gameService->getGameApi($data, $limit, $offset);
         return $this->render(
             'admin/api/game/list.html.twig',
             [
                 'page'       => $page,
                 'platform'   => $all['game']['platform'] ?? '',
                 'controller' => self::class,
-                'ea'         => $adminContext,
                 'games'      => $games,
             ]
         );
     }
 
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -165,7 +169,7 @@ class GameCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -178,7 +182,7 @@ class GameCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -216,12 +220,11 @@ class GameCrudController extends CrudControllerAbstract
         return Game::class;
     }
 
-    public function igdb(AdminContext $adminContext): Response
+    public function igdb(Request $request): Response
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $game                            = $repositoryAbstract->find($entityId);
-
         $url = $game->getUrl();
         if (empty($url)) {
             return $this->redirectToRoute('admin_game_index');
@@ -230,20 +233,14 @@ class GameCrudController extends CrudControllerAbstract
         return $this->redirect($url);
     }
 
-    public function importFile(
-        AdminContext $adminContext,
-        MessageBusInterface $messageBus,
-        FileService $fileService,
-    ): JsonResponse
+    public function importFile(Request $request): JsonResponse
     {
-        $request = $adminContext->getRequest();
         $files   = $request->files->all();
         $all     = $request->request->all();
         $file    = $files['game_import']['file'] ?? null;
         $data    = [
             'platform' => $all['game_import']['platform'] ?? '',
         ];
-
         if (null === $file) {
             return new JsonResponse(
                 [
@@ -256,10 +253,8 @@ class GameCrudController extends CrudControllerAbstract
         $content   = file_get_contents($file->getPathname());
         $extension = $file->getClientOriginalExtension();
         $filename  = uniqid('import_', true) . '.' . $extension;
-        $fileService->saveFileInAdapter('private', $filename, $content);
-
-        $messageBus->dispatch(new ImportMessage($filename, 'game', $data));
-
+        $this->fileService->saveFileInAdapter('private', $filename, $content);
+        $this->messageBus->dispatch(new ImportMessage($filename, 'game', $data));
         return new JsonResponse(
             [
                 'status'  => 'success',
@@ -300,33 +295,27 @@ class GameCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    public function showModalGame(AdminContext $adminContext): Response
+    public function showModalGame(Request $request): Response
     {
-        $request = $adminContext->getRequest();
         $form    = $this->createForm(GameType::class);
         $form->handleRequest($request);
-
         return $this->render(
             'admin/game/new.html.twig',
             [
                 'controller' => self::class,
-                'ea'         => $adminContext,
                 'form'       => $form->createView(),
             ]
         );
     }
 
-    public function showModalImportGame(AdminContext $adminContext): Response
+    public function showModalImportGame(Request $request): Response
     {
-        $request = $adminContext->getRequest();
         $form    = $this->createForm(GameImportType::class);
         $form->handleRequest($request);
-
         return $this->render(
             'admin/game/import.html.twig',
             [
                 'controller' => self::class,
-                'ea'         => $adminContext,
                 'form'       => $form->createView(),
             ]
         );

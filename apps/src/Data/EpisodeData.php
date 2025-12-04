@@ -2,11 +2,12 @@
 
 namespace Labstag\Data;
 
+use Override;
 use Labstag\Entity\Episode;
 
 class EpisodeData extends SeasonData implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function asset(mixed $entity, string $field): string
     {
         $asset = $this->fileService->asset($entity, $field);
@@ -17,7 +18,7 @@ class EpisodeData extends SeasonData implements DataInterface
         return parent::asset($entity->getRefseason()->getRefserie(), 'backdrop');
     }
 
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('episode');
@@ -28,7 +29,7 @@ class EpisodeData extends SeasonData implements DataInterface
         return parent::placeholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Episode;

@@ -2,6 +2,7 @@
 
 namespace Labstag\Data;
 
+use Override;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -10,7 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class LoginData extends DataAbstract implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function scriptBefore(object $entity, Response $response): Response
     {
         unset($entity);
@@ -31,7 +32,7 @@ class LoginData extends DataAbstract implements DataInterface
         return $response;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsScriptBefore(object $entity): bool
     {
         return $entity instanceof Page && $entity->getType() == PageEnum::LOGIN->value;

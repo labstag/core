@@ -2,11 +2,12 @@
 
 namespace Labstag\Data;
 
+use Override;
 use Labstag\Entity\Edito;
 
 class EditoData extends DataAbstract implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('edito');
@@ -17,7 +18,7 @@ class EditoData extends DataAbstract implements DataInterface
         return $this->configPlaceholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Edito;

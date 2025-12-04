@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class FrontController extends AbstractController
 {
     public function __construct(
-        protected SiteService $siteService,
+        protected SiteService $siteService, private readonly FrontService $frontService,
     )
     {
     }
@@ -32,10 +32,10 @@ class FrontController extends AbstractController
         ],
         priority: -1
     )]
-    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
-    public function index(FrontService $frontService): Response
+    #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
+    public function index(): Response
     {
-        return $frontService->showView();
+        return $this->frontService->showView();
     }
 
     #[Route(path: '/logout', name: 'app_logout')]
@@ -45,31 +45,26 @@ class FrontController extends AbstractController
     }
 
     #[Route('/sitemap.css', name: 'sitemap.css', priority: 1)]
-    public function sitemapCss(FrontService $frontService): Response
+    public function sitemapCss(): Response
     {
-        return $frontService->getSitemapCss();
+        return $this->frontService->getSitemapCss();
     }
 
     #[Route('/sitemap.js', name: 'sitemap.js', priority: 1)]
-    public function sitemapJs(FrontService $frontService): Response
+    public function sitemapJs(): Response
     {
-        return $frontService->getSitemapJs();
+        return $this->frontService->getSitemapJs();
     }
 
-    #[Route(
-        '/sitemap.xml',
-        name: 'sitemap.xml',
-        priority: 1,
-        defaults: ['_format' => 'xml']
-    )]
-    public function sitemapXml(FrontService $frontService): mixed
+    #[Route('/sitemap.xml', name: 'sitemap.xml', defaults: ['_format' => 'xml'], priority: 1)]
+    public function sitemapXml(): mixed
     {
-        return $frontService->getSitemapXml();
+        return $this->frontService->getSitemapXml();
     }
 
     #[Route('/sitemap.xsl', name: 'sitemap.xsl', priority: 1)]
-    public function sitemapXsl(FrontService $frontService): Response
+    public function sitemapXsl(): Response
     {
-        return $frontService->getSitemapXls();
+        return $this->frontService->getSitemapXls();
     }
 }

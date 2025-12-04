@@ -55,7 +55,7 @@ class Memo implements Stringable, EntityWithParagraphsInterface
     )]
     protected Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'memos', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'memos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?User $refuser = null;
 

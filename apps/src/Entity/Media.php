@@ -21,7 +21,7 @@ class Media
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
-    #[Vich\UploadableField(mapping: 'media', fileNameProperty: 'name', mimeType: 'mimeType', size: 'size')]
+    #[Vich\UploadableField(mapping: 'media', fileNameProperty: 'name', size: 'size', mimeType: 'mimeType')]
     protected ?File $file = null;
 
     #[ORM\Id]
@@ -39,8 +39,8 @@ class Media
     #[ORM\Column(nullable: true)]
     protected ?int $size = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['name'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[Gedmo\Slug(fields: ['name'], updatable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
     protected ?string $slug = null;
 
     public function getFile(): ?File

@@ -6,6 +6,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use Exception;
 use Labstag\Api\IgdbApi;
+use Labstag\Entity\Group;
+use Labstag\Entity\Permission;
 use Labstag\Message\ClearCacheMessage;
 use Labstag\Message\DeleteOldFileMessage;
 use Labstag\Repository\GroupRepository;
@@ -32,6 +34,9 @@ class BackController extends AbstractController
         protected WorkflowService $workflowService,
         protected SiteService $siteService,
         protected IgdbApi $igdbApi,
+        private readonly MessageBusInterface $messageBus,
+        private readonly PermissionRepository $permissionRepository,
+        private readonly GroupRepository $groupRepository,
     )
     {
     }
@@ -51,10 +56,10 @@ class BackController extends AbstractController
         name: 'admin_cacheclear',
         defaults: ['_locale' => 'fr']
     )]
-    public function cacheclear(MessageBusInterface $messageBus, Request $request): Response
+    public function cacheclear(Request $request): Response
     {
-        $messageBus->dispatch(new ClearCacheMessage());
-        $messageBus->dispatch(new DeleteOldFileMessage());
+        $this->messageBus->dispatch(new ClearCacheMessage());
+        $this->messageBus->dispatch(new DeleteOldFileMessage());
         $this->addFlash('success', new TranslatableMessage('Cache cleared'));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -103,16 +108,14 @@ class BackController extends AbstractController
     )]
     public function permission(
         Request $request,
-        PermissionRepository $permissionRepository,
-        GroupRepository $groupRepository,
     ): Response
     {
         if ($request->isMethod('POST')) {
             $groupId      = $request->query->get('groupId');
             $permissionId = $request->query->get('permissionId');
 
-            $group      = $groupRepository->find($groupId);
-            $permission = $permissionRepository->find($permissionId);
+            $group      = $this->getRepository(Group::class)->find($groupId);
+            $permission = $this->getRepository(Permission::class)->find($permissionId);
 
             if (!$group || !$permission) {
                 return $this->json(
@@ -130,18 +133,18 @@ class BackController extends AbstractController
                 false => $group->addPermission($permission),
             };
 
-            $groupRepository->save($group);
+            $this->getRepository(Group::class)->save($group);
 
             return $this->json(
                 ['success' => true]
             );
         }
 
-        $permissions = $permissionRepository->findBy(
+        $permissions = $this->getRepository(Permission::class)->findBy(
             [],
             ['title' => 'ASC']
         );
-        $groups = $groupRepository->findAll();
+        $groups = $this->getRepository(Group::class)->findAll();
         $data   = [];
         foreach ($permissions as $permission) {
             [

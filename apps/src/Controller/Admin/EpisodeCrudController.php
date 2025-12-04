@@ -2,6 +2,28 @@
 
 namespace Labstag\Controller\Admin;
 
+use Labstag\Service\EmailService;
+use Labstag\Service\Imdb\SerieService;
+use Labstag\Service\FormService;
+use Labstag\Service\FileService;
+use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
+use Labstag\Service\Imdb\SeasonService;
+use Labstag\Service\SecurityService;
+use Labstag\Service\BlockService;
+use Labstag\Service\Imdb\EpisodeService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SagaService;
+use Labstag\Service\ParagraphService;
+use Labstag\Service\WorkflowService;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Labstag\Service\UserService;
+use Labstag\Controller\Admin\Factory\ActionsFactory;
+use Labstag\Controller\Admin\Factory\CrudFieldFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -25,7 +47,8 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class EpisodeCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -35,7 +58,7 @@ class EpisodeCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -48,7 +71,7 @@ class EpisodeCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -104,7 +127,7 @@ class EpisodeCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -133,27 +156,23 @@ class EpisodeCrudController extends CrudControllerAbstract
         return Episode::class;
     }
 
-    public function jsonEpisode(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
+    public function jsonEpisode(Request $request): JsonResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $repositoryAbstract                = $this->getRepository();
         $episode                           = $repositoryAbstract->find($entityId);
-
-        $details = $theMovieDbApi->getDetailsEpisode($episode);
-
+        $details = $this->theMovieDbApi->getDetailsEpisode($episode);
         return new JsonResponse($details);
     }
 
     public function updateEpisode(
-        AdminContext $adminContext,
         Request $request,
-        MessageBusInterface $messageBus,
     ): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $repositoryAbstract                = $this->getRepository();
         $episode                           = $repositoryAbstract->find($entityId);
-        $messageBus->dispatch(new EpisodeMessage($episode->getId()));
+        $this->messageBus->dispatch(new EpisodeMessage($episode->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

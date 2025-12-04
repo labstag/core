@@ -2,6 +2,7 @@
 
 namespace Labstag\Entity;
 
+use Stringable;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,7 +20,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: CompanyRepository::class)]
 #[Vich\Uploadable]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-class Company implements \Stringable
+class Company implements Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;

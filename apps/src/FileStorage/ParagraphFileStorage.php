@@ -2,6 +2,7 @@
 
 namespace Labstag\FileStorage;
 
+use Override;
 use Labstag\Entity\HeadCvParagraph;
 use Labstag\Entity\ImageParagraph;
 use Labstag\Entity\TextImgParagraph;
@@ -24,7 +25,7 @@ class ParagraphFileStorage extends FileStorageAbstract implements FileStorageInt
         $this->setType('paragraph');
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(): array
     {
         return [

@@ -2,13 +2,14 @@
 
 namespace Labstag\Data;
 
+use Override;
 use Labstag\Entity\Game;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 
 class GameData extends PageData implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function generateSlug(object $entity): array
     {
         $entityRepository = $this->entityManager->getRepository(Page::class);
@@ -24,31 +25,31 @@ class GameData extends PageData implements DataInterface
         return $slug;
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugGame($slug);
     }
 
-    #[\Override]
+    #[Override]
     public function getShortCodes(): array
     {
         return [];
     }
 
-    #[\Override]
+    #[Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
     }
 
-    #[\Override]
+    #[Override]
     public function getTitleMeta(object $entity): string
     {
         return $this->getTitle($entity);
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         $game = $this->getEntityBySlugGame($slug);
@@ -56,7 +57,7 @@ class GameData extends PageData implements DataInterface
         return $game instanceof Game;
     }
 
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('game');
@@ -67,13 +68,13 @@ class GameData extends PageData implements DataInterface
         return $this->configPlaceholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Game;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Game;

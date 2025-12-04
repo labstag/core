@@ -2,6 +2,27 @@
 
 namespace Labstag\Controller\Admin;
 
+use Labstag\Service\EmailService;
+use Labstag\Service\Imdb\SerieService;
+use Labstag\Service\FormService;
+use Labstag\Service\FileService;
+use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
+use Labstag\Service\Imdb\SeasonService;
+use Labstag\Service\SecurityService;
+use Labstag\Service\BlockService;
+use Labstag\Service\Imdb\EpisodeService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SagaService;
+use Labstag\Service\ParagraphService;
+use Labstag\Service\WorkflowService;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Labstag\Service\UserService;
+use Labstag\Controller\Admin\Factory\ActionsFactory;
+use Labstag\Controller\Admin\Factory\CrudFieldFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Doctrine\Persistence\ManagerRegistry;
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -14,6 +35,7 @@ use Labstag\Form\Admin\PlatformType;
 use Labstag\Message\AddGameMessage;
 use Labstag\Service\Igdb\PlatformService;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -21,28 +43,22 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PlatformCrudController extends CrudControllerAbstract
 {
-    public function addByApi(
-        AdminContext $adminContext,
-        MessageBusInterface $messageBus,
-        TranslatorInterface $translator,
-    ): JsonResponse
-    {
-        $request = $adminContext->getRequest();
-        $id      = $request->query->get('id');
-        $messageBus->dispatch(new AddGameMessage($id, 'platform'));
 
+    public function addByApi(Request $request): JsonResponse
+    {
+        $id      = $request->query->get('id');
+        $this->messageBus->dispatch(new AddGameMessage($id, 'platform'));
         return new JsonResponse(
             [
                 'status'  => 'success',
                 'id'      => $id,
-                'message' => $translator->trans(new TranslatableMessage('Platform is being added')),
+                'message' => $this->translator->trans(new TranslatableMessage('Platform is being added')),
             ]
         );
     }
 
-    public function apiPlatform(AdminContext $adminContext, PlatformService $platformService): Response
+    public function apiPlatform(Request $request): Response
     {
-        $request            = $adminContext->getRequest();
         $page               = $request->query->get('page', 1);
         $limit              = $request->query->get('limit', 20);
         $offset             = ($page - 1) * $limit;
@@ -51,20 +67,18 @@ class PlatformCrudController extends CrudControllerAbstract
             'title'  => $all['platform']['title'] ?? '',
             'family' => $all['platform']['family'] ?? '',
         ];
-        $platforms = $platformService->getPlatformApi($data, $limit, $offset);
-
+        $platforms = $this->platformService->getPlatformApi($data, $limit, $offset);
         return $this->render(
             'admin/api/game/platform.html.twig',
             [
                 'page'       => $page,
                 'controller' => self::class,
-                'ea'         => $adminContext,
                 'platforms'  => $platforms,
             ]
         );
     }
 
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -74,7 +88,7 @@ class PlatformCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -87,7 +101,7 @@ class PlatformCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -128,17 +142,14 @@ class PlatformCrudController extends CrudControllerAbstract
         return Platform::class;
     }
 
-    public function showModalPlatform(AdminContext $adminContext): Response
+    public function showModalPlatform(Request $request): Response
     {
-        $request = $adminContext->getRequest();
         $form    = $this->createForm(PlatformType::class);
         $form->handleRequest($request);
-
         return $this->render(
             'admin/platform/new.html.twig',
             [
                 'controller' => self::class,
-                'ea'         => $adminContext,
                 'form'       => $form->createView(),
             ]
         );

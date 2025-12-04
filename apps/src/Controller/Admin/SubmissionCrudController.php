@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
@@ -12,7 +13,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class SubmissionCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -21,7 +22,7 @@ class SubmissionCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());

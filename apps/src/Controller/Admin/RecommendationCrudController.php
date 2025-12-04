@@ -2,6 +2,28 @@
 
 namespace Labstag\Controller\Admin;
 
+use Labstag\Service\EmailService;
+use Labstag\Service\Imdb\SerieService;
+use Labstag\Service\FormService;
+use Labstag\Service\FileService;
+use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
+use Labstag\Service\Imdb\SeasonService;
+use Labstag\Service\SecurityService;
+use Labstag\Service\BlockService;
+use Labstag\Service\Imdb\EpisodeService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SagaService;
+use Labstag\Service\ParagraphService;
+use Labstag\Service\WorkflowService;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Labstag\Service\UserService;
+use Labstag\Controller\Admin\Factory\ActionsFactory;
+use Labstag\Controller\Admin\Factory\CrudFieldFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
@@ -14,13 +36,14 @@ use Labstag\Entity\Recommendation;
 use Labstag\Entity\Saga;
 use Labstag\Entity\Serie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class RecommendationCrudController extends CrudControllerAbstract
 {
-    public function addToBdd(AdminContext $adminContext): ?RedirectResponse
+
+    public function addToBdd(Request $request): ?RedirectResponse
     {
-        $request            = $adminContext->getRequest();
         $repositoryAbstract = $this->getRepository();
         $entity             = $repositoryAbstract->find($request->query->get('entityId'));
         if (!$entity instanceof Recommendation) {
@@ -42,7 +65,7 @@ class RecommendationCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_recommendation_index');
     }
 
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -54,7 +77,7 @@ class RecommendationCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -67,7 +90,7 @@ class RecommendationCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -112,9 +135,9 @@ class RecommendationCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    public function tmdb(AdminContext $adminContext): RedirectResponse
+    public function tmdb(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $repositoryAbstract                       = $this->getRepository();
         $recommendation                           = $repositoryAbstract->find($entityId);
         if ($recommendation->getRefserie() instanceof Serie) {

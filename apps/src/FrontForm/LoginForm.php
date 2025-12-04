@@ -2,6 +2,7 @@
 
 namespace Labstag\FrontForm;
 
+use Override;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Form\Front\LoginType;
@@ -25,7 +26,7 @@ class LoginForm extends FrontFormAbstract
         return new TranslatableMessage('Form login');
     }
 
-    #[\Override]
+    #[Override]
     public function setParamsTwig(
         FormInterface $form,
         $formCode,

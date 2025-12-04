@@ -2,13 +2,14 @@
 
 namespace Labstag\Data;
 
+use Override;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 
 class MovieData extends SagaData implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function asset(mixed $entity, string $field): string
     {
         $asset = $this->fileService->asset($entity, $field);
@@ -23,7 +24,7 @@ class MovieData extends SagaData implements DataInterface
         return $this->fileService->asset($entity, $field);
     }
 
-    #[\Override]
+    #[Override]
     public function generateSlug(object $entity): array
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
@@ -38,19 +39,19 @@ class MovieData extends SagaData implements DataInterface
         return $slug;
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugMovie($slug);
     }
 
-    #[\Override]
+    #[Override]
     public function getJsonLd(object $entity): object
     {
         return $this->getJsonLdMovie($entity);
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlugMovie($slug);
@@ -58,7 +59,7 @@ class MovieData extends SagaData implements DataInterface
         return $page instanceof Movie;
     }
 
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('movie');
@@ -69,19 +70,19 @@ class MovieData extends SagaData implements DataInterface
         return $this->configPlaceholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Movie;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Movie;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsJsonLd(object $entity): bool
     {
         return $entity instanceof Movie;

@@ -2,6 +2,27 @@
 
 namespace Labstag\Controller\Admin;
 
+use Labstag\Service\EmailService;
+use Labstag\Service\Imdb\SerieService;
+use Labstag\Service\FormService;
+use Labstag\Service\FileService;
+use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
+use Labstag\Service\Imdb\SeasonService;
+use Labstag\Service\SecurityService;
+use Labstag\Service\BlockService;
+use Labstag\Service\Imdb\EpisodeService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SagaService;
+use Labstag\Service\ParagraphService;
+use Labstag\Service\WorkflowService;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Labstag\Service\UserService;
+use Labstag\Controller\Admin\Factory\ActionsFactory;
+use Labstag\Controller\Admin\Factory\CrudFieldFactory;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Override;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -31,7 +52,8 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class BlockCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -56,7 +78,7 @@ class BlockCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -100,7 +122,7 @@ class BlockCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -158,7 +180,7 @@ class BlockCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -181,7 +203,7 @@ class BlockCrudController extends CrudControllerAbstract
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): object
     {
         unset($entityFqcn);
@@ -196,7 +218,7 @@ class BlockCrudController extends CrudControllerAbstract
         return new $classe();
     }
 
-    #[\Override]
+    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
@@ -224,7 +246,7 @@ class BlockCrudController extends CrudControllerAbstract
     /**
      * @return FormBuilderInterface<mixed>
      */
-    #[\Override]
+    #[Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
@@ -269,7 +291,6 @@ class BlockCrudController extends CrudControllerAbstract
 
         $blocks    = $query->getResult();
         $generator = $this->container->get(AdminUrlGenerator::class);
-
         if ($request->isMethod('POST')) {
             $allTypes = $this->blockService->getRegions();
             foreach ($allTypes as $allType) {
@@ -303,11 +324,9 @@ class BlockCrudController extends CrudControllerAbstract
         );
     }
 
-    public function showModalBlock(AdminContext $adminContext): Response
+    public function showModalBlock(): Response
     {
-        unset($adminContext);
         $blocks = $this->blockService->getAll(null);
-
         return $this->render(
             'admin/block/new.html.twig',
             [

@@ -41,15 +41,10 @@ class Story implements Stringable, EntityWithParagraphsInterface
     /**
      * @var Collection<int, Chapter>
      */
-    #[ORM\OneToMany(
-        targetEntity: Chapter::class,
-        mappedBy: 'refstory',
-        orphanRemoval: true,
-        cascade: [
-            'persist',
-            'remove',
-        ]
-    )]
+    #[ORM\OneToMany(targetEntity: Chapter::class, mappedBy: 'refstory', cascade: [
+        'persist',
+        'remove',
+    ], orphanRemoval: true)]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -92,15 +87,15 @@ class Story implements Stringable, EntityWithParagraphsInterface
     #[Vich\UploadableField(mapping: 'story', fileNameProperty: 'pdf')]
     protected ?File $pdfFile = null;
 
-    #[ORM\ManyToOne(inversedBy: 'stories', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'stories')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?User $refuser = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $resume = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
     protected ?string $slug = null;
 
     /**

@@ -2,11 +2,12 @@
 
 namespace Labstag\Data;
 
+use Override;
 use Labstag\Entity\Star;
 
 class StarData extends DataAbstract implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('star');
@@ -17,7 +18,7 @@ class StarData extends DataAbstract implements DataInterface
         return $this->configPlaceholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Star;

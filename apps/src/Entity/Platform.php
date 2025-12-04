@@ -2,6 +2,7 @@
 
 namespace Labstag\Entity;
 
+use Stringable;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -20,7 +21,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Index(name: 'IDX_PLATFORM_SLUG', columns: ['slug'])]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Platform implements \Stringable
+class Platform implements Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
@@ -37,8 +38,8 @@ class Platform implements \Stringable
     #[Vich\UploadableField(mapping: 'platform', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
     protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]

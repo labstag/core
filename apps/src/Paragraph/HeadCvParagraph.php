@@ -2,6 +2,7 @@
 
 namespace Labstag\Paragraph;
 
+use Generator;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\HeadCvParagraph as EntityHeadCvParagraph;
 use Labstag\Entity\Page;
@@ -34,7 +35,7 @@ class HeadCvParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): \Generator
+    public function getFields(Paragraph $paragraph, string $pageName): Generator
     {
         yield TextField::new('title', new TranslatableMessage('Title'));
         yield $this->addFieldFileUpload('pdf', $pageName, $paragraph);

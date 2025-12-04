@@ -2,6 +2,7 @@
 
 namespace Labstag\FileStorage;
 
+use Override;
 use Labstag\Entity\User;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -20,7 +21,7 @@ class AvatarFileStorage extends FileStorageAbstract implements FileStorageInterf
         $this->setType('avatar');
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(): array
     {
         return [User::class];

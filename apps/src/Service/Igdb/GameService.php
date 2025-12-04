@@ -11,7 +11,6 @@ use Labstag\Entity\GameCategory;
 use Labstag\Entity\Platform;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 final class GameService extends AbstractIgdb
 {
@@ -19,7 +18,6 @@ final class GameService extends AbstractIgdb
         IgdbApi $igdbApi,
         EntityManagerInterface $entityManager,
         FileService $fileService,
-        private MessageBusInterface $messageBus,
         private CategoryService $categoryService,
     )
     {

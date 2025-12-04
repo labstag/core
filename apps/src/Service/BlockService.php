@@ -2,6 +2,7 @@
 
 namespace Labstag\Service;
 
+use Labstag\Block\BlockAbstract;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
@@ -22,7 +23,7 @@ final class BlockService
 
     public function __construct(
         /**
-         * @var iterable<\Labstag\Block\BlockAbstract>
+         * @var iterable<BlockAbstract>
          */
         #[AutowireIterator('labstag.blocks')]
         private readonly iterable $blocks,

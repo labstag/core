@@ -2,12 +2,13 @@
 
 namespace Labstag\Data;
 
+use Override;
 use Labstag\Entity\Page;
 use Labstag\Shortcode\PageUrlShortcode;
 
 class PageData extends HomeData implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function generateSlug(object $entity): array
     {
         $slug = parent::generateSlug($entity);
@@ -24,19 +25,19 @@ class PageData extends HomeData implements DataInterface
         return $slug;
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugPage($slug);
     }
 
-    #[\Override]
+    #[Override]
     public function getShortCodes(): array
     {
         return [PageUrlShortcode::class];
     }
 
-    #[\Override]
+    #[Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
@@ -47,7 +48,7 @@ class PageData extends HomeData implements DataInterface
         return $this->getTitle($entity);
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlugPage($slug);
@@ -55,7 +56,7 @@ class PageData extends HomeData implements DataInterface
         return $page instanceof Page;
     }
 
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('page');
@@ -66,19 +67,19 @@ class PageData extends HomeData implements DataInterface
         return $this->configPlaceholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Page;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Page;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsShortcode(string $className): bool
     {
         return Page::class === $className;

@@ -2,6 +2,7 @@
 
 namespace Labstag\FileStorage;
 
+use Override;
 use Labstag\Entity\Company;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -20,7 +21,7 @@ class CompanyFileStorage extends FileStorageAbstract implements FileStorageInter
         $this->setType('company');
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(): array
     {
         return [Company::class];

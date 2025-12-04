@@ -2,6 +2,7 @@
 
 namespace Labstag\FileStorage;
 
+use Override;
 use Labstag\Entity\Saga;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -20,7 +21,7 @@ class SagaFileStorage extends FileStorageAbstract implements FileStorageInterfac
         $this->setType('saga');
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(): array
     {
         return [Saga::class];

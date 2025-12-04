@@ -65,14 +65,14 @@ class Chapter implements Stringable, EntityWithParagraphsInterface
     )]
     protected int $position = 1;
 
-    #[ORM\ManyToOne(inversedBy: 'chapters', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'chapters')]
     #[ORM\JoinColumn(nullable: false)]
     protected ?Story $refstory = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $resume = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]
     #[Gedmo\SlugHandler(class: ChapterSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $slug = null;

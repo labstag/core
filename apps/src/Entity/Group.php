@@ -2,6 +2,7 @@
 
 namespace Labstag\Entity;
 
+use Stringable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -11,7 +12,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: GroupRepository::class)]
 #[ORM\Table(name: '`group`')]
-class Group implements \Stringable
+class Group implements Stringable
 {
 
     #[ORM\Id]

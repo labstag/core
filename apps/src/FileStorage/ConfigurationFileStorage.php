@@ -2,6 +2,7 @@
 
 namespace Labstag\FileStorage;
 
+use Override;
 use Labstag\Entity\Configuration;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -20,7 +21,7 @@ class ConfigurationFileStorage extends FileStorageAbstract implements FileStorag
         $this->setType('configuration');
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(): array
     {
         return [Configuration::class];

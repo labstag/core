@@ -2,6 +2,7 @@
 
 namespace Labstag\Service;
 
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Labstag\Message\FileDeleteMessage;
@@ -358,9 +359,9 @@ final class FileService
     }
 
     /**
-     * @return \Doctrine\ORM\EntityRepository<object>
+     * @return EntityRepository<object>
      */
-    private function getRepository(string $entity): \Doctrine\ORM\EntityRepository
+    private function getRepository(string $entity): EntityRepository
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (is_null($entityRepository)) {

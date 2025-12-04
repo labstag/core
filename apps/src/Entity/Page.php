@@ -67,7 +67,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(targetEntity: self::class, cascade: ['persist', 'detach'], inversedBy: 'children')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?self $page = null;
 
@@ -80,7 +80,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
     )]
     protected Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'pages', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'pages')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?User $refuser = null;
 
@@ -95,7 +95,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
             'separator'           => '/',
         ]
     )]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
     protected ?string $slug = null;
 
     /**

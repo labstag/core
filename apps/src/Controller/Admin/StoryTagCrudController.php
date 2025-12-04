@@ -2,13 +2,14 @@
 
 namespace Labstag\Controller\Admin;
 
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Labstag\Entity\StoryTag;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryTagCrudController extends TagCrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -23,7 +24,7 @@ class StoryTagCrudController extends TagCrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return StoryTag::class;

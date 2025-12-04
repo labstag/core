@@ -2,6 +2,7 @@
 
 namespace Labstag\Data;
 
+use Override;
 use Labstag\Entity\Page;
 use Labstag\Entity\Serie;
 use Labstag\Enum\PageEnum;
@@ -10,7 +11,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class SerieData extends PageData implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function asset(mixed $entity, string $field): string
     {
         $asset = $this->fileService->asset($entity, $field);
@@ -25,7 +26,7 @@ class SerieData extends PageData implements DataInterface
         return $this->fileService->asset($entity, $field);
     }
 
-    #[\Override]
+    #[Override]
     public function generateSlug(object $entity): array
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
@@ -40,7 +41,7 @@ class SerieData extends PageData implements DataInterface
         return $slug;
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugSerie($slug);
@@ -82,19 +83,19 @@ class SerieData extends PageData implements DataInterface
         return $tvSeries;
     }
 
-    #[\Override]
+    #[Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
     }
 
-    #[\Override]
+    #[Override]
     public function getTitleMeta(object $entity): string
     {
         return $this->getTitle($entity);
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlugSerie($slug);
@@ -102,7 +103,7 @@ class SerieData extends PageData implements DataInterface
         return $page instanceof Serie;
     }
 
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('serie');
@@ -113,19 +114,19 @@ class SerieData extends PageData implements DataInterface
         return $this->configPlaceholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Serie;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Serie;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsJsonLd(object $entity): bool
     {
         return $entity instanceof Serie;

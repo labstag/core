@@ -2,6 +2,7 @@
 
 namespace Labstag\FileStorage;
 
+use Override;
 use Labstag\Entity\Page;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -20,7 +21,7 @@ class PageFileStorage extends FileStorageAbstract implements FileStorageInterfac
         $this->setType('page');
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(): array
     {
         return [Page::class];

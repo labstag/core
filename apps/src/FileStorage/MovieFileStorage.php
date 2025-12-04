@@ -2,6 +2,7 @@
 
 namespace Labstag\FileStorage;
 
+use Override;
 use Labstag\Entity\Movie;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -20,7 +21,7 @@ class MovieFileStorage extends FileStorageAbstract implements FileStorageInterfa
         $this->setType('movie');
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(): array
     {
         return [Movie::class];

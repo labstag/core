@@ -26,8 +26,8 @@ final class SearchGameMessageHandler
     public function __invoke(SearchGameMessage $searchGameMessage): void
     {
         $data = $searchGameMessage->getData();
-        $name = isset($data['Nom']) ? $data['Nom'] : null;
-        $name = isset($data['name']) ? $data['name'] : $name;
+        $name = $data['Nom'] ?? null;
+        $name = $data['name'] ?? $name;
         if (is_null($name) || $this->getGameByData($name) instanceof Game) {
             return;
         }

@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
+use Override;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -13,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Controller\Admin\Factory\MenuItemFactory;
+use Labstag\Entity\Configuration;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
 use Labstag\Repository\ConfigurationRepository;
@@ -44,13 +46,13 @@ class DashboardController extends AbstractDashboardController
     {
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(): Crud
     {
         return Crud::new()->setFormThemes(['admin/form.html.twig', '@EasyAdmin/crud/form_theme.html.twig']);
     }
 
-    #[\Override]
+    #[Override]
     public function configureDashboard(): Dashboard
     {
         $data      = $this->configurationService->getConfiguration();
@@ -63,7 +65,7 @@ class DashboardController extends AbstractDashboardController
         return $dashboard;
     }
 
-    #[\Override]
+    #[Override]
     public function configureMenuItems(): iterable
     {
         $categories = $this->menuItemFactory->createCategoryMenuItems();
@@ -98,7 +100,7 @@ class DashboardController extends AbstractDashboardController
         yield from $this->buildUtilityMenus();
     }
 
-    #[\Override]
+    #[Override]
     public function configureUserMenu(UserInterface $user): UserMenu
     {
         $userMenu = parent::configureUserMenu($user);
@@ -136,7 +138,7 @@ class DashboardController extends AbstractDashboardController
         return $userMenu;
     }
 
-    #[\Override]
+    #[Override]
     public function index(): Response
     {
         $repositoryAbstract = $this->getRepository(Memo::class);
@@ -210,7 +212,7 @@ class DashboardController extends AbstractDashboardController
      */
     private function buildConfigurationMenuItem(): ?object
     {
-        $configurations = $this->configurationRepository->findAll();
+        $configurations = $this->getRepository(Configuration::class)->findAll();
         $configuration  = $configurations[0] ?? null;
         if (!$configuration) {
             return null;

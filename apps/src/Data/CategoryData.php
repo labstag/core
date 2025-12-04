@@ -2,6 +2,7 @@
 
 namespace Labstag\Data;
 
+use Override;
 use Labstag\Entity\Category;
 use Labstag\Entity\GameCategory;
 use Labstag\Entity\MovieCategory;
@@ -14,7 +15,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class CategoryData extends DataAbstract implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function generateSlug(object $entity): array
     {
         $page = $this->getPage($entity::class);
@@ -48,13 +49,13 @@ class CategoryData extends DataAbstract implements DataInterface
         };
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugCategory($slug);
     }
 
-    #[\Override]
+    #[Override]
     public function getTitle(object $entity): string
     {
         unset($entity);
@@ -69,7 +70,7 @@ class CategoryData extends DataAbstract implements DataInterface
         return $this->translator->trans(new TranslatableMessage('Category %category%'), $params);
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlugCategory($slug);
@@ -77,7 +78,7 @@ class CategoryData extends DataAbstract implements DataInterface
         return $page instanceof Page;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Category;

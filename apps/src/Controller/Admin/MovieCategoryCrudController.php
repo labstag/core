@@ -2,13 +2,14 @@
 
 namespace Labstag\Controller\Admin;
 
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Labstag\Entity\MovieCategory;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieCategoryCrudController extends CategoryCrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());

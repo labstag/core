@@ -2,6 +2,7 @@
 
 namespace Labstag\FrontForm;
 
+use Override;
 use Labstag\Entity\User;
 use Labstag\Form\Front\ChangePasswordType;
 use Symfony\Component\Form\FormInterface;
@@ -24,7 +25,7 @@ class ChangePasswordForm extends FrontFormAbstract
         return new TranslatableMessage('Form change password');
     }
 
-    #[\Override]
+    #[Override]
     public function setParamsTwig(
         FormInterface $form,
         $formCode,

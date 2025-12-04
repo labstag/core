@@ -78,7 +78,7 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'poster')]
     protected ?File $posterFile = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]
     #[Gedmo\SlugHandler(class: SagaSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     protected ?string $slug = null;

@@ -75,7 +75,7 @@ abstract class Block implements Stringable
     #[ORM\Column(type: Types::JSON, nullable: true)]
     protected ?array $roles = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[Gedmo\Slug(fields: ['title'], updatable: true)]
     #[ORM\Column(length: 255, unique: true)]
     protected string $slug;
 

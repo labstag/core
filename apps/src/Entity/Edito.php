@@ -55,7 +55,7 @@ class Edito implements Stringable, EntityWithParagraphsInterface
     )]
     protected Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'editos', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'editos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?User $refuser = null;
 

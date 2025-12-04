@@ -28,7 +28,7 @@ final class ImportMessageHandler
 
         $file      = $this->fileService->getFileInAdapter('private', $fileName);
         $mimeType  = mime_content_type($file);
-        $extension = pathinfo($file, PATHINFO_EXTENSION);
+        $extension = pathinfo((string) $file, PATHINFO_EXTENSION);
         match ($mimeType) {
             'text/csv' => $this->importCsvFile($file, $data, $type),
             'text/xml' => $this->importXmlFile($file, $data, $type),

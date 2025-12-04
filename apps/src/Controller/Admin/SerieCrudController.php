@@ -2,6 +2,25 @@
 
 namespace Labstag\Controller\Admin;
 
+use Labstag\Service\EmailService;
+use Labstag\Service\FormService;
+use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
+use Labstag\Service\Imdb\SeasonService;
+use Labstag\Service\SecurityService;
+use Labstag\Service\BlockService;
+use Labstag\Service\Imdb\EpisodeService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SagaService;
+use Labstag\Service\ParagraphService;
+use Labstag\Service\WorkflowService;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Labstag\Service\UserService;
+use Labstag\Controller\Admin\Factory\ActionsFactory;
+use Labstag\Controller\Admin\Factory\CrudFieldFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Doctrine\Persistence\ManagerRegistry;
+use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -39,18 +58,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SerieCrudController extends CrudControllerAbstract
 {
-    public function addByApi(
-        AdminContext $adminContext,
-        MessageBusInterface $messageBus,
-        TheMovieDbApi $theMovieDbApi,
-        ConfigurationService $configurationService,
-        SerieRepository $serieRepository,
-        TranslatorInterface $translator,
-    ): JsonResponse
+
+    public function addByApi(Request $request): JsonResponse
     {
-        $request      = $adminContext->getRequest();
         $tmdbId       = $request->query->get('id');
-        $serie        = $serieRepository->findOneBy(
+        $serie        = $this->getRepository(Serie::class)->findOneBy(
             ['tmdb' => $tmdbId]
         );
         if ($serie instanceof Serie) {
@@ -58,19 +70,19 @@ class SerieCrudController extends CrudControllerAbstract
                 [
                     'status'  => 'warning',
                     'id'      => $tmdbId,
-                    'message' => $translator->trans(new TranslatableMessage('Serie already exists')),
+                    'message' => $this->translator->trans(new TranslatableMessage('Serie already exists')),
                 ]
             );
         }
 
-        $locale = $configurationService->getLocaleTmdb();
-        $tmdb   = $theMovieDbApi->tvserie()->getDetails($tmdbId, $locale);
+        $locale = $this->configurationService->getLocaleTmdb();
+        $tmdb   = $this->theMovieDbApi->tvserie()->getDetails($tmdbId, $locale);
         if (is_null($tmdb)) {
             return new JsonResponse(
                 [
                     'status'  => 'warning',
                     'id'      => $tmdbId,
-                    'message' => $translator->trans(
+                    'message' => $this->translator->trans(
                         new TranslatableMessage(
                             'The series with the TMDB id %id% does not exist',
                             ['%id%' => $tmdbId]
@@ -80,13 +92,13 @@ class SerieCrudController extends CrudControllerAbstract
             );
         }
 
-        $other  = $theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
+        $other  = $this->theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
         if (!isset($other['imdb_id'])) {
             return new JsonResponse(
                 [
                     'status'  => 'warning',
                     'id'      => $tmdbId,
-                    'message' => $translator->trans(new TranslatableMessage('No Imdb id for this series')),
+                    'message' => $this->translator->trans(new TranslatableMessage('No Imdb id for this series')),
                 ]
             );
         }
@@ -99,42 +111,37 @@ class SerieCrudController extends CrudControllerAbstract
         $serie->setImdb($other['imdb_id']);
         $serie->setTitle($tmdb['name']);
 
-        $serieRepository->save($serie);
-        $messageBus->dispatch(new SerieMessage($serie->getId()));
-
+        $this->getRepository(Serie::class)->save($serie);
+        $this->messageBus->dispatch(new SerieMessage($serie->getId()));
         return new JsonResponse(
             [
                 'status'  => 'success',
                 'id'      => $tmdbId,
-                'message' => $translator->trans(new TranslatableMessage('Serie added successfully')),
+                'message' => $this->translator->trans(new TranslatableMessage('Serie added successfully')),
             ]
         );
     }
 
-    public function apiSerie(AdminContext $adminContext, SerieService $serieService): Response
+    public function apiSerie(Request $request): Response
     {
-        $request            = $adminContext->getRequest();
         $page               = $request->query->get('page', 1);
         $all                = $request->request->all();
         $data               = [
             'imdb'  => $all['serie']['imdb'] ?? '',
             'title' => $all['serie']['title'] ?? '',
         ];
-
-        $series = $serieService->getSerieApi($data, $page);
-
+        $series = $this->serieService->getSerieApi($data, $page);
         return $this->render(
             'admin/api/serie/list.html.twig',
             [
                 'page'       => $page,
                 'controller' => self::class,
-                'ea'         => $adminContext,
                 'series'     => $series,
             ]
         );
     }
 
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -149,7 +156,7 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -162,7 +169,7 @@ class SerieCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -244,7 +251,7 @@ class SerieCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -275,9 +282,9 @@ class SerieCrudController extends CrudControllerAbstract
         return Serie::class;
     }
 
-    public function imdb(AdminContext $adminContext): RedirectResponse
+    public function imdb(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
         if (empty($serie->getImdb())) {
@@ -287,16 +294,10 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.imdb.com/title/' . $serie->getImdb() . '/');
     }
 
-    public function importFile(
-        AdminContext $adminContext,
-        MessageBusInterface $messageBus,
-        FileService $fileService,
-    ): JsonResponse
+    public function importFile(Request $request): JsonResponse
     {
-        $request = $adminContext->getRequest();
         $files   = $request->files->all();
         $file    = $files['serie_import']['file'] ?? null;
-
         if (null === $file) {
             return new JsonResponse(
                 [
@@ -309,10 +310,8 @@ class SerieCrudController extends CrudControllerAbstract
         $content   = file_get_contents($file->getPathname());
         $extension = $file->getClientOriginalExtension();
         $filename  = uniqid('import_', true) . '.' . $extension;
-        $fileService->saveFileInAdapter('private', $filename, $content);
-
-        $messageBus->dispatch(new ImportMessage($filename, 'serie', []));
-
+        $this->fileService->saveFileInAdapter('private', $filename, $content);
+        $this->messageBus->dispatch(new ImportMessage($filename, 'serie', []));
         return new JsonResponse(
             [
                 'status'  => 'success',
@@ -321,75 +320,63 @@ class SerieCrudController extends CrudControllerAbstract
         );
     }
 
-    public function jsonSerie(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
+    public function jsonSerie(Request $request): JsonResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
-
-        $details = $theMovieDbApi->getDetailsSerie($serie);
-
+        $details = $this->theMovieDbApi->getDetailsSerie($serie);
         return new JsonResponse($details);
     }
 
-    public function showModalImportSerie(AdminContext $adminContext): Response
+    public function showModalImportSerie(Request $request): Response
     {
-        $request = $adminContext->getRequest();
         $form    = $this->createForm(SerieImportType::class);
         $form->handleRequest($request);
-
         return $this->render(
             'admin/serie/import.html.twig',
             [
                 'controller' => self::class,
-                'ea'         => $adminContext,
                 'form'       => $form->createView(),
             ]
         );
     }
 
-    public function showModalSerie(AdminContext $adminContext): Response
+    public function showModalSerie(Request $request): Response
     {
-        $request = $adminContext->getRequest();
         $form    = $this->createForm(SerieType::class);
         $form->handleRequest($request);
-
         return $this->render(
             'admin/serie/new.html.twig',
             [
                 'controller' => self::class,
-                'ea'         => $adminContext,
                 'form'       => $form->createView(),
             ]
         );
     }
 
-    public function tmdb(AdminContext $adminContext): RedirectResponse
+    public function tmdb(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
-
         return $this->redirect('https://www.themoviedb.org/tv/' . $serie->getTmdb());
     }
 
-    public function updateAllSerie(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllSerie(): RedirectResponse
     {
-        $messageBus->dispatch(new SerieAllMessage());
-
+        $this->messageBus->dispatch(new SerieAllMessage());
         return $this->redirectToRoute('admin_serie_index');
     }
 
     public function updateSerie(
-        AdminContext $adminContext,
         Request $request,
-        MessageBusInterface $messageBus,
     ): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
-        $messageBus->dispatch(new SerieMessage($serie->getId()));
+        $this->messageBus->dispatch(new SerieMessage($serie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

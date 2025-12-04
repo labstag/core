@@ -2,6 +2,27 @@
 
 namespace Labstag\Controller\Admin;
 
+use Labstag\Service\EmailService;
+use Labstag\Service\Imdb\SerieService;
+use Labstag\Service\FormService;
+use Labstag\Service\FileService;
+use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
+use Labstag\Service\Imdb\SeasonService;
+use Labstag\Service\SecurityService;
+use Labstag\Service\BlockService;
+use Labstag\Service\Imdb\EpisodeService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SagaService;
+use Labstag\Service\ParagraphService;
+use Labstag\Service\WorkflowService;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Labstag\Service\UserService;
+use Labstag\Controller\Admin\Factory\ActionsFactory;
+use Labstag\Controller\Admin\Factory\CrudFieldFactory;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Override;
 use DateTime;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -30,7 +51,7 @@ class RedirectionCrudController extends CrudControllerAbstract
 {
     private const FIELDCSV = 2;
 
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -41,7 +62,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -83,7 +104,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -91,7 +112,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): Redirection
     {
         $redirection = parent::createEntity($entityFqcn);
@@ -102,9 +123,9 @@ class RedirectionCrudController extends CrudControllerAbstract
         return $redirection;
     }
 
-    public function export(RedirectionRepository $redirectionRepository): void
+    public function export(): void
     {
-        $all    = $redirectionRepository->findAll();
+        $all    = $this->getRepository(Redirection::class)->findAll();
         $row    = [];
         $header = [
             'Source',
@@ -119,7 +140,6 @@ class RedirectionCrudController extends CrudControllerAbstract
         }
 
         $response = $this->sendToExport($header, $row);
-
         $response->send();
     }
 
@@ -128,7 +148,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         return Redirection::class;
     }
 
-    public function import(Request $request, RedirectionRepository $redirectionRepository): RedirectResponse|Response
+    public function import(Request $request): RedirectResponse|Response
     {
         $form = $this->createForm(
             RedirectionImportType::class,
@@ -141,13 +161,13 @@ class RedirectionCrudController extends CrudControllerAbstract
 
         if ($form->isSubmitted() && $form->isValid()) {
             $file = $form->get('file')->getData();
-            $data = $this->importCsv($file, $redirectionRepository);
+            $data = $this->importCsv($file, $this->redirectionRepository);
 
             foreach ($data as $row) {
-                $redirectionRepository->persist($row);
+                $this->getRepository(Redirection::class)->persist($row);
             }
 
-            $redirectionRepository->flush();
+            $this->getRepository(Redirection::class)->flush();
 
             return $this->redirectToIndex();
         }
@@ -160,12 +180,11 @@ class RedirectionCrudController extends CrudControllerAbstract
         );
     }
 
-    public function testSource(AdminContext $adminContext): RedirectResponse
+    public function testSource(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $redirection                     = $repositoryAbstract->find($entityId);
-
         return $this->redirect($redirection->getSource());
     }
 
@@ -291,7 +310,7 @@ class RedirectionCrudController extends CrudControllerAbstract
     /**
      * @return Redirection[]
      */
-    private function importCsv(UploadedFile $uploadedFile, RedirectionRepository $redirectionRepository): array
+    private function importCsv(UploadedFile $uploadedFile): array
     {
         $data        = [];
         $csv         = new Csv();
@@ -313,7 +332,7 @@ class RedirectionCrudController extends CrudControllerAbstract
             $destination = $row[$head['Destination']];
             $source      = $source['path'];
             $source .= isset($source['query']) ? '?' . $source['query'] : '';
-            $redirection = $redirectionRepository->findOneBy(
+            $redirection = $this->getRepository(Redirection::class)->findOneBy(
                 ['source' => $source]
             );
             if (null === $redirection) {

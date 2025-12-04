@@ -2,6 +2,7 @@
 
 namespace Labstag\Data;
 
+use Override;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Saga;
@@ -11,7 +12,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class SagaData extends PageData implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function asset(mixed $entity, string $field): string
     {
         $asset = $this->fileService->asset($entity, $field);
@@ -26,7 +27,7 @@ class SagaData extends PageData implements DataInterface
         return $this->fileService->asset($entity, $field);
     }
 
-    #[\Override]
+    #[Override]
     public function generateSlug(object $entity): array
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
@@ -41,7 +42,7 @@ class SagaData extends PageData implements DataInterface
         return $slug;
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugSaga($slug);
@@ -95,19 +96,19 @@ class SagaData extends PageData implements DataInterface
         return $movieSeries;
     }
 
-    #[\Override]
+    #[Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
     }
 
-    #[\Override]
+    #[Override]
     public function getTitleMeta(object $entity): string
     {
         return $this->getTitle($entity);
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlugSaga($slug);
@@ -115,7 +116,7 @@ class SagaData extends PageData implements DataInterface
         return $page instanceof Saga;
     }
 
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('saga');
@@ -126,19 +127,19 @@ class SagaData extends PageData implements DataInterface
         return $this->configPlaceholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Saga;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Saga;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsJsonLd(object $entity): bool
     {
         return $entity instanceof Saga;

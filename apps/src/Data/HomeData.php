@@ -2,9 +2,11 @@
 
 namespace Labstag\Data;
 
+use Override;
+
 class HomeData extends DataAbstract implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function generateSlug(object $entity): array
     {
         unset($entity);
@@ -12,7 +14,7 @@ class HomeData extends DataAbstract implements DataInterface
         return ['slug' => ''];
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(?string $slug): object
     {
         unset($slug);
@@ -20,13 +22,13 @@ class HomeData extends DataAbstract implements DataInterface
         return $this->getHome();
     }
 
-    #[\Override]
+    #[Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         return '' === $slug || is_null($slug);

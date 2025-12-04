@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller\Admin\Factory;
 
+use Symfony\Contracts\Translation\TranslatableInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\SubMenuItem;
@@ -64,7 +65,7 @@ final class MenuItemFactory
      */
     public function createContentSubMenu(
         string $type,
-        $label,
+        TranslatableInterface|string $label,
         string $icon,
         string $controllerClass,
         $disableAdd = false,
@@ -133,11 +134,11 @@ final class MenuItemFactory
      *
      * @return array<string, CrudMenuItem>
      */
-    private function createMenuItems(array $controllers, $label, string $icon): array
+    private function createMenuItems(array $controllers, TranslatableMessage $translatableMessage, string $icon): array
     {
         $menuItems = [];
         foreach ($controllers as $key => $data) {
-            $menuItem = MenuItem::linkToCrud($label, $icon, $data['crud']);
+            $menuItem = MenuItem::linkToCrud($translatableMessage, $icon, $data['crud']);
             $menuItem->setController($data['controller']);
             $menuItems[$key] = $menuItem;
         }

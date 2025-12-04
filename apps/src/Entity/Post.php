@@ -69,15 +69,15 @@ class Post implements Stringable, EntityWithParagraphsInterface
     )]
     protected Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'posts', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?User $refuser = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $resume = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
     protected ?string $slug = null;
 
     /**

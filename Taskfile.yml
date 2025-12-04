@@ -492,7 +492,7 @@ tasks:
     cmds:
     - task: composer:exec
       vars:
-        CMD: "run rector --dry-run"
+        CMD: "run rector-dry"
 
   star:get:
     desc: "Download star data"

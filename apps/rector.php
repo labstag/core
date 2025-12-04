@@ -45,7 +45,6 @@ $configure->withPreparedSets(
 // $configure->withSymfonyContainerXml(__DIR__ . '/var/cache/dev/App_KernelDevDebugContainer.xml');
 $configure->withSkip(
     [
-        FunctionLikeToFirstClassCallableRector::class,
         ReadOnlyPropertyRector::class,
         AddTypeToConstRector::class,
         ReadOnlyClassRector::class,

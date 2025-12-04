@@ -110,7 +110,7 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     #[ORM\ManyToOne(inversedBy: 'movies')]
     protected ?Saga $saga = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]
     #[Gedmo\SlugHandler(class: MovieSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $slug = null;

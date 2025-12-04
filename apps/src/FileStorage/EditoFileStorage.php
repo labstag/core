@@ -2,6 +2,7 @@
 
 namespace Labstag\FileStorage;
 
+use Override;
 use Labstag\Entity\Edito;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -20,7 +21,7 @@ class EditoFileStorage extends FileStorageAbstract implements FileStorageInterfa
         $this->setType('edito');
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(): array
     {
         return [Edito::class];

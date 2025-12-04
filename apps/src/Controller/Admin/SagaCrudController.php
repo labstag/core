@@ -2,6 +2,28 @@
 
 namespace Labstag\Controller\Admin;
 
+use Labstag\Service\EmailService;
+use Labstag\Service\Imdb\SerieService;
+use Labstag\Service\FormService;
+use Labstag\Service\FileService;
+use Labstag\Service\SiteService;
+use Labstag\Service\SlugService;
+use Labstag\Service\Imdb\SeasonService;
+use Labstag\Service\SecurityService;
+use Labstag\Service\BlockService;
+use Labstag\Service\Imdb\EpisodeService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\Imdb\SagaService;
+use Labstag\Service\ParagraphService;
+use Labstag\Service\WorkflowService;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Labstag\Service\UserService;
+use Labstag\Controller\Admin\Factory\ActionsFactory;
+use Labstag\Controller\Admin\Factory\CrudFieldFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Override;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -24,7 +46,8 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -35,7 +58,7 @@ class SagaCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -48,7 +71,7 @@ class SagaCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -89,14 +112,12 @@ class SagaCrudController extends CrudControllerAbstract
         return Saga::class;
     }
 
-    public function jsonSaga(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
+    public function jsonSaga(Request $request): JsonResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
-
-        $details = $theMovieDbApi->getDetailsSaga($saga);
-
+        $details = $this->theMovieDbApi->getDetailsSaga($saga);
         return new JsonResponse($details);
     }
 
@@ -144,32 +165,28 @@ class SagaCrudController extends CrudControllerAbstract
         return $associationField;
     }
 
-    public function tmdb(AdminContext $adminContext): RedirectResponse
+    public function tmdb(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
-
         return $this->redirect('https://www.themoviedb.org/collection/' . $saga->getTmdb());
     }
 
-    public function updateAllSaga(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllSaga(): RedirectResponse
     {
-        $messageBus->dispatch(new SagaAllMessage());
-
+        $this->messageBus->dispatch(new SagaAllMessage());
         return $this->redirectToRoute('admin_saga_index');
     }
 
     public function updateSaga(
-        AdminContext $adminContext,
         Request $request,
-        MessageBusInterface $messageBus,
     ): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
-        $messageBus->dispatch(new SagaMessage($saga->getId()));
+        $this->messageBus->dispatch(new SagaMessage($saga->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

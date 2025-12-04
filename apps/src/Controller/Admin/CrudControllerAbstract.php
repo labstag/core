@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller\Admin;
 
+use Override;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -40,6 +41,7 @@ use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -61,6 +63,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         protected FileService $fileService,
         protected SiteService $siteService,
         protected SlugService $slugService,
+        protected MessageBusInterface $messageBus,
         protected SeasonService $seasonService,
         protected SecurityService $securityService,
         protected BlockService $blockService,
@@ -80,7 +83,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     {
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->addFormTheme('admin/form.html.twig');
@@ -95,7 +98,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): object
     {
         $entity = new $entityFqcn();
@@ -113,7 +116,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return $entity;
     }
 
-    #[\Override]
+    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
@@ -143,8 +146,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     {
         $request                         = $adminContext->getRequest();
         $entityId                        = $request->query->get('entityId');
-        $repository                      = $this->getRepository();
-        $entity                          = $repository->find($entityId);
+        $entity                          = $this->getRepository()->find($entityId);
         $repositoryAbstract              = $this->getRepository();
         $repositoryAbstract->find($entity);
 

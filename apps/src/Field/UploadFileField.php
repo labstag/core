@@ -30,7 +30,7 @@ final class UploadFileField implements FieldInterface
         return $uploadFileField;
     }
 
-    public function setTranslator(TranslatorInterface $translator)
+    public function setTranslator(TranslatorInterface $translator): void
     {
         $deleteLabel      = new TranslatableMessage('Delete file');
         $downloadLabel    = new TranslatableMessage('Download');

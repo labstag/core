@@ -2,6 +2,7 @@
 
 namespace Labstag\Data;
 
+use Override;
 use Labstag\Entity\Page;
 use Labstag\Entity\PostTag;
 use Labstag\Entity\StoryTag;
@@ -11,7 +12,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class TagData extends DataAbstract implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function generateSlug(object $entity): array
     {
         $entityRepository = $this->entityManager->getRepository(Page::class);
@@ -46,13 +47,13 @@ class TagData extends DataAbstract implements DataInterface
         };
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugTag($slug);
     }
 
-    #[\Override]
+    #[Override]
     public function getTitle(object $entity): string
     {
         unset($entity);
@@ -67,7 +68,7 @@ class TagData extends DataAbstract implements DataInterface
         return $this->translator->trans(new TranslatableMessage('Tag %tag%'), $params);
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlugTag($slug);
@@ -75,7 +76,7 @@ class TagData extends DataAbstract implements DataInterface
         return $page instanceof Page;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Tag;

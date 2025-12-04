@@ -2,6 +2,7 @@
 
 namespace Labstag\Entity;
 
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Labstag\Repository\RecommendationRepository;
@@ -33,7 +34,7 @@ class Recommendation
     private ?Serie $refserie = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $releaseDate = null;
+    private ?DateTime $releaseDate = null;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
@@ -71,7 +72,7 @@ class Recommendation
         return $this->refserie;
     }
 
-    public function getReleaseDate(): ?\DateTime
+    public function getReleaseDate(): ?DateTime
     {
         return $this->releaseDate;
     }
@@ -121,7 +122,7 @@ class Recommendation
         return $this;
     }
 
-    public function setReleaseDate(\DateTime $releaseDate): static
+    public function setReleaseDate(DateTime $releaseDate): static
     {
         $this->releaseDate = $releaseDate;
 

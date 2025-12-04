@@ -83,7 +83,7 @@ class Season implements Stringable, EntityWithParagraphsInterface
     #[ORM\JoinColumn(name: 'refserie_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
     protected ?Serie $refserie = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]
     #[Gedmo\SlugHandler(class: SeasonSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $slug = null;
