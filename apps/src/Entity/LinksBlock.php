@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class LinksBlock extends Block
 {
-
     #[ORM\Column(nullable: true)]
     private ?array $data = null;
 

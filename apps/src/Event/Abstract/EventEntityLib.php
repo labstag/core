@@ -69,9 +69,9 @@ abstract class EventEntityLib
 
         $tmdb                     = $instance->getTmdb();
         $entityRepository         = $this->entityManager->getRepository(Recommendation::class);
-        $recommendation           = $entityRepository->findOneBy(
-            ['tmdb' => $tmdb]
-        );
+        $recommendation           = $entityRepository->findOneBy([
+                'tmdb' => $tmdb,
+            ]);
         if (!$recommendation instanceof Recommendation) {
             return;
         }
@@ -140,11 +140,9 @@ abstract class EventEntityLib
         }
 
         $entityRepository = $this->entityManager->getRepository(HttpErrorLogs::class);
-        $httpsLogs        = $entityRepository->findBy(
-            [
+        $httpsLogs        = $entityRepository->findBy([
                 'internetProtocol' => $instance->getInternetProtocol(),
-            ]
-        );
+            ]);
         foreach ($httpsLogs as $httpLog) {
             $entityManager->remove($httpLog);
         }

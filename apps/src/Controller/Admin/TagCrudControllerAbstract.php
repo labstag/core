@@ -21,9 +21,9 @@ abstract class TagCrudControllerAbstract extends CrudControllerAbstract
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort(
-            ['title' => 'ASC']
-        );
+        $crud->setDefaultSort([
+                'title' => 'ASC',
+            ]);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Tag'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Tags'));
 

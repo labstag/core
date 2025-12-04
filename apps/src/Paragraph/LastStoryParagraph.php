@@ -93,7 +93,8 @@ class LastStoryParagraph extends ParagraphAbstract implements ParagraphInterface
         $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
-            return $object instanceof Page && $object->getType() == PageEnum::HOME->value;
+            return $object instanceof Page && $object->getType() == PageEnum::HOME
+                ->value;
         }
 
         $parent = $this->paragraphService->getEntityParent($paragraph);

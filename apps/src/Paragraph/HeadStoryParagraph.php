@@ -24,14 +24,11 @@ class HeadStoryParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $this->setData(
-            $paragraph,
-            [
+        $this->setData($paragraph, [
                 'story'     => $data['entity'],
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]
-        );
+            ]);
     }
 
     public function getClass(): string

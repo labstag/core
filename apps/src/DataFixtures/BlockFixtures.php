@@ -13,7 +13,6 @@ use Override;
 
 class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
 {
-
     /**
      * @var Page[]
      */

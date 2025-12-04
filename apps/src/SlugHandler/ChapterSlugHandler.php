@@ -44,7 +44,9 @@ class ChapterSlugHandler implements SlugHandlerInterface
             [
                 'refstory' => $object->getRefstory(),
             ],
-            ['position' => 'ASC']
+            [
+                'position' => 'ASC',
+            ]
         );
         foreach ($existingChapters as $existingChapter) {
             if ($existingChapter === $object) {
@@ -67,17 +69,16 @@ class ChapterSlugHandler implements SlugHandlerInterface
     public function setSlugForObject($objectRepository, $object)
     {
         $asciiSlugger        = new AsciiSlugger();
-        $unicodeString       = $asciiSlugger->slug((string) $object->getTitle())->lower();
+        $unicodeString       = $asciiSlugger->slug((string) $object->getTitle())
+            ->lower();
         $slug      = $unicodeString;
         $find      = false;
         $number    = 1;
         while (false === $find) {
-            $testChapter = $objectRepository->findOneBy(
-                [
+            $testChapter = $objectRepository->findOneBy([
                     'refstory' => $object->getRefstory(),
                     'slug'     => $slug,
-                ]
-            );
+                ]);
             if (!$testChapter instanceof Chapter) {
                 $find = true;
                 break;

@@ -43,9 +43,9 @@ class SeasonCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Season'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Seasons'));
-        $crud->setDefaultSort(
-            ['number' => 'ASC']
-        );
+        $crud->setDefaultSort([
+                'number' => 'ASC',
+            ]);
 
         return $crud;
     }
@@ -208,9 +208,9 @@ class SeasonCrudController extends CrudControllerAbstract
 
         $action = Action::new('jsonSeason', new TranslatableMessage('Json'), 'fas fa-server');
         $action->linkToCrudAction('jsonSeason');
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
+        $action->setHtmlAttributes([
+                'target' => '_blank',
+            ]);
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);

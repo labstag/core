@@ -113,15 +113,12 @@ final class EasyadminVoter extends Voter
 
     private function getPermission($entityClass, $shortname, UserInterface $user): bool
     {
-        $codes = [
-            $shortname,
-            $entityClass,
-        ];
+        $codes = [$shortname, $entityClass];
         $code  = strtoupper(implode('_', $codes));
 
-        $permission = $this->permissionRepository->findOneBy(
-            ['title' => $code]
-        );
+        $permission = $this->permissionRepository->findOneBy([
+                'title' => $code,
+            ]);
         if (!$permission instanceof EntityPermission) {
             $permission = new EntityPermission();
             $permission->setTitle($code);

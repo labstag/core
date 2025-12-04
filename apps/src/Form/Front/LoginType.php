@@ -47,13 +47,9 @@ class LoginType extends AbstractType
             ]
         );
         $formBuilder->add('_target_path', HiddenType::class, []);
-        $formBuilder->add(
-            'submit',
-            SubmitType::class,
-            [
+        $formBuilder->add('submit', SubmitType::class, [
                 'label' => new TranslatableMessage('Login'),
-            ]
-        );
+            ]);
     }
 
     #[Override]

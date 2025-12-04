@@ -9,7 +9,6 @@ use Labstag\Repository\CategoryRepository;
 
 class CategoryService
 {
-
     protected array $categories = [];
 
     public function __construct(

@@ -21,7 +21,6 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 abstract class FixtureAbstract extends Fixture
 {
-
     /**
      * @var Category[]
      */

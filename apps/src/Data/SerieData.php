@@ -29,11 +29,9 @@ class SerieData extends PageData implements DataInterface
     #[Override]
     public function generateSlug(object $entity): array
     {
-        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
-            [
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy([
                 'type' => PageEnum::SERIES->value,
-            ]
-        );
+            ]);
 
         $slug = parent::generateSlug($page);
         $slug['slug'] .= '/' . $entity->getSlug();
@@ -141,9 +139,9 @@ class SerieData extends PageData implements DataInterface
         $slugSecond = basename((string) $slug);
         $slugFirst  = dirname((string) $slug);
 
-        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
-            ['slug' => $slugFirst]
-        );
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy([
+                'slug' => $slugFirst,
+            ]);
         if (!$page instanceof Page) {
             return null;
         }
@@ -152,9 +150,9 @@ class SerieData extends PageData implements DataInterface
             return null;
         }
 
-        return $this->entityManager->getRepository(Serie::class)->findOneBy(
-            ['slug' => $slugSecond]
-        );
+        return $this->entityManager->getRepository(Serie::class)->findOneBy([
+                'slug' => $slugSecond,
+            ]);
     }
 
     protected function getJsonLdSeason(object $entity): object

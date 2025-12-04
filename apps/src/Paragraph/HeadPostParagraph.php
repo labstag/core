@@ -24,14 +24,11 @@ class HeadPostParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $this->setData(
-            $paragraph,
-            [
+        $this->setData($paragraph, [
                 'post'      => $data['entity'],
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]
-        );
+            ]);
     }
 
     public function getClass(): string

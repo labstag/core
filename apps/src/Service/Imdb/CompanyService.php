@@ -24,11 +24,9 @@ final class CompanyService
 
     public function getCompany(array $data): Company
     {
-        $company = $this->companyRepository->findOneBy(
-            [
+        $company = $this->companyRepository->findOneBy([
                 'tmdb' => $data['id'],
-            ]
-        );
+            ]);
         if (!$company instanceof Company) {
             $company = new Company();
             $company->setTitle($data['name']);
@@ -50,10 +48,7 @@ final class CompanyService
             return false;
         }
 
-        $statuses = [
-            $this->updateCompany($company, $details),
-            $this->updateImageCompany($company, $details),
-        ];
+        $statuses = [$this->updateCompany($company, $details), $this->updateImageCompany($company, $details)];
 
         return in_array(true, $statuses, true);
     }
@@ -68,7 +63,8 @@ final class CompanyService
 
     private function updateImageCompany(Company $company, array $data): bool
     {
-        $poster = $this->theMovieDbApi->images()->getLogoUrl($data['tmdb']['logo_path'] ?? '');
+        $poster = $this->theMovieDbApi->images()
+            ->getLogoUrl($data['tmdb']['logo_path'] ?? '');
         if (is_null($poster)) {
             $company->setImgFile();
             $company->setImg(null);

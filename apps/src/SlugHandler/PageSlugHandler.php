@@ -84,12 +84,13 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
     {
         unset($slug);
         $this->objectManager       = $sluggableAdapter->getObjectManager();
-        $this->isInsert            = $this->objectManager->getUnitOfWork()->isScheduledForInsert($object);
+        $this->isInsert            = $this->objectManager->getUnitOfWork()
+            ->isScheduledForInsert($object);
         $options = $config['handlers'][static::class];
 
         $this->usedPathSeparator = $options['separator'] ?? self::SEPARATOR;
-        $this->prefix            = $options['prefix'] ?? '';
-        $this->suffix            = $options['suffix'] ?? '';
+        $this->prefix            = $options['prefix']    ?? '';
+        $this->suffix            = $options['suffix']    ?? '';
 
         if (!$this->isInsert && !$needToChangeSlug) {
             $changeSet = $sluggableAdapter->getObjectChangeSet($this->objectManager->getUnitOfWork(), $object);
@@ -140,7 +141,8 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
             $this->parentSlug = $parent->getPropertyValue($config['slug']);
             // if needed, remove suffix from parentSlug, so we can use it to prepend it to our slug
             if (isset($options['suffix'])) {
-                $this->parentSlug = u($this->parentSlug)->trimSuffix($options['suffix'])->toString();
+                $this->parentSlug = u($this->parentSlug)
+                    ->trimSuffix($options['suffix'])->toString();
             }
         }
     }
@@ -171,13 +173,11 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
     public static function validate(array $options, ClassMetadata $meta): void
     {
         if (!$meta->isSingleValuedAssociation($options['parentRelationField'])) {
-            throw new InvalidMappingException(
-                sprintf(
-                    'Unable to find tree parent slug relation through field - [%s] in class - %s',
-                    $options['parentRelationField'],
-                    $meta->getName()
-                )
-            );
+            throw new InvalidMappingException(sprintf(
+                'Unable to find tree parent slug relation through field - [%s] in class - %s',
+                $options['parentRelationField'],
+                $meta->getName()
+            ));
         }
     }
 
@@ -216,11 +216,9 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
         $classMetadata    = $objectManager->getClassMetadata($object::class);
         $objectRepository = $objectManager->getRepository($classMetadata->getName());
 
-        $existingPages = $objectRepository->findBy(
-            [
+        $existingPages = $objectRepository->findBy([
                 'type' => $object->getType(),
-            ]
-        );
+            ]);
 
         foreach ($existingPages as $existingPage) {
             if ($existingPage === $object) {

@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class PageTag extends Tag
 {
-
     /**
      * @var Collection<int, Page>
      */

@@ -33,9 +33,9 @@ class StarCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Star'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Stars'));
-        $crud->setDefaultSort(
-            ['title' => 'ASC']
-        );
+        $crud->setDefaultSort([
+                'title' => 'ASC',
+            ]);
 
         return $crud;
     }

@@ -30,11 +30,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     #[Override]
     public function getDependencies(): array
     {
-        return [
-            CategoryFixtures::class,
-            TagFixtures::class,
-            UserFixtures::class,
-        ];
+        return [CategoryFixtures::class, TagFixtures::class, UserFixtures::class];
     }
 
     public function getParent(mixed $idParent): ?object
@@ -294,7 +290,8 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $user = $this->getReference('user_superadmin', User::class);
         $page->setRefuser($user);
 
-        $date = $generator->unique()->dateTimeBetween('- 8 month', 'now');
+        $date = $generator->unique()
+            ->dateTimeBetween('- 8 month', 'now');
 
         $page->setCreatedAt($date);
         $this->setImage($page, 'imgFile');

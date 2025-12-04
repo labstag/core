@@ -15,7 +15,6 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 final class CacheServiceTest extends TestCase
 {
-
     private CacheInterface&MockObject $cache;
 
     private CacheService $cacheService;
@@ -35,15 +34,16 @@ final class CacheServiceTest extends TestCase
         $callback      = fn (): string => $callbackValue;
         $exception     = new Exception('Cache error');
 
-        $this->cache->method('get')->with($key, $callback, $ttl)->willThrowException($exception);
+        $this->cache->method('get')
+            ->with($key, $callback, $ttl)
+            ->willThrowException($exception);
 
-        $this->logger->expects($this->once())->method('error')->with(
-            'Cache error',
-            [
-                'key'   => $key,
-                'error' => 'Cache error',
-            ]
-        );
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('Cache error', [
+                            'key'   => $key,
+                            'error' => 'Cache error',
+                        ]);
 
         // Act
         $result = $this->cacheService->get($key, $callback, $ttl);
@@ -63,7 +63,9 @@ final class CacheServiceTest extends TestCase
         $ttl           = 3600;
         $callback      = fn (): string => 'callback_value';
 
-        $this->cache->method('get')->with($key, $callback, $ttl)->willReturn($expectedValue);
+        $this->cache->method('get')
+            ->with($key, $callback, $ttl)
+            ->willReturn($expectedValue);
 
         // Act
         $result = $this->cacheService->get($key, $callback, $ttl);
@@ -83,14 +85,18 @@ final class CacheServiceTest extends TestCase
         $complexData = [
             'id'   => 123,
             'name' => 'Test Item',
-            'data' => ['nested' => 'value'],
+            'data' => [
+                'nested' => 'value',
+            ],
         ];
 
         $callback = (fn (): array =>
             // Simulate an expensive operation
             $complexData);
 
-        $this->cache->method('get')->with($key, $callback, 3600)->willReturn($complexData);
+        $this->cache->method('get')
+            ->with($key, $callback, 3600)
+            ->willReturn($complexData);
 
         // Act
         $result = $this->cacheService->get($key, $callback);
@@ -111,7 +117,9 @@ final class CacheServiceTest extends TestCase
         $defaultTtl    = 3600;
         $callback      = fn (): string => 'callback_value';
 
-        $this->cache->method('get')->with($key, $callback, $defaultTtl)->willReturn($expectedValue);
+        $this->cache->method('get')
+            ->with($key, $callback, $defaultTtl)
+            ->willReturn($expectedValue);
 
         // Act
         $result = $this->cacheService->get($key, $callback);
@@ -132,7 +140,9 @@ final class CacheServiceTest extends TestCase
         $customTtl     = 7200;
         $callback      = fn (): string => 'callback_value';
 
-        $this->cache->method('get')->with($key, $callback, $customTtl)->willReturn($expectedValue);
+        $this->cache->method('get')
+            ->with($key, $callback, $customTtl)
+            ->willReturn($expectedValue);
 
         // Act
         $result = $this->cacheService->get($key, $callback, $customTtl);

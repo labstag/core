@@ -36,23 +36,16 @@ class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
             $entityRepository->getQueryPaginator($categorySlug, $tagSlug),
             $paragraph->getNbr()
         );
-        $this->setData(
-            $paragraph,
-            [
+        $this->setData($paragraph, [
                 'pagination' => $pagination,
                 'paragraph'  => $paragraph,
                 'data'       => $data,
-            ]
-        );
+            ]);
 
         $templates = $this->templates($paragraph, 'header');
-        $this->setHeader(
-            $paragraph,
-            $this->render(
-                $templates['view'],
-                ['pagination' => $pagination]
-            )
-        );
+        $this->setHeader($paragraph, $this->render($templates['view'], [
+                    'pagination' => $pagination,
+                ]));
     }
 
     public function getClass(): string
@@ -93,7 +86,8 @@ class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
         $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
-            return $object instanceof Page && $object->getType() == PageEnum::POSTS->value;
+            return $object instanceof Page && $object->getType() == PageEnum::POSTS
+                ->value;
         }
 
         $parent = $this->paragraphService->getEntityParent($paragraph);

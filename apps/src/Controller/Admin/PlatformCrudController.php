@@ -40,7 +40,7 @@ class PlatformCrudController extends CrudControllerAbstract
         $offset             = ($page - 1) * $limit;
         $all                = $request->request->all();
         $data               = [
-            'title'  => $all['platform']['title'] ?? '',
+            'title'  => $all['platform']['title']  ?? '',
             'family' => $all['platform']['family'] ?? '',
         ];
         $platforms = $this->platformService->getPlatformApi($data, $limit, $offset);
@@ -69,9 +69,9 @@ class PlatformCrudController extends CrudControllerAbstract
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort(
-            ['title' => 'ASC']
-        );
+        $crud->setDefaultSort([
+                'title' => 'ASC',
+            ]);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Platform'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Platforms'));
 
@@ -141,9 +141,9 @@ class PlatformCrudController extends CrudControllerAbstract
 
         $action = Action::new('showModalPlatform', new TranslatableMessage('New platform'));
         $action->linkToCrudAction('showModalPlatform');
-        $action->setHtmlAttributes(
-            ['data-action' => 'show-modal']
-        );
+        $action->setHtmlAttributes([
+                'data-action' => 'show-modal',
+            ]);
         $action->createAsGlobalAction();
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);

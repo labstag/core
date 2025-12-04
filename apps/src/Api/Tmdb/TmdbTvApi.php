@@ -65,11 +65,9 @@ class TmdbTvApi extends AbstractTmdbApi
         ?string $language = null,
     ): ?array
     {
-        $params = array_filter(
-            [
+        $params = array_filter([
                 'language' => $language ?? 'fr-FR',
-            ]
-        );
+            ]);
 
         $query    = $this->buildQueryParams($params);
         $cacheKey = 'tmdb_tv_episode_' . $seriesId . '_s' . $seasonNumber . 'e' . $episodeNumber . '_' . md5($query);
@@ -146,9 +144,9 @@ class TmdbTvApi extends AbstractTmdbApi
         ?string $includeImageLanguage = null,
     ): ?array
     {
-        $params = array_filter(
-            ['include_image_language' => $includeImageLanguage]
-        );
+        $params = array_filter([
+                'include_image_language' => $includeImageLanguage,
+            ]);
 
         $query    = $this->buildQueryParams($params);
         $cacheKey = 'tmdb_tv_episode_images_' . $seriesId . '_s' . $seasonNumber . 'e' . $episodeNumber . '_' . md5(
@@ -186,9 +184,9 @@ class TmdbTvApi extends AbstractTmdbApi
      */
     public function getImages(string $seriesId, ?string $includeImageLanguage = null): ?array
     {
-        $params = array_filter(
-            ['include_image_language' => $includeImageLanguage]
-        );
+        $params = array_filter([
+                'include_image_language' => $includeImageLanguage,
+            ]);
 
         $query    = $this->buildQueryParams($params);
         $cacheKey = 'tmdb_tv_images_' . $seriesId . '_' . md5($query);
@@ -224,12 +222,10 @@ class TmdbTvApi extends AbstractTmdbApi
      */
     public function getPopular(int $page = 1, ?string $language = null): ?array
     {
-        $params = array_filter(
-            [
+        $params = array_filter([
                 'page'     => 1 < $page ? $page : null,
                 'language' => $language ?? 'en-US',
-            ]
-        );
+            ]);
 
         $query    = $this->buildQueryParams($params);
         $cacheKey = 'tmdb_popular_tv_' . md5($query);
@@ -305,9 +301,9 @@ class TmdbTvApi extends AbstractTmdbApi
      */
     public function getSeasonVideos(string $seriesId, int $seasonNumber, ?string $language = null): ?array
     {
-        $params = array_filter(
-            ['language' => $language]
-        );
+        $params = array_filter([
+                'language' => $language,
+            ]);
 
         $query    = $this->buildQueryParams($params);
         $cacheKey = 'tmdb_tv_season_videos_' . $seriesId . '_s' . $seasonNumber . '_' . md5($query);
@@ -443,9 +439,9 @@ class TmdbTvApi extends AbstractTmdbApi
      */
     public function getVideos(string $seriesId, ?string $language = null): ?array
     {
-        $params = array_filter(
-            ['language' => $language]
-        );
+        $params = array_filter([
+                'language' => $language,
+            ]);
 
         $query    = $this->buildQueryParams($params);
         $cacheKey = 'tmdb_tv_videos_' . $seriesId . '_' . md5($query);

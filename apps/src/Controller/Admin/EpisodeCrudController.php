@@ -39,9 +39,9 @@ class EpisodeCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Episode'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Episodes'));
-        $crud->setDefaultSort(
-            ['number' => 'ASC']
-        );
+        $crud->setDefaultSort([
+                'number' => 'ASC',
+            ]);
 
         return $crud;
     }
@@ -108,18 +108,16 @@ class EpisodeCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterEnable($filters);
         $filters->add(
             SerieEpisodeFilter::new('number', new TranslatableMessage('Season'))->setChoices(
-                array_merge(
-                    ['' => ''],
-                    $this->seasonService->getSeasonsChoice()
-                )
+                array_merge([
+                        '' => '',
+                    ], $this->seasonService->getSeasonsChoice())
             )
         );
         $filters->add(
             SeasonEpisodeFilter::new('serie', new TranslatableMessage('Serie'))->setChoices(
-                array_merge(
-                    ['' => ''],
-                    $this->serieService->getSeriesChoice()
-                )
+                array_merge([
+                        '' => '',
+                    ], $this->serieService->getSeriesChoice())
             )
         );
 
@@ -173,9 +171,9 @@ class EpisodeCrudController extends CrudControllerAbstract
 
         $action = Action::new('jsonEpisode', new TranslatableMessage('Json'), 'fas fa-server');
         $action->linkToCrudAction('jsonEpisode');
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
+        $action->setHtmlAttributes([
+                'target' => '_blank',
+            ]);
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);

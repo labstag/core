@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class LastStoryParagraph extends Paragraph
 {
-
     #[ORM\Column(nullable: true)]
     protected ?int $nbr = null;
 

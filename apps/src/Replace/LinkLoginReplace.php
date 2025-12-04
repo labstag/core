@@ -11,11 +11,9 @@ class LinkLoginReplace extends ReplaceAbstract
     {
         $configuration    = $this->configurationService->getConfiguration();
         $entityRepository = $this->entityManager->getRepository(Page::class);
-        $login            = $entityRepository->findOneBy(
-            [
+        $login            = $entityRepository->findOneBy([
                 'type' => PageEnum::LOGIN->value,
-            ]
-        );
+            ]);
         if (!$login instanceof Page) {
             return '#disableurl';
         }

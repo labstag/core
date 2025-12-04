@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 final class SlugService
 {
-
     /**
      * @var array<string, mixed>
      */

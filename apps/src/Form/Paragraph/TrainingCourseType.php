@@ -19,27 +19,15 @@ class TrainingCourseType extends AbstractType
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         $formBuilder->add('position', HiddenType::class);
-        $formBuilder->add(
-            'title',
-            TextType::class,
-            [
+        $formBuilder->add('title', TextType::class, [
                 'label' => new TranslatableMessage('Title'),
-            ]
-        );
-        $formBuilder->add(
-            'year',
-            TextType::class,
-            [
+            ]);
+        $formBuilder->add('year', TextType::class, [
                 'label' => new TranslatableMessage('Year'),
-            ]
-        );
-        $formBuilder->add(
-            'place',
-            TextType::class,
-            [
+            ]);
+        $formBuilder->add('place', TextType::class, [
                 'label' => new TranslatableMessage('Place'),
-            ]
-        );
+            ]);
 
         unset($options);
     }

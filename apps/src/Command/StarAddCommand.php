@@ -18,7 +18,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[AsCommand(name: 'labstag:star-add', description: 'Get all star github with npm run star:get')]
 class StarAddCommand extends Command
 {
-
     private int $add = 0;
 
     private int $update = 0;

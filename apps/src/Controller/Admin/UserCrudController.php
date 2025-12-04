@@ -36,9 +36,9 @@ class UserCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('User'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Users'));
-        $crud->setDefaultSort(
-            ['username' => 'ASC']
-        );
+        $crud->setDefaultSort([
+                'username' => 'ASC',
+            ]);
 
         return $crud;
     }
@@ -58,11 +58,15 @@ class UserCrudController extends CrudControllerAbstract
                 'type'           => PasswordType::class,
                 'first_options'  => [
                     'label' => new TranslatableMessage('Password'),
-                    'attr'  => ['autocomplete' => 'new-password'],
+                    'attr'  => [
+                        'autocomplete' => 'new-password',
+                    ],
                 ],
                 'second_options' => [
                     'label' => new TranslatableMessage('Repeat Password'),
-                    'attr'  => ['autocomplete' => 'new-password'],
+                    'attr'  => [
+                        'autocomplete' => 'new-password',
+                    ],
                 ],
                 'mapped'         => false,
             ]
@@ -89,9 +93,9 @@ class UserCrudController extends CrudControllerAbstract
                 'generatepassword',
                 new TranslatableMessage('generate Password')
             );
-            $generatePasswordField->setFormTypeOptions(
-                ['mapped' => false]
-            );
+            $generatePasswordField->setFormTypeOptions([
+                    'mapped' => false,
+                ]);
             $this->crudFieldFactory->addFieldsToTab('principal', [$generatePasswordField]);
         }
 
@@ -100,10 +104,7 @@ class UserCrudController extends CrudControllerAbstract
         $languageField->setChoices($langue);
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
-            [
-                $languageField,
-                $this->crudFieldFactory->imageField('avatar', $pageName, self::getEntityFqcn()),
-            ]
+            [$languageField, $this->crudFieldFactory->imageField('avatar', $pageName, self::getEntityFqcn())]
         );
 
         $tab = [
@@ -203,22 +204,26 @@ class UserCrudController extends CrudControllerAbstract
                 return;
             }
 
-            $generatepassword = $form->get('generatepassword')->getData();
+            $generatepassword = $form->get('generatepassword')
+                ->getData();
             if ($generatepassword) {
                 $password = bin2hex(random_bytes(10));
                 $hash     = $this->userService->hashPassword($event->getData(), $password);
-                $form->getData()->setPassword($hash);
+                $form->getData()
+                    ->setPassword($hash);
 
                 return;
             }
 
-            $password = $form->get('password')->getData();
+            $password = $form->get('password')
+                ->getData();
             if (is_null($password)) {
                 return;
             }
 
             $hash = $this->userService->hashPassword($event->getData(), $password);
-            $form->getData()->setPassword($hash);
+            $form->getData()
+                ->setPassword($hash);
         };
     }
 }

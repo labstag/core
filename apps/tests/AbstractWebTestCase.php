@@ -11,7 +11,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 abstract class AbstractWebTestCase extends WebTestCase
 {
-
     protected static ?KernelBrowser $client = null;
 
     /**

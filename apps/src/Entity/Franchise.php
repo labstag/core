@@ -14,7 +14,6 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 #[ORM\Index(name: 'IDX_FRANCHISE_SLUG', columns: ['slug'])]
 class Franchise
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]

@@ -20,13 +20,10 @@ class HeadCvParagraph extends ParagraphAbstract implements ParagraphInterface
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        $this->setData(
-            $paragraph,
-            [
+        $this->setData($paragraph, [
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]
-        );
+            ]);
     }
 
     public function getClass(): string
@@ -64,7 +61,8 @@ class HeadCvParagraph extends ParagraphAbstract implements ParagraphInterface
         $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
-            return $object instanceof Page && $object->getType() == PageEnum::CV->value;
+            return $object instanceof Page && $object->getType() == PageEnum::CV
+                ->value;
         }
 
         $parent = $this->paragraphService->getEntityParent($paragraph);

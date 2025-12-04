@@ -31,20 +31,14 @@ class ContentBlock extends BlockAbstract
     #[Override]
     public function generate(Block $block, array $data, bool $disable): void
     {
-        $this->logger->debug(
-            'Starting content block generation',
-            [
+        $this->logger->debug('Starting content block generation', [
                 'block_id' => $block->getId(),
-            ]
-        );
+            ]);
 
         if (!isset($data['paragraphs']) || !is_array($data['paragraphs'])) {
-            $this->logger->warning(
-                'Invalid paragraphs data for content block',
-                [
+            $this->logger->warning('Invalid paragraphs data for content block', [
                     'block_id' => $block->getId(),
-                ]
-            );
+                ]);
             $this->setShow($block, false);
 
             return;

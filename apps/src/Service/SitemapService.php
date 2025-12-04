@@ -18,7 +18,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class SitemapService
 {
-
     /**
      * @var string[]
      */
@@ -71,7 +70,9 @@ final class SitemapService
         $url    = $this->urlGenerator->generate('front', $params);
 
         return [
-            '/' . $url => ['entity' => $entity],
+            '/' . $url => [
+                'entity' => $entity,
+            ],
         ];
     }
 

@@ -25,9 +25,9 @@ class FranchiseCrudController extends CrudControllerAbstract
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort(
-            ['title' => 'ASC']
-        );
+        $crud->setDefaultSort([
+                'title' => 'ASC',
+            ]);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Franchise'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Franchises'));
 
@@ -48,11 +48,7 @@ class FranchiseCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
-            [
-                $this->crudFieldFactory->titleField(),
-                $textField,
-                $associationField,
-            ]
+            [$this->crudFieldFactory->titleField(), $textField, $associationField]
         );
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);

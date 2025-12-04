@@ -42,13 +42,9 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
         }
 
         $this->securityService->addBan($internetProtocol);
-        $this->addFlash(
-            'success',
-            new TranslatableMessage(
-                'Ip %ip% banned',
-                ['%ip%' => $internetProtocol]
-            )
-        );
+        $this->addFlash('success', new TranslatableMessage('Ip %ip% banned', [
+                    '%ip%' => $internetProtocol,
+                ]));
 
         return $redirectToRoute;
     }
@@ -70,9 +66,9 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('HTTP Error Log'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('HTTP Error Logs'));
-        $crud->setDefaultSort(
-            ['createdAt' => 'DESC']
-        );
+        $crud->setDefaultSort([
+                'createdAt' => 'DESC',
+            ]);
 
         return $crud;
     }
@@ -92,7 +88,9 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
                 IsBotField::new('bot', new TranslatableMessage('Bot')),
             ]
         );
-        $currentEntity = $this->getContext()->getEntity()->getInstance();
+        $currentEntity = $this->getContext()
+            ->getEntity()
+            ->getInstance();
         if (!is_null($currentEntity)) {
             $deviceDetector = new DeviceDetector($currentEntity->getAgent());
             $deviceDetector->parse();
@@ -184,12 +182,9 @@ class HttpErrorLogsCrudController extends CrudControllerAbstract
     {
         $action = Action::new('newRedirection', new TranslatableMessage('new Redirection'));
         $action->linkToUrl(
-            fn ($entity): string => $this->generateUrl(
-                'admin_redirection_new',
-                [
+            fn ($entity): string => $this->generateUrl('admin_redirection_new', [
                     'source' => $entity->getUrl(),
-                ]
-            )
+                ])
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

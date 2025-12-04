@@ -13,7 +13,6 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 final class WorkflowService
 {
-
     /**
      * @var array<string, mixed>
      */
@@ -49,7 +48,8 @@ final class WorkflowService
             return;
         }
 
-        $session->getFlashBag()->add('success', new TranslatableMessage('The status has been successfully changed'));
+        $session->getFlashBag()
+            ->add('success', new TranslatableMessage('The status has been successfully changed'));
     }
 
     public function get(object $entity): ?WorkflowInterface

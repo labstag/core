@@ -33,15 +33,7 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $types = [
-            'title',
-            'country',
-            'categories',
-            'sagas',
-            'year',
-            'order',
-            'orderby',
-        ];
+        $types = ['title', 'country', 'categories', 'sagas', 'year', 'order', 'orderby'];
         foreach ($types as $type) {
             if ($request->query->has($type)) {
                 $this->setShow($paragraph, false);
@@ -61,7 +53,8 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
 
         $sagas = $entityRepository->showPublic();
         foreach ($sagas as $key => $saga) {
-            $total = $saga->getMovies()->filter(fn ($movie) => $movie->isEnable());
+            $total = $saga->getMovies()
+                ->filter(fn ($movie) => $movie->isEnable());
             if (self::MINMOVIES > count($total)) {
                 unset($sagas[$key]);
             }
@@ -73,14 +66,11 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $this->setData(
-            $paragraph,
-            [
+        $this->setData($paragraph, [
                 'sagas'     => $sagas,
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]
-        );
+            ]);
     }
 
     public function getClass(): string

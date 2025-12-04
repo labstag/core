@@ -22,7 +22,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 final class MovieService
 {
-
     /**
      * @var array<string, mixed>
      */
@@ -52,36 +51,36 @@ final class MovieService
 
     public function addToBddMovie(Recommendation $recommendation, string $tmdbId): RedirectResponse
     {
-        $details = $this->theMovieDbApi->movies()->getDetails($tmdbId);
+        $details = $this->theMovieDbApi->movies()
+            ->getDetails($tmdbId);
         if (0 === count($details)) {
             return new RedirectResponse($this->router->generate('admin_recommendation_index'));
         }
 
-        $movie = $this->movieRepository->findOneBy(
-            ['tmdb' => $tmdbId]
-        );
+        $movie = $this->movieRepository->findOneBy([
+                'tmdb' => $tmdbId,
+            ]);
         if ($movie instanceof Movie) {
-            $this->getFlashBag()->add(
-                'warning',
-                new TranslatableMessage(
-                    'The %name% movie is already present in the database',
-                    [
-                        '%name%' => $movie->getTitle(),
-                    ]
-                )
-            );
+            $this->getFlashBag()
+                ->add(
+                    'warning',
+                    new TranslatableMessage(
+                        'The %name% movie is already present in the database',
+                        [
+                            '%name%' => $movie->getTitle(),
+                        ]
+                    )
+                );
 
             return new RedirectResponse(
-                $this->router->generate(
-                    'admin_movie_detail',
-                    [
+                $this->router->generate('admin_movie_detail', [
                         'entityId' => $movie->getId(),
-                    ]
-                )
+                    ])
             );
         }
 
-        $data = $this->theMovieDbApi->movies()->getMovieExternalIds($tmdbId);
+        $data = $this->theMovieDbApi->movies()
+            ->getMovieExternalIds($tmdbId);
         $movie = new Movie();
         $movie->setFile(false);
         $movie->setEnable(true);
@@ -92,23 +91,21 @@ final class MovieService
 
         $this->movieRepository->save($movie);
         $this->messageBus->dispatch(new MovieMessage($movie->getId()));
-        $this->getFlashBag()->add(
-            'success',
-            new TranslatableMessage(
-                'The %name% movie has been added to the database',
-                [
-                    '%name%' => $movie->getTitle(),
-                ]
-            )
-        );
+        $this->getFlashBag()
+            ->add(
+                'success',
+                new TranslatableMessage(
+                    'The %name% movie has been added to the database',
+                    [
+                        '%name%' => $movie->getTitle(),
+                    ]
+                )
+            );
 
         return new RedirectResponse(
-            $this->router->generate(
-                'admin_movie_detail',
-                [
+            $this->router->generate('admin_movie_detail', [
                     'entityId' => $movie->getId(),
-                ]
-            )
+                ])
         );
     }
 
@@ -135,7 +132,8 @@ final class MovieService
         $movies             = [];
         $tmdbs              = $this->movieRepository->getAllTmdb();
         if (isset($data['imdb']) && !empty($data['imdb'])) {
-            $results = $this->theMovieDbApi->other()->findByImdb($data['imdb']);
+            $results = $this->theMovieDbApi->other()
+                ->findByImdb($data['imdb']);
             if (isset($results['movie_results'])) {
                 $movies = $results['movie_results'];
             }
@@ -149,7 +147,8 @@ final class MovieService
         }
 
         $locale             = $this->configurationService->getLocaleTmdb();
-        $results            = $this->theMovieDbApi->movies()->search(searchQuery: $search, page: $page, language: $locale);
+        $results            = $this->theMovieDbApi->movies()
+            ->search(searchQuery: $search, page: $page, language: $locale);
         if (isset($results['results'])) {
             $movies = $results['results'];
         }
@@ -282,7 +281,8 @@ final class MovieService
      */
     private function updateImageBackdrop(Movie $movie, array $details): bool
     {
-        $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
+        $backdrop = $this->theMovieDbApi->images()
+            ->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
         if (is_null($backdrop)) {
             $movie->setBackdropFile();
             $movie->setBackdrop(null);
@@ -300,7 +300,8 @@ final class MovieService
      */
     private function updateImagePoster(Movie $movie, array $details): bool
     {
-        $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
+        $poster = $this->theMovieDbApi->images()
+            ->getPosterUrl($details['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
             $movie->setPosterFile();
             $movie->setPoster(null);

@@ -48,10 +48,11 @@ final class EpisodeService
 
     public function getEpisodes(Season $season): array
     {
-        return $this->episodeRepository->findBy(
-            ['refseason' => $season],
-            ['number' => 'ASC']
-        );
+        return $this->episodeRepository->findBy([
+                'refseason' => $season,
+            ], [
+                'number' => 'ASC',
+            ]);
     }
 
     public function save(Episode $episode): void
@@ -68,10 +69,7 @@ final class EpisodeService
             return false;
         }
 
-        $statuses = [
-            $this->updateEpisode($episode, $details),
-            $this->updateImage($episode, $details),
-        ];
+        $statuses = [$this->updateEpisode($episode, $details), $this->updateImage($episode, $details)];
 
         return in_array(true, $statuses, true);
     }
@@ -100,7 +98,8 @@ final class EpisodeService
      */
     private function updateImage(Episode $episode, array $details): bool
     {
-        $poster = $this->theMovieDbApi->images()->getStillUrl($details['tmdb']['still_path'] ?? '');
+        $poster = $this->theMovieDbApi->images()
+            ->getStillUrl($details['tmdb']['still_path'] ?? '');
         if (is_null($poster)) {
             $episode->setImgFile();
             $episode->setImg(null);

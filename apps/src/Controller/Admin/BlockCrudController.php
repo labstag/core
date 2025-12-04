@@ -48,9 +48,9 @@ class BlockCrudController extends CrudControllerAbstract
 
         $action = Action::new('showModalBlock', new TranslatableMessage('New block'));
         $action->linkToCrudAction('showModalBlock');
-        $action->setHtmlAttributes(
-            ['data-action' => 'show-modal']
-        );
+        $action->setHtmlAttributes([
+                'data-action' => 'show-modal',
+            ]);
         $action->createAsGlobalAction();
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
@@ -82,7 +82,9 @@ class BlockCrudController extends CrudControllerAbstract
 
                     return new TranslatableMessage(
                         'Block %name%',
-                        ['%name%' => $name]
+                        [
+                            '%name%' => $name,
+                        ]
                     );
                 }
 
@@ -90,14 +92,16 @@ class BlockCrudController extends CrudControllerAbstract
 
                 return new TranslatableMessage(
                     'Block %name%',
-                    ['%name%' => $name]
+                    [
+                        '%name%' => $name,
+                    ]
                 );
             }
         );
         $crud->setEntityLabelInPlural(new TranslatableMessage('Blocks'));
-        $crud->setDefaultSort(
-            ['title' => 'ASC']
-        );
+        $crud->setDefaultSort([
+                'title' => 'ASC',
+            ]);
 
         return $crud;
     }
@@ -106,7 +110,9 @@ class BlockCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
-        $currentEntity = $this->getContext()->getEntity()->getInstance();
+        $currentEntity = $this->getContext()
+            ->getEntity()
+            ->getInstance();
 
         $regionField = ChoiceField::new('region', new TranslatableMessage('Region'));
         $regionField->setChoices($this->blockService->getRegions());
@@ -143,8 +149,8 @@ class BlockCrudController extends CrudControllerAbstract
         $requestPathField->setRequired(true);
         $requestPathField->setChoices(
             [
-                new TranslatableMessage('Show for listed pages') => '0',
-                new TranslatableMessage('Hide for listed pages') => '1',
+                $this->translator->trans(new TranslatableMessage('Show for listed pages')) => '0',
+                $this->translator->trans(new TranslatableMessage('Hide for listed pages')) => '1',
             ]
         );
         $this->crudFieldFactory->addFieldsToTab(
@@ -171,12 +177,9 @@ class BlockCrudController extends CrudControllerAbstract
 
         $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', new TranslatableMessage('Type'));
         $discriminatorTypeFilter->setBlockService($this->blockService);
-        $discriminatorTypeFilter->setChoices(
-            array_merge(
-                ['' => ''],
-                $types
-            )
-        );
+        $discriminatorTypeFilter->setChoices(array_merge([
+                    '' => '',
+                ], $types));
 
         $filters->add($discriminatorTypeFilter);
 
@@ -247,13 +250,10 @@ class BlockCrudController extends CrudControllerAbstract
     {
         $blocks = $this->blockService->getAll(null);
 
-        return $this->render(
-            'admin/block/new.html.twig',
-            [
+        return $this->render('admin/block/new.html.twig', [
                 'controller' => static::class,
                 'blocks'     => $blocks,
-            ]
-        );
+            ]);
     }
 
     public function positionBlock(Request $request): RedirectResponse|Response
@@ -297,23 +297,19 @@ class BlockCrudController extends CrudControllerAbstract
             return $this->redirect($url);
         }
 
-        return $this->render(
-            'admin/block/order.html.twig',
-            ['blocks' => $blocks]
-        );
+        return $this->render('admin/block/order.html.twig', [
+                'blocks' => $blocks,
+            ]);
     }
 
     public function showModalBlock(): Response
     {
         $blocks = $this->blockService->getAll(null);
 
-        return $this->render(
-            'admin/block/new.html.twig',
-            [
+        return $this->render('admin/block/new.html.twig', [
                 'controller' => static::class,
                 'blocks'     => $blocks,
-            ]
-        );
+            ]);
     }
 
     private function setPosition(): callable
@@ -327,7 +323,8 @@ class BlockCrudController extends CrudControllerAbstract
 
             $data                            = $event->getData();
             $repositoryAbstract              = $this->getRepository();
-            $region                          = $form->get('region')->getData();
+            $region                          = $form->get('region')
+                ->getData();
             if (is_null($region) || !$repositoryAbstract instanceof BlockRepository) {
                 return;
             }

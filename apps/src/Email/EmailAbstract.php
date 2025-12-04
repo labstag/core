@@ -18,7 +18,6 @@ use Twig\Environment;
 #[AutoconfigureTag('labstag.emails')]
 abstract class EmailAbstract extends Email
 {
-
     /**
      * @var mixed[]
      */
@@ -57,11 +56,9 @@ abstract class EmailAbstract extends Email
 
     public function getEntity(): ?Template
     {
-        return $this->templateRepository->findOneBy(
-            [
+        return $this->templateRepository->findOneBy([
                 'code' => $this->getType(),
-            ]
-        );
+            ]);
     }
 
     public function getHelp(): ?string
@@ -132,14 +129,8 @@ abstract class EmailAbstract extends Email
         $configuration = $this->configurationService->getConfiguration();
         $entity        = $this->getEntity();
         $subject       = str_replace(
-            [
-                '%content_title%',
-                '%site_name%',
-            ],
-            [
-                $this->replace($entity->getTitle()),
-                $configuration->getName(),
-            ],
+            ['%content_title%', '%site_name%'],
+            [$this->replace($entity->getTitle()), $configuration->getName()],
             $configuration->getTitleFormat()
         );
 
@@ -165,10 +156,7 @@ abstract class EmailAbstract extends Email
         }
 
         $twig  = '.' . $type . '.twig';
-        $files = [
-            'emails/' . $folder . $twig,
-            'emails/default' . $twig,
-        ];
+        $files = ['emails/' . $folder . $twig, 'emails/default' . $twig];
 
         $view   = end($files);
         $loader = $this->twigEnvironment->getLoader();

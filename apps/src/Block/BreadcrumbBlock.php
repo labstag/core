@@ -83,15 +83,9 @@ class BreadcrumbBlock extends BlockAbstract
             $item = Schema::listItem();
             $item->position($position + 1);
             $item->name($data['title']);
-            $item->item(
-                $this->router->generate(
-                    'front',
-                    [
+            $item->item($this->router->generate('front', [
                         'slug' => $data['url'],
-                    ],
-                    0
-                )
-            );
+                    ], 0));
             $breadcrumbs[] = $item;
         }
 

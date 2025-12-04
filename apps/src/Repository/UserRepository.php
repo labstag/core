@@ -54,7 +54,9 @@ class UserRepository extends RepositoryAbstract implements PasswordUpgraderInter
         }
 
         $passwordAuthenticatedUser->setPassword($newHashedPassword);
-        $this->getEntityManager()->persist($passwordAuthenticatedUser);
-        $this->getEntityManager()->flush();
+        $this->getEntityManager()
+            ->persist($passwordAuthenticatedUser);
+        $this->getEntityManager()
+            ->flush();
     }
 }

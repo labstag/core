@@ -48,11 +48,9 @@ final class GameService extends AbstractIgdb
     public function getFranchise(array $data): Franchise
     {
         $entityRepository = $this->entityManager->getRepository(Franchise::class);
-        $franchise        = $entityRepository->findOneBy(
-            [
+        $franchise        = $entityRepository->findOneBy([
                 'igdb' => $data['id'],
-            ]
-        );
+            ]);
         if ($franchise instanceof Franchise) {
             return $franchise;
         }
@@ -95,11 +93,7 @@ final class GameService extends AbstractIgdb
 
         $body  = $this->igdbApi->setBody(
             search: $search,
-            fields: [
-                '*',
-                'cover.*',
-                'game_type.*',
-            ],
+            fields: ['*', 'cover.*', 'game_type.*'],
             where: $where,
             limit: $limit,
             offset: $offset
@@ -179,15 +173,7 @@ final class GameService extends AbstractIgdb
     private function getApiGameId(string $id): ?array
     {
         $where  = ['id = ' . $id];
-        $fields = [
-            '*',
-            'cover.*',
-            'genres.*',
-            'franchises.*',
-            'screenshots.*',
-            'artworks.*',
-            'videos.*',
-        ];
+        $fields = ['*', 'cover.*', 'genres.*', 'franchises.*', 'screenshots.*', 'artworks.*', 'videos.*'];
         $body   = $this->igdbApi->setBody(fields: $fields, where: $where, limit: 1);
 
         $results = $this->igdbApi->setUrl('games', $body);
@@ -201,11 +187,9 @@ final class GameService extends AbstractIgdb
     private function getGameByRow(array $data): Game
     {
         $entityRepository = $this->entityManager->getRepository(Game::class);
-        $game             = $entityRepository->findOneBy(
-            [
+        $game             = $entityRepository->findOneBy([
                 'igdb' => $data['id'],
-            ]
-        );
+            ]);
         if ($game instanceof Game) {
             return $game;
         }

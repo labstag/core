@@ -54,11 +54,15 @@ class ProfilCrudController extends UserCrudController
                 'type'           => PasswordType::class,
                 'first_options'  => [
                     'label' => new TranslatableMessage('Password'),
-                    'attr'  => ['autocomplete' => 'new-password'],
+                    'attr'  => [
+                        'autocomplete' => 'new-password',
+                    ],
                 ],
                 'second_options' => [
                     'label' => new TranslatableMessage('Repeat Password'),
-                    'attr'  => ['autocomplete' => 'new-password'],
+                    'attr'  => [
+                        'autocomplete' => 'new-password',
+                    ],
                 ],
                 'mapped'         => false,
             ]

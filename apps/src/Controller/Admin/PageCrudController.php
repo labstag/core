@@ -30,9 +30,9 @@ class PageCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Page'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Pages'));
-        $crud->setDefaultSort(
-            ['createdAt' => 'DESC']
-        );
+        $crud->setDefaultSort([
+                'createdAt' => 'DESC',
+            ]);
 
         return $crud;
     }
@@ -40,7 +40,9 @@ class PageCrudController extends CrudControllerAbstract
     #[Override]
     public function configureFields(string $pageName): iterable
     {
-        $currentEntity = $this->getContext()->getEntity()->getInstance();
+        $currentEntity = $this->getContext()
+            ->getEntity()
+            ->getInstance();
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $this->crudFieldFactory->addFieldsToTab('principal', $this->getIdEntity($pageName, $currentEntity));
 
@@ -82,11 +84,10 @@ class PageCrudController extends CrudControllerAbstract
     public function createEntity(string $entityFqcn): Page
     {
         $page = parent::createEntity($entityFqcn);
-        $home = $this->getRepository()->findOneBy(
-            [
-                'type' => PageEnum::HOME->value,
-            ]
-        );
+        $home = $this->getRepository()
+            ->findOneBy([
+                            'type' => PageEnum::HOME->value,
+                        ]);
         if ($home instanceof Page) {
             $page->setPage($home);
         }

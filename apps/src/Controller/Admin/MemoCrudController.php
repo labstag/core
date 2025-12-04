@@ -25,9 +25,9 @@ class MemoCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Memo'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Memos'));
-        $crud->setDefaultSort(
-            ['createdAt' => 'DESC']
-        );
+        $crud->setDefaultSort([
+                'createdAt' => 'DESC',
+            ]);
 
         return $crud;
     }

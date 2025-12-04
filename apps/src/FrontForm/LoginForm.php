@@ -47,16 +47,12 @@ class LoginForm extends FrontFormAbstract
         ];
 
         $entityRepository = $this->entityManager->getRepository(Page::class);
-        $lost             = $entityRepository->findOneBy(
-            [
+        $lost             = $entityRepository->findOneBy([
                 'type' => PageEnum::LOSTPASSWORD->value,
-            ]
-        );
-        $form = $this->createForm(
-            $this->getForm(),
-            $data,
-            ['method' => 'POST']
-        );
+            ]);
+        $form = $this->createForm($this->getForm(), $data, [
+                'method' => 'POST',
+            ]);
         $execute = false;
 
         return [

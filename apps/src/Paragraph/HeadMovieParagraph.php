@@ -24,14 +24,11 @@ class HeadMovieParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $this->setData(
-            $paragraph,
-            [
+        $this->setData($paragraph, [
                 'movie'     => $data['entity'],
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]
-        );
+            ]);
     }
 
     public function getClass(): string

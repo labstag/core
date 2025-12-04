@@ -12,7 +12,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class StoryService
 {
-
     /**
      * @var array<string, mixed>
      */

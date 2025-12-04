@@ -86,9 +86,9 @@ class StoryCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Story'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Stories'));
-        $crud->setDefaultSort(
-            ['createdAt' => 'DESC']
-        );
+        $crud->setDefaultSort([
+                'createdAt' => 'DESC',
+            ]);
 
         return $crud;
     }
@@ -162,12 +162,9 @@ class StoryCrudController extends CrudControllerAbstract
             return $this->redirect($url);
         }
 
-        return $this->render(
-            'admin/story/order.html.twig',
-            [
+        return $this->render('admin/story/order.html.twig', [
                 'chapters' => $story->getChapters(),
-            ]
-        );
+            ]);
     }
 
     public function updateAllStory(): RedirectResponse
@@ -216,12 +213,9 @@ class StoryCrudController extends CrudControllerAbstract
 
         $action = Action::new('newChapter', new TranslatableMessage('New chapter'));
         $action->linkToUrl(
-            fn (Story $story): string => $this->generateUrl(
-                'admin_chapter_new',
-                [
+            fn (Story $story): string => $this->generateUrl('admin_chapter_new', [
                     'story' => $story->getId(),
-                ]
-            )
+                ])
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

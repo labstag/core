@@ -41,13 +41,14 @@ class SagaSlugHandler implements SlugHandlerInterface
         $objectRepository = $objectManager->getRepository(Saga::class);
 
         $asciiSlugger = new AsciiSlugger();
-        $slug         = $asciiSlugger->slug((string) $object->getTitle())->lower();
+        $slug         = $asciiSlugger->slug((string) $object->getTitle())
+            ->lower();
 
         $originalSlug = $slug;
 
-        $existingMovies = $objectRepository->findBy(
-            ['slug' => $slug]
-        );
+        $existingMovies = $objectRepository->findBy([
+                'slug' => $slug,
+            ]);
 
         if ($existingMovies) {
             $slug = $originalSlug . '-saga';

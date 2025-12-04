@@ -20,7 +20,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 #[AsCommand(name: 'labstag:geocode-install', description: 'Retrieve geocodes')]
 class GeocodeInstallCommand extends Command
 {
-
     private int $add = 0;
 
     private int $update = 0;

@@ -16,11 +16,9 @@ class PostData extends PageData implements DataInterface
     #[Override]
     public function generateSlug(object $entity): array
     {
-        $page  = $this->entityManager->getRepository(Page::class)->findOneBy(
-            [
+        $page  = $this->entityManager->getRepository(Page::class)->findOneBy([
                 'type' => PageEnum::POSTS->value,
-            ]
-        );
+            ]);
 
         $slug = parent::generateSlug($page);
         $slug['slug'] .= '/' . $entity->getSlug();
@@ -136,9 +134,9 @@ class PostData extends PageData implements DataInterface
         $slugSecond = basename((string) $slug);
         $slugFirst  = dirname((string) $slug);
 
-        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
-            ['slug' => $slugFirst]
-        );
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy([
+                'slug' => $slugFirst,
+            ]);
         if (!$page instanceof Page) {
             return null;
         }
@@ -147,8 +145,8 @@ class PostData extends PageData implements DataInterface
             return null;
         }
 
-        return $this->entityManager->getRepository(Post::class)->findOneBy(
-            ['slug' => $slugSecond]
-        );
+        return $this->entityManager->getRepository(Post::class)->findOneBy([
+                'slug' => $slugSecond,
+            ]);
     }
 }

@@ -112,9 +112,9 @@ class TmdbMoviesApi extends AbstractTmdbApi
      */
     public function getImages(string $movieId, ?string $includeImageLanguage = null): ?array
     {
-        $params = array_filter(
-            ['include_image_language' => $includeImageLanguage]
-        );
+        $params = array_filter([
+                'include_image_language' => $includeImageLanguage,
+            ]);
 
         $query    = $this->buildQueryParams($params);
         $cacheKey = 'tmdb_movie_images_' . $movieId . '_' . md5($query);
@@ -154,11 +154,9 @@ class TmdbMoviesApi extends AbstractTmdbApi
             return null;
         }
 
-        $params = array_filter(
-            [
+        $params = array_filter([
                 'language' => $language ?? 'en-US',
-            ]
-        );
+            ]);
 
         $query    = $this->buildQueryParams($params);
         $cacheKey = 'tmdb_collection_' . $collectionId . '_' . md5($query);
@@ -377,9 +375,9 @@ class TmdbMoviesApi extends AbstractTmdbApi
      */
     public function getVideos(string $movieId, ?string $language = null): ?array
     {
-        $params = array_filter(
-            ['language' => $language]
-        );
+        $params = array_filter([
+                'language' => $language,
+            ]);
 
         $query    = $this->buildQueryParams($params);
         $cacheKey = 'tmdb_movie_videos_' . $movieId . '_' . md5($query);

@@ -28,11 +28,9 @@ class AddPagesCommand extends Command
     {
         $symfonyStyle   = new SymfonyStyle($input, $output);
 
-        $home = $this->pageRepository->findOneBy(
-            [
+        $home = $this->pageRepository->findOneBy([
                 'type' => PageEnum::HOME->value,
-            ]
-        );
+            ]);
         if (!$home instanceof Page) {
             $home = new Page();
             $home->setType(PageEnum::HOME->value);
@@ -44,11 +42,9 @@ class AddPagesCommand extends Command
                 continue;
             }
 
-            $page = $this->pageRepository->findOneBy(
-                [
+            $page = $this->pageRepository->findOneBy([
                     'type' => $case->value,
-                ]
-            );
+                ]);
             if (!$page instanceof Page) {
                 $this->newPage($home, $case->value);
             }

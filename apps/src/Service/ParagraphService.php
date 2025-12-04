@@ -19,7 +19,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ParagraphService
 {
-
     private array $init = [];
 
     public function __construct(
@@ -35,7 +34,8 @@ final class ParagraphService
 
     public function addInPosition(object $entity, Paragraph $paragraph, int $position): void
     {
-        $paragraphs = $entity->getParagraphs()->toArray();
+        $paragraphs = $entity->getParagraphs()
+            ->toArray();
         array_splice($paragraphs, $position, 0, [$paragraph]);
         foreach ($paragraphs as $key => $row) {
             $row->setPosition($key);

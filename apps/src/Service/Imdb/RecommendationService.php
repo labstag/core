@@ -69,21 +69,15 @@ class RecommendationService
         }
 
         return match ($field) {
-            'refmovie' => $movieRepository->findOneBy(
-                [
+            'refmovie' => $movieRepository->findOneBy([
                     'tmdb' => trim((string) $row['id']),
-                ]
-            ),
-            'refserie' => $serieRepository->findOneBy(
-                [
+                ]),
+            'refserie' => $serieRepository->findOneBy([
                     'tmdb' => trim((string) $row['id']),
-                ]
-            ),
-            'refsaga'  => $movieRepository->findOneBy(
-                [
+                ]),
+            'refsaga'  => $movieRepository->findOneBy([
                     'tmdb' => trim((string) $row['id']),
-                ]
-            ),
+                ]),
         };
     }
 

@@ -16,7 +16,6 @@ use ReflectionProperty;
 
 final class EtagCacheServiceTest extends TestCase
 {
-
     private EtagCacheService $etagCacheService;
 
     #[Test]
@@ -39,10 +38,7 @@ final class EtagCacheServiceTest extends TestCase
         // Arrange
         $user1    = $this->createMockUser('123e4567-e89b-12d3-a456-426614174000', 'test1@example.com');
         $user2    = $this->createMockUser('123e4567-e89b-12d3-a456-426614174001', 'test2@example.com');
-        $entities = [
-            $user1,
-            $user2,
-        ];
+        $entities = [$user1, $user2];
 
         // Act
         $etag = $this->etagCacheService->generateCollectionEtag($entities);

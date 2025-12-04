@@ -126,9 +126,9 @@ class StoryData extends PageData implements DataInterface
         $slugSecond = basename((string) $slug);
         $slugFirst  = dirname((string) $slug);
 
-        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
-            ['slug' => $slugFirst]
-        );
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy([
+                'slug' => $slugFirst,
+            ]);
         if (!$page instanceof Page) {
             return null;
         }
@@ -137,9 +137,9 @@ class StoryData extends PageData implements DataInterface
             return null;
         }
 
-        return $this->entityManager->getRepository(Story::class)->findOneBy(
-            ['slug' => $slugSecond]
-        );
+        return $this->entityManager->getRepository(Story::class)->findOneBy([
+                'slug' => $slugSecond,
+            ]);
     }
 
     protected function getJsonLdChapter(Chapter $chapter): object

@@ -22,7 +22,8 @@ class SagaRepository extends RepositoryAbstract
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->orderBy('s.title', 'ASC');
-        $queryBuilder->leftJoin('s.movies', 'm')->addSelect('m');
+        $queryBuilder->leftJoin('s.movies', 'm')
+            ->addSelect('m');
         $queryBuilder->andWhere('m.enable = true');
 
         $query = $queryBuilder->getQuery();
@@ -37,7 +38,8 @@ class SagaRepository extends RepositoryAbstract
     public function findSagaWithoutMovie(): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->leftJoin('s.movies', 'm')->addSelect('m');
+        $queryBuilder->leftJoin('s.movies', 'm')
+            ->addSelect('m');
         $queryBuilder->andWhere('m.id IS NULL');
         $queryBuilder->orderBy('s.title', 'ASC');
 

@@ -26,9 +26,9 @@ final class UserEmailMessageHandler
         $username = $userEmailMessage->getUsername();
         $template = $userEmailMessage->getTemplate();
 
-        $user = $this->userRepository->findOneBy(
-            ['username' => $username]
-        );
+        $user = $this->userRepository->findOneBy([
+                'username' => $username,
+            ]);
         if (!$user instanceof User) {
             return;
         }

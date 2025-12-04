@@ -46,21 +46,23 @@ class ParagraphCrudController extends CrudControllerAbstract
 
                 return new TranslatableMessage(
                     'Paragraph %name%',
-                    ['%name%' => $name]
+                    [
+                        '%name%' => $name,
+                    ]
                 );
             }
         );
         $crud->setEntityLabelInPlural(new TranslatableMessage('Paragraphs'));
         if ($this->isIframeEdit()) {
             $crud->renderSidebarMinimized();
-            $crud->overrideTemplates(
-                ['layout' => 'admin/paragraph/layout.html.twig']
-            );
+            $crud->overrideTemplates([
+                    'layout' => 'admin/paragraph/layout.html.twig',
+                ]);
         }
 
-        $crud->setDefaultSort(
-            ['createdAt' => 'DESC']
-        );
+        $crud->setDefaultSort([
+                'createdAt' => 'DESC',
+            ]);
 
         return $crud;
     }
@@ -69,7 +71,9 @@ class ParagraphCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
-        $currentEntity = $this->getContext()->getEntity()->getInstance();
+        $currentEntity = $this->getContext()
+            ->getEntity()
+            ->getInstance();
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [ParagraphParentField::new('parent', new TranslatableMessage('Parent'))]
@@ -116,12 +120,9 @@ class ParagraphCrudController extends CrudControllerAbstract
 
         $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', new TranslatableMessage('Type'));
         $discriminatorTypeFilter->setParagraphService($this->paragraphService);
-        $discriminatorTypeFilter->setChoices(
-            array_merge(
-                ['' => ''],
-                $types
-            )
-        );
+        $discriminatorTypeFilter->setChoices(array_merge([
+                    '' => '',
+                ], $types));
 
         $filters->add($discriminatorTypeFilter);
 
@@ -135,7 +136,8 @@ class ParagraphCrudController extends CrudControllerAbstract
 
     private function isIframeEdit(): bool
     {
-        $query = $this->requestStack->getCurrentRequest()->query->all();
+        $query = $this->requestStack->getCurrentRequest()
+            ->query->all();
 
         return isset($query['iframe']);
     }

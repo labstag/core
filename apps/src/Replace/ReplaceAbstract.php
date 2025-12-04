@@ -12,7 +12,6 @@ use Symfony\Component\Routing\RouterInterface;
 #[AutoconfigureTag('labstag.replaces')]
 abstract class ReplaceAbstract implements ReplaceInterface
 {
-
     /**
      * @var mixed[]
      */

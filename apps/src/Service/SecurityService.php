@@ -28,9 +28,9 @@ final class SecurityService
 
     public function addBan(string $internetProtocol): void
     {
-        $banIp = $this->banIpRepository->findOneBy(
-            ['internetProtocol' => $internetProtocol]
-        );
+        $banIp = $this->banIpRepository->findOneBy([
+                'internetProtocol' => $internetProtocol,
+            ]);
         if ($banIp instanceof BanIp) {
             return;
         }
@@ -165,12 +165,10 @@ final class SecurityService
             $httpErrorLogs->setReferer($referer);
         }
 
-        $httpErrorLogs->setRequestData(
-            [
+        $httpErrorLogs->setRequestData([
                 'get'  => $request->query->all(),
                 'post' => $request->request->all(),
-            ]
-        );
+            ]);
         $httpErrorLogs->setRequestMethod($method);
 
         $this->httpErrorLogsRepository->save($httpErrorLogs);
@@ -186,7 +184,9 @@ final class SecurityService
                 'enable' => true,
                 'regex'  => $regex,
             ],
-            ['position' => 'ASC']
+            [
+                'position' => 'ASC',
+            ]
         );
     }
 

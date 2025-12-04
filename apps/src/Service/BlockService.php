@@ -18,7 +18,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class BlockService
 {
-
     private array $init = [];
 
     public function __construct(

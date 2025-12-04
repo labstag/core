@@ -20,20 +20,12 @@ class LinkType extends AbstractType
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         $formBuilder->add('position', HiddenType::class);
-        $formBuilder->add(
-            'title',
-            TextType::class,
-            [
+        $formBuilder->add('title', TextType::class, [
                 'label' => new TranslatableMessage('Title'),
-            ]
-        );
-        $formBuilder->add(
-            'url',
-            TextType::class,
-            [
+            ]);
+        $formBuilder->add('url', TextType::class, [
                 'label' => new TranslatableMessage('Url'),
-            ]
-        );
+            ]);
         $formBuilder->add(
             'blank',
             CheckboxType::class,

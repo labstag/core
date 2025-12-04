@@ -44,14 +44,11 @@ class SeasonListParagraph extends ParagraphAbstract implements ParagraphInterfac
             return;
         }
 
-        $this->setData(
-            $paragraph,
-            [
+        $this->setData($paragraph, [
                 'seasons'   => $seasons,
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]
-        );
+            ]);
     }
 
     public function getClass(): string

@@ -15,10 +15,7 @@ class PostCategoryCrudController extends CategoryCrudControllerAbstract
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
-            [
-                $this->crudFieldFactory->slugField(),
-                $this->crudFieldFactory->titleField(),
-            ]
+            [$this->crudFieldFactory->slugField(), $this->crudFieldFactory->titleField()]
         );
         $associationField = AssociationField::new('posts', new TranslatableMessage('Posts'));
         $associationField->formatValue(fn ($entity): int => count($entity));

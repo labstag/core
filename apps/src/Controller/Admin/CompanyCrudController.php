@@ -35,9 +35,9 @@ class CompanyCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Company'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Companies'));
-        $crud->setDefaultSort(
-            ['title' => 'ASC']
-        );
+        $crud->setDefaultSort([
+                'title' => 'ASC',
+            ]);
 
         return $crud;
     }
@@ -132,9 +132,9 @@ class CompanyCrudController extends CrudControllerAbstract
 
         $action = Action::new('jsonCompany', new TranslatableMessage('Json'), 'fas fa-server');
         $action->linkToCrudAction('jsonCompany');
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
+        $action->setHtmlAttributes([
+                'target' => '_blank',
+            ]);
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);

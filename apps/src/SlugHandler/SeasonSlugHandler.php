@@ -39,7 +39,8 @@ class SeasonSlugHandler implements SlugHandlerInterface
         $sluggableAdapter->getObjectManager();
 
         $asciiSlugger = new AsciiSlugger();
-        $slug         = $asciiSlugger->slug((string) $object->getTitle())->lower();
+        $slug         = $asciiSlugger->slug((string) $object->getTitle())
+            ->lower();
     }
 
     public function postSlugBuild(SluggableAdapter $sluggableAdapter, array &$config, $object, &$slug): void

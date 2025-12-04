@@ -23,7 +23,6 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 final class SerieService
 {
-
     /**
      * @var array<string, mixed>
      */
@@ -52,36 +51,36 @@ final class SerieService
 
     public function addToBddSerie(Recommendation $recommendation, string $tmdbId): RedirectResponse
     {
-        $details = $this->theMovieDbApi->tvserie()->getDetails($tmdbId);
+        $details = $this->theMovieDbApi->tvserie()
+            ->getDetails($tmdbId);
         if (0 === count($details)) {
             return new RedirectResponse($this->router->generate('admin_recommendation_index'));
         }
 
-        $serie = $this->serieRepository->findOneBy(
-            ['tmdb' => $tmdbId]
-        );
+        $serie = $this->serieRepository->findOneBy([
+                'tmdb' => $tmdbId,
+            ]);
         if ($serie instanceof Serie) {
-            $this->getFlashBag()->add(
-                'warning',
-                new TranslatableMessage(
-                    'The %name% series is already present in the database',
-                    [
-                        '%name%' => $serie->getTitle(),
-                    ]
-                )
-            );
+            $this->getFlashBag()
+                ->add(
+                    'warning',
+                    new TranslatableMessage(
+                        'The %name% series is already present in the database',
+                        [
+                            '%name%' => $serie->getTitle(),
+                        ]
+                    )
+                );
 
             return new RedirectResponse(
-                $this->router->generate(
-                    'admin_serie_detail',
-                    [
+                $this->router->generate('admin_serie_detail', [
                         'entityId' => $serie->getId(),
-                    ]
-                )
+                    ])
             );
         }
 
-        $data = $this->theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
+        $data = $this->theMovieDbApi->tvserie()
+            ->getTvExternalIds($tmdbId);
         $serie = new Serie();
         $serie->setFile(false);
         $serie->setEnable(true);
@@ -92,23 +91,21 @@ final class SerieService
 
         $this->serieRepository->save($serie);
         $this->messageBus->dispatch(new SerieMessage($serie->getId()));
-        $this->getFlashBag()->add(
-            'success',
-            new TranslatableMessage(
-                'The %name% series has been added to the database',
-                [
-                    '%name%' => $serie->getTitle(),
-                ]
-            )
-        );
+        $this->getFlashBag()
+            ->add(
+                'success',
+                new TranslatableMessage(
+                    'The %name% series has been added to the database',
+                    [
+                        '%name%' => $serie->getTitle(),
+                    ]
+                )
+            );
 
         return new RedirectResponse(
-            $this->router->generate(
-                'admin_serie_detail',
-                [
+            $this->router->generate('admin_serie_detail', [
                     'entityId' => $serie->getId(),
-                ]
-            )
+                ])
         );
     }
 
@@ -134,7 +131,8 @@ final class SerieService
         $tmdbs              = $this->serieRepository->getAllTmdb();
         $search             = '';
         if (isset($data['imdb']) && !empty($data['imdb'])) {
-            $results = $this->theMovieDbApi->other()->findByImdb($data['imdb']);
+            $results = $this->theMovieDbApi->other()
+                ->findByImdb($data['imdb']);
             if (isset($results['tv_results'])) {
                 $series = $results['tv_results'];
             }
@@ -147,7 +145,8 @@ final class SerieService
         }
 
         $locale             = $this->configurationService->getLocaleTmdb();
-        $results            = $this->theMovieDbApi->tvserie()->search(searchQuery: $search, page: $page, language: $locale);
+        $results            = $this->theMovieDbApi->tvserie()
+            ->search(searchQuery: $search, page: $page, language: $locale);
         if (isset($results['results'])) {
             $series = $results['results'];
         }
@@ -160,10 +159,9 @@ final class SerieService
      */
     public function getSeriesChoice(): array
     {
-        $series = $this->serieRepository->findBy(
-            [],
-            ['title' => 'ASC']
-        );
+        $series = $this->serieRepository->findBy([], [
+                'title' => 'ASC',
+            ]);
         $choices = [];
         /** @var Serie $serie */
         foreach ($series as $serie) {
@@ -345,7 +343,8 @@ final class SerieService
      */
     private function updateImageBackdrop(Serie $serie, array $details): bool
     {
-        $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
+        $backdrop = $this->theMovieDbApi->images()
+            ->getBackdropUrl($details['tmdb']['backdrop_path'] ?? '');
         if (is_null($backdrop)) {
             $serie->setBackdropFile();
             $serie->setBackdrop(null);
@@ -363,7 +362,8 @@ final class SerieService
      */
     private function updateImagePoster(Serie $serie, array $details): bool
     {
-        $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
+        $poster = $this->theMovieDbApi->images()
+            ->getPosterUrl($details['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
             $serie->setPosterFile();
             $serie->setPoster(null);

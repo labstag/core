@@ -22,7 +22,8 @@ trait ParagraphProcessingTrait
             return null;
         }
 
-        $paragraphs = $block->getParagraphs()->getValues();
+        $paragraphs = $block->getParagraphs()
+            ->getValues();
         if (0 === count($paragraphs)) {
             $this->logger->debug(
                 'No paragraphs found for block',

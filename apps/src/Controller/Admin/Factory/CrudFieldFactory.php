@@ -39,7 +39,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 final class CrudFieldFactory
 {
-
     private ?AdminContext $adminContext = null;
 
     private array $tabfields = [];
@@ -80,12 +79,10 @@ final class CrudFieldFactory
     public function addFieldsToTab(string $tabName, $fields): void
     {
         if (!isset($this->tabfields[$tabName])) {
-            throw new RuntimeException(
-                sprintf(
-                    'Tab "%s" not found in CrudFieldFactory. Please add it first using addTab().',
-                    $tabName
-                )
-            );
+            throw new RuntimeException(sprintf(
+                'Tab "%s" not found in CrudFieldFactory. Please add it first using addTab().',
+                $tabName
+            ));
         }
 
         foreach ($fields as $field) {
@@ -398,9 +395,9 @@ final class CrudFieldFactory
     {
         $slugField = SlugField::new('slug', new TranslatableMessage('Slug'));
         $slugField->hideOnIndex();
-        $slugField->setFormTypeOptions(
-            ['required' => false]
-        );
+        $slugField->setFormTypeOptions([
+                'required' => false,
+            ]);
         $slugField->setTargetFieldName($target);
         $slugField->setUnlockConfirmationMessage(
             new TranslatableMessage('Are you sure you want to edit the slug manually?')

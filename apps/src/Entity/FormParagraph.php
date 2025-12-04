@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class FormParagraph extends Paragraph
 {
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $content = null;
 
@@ -17,7 +16,9 @@ class FormParagraph extends Paragraph
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: ['default' => 1]
+        options: [
+            'default' => 1,
+        ]
     )]
     protected bool $save = true;
 

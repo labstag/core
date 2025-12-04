@@ -10,7 +10,6 @@ use Twig\Environment;
 
 final class ViewResolverService
 {
-
     /**
      * @var array<string, mixed>
      */
@@ -39,7 +38,8 @@ final class ViewResolverService
         $reflectionClass = new ReflectionClass($entity);
         $data            = [
             'entity'     => $entity,
-            'paragraphs' => $entity->getParagraphs()->getValues(),
+            'paragraphs' => $entity->getParagraphs()
+                ->getValues(),
         ];
 
         $data['img'] = $reflectionClass->hasMethod('getImg') ? $entity->getImg() : $entity->getPoster();
@@ -159,10 +159,7 @@ final class ViewResolverService
     private function getViewByEntityName(string $entityName): string
     {
         $loader = $this->twigEnvironment->getLoader();
-        $files  = [
-            'views/' . $entityName . '.html.twig',
-            'views/default.html.twig',
-        ];
+        $files  = ['views/' . $entityName . '.html.twig', 'views/default.html.twig'];
 
         foreach ($files as $file) {
             if ($loader->exists($file)) {

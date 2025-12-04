@@ -60,7 +60,9 @@ class FrontController extends AbstractController
     #[Route(
         '/sitemap.xml',
         name: 'sitemap.xml',
-        defaults: ['_format' => 'xml'],
+        defaults: [
+            '_format' => 'xml',
+        ],
         priority: 1
     )]
     public function sitemapXml(): mixed

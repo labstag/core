@@ -24,7 +24,6 @@ use Twig\Environment;
 #[AutoconfigureTag('labstag.blocks')]
 abstract class BlockAbstract extends AbstractController implements BlockInterface
 {
-
     /**
      * @var mixed[]
      */
@@ -156,10 +155,7 @@ abstract class BlockAbstract extends AbstractController implements BlockInterfac
         }
 
         $htmltwig = '.html.twig';
-        $files    = [
-            'blocks/' . $folder . '/' . $type . $htmltwig,
-            'blocks/' . $folder . '/default' . $htmltwig,
-        ];
+        $files    = ['blocks/' . $folder . '/' . $type . $htmltwig, 'blocks/' . $folder . '/default' . $htmltwig];
 
         $view   = end($files);
         $loader = $this->twigEnvironment->getLoader();
@@ -174,13 +170,10 @@ abstract class BlockAbstract extends AbstractController implements BlockInterfac
         }
 
         if ($view == end($files)) {
-            $this->logger->error(
-                'Template not found',
-                [
+            $this->logger->error('Template not found', [
                     'folder' => $folder,
                     'type'   => $type,
-                ]
-            );
+                ]);
         }
 
         $this->templates[$folder][$type] = [

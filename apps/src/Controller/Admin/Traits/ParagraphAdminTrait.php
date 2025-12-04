@@ -33,10 +33,12 @@ trait ParagraphAdminTrait
 
         $type = $request->request->get('paragraph');
         if (null !== $type) {
-            $entity     = $this->getRepository()->find($entityId);
+            $entity     = $this->getRepository()
+                ->find($entityId);
             if ($entity) {
                 $paragraphService->addParagraph($entity, $type);
-                $this->getRepository()->save($entity);
+                $this->getRepository()
+                    ->save($entity);
             }
         }
 
@@ -65,14 +67,15 @@ trait ParagraphAdminTrait
 
     public function listParagraph(AdminContext $adminContext): Response
     {
-        $entityId   = $adminContext->getRequest()->query->get('entityId');
-        $entity     = $this->getRepository()->find($entityId);
+        $entityId   = $adminContext->getRequest()
+            ->query->get('entityId');
+        $entity     = $this->getRepository()
+            ->find($entityId);
         $paragraphs = method_exists($entity, 'getParagraphs') ? $entity->getParagraphs() : [];
 
-        return $this->render(
-            'admin/pararaphs.html.twig',
-            ['paragraphs' => $paragraphs]
-        );
+        return $this->render('admin/pararaphs.html.twig', [
+                'paragraphs' => $paragraphs,
+            ]);
     }
 
     public function updateParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator): RedirectResponse

@@ -38,14 +38,11 @@ class ChapterListParagraph extends ParagraphAbstract implements ParagraphInterfa
             return;
         }
 
-        $this->setData(
-            $paragraph,
-            [
+        $this->setData($paragraph, [
                 'chapters'  => $chapters,
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]
-        );
+            ]);
     }
 
     public function getClass(): string

@@ -41,18 +41,17 @@ class MovieSlugHandler implements SlugHandlerInterface
         $objectRepository = $objectManager->getRepository($classMetadata->getName());
 
         $asciiSlugger = new AsciiSlugger();
-        $slug         = $asciiSlugger->slug((string) $object->getTitle())->lower();
+        $slug         = $asciiSlugger->slug((string) $object->getTitle())
+            ->lower();
         if (preg_match('/^\d+$/', $slug)) {
             $slug .= '-movie';
         }
 
         $originalSlug = $slug;
 
-        $existingMovies = $objectRepository->findBy(
-            [
+        $existingMovies = $objectRepository->findBy([
                 'title' => $object->getTitle(),
-            ]
-        );
+            ]);
 
         foreach ($existingMovies as $existingMovie) {
             if ($existingMovie === $object) {

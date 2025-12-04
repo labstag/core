@@ -24,14 +24,11 @@ class HeadSeasonParagraph extends ParagraphAbstract implements ParagraphInterfac
             return;
         }
 
-        $this->setData(
-            $paragraph,
-            [
+        $this->setData($paragraph, [
                 'season'    => $data['entity'],
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]
-        );
+            ]);
     }
 
     public function getClass(): string

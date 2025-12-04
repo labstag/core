@@ -18,14 +18,11 @@ class SitemapParagraph extends ParagraphAbstract implements ParagraphInterface
     {
         unset($disable);
         $sitemap = $this->sitemapService->getData();
-        $this->setData(
-            $paragraph,
-            [
+        $this->setData($paragraph, [
                 'sitemap'   => $sitemap,
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]
-        );
+            ]);
     }
 
     public function getClass(): string
