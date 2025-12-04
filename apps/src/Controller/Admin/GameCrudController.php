@@ -254,9 +254,11 @@ class GameCrudController extends CrudControllerAbstract
         }
 
         $content = file_get_contents($file->getPathname());
-        $fileService->saveFileInAdapter('private', $file->getClientOriginalName() . '-' . time(), $content);
+        $extension = $file->getClientOriginalExtension();
+        $filename = uniqid('import_', true) . '.' . $extension;
+        $fileService->saveFileInAdapter('private', $filename, $content);
 
-        $messageBus->dispatch(new ImportMessage($file->getClientOriginalName() . '-' . time(), 'game', $data));
+        $messageBus->dispatch(new ImportMessage($filename, 'game', $data));
 
         return new JsonResponse(
             [

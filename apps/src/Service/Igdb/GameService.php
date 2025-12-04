@@ -152,21 +152,6 @@ final class GameService extends AbstractIgdb
         return null;
     }
 
-    public function importFile($file, string $platform): bool
-    {
-        $file = $this->fileService->getFileInAdapter('private', $file);
-        if (is_null($file)) {
-            return false;
-        }
-
-        $mimeType = mime_content_type($file);
-        return match ($mimeType) {
-            'text/csv' => $this->importCsvFile($file, $platform),
-            'text/xml' => $this->importXmlFile($file, $platform),
-            default    => false,
-        };
-    }
-
     public function setAnotherName($name): string
     {
         $name = preg_replace('/[^a-zA-Z0-9\s]/', '', (string) $name);
@@ -240,26 +225,6 @@ final class GameService extends AbstractIgdb
         $entityRepository->save($game);
 
         return $game;
-    }
-
-    private function importXmlFile(string $path, string $platform): bool
-    {
-        $data = $this->fileService->getimportXmlFile($path);
-        foreach ($data as $row) {
-            $this->messageBus->dispatch(new SearchGameMessage($row, $platform));
-        }
-
-        return true;
-    }
-
-    private function importCsvFile(string $path, string $platform): bool
-    {
-        $data = $this->fileService->getimportCsvFile($path);
-        foreach ($data as $row) {
-            $this->messageBus->dispatch(new SearchGameMessage($row, $platform));
-        }
-
-        return true;
     }
 
     private function matchesGameName(array $result, string $name, string $nameLower): bool

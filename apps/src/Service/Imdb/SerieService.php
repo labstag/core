@@ -196,21 +196,6 @@ final class SerieService
         return $year;
     }
 
-    public function importFile($file): bool
-    {
-        $file = $this->fileService->getFileInAdapter('private', $file);
-        if (is_null($file)) {
-            return false;
-        }
-
-        $mimeType = mime_content_type($file);
-        if ('text/csv' == $mimeType) {
-            return $this->importCsvFile($file);
-        }
-
-        return true;
-    }
-
     public function update(Serie $serie): bool
     {
         $details  = $this->theMovieDbApi->getDetailsSerie($serie);
@@ -245,16 +230,6 @@ final class SerieService
         $session = $this->requestStack->getSession();
 
         return $session->getFlashBag();
-    }
-
-    private function importCsvFile(string $path): bool
-    {
-        $data = $this->fileService->getimportCsvFile($path);
-        foreach ($data as $row) {
-            $this->messageBus->dispatch(new AddSerieMessage($row));
-        }
-
-        return true;
     }
 
     /**

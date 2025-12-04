@@ -180,10 +180,10 @@ final class FileService
         return $this->parameterBag->get('kernel.project_dir') . '/public' . $basePath;
     }
 
-    public function getimportCsvFile(string $path): array
+    public function getimportCsvFile(string $path, string $delimiter = ','): array
     {
         $csv = new Csv();
-        $csv->setDelimiter(',');
+        $csv->setDelimiter($delimiter);
         $csv->setSheetIndex(0);
 
         $spreadsheet = $csv->load($path);
