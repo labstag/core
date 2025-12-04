@@ -3,10 +3,13 @@
 namespace Labstag\Service;
 
 use Carbon\Carbon;
+use Labstag\Message\FileDeleteMessage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 class FrontService extends AbstractController
 {
@@ -14,6 +17,8 @@ class FrontService extends AbstractController
         #[AutowireIterator('labstag.datas')]
         private readonly iterable $datas,
         protected CacheService $cacheService,
+        protected MessageBusInterface $messageBus,
+        protected FileService $fileService,
         protected ConfigurationService $configurationService,
         protected SlugService $slugService,
         protected SitemapService $sitemapService,
@@ -51,7 +56,18 @@ class FrontService extends AbstractController
 
     public function getSitemapXml(): Response
     {
-        return $this->cacheService->get(
+        $filePath      = $this->fileService->getFileInAdapter('public', 'sitemap.xml');
+        if (!is_null($filePath)) {
+            $content  = file_get_contents($filePath);
+
+            $this->messageBus->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(86_400_000)]);
+            $response = new Response($content === false ? '' : $content, Response::HTTP_OK);
+            $response->headers->set('Content-Type', 'text/xml');
+
+            return $response;
+        }
+        
+        $content = $this->cacheService->get(
             'sitemap.xml',
             function (): Response
             {
@@ -67,6 +83,10 @@ class FrontService extends AbstractController
                 );
             }
         );
+
+        $this->fileService->saveFileInAdapter('public', 'sitemap.xml', $content->getContent());
+
+        return $content;
     }
 
     public function showView(): Response
