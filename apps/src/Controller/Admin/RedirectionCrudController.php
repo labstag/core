@@ -2,40 +2,18 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Service\EmailService;
-use Labstag\Service\Imdb\SerieService;
-use Labstag\Service\FormService;
-use Labstag\Service\FileService;
-use Labstag\Service\SiteService;
-use Labstag\Service\SlugService;
-use Labstag\Service\Imdb\SeasonService;
-use Labstag\Service\SecurityService;
-use Labstag\Service\BlockService;
-use Labstag\Service\Imdb\EpisodeService;
-use Labstag\Service\Imdb\MovieService;
-use Labstag\Service\Imdb\SagaService;
-use Labstag\Service\ParagraphService;
-use Labstag\Service\WorkflowService;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Labstag\Service\UserService;
-use Labstag\Controller\Admin\Factory\ActionsFactory;
-use Labstag\Controller\Admin\Factory\CrudFieldFactory;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Override;
 use DateTime;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\Redirection;
 use Labstag\Form\Admin\RedirectionImportType;
-use Labstag\Repository\RedirectionRepository;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -161,7 +139,7 @@ class RedirectionCrudController extends CrudControllerAbstract
 
         if ($form->isSubmitted() && $form->isValid()) {
             $file = $form->get('file')->getData();
-            $data = $this->importCsv($file, $this->redirectionRepository);
+            $data = $this->importCsv($file);
 
             foreach ($data as $row) {
                 $this->getRepository(Redirection::class)->persist($row);

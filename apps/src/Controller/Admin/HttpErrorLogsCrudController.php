@@ -2,34 +2,12 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Service\EmailService;
-use Labstag\Service\Imdb\SerieService;
-use Labstag\Service\FormService;
-use Labstag\Service\FileService;
-use Labstag\Service\SiteService;
-use Labstag\Service\SlugService;
-use Labstag\Service\Imdb\SeasonService;
-use Labstag\Service\SecurityService;
-use Labstag\Service\BlockService;
-use Labstag\Service\Imdb\EpisodeService;
-use Labstag\Service\Imdb\MovieService;
-use Labstag\Service\Imdb\SagaService;
-use Labstag\Service\ParagraphService;
-use Labstag\Service\WorkflowService;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Labstag\Service\UserService;
-use Labstag\Controller\Admin\Factory\ActionsFactory;
-use Labstag\Controller\Admin\Factory\CrudFieldFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Override;
 use DeviceDetector\DeviceDetector;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;

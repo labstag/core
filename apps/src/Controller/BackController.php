@@ -10,8 +10,6 @@ use Labstag\Entity\Group;
 use Labstag\Entity\Permission;
 use Labstag\Message\ClearCacheMessage;
 use Labstag\Message\DeleteOldFileMessage;
-use Labstag\Repository\GroupRepository;
-use Labstag\Repository\PermissionRepository;
 use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\FileService;
 use Labstag\Service\SiteService;
@@ -35,8 +33,6 @@ class BackController extends AbstractController
         protected SiteService $siteService,
         protected IgdbApi $igdbApi,
         private readonly MessageBusInterface $messageBus,
-        private readonly PermissionRepository $permissionRepository,
-        private readonly GroupRepository $groupRepository,
     )
     {
     }

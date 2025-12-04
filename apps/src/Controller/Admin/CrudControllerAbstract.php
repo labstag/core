@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Controller\Admin\Factory\ActionsFactory;
 use Labstag\Controller\Admin\Factory\CrudFieldFactory;
 use Labstag\Controller\Admin\Traits\ParagraphAdminTrait;
@@ -23,9 +24,12 @@ use Labstag\Entity\Paragraph;
 use Labstag\Repository\ParagraphRepository;
 use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\BlockService;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
 use Labstag\Service\FormService;
+use Labstag\Service\Igdb\GameService;
+use Labstag\Service\Igdb\PlatformService;
 use Labstag\Service\Imdb\EpisodeService;
 use Labstag\Service\Imdb\MovieService;
 use Labstag\Service\Imdb\SagaService;
@@ -57,6 +61,10 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     use ParagraphAdminTrait;
 
     public function __construct(
+        protected GameService $gameService,
+        protected PlatformService $platformService,
+        protected TheMovieDbApi $theMovieDbApi,
+        protected ConfigurationService $configurationService,
         protected EmailService $emailService,
         protected SerieService $serieService,
         protected FormService $formService,

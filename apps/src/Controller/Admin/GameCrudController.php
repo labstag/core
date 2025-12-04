@@ -2,30 +2,10 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Service\EmailService;
-use Labstag\Service\Imdb\SerieService;
-use Labstag\Service\FormService;
-use Labstag\Service\SiteService;
-use Labstag\Service\SlugService;
-use Labstag\Service\Imdb\SeasonService;
-use Labstag\Service\SecurityService;
-use Labstag\Service\BlockService;
-use Labstag\Service\Imdb\EpisodeService;
-use Labstag\Service\Imdb\MovieService;
-use Labstag\Service\Imdb\SagaService;
-use Labstag\Service\ParagraphService;
-use Labstag\Service\WorkflowService;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Labstag\Service\UserService;
-use Labstag\Controller\Admin\Factory\ActionsFactory;
-use Labstag\Controller\Admin\Factory\CrudFieldFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Doctrine\Persistence\ManagerRegistry;
 use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -36,14 +16,10 @@ use Labstag\Form\Admin\GameOtherPlatformType;
 use Labstag\Form\Admin\GameType;
 use Labstag\Message\AddGameMessage;
 use Labstag\Message\ImportMessage;
-use Labstag\Service\FileService;
-use Labstag\Service\Igdb\GameService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GameCrudController extends CrudControllerAbstract
 {

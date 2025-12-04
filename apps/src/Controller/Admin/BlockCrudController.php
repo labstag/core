@@ -2,26 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Service\EmailService;
-use Labstag\Service\Imdb\SerieService;
-use Labstag\Service\FormService;
-use Labstag\Service\FileService;
-use Labstag\Service\SiteService;
-use Labstag\Service\SlugService;
-use Labstag\Service\Imdb\SeasonService;
-use Labstag\Service\SecurityService;
-use Labstag\Service\BlockService;
-use Labstag\Service\Imdb\EpisodeService;
-use Labstag\Service\Imdb\MovieService;
-use Labstag\Service\Imdb\SagaService;
-use Labstag\Service\ParagraphService;
-use Labstag\Service\WorkflowService;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Labstag\Service\UserService;
-use Labstag\Controller\Admin\Factory\ActionsFactory;
-use Labstag\Controller\Admin\Factory\CrudFieldFactory;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Override;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -47,6 +27,7 @@ use LogicException;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -276,9 +257,8 @@ class BlockCrudController extends CrudControllerAbstract
         );
     }
 
-    public function positionBlock(AdminContext $adminContext): RedirectResponse|Response
+    public function positionBlock(Request $request): RedirectResponse|Response
     {
-        $request                         = $adminContext->getRequest();
         $repositoryAbstract              = $this->getRepository();
         if (!$repositoryAbstract instanceof BlockRepository) {
             throw new Exception('findAllOrderedByRegion not found');
