@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Exception;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\Game;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
@@ -56,6 +57,10 @@ final class SitemapService
             $tabs = array_merge($tabs, $this->getDataMovie());
         }
 
+        if ($all) {
+            $tabs = array_merge($tabs, $this->getDataGame());
+        }
+
         $this->parent = [];
 
         return $this->setTabsByParent($tabs, '/');
@@ -103,6 +108,21 @@ final class SitemapService
         $sagas            = $this->getDataFromRepository(Saga::class);
 
         return array_merge($this->setTabs($movies), $this->setTabs($sagas));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getDataGame(): array
+    {
+        $listing = $this->slugService->getPageByType(PageEnum::GAMES->value);
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
+
+        $games = $this->getDataFromRepository(Game::class);
+
+        return array_merge($this->setTabs($games));
     }
 
     /**

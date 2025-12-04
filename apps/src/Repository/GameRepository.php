@@ -17,6 +17,19 @@ class GameRepository extends RepositoryAbstract
         parent::__construct($registry, Game::class);
     }
 
+    public function getAllActivate(): mixed
+    {
+        $queryBuilder = $this->createQueryBuilder('g');
+        $queryBuilder->where('g.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        $queryBuilder->orderBy('g.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'games-activate');
+
+        return $query->getResult();
+    }
+
     public function getAllIgdb(): array
     {
         $queryBuilder = $this->createQueryBuilder('p');
