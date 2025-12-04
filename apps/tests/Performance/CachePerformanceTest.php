@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Labstag\Tests\Performance;
 
+use Override;
 use Labstag\Entity\Post;
 use Labstag\Entity\User;
 use Labstag\Service\EtagCacheService;
@@ -264,7 +265,7 @@ final class CachePerformanceTest extends AbstractTestCase
         $this->assertLessThan(10 * 1024 * 1024, $memoryIncrease, 'Memory increase should be less than 10MB');
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -272,7 +273,7 @@ final class CachePerformanceTest extends AbstractTestCase
         $this->stopwatch        = new Stopwatch();
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown(): void
     {
         // Clean cache after each test

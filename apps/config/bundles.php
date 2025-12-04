@@ -1,31 +1,53 @@
 <?php
 
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
+use Symfony\Bundle\TwigBundle\TwigBundle;
+use Symfony\Bundle\SecurityBundle\SecurityBundle;
+use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
+use Knp\Bundle\MenuBundle\KnpMenuBundle;
+use Knp\Bundle\PaginatorBundle\KnpPaginatorBundle;
+use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
+use Symfony\Bundle\MakerBundle\MakerBundle;
+use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
+use Nelmio\CorsBundle\NelmioCorsBundle;
+use Symfony\Bundle\DebugBundle\DebugBundle;
+use Vich\UploaderBundle\VichUploaderBundle;
+use League\FlysystemBundle\FlysystemBundle;
+use Liip\ImagineBundle\LiipImagineBundle;
+use Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle;
+use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
+use Symfony\UX\TwigComponent\TwigComponentBundle;
+use Symfony\Bundle\MonologBundle\MonologBundle;
+use DAMA\DoctrineTestBundle\DAMADoctrineTestBundle;
+
 return [
-    Symfony\Bundle\FrameworkBundle\FrameworkBundle::class            => ['all' => true],
-    Doctrine\Bundle\DoctrineBundle\DoctrineBundle::class             => ['all' => true],
-    Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle::class => ['all' => true],
-    Symfony\Bundle\TwigBundle\TwigBundle::class                      => ['all' => true],
-    Symfony\Bundle\SecurityBundle\SecurityBundle::class              => ['all' => true],
-    EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle::class           => ['all' => true],
-    Knp\Bundle\MenuBundle\KnpMenuBundle::class                       => ['all' => true],
-    Knp\Bundle\PaginatorBundle\KnpPaginatorBundle::class             => ['all' => true],
-    Twig\Extra\TwigExtraBundle\TwigExtraBundle::class                => ['all' => true],
-    Symfony\Bundle\MakerBundle\MakerBundle::class                    => ['dev' => true],
-    Symfony\Bundle\WebProfilerBundle\WebProfilerBundle::class        => [
+    FrameworkBundle::class            => ['all' => true],
+    DoctrineBundle::class             => ['all' => true],
+    DoctrineMigrationsBundle::class => ['all' => true],
+    TwigBundle::class                      => ['all' => true],
+    SecurityBundle::class              => ['all' => true],
+    EasyAdminBundle::class           => ['all' => true],
+    KnpMenuBundle::class                       => ['all' => true],
+    KnpPaginatorBundle::class             => ['all' => true],
+    TwigExtraBundle::class                => ['all' => true],
+    MakerBundle::class                    => ['dev' => true],
+    WebProfilerBundle::class        => [
         'dev'  => true,
         'test' => true,
     ],
-    Nelmio\CorsBundle\NelmioCorsBundle::class                        => ['all' => true],
-    Symfony\Bundle\DebugBundle\DebugBundle::class                    => ['dev' => true],
-    Vich\UploaderBundle\VichUploaderBundle::class                    => ['all' => true],
-    League\FlysystemBundle\FlysystemBundle::class                    => ['all' => true],
-    Liip\ImagineBundle\LiipImagineBundle::class                      => ['all' => true],
-    Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class     => [
+    NelmioCorsBundle::class                        => ['all' => true],
+    DebugBundle::class                    => ['dev' => true],
+    VichUploaderBundle::class                    => ['all' => true],
+    FlysystemBundle::class                    => ['all' => true],
+    LiipImagineBundle::class                      => ['all' => true],
+    DoctrineFixturesBundle::class     => [
         'dev'  => true,
         'test' => true,
     ],
-    Symfony\WebpackEncoreBundle\WebpackEncoreBundle::class           => ['all' => true],
-    Symfony\UX\TwigComponent\TwigComponentBundle::class              => ['all' => true],
-    Symfony\Bundle\MonologBundle\MonologBundle::class                => ['all' => true],
-    DAMA\DoctrineTestBundle\DAMADoctrineTestBundle::class            => ['test' => true],
+    WebpackEncoreBundle::class           => ['all' => true],
+    TwigComponentBundle::class              => ['all' => true],
+    MonologBundle::class                => ['all' => true],
+    DAMADoctrineTestBundle::class            => ['test' => true],
 ];

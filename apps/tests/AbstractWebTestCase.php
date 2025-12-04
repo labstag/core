@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Labstag\Tests;
 
+use Override;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -16,7 +17,7 @@ abstract class AbstractWebTestCase extends WebTestCase
     /**
      * Static client reset to avoid conflicts between test classes.
      */
-    #[\Override]
+    #[Override]
     public static function tearDownAfterClass(): void
     {
         self::$client = null;
@@ -72,7 +73,7 @@ abstract class AbstractWebTestCase extends WebTestCase
         }
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown(): void
     {
         parent::tearDown();

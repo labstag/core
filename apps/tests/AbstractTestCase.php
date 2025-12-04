@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Labstag\Tests;
 
+use Override;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -54,7 +55,7 @@ abstract class AbstractTestCase extends KernelTestCase
         $this->entityManager = $this->container->get(EntityManagerInterface::class);
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown(): void
     {
         parent::tearDown();
