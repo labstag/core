@@ -160,11 +160,11 @@ final class GameService extends AbstractIgdb
         }
 
         $mimeType = mime_content_type($file);
-        if ('text/csv' == $mimeType) {
-            return $this->importCsvFile($file, $platform);
-        }
-
-        return true;
+        return match ($mimeType) {
+            'text/csv' => $this->importCsvFile($file, $platform),
+            'text/xml' => $this->importXmlFile($file, $platform),
+            default    => false,
+        };
     }
 
     public function setAnotherName($name): string
@@ -240,6 +240,16 @@ final class GameService extends AbstractIgdb
         $entityRepository->save($game);
 
         return $game;
+    }
+
+    private function importXmlFile(string $path, string $platform): bool
+    {
+        $data = $this->fileService->getimportXmlFile($path);
+        foreach ($data as $row) {
+            $this->messageBus->dispatch(new SearchGameMessage($row, $platform));
+        }
+
+        return true;
     }
 
     private function importCsvFile(string $path, string $platform): bool

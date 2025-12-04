@@ -192,6 +192,26 @@ final class FileService
         return $this->generateJsonCSV($worksheet);
     }
 
+    public function getimportXmlFile(string $path): array
+    {
+        $xml = simplexml_load_file($path);
+        if (false === $xml) {
+            throw new Exception('Error loading XML file');
+        }
+
+        $dataJson = [];
+        foreach ($xml->children() as $item) {
+            $row = [];
+            foreach ($item->children() as $child) {
+                $row[$child->getName()] = (string) $child;
+            }
+
+            $dataJson[] = $row;
+        }
+
+        return $dataJson;
+    }
+
     /**
      * @return array<string, mixed>
      */

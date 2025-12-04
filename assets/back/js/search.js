@@ -6,12 +6,18 @@ export class Search {
   }
 
   initData(modalContent) {
-    if (typeof this.isInitialized !== 'undefined') {
-      modalContent.querySelector('.results').innerHTML = this.isInitialized;
+    const resultsContainer = modalContent ? modalContent.querySelector('.results') : null;
+    if (resultsContainer == 'undefined' || resultsContainer == null) {
       return;
     }
+
+    if (typeof this.isInitialized !== 'undefined') {
+      resultsContainer.innerHTML = this.isInitialized;
+      return;
+    }
+
     const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = modalContent.querySelector('.results').innerHTML;
+    tempDiv.innerHTML = resultsContainer.innerHTML;
 
     this.isInitialized = tempDiv.innerHTML;
 
