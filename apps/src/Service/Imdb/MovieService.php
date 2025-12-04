@@ -8,7 +8,6 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
 use Labstag\Entity\Recommendation;
-use Labstag\Message\AddMovieMessage;
 use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
 use Labstag\Service\CategoryService;

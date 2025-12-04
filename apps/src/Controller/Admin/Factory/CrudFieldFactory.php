@@ -325,6 +325,7 @@ final class CrudFieldFactory
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
             $uploadImageField = UploadImageField::new($type . 'File', $label ?? new TranslatableMessage('Image'));
             $uploadImageField->setTranslator($this->translator);
+
             return $uploadImageField;
         }
 

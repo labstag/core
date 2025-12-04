@@ -277,7 +277,7 @@ class ActionsFactory
         $this->adminUrlGenerator->setAction(Crud::PAGE_INDEX);
         $this->adminUrlGenerator->setController($this->controller);
         $this->adminUrlGenerator->set('action', 'trash');
-        
+
         $action->linkToUrl($this->adminUrlGenerator->generateUrl());
         $action->createAsGlobalAction();
 

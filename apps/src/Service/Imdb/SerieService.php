@@ -8,7 +8,6 @@ use Labstag\Entity\Recommendation;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\SerieCategory;
-use Labstag\Message\AddSerieMessage;
 use Labstag\Message\SeasonMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Repository\SerieRepository;

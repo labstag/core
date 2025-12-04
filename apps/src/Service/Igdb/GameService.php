@@ -9,7 +9,6 @@ use Labstag\Entity\Franchise;
 use Labstag\Entity\Game;
 use Labstag\Entity\GameCategory;
 use Labstag\Entity\Platform;
-use Labstag\Message\SearchGameMessage;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;
 use Symfony\Component\Messenger\MessageBusInterface;

@@ -55,9 +55,7 @@ final class SearchGameMessageHandler
         $entityRepository = $this->entityManager->getRepository(Game::class);
 
         return $entityRepository->findOneBy(
-            [
-                'title' => $name,
-            ]
+            ['title' => $name]
         );
     }
 

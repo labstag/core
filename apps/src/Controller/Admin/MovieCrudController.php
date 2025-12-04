@@ -309,9 +309,9 @@ class MovieCrudController extends CrudControllerAbstract
             );
         }
 
-        $content = file_get_contents($file->getPathname());
+        $content   = file_get_contents($file->getPathname());
         $extension = $file->getClientOriginalExtension();
-        $filename = uniqid('import_', true) . '.' . $extension;
+        $filename  = uniqid('import_', true) . '.' . $extension;
         $fileService->saveFileInAdapter('private', $filename, $content);
 
         $messageBus->dispatch(new ImportMessage($filename, 'movie', []));

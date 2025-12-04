@@ -7,9 +7,6 @@ use Labstag\Message\AddSerieMessage;
 use Labstag\Message\ImportMessage;
 use Labstag\Message\SearchGameMessage;
 use Labstag\Service\FileService;
-use Labstag\Service\Igdb\GameService;
-use Labstag\Service\Imdb\MovieService;
-use Labstag\Service\Imdb\SerieService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -26,19 +23,18 @@ final class ImportMessageHandler
     public function __invoke(ImportMessage $importMessage): void
     {
         $fileName = $importMessage->getFile();
-        $type = $importMessage->getType();
-        $data = $importMessage->getData();
+        $type     = $importMessage->getType();
+        $data     = $importMessage->getData();
 
-        
-        $file = $this->fileService->getFileInAdapter('private', $fileName);
-        $mimeType = mime_content_type($file);
+        $file      = $this->fileService->getFileInAdapter('private', $fileName);
+        $mimeType  = mime_content_type($file);
         $extension = pathinfo($file, PATHINFO_EXTENSION);
         match ($mimeType) {
             'text/csv' => $this->importCsvFile($file, $data, $type),
             'text/xml' => $this->importXmlFile($file, $data, $type),
-            default    => match($extension) {
-                'csv' => $this->importCsvFile($file, $data, $type),
-                'xml' => $this->importXmlFile($file, $data, $type),
+            default    => match ($extension) {
+                'csv'   => $this->importCsvFile($file, $data, $type),
+                'xml'   => $this->importXmlFile($file, $data, $type),
                 default => false,
             },
         };
@@ -46,7 +42,7 @@ final class ImportMessageHandler
 
     private function importCsvFile(string $path, array $data, string $type): void
     {
-        $delimiter = match($type) {
+        $delimiter = match ($type) {
             'game'  => ',',
             'serie' => ';',
             'movie' => ';',
@@ -56,29 +52,30 @@ final class ImportMessageHandler
         $data = $this->fileService->getimportCsvFile($path, $delimiter);
 
         foreach ($data as $row) {
-            $message = match($type) {
+            $message = match ($type) {
                 'game'  => new SearchGameMessage($row, 'game', $data['platform'] ?? ''),
                 'serie' => new AddSerieMessage($row),
                 'movie' => new AddMovieMessage($row),
                 default => null,
             };
+
             if (!is_null($message)) {
                 $this->messageBus->dispatch($message);
             }
         }
-
     }
 
     private function importXmlFile(string $path, array $data, string $type): void
     {
         $data = $this->fileService->getimportXmlFile($path);
         foreach ($data as $row) {
-            $message = match($type) {
+            $message = match ($type) {
                 'game'  => new SearchGameMessage($row, 'game', $data['platform'] ?? ''),
                 'serie' => new AddSerieMessage($row),
                 'movie' => new AddMovieMessage($row),
                 default => null,
             };
+
             if (!is_null($message)) {
                 $this->messageBus->dispatch($message);
             }

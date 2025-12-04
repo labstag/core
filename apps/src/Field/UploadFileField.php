@@ -21,7 +21,6 @@ final class UploadFileField implements FieldInterface
      */
     public static function new(string $propertyName, $label = null): self
     {
-
         $uploadFileField = (new self());
         $uploadFileField->setProperty($propertyName);
         $uploadFileField->setTemplatePath('');
@@ -55,6 +54,6 @@ final class UploadFileField implements FieldInterface
                     ),
                 ],
             ]
-        ); 
+        );
     }
 }
