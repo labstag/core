@@ -38,9 +38,15 @@ class MovieParagraph extends ParagraphAbstract implements ParagraphInterface
         $pagination = $this->getPaginator($entityRepository->getQueryPaginator($query), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
-        $this->setHeader($paragraph, $this->render($templates['view'], [
+        $this->setHeader(
+            $paragraph, 
+            $this->render(
+                $templates['view'],
+                [
                     'pagination' => $pagination,
-                ]));
+                ]
+            )
+        );
 
         $form = $this->createForm(MovieType::class, $query);
 

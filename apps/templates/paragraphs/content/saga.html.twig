@@ -2,11 +2,14 @@
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
         <ul>
-            {% for saga in sagas %}
+            {% for saga in pagination %}
                 <li class="teaser-saga">
                     {% include  "teasers/saga.html.twig"  with {'saga': saga} %}
                 </li>
             {% endfor %}
         </ul>
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
+        </div>
     </div>
 </section>

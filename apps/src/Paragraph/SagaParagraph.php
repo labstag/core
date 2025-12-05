@@ -27,50 +27,45 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
         unset($disable);
 
         $request = $this->requestStack->getCurrentRequest();
-        if (1 != $request->attributes->get('page')) {
-            $this->setShow($paragraph, false);
-
-            return;
-        }
-
-        $types = ['title', 'country', 'categories', 'sagas', 'year', 'order', 'orderby'];
-        foreach ($types as $type) {
-            if ($request->query->has($type)) {
-                $this->setShow($paragraph, false);
-
-                return;
-            }
-        }
-
-        /** @var MovieRepository $entityRepository */
         $entityRepository = $this->getRepository(Saga::class);
-        if (!$entityRepository instanceof SagaRepository) {
-            $this->logger->error('SagaParagraph: Saga repository not found.');
-            $this->setShow($paragraph, false);
+        $query   = $this->setQuery($request->query->all());
 
-            return;
-        }
+        $pagination = $this->getPaginator($entityRepository->getQueryPaginator($query), $paragraph->getNbr());
 
-        $sagas = $entityRepository->showPublic();
-        foreach ($sagas as $key => $saga) {
-            $total = $saga->getMovies()
-                ->filter(fn ($movie) => $movie->isEnable());
-            if (self::MINMOVIES > count($total)) {
-                unset($sagas[$key]);
-            }
-        }
-
-        if (self::MINSAGA > count($sagas)) {
-            $this->setShow($paragraph, false);
-
-            return;
-        }
+        $templates = $this->templates($paragraph, 'header');
+        $this->setHeader(
+            $paragraph, 
+            $this->render(
+                $templates['view'],
+                [
+                    'pagination' => $pagination,
+                ]
+            )
+        );
 
         $this->setData($paragraph, [
-                'sagas'     => $sagas,
+                'pagination' => $pagination,
                 'paragraph' => $paragraph,
                 'data'      => $data,
             ]);
+    }
+
+    /**
+     * @param array<string, mixed> $query
+     *
+     * @return array<string, mixed>
+     */
+    private function setQuery(array $query): array
+    {
+        if (!isset($query['order'])) {
+            $query['order'] = 'title';
+        }
+
+        if (!isset($query['orderby'])) {
+            $query['orderby'] = 'ASC';
+        }
+
+        return $query;
     }
 
     public function getClass(): string
