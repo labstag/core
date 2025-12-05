@@ -48,6 +48,12 @@ class Configuration
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'episodePlaceholder')]
     protected ?File $episodePlaceholderFile = null;
 
+    #[ORM\Column(name: 'game_placeholder', length: 255, nullable: true)]
+    protected ?string $gamePlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'gamePlaceholder')]
+    protected ?File $gamePlaceholderFile = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
@@ -98,6 +104,9 @@ class Configuration
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'postPlaceholder')]
     protected ?File $postPlaceholderFile = null;
+
+    #[ORM\Column(name: 'region_tmdb', length: 255, nullable: true)]
+    protected ?string $regionTmdb = null;
 
     #[ORM\Column(name: 'saga_placeholder', length: 255, nullable: true)]
     protected ?string $sagaPlaceholder = null;
@@ -341,6 +350,9 @@ class Configuration
     )]
     protected bool $userShow = false;
 
+    #[ORM\ManyToOne(inversedBy: 'configurations')]
+    private ?User $defaultuser = null;
+
     public function getChapterPlaceholder(): ?string
     {
         return $this->chapterPlaceholder;
@@ -354,6 +366,11 @@ class Configuration
     public function getCopyright(): ?string
     {
         return $this->copyright;
+    }
+
+    public function getDefaultuser(): ?User
+    {
+        return $this->defaultuser;
     }
 
     public function getEditoPlaceholder(): ?string
@@ -379,6 +396,16 @@ class Configuration
     public function getEpisodePlaceholderFile(): ?File
     {
         return $this->episodePlaceholderFile;
+    }
+
+    public function getGamePlaceholder(): ?string
+    {
+        return $this->gamePlaceholder;
+    }
+
+    public function getGamePlaceholderFile(): ?File
+    {
+        return $this->gamePlaceholderFile;
     }
 
     public function getId(): ?string
@@ -459,6 +486,11 @@ class Configuration
     public function getPostPlaceholderFile(): ?File
     {
         return $this->postPlaceholderFile;
+    }
+
+    public function getRegionTmdb(): ?string
+    {
+        return $this->regionTmdb;
     }
 
     public function getSagaPlaceholder(): ?string
@@ -769,6 +801,13 @@ class Configuration
         return $this;
     }
 
+    public function setDefaultuser(?User $user): static
+    {
+        $this->defaultuser = $user;
+
+        return $this;
+    }
+
     public function setDisableEmptyAgent(bool $disableEmptyAgent): static
     {
         $this->disableEmptyAgent = $disableEmptyAgent;
@@ -809,6 +848,22 @@ class Configuration
         $this->episodePlaceholderFile = $episodePlaceholderFile;
 
         if ($episodePlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setGamePlaceholder(?string $gamePlaceholder): void
+    {
+        $this->gamePlaceholder = $gamePlaceholder;
+    }
+
+    public function setGamePlaceholderFile(?File $gamePlaceholderFile = null): void
+    {
+        $this->gamePlaceholderFile = $gamePlaceholderFile;
+
+        if ($gamePlaceholderFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
@@ -930,6 +985,13 @@ class Configuration
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
+    }
+
+    public function setRegionTmdb(?string $regionTmdb): static
+    {
+        $this->regionTmdb = $regionTmdb;
+
+        return $this;
     }
 
     public function setSagaPlaceholder(?string $sagaPlaceholder): void

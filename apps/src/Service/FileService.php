@@ -292,6 +292,85 @@ final class FileService
         return null;
     }
 
+    public function setImgPatwork(array $files): ?string
+    {
+        if ([] === $files) {
+            return null;
+        }
+
+        $cellSize    = 300;
+        $jpegQuality = 90;
+        $count       = count($files);
+        $cols        = (int) ceil(sqrt($count));
+        $rows        = (int) ceil($count / $cols);
+        if ($rows * $cols > $count) {
+            $rest = $rows * $cols - $count;
+            for ($i = 0; $i < $rest; ++$i) {
+                $files[] = $files[$i % $count];
+            }
+        }
+
+        // Création du canevas final
+        $finalWidth  = $cols * $cellSize;
+        $finalHeight = $rows * $cellSize;
+        $final       = imagecreatetruecolor($finalWidth, $finalHeight);
+
+        if (false === $final) {
+            return null;
+        }
+
+        // Couleur de fond blanche
+        $white = imagecolorallocate($final, 255, 255, 255);
+        if (false === $white) {
+            return null;
+        }
+
+        imagefill($final, 0, 0, $white);
+
+        // Placement des images
+        $i = 0;
+        foreach ($files as $file) {
+            $imgInfo = @getimagesize($file);
+            if (false === $imgInfo) {
+                continue;
+            }
+
+            if (!isset($imgInfo['mime'])) {
+                continue;
+            }
+
+            $src = match ($imgInfo['mime']) {
+                'image/jpeg' => @imagecreatefromjpeg($file),
+                'image/png'  => @imagecreatefrompng($file),
+                'image/gif'  => @imagecreatefromgif($file),
+                default      => false,
+            };
+
+            if (false === $src) {
+                continue;
+            }
+
+            // Position dans la grille
+            $x = ($i % $cols) * $cellSize;
+            $y = (int) floor($i / $cols) * $cellSize;
+
+            // Redimensionne et colle
+            imagecopyresampled($final, $src, $x, $y, 0, 0, $cellSize, $cellSize, imagesx($src), imagesy($src));
+
+            ++$i;
+        }
+
+        // Sauvegarde du résultat
+        $output = tempnam(sys_get_temp_dir(), 'poster_grid_');
+        if (false === $output) {
+            return null;
+        }
+
+        $success = imagejpeg($final, $output, $jpegQuality);
+
+        return $success ? $output : null;
+    }
+
     public function setUploadedFile(string $filePath, object $entity, string|PropertyPathInterface $type): void
     {
         try {

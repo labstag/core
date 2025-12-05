@@ -468,7 +468,7 @@ tasks:
     cmds:
     - task: symfony:console
       vars:
-        CMD: "messenger:consume async"
+        CMD: "messenger:consume --all"
 
   messenger:stats:
     desc: "Show Messenger statistics"

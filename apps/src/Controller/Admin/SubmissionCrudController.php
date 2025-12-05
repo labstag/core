@@ -32,7 +32,7 @@ class SubmissionCrudController extends CrudControllerAbstract
             [TextField::new('type', new TranslatableMessage('Type'))]
         );
         if (Action::DETAIL === $pageName) {
-            $this->crudFieldFactory->addFieldsToTab('principal', [$this->addFieldsSubmission($currentEntity)]);
+            $this->crudFieldFactory->addFieldsToTab('principal', $this->addFieldsSubmission($currentEntity));
         }
 
         $this->crudFieldFactory->setTabDate($pageName);

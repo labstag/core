@@ -53,7 +53,7 @@ abstract class FrontFormAbstract extends AbstractController implements FrontForm
     /**
      * @param array<string, mixed> $data
      */
-    public function getFields(array $data): mixed
+    public function getFields(array $data): array
     {
         unset($data);
 
@@ -69,8 +69,7 @@ abstract class FrontFormAbstract extends AbstractController implements FrontForm
         bool $save = true,
     ): array
     {
-        unset($save);
-        $execute = $this->execute($form, $formCode, $disable);
+        $execute = $this->execute($form, $disable, $save);
 
         return [
             'execute'   => $execute,

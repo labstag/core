@@ -34,6 +34,15 @@ class TemplateFixtures extends FixtureAbstract
             $objectManager->persist($template);
         }
 
+        foreach ($this->templates as $row) {
+            $template = new Template();
+            $template->setCode($row->getCode());
+            $template->setTitle('Template ' . $row->getCode());
+            $template->setText($row->getContent('txt'));
+            $template->setHtml($row->getContent('html'));
+            $objectManager->persist($template);
+        }
+
         $objectManager->flush();
     }
 

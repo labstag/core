@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Override;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -16,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Labstag\Entity\Configuration;
 use Labstag\Field\WysiwygField;
+use Override;
 use Symfony\Component\Intl\Locales;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -64,7 +64,8 @@ class ConfigurationCrudController extends CrudControllerAbstract
         }
 
         $choiceField->setChoices($languages);
-        $this->crudFieldFactory->addFieldsToTab('tmdb', [$choiceField]);
+        $textField = TextField::new('regionTmdb', new TranslatableMessage('Region'));
+        $this->crudFieldFactory->addFieldsToTab('tmdb', [$choiceField, $textField]);
 
         $this->crudFieldFactory->addTab('security', FormField::addTab(new TranslatableMessage('Security')));
 
@@ -150,6 +151,13 @@ class ConfigurationCrudController extends CrudControllerAbstract
                 $pageName,
                 self::getEntityFqcn(),
                 new TranslatableMessage('Movie')
+            ),
+            FormField::addColumn(6),
+            $this->crudFieldFactory->imageField(
+                'gamePlaceholder',
+                $pageName,
+                self::getEntityFqcn(),
+                new TranslatableMessage('Game')
             ),
             FormField::addColumn(6),
             $this->crudFieldFactory->imageField(

@@ -115,6 +115,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     protected ?string $username = null;
 
     /**
+     * @var Collection<int, Configuration>
+     */
+    #[ORM\OneToMany(targetEntity: Configuration::class, mappedBy: 'defaultuser')]
+    private Collection $configurations;
+
+    /**
      * @var Collection<int, Group>
      */
     #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'users')]
@@ -122,13 +128,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
 
     public function __construct()
     {
-        $this->stories       = new ArrayCollection();
-        $this->editos        = new ArrayCollection();
-        $this->memos         = new ArrayCollection();
-        $this->pages         = new ArrayCollection();
-        $this->posts         = new ArrayCollection();
-        $this->httpErrorLogs = new ArrayCollection();
-        $this->groups        = new ArrayCollection();
+        $this->stories        = new ArrayCollection();
+        $this->editos         = new ArrayCollection();
+        $this->memos          = new ArrayCollection();
+        $this->pages          = new ArrayCollection();
+        $this->posts          = new ArrayCollection();
+        $this->httpErrorLogs  = new ArrayCollection();
+        $this->groups         = new ArrayCollection();
+        $this->configurations = new ArrayCollection();
     }
 
     /**
@@ -164,6 +171,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
                 $this->email,
             ] = $data;
         }
+    }
+
+    public function addConfiguration(Configuration $configuration): static
+    {
+        if (!$this->configurations->contains($configuration)) {
+            $this->configurations->add($configuration);
+            $configuration->setDefaultuser($this);
+        }
+
+        return $this;
     }
 
     public function addEdito(Edito $edito): static
@@ -254,6 +271,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function getAvatarFile(): ?File
     {
         return $this->avatarFile;
+    }
+
+    /**
+     * @return Collection<int, Configuration>
+     */
+    public function getConfigurations(): Collection
+    {
+        return $this->configurations;
     }
 
     /**
@@ -370,6 +395,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function isEnable(): ?bool
     {
         return $this->enable;
+    }
+
+    public function removeConfiguration(Configuration $configuration): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->configurations->removeElement($configuration) && $configuration->getDefaultuser() === $this) {
+            $configuration->setDefaultuser(null);
+        }
+
+        return $this;
     }
 
     public function removeEdito(Edito $edito): static

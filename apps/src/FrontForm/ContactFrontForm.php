@@ -50,11 +50,22 @@ class ContactFrontForm extends FrontFormAbstract
      * @return iterable<mixed>
      */
     #[Override]
-    public function getFields(array $data): iterable
+    public function getFields(array $data): array
     {
-        yield TextField::new('firstname', new TranslatableMessage('First name'))->setValue($data['firstname']);
-        yield TextField::new('lastname', new TranslatableMessage('Last name'))->setValue($data['lastname']);
-        yield TextareaField::new('content', new TranslatableMessage('Content'))->setValue($data['content']);
+        $textField = TextField::new('firstname', new TranslatableMessage('First name'));
+        $textField->setValue($data['firstname']);
+
+        $lastName = TextField::new('lastname', new TranslatableMessage('Last name'));
+        $lastName->setValue($data['lastname']);
+
+        $textareaField = TextareaField::new('content', new TranslatableMessage('Content'));
+        $textareaField->setValue($data['content']);
+
+        return [
+            $textField,
+            $lastName,
+            $textareaField,
+        ];
     }
 
     public function getForm(): string

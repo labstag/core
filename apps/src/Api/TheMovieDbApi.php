@@ -111,6 +111,7 @@ class TheMovieDbApi
         $details['tmdb']          = $this->movies()->getDetails($tmdbId, $locale);
         $locale                   = $this->configurationService->getLocaleTmdb();
         $details['videos']        = $this->getVideosMovie($tmdbId);
+        $details['credits']       = $this->movies()->getCredits($tmdbId, $locale);
         $details['release_dates'] = $this->movies()->getMovieReleasesDates($tmdbId);
         $details['collection']    = $this->movies()->getMovieCollection(
             $details['tmdb']['belongs_to_collection']['id'] ?? '',
@@ -208,6 +209,28 @@ class TheMovieDbApi
         return $details;
     }
 
+    public function getVideosMovie(string $tmdbId): ?array
+    {
+        $locale = $this->configurationService->getLocaleTmdb();
+        $videos = $this->movies()->getVideos($tmdbId, $locale);
+        if (is_null($videos)) {
+            return $this->movies()->getVideos($tmdbId);
+        }
+
+        return $videos;
+    }
+
+    public function getVideosSeason(string $tmdbId, int $numberSeason): ?array
+    {
+        $locale = $this->configurationService->getLocaleTmdb();
+        $videos = $this->tvserie()->getSeasonVideos($tmdbId, $numberSeason, $locale);
+        if (is_null($videos)) {
+            return $this->tvserie()->getSeasonVideos($tmdbId, $numberSeason);
+        }
+
+        return $videos;
+    }
+
     /**
      * Get direct access to images API for advanced usage.
      */
@@ -246,28 +269,6 @@ class TheMovieDbApi
         }
 
         return [];
-    }
-
-    private function getVideosMovie(string $tmdbId): ?array
-    {
-        $locale = $this->configurationService->getLocaleTmdb();
-        $videos = $this->movies()->getVideos($tmdbId, $locale);
-        if (is_null($videos)) {
-            return $this->movies()->getVideos($tmdbId);
-        }
-
-        return $videos;
-    }
-
-    private function getVideosSeason(string $tmdbId, int $numberSeason): ?array
-    {
-        $locale = $this->configurationService->getLocaleTmdb();
-        $videos = $this->tvserie()->getSeasonVideos($tmdbId, $numberSeason, $locale);
-        if (is_null($videos)) {
-            return $this->tvserie()->getSeasonVideos($tmdbId, $numberSeason);
-        }
-
-        return $videos;
     }
 
     private function getVideosSerie(string $tmdbId): ?array

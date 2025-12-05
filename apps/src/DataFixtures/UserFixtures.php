@@ -2,22 +2,12 @@
 
 namespace Labstag\DataFixtures;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Labstag\Entity\User;
 use Override;
 
-class UserFixtures extends FixtureAbstract implements DependentFixtureInterface
+class UserFixtures extends FixtureAbstract
 {
-    /**
-     * @return string[]
-     */
-    #[Override]
-    public function getDependencies(): array
-    {
-        return [ConfigFixtures::class];
-    }
-
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
