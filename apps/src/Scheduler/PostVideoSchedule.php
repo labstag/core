@@ -21,7 +21,10 @@ final class PostVideoSchedule implements ScheduleProviderInterface
     public function getSchedule(): Schedule
     {
         $schedule = new Schedule();
-        $schedule->add(RecurringMessage::cron('0 0 * * 1', new PostVideoMessage()));
+        $schedule->add(
+            // RecurringMessage::cron('0 0 * * 1', new PostVideoMessage()),
+            RecurringMessage::every('1 minute', new PostVideoMessage()),
+        );
         $schedule->stateful($this->cache);
 
         return $schedule;
