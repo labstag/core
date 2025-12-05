@@ -69,7 +69,7 @@ class SagaRepository extends RepositoryAbstract
         $subQuery = $this->createQueryBuilder('s2');
         $subQuery->select('s2.id');
         $subQuery->join('s2.movies', 'm2');
-        $subQuery->where('m.enable = :enable');
+        $subQuery->where('m2.enable = :enable');
         $subQuery->setParameter('enable', true);
         $subQuery->groupBy('s2.id');
         $subQuery->having('COUNT(m2.id) >= 2');
