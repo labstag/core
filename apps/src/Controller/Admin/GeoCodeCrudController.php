@@ -32,9 +32,9 @@ class GeoCodeCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Geo Code'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Geo Codes'));
-        $crud->setDefaultSort([
-                'stateName' => 'ASC',
-            ]);
+        $crud->setDefaultSort(
+            ['stateName' => 'ASC']
+        );
 
         return $crud;
     }

@@ -37,15 +37,22 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
         );
 
         $templates = $this->templates($paragraph, 'header');
-        $this->setHeader($paragraph, $this->render($templates['view'], [
-                    'pagination' => $pagination,
-                ]));
+        $this->setHeader(
+            $paragraph,
+            $this->render(
+                $templates['view'],
+                ['pagination' => $pagination]
+            )
+        );
 
-        $this->setData($paragraph, [
+        $this->setData(
+            $paragraph,
+            [
                 'pagination' => $pagination,
                 'paragraph'  => $paragraph,
                 'data'       => $data,
-            ]);
+            ]
+        );
     }
 
     public function getClass(): string
@@ -86,8 +93,7 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
         $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
-            return $object instanceof Page && $object->getType() == PageEnum::SERIES
-                ->value;
+            return $object instanceof Page && $object->getType() == PageEnum::SERIES->value;
         }
 
         $parent = $this->paragraphService->getEntityParent($paragraph);

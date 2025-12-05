@@ -25,9 +25,9 @@ class GroupCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Group'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Groups'));
-        $crud->setDefaultSort([
-                'title' => 'ASC',
-            ]);
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
 
         return $crud;
     }
@@ -43,7 +43,10 @@ class GroupCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
-            [$this->crudFieldFactory->titleField(), $associationField]
+            [
+                $this->crudFieldFactory->titleField(),
+                $associationField,
+            ]
         );
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);

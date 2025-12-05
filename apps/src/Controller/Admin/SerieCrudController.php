@@ -35,9 +35,9 @@ class SerieCrudController extends CrudControllerAbstract
     public function addByApi(Request $request): JsonResponse
     {
         $tmdbId       = $request->query->get('id');
-        $serie        = $this->getRepository(Serie::class)->findOneBy([
-                'tmdb' => $tmdbId,
-            ]);
+        $serie        = $this->getRepository(Serie::class)->findOneBy(
+            ['tmdb' => $tmdbId]
+        );
         if ($serie instanceof Serie) {
             return new JsonResponse(
                 [
@@ -49,8 +49,7 @@ class SerieCrudController extends CrudControllerAbstract
         }
 
         $locale = $this->configurationService->getLocaleTmdb();
-        $tmdb   = $this->theMovieDbApi->tvserie()
-            ->getDetails($tmdbId, $locale);
+        $tmdb   = $this->theMovieDbApi->tvserie()->getDetails($tmdbId, $locale);
         if (is_null($tmdb)) {
             return new JsonResponse(
                 [
@@ -59,17 +58,14 @@ class SerieCrudController extends CrudControllerAbstract
                     'message' => $this->translator->trans(
                         new TranslatableMessage(
                             'The series with the TMDB id %id% does not exist',
-                            [
-                                '%id%' => $tmdbId,
-                            ]
+                            ['%id%' => $tmdbId]
                         )
                     ),
                 ]
             );
         }
 
-        $other  = $this->theMovieDbApi->tvserie()
-            ->getTvExternalIds($tmdbId);
+        $other  = $this->theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
         if (!isset($other['imdb_id'])) {
             return new JsonResponse(
                 [
@@ -105,7 +101,7 @@ class SerieCrudController extends CrudControllerAbstract
         $page               = $request->query->get('page', 1);
         $all                = $request->request->all();
         $data               = [
-            'imdb'  => $all['serie']['imdb']  ?? '',
+            'imdb'  => $all['serie']['imdb'] ?? '',
             'title' => $all['serie']['title'] ?? '',
         ];
         $series = $this->serieService->getSerieApi($data, $page);
@@ -141,9 +137,9 @@ class SerieCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Serie'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Series'));
-        $crud->setDefaultSort([
-                'title' => 'ASC',
-            ]);
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
 
         return $crud;
     }
@@ -236,13 +232,15 @@ class SerieCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterEnable($filters);
 
         $filters->add('releaseDate');
-        $countries = $this->getRepository()
-            ->getCountries();
+        $countries = $this->getRepository()->getCountries();
         if ([] != $countries) {
             $countriesFilter = CountriesFilter::new('countries', new TranslatableMessage('Countries'));
-            $countriesFilter->setChoices(array_merge([
-                        '' => '',
-                    ], $countries));
+            $countriesFilter->setChoices(
+                array_merge(
+                    ['' => ''],
+                    $countries
+                )
+            );
             $filters->add($countriesFilter);
         }
 
@@ -382,9 +380,9 @@ class SerieCrudController extends CrudControllerAbstract
 
         $action = Action::new('showModalImportSerie', new TranslatableMessage('Import'), 'fas fa-file-import');
         $action->linkToCrudAction('showModalImportSerie');
-        $action->setHtmlAttributes([
-                'data-action' => 'show-modal',
-            ]);
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
         $action->createAsGlobalAction();
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
@@ -398,9 +396,9 @@ class SerieCrudController extends CrudControllerAbstract
 
         $action = Action::new('showModalSerie', new TranslatableMessage('New serie'), 'fas fa-plus');
         $action->linkToCrudAction('showModalSerie');
-        $action->setHtmlAttributes([
-                'data-action' => 'show-modal',
-            ]);
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
         $action->createAsGlobalAction();
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
@@ -422,9 +420,9 @@ class SerieCrudController extends CrudControllerAbstract
 
         $action = Action::new('jsonSerie', new TranslatableMessage('Json'), 'fas fa-server');
         $action->linkToCrudAction('jsonSerie');
-        $action->setHtmlAttributes([
-                'target' => '_blank',
-            ]);
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);

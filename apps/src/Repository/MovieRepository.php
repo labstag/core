@@ -72,8 +72,7 @@ class MovieRepository extends RepositoryAbstract
     public function findAllUpdate(): mixed
     {
         $queryBuilder = $this->createQueryBuilder('m');
-        $queryBuilder->leftJoin('m.saga', 's')
-            ->addSelect('s');
+        $queryBuilder->leftJoin('m.saga', 's')->addSelect('s');
 
         $query = $queryBuilder->getQuery();
 
@@ -145,8 +144,7 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->select('m.json');
 
-        $rows = $queryBuilder->getQuery()
-            ->getScalarResult();
+        $rows = $queryBuilder->getQuery()->getScalarResult();
 
         return array_column($rows, 'json');
     }
@@ -156,8 +154,7 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->select('m.tmdb');
 
-        $rows = $queryBuilder->getQuery()
-            ->getScalarResult();
+        $rows = $queryBuilder->getQuery()->getScalarResult();
 
         return array_column($rows, 'tmdb');
     }
@@ -167,8 +164,7 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->select('m.tmdb');
 
-        $result = $queryBuilder->getQuery()
-            ->getArrayResult();
+        $result = $queryBuilder->getQuery()->getArrayResult();
 
         return array_column($result, 'tmdb');
     }
@@ -229,10 +225,8 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->leftJoin('m.categories', 'c')
-            ->addSelect('c');
-        $queryBuilder->leftJoin('m.saga', 's')
-            ->addSelect('s');
+        $queryBuilder->leftJoin('m.categories', 'c')->addSelect('c');
+        $queryBuilder->leftJoin('m.saga', 's')->addSelect('s');
         $this->getQueryBuilderTitle($queryBuilder, $query);
         $this->getQueryBuilderCountry($queryBuilder, $query);
         $this->getQueryBuilderSaga($queryBuilder, $query);

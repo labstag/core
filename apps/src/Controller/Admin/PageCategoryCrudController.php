@@ -15,7 +15,10 @@ class PageCategoryCrudController extends CategoryCrudControllerAbstract
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
-            [$this->crudFieldFactory->slugField(), $this->crudFieldFactory->titleField()]
+            [
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->titleField(),
+            ]
         );
         $associationField = AssociationField::new('pages', new TranslatableMessage('Pages'));
         $associationField->formatValue(fn ($entity): int => count($entity));

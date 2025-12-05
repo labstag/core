@@ -21,9 +21,7 @@ class RedirectionImportType extends AbstractType
             FileType::class,
             [
                 'label' => new TranslatableMessage('Import file (CSV)'),
-                'attr'  => [
-                    'accept' => '.csv',
-                ],
+                'attr'  => ['accept' => '.csv'],
             ]
         );
     }

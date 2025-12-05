@@ -56,11 +56,13 @@ final class WysiwygField implements FieldInterface
     public function setMaxLength(int $length): self
     {
         if (1 > $length) {
-            throw new InvalidArgumentException(sprintf(
-                'The argument of the "%s()" method must be 1 or higher (%d given).',
-                __METHOD__,
-                $length
-            ));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'The argument of the "%s()" method must be 1 or higher (%d given).',
+                    __METHOD__,
+                    $length
+                )
+            );
         }
 
         $this->setCustomOption(self::OPTION_MAX_LENGTH, $length);
@@ -71,11 +73,13 @@ final class WysiwygField implements FieldInterface
     public function setNumOfRows(int $rows): self
     {
         if (1 > $rows) {
-            throw new InvalidArgumentException(sprintf(
-                'The argument of the "%s()" method must be 1 or higher (%d given).',
-                __METHOD__,
-                $rows
-            ));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'The argument of the "%s()" method must be 1 or higher (%d given).',
+                    __METHOD__,
+                    $rows
+                )
+            );
         }
 
         $this->setCustomOption(self::OPTION_NUM_OF_ROWS, $rows);

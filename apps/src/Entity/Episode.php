@@ -27,9 +27,7 @@ class Episode
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     protected ?bool $enable = null;
 

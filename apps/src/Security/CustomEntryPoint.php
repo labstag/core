@@ -27,9 +27,11 @@ class CustomEntryPoint implements AuthenticationEntryPointInterface
     {
         unset($request, $authException);
 
-        $page = $this->pageRepository->findOneBy([
+        $page = $this->pageRepository->findOneBy(
+            [
                 'type' => PageEnum::LOGIN->value,
-            ]);
+            ]
+        );
         if (!$page instanceof Page) {
             return new RedirectResponse($this->urlGenerator->generate('front'));
         }

@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 abstract class AbstractTestCase extends KernelTestCase
 {
+
     protected ContainerInterface $container;
 
     protected EntityManagerInterface $entityManager;

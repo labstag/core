@@ -154,8 +154,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     {
         $request                         = $adminContext->getRequest();
         $entityId                        = $request->query->get('entityId');
-        $entity                          = $this->getRepository()
-            ->find($entityId);
+        $entity                          = $this->getRepository()->find($entityId);
         $repositoryAbstract              = $this->getRepository();
         $repositoryAbstract->find($entity);
 
@@ -179,8 +178,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
 
     protected function filterTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
     {
-        $action = $searchDto->getRequest()
-            ->query->get('action');
+        $action = $searchDto->getRequest()->query->get('action');
         if ('trash' === $action) {
             $queryBuilder->andWhere('entity.deletedAt IS NOT NULL');
         }
@@ -244,27 +242,29 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
 
         $action = Action::new('linkPublic', new TranslatableMessage('View Page'))->setHtmlAttributes(
-            [
-                'target' => '_blank',
-            ]
-        )->linkToRoute($urlPublic, fn ($entity): array => [
+            ['target' => '_blank']
+        )->linkToRoute(
+            $urlPublic,
+            fn ($entity): array => [
                 'entity' => $entity->getId(),
-            ])->displayIf(
-                static fn ($entity): bool => !method_exists($entity, 'getDeletedAt') || null === $entity->getDeletedAt()
-            );
+            ]
+        )->displayIf(
+            static fn ($entity): bool => !method_exists($entity, 'getDeletedAt') || null === $entity->getDeletedAt()
+        );
         $actions->add(Crud::PAGE_DETAIL, $action);
         $actions->add(Crud::PAGE_EDIT, $action);
         $actions->add(Crud::PAGE_INDEX, $action);
 
         $w3cAction = Action::new('linkw3CValidator', new TranslatableMessage('W3C Validator'))->setHtmlAttributes(
-            [
-                'target' => '_blank',
-            ]
-        )->linkToRoute($urlW3c, fn ($entity): array => [
+            ['target' => '_blank']
+        )->linkToRoute(
+            $urlW3c,
+            fn ($entity): array => [
                 'entity' => $entity->getId(),
-            ])->displayIf(
-                static fn ($entity): bool => !method_exists($entity, 'getDeletedAt') || null === $entity->getDeletedAt()
-            );
+            ]
+        )->displayIf(
+            static fn ($entity): bool => !method_exists($entity, 'getDeletedAt') || null === $entity->getDeletedAt()
+        );
         $actions->add(Crud::PAGE_EDIT, $w3cAction);
         $actions->add(Crud::PAGE_INDEX, $w3cAction);
         $actions->add(Crud::PAGE_DETAIL, $w3cAction);

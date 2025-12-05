@@ -17,8 +17,7 @@ final class SecurityControllerTest extends AbstractWebTestCase
     #[Group('security')]
     public function loginpageisaccessible(): void
     {
-        $this->client()
-            ->request(Request::METHOD_GET, '/login');
+        $this->client()->request(Request::METHOD_GET, '/login');
         $this->assertResponseIsSuccessful();
     }
 }

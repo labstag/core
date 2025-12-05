@@ -25,9 +25,11 @@ final class SagaService
 
     public function getSaga(array $data): Saga
     {
-        $saga = $this->sagaRepository->findOneBy([
+        $saga = $this->sagaRepository->findOneBy(
+            [
                 'tmdb' => $data['id'],
-            ]);
+            ]
+        );
         if (!$saga instanceof Saga) {
             $saga = new Saga();
             $saga->setEnable(true);
@@ -88,8 +90,7 @@ final class SagaService
 
     private function updateImageBackdrop(Saga $saga, array $data): bool
     {
-        $backdrop = $this->theMovieDbApi->images()
-            ->getBackdropUrl($data['tmdb']['backdrop_path'] ?? '');
+        $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($data['tmdb']['backdrop_path'] ?? '');
         if (is_null($backdrop)) {
             $saga->setBackdropFile();
             $saga->setBackdrop(null);
@@ -104,8 +105,7 @@ final class SagaService
 
     private function updateImagePoster(Saga $saga, array $data): bool
     {
-        $poster = $this->theMovieDbApi->images()
-            ->getPosterUrl($data['tmdb']['poster_path'] ?? '');
+        $poster = $this->theMovieDbApi->images()->getPosterUrl($data['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
             $saga->setPosterFile();
             $saga->setPoster(null);

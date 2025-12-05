@@ -35,8 +35,7 @@ class GameRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('p');
         $queryBuilder->select('p.igdb');
 
-        $result = $queryBuilder->getQuery()
-            ->getArrayResult();
+        $result = $queryBuilder->getQuery()->getArrayResult();
 
         return array_column($result, 'igdb');
     }
@@ -49,8 +48,7 @@ class GameRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('g');
         $queryBuilder->where('g.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->leftJoin('g.categories', 'c')
-            ->addSelect('c');
+        $queryBuilder->leftJoin('g.categories', 'c')->addSelect('c');
 
         return $queryBuilder->orderBy('g.' . $query['order'], $query['orderby']);
     }

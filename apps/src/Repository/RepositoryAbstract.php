@@ -43,14 +43,12 @@ abstract class RepositoryAbstract extends ServiceEntityRepository
 
     public function persist(object $entity): void
     {
-        $this->getEntityManager()
-            ->persist($entity);
+        $this->getEntityManager()->persist($entity);
     }
 
     public function remove(object $entity): void
     {
-        $this->getEntityManager()
-            ->remove($entity);
+        $this->getEntityManager()->remove($entity);
     }
 
     public function save(object $entity): void

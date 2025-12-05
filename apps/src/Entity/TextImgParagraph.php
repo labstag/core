@@ -13,6 +13,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 class TextImgParagraph extends Paragraph
 {
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $content = null;
 

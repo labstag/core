@@ -17,19 +17,21 @@ class TagData extends DataAbstract implements DataInterface
     {
         $entityRepository = $this->entityManager->getRepository(Page::class);
         $page             = match ($entity::class) {
-            PostTag::class => $entityRepository->findOneBy([
+            PostTag::class => $entityRepository->findOneBy(
+                [
                     'type' => PageEnum::POSTS->value,
-                ]),
-            StoryTag::class => $entityRepository->findOneBy([
+                ]
+            ),
+            StoryTag::class => $entityRepository->findOneBy(
+                [
                     'type' => PageEnum::STORIES->value,
-                ]),
+                ]
+            ),
             default => null,
         };
 
         if (!$page instanceof Page) {
-            return [
-                'slug' => '',
-            ];
+            return ['slug' => ''];
         }
 
         return match ($entity::class) {
@@ -41,9 +43,7 @@ class TagData extends DataAbstract implements DataInterface
                 'slug' => $page->getSlug(),
                 'tag'  => $entity->getSlug(),
             ],
-            default         => [
-                'slug' => '',
-            ],
+            default         => ['slug' => ''],
         };
     }
 
@@ -100,9 +100,9 @@ class TagData extends DataAbstract implements DataInterface
         $slugSecond = basename((string) $slug);
         $slugFirst  = dirname((string) $slug);
 
-        $page = $this->entityManager->getRepository(Page::class)->findOneBy([
-                'slug' => $slugFirst,
-            ]);
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
+            ['slug' => $slugFirst]
+        );
         if (!$page instanceof Page) {
             return null;
         }
@@ -117,10 +117,9 @@ class TagData extends DataAbstract implements DataInterface
         }
 
         $slugSecond = str_replace('tag-', '', $slugSecond);
-        $tag        = $this->entityManager->getRepository($typeclass)
-            ->findOneBy([
-                            'slug' => $slugSecond,
-                        ]);
+        $tag        = $this->entityManager->getRepository($typeclass)->findOneBy(
+            ['slug' => $slugSecond]
+        );
         if (!$tag instanceof Tag) {
             return null;
         }
@@ -137,9 +136,9 @@ class TagData extends DataAbstract implements DataInterface
         $slugSecond = basename($slug);
         $slugFirst  = dirname($slug);
 
-        $page = $this->entityManager->getRepository(Page::class)->findOneBy([
-                'slug' => $slugFirst,
-            ]);
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
+            ['slug' => $slugFirst]
+        );
         if (!$page instanceof Page) {
             return null;
         }
@@ -155,9 +154,8 @@ class TagData extends DataAbstract implements DataInterface
 
         $slugSecond = str_replace('tag-', '', $slugSecond);
 
-        return $this->entityManager->getRepository($typeclass)
-            ->findOneBy([
-                            'slug' => $slugSecond,
-                        ]);
+        return $this->entityManager->getRepository($typeclass)->findOneBy(
+            ['slug' => $slugSecond]
+        );
     }
 }

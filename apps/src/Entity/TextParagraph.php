@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class TextParagraph extends Paragraph
 {
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $content = null;
 

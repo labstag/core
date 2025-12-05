@@ -28,11 +28,14 @@ class AdminBlock extends BlockAbstract
     {
         unset($disable);
 
-        $this->setData($block, [
+        $this->setData(
+            $block,
+            [
                 'entity' => $data['entity'],
                 'block'  => $block,
                 'data'   => $data,
-            ]);
+            ]
+        );
     }
 
     public function getClass(): string

@@ -19,7 +19,10 @@ final class UserService
      */
     public function getLanguages(): array
     {
-        return ['fr', 'en'];
+        return [
+            'fr',
+            'en',
+        ];
     }
 
     /**

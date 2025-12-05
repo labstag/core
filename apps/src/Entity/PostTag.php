@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class PostTag extends Tag
 {
+
     /**
      * @var Collection<int, Post>
      */

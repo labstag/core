@@ -60,9 +60,9 @@ class RecommendationCrudController extends CrudControllerAbstract
         $crud = parent::configureCrud($crud);
         $crud->setEntityLabelInSingular(new TranslatableMessage('Recommendation'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Recommendations'));
-        $crud->setDefaultSort([
-                'title' => 'ASC',
-            ]);
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
 
         return $crud;
     }
@@ -106,9 +106,9 @@ class RecommendationCrudController extends CrudControllerAbstract
         $action = Action::new('addToBdd', new TranslatableMessage('addToBdd'), 'fas fa-terminal');
         $action->renderAsLink();
         $action->linkToCrudAction('addToBdd');
-        $action->setHtmlAttributes([
-                'target' => '_blank',
-            ]);
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 

@@ -37,9 +37,9 @@ class SagaCrudController extends CrudControllerAbstract
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort([
-                'title' => 'ASC',
-            ]);
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
         $crud->setEntityLabelInSingular(new TranslatableMessage('Saga'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Sagas'));
 
@@ -189,9 +189,9 @@ class SagaCrudController extends CrudControllerAbstract
 
         $action = Action::new('jsonSaga', new TranslatableMessage('Json'), 'fas fa-server');
         $action->linkToCrudAction('jsonSaga');
-        $action->setHtmlAttributes([
-                'target' => '_blank',
-            ]);
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);

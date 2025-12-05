@@ -48,10 +48,9 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         $loginData = $request->request->all('login');
         $username  = $loginData['username'] ?? '';
         $password  = $loginData['password'] ?? '';
-        $csrfToken = $loginData['_token']   ?? '';
+        $csrfToken = $loginData['_token'] ?? '';
 
-        $request->getSession()
-            ->set(SecurityRequestAttributes::LAST_USERNAME, $username);
+        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $username);
 
         return new Passport(
             new UserBadge(
@@ -66,7 +65,10 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
                 }
             ),
             new PasswordCredentials($password),
-            [new CsrfTokenBadge('login', $csrfToken), new RememberMeBadge()]
+            [
+                new CsrfTokenBadge('login', $csrfToken),
+                new RememberMeBadge(),
+            ]
         );
     }
 
@@ -87,9 +89,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     protected function getLoginUrl(Request $request): string
     {
         unset($request);
-        $login = $this->pageRepository->findOneBy([
+        $login = $this->pageRepository->findOneBy(
+            [
                 'type' => PageEnum::LOGIN->value,
-            ]);
+            ]
+        );
         if (!$login instanceof Page) {
             return '#linkdisabled';
         }

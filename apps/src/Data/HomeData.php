@@ -11,9 +11,7 @@ class HomeData extends DataAbstract implements DataInterface
     {
         unset($entity);
 
-        return [
-            'slug' => '',
-        ];
+        return ['slug' => ''];
     }
 
     #[Override]

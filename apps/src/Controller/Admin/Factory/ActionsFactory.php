@@ -13,6 +13,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class ActionsFactory
 {
+
     protected ?Actions $actions = null;
 
     protected array $actionsAdd     = [];
@@ -63,10 +64,24 @@ class ActionsFactory
     public function getDefaultActions(): void
     {
         $this->actionsDefault = [
-            Crud::PAGE_INDEX  => [Action::NEW, Action::EDIT, Action::DELETE],
-            Crud::PAGE_DETAIL => [Action::EDIT, Action::DELETE, Action::INDEX],
-            Crud::PAGE_EDIT   => [Action::SAVE_AND_RETURN, Action::SAVE_AND_CONTINUE],
-            Crud::PAGE_NEW    => [Action::SAVE_AND_RETURN, Action::SAVE_AND_ADD_ANOTHER],
+            Crud::PAGE_INDEX  => [
+                Action::NEW,
+                Action::EDIT,
+                Action::DELETE,
+            ],
+            Crud::PAGE_DETAIL => [
+                Action::EDIT,
+                Action::DELETE,
+                Action::INDEX,
+            ],
+            Crud::PAGE_EDIT   => [
+                Action::SAVE_AND_RETURN,
+                Action::SAVE_AND_CONTINUE,
+            ],
+            Crud::PAGE_NEW    => [
+                Action::SAVE_AND_RETURN,
+                Action::SAVE_AND_ADD_ANOTHER,
+            ],
         ];
     }
 
@@ -126,9 +141,9 @@ class ActionsFactory
         }
 
         $action = Action::new('linkPublic', new TranslatableMessage('View Page'), 'fas fa-external-link-alt');
-        $action->setHtmlAttributes([
-                'target' => '_blank',
-            ]);
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
         $action->linkToCrudAction('linkPublic');
 
         $this->add(Crud::PAGE_DETAIL, $action);
@@ -158,9 +173,9 @@ class ActionsFactory
         }
 
         $w3cAction = Action::new('linkw3CValidator', new TranslatableMessage('W3C Validator'), 'fas fa-check-circle');
-        $w3cAction->setHtmlAttributes([
-                'target' => '_blank',
-            ]);
+        $w3cAction->setHtmlAttributes(
+            ['target' => '_blank']
+        );
         $w3cAction->linkToCrudAction('linkw3CValidator');
 
         $this->add(Crud::PAGE_DETAIL, $w3cAction);
@@ -188,9 +203,9 @@ class ActionsFactory
         }
 
         $action = Action::new('imdb', new TranslatableMessage('IMDB Page'), 'fas fa-film');
-        $action->setHtmlAttributes([
-                'target' => '_blank',
-            ]);
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
         $action->linkToCrudAction('imdb');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
@@ -206,9 +221,9 @@ class ActionsFactory
         }
 
         $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'), 'fas fa-database');
-        $action->setHtmlAttributes([
-                'target' => '_blank',
-            ]);
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
         $action->linkToCrudAction('tmdb');
         $this->add(Crud::PAGE_DETAIL, $action);
         $this->add(Crud::PAGE_EDIT, $action);
@@ -284,9 +299,12 @@ class ActionsFactory
         $this->add(Crud::PAGE_INDEX, $action);
 
         $empty = Action::new('empty', new TranslatableMessage('Empty'), 'fa fa-trash');
-        $empty->linkToRoute('admin_empty', [
+        $empty->linkToRoute(
+            'admin_empty',
+            [
                 'entity' => $this->entity,
-            ]);
+            ]
+        );
         $empty->createAsGlobalAction();
         $this->add(Crud::PAGE_INDEX, $empty);
 

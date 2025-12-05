@@ -23,9 +23,12 @@ class ContactFrontForm extends FrontFormAbstract
             return false;
         }
 
-        $email = $this->emailService->get('send_contact', [
+        $email = $this->emailService->get(
+            'send_contact',
+            [
                 'form' => $form->all(),
-            ]);
+            ]
+        );
         if (!$email instanceof EmailAbstract) {
             return false;
         }

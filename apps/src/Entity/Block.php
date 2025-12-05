@@ -30,14 +30,13 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 )]
 abstract class Block implements Stringable
 {
+
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $classes = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     protected ?bool $enable = null;
 
@@ -55,16 +54,12 @@ abstract class Block implements Stringable
      */
     #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
-        [
-            'position' => 'ASC',
-        ]
+        ['position' => 'ASC']
     )]
     protected Collection $paragraphs;
 
     #[ORM\Column(
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     protected int $position = 1;
 

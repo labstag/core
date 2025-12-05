@@ -42,9 +42,7 @@ class ChangePasswordType extends AbstractType
                                 'min'        => 8,
                                 'minMessage' => new TranslatableMessage(
                                     'Your password should be at least {{ limit }} characters',
-                                    [
-                                        '{{ limit }}' => 8,
-                                    ]
+                                    ['{{ limit }}' => 8]
                                 ),
                             ]
                         ),

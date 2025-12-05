@@ -20,10 +20,13 @@ final class CacheService
         try {
             return $this->cache->get($key, $callback, $ttl);
         } catch (Exception $exception) {
-            $this->logger->error('Cache error', [
+            $this->logger->error(
+                'Cache error',
+                [
                     'key'   => $key,
                     'error' => $exception->getMessage(),
-                ]);
+                ]
+            );
 
             return $callback();
         }

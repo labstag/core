@@ -27,9 +27,11 @@ class MovieData extends SagaData implements DataInterface
     #[Override]
     public function generateSlug(object $entity): array
     {
-        $page = $this->entityManager->getRepository(Page::class)->findOneBy([
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
+            [
                 'type' => PageEnum::MOVIES->value,
-            ]);
+            ]
+        );
 
         $slug = parent::generateSlugPage($page);
         $slug['slug'] .= '/' . $entity->getSlug();
@@ -95,9 +97,9 @@ class MovieData extends SagaData implements DataInterface
         $slugSecond = basename((string) $slug);
         $slugFirst  = dirname((string) $slug);
 
-        $page = $this->entityManager->getRepository(Page::class)->findOneBy([
-                'slug' => $slugFirst,
-            ]);
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
+            ['slug' => $slugFirst]
+        );
         if (!$page instanceof Page) {
             return null;
         }
@@ -106,8 +108,8 @@ class MovieData extends SagaData implements DataInterface
             return null;
         }
 
-        return $this->entityManager->getRepository(Movie::class)->findOneBy([
-                'slug' => $slugSecond,
-            ]);
+        return $this->entityManager->getRepository(Movie::class)->findOneBy(
+            ['slug' => $slugSecond]
+        );
     }
 }

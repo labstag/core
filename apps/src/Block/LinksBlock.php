@@ -37,15 +37,21 @@ class LinksBlock extends BlockAbstract
 
         unset($disable);
 
-        $this->logger->debug('Starting links block generation', [
+        $this->logger->debug(
+            'Starting links block generation',
+            [
                 'block_id' => $block->getId(),
-            ]);
+            ]
+        );
 
         $links  = $block->getLinks();
         if (!is_array($links) || [] === $links) {
-            $this->logger->debug('No valid links found', [
+            $this->logger->debug(
+                'No valid links found',
+                [
                     'block_id' => $block->getId(),
-                ]);
+                ]
+            );
             $this->setShow($block, false);
 
             return;
@@ -53,11 +59,14 @@ class LinksBlock extends BlockAbstract
 
         $links = $this->correctionLinks($links);
 
-        $this->setData($block, [
+        $this->setData(
+            $block,
+            [
                 'links' => $links,
                 'block' => $block,
                 'data'  => $data,
-            ]);
+            ]
+        );
     }
 
     public function getClass(): string
@@ -82,9 +91,10 @@ class LinksBlock extends BlockAbstract
                 return new TranslatableMessage('Link');
             }
         );
-        $collectionField->setFormTypeOption('attr', [
-                'data-controller' => 'sortable',
-            ]);
+        $collectionField->setFormTypeOption(
+            'attr',
+            ['data-controller' => 'sortable']
+        );
         $collectionField->setEntryType(LinkType::class);
         yield $collectionField;
     }

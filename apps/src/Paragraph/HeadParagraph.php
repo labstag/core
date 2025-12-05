@@ -17,10 +17,13 @@ class HeadParagraph extends ParagraphAbstract implements ParagraphInterface
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
         unset($disable);
-        $this->setData($paragraph, [
+        $this->setData(
+            $paragraph,
+            [
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]);
+            ]
+        );
     }
 
     public function getClass(): string

@@ -24,9 +24,11 @@ final class PlatformService extends AbstractIgdb
     public function getPlatform(array $data): Platform
     {
         $entityRepository = $this->entityManager->getRepository(Platform::class);
-        $platform         = $entityRepository->findOneBy([
+        $platform         = $entityRepository->findOneBy(
+            [
                 'igdb' => $data['id'],
-            ]);
+            ]
+        );
         if ($platform instanceof Platform) {
             return $platform;
         }
@@ -58,7 +60,10 @@ final class PlatformService extends AbstractIgdb
             $where[] = 'platform_family.name ~ "' . $family . '"';
         }
 
-        $fields    = ['*', 'platform_family.*'];
+        $fields    = [
+            '*',
+            'platform_family.*',
+        ];
         $body      = $this->igdbApi->setBody(
             search: $search,
             fields: $fields,
@@ -102,7 +107,11 @@ final class PlatformService extends AbstractIgdb
     private function getApiPlatformId(string $id): ?array
     {
         $where  = ['id = ' . $id];
-        $fields = ['*', 'platform_logo.*', 'platform_family.*'];
+        $fields = [
+            '*',
+            'platform_logo.*',
+            'platform_family.*',
+        ];
         $body   = $this->igdbApi->setBody(fields: $fields, where: $where, limit: 1);
 
         $results = $this->igdbApi->setUrl('platforms', $body);

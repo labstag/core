@@ -130,10 +130,13 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
         $essence = new Essence();
 
         // Load any url:
-        $media = $essence->extract($url, [
+        $media = $essence->extract(
+            $url,
+            [
                 'maxwidth'  => 800,
                 'maxheight' => 600,
-            ]);
+            ]
+        );
 
         if (!$media->has('thumbnailUrl')) {
             return;
@@ -157,10 +160,13 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
         $essence = new Essence();
 
         // Load any url:
-        $media = $essence->extract($url, [
+        $media = $essence->extract(
+            $url,
+            [
                 'maxwidth'  => 800,
                 'maxheight' => 600,
-            ]);
+            ]
+        );
         if (!$media instanceof Media) {
             return null;
         }

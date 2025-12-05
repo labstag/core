@@ -21,16 +21,18 @@ class SkillsType extends AbstractType
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         $formBuilder->add('position', HiddenType::class);
-        $formBuilder->add('title', TextType::class, [
+        $formBuilder->add(
+            'title',
+            TextType::class,
+            [
                 'label' => new TranslatableMessage('Title'),
-            ]);
+            ]
+        );
         $formBuilder->add(
             'skills',
             CollectionType::class,
             [
-                'attr'         => [
-                    'data-controller' => 'sortable',
-                ],
+                'attr'         => ['data-controller' => 'sortable'],
                 'entry_type'   => CollectionSkillsType::class,
                 'allow_add'    => true,
                 'allow_delete' => true,

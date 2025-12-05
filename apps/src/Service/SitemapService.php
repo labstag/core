@@ -19,6 +19,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class SitemapService
 {
+
     /**
      * @var string[]
      */
@@ -75,9 +76,7 @@ final class SitemapService
         $url    = $this->urlGenerator->generate('front', $params);
 
         return [
-            '/' . $url => [
-                'entity' => $entity,
-            ],
+            '/' . $url => ['entity' => $entity],
         ];
     }
 
@@ -97,6 +96,21 @@ final class SitemapService
     /**
      * @return mixed[]
      */
+    private function getDataGame(): array
+    {
+        $listing = $this->slugService->getPageByType(PageEnum::GAMES->value);
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
+
+        $games = $this->getDataFromRepository(Game::class);
+
+        return array_merge($this->setTabs($games));
+    }
+
+    /**
+     * @return mixed[]
+     */
     private function getDataMovie(): array
     {
         $listing = $this->slugService->getPageByType(PageEnum::MOVIES->value);
@@ -108,21 +122,6 @@ final class SitemapService
         $sagas            = $this->getDataFromRepository(Saga::class);
 
         return array_merge($this->setTabs($movies), $this->setTabs($sagas));
-    }
-
-    /**
-     * @return mixed[]
-     */
-    private function getDataGame(): array
-    {
-        $listing = $this->slugService->getPageByType(PageEnum::GAMES->value);
-        if (!is_object($listing) || !$listing->isEnable()) {
-            return [];
-        }
-
-        $games = $this->getDataFromRepository(Game::class);
-
-        return array_merge($this->setTabs($games));
     }
 
     /**

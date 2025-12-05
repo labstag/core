@@ -11,6 +11,7 @@ use Symfony\Component\Yaml\Yaml;
 #[AutoconfigureTag('labstag.filestorage')]
 abstract class FileStorageAbstract
 {
+
     protected mixed $adapter = null;
 
     protected string $type;

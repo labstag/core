@@ -7,17 +7,11 @@ use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Saga;
 use Labstag\Entity\SagaParagraph as EntitySagaParagraph;
-use Labstag\Repository\MovieRepository;
-use Labstag\Repository\SagaRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
 {
-    private const MINMOVIES = 2;
-
-    private const MINSAGA   = 3;
-
     /**
      * @param mixed[] $data
      */
@@ -26,46 +20,29 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
     {
         unset($disable);
 
-        $request = $this->requestStack->getCurrentRequest();
+        $request          = $this->requestStack->getCurrentRequest();
         $entityRepository = $this->getRepository(Saga::class);
-        $query   = $this->setQuery($request->query->all());
+        $query            = $this->setQuery($request->query->all());
 
         $pagination = $this->getPaginator($entityRepository->getQueryPaginator($query), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
-            $paragraph, 
+            $paragraph,
             $this->render(
                 $templates['view'],
-                [
-                    'pagination' => $pagination,
-                ]
+                ['pagination' => $pagination]
             )
         );
 
-        $this->setData($paragraph, [
+        $this->setData(
+            $paragraph,
+            [
                 'pagination' => $pagination,
-                'paragraph' => $paragraph,
-                'data'      => $data,
-            ]);
-    }
-
-    /**
-     * @param array<string, mixed> $query
-     *
-     * @return array<string, mixed>
-     */
-    private function setQuery(array $query): array
-    {
-        if (!isset($query['order'])) {
-            $query['order'] = 'title';
-        }
-
-        if (!isset($query['orderby'])) {
-            $query['orderby'] = 'ASC';
-        }
-
-        return $query;
+                'paragraph'  => $paragraph,
+                'data'       => $data,
+            ]
+        );
     }
 
     public function getClass(): string
@@ -106,5 +83,23 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
         $paragraph                       = $entityRepository->findOneBy([]);
 
         return !$paragraph instanceof Paragraph;
+    }
+
+    /**
+     * @param array<string, mixed> $query
+     *
+     * @return array<string, mixed>
+     */
+    private function setQuery(array $query): array
+    {
+        if (!isset($query['order'])) {
+            $query['order'] = 'title';
+        }
+
+        if (!isset($query['orderby'])) {
+            $query['orderby'] = 'ASC';
+        }
+
+        return $query;
     }
 }

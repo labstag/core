@@ -25,10 +25,12 @@ final class SeasonService
 
     public function getSeason(Serie $serie, array $data): ?Season
     {
-        $season = $this->seasonRepository->findOneBy([
+        $season = $this->seasonRepository->findOneBy(
+            [
                 'refserie' => $serie,
                 'number'   => $data['season_number'],
-            ]);
+            ]
+        );
 
         if ($season instanceof Season) {
             if (0 == $data['episode_count']) {
@@ -55,11 +57,10 @@ final class SeasonService
 
     public function getSeasons(Serie $serie): array
     {
-        return $this->seasonRepository->findBy([
-                'refserie' => $serie,
-            ], [
-                'number' => 'ASC',
-            ]);
+        return $this->seasonRepository->findBy(
+            ['refserie' => $serie],
+            ['number' => 'ASC']
+        );
     }
 
     /**
@@ -67,9 +68,10 @@ final class SeasonService
      */
     public function getSeasonsChoice(): array
     {
-        $seasons = $this->seasonRepository->findBy([], [
-                'number' => 'ASC',
-            ]);
+        $seasons = $this->seasonRepository->findBy(
+            [],
+            ['number' => 'ASC']
+        );
         $choices = [];
         /** @var Season $season */
         foreach ($seasons as $season) {
@@ -125,8 +127,7 @@ final class SeasonService
      */
     private function updateImagePoster(Season $season, array $details): bool
     {
-        $poster = $this->theMovieDbApi->images()
-            ->getPosterUrl($details['tmdb']['poster_path'] ?? '');
+        $poster = $this->theMovieDbApi->images()->getPosterUrl($details['tmdb']['poster_path'] ?? '');
         if (is_null($poster)) {
             return false;
         }

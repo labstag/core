@@ -43,9 +43,7 @@ abstract class DataAbstract
     {
         unset($entity);
 
-        return [
-            'slug' => '',
-        ];
+        return ['slug' => ''];
     }
 
     public function getEntity(?string $slug): object
@@ -128,9 +126,11 @@ abstract class DataAbstract
 
     protected function getHome(): ?object
     {
-        return $this->entityManager->getRepository(Page::class)->findOneBy([
+        return $this->entityManager->getRepository(Page::class)->findOneBy(
+            [
                 'type' => PageEnum::HOME->value,
-            ]);
+            ]
+        );
     }
 
     protected function globalPlaceholder(string $key): string

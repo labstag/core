@@ -7,6 +7,7 @@ use Labstag\Repository\ConfigurationRepository;
 
 final class ConfigurationService
 {
+
     private ?Configuration $configuration = null;
 
     public function __construct(

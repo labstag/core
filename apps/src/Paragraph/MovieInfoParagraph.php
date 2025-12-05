@@ -38,10 +38,13 @@ class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $this->setData($paragraph, [
+        $this->setData(
+            $paragraph,
+            [
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]);
+            ]
+        );
     }
 
     public function getClass(): string
@@ -57,9 +60,10 @@ class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
     {
         unset($paragraph);
         $entityRepository = $this->entityManager->getRepository(Movie::class);
-        $movies           = $entityRepository->findBy([], [
-                'title' => 'ASC',
-            ]);
+        $movies           = $entityRepository->findBy(
+            [],
+            ['title' => 'ASC']
+        );
         $choices = [];
         foreach ($movies as $movie) {
             $choices[$movie->getTitle()] = $movie;
@@ -73,11 +77,9 @@ class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
 
         yield ChoiceField::new('refmovie', new TranslatableMessage('Movie'))->setChoices(
             $choices
-        )->allowMultipleChoices(false)
-            ->renderExpanded(false)
-            ->renderAsBadges(
-                false
-            )->formatValue(static fn ($value): string => $value instanceof Movie ? $value->getTitle() ?? '' : '');
+        )->allowMultipleChoices(false)->renderExpanded(false)->renderAsBadges(
+            false
+        )->formatValue(static fn ($value): string => $value instanceof Movie ? $value->getTitle() ?? '' : '');
     }
 
     #[Override]

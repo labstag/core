@@ -34,15 +34,22 @@ class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
         $pagination = $this->getPaginator($entityRepository->getQueryPaginator(), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
-        $this->setHeader($paragraph, $this->render($templates['view'], [
-                    'pagination' => $pagination,
-                ]));
+        $this->setHeader(
+            $paragraph,
+            $this->render(
+                $templates['view'],
+                ['pagination' => $pagination]
+            )
+        );
 
-        $this->setData($paragraph, [
+        $this->setData(
+            $paragraph,
+            [
                 'pagination' => $pagination,
                 'paragraph'  => $paragraph,
                 'data'       => $data,
-            ]);
+            ]
+        );
     }
 
     public function getClass(): string
@@ -83,8 +90,7 @@ class StoryListParagraph extends ParagraphAbstract implements ParagraphInterface
         $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
-            return $object instanceof Page && $object->getType() == PageEnum::STORIES
-                ->value;
+            return $object instanceof Page && $object->getType() == PageEnum::STORIES->value;
         }
 
         $parent = $this->paragraphService->getEntityParent($paragraph);

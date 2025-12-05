@@ -49,9 +49,9 @@ class RedirectionCrudController extends CrudControllerAbstract
         if (Action::NEW === $pageName) {
             $request       = $this->requestStack->getCurrentRequest();
             $defaultSource = $request->query->get('source', '');
-            $textField->setFormTypeOptions([
-                    'data' => $defaultSource,
-                ]);
+            $textField->setFormTypeOptions(
+                ['data' => $defaultSource]
+            );
         }
 
         $this->crudFieldFactory->addFieldsToTab('principal', [$textField]);
@@ -105,9 +105,15 @@ class RedirectionCrudController extends CrudControllerAbstract
     {
         $all    = $this->getRepository(Redirection::class)->findAll();
         $row    = [];
-        $header = ['Source', 'Destination'];
+        $header = [
+            'Source',
+            'Destination',
+        ];
         foreach ($all as $redirection) {
-            $tab   = [$redirection->getSource(), $redirection->getDestination()];
+            $tab   = [
+                $redirection->getSource(),
+                $redirection->getDestination(),
+            ];
             $row[] = $tab;
         }
 
@@ -126,16 +132,13 @@ class RedirectionCrudController extends CrudControllerAbstract
             RedirectionImportType::class,
             null,
             [
-                'attr' => [
-                    'id' => 'redirection_import',
-                ],
+                'attr' => ['id' => 'redirection_import'],
             ]
         );
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $file = $form->get('file')
-                ->getData();
+            $file = $form->get('file')->getData();
             $data = $this->importCsv($file);
 
             foreach ($data as $row) {
@@ -147,9 +150,12 @@ class RedirectionCrudController extends CrudControllerAbstract
             return $this->redirectToIndex();
         }
 
-        return $this->render('admin/redirection/import.html.twig', [
+        return $this->render(
+            'admin/redirection/import.html.twig',
+            [
                 'form' => $form->createView(),
-            ]);
+            ]
+        );
     }
 
     public function testSource(Request $request): RedirectResponse
@@ -184,10 +190,8 @@ class RedirectionCrudController extends CrudControllerAbstract
 
         $spreadsheet = new Spreadsheet();
         $spreadsheet->setActiveSheetIndex(0);
-        $spreadsheet->getActiveSheet()
-            ->fromArray($header, null, 'A1');
-        $spreadsheet->getActiveSheet()
-            ->fromArray($rows, null, 'A2');
+        $spreadsheet->getActiveSheet()->fromArray($header, null, 'A1');
+        $spreadsheet->getActiveSheet()->fromArray($rows, null, 'A2');
 
         try {
             foreach (['Xlsx', 'Xls', 'Ods'] as $writerType) {
@@ -251,9 +255,9 @@ class RedirectionCrudController extends CrudControllerAbstract
         }
 
         $action = Action::new('testSource', 'Test de la source');
-        $action->setHtmlAttributes([
-                'target' => '_blank',
-            ]);
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
         $action->linkToCrudAction('testSource');
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
@@ -290,8 +294,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         $data        = [];
         $csv         = new Csv();
         $spreadsheet = $csv->load($uploadedFile->getPathname());
-        $sheetData   = $spreadsheet->getActiveSheet()
-            ->toArray();
+        $sheetData   = $spreadsheet->getActiveSheet()->toArray();
         $head        = $sheetData[0];
         $find        = $this->setFind($head);
         if (self::FIELDCSV !== $find) {
@@ -308,9 +311,9 @@ class RedirectionCrudController extends CrudControllerAbstract
             $destination = $row[$head['Destination']];
             $source      = $source['path'];
             $source .= isset($source['query']) ? '?' . $source['query'] : '';
-            $redirection = $this->getRepository(Redirection::class)->findOneBy([
-                    'source' => $source,
-                ]);
+            $redirection = $this->getRepository(Redirection::class)->findOneBy(
+                ['source' => $source]
+            );
             if (null === $redirection) {
                 $redirection = new Redirection();
                 $redirection->setActionCode(301);

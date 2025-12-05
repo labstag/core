@@ -22,7 +22,10 @@ class ParagraphExtension extends AbstractExtension
             new TwigFunction('paragraph_fond', [ParagraphExtensionRuntime::class, 'getFond']),
             new TwigFunction(
                 'paragraph_show',
-                [ParagraphExtensionRuntime::class, 'getShow'],
+                [
+                    ParagraphExtensionRuntime::class,
+                    'getShow',
+                ],
                 [
                     'is_safe' => ['html'],
                 ]

@@ -84,7 +84,10 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
     private function getClass(Block $block): string
     {
         $type = $this->blockService->getType($block);
-        $tab  = ['block', 'block_' . $type];
+        $tab  = [
+            'block',
+            'block_' . $type,
+        ];
 
         $classes = explode(' ', (string) $block->getClasses());
 

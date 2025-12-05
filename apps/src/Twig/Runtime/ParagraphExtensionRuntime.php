@@ -89,7 +89,10 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
     private function getClass(Paragraph $paragraph): string
     {
         $type = $this->paragraphService->getType($paragraph);
-        $tab  = ['paragraph', 'paragraph_' . $type];
+        $tab  = [
+            'paragraph',
+            'paragraph_' . $type,
+        ];
 
         $tab = array_merge($tab, $this->paragraphService->getClasses($paragraph));
 

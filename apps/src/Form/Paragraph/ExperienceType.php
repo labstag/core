@@ -24,12 +24,20 @@ class ExperienceType extends AbstractType
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         $formBuilder->add('position', HiddenType::class);
-        $formBuilder->add('title', TextType::class, [
+        $formBuilder->add(
+            'title',
+            TextType::class,
+            [
                 'label' => new TranslatableMessage('Title'),
-            ]);
-        $formBuilder->add('entreprise', TextType::class, [
+            ]
+        );
+        $formBuilder->add(
+            'entreprise',
+            TextType::class,
+            [
                 'label' => new TranslatableMessage('Company'),
-            ]);
+            ]
+        );
         $formBuilder->add(
             'yearStart',
             DateType::class,
@@ -74,15 +82,11 @@ class ExperienceType extends AbstractType
             'skills',
             CollectionType::class,
             [
-                'attr'          => [
-                    'data-controller' => 'sortable',
-                ],
+                'attr'          => ['data-controller' => 'sortable'],
                 'entry_type'    => SkillsType::class,
                 'allow_add'     => true,
                 'allow_delete'  => true,
-                'entry_options' => [
-                    'label' => 'Compétence',
-                ],
+                'entry_options' => ['label' => 'Compétence'],
                 'label'         => new TranslatableMessage('Skills'),
             ]
         );

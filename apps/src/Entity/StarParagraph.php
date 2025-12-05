@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class StarParagraph extends Paragraph
 {
+
     #[ORM\Column(nullable: true)]
     protected ?int $nbr = null;
 

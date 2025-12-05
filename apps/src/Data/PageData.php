@@ -92,8 +92,8 @@ class PageData extends HomeData implements DataInterface
 
     protected function getEntityBySlugPage(?string $slug): ?object
     {
-        return $this->entityManager->getRepository(Page::class)->findOneBy([
-                'slug' => $slug,
-            ]);
+        return $this->entityManager->getRepository(Page::class)->findOneBy(
+            ['slug' => $slug]
+        );
     }
 }

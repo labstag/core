@@ -39,9 +39,7 @@ class Saga implements Stringable, EntityWithParagraphsInterface
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     protected ?bool $enable = null;
 
@@ -61,9 +59,7 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: 'saga')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     #[ORM\OrderBy(
-        [
-            'releaseDate' => 'ASC',
-        ]
+        ['releaseDate' => 'ASC']
     )]
     protected Collection $movies;
 
@@ -72,9 +68,7 @@ class Saga implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'saga', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
-        [
-            'position' => 'ASC',
-        ]
+        ['position' => 'ASC']
     )]
     protected Collection $paragraphs;
 

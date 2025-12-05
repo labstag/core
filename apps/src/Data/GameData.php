@@ -13,9 +13,11 @@ class GameData extends PageData implements DataInterface
     public function generateSlug(object $entity): array
     {
         $entityRepository = $this->entityManager->getRepository(Page::class);
-        $page             = $entityRepository->findOneBy([
+        $page             = $entityRepository->findOneBy(
+            [
                 'type' => PageEnum::GAMES->value,
-            ]);
+            ]
+        );
 
         $slug = parent::generateSlugPage($page);
         $slug['slug'] .= '/' . $entity->getSlug();
@@ -87,9 +89,9 @@ class GameData extends PageData implements DataInterface
         $slugSecond = basename((string) $slug);
         $slugFirst  = dirname((string) $slug);
 
-        $page = $this->entityManager->getRepository(Page::class)->findOneBy([
-                'slug' => $slugFirst,
-            ]);
+        $page = $this->entityManager->getRepository(Page::class)->findOneBy(
+            ['slug' => $slugFirst]
+        );
         if (!$page instanceof Page) {
             return null;
         }
@@ -98,8 +100,8 @@ class GameData extends PageData implements DataInterface
             return null;
         }
 
-        return $this->entityManager->getRepository(Game::class)->findOneBy([
-                'slug' => $slugSecond,
-            ]);
+        return $this->entityManager->getRepository(Game::class)->findOneBy(
+            ['slug' => $slugSecond]
+        );
     }
 }

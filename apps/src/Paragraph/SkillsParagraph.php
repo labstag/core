@@ -35,11 +35,14 @@ class SkillsParagraph extends ParagraphAbstract implements ParagraphInterface
         }
 
         unset($disable);
-        $this->setData($paragraph, [
+        $this->setData(
+            $paragraph,
+            [
                 'skills'    => $skills,
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]);
+            ]
+        );
     }
 
     public function getClass(): string
@@ -61,9 +64,10 @@ class SkillsParagraph extends ParagraphAbstract implements ParagraphInterface
                 return $this->translator->trans(new TranslatableMessage('Skill'));
             }
         );
-        $collectionField->setFormTypeOption('attr', [
-                'data-controller' => 'sortable',
-            ]);
+        $collectionField->setFormTypeOption(
+            'attr',
+            ['data-controller' => 'sortable']
+        );
         $collectionField->setEntryType(SkillsType::class);
         yield $collectionField;
     }
@@ -91,8 +95,7 @@ class SkillsParagraph extends ParagraphAbstract implements ParagraphInterface
         $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
-            return $object instanceof Page && $object->getType() == PageEnum::CV
-                ->value;
+            return $object instanceof Page && $object->getType() == PageEnum::CV->value;
         }
 
         $parent = $this->paragraphService->getEntityParent($paragraph);

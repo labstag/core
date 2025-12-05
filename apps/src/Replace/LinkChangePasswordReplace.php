@@ -22,9 +22,11 @@ class LinkChangePasswordReplace extends ReplaceAbstract
 
         $entityRepository = $this->entityManager->getRepository(Page::class);
 
-        $page = $entityRepository->findOneBy([
+        $page = $entityRepository->findOneBy(
+            [
                 'type' => PageEnum::CHANGEPASSWORD->value,
-            ]);
+            ]
+        );
         if (!$page instanceof Page) {
             return '#linkdisabled';
         }

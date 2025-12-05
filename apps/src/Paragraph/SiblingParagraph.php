@@ -36,11 +36,14 @@ class SiblingParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $this->setData($paragraph, [
+        $this->setData(
+            $paragraph,
+            [
                 'childs'    => $enables,
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]);
+            ]
+        );
     }
 
     public function getClass(): string

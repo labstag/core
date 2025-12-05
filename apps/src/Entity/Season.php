@@ -35,9 +35,7 @@ class Season implements Stringable, EntityWithParagraphsInterface
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     protected ?bool $enable = null;
 
@@ -46,9 +44,7 @@ class Season implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\OneToMany(targetEntity: Episode::class, mappedBy: 'refseason', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
-        [
-            'number' => 'ASC',
-        ]
+        ['number' => 'ASC']
     )]
     protected Collection $episodes;
 
@@ -73,9 +69,7 @@ class Season implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'season', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
-        [
-            'position' => 'ASC',
-        ]
+        ['position' => 'ASC']
     )]
     protected Collection $paragraphs;
 

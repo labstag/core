@@ -32,7 +32,10 @@ class ChapterFixtures extends FixtureAbstract implements DependentFixtureInterfa
     #[Override]
     public function getDependencies(): array
     {
-        return [TagFixtures::class, StoryFixtures::class];
+        return [
+            TagFixtures::class,
+            StoryFixtures::class,
+        ];
     }
 
     #[Override]

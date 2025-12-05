@@ -34,9 +34,7 @@ class Story implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: StoryCategory::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        [
-            'title' => 'ASC',
-        ]
+        ['title' => 'ASC']
     )]
     protected Collection $categories;
 
@@ -46,21 +44,20 @@ class Story implements Stringable, EntityWithParagraphsInterface
     #[ORM\OneToMany(
         targetEntity: Chapter::class,
         mappedBy: 'refstory',
-        cascade: ['persist', 'remove'],
+        cascade: [
+            'persist',
+            'remove',
+        ],
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        [
-            'position' => 'ASC',
-        ]
+        ['position' => 'ASC']
     )]
     protected Collection $chapters;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     protected ?bool $enable = null;
 
@@ -85,9 +82,7 @@ class Story implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'story', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
-        [
-            'position' => 'ASC',
-        ]
+        ['position' => 'ASC']
     )]
     protected Collection $paragraphs;
 
@@ -113,9 +108,7 @@ class Story implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: StoryTag::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        [
-            'title' => 'ASC',
-        ]
+        ['title' => 'ASC']
     )]
     protected Collection $tags;
 

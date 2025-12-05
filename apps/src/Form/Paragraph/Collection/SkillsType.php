@@ -19,12 +19,20 @@ class SkillsType extends AbstractType
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         $formBuilder->add('position', HiddenType::class);
-        $formBuilder->add('icon', TextType::class, [
+        $formBuilder->add(
+            'icon',
+            TextType::class,
+            [
                 'label' => new TranslatableMessage('Icon'),
-            ]);
-        $formBuilder->add('title', TextType::class, [
+            ]
+        );
+        $formBuilder->add(
+            'title',
+            TextType::class,
+            [
                 'label' => new TranslatableMessage('Title'),
-            ]);
+            ]
+        );
 
         unset($options);
     }
@@ -32,8 +40,8 @@ class SkillsType extends AbstractType
     #[Override]
     public function configureOptions(OptionsResolver $optionsResolver): void
     {
-        $optionsResolver->setDefaults([
-                'label' => false,
-            ]);
+        $optionsResolver->setDefaults(
+            ['label' => false]
+        );
     }
 }

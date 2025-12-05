@@ -4,6 +4,7 @@ namespace Labstag\Block\Traits;
 
 trait CacheableTrait
 {
+
     /**
      * @var mixed[]
      */

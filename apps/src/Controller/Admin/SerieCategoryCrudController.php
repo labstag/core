@@ -15,7 +15,10 @@ class SerieCategoryCrudController extends CategoryCrudControllerAbstract
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
-            [$this->crudFieldFactory->slugField(), $this->crudFieldFactory->titleField()]
+            [
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->titleField(),
+            ]
         );
         $associationField = AssociationField::new('series', new TranslatableMessage('Series'));
         $associationField->formatValue(fn ($entity): int => count($entity));

@@ -28,9 +28,10 @@ final class IgdbService
     public function getPlatformChoices(): array
     {
         $entityRepository = $this->entityManager->getRepository(Platform::class);
-        $platforms        = $entityRepository->findBy([], [
-                'title' => 'ASC',
-            ]);
+        $platforms        = $entityRepository->findBy(
+            [],
+            ['title' => 'ASC']
+        );
         $choices    = [];
         foreach ($platforms as $platform) {
             $choices[$platform->getTitle()] = $platform->getId();

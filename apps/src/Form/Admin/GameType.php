@@ -78,9 +78,10 @@ class GameType extends AbstractType
             [
                 'label'    => new TranslatableMessage('Platform'),
                 'required' => false,
-                'choices'  => array_merge([
-                        '' => '',
-                    ], $this->igdbService->getPlatformChoices(),),
+                'choices'  => array_merge(
+                    ['' => ''],
+                    $this->igdbService->getPlatformChoices(),
+                ),
             ]
         );
     }

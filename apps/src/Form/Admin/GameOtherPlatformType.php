@@ -27,9 +27,11 @@ class GameOtherPlatformType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
+        $resolver->setDefaults(
+            [
                 'platforms' => [],
-            ]);
+            ]
+        );
     }
 
     private function setPlatform(array $platforms): array

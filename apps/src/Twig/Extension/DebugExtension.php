@@ -18,14 +18,20 @@ class DebugExtension extends AbstractExtension
         return [
             new TwigFunction(
                 'debug_begin',
-                [DebugExtensionRuntime::class, 'begin'],
+                [
+                    DebugExtensionRuntime::class,
+                    'begin',
+                ],
                 [
                     'is_safe' => ['html'],
                 ]
             ),
             new TwigFunction(
                 'debug_end',
-                [DebugExtensionRuntime::class, 'end'],
+                [
+                    DebugExtensionRuntime::class,
+                    'end',
+                ],
                 [
                     'is_safe' => ['html'],
                 ]

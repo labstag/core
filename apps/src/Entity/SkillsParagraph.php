@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class SkillsParagraph extends Paragraph
 {
+
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $title = null;
 

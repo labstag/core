@@ -74,7 +74,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
 
         // Shared taxonomy items (categories / tags) used in several content sub-menus
-        $fieldsTAbs = [$this->buildContentMenus($categories, $tags), $this->buildSimpleCrudMenus()];
+        $fieldsTAbs = [
+            $this->buildContentMenus($categories, $tags),
+            $this->buildSimpleCrudMenus(),
+        ];
         foreach ($fieldsTAbs as $fieldTAb) {
             yield from $fieldTAb;
         }
@@ -113,9 +116,12 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToUrl(
                     new TranslatableMessage('My profile'),
                     'fa fa-user',
-                    $this->generateUrl('admin_profil_edit', [
+                    $this->generateUrl(
+                        'admin_profil_edit',
+                        [
                             'entityId' => $user->getId(),
-                        ])
+                        ]
+                    )
                 ),
             ]
         );
@@ -136,20 +142,22 @@ class DashboardController extends AbstractDashboardController
     public function index(): Response
     {
         $repositoryAbstract = $this->getRepository(Memo::class);
-        $memos              = $repositoryAbstract->findBy([
-                'enable' => true,
-            ]);
+        $memos              = $repositoryAbstract->findBy(
+            ['enable' => true]
+        );
         foreach ($memos as $memo) {
             $idMemo     = $memo->getId();
-            $paragraphs = $memo->getParagraphs()
-                ->getValues();
+            $paragraphs = $memo->getParagraphs()->getValues();
             $paragraphs[$idMemo] = $this->paragraphService->generate($paragraphs, [], false);
         }
 
-        return $this->render('admin/dashboard.html.twig', [
+        return $this->render(
+            'admin/dashboard.html.twig',
+            [
                 'paragraphs' => $paragraphs,
                 'memos'      => $memos,
-            ]);
+            ]
+        );
     }
 
     protected function adminEmpty(string $entity): void
@@ -361,18 +369,66 @@ class DashboardController extends AbstractDashboardController
                 'fas fa-comment-medical',
                 RecommendationCrudController::getEntityFqcn(),
             ],
-            [new TranslatableMessage('Company'), 'fas fa-building', CompanyCrudController::getEntityFqcn()],
-            [new TranslatableMessage('Edito'), 'fas fa-info', EditoCrudController::getEntityFqcn()],
-            [new TranslatableMessage('Memo'), 'fas fa-memory', MemoCrudController::getEntityFqcn()],
-            [new TranslatableMessage('Media'), 'fas fa-photo-video', MediaCrudController::getEntityFqcn()],
-            [new TranslatableMessage('Meta'), 'fa fa-file-alt', MetaCrudController::getEntityFqcn()],
-            [new TranslatableMessage('Paragraph'), 'fa fa-paragraph', ParagraphCrudController::getEntityFqcn()],
-            [new TranslatableMessage('Block'), 'fa fa-cubes', BlockCrudController::getEntityFqcn()],
-            [new TranslatableMessage('Geocode'), 'fas fa-map-signs', GeoCodeCrudController::getEntityFqcn()],
-            [new TranslatableMessage('Star'), 'fas fa-star', StarCrudController::getEntityFqcn()],
-            [new TranslatableMessage('User'), 'fa fa-user', UserCrudController::getEntityFqcn()],
-            [new TranslatableMessage('Group'), 'fa fa-users', GroupCrudController::getEntityFqcn()],
-            [new TranslatableMessage('Ban IP'), 'fas fa-ban', BanIpCrudController::getEntityFqcn()],
+            [
+                new TranslatableMessage('Company'),
+                'fas fa-building',
+                CompanyCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Edito'),
+                'fas fa-info',
+                EditoCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Memo'),
+                'fas fa-memory',
+                MemoCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Media'),
+                'fas fa-photo-video',
+                MediaCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Meta'),
+                'fa fa-file-alt',
+                MetaCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Paragraph'),
+                'fa fa-paragraph',
+                ParagraphCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Block'),
+                'fa fa-cubes',
+                BlockCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Geocode'),
+                'fas fa-map-signs',
+                GeoCodeCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Star'),
+                'fas fa-star',
+                StarCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('User'),
+                'fa fa-user',
+                UserCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Group'),
+                'fa fa-users',
+                GroupCrudController::getEntityFqcn(),
+            ],
+            [
+                new TranslatableMessage('Ban IP'),
+                'fas fa-ban',
+                BanIpCrudController::getEntityFqcn(),
+            ],
             [
                 new TranslatableMessage('Redirection'),
                 'fas fa-directions',

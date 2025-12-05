@@ -23,69 +23,31 @@ use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 use Vich\UploaderBundle\VichUploaderBundle;
 
 return [
-    FrameworkBundle::class          => [
-        'all' => true,
-    ],
-    DoctrineBundle::class           => [
-        'all' => true,
-    ],
-    DoctrineMigrationsBundle::class => [
-        'all' => true,
-    ],
-    TwigBundle::class               => [
-        'all' => true,
-    ],
-    SecurityBundle::class           => [
-        'all' => true,
-    ],
-    EasyAdminBundle::class          => [
-        'all' => true,
-    ],
-    KnpMenuBundle::class            => [
-        'all' => true,
-    ],
-    KnpPaginatorBundle::class       => [
-        'all' => true,
-    ],
-    TwigExtraBundle::class          => [
-        'all' => true,
-    ],
-    MakerBundle::class              => [
-        'dev' => true,
-    ],
+    FrameworkBundle::class          => ['all' => true],
+    DoctrineBundle::class           => ['all' => true],
+    DoctrineMigrationsBundle::class => ['all' => true],
+    TwigBundle::class               => ['all' => true],
+    SecurityBundle::class           => ['all' => true],
+    EasyAdminBundle::class          => ['all' => true],
+    KnpMenuBundle::class            => ['all' => true],
+    KnpPaginatorBundle::class       => ['all' => true],
+    TwigExtraBundle::class          => ['all' => true],
+    MakerBundle::class              => ['dev' => true],
     WebProfilerBundle::class        => [
         'dev'  => true,
         'test' => true,
     ],
-    NelmioCorsBundle::class         => [
-        'all' => true,
-    ],
-    DebugBundle::class              => [
-        'dev' => true,
-    ],
-    VichUploaderBundle::class       => [
-        'all' => true,
-    ],
-    FlysystemBundle::class          => [
-        'all' => true,
-    ],
-    LiipImagineBundle::class        => [
-        'all' => true,
-    ],
+    NelmioCorsBundle::class         => ['all' => true],
+    DebugBundle::class              => ['dev' => true],
+    VichUploaderBundle::class       => ['all' => true],
+    FlysystemBundle::class          => ['all' => true],
+    LiipImagineBundle::class        => ['all' => true],
     DoctrineFixturesBundle::class   => [
         'dev'  => true,
         'test' => true,
     ],
-    WebpackEncoreBundle::class      => [
-        'all' => true,
-    ],
-    TwigComponentBundle::class      => [
-        'all' => true,
-    ],
-    MonologBundle::class            => [
-        'all' => true,
-    ],
-    DAMADoctrineTestBundle::class   => [
-        'test' => true,
-    ],
+    WebpackEncoreBundle::class      => ['all' => true],
+    TwigComponentBundle::class      => ['all' => true],
+    MonologBundle::class            => ['all' => true],
+    DAMADoctrineTestBundle::class   => ['test' => true],
 ];

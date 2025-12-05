@@ -25,10 +25,12 @@ class TmdbOtherApi extends AbstractTmdbApi
             return null;
         }
 
-        $params = array_filter([
+        $params = array_filter(
+            [
                 'external_source' => $externalSource,
                 'language'        => $language ?? 'en-US',
-            ]);
+            ]
+        );
 
         $query    = $this->buildQueryParams($params);
         $cacheKey = 'tmdb_find_' . $externalId . '_' . md5($query);

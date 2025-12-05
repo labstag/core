@@ -11,6 +11,7 @@ use Labstag\Repository\HttpErrorLogsRepository;
 
 final class SameConfigurator implements FieldConfiguratorInterface
 {
+
     /**
      * @var array<mixed>
      */
@@ -39,9 +40,9 @@ final class SameConfigurator implements FieldConfiguratorInterface
             return;
         }
 
-        $logs = $this->httpErrorLogsRepository->findBy([
-                'internetProtocol' => $internetProtocol,
-            ]);
+        $logs = $this->httpErrorLogsRepository->findBy(
+            ['internetProtocol' => $internetProtocol]
+        );
 
         $total = count($logs);
 

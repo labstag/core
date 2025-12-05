@@ -99,22 +99,21 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         $essence = new Essence();
 
         // Load any url:
-        $media = $essence->extract($url, [
+        $media = $essence->extract(
+            $url,
+            [
                 'maxwidth'  => 800,
                 'maxheight' => 600,
-            ]);
+            ]
+        );
         if (!$media instanceof Media) {
-            return [
-                'oembed' => '',
-            ];
+            return ['oembed' => ''];
         }
 
         $html   = $media->has('html') ? $media->get('html') : '';
         $oembed = $this->getOEmbedUrl($html);
         if (is_null($oembed)) {
-            return [
-                'oembed' => '',
-            ];
+            return ['oembed' => ''];
         }
 
         return [

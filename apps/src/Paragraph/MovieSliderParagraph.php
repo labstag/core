@@ -99,8 +99,7 @@ class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterfa
         $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
-            return $object instanceof Page && $object->getType() == PageEnum::HOME
-                ->value;
+            return $object instanceof Page && $object->getType() == PageEnum::HOME->value;
         }
 
         $parent = $this->paragraphService->getEntityParent($paragraph);

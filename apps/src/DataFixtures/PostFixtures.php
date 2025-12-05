@@ -29,7 +29,11 @@ class PostFixtures extends FixtureAbstract implements DependentFixtureInterface
     #[Override]
     public function getDependencies(): array
     {
-        return [CategoryFixtures::class, TagFixtures::class, UserFixtures::class];
+        return [
+            CategoryFixtures::class,
+            TagFixtures::class,
+            UserFixtures::class,
+        ];
     }
 
     #[Override]

@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 class SerieCategory extends Category
 {
+
     /**
      * @var Collection<int, Serie>
      */

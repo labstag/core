@@ -35,11 +35,14 @@ class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInt
         }
 
         unset($disable);
-        $this->setData($paragraph, [
+        $this->setData(
+            $paragraph,
+            [
                 'trainings' => $trainings,
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]);
+            ]
+        );
     }
 
     public function getClass(): string
@@ -61,9 +64,10 @@ class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInt
                 return $this->translator->trans(new TranslatableMessage('Training course'));
             }
         );
-        $collectionField->setFormTypeOption('attr', [
-                'data-controller' => 'sortable',
-            ]);
+        $collectionField->setFormTypeOption(
+            'attr',
+            ['data-controller' => 'sortable']
+        );
         $collectionField->setEntryType(TrainingCourseType::class);
         yield $collectionField;
     }
@@ -91,8 +95,7 @@ class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInt
         $paragraph                       = $entityRepository->findOneBy([]);
 
         if (!$paragraph instanceof Paragraph) {
-            return $object instanceof Page && $object->getType() == PageEnum::CV
-                ->value;
+            return $object instanceof Page && $object->getType() == PageEnum::CV->value;
         }
 
         $parent = $this->paragraphService->getEntityParent($paragraph);

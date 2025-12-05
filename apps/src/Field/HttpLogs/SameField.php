@@ -22,10 +22,12 @@ final class SameField implements FieldInterface
         $sameField->setLabel($label);
         $sameField->setTemplatePath('admin/field/integer.html.twig');
         $sameField->setFormType(IntegerType::class);
-        $sameField->setFormTypeOptions([
+        $sameField->setFormTypeOptions(
+            [
                 'mapped'   => false,
                 'required' => false,
-            ]);
+            ]
+        );
         $sameField->addCssClass('field-integer');
         $sameField->setDefaultColumns('col-md-4 col-xxl-3');
         $sameField->setCustomOption(self::OPTION_NUMBER_FORMAT, null);

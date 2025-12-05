@@ -61,12 +61,12 @@ class FrontService extends AbstractController
             $content  = file_get_contents($filePath);
 
             $this->messageBus->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(86_400_000)]);
-            $response = new Response($content === false ? '' : $content, Response::HTTP_OK);
+            $response = new Response(false === $content ? '' : $content, Response::HTTP_OK);
             $response->headers->set('Content-Type', 'text/xml');
 
             return $response;
         }
-        
+
         $content = $this->cacheService->get(
             'sitemap.xml',
             function (): Response

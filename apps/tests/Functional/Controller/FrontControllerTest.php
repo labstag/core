@@ -17,15 +17,10 @@ final class FrontControllerTest extends AbstractWebTestCase
     #[Group('frontend')]
     public function simplehomepage(): void
     {
-        $this->client()
-            ->request(Request::METHOD_GET, '/');
+        $this->client()->request(Request::METHOD_GET, '/');
         $this->assertTrue(
-            $this->client()
-                ->getResponse()
-                ->isSuccessful()
-            || $this->client()
-                ->getResponse()
-                ->isRedirection()
+            $this->client()->getResponse()->isSuccessful()
+            || $this->client()->getResponse()->isRedirection()
         );
     }
 }

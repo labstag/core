@@ -26,9 +26,9 @@ class TemplateCrudController extends CrudControllerAbstract
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort([
-                'title' => 'ASC',
-            ]);
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
         $crud->setEntityLabelInSingular(new TranslatableMessage('Template'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Templates'));
 
@@ -39,9 +39,7 @@ class TemplateCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
-        $currentEntity = $this->getContext()
-            ->getEntity()
-            ->getInstance();
+        $currentEntity = $this->getContext()->getEntity()->getInstance();
         $textField = TextField::new('code', new TranslatableMessage('Code'));
         if (Crud::PAGE_NEW !== $pageName) {
             $textField->setDisabled(true);

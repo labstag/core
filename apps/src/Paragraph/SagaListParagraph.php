@@ -42,15 +42,22 @@ class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
         }
 
         $templates = $this->templates($paragraph, 'header');
-        $this->setHeader($paragraph, $this->render($templates['view'], [
-                    'movies' => $movies,
-                ]));
+        $this->setHeader(
+            $paragraph,
+            $this->render(
+                $templates['view'],
+                ['movies' => $movies]
+            )
+        );
 
-        $this->setData($paragraph, [
+        $this->setData(
+            $paragraph,
+            [
                 'movies'    => $movies,
                 'paragraph' => $paragraph,
                 'data'      => $data,
-            ]);
+            ]
+        );
     }
 
     public function getClass(): string

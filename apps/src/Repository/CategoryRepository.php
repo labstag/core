@@ -38,8 +38,7 @@ class CategoryRepository extends RepositoryAbstract
         $queryBuilder->resetDQLPart('from');
         $queryBuilder->from($class, 'c');
         $queryBuilder->orderBy('c.title', 'ASC');
-        $queryBuilder->leftJoin('c.movies', 'm')
-            ->addSelect('m');
+        $queryBuilder->leftJoin('c.movies', 'm')->addSelect('m');
         $queryBuilder->andWhere('m.enable = true');
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'category-type-movie-enable');

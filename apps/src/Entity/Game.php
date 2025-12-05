@@ -27,9 +27,7 @@ class Game implements EntityWithParagraphsInterface
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     protected ?bool $enable = true;
 
@@ -54,9 +52,7 @@ class Game implements EntityWithParagraphsInterface
      */
     #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'game', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
-        [
-            'position' => 'ASC',
-        ]
+        ['position' => 'ASC']
     )]
     protected Collection $paragraphs;
 
@@ -72,9 +68,7 @@ class Game implements EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: GameCategory::class, inversedBy: 'games')]
     #[ORM\OrderBy(
-        [
-            'title' => 'ASC',
-        ]
+        ['title' => 'ASC']
     )]
     private Collection $categories;
 
@@ -83,9 +77,7 @@ class Game implements EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: Franchise::class, inversedBy: 'games')]
     #[ORM\OrderBy(
-        [
-            'title' => 'ASC',
-        ]
+        ['title' => 'ASC']
     )]
     private Collection $franchises;
 
@@ -97,9 +89,7 @@ class Game implements EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: Platform::class, inversedBy: 'games')]
     #[ORM\OrderBy(
-        [
-            'title' => 'ASC',
-        ]
+        ['title' => 'ASC']
     )]
     private Collection $platforms;
 

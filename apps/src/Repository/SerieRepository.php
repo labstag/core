@@ -110,8 +110,7 @@ class SerieRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->select('m.json');
 
-        $rows = $queryBuilder->getQuery()
-            ->getScalarResult();
+        $rows = $queryBuilder->getQuery()->getScalarResult();
 
         return array_column($rows, 'json');
     }
@@ -121,8 +120,7 @@ class SerieRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->select('s.tmdb');
 
-        $rows = $queryBuilder->getQuery()
-            ->getScalarResult();
+        $rows = $queryBuilder->getQuery()->getScalarResult();
 
         return array_column($rows, 'tmdb');
     }
@@ -132,8 +130,7 @@ class SerieRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->select('s.tmdb');
 
-        $result = $queryBuilder->getQuery()
-            ->getArrayResult();
+        $result = $queryBuilder->getQuery()->getArrayResult();
 
         return array_column($result, 'tmdb');
     }
@@ -169,8 +166,7 @@ class SerieRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->where('s.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->leftJoin('s.categories', 'c')
-            ->addSelect('c');
+        $queryBuilder->leftJoin('s.categories', 'c')->addSelect('c');
 
         return $queryBuilder->orderBy('s.title', 'ASC');
     }

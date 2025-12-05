@@ -35,9 +35,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: PageCategory::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        [
-            'title' => 'ASC',
-        ]
+        ['title' => 'ASC']
     )]
     protected Collection $categories;
 
@@ -49,9 +47,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 1,
-        ]
+        options: ['default' => 1]
     )]
     protected ?bool $enable = true;
 
@@ -80,9 +76,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'page', cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(
-        [
-            'position' => 'ASC',
-        ]
+        ['position' => 'ASC']
     )]
     protected Collection $paragraphs;
 
@@ -109,9 +103,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: PageTag::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        [
-            'title' => 'ASC',
-        ]
+        ['title' => 'ASC']
     )]
     protected Collection $tags;
 
@@ -123,9 +115,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
 
     #[ORM\Column(
         type: Types::BOOLEAN,
-        options: [
-            'default' => 0,
-        ]
+        options: ['default' => 0]
     )]
     private ?bool $hide = false;
 

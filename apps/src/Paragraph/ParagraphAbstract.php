@@ -40,6 +40,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 #[AutoconfigureTag('labstag.paragraphs')]
 abstract class ParagraphAbstract extends AbstractController
 {
+
     /**
      * @var mixed[]
      */
@@ -151,7 +152,12 @@ abstract class ParagraphAbstract extends AbstractController
                         new File(
                             [
                                 'maxSize'          => ini_get('upload_max_filesize'),
-                                'mimeTypes'        => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+                                'mimeTypes'        => [
+                                    'image/jpeg',
+                                    'image/png',
+                                    'image/gif',
+                                    'image/webp',
+                                ],
                                 'mimeTypesMessage' => $this->translator->trans($mimeTypesMessage),
                                 'maxSizeMessage'   => $this->translator->trans($maxSizeMessage),
                             ]
@@ -173,9 +179,10 @@ abstract class ParagraphAbstract extends AbstractController
     public function addFieldIntegerNbr(): IntegerField
     {
         $integerField = IntegerField::new('nbr', new TranslatableMessage('Number'));
-        $integerField->setFormTypeOption('attr', [
-                'min' => 1,
-            ]);
+        $integerField->setFormTypeOption(
+            'attr',
+            ['min' => 1]
+        );
 
         return $integerField;
     }
@@ -343,10 +350,13 @@ abstract class ParagraphAbstract extends AbstractController
         }
 
         if ($view == end($files)) {
-            $this->logger->error('Template not found', [
+            $this->logger->error(
+                'Template not found',
+                [
                     'folder' => $folder,
                     'type'   => $type,
-                ]);
+                ]
+            );
         }
 
         $this->templates[$folder][$type] = [

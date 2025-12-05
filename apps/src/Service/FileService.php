@@ -90,9 +90,9 @@ final class FileService
                     $find = 0;
                     foreach ($mappings as $mapping) {
                         $field  = $mapping->getFileNamePropertyName();
-                        $entity = $repository->findOneBy([
-                                $field => $file,
-                            ]);
+                        $entity = $repository->findOneBy(
+                            [$field => $file]
+                        );
                         if (!$entity instanceof $entityClass) {
                             continue;
                         }
@@ -251,7 +251,13 @@ final class FileService
 
     public function getSizeFormat(int $size): string
     {
-        $units     = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $units     = [
+            'B',
+            'KB',
+            'MB',
+            'GB',
+            'TB',
+        ];
         $bytes     = (float) $size;
         $unitIndex = 0;
         $maxIndex  = count($units) - 1;

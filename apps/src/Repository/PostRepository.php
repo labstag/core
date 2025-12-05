@@ -95,12 +95,9 @@ class PostRepository extends RepositoryAbstract
     {
         $queryBuilder = $this->getQueryBuilder();
         // Relations hypothétiques : tags, categories, meta (ajuster selon mapping réel)
-        $queryBuilder->leftJoin('p.tags', 't')
-            ->addSelect('t');
-        $queryBuilder->leftJoin('p.categories', 'c')
-            ->addSelect('c');
-        $queryBuilder->leftJoin('p.meta', 'm')
-            ->addSelect('m');
+        $queryBuilder->leftJoin('p.tags', 't')->addSelect('t');
+        $queryBuilder->leftJoin('p.categories', 'c')->addSelect('c');
+        $queryBuilder->leftJoin('p.meta', 'm')->addSelect('m');
 
         return $queryBuilder;
     }

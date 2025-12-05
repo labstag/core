@@ -18,9 +18,10 @@ class LoginData extends DataAbstract implements DataInterface
         $user = $this->security->getUser();
         if ($user instanceof UserInterface) {
             return new RedirectResponse(
-                $this->router->generate('front', [
-                        'slug' => '',
-                    ])
+                $this->router->generate(
+                    'front',
+                    ['slug' => '']
+                )
             );
         }
 
@@ -34,7 +35,6 @@ class LoginData extends DataAbstract implements DataInterface
     #[Override]
     public function supportsScriptBefore(object $entity): bool
     {
-        return $entity instanceof Page && $entity->getType() == PageEnum::LOGIN
-            ->value;
+        return $entity instanceof Page && $entity->getType() == PageEnum::LOGIN->value;
     }
 }

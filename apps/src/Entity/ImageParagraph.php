@@ -12,6 +12,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 class ImageParagraph extends Paragraph
 {
+
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $img = null;
 

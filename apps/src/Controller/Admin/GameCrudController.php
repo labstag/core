@@ -96,9 +96,7 @@ class GameCrudController extends CrudControllerAbstract
         $platforms              = $this->getRepository(Platform::class)->notInGame($game);
         $form                   = $this->createForm(
             type: GameOtherPlatformType::class,
-            options: [
-                'platforms' => $platforms,
-            ]
+            options: ['platforms' => $platforms]
         );
         $form->handleRequest($request);
 
@@ -119,11 +117,11 @@ class GameCrudController extends CrudControllerAbstract
         $offset  = ($page - 1) * $limit;
         $all     = $request->request->all();
         $data    = [
-            'title'     => $all['game']['title']     ?? '',
-            'platform'  => $all['game']['platform']  ?? '',
+            'title'     => $all['game']['title'] ?? '',
+            'platform'  => $all['game']['platform'] ?? '',
             'franchise' => $all['game']['franchise'] ?? '',
-            'type'      => $all['game']['type']      ?? '',
-            'number'    => $all['game']['number']    ?? '',
+            'type'      => $all['game']['type'] ?? '',
+            'number'    => $all['game']['number'] ?? '',
         ];
         $games   = $this->gameService->getGameApi($data, $limit, $offset);
 
@@ -154,9 +152,9 @@ class GameCrudController extends CrudControllerAbstract
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setDefaultSort([
-                'title' => 'ASC',
-            ]);
+        $crud->setDefaultSort(
+            ['title' => 'ASC']
+        );
         $crud->setEntityLabelInSingular(new TranslatableMessage('Game'));
         $crud->setEntityLabelInPlural(new TranslatableMessage('Games'));
 
@@ -252,9 +250,9 @@ class GameCrudController extends CrudControllerAbstract
         }
 
         $action = Action::new('igdb', new TranslatableMessage('IGDB Page'), 'fas fa-external-link-alt');
-        $action->setHtmlAttributes([
-                'target' => '_blank',
-            ]);
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
         $action->linkToCrudAction('igdb');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
@@ -268,9 +266,9 @@ class GameCrudController extends CrudControllerAbstract
             'fas fa-plus-circle'
         );
         $action->linkToCrudAction('addToAnotherPlatform');
-        $action->setHtmlAttributes([
-                'data-action' => 'show-modal',
-            ]);
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
 
         $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
         $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
@@ -313,9 +311,9 @@ class GameCrudController extends CrudControllerAbstract
 
         $action = Action::new('showModalImportGame', new TranslatableMessage('Import'), 'fas fa-file-import');
         $action->linkToCrudAction('showModalImportGame');
-        $action->setHtmlAttributes([
-                'data-action' => 'show-modal',
-            ]);
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
         $action->createAsGlobalAction();
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
@@ -329,9 +327,9 @@ class GameCrudController extends CrudControllerAbstract
 
         $action = Action::new('showModalGame', new TranslatableMessage('New game'), 'fas fa-plus-circle');
         $action->linkToCrudAction('showModalGame');
-        $action->setHtmlAttributes([
-                'data-action' => 'show-modal',
-            ]);
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
         $action->createAsGlobalAction();
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
