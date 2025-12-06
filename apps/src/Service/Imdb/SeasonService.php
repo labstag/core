@@ -128,7 +128,7 @@ final class SeasonService
         $images = [];
         foreach ($season->getEpisodes() as $episode) {
             $file     = $episode->getImg();
-            if (!is_null($file)) {
+            if (is_null($file)) {
                 continue;
             }
 
