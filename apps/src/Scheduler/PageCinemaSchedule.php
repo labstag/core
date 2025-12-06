@@ -2,7 +2,7 @@
 
 namespace Labstag\Scheduler;
 
-use Labstag\Message\PostVideoMessage;
+use Labstag\Message\PageCinemaMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
@@ -10,7 +10,7 @@ use Symfony\Component\Scheduler\ScheduleProviderInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 #[AsSchedule('cinema')]
-final class PostVideoSchedule implements ScheduleProviderInterface
+final class PageCinemaSchedule implements ScheduleProviderInterface
 {
     public function __construct(
         private CacheInterface $cache,
@@ -22,8 +22,8 @@ final class PostVideoSchedule implements ScheduleProviderInterface
     {
         $schedule = new Schedule();
         $schedule->add(
-            // RecurringMessage::cron('0 0 * * 1', new PostVideoMessage()),
-            RecurringMessage::every('1 minute', new PostVideoMessage()),
+            // RecurringMessage::cron('0 0 * * 1', new PageCinemaMessage()),
+            RecurringMessage::every('1 minute', new PageCinemaMessage()),
         );
         $schedule->stateful($this->cache);
 

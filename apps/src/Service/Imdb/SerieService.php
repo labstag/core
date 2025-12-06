@@ -14,6 +14,7 @@ use Labstag\Repository\SerieRepository;
 use Labstag\Service\CategoryService;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Labstag\Service\VideoService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -45,6 +46,7 @@ final class SerieService
         private CategoryService $categoryService,
         private TheMovieDbApi $theMovieDbApi,
         private RequestStack $requestStack,
+        private VideoService $videoService,
         private RouterInterface $router,
     )
     {
@@ -461,21 +463,11 @@ final class SerieService
      */
     private function updateTrailer(Serie $serie, array $details): bool
     {
-        if (is_null($details['videos']) || !is_array($details['videos'])) {
-            return false;
-        }
-
         $find = false;
-
-        foreach ($details['videos']['results'] as $result) {
-            if ('YouTube' == $result['site'] && 'Trailer' == $result['type']) {
-                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
-                $serie->setTrailer($url);
-
-                $find = true;
-
-                break;
-            }
+        $video = $this->videoService->getTrailer($details['videos']);
+        if (!is_null($video)) {
+            $serie->setTrailer($video);
+            $find = true;
         }
 
         return $find;

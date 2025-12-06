@@ -13,6 +13,7 @@ use Labstag\Repository\MovieRepository;
 use Labstag\Service\CategoryService;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Labstag\Service\VideoService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -42,6 +43,7 @@ final class MovieService
         private SagaService $sagaService,
         private EntityManagerInterface $entityManager,
         private MovieRepository $movieRepository,
+        private VideoService $videoService,
         private MessageBusInterface $messageBus,
         private TheMovieDbApi $theMovieDbApi,
         private RequestStack $requestStack,
@@ -408,29 +410,10 @@ final class MovieService
      */
     private function updateTrailer(Movie $movie, array $details): bool
     {
-        if (is_null($details['videos']) || !is_array($details['videos'])) {
-            return false;
-        }
-
         $find = false;
-
-        foreach ($details['videos']['results'] as $result) {
-            if ('YouTube' == $result['site'] && 'Trailer' == $result['type']) {
-                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
-                $movie->setTrailer($url);
-
-                $find = true;
-
-                break;
-            }
-        }
-
-        if (false === $find && 1 === count(
-            $details['videos']['results']
-        ) && 'YouTube' == $details['videos']['results'][0]['site']
-        ) {
-            $url = 'https://www.youtube.com/watch?v=' . $result['key'];
-            $movie->setTrailer($url);
+        $video = $this->videoService->getTrailer($details['videos']);
+        if (!is_null($video)) {
+            $movie->setTrailer($video);
             $find = true;
         }
 

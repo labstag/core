@@ -39,7 +39,7 @@ abstract class TemplateAbstract
 
     public function getTemplate()
     {
-        $code       = $this->getCode();
+        $code             = $this->getCode();
         $entityRepository = $this->entityManager->getRepository(Template::class);
 
         $template = $entityRepository->findOneBy(

@@ -11,9 +11,11 @@ use Labstag\Entity\Page;
 use Labstag\Entity\TextImgParagraph;
 use Labstag\Entity\TextParagraph;
 use Labstag\Entity\VideoParagraph;
+use Labstag\Enum\PageEnum;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
+use Labstag\Service\VideoService;
 use Labstag\Template\PageCinemaInfoTemplate;
 use Labstag\Template\PageCinemaResumeTemplate;
 use Labstag\Template\PageCinemaTitleTemplate;
@@ -30,6 +32,7 @@ class CinemaGenerate
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
         protected TheMovieDbApi $theMovieDbApi,
+        protected VideoService $videoService,
         protected ConfigurationService $configurationService,
     )
     {
@@ -37,21 +40,30 @@ class CinemaGenerate
 
     public function execute(): void
     {
-        $title = $this->pageCinemaTitleTemplate->getTemplate();
+        $title = $this->pageCinemaTitleTemplate->getTemplate()->getText();
 
         $entityRepository = $this->entityManager->getRepository(Page::class);
-        $page           = $entityRepository->findOneBy(
+        $page             = $entityRepository->findOneBy(
             [
-                'title' => $title->getText(),
+                'title' => $title,
+            ]
+        );
+        $home = $entityRepository->findOneBy(
+            [
+                'type' => PageEnum::HOME->value,
             ]
         );
 
         if (!$page instanceof Page) {
             $page = new Page();
+            $page->setType(PageEnum::PAGE->value);
             $page->setEnable(true);
-            $page->setTitle($title->getText());
+            $page->setTitle($title);
             $entityRepository->save($page);
         }
+
+        $page->setPage($home);
+        $page->setResume($this->pageCinemaResumeTemplate->getTemplate()->getHtml());
 
         $configuration = $this->configurationService->getConfiguration();
         $page->setRefuser($configuration->getDefaultUser());
@@ -106,43 +118,15 @@ class CinemaGenerate
         );
     }
 
-    private function getTrailer(array $videos): ?string
-    {
-        foreach ($videos['results'] as $result) {
-            if ('YouTube' == $result['site'] && 'Trailer' == $result['type']) {
-                return 'https://www.youtube.com/watch?v=' . $result['key'];
-            }
-        }
-
-        if (1 === count($videos['results']) && 'YouTube' == $videos['results'][0]['site']
-        ) {
-            return 'https://www.youtube.com/watch?v=' . $videos['results'][0]['key'];
-        }
-
-        return null;
-    }
-
     private function setMovie(Page $page, array $movieData, string $locale, array &$images, int $key): void
     {
         if (!isset($movieData['release_date'])) {
             return;
         }
 
-        $movieTitle = $movieData['title'] ?? 'Titre inconnu';
-        $cast       = $this->theMovieDbApi->movies()->getCredits($movieData['id'], $locale);
-        $overview    = $movieData['overview'] ?? 'Pas de description disponible.';
+        $movieTitle  = $movieData['title'] ?? 'Titre inconnu';
+        $cast        = $this->theMovieDbApi->movies()->getCredits($movieData['id'], $locale);
         $releaseDate = new DateTime($movieData['release_date']);
-        $movieLine   = sprintf(
-            "\n\n<h2>%s</h2><br />(Sortie le %s)\n%s%s<br /><a href=\"https://www.themoviedb.org/movie/%d\" target=\"_blank\">Aller sur la page TMDB</a></p>",
-            $movieTitle,
-            $releaseDate->format('d/m/Y'),
-            sprintf('<p>%s</p>', $overview),
-            isset($cast['cast']) ? '<p>Avec: ' . implode(
-                ', ',
-                array_map(fn (array $actor) => $actor['name'], array_slice($cast['cast'], 0, 5))
-            ) . '</p>' : '',
-            $movieData['id']
-        );
 
         $paragraph = $this->paragraphService->addParagraph($page, 'text-img');
         if (!$paragraph instanceof TextImgParagraph) {
@@ -150,7 +134,28 @@ class CinemaGenerate
         }
 
         $paragraph->setLeftposition(($key % 2) === 0);
-        $paragraph->setContent($movieLine);
+        $html = $this->pageMovieInfoTemplate->getTemplate()->getHtml();
+        $html = str_replace(
+            [
+                '%title%',
+                '%release_date%',
+                '%overview%',
+                '%cast%',
+                '%url%',
+            ],
+            [
+                $movieTitle,
+                $releaseDate->format('d/m/Y'),
+                (string) $movieData['overview'],
+                implode(
+                    ', ',
+                    array_map(fn (array $actor) => $actor['name'], array_slice($cast['cast'], 0, 5))
+                ),
+                'https://www.themoviedb.org/movie/' . $movieData['id']
+            ],
+            $html
+        );
+        $paragraph->setContent($html);
 
         $poster = $this->theMovieDbApi->images()->getPosterUrl($movieData['poster_path'] ?? '');
         if (is_null($poster)) {
@@ -182,11 +187,7 @@ class CinemaGenerate
     private function setVideo(Page $page, array $movieData): void
     {
         $videos = $this->theMovieDbApi->getVideosMovie($movieData['id']);
-        if (!is_array($videos)) {
-            return;
-        }
-
-        $trailer = $this->getTrailer($videos);
+        $trailer = $this->videoService->getTrailer($videos);
         if (is_null($trailer)) {
             return;
         }

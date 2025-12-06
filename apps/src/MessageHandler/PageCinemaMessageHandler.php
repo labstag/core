@@ -3,11 +3,11 @@
 namespace Labstag\MessageHandler;
 
 use Labstag\Generate\CinemaGenerate;
-use Labstag\Message\PostVideoMessage;
+use Labstag\Message\PageCinemaMessage;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-final class PostVideoMessageHandler
+final class PageCinemaMessageHandler
 {
     public function __construct(
         private CinemaGenerate $cinemaGenerate,
@@ -15,7 +15,7 @@ final class PostVideoMessageHandler
     {
     }
 
-    public function __invoke(PostVideoMessage $postVideoMessage): void
+    public function __invoke(PageCinemaMessage $pageCinemaMessage): void
     {
         dump('Creating page with movie releases of the week...');
         $this->cinemaGenerate->execute();
