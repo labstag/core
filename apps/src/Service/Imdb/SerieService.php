@@ -463,7 +463,7 @@ final class SerieService
      */
     private function updateTrailer(Serie $serie, array $details): bool
     {
-        $find = false;
+        $find  = false;
         $video = $this->videoService->getTrailer($details['videos']);
         if (!is_null($video)) {
             $serie->setTrailer($video);

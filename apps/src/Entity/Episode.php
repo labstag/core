@@ -2,6 +2,7 @@
 
 namespace Labstag\Entity;
 
+use Stringable;
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
@@ -17,7 +18,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[ORM\Entity(repositoryClass: EpisodeRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Episode
+class Episode implements Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
@@ -66,6 +67,11 @@ class Episode
 
     #[ORM\Column(name: 'vote_count', nullable: true)]
     protected ?int $voteCount = null;
+
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
+    }
 
     public function getAirDate(): ?DateTime
     {

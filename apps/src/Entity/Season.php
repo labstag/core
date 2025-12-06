@@ -26,8 +26,10 @@ class Season implements Stringable, EntityWithParagraphsInterface
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
+    #[ORM\Column(length: 255, nullable: true)]
     public $backdrop;
 
+    #[Vich\UploadableField(mapping: 'season', fileNameProperty: 'backdrop')]
     public $backdropFile;
 
     #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
@@ -246,6 +248,26 @@ class Season implements Stringable, EntityWithParagraphsInterface
         $this->airDate = $airDate;
 
         return $this;
+    }
+
+    public function setBackdrop(?string $backdrop): void
+    {
+        $this->backdrop = $backdrop;
+
+        if (null === $backdrop) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setBackdropFile(?File $backdropFile = null): void
+    {
+        $this->backdropFile = $backdropFile;
+
+        if ($backdropFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setEnable(bool $enable): static

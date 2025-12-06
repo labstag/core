@@ -99,6 +99,7 @@ final class SeasonService
         $statuses = [
             $this->updateSeason($season, $details),
             $this->updateImagePoster($season, $details),
+            $this->updateImageBackdrop($season),
             $this->updateEpisodes($season, $details),
         ];
 
@@ -117,6 +118,26 @@ final class SeasonService
         $episodes = $this->episodeService->getEpisodes($season);
         foreach ($episodes as $episode) {
             $this->messageBus->dispatch(new EpisodeMessage($episode->getId()));
+        }
+
+        return true;
+    }
+
+    private function updateImageBackdrop(Season $season): bool
+    {
+        $images = [];
+        foreach ($season->getEpisodes() as $episode) {
+            $file     = $episode->getImg();
+            $images[] = $this->fileService->getFileInAdapter('episode', $file);
+        }
+
+        if ([] === $images) {
+            return false;
+        }
+
+        $patwork = $this->fileService->setImgPatwork($images);
+        if (!is_null($patwork)) {
+            $this->fileService->setUploadedFile($patwork, $season, 'backdropFile');
         }
 
         return true;

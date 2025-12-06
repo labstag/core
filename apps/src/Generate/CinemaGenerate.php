@@ -44,9 +44,7 @@ class CinemaGenerate
 
         $entityRepository = $this->entityManager->getRepository(Page::class);
         $page             = $entityRepository->findOneBy(
-            [
-                'title' => $title,
-            ]
+            ['title' => $title]
         );
         $home = $entityRepository->findOneBy(
             [
@@ -54,8 +52,10 @@ class CinemaGenerate
             ]
         );
 
+        $configuration = $this->configurationService->getConfiguration();
         if (!$page instanceof Page) {
             $page = new Page();
+            $page->setRefuser($configuration->getDefaultUser());
             $page->setType(PageEnum::PAGE->value);
             $page->setEnable(true);
             $page->setTitle($title);
@@ -64,9 +64,6 @@ class CinemaGenerate
 
         $page->setPage($home);
         $page->setResume($this->pageCinemaResumeTemplate->getTemplate()->getHtml());
-
-        $configuration = $this->configurationService->getConfiguration();
-        $page->setRefuser($configuration->getDefaultUser());
         $this->setParagraphs($page, $configuration);
         $entityRepository->save($page);
     }
@@ -107,7 +104,7 @@ class CinemaGenerate
 
         $region = $configuration->getRegionTmdb() ?? 'FR';
 
-        return $this->theMovieDbApi->movies()->discovers(
+        $data = $this->theMovieDbApi->movies()->discovers(
             filters: [
                 'with_release_type' => '2|3',
                 'region'            => $region,
@@ -116,6 +113,12 @@ class CinemaGenerate
             ],
             language: $locale
         );
+        usort(
+            $data['results'],
+            fn (array $result1, array $result2): int => strcasecmp($result1['title'] ?? '', $result2['title'] ?? '')
+        );
+
+        return $data;
     }
 
     private function setMovie(Page $page, array $movieData, string $locale, array &$images, int $key): void
@@ -147,11 +150,8 @@ class CinemaGenerate
                 $movieTitle,
                 $releaseDate->format('d/m/Y'),
                 (string) $movieData['overview'],
-                implode(
-                    ', ',
-                    array_map(fn (array $actor) => $actor['name'], array_slice($cast['cast'], 0, 5))
-                ),
-                'https://www.themoviedb.org/movie/' . $movieData['id']
+                implode(', ', array_map(fn (array $actor) => $actor['name'], array_slice($cast['cast'], 0, 5))),
+                'https://www.themoviedb.org/movie/' . $movieData['id'],
             ],
             $html
         );
@@ -187,6 +187,8 @@ class CinemaGenerate
     private function setVideo(Page $page, array $movieData): void
     {
         $videos = $this->theMovieDbApi->getVideosMovie($movieData['id']);
+
+        $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($movieData['backdrop_path'] ?? '');
         $trailer = $this->videoService->getTrailer($videos);
         if (is_null($trailer)) {
             return;
@@ -195,6 +197,10 @@ class CinemaGenerate
         $paragraph = $this->paragraphService->addParagraph($page, 'video');
         if (is_null($paragraph) || !$paragraph instanceof VideoParagraph) {
             return;
+        }
+
+        if (!is_null($backdrop)) {
+            $this->fileService->setUploadedFile($backdrop, $paragraph, 'imgFile');
         }
 
         $paragraph->setUrl($trailer);

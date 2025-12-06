@@ -10,7 +10,6 @@ class VideoService
         protected LoggerInterface $logger,
     )
     {
-
     }
 
     public function getTrailer(?array $details): ?string
@@ -29,10 +28,8 @@ class VideoService
             }
         }
 
-        if (is_null($video)) {
-            if ('Trailer' == $details['results'][0]['type']) {
-                $video = $this->setVideo($details['results'][0]);
-            }
+        if (is_null($video) && 'Trailer' == $details['results'][0]['type']) {
+            return $this->setVideo($details['results'][0]);
         }
 
         return $video;
@@ -40,13 +37,13 @@ class VideoService
 
     private function setVideo(array $data)
     {
-        $type = strtolower($data['site']);
-        $video = match($type) {
+        $type  = strtolower((string) $data['site']);
+        $video = match ($type) {
             'youtube' => 'https://www.youtube.com/watch?v=' . $data['key'],
             'vimeo'   => 'https://vimeo.com/' . $data['key'],
-            default => null,
+            default   => null,
         };
-        
+
         if (is_null($video)) {
             $this->logger->warning('Unsupported video site', $data);
         }

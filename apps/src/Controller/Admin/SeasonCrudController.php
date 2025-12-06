@@ -76,6 +76,12 @@ class SeasonCrudController extends CrudControllerAbstract
                     self::getEntityFqcn(),
                     new TranslatableMessage('Poster')
                 ),
+                $this->crudFieldFactory->imageField(
+                    'backdrop',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    new TranslatableMessage('Backdrop')
+                ),
                 $textField,
                 AssociationField::new('refserie', new TranslatableMessage('Serie')),
                 IntegerField::new('number', new TranslatableMessage('Number')),

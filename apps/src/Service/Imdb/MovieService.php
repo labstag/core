@@ -410,7 +410,7 @@ final class MovieService
      */
     private function updateTrailer(Movie $movie, array $details): bool
     {
-        $find = false;
+        $find  = false;
         $video = $this->videoService->getTrailer($details['videos']);
         if (!is_null($video)) {
             $movie->setTrailer($video);
