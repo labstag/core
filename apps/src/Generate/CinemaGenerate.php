@@ -10,6 +10,7 @@ use Labstag\Entity\HeadParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\TextImgParagraph;
 use Labstag\Entity\TextParagraph;
+use Labstag\Entity\User;
 use Labstag\Entity\VideoParagraph;
 use Labstag\Enum\PageEnum;
 use Labstag\Service\ConfigurationService;
@@ -38,6 +39,17 @@ class CinemaGenerate
     {
     }
 
+    private function getUser()
+    {
+        $configuration = $this->configurationService->getConfiguration();
+
+        $userId = $configuration->getDefaultUser();
+
+        $user = $this->entityManager->getRepository(User::class)->find($userId);
+
+        return $user;
+    }
+
     public function execute(): void
     {
         $title = $this->pageCinemaTitleTemplate->getTemplate()->getText();
@@ -55,7 +67,7 @@ class CinemaGenerate
         $configuration = $this->configurationService->getConfiguration();
         if (!$page instanceof Page) {
             $page = new Page();
-            $page->setRefuser($configuration->getDefaultUser());
+            $page->setRefuser($this->getUser());
             $page->setType(PageEnum::PAGE->value);
             $page->setEnable(true);
             $page->setTitle($title);
@@ -158,15 +170,10 @@ class CinemaGenerate
         $paragraph->setContent($html);
 
         $poster = $this->theMovieDbApi->images()->getPosterUrl($movieData['poster_path'] ?? '');
-        if (is_null($poster)) {
-            $paragraph->setImgFile();
-            $paragraph->setImg(null);
-
-            return;
+        if (!is_null($poster)) {
+            $images[] = $poster;
+            $this->fileService->setUploadedFile($poster, $paragraph, 'imgFile');
         }
-
-        $images[] = $poster;
-        $this->fileService->setUploadedFile($poster, $paragraph, 'imgFile');
 
         $this->setVideo($page, $movieData);
     }
@@ -178,9 +185,9 @@ class CinemaGenerate
             $this->setMovie($page, $movieData, $locale, $images, $key);
         }
 
-        $patwork = $this->fileService->setImgPatwork($images);
-        if (!is_null($patwork)) {
-            $this->fileService->setUploadedFile($patwork, $page, 'imgFile');
+        $patchwork = $this->fileService->setImgPatchwork($images);
+        if (!is_null($patchwork)) {
+            $this->fileService->setUploadedFile($patchwork, $page, 'imgFile');
         }
     }
 
@@ -199,10 +206,10 @@ class CinemaGenerate
             return;
         }
 
+        $paragraph->setUrl($trailer);
         if (!is_null($backdrop)) {
             $this->fileService->setUploadedFile($backdrop, $paragraph, 'imgFile');
         }
 
-        $paragraph->setUrl($trailer);
     }
 }

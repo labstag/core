@@ -17,6 +17,7 @@ final class PageCinemaMessageHandler
 
     public function __invoke(PageCinemaMessage $pageCinemaMessage): void
     {
+        unset($pageCinemaMessage);
         dump('Creating page with movie releases of the week...');
         $this->cinemaGenerate->execute();
         dump('Page created with movie releases of the week.');

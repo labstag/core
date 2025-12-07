@@ -108,6 +108,9 @@ class Game implements EntityWithParagraphsInterface
     #[ORM\Column(nullable: true)]
     private ?array $videos = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $summary = null;
+
     public function __construct()
     {
         $this->franchises = new ArrayCollection();
@@ -365,6 +368,18 @@ class Game implements EntityWithParagraphsInterface
     public function setVideos(?array $videos): static
     {
         $this->videos = $videos;
+
+        return $this;
+    }
+
+    public function getSummary(): ?string
+    {
+        return $this->summary;
+    }
+
+    public function setSummary(?string $summary): static
+    {
+        $this->summary = $summary;
 
         return $this;
     }

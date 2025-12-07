@@ -74,8 +74,8 @@ abstract class TemplateAbstract
 
         $extension = '.' . $type . '.twig';
         $files     = [
-            'generate/' . $code . $extension,
-            'generate/default' . $extension,
+            'template/' . $code . $extension,
+            'template/default' . $extension,
         ];
 
         $view   = end($files);

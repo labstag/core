@@ -139,9 +139,9 @@ final class SeasonService
             return false;
         }
 
-        $patwork = $this->fileService->setImgPatwork($images);
-        if (!is_null($patwork)) {
-            $this->fileService->setUploadedFile($patwork, $season, 'backdropFile');
+        $patchwork = $this->fileService->setImgPatchwork($images);
+        if (!is_null($patchwork)) {
+            $this->fileService->setUploadedFile($patchwork, $season, 'backdropFile');
         }
 
         return true;

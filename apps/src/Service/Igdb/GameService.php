@@ -5,6 +5,7 @@ namespace Labstag\Service\Igdb;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\IgdbApi;
+use Labstag\Api\LibreTranslationApi;
 use Labstag\Entity\Franchise;
 use Labstag\Entity\Game;
 use Labstag\Entity\GameCategory;
@@ -18,6 +19,7 @@ final class GameService extends AbstractIgdb
         IgdbApi $igdbApi,
         EntityManagerInterface $entityManager,
         FileService $fileService,
+        private LibreTranslationApi $libreTranslationApi,
         private CategoryService $categoryService,
     )
     {
@@ -165,6 +167,7 @@ final class GameService extends AbstractIgdb
         }
 
         $statuses = [
+            $this->updateGame($game, $result),
             $this->updateImage($game, $result),
             $this->updateFranchises($game, $result),
             $this->updateScreenshots($game, $result),
@@ -176,7 +179,16 @@ final class GameService extends AbstractIgdb
         return in_array(true, $statuses, true);
     }
 
-    private function getApiGameId(string $id): ?array
+    public function updateGame(Game $game, array $data): bool
+    {
+        $summary = $data['summary'] ?? '';
+        $translation = $this->libreTranslationApi->translate($summary, 'en', 'fr');
+        $game->setSummary($translation['translatedText'] ?? '');
+
+        return true;
+    }
+
+    public function getApiGameId(string $id): ?array
     {
         $where  = ['id = ' . $id];
         $fields = [

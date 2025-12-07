@@ -292,7 +292,7 @@ final class FileService
         return null;
     }
 
-    public function setImgPatwork(array $files): ?string
+    public function setImgPatchwork(array $files): ?string
     {
         if ([] === $files) {
             return null;

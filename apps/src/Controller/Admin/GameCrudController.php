@@ -10,13 +10,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Game;
 use Labstag\Entity\Platform;
+use Labstag\Field\WysiwygField;
 use Labstag\Form\Admin\GameImportType;
 use Labstag\Form\Admin\GameOtherPlatformType;
 use Labstag\Form\Admin\GameType;
 use Labstag\Message\AddGameMessage;
+use Labstag\Message\GameAllMessage;
+use Labstag\Message\GameMessage;
 use Labstag\Message\ImportMessage;
 use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -142,10 +146,18 @@ class GameCrudController extends CrudControllerAbstract
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
         $this->setLinkIgdb();
+        $this->setUpdateAction();
         $this->addActionNewGame();
         $this->addActionImportGame();
+        $this->actionsFactory->setActionUpdateAll('updateAllGame');
 
         return $this->actionsFactory->show();
+    }
+
+    public function updateAllGame(): RedirectResponse
+    {
+        $this->messageBus->dispatch(new GameAllMessage());
+        return $this->redirectToRoute('admin_game_index');
     }
 
     #[Override]
@@ -176,12 +188,16 @@ class GameCrudController extends CrudControllerAbstract
         $franchisesField->setTemplatePath('admin/field/game-franchises.html.twig');
 
         $this->crudFieldFactory->setTabDate($pageName);
+
+        $wysiwygField = WysiwygField::new('summary', new TranslatableMessage('Summary'));
+        $wysiwygField->hideOnIndex();
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
+                $wysiwygField,
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 DateField::new('releaseDate', new TranslatableMessage('Release date')),
                 $textField,
@@ -332,6 +348,59 @@ class GameCrudController extends CrudControllerAbstract
         );
         $action->createAsGlobalAction();
 
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
+    public function updateGame(
+        Request $request,
+    ): RedirectResponse
+    {
+        $entityId = $request->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $game                           = $repositoryAbstract->find($entityId);
+        $this->messageBus->dispatch(new GameMessage($game->getId()));
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                return $this->redirect($url);
+            }
+        }
+
+        return $this->redirectToRoute('admin_game_index');
+    }
+
+    public function jsonMovie(Request $request): JsonResponse
+    {
+        $entityId = $request->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $game                           = $repositoryAbstract->find($entityId);
+        $details = $this->gameService->getApiGameId($game->getIgdb());
+        return new JsonResponse($details);
+    }
+
+    private function setUpdateAction(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('updateGame', new TranslatableMessage('Update'), 'fas fa-sync-alt');
+        $action->linkToCrudAction('updateGame');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+
+        $action = Action::new('jsonMovie', new TranslatableMessage('Json'), 'fas fa-server');
+        $action->linkToCrudAction('jsonMovie');
+        $action->setHtmlAttributes(
+            ['target' => '_blank']
+        );
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 }
