@@ -182,8 +182,17 @@ final class GameService extends AbstractIgdb
     public function updateGame(Game $game, array $data): bool
     {
         $summary = $data['summary'] ?? '';
-        $translation = $this->libreTranslationApi->translate($summary, 'en', 'fr');
-        $game->setSummary($translation['translatedText'] ?? '');
+        $summary = explode("\n", $summary);
+        $new = [];
+        foreach ($summary as $text) {
+            if (trim($text) !== '') {
+                $translation = $this->libreTranslationApi->translate($text, 'en', 'fr');
+                $new[] = trim($translation['translatedText']);
+            }
+        }
+
+        $summary = '<p>'.implode('</p><p>', $new).'</p>';
+        $game->setSummary($summary);
 
         return true;
     }
