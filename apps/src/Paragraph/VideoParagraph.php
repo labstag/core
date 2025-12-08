@@ -118,6 +118,9 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
                 'maxheight' => 600,
             ]
         );
+        if (!is_object($media)) {
+            return;
+        }
 
         if (!$media->has('thumbnailUrl')) {
             return;
