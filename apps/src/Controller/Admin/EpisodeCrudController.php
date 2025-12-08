@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use Labstag\Entity\Episode;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\SeasonEpisodeFilter;
@@ -114,6 +115,7 @@ class EpisodeCrudController extends CrudControllerAbstract
                 )
             )
         );
+        $filters->add(DateTimeFilter::new('airDate', new TranslatableMessage('Air date')));
         $filters->add(
             SeasonEpisodeFilter::new('serie', new TranslatableMessage('Serie'))->setChoices(
                 array_merge(
