@@ -142,6 +142,10 @@ class CinemaGenerate
         $movieTitle  = $movieData['title'] ?? 'Titre inconnu';
         $cast        = $this->theMovieDbApi->movies()->getCredits($movieData['id'], $locale);
         $releaseDate = new DateTime($movieData['release_date']);
+        $poster = $this->theMovieDbApi->images()->getPosterUrl($movieData['poster_path'] ?? '');
+        if (is_null($poster)) {
+            return;
+        }
 
         $paragraph = $this->paragraphService->addParagraph($page, 'text-img');
         if (!$paragraph instanceof TextImgParagraph) {
@@ -168,13 +172,8 @@ class CinemaGenerate
             $html
         );
         $paragraph->setContent($html);
-
-        $poster = $this->theMovieDbApi->images()->getPosterUrl($movieData['poster_path'] ?? '');
-        if (!is_null($poster)) {
-            $images[] = $poster;
-            $this->fileService->setUploadedFile($poster, $paragraph, 'imgFile');
-        }
-
+        $images[] = $poster;
+        $this->fileService->setUploadedFile($poster, $paragraph, 'imgFile');
         $this->setVideo($page, $movieData);
     }
 
