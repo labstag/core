@@ -109,6 +109,7 @@ class SeasonCrudController extends CrudControllerAbstract
     {
         $associationField = AssociationField::new('episodes', new TranslatableMessage('Episodes'));
         $associationField->setTemplatePath('admin/field/episodes.html.twig');
+        $associationField->hideOnForm();
 
         return $associationField;
     }
