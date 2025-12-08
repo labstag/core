@@ -18,9 +18,9 @@ final class GameAllMessageHandler
     {
     }
 
-    public function __invoke(GameAllMessage $message): void
+    public function __invoke(GameAllMessage $gameAllMessage): void
     {
-        unset($message);
+        unset($gameAllMessage);
         $games = $this->gameRepository->findAll();
         foreach ($games as $game) {
             $this->messageBus->dispatch(new GameMessage($game->getId()));

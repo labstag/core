@@ -18,9 +18,9 @@ final class GameMessageHandler
     {
     }
 
-    public function __invoke(GameMessage $message): void
+    public function __invoke(GameMessage $gameMessage): void
     {
-        $gameId = $message->getGame();
+        $gameId = $gameMessage->getGame();
         $game   = $this->gameRepository->find($gameId);
         if (!$game instanceof Game) {
             return;

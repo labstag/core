@@ -12,6 +12,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Essence\Essence;
+use Essence\Media;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Labstag\Controller\Admin\ParagraphCrudController;
@@ -280,6 +282,29 @@ abstract class ParagraphAbstract extends AbstractController
         $request = $this->requestStack->getCurrentRequest();
 
         return $request->query->get('categories');
+    }
+
+    protected function getMediaByUrl(?string $url): ?Media
+    {
+        if (is_null($url) || '' === $url || '0' === $url) {
+            return null;
+        }
+
+        $essence = new Essence();
+
+        // Load any url:
+        $media = $essence->extract(
+            $url,
+            [
+                'maxwidth'  => 800,
+                'maxheight' => 600,
+            ]
+        );
+        if (!$media instanceof Media) {
+            return null;
+        }
+
+        return $media;
     }
 
     protected function getOEmbedUrl(string $html): ?string

@@ -5,7 +5,6 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
-use Essence\Essence;
 use Essence\Media;
 use Generator;
 use Labstag\Entity\Block;
@@ -27,7 +26,7 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        $media = $this->getMedia($paragraph);
+        $media = $this->getMediaByUrl($paragraph->getUrl());
 
         unset($disable);
         if (!$media instanceof Media) {
@@ -118,59 +117,16 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        if (!is_null($paragraph->getImg())) {
+        if (!is_null($paragraph->getImg()) && is_null($paragraph->getImgFile())) {
             return;
         }
 
-        $url = $paragraph->getUrl();
-        if (is_null($url) || '' === $url || '0' === $url) {
-            return;
-        }
-
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
-
-        if (!$media->has('thumbnailUrl')) {
+        $media = $this->getMediaByUrl($paragraph->getUrl());
+        if (is_null($media)) {
             return;
         }
 
         $thumbnailUrl = $media->get('thumbnailUrl');
         $this->fileService->setUploadedFile($thumbnailUrl, $paragraph, 'imgFile');
-    }
-
-    protected function getMedia(Paragraph $paragraph): ?Media
-    {
-        if (!$paragraph instanceof EntityTextMediaParagraph) {
-            return null;
-        }
-
-        $url = $paragraph->getUrl();
-        if (is_null($url) || '' === $url || '0' === $url) {
-            return null;
-        }
-
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
-        if (!$media instanceof Media) {
-            return null;
-        }
-
-        return $media;
     }
 }

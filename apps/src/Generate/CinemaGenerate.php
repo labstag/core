@@ -39,17 +39,6 @@ class CinemaGenerate
     {
     }
 
-    private function getUser()
-    {
-        $configuration = $this->configurationService->getConfiguration();
-
-        $userId = $configuration->getDefaultUser();
-
-        $user = $this->entityManager->getRepository(User::class)->find($userId);
-
-        return $user;
-    }
-
     public function execute(): void
     {
         $title = $this->pageCinemaTitleTemplate->getTemplate()->getText();
@@ -133,6 +122,15 @@ class CinemaGenerate
         return $data;
     }
 
+    private function getUser(): ?object
+    {
+        $configuration = $this->configurationService->getConfiguration();
+
+        $userId = $configuration->getDefaultUser();
+
+        return $this->entityManager->getRepository(User::class)->find($userId);
+    }
+
     private function setMovie(Page $page, array $movieData, string $locale, array &$images, int $key): void
     {
         if (!isset($movieData['release_date'])) {
@@ -142,7 +140,7 @@ class CinemaGenerate
         $movieTitle  = $movieData['title'] ?? 'Titre inconnu';
         $cast        = $this->theMovieDbApi->movies()->getCredits($movieData['id'], $locale);
         $releaseDate = new DateTime($movieData['release_date']);
-        $poster = $this->theMovieDbApi->images()->getPosterUrl($movieData['poster_path'] ?? '');
+        $poster      = $this->theMovieDbApi->images()->getPosterUrl($movieData['poster_path'] ?? '');
         if (is_null($poster)) {
             return;
         }
@@ -209,6 +207,5 @@ class CinemaGenerate
         if (!is_null($backdrop)) {
             $this->fileService->setUploadedFile($backdrop, $paragraph, 'imgFile');
         }
-
     }
 }

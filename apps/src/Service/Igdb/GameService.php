@@ -47,6 +47,28 @@ final class GameService extends AbstractIgdb
         return $game;
     }
 
+    public function getApiGameId(string $id): ?array
+    {
+        $where  = ['id = ' . $id];
+        $fields = [
+            '*',
+            'cover.*',
+            'genres.*',
+            'franchises.*',
+            'screenshots.*',
+            'artworks.*',
+            'videos.*',
+        ];
+        $body   = $this->igdbApi->setBody(fields: $fields, where: $where, limit: 1);
+
+        $results = $this->igdbApi->setUrl('games', $body);
+        if (is_null($results)) {
+            return null;
+        }
+
+        return $results[0];
+    }
+
     public function getFranchise(array $data): Franchise
     {
         $entityRepository = $this->entityManager->getRepository(Franchise::class);
@@ -183,40 +205,19 @@ final class GameService extends AbstractIgdb
     {
         $summary = $data['summary'] ?? '';
         $summary = explode("\n", $summary);
-        $new = [];
+
+        $new     = [];
         foreach ($summary as $text) {
-            if (trim($text) !== '') {
+            if ('' !== trim($text)) {
                 $translation = $this->libreTranslationApi->translate($text, 'en', 'fr');
-                $new[] = trim($translation['translatedText']);
+                $new[]       = trim($translation['translatedText']);
             }
         }
 
-        $summary = '<p>'.implode('</p><p>', $new).'</p>';
+        $summary = '<p>' . implode('</p><p>', $new) . '</p>';
         $game->setSummary($summary);
 
         return true;
-    }
-
-    public function getApiGameId(string $id): ?array
-    {
-        $where  = ['id = ' . $id];
-        $fields = [
-            '*',
-            'cover.*',
-            'genres.*',
-            'franchises.*',
-            'screenshots.*',
-            'artworks.*',
-            'videos.*',
-        ];
-        $body   = $this->igdbApi->setBody(fields: $fields, where: $where, limit: 1);
-
-        $results = $this->igdbApi->setUrl('games', $body);
-        if (is_null($results)) {
-            return null;
-        }
-
-        return $results[0];
     }
 
     private function getGameByRow(array $data): Game

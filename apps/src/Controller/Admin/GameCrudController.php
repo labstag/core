@@ -154,12 +154,6 @@ class GameCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    public function updateAllGame(): RedirectResponse
-    {
-        $this->messageBus->dispatch(new GameAllMessage());
-        return $this->redirectToRoute('admin_game_index');
-    }
-
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
@@ -191,6 +185,7 @@ class GameCrudController extends CrudControllerAbstract
 
         $wysiwygField = WysiwygField::new('summary', new TranslatableMessage('Summary'));
         $wysiwygField->hideOnIndex();
+
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
@@ -259,6 +254,16 @@ class GameCrudController extends CrudControllerAbstract
         );
     }
 
+    public function jsonMovie(Request $request): JsonResponse
+    {
+        $entityId                        = $request->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $game                            = $repositoryAbstract->find($entityId);
+        $details                         = $this->gameService->getApiGameId($game->getIgdb());
+
+        return new JsonResponse($details);
+    }
+
     public function setLinkIgdb(): void
     {
         if (!$this->actionsFactory->isTrash()) {
@@ -319,6 +324,29 @@ class GameCrudController extends CrudControllerAbstract
         );
     }
 
+    public function updateAllGame(): RedirectResponse
+    {
+        $this->messageBus->dispatch(new GameAllMessage());
+
+        return $this->redirectToRoute('admin_game_index');
+    }
+
+    public function updateGame(Request $request): RedirectResponse
+    {
+        $entityId                        = $request->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $game                            = $repositoryAbstract->find($entityId);
+        $this->messageBus->dispatch(new GameMessage($game->getId()));
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                return $this->redirect($url);
+            }
+        }
+
+        return $this->redirectToRoute('admin_game_index');
+    }
+
     private function addActionImportGame(): void
     {
         if (!$this->actionsFactory->isTrash()) {
@@ -349,33 +377,6 @@ class GameCrudController extends CrudControllerAbstract
         $action->createAsGlobalAction();
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
-    }
-
-    public function updateGame(
-        Request $request,
-    ): RedirectResponse
-    {
-        $entityId = $request->query->get('entityId');
-        $repositoryAbstract              = $this->getRepository();
-        $game                           = $repositoryAbstract->find($entityId);
-        $this->messageBus->dispatch(new GameMessage($game->getId()));
-        if ($request->headers->has('referer')) {
-            $url = $request->headers->get('referer');
-            if (is_string($url) && '' !== $url) {
-                return $this->redirect($url);
-            }
-        }
-
-        return $this->redirectToRoute('admin_game_index');
-    }
-
-    public function jsonMovie(Request $request): JsonResponse
-    {
-        $entityId = $request->query->get('entityId');
-        $repositoryAbstract              = $this->getRepository();
-        $game                           = $repositoryAbstract->find($entityId);
-        $details = $this->gameService->getApiGameId($game->getIgdb());
-        return new JsonResponse($details);
     }
 
     private function setUpdateAction(): void
