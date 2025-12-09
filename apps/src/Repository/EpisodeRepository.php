@@ -4,6 +4,7 @@ namespace Labstag\Repository;
 
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Episode;
@@ -19,7 +20,12 @@ class EpisodeRepository extends RepositoryAbstract
         parent::__construct($registry, Episode::class);
     }
 
-    public function getAllActivateBySeason(Season $season): mixed
+    /**
+     * @param array<string, mixed> $query
+     *
+     * @return Query<mixed, mixed>
+     */
+    public function getQueryPaginator(Season $season): Query
     {
         $data = new ArrayCollection();
         $data->add(new Parameter('enable', true));
@@ -33,9 +39,10 @@ class EpisodeRepository extends RepositoryAbstract
         $queryBuilder->setParameters($data);
         $queryBuilder->orderBy('e.number', 'ASC');
 
-        $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'episodes-activate-season-' . $season->getId());
+        $query        = $queryBuilder->getQuery();
+        $dql          = $query->getDQL();
+        $query->enableResultCache(3600, 'movies-query-paginator-' . md5((string) $dql));
 
-        return $query->getResult();
+        return $query;
     }
 }
