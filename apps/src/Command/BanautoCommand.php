@@ -39,12 +39,12 @@ class BanautoCommand
 
         $banIps = $this->banIpRepository->findAll();
         $oneWeekAgo = new DateTime('-1 week');
-            foreach ($banIps as $banIp) {
-                if ($banIp->getCreatedAt() < $oneWeekAgo) {
-                    $this->banIpRepository->remove($banIp, true);
-                    $symfonyStyle->note(sprintf('Ip %s unbanned (older than 1 week)', $banIp->getInternetProtocol()));
-                }
+        foreach ($banIps as $banIp) {
+            if ($banIp->getCreatedAt() < $oneWeekAgo) {
+                $this->banIpRepository->delete($banIp, true);
+                $symfonyStyle->note(sprintf('Ip %s unbanned (older than 1 week)', $banIp->getInternetProtocol()));
             }
+        }
 
         return Command::SUCCESS;
     }
