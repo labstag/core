@@ -15,4 +15,5 @@ enum PageEnum: string
     case POSTS          = 'post';
     case SERIES         = 'series';
     case STORIES        = 'story';
+    case ERRORS         = 'error';
 }

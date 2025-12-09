@@ -1,11 +1,7 @@
 @use "../mixins";
 
 .block_breadcrumb {
-  display: none;
-
-  @include mixins.respond-to(md) {
-    display: block;
-  }
+  display: block;
 
   .wrapper {}
 

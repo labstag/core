@@ -93,6 +93,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($block, 'season-list');
         $this->paragraphService->addParagraph($block, 'episode-list');
         $this->paragraphService->addParagraph($block, 'saga-list');
+        $this->paragraphService->addParagraph($block, 'error');
     }
 
     private function addParagraphsTest(Block $block): void

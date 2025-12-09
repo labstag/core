@@ -16,6 +16,7 @@ use Essence\Essence;
 use Essence\Media;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Labstag\Context\ExceptionContext;
 use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\Paragraph;
 use Labstag\Service\ConfigurationService;
@@ -69,6 +70,7 @@ abstract class ParagraphAbstract extends AbstractController
     protected array $templates = [];
 
     public function __construct(
+        protected ExceptionContext $context,
         protected LoggerInterface $logger,
         protected Security $security,
         protected AdminUrlGenerator $adminUrlGenerator,

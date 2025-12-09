@@ -1,0 +1,11 @@
+@use "../placeholders" as *;
+
+.paragraph_error {
+  @extend %head;
+
+  .content {}
+
+  .background {}
+
+  h1 {}
+}

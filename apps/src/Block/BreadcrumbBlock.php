@@ -45,11 +45,6 @@ class BreadcrumbBlock extends BlockAbstract
         $slug    = $request->attributes->get('slug');
         $urls    = $this->setBreadcrumb($slug);
         $params  = $this->getParamsAttributes($request);
-        if ($entity instanceof Page && $entity->isHide()) {
-            // delete last $urls element
-            array_pop($urls);
-        }
-
         if ([] === $urls) {
             $this->setShow($block, false);
 

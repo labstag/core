@@ -6,6 +6,7 @@ use Labstag\Service\FrontService;
 use Labstag\Service\SiteService;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Attribute\Route;
@@ -43,6 +44,11 @@ class FrontController extends AbstractController
     public function logout(): void
     {
         throw new LogicException();
+    }
+
+    public function error(FlattenException $exception): Response
+    {
+        return $this->frontService->errorView($exception);
     }
 
     #[Route('/sitemap.css', name: 'sitemap.css', priority: 1)]

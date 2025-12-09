@@ -1933,6 +1933,66 @@
         <source>Traitement finished</source>
         <target>Traitement terminé</target>
       </trans-unit>
+      <trans-unit id="S13N6_U" resname="Summary">
+        <source>Summary</source>
+        <target>Résumé</target>
+      </trans-unit>
+      <trans-unit id="sXXx3Jc" resname="page.error.401.title">
+        <source>page.error.401.title</source>
+        <target>Non autorisé</target>
+      </trans-unit>
+      <trans-unit id="qiyS2Aj" resname="page.error.404.title">
+        <source>page.error.404.title</source>
+        <target>Page non trouvée</target>
+      </trans-unit>
+      <trans-unit id="HBiXNo." resname="page.error.403.title">
+        <source>page.error.403.title</source>
+        <target>Accès interdit</target>
+      </trans-unit>
+      <trans-unit id="cAD0qAJ" resname="page.error.500.title">
+        <source>page.error.500.title</source>
+        <target>Erreur interne du serveur</target>
+      </trans-unit>
+      <trans-unit id="h6uPIX2" resname="page.error.default.title">
+        <source>page.error.default.title</source>
+        <target>Une erreur est survenue</target>
+      </trans-unit>
+      <trans-unit id="fCST5i7" resname="page.error.401.message">
+        <source>page.error.401.message</source>
+        <target>Vous devez vous authentifier pour accéder à cette ressource.</target>
+      </trans-unit>
+      <trans-unit id="5Dkoz51" resname="page.error.404.message">
+        <source>page.error.404.message</source>
+        <target>La page que vous recherchez n'existe pas ou a été déplacée.</target>
+      </trans-unit>
+      <trans-unit id="gjxjUZs" resname="page.error.403.message">
+        <source>page.error.403.message</source>
+        <target>Vous n'avez pas les permissions nécessaires pour accéder à cette ressource.</target>
+      </trans-unit>
+      <trans-unit id="Zd03i2P" resname="page.error.500.message">
+        <source>page.error.500.message</source>
+        <target>Une erreur inattendue s'est produite. Veuillez réessayer plus tard.</target>
+      </trans-unit>
+      <trans-unit id="tmemtQn" resname="page.error.default.message">
+        <source>page.error.default.message</source>
+        <target>Une erreur s'est produite lors du traitement de votre demande.</target>
+      </trans-unit>
+      <trans-unit id="B9r0Hn5" resname="Error">
+        <source>Error</source>
+        <target>Erreur</target>
+      </trans-unit>
+      <trans-unit id="g0BY5ot" resname="Import movies">
+        <source>Import movies</source>
+        <target>Importer des films</target>
+      </trans-unit>
+      <trans-unit id="gzyF672" resname="Import series">
+        <source>Import series</source>
+        <target>Importer des séries</target>
+      </trans-unit>
+      <trans-unit id="LnDK4Bi" resname="Import games">
+        <source>Import games</source>
+        <target>Importer des jeux</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

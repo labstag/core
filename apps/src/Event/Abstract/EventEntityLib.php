@@ -180,12 +180,15 @@ abstract class EventEntityLib
             return;
         }
 
-        if (PageEnum::HOME->value != $instance->getType()) {
-            $code = (PageEnum::CV->value == $instance->getType()) ? 'head-cv' : 'head';
-            $this->addParagraph($instance, $code, 0);
+        if (in_array($instance->getType(), [PageEnum::HOME->value, PageEnum::ERRORS->value])) {
 
             return;
         }
+        
+        $code = (PageEnum::CV->value == $instance->getType()) ? 'head-cv' : 'head';
+        $this->addParagraph($instance, $code, 0);
+
+        return;
     }
 
     protected function updateEntityParagraph(object $instance): void

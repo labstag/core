@@ -23,6 +23,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
         'chapter-list'     => ChapterListParagraph::class,
         'edito'            => EditoParagraph::class,
         'episode-list'     => EpisodeListParagraph::class,
+        'error'            => ErrorParagraph::class,
         'experiences'      => ExperiencesParagraph::class,
         'form'             => FormParagraph::class,
         'game'             => GameParagraph::class,

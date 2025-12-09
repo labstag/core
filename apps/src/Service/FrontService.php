@@ -3,9 +3,13 @@
 namespace Labstag\Service;
 
 use Carbon\Carbon;
+use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Entity\Page;
+use Labstag\Enum\PageEnum;
 use Labstag\Message\FileDeleteMessage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -17,6 +21,7 @@ class FrontService extends AbstractController
         #[AutowireIterator('labstag.datas')]
         private readonly iterable $datas,
         protected CacheService $cacheService,
+        protected EntityManagerInterface $entityManager,
         protected MessageBusInterface $messageBus,
         protected FileService $fileService,
         protected ConfigurationService $configurationService,
@@ -89,10 +94,30 @@ class FrontService extends AbstractController
         return $content;
     }
 
-    public function showView(): Response
+    public function getPageError(FlattenException $exception)
     {
-        $entity = $this->slugService->getEntity();
+        $pageRepository = $this->entityManager->getRepository(Page::class);
+        $page = $pageRepository->findOneBy(['type' => PageEnum::ERRORS->value]);
+        if (!$page instanceof Page) {
+            $page = new Page();
+            $page->setHide(true);
+            $page->setTitle(PageEnum::ERRORS->value);
+            $page->setType(PageEnum::ERRORS->value);
+            $pageRepository->save($page);
+        }
 
+        return $page;
+    }
+
+    public function errorView(FlattenException $exception): Response
+    {
+        $entity = $this->getPageError($exception);
+        
+        return $this->getResponse($entity);
+    }
+
+    public function getResponse($entity)
+    {
         if (!is_object($entity)) {
             throw $this->createNotFoundException();
         }
@@ -109,6 +134,13 @@ class FrontService extends AbstractController
         }
 
         return $response;
+    }
+
+    public function showView(): Response
+    {
+        $entity = $this->slugService->getEntity();
+        
+        return $this->getResponse($entity);
     }
 
     private function showContentEntity(?object $entity): Response
