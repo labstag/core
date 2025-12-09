@@ -2075,211 +2075,211 @@
       </trans-unit>
       <trans-unit id="nkZICzq" resname="page.error.425.title">
         <source>page.error.425.title</source>
-        <target>__page.error.425.title</target>
+        <target>Trop tôt</target>
       </trans-unit>
       <trans-unit id="x8xS94P" resname="page.error.426.title">
         <source>page.error.426.title</source>
-        <target>__page.error.426.title</target>
+        <target>Mise à niveau requise</target>
       </trans-unit>
       <trans-unit id="2osE9c." resname="page.error.428.title">
         <source>page.error.428.title</source>
-        <target>__page.error.428.title</target>
+        <target>Précondition requise</target>
       </trans-unit>
       <trans-unit id="KyG9J6C" resname="page.error.429.title">
         <source>page.error.429.title</source>
-        <target>__page.error.429.title</target>
+        <target>Trop de requêtes</target>
       </trans-unit>
       <trans-unit id="JwIZ6S4" resname="page.error.431.title">
         <source>page.error.431.title</source>
-        <target>__page.error.431.title</target>
+        <target>Champs d'en-tête trop grands</target>
       </trans-unit>
       <trans-unit id="fwadkQy" resname="page.error.451.title">
         <source>page.error.451.title</source>
-        <target>__page.error.451.title</target>
+        <target>Indisponible pour des raisons légales</target>
       </trans-unit>
       <trans-unit id="_IPKPko" resname="page.error.501.title">
         <source>page.error.501.title</source>
-        <target>__page.error.501.title</target>
+        <target>Non implémenté</target>
       </trans-unit>
       <trans-unit id="Aic1uP2" resname="page.error.502.title">
         <source>page.error.502.title</source>
-        <target>__page.error.502.title</target>
+        <target>Mauvaise passerelle</target>
       </trans-unit>
       <trans-unit id="VGGN1Zl" resname="page.error.503.title">
         <source>page.error.503.title</source>
-        <target>__page.error.503.title</target>
+        <target>Service indisponible</target>
       </trans-unit>
       <trans-unit id="IbDLdvB" resname="page.error.504.title">
         <source>page.error.504.title</source>
-        <target>__page.error.504.title</target>
+        <target>Délai d'attente de la passerelle dépassé</target>
       </trans-unit>
       <trans-unit id="RAuTwcT" resname="page.error.505.title">
         <source>page.error.505.title</source>
-        <target>__page.error.505.title</target>
+        <target>Version HTTP non supportée</target>
       </trans-unit>
       <trans-unit id="7kd0vGP" resname="page.error.506.title">
         <source>page.error.506.title</source>
-        <target>__page.error.506.title</target>
+        <target>Négociation de variante</target>
       </trans-unit>
       <trans-unit id="WczbfV." resname="page.error.507.title">
         <source>page.error.507.title</source>
-        <target>__page.error.507.title</target>
+        <target>Espace de stockage insuffisant</target>
       </trans-unit>
       <trans-unit id="tImePCE" resname="page.error.508.title">
         <source>page.error.508.title</source>
-        <target>__page.error.508.title</target>
+        <target>Boucle détectée</target>
       </trans-unit>
       <trans-unit id="74aaG9P" resname="page.error.510.title">
         <source>page.error.510.title</source>
-        <target>__page.error.510.title</target>
+        <target>Non étendu</target>
       </trans-unit>
       <trans-unit id="ztohEbV" resname="page.error.511.title">
         <source>page.error.511.title</source>
-        <target>__page.error.511.title</target>
+        <target>Authentification réseau requise</target>
       </trans-unit>
       <trans-unit id="FnPOPKo" resname="page.error.400.message">
         <source>page.error.400.message</source>
-        <target>__page.error.400.message</target>
+        <target>La requête ne peut pas être traitée en raison d'une syntaxe incorrecte.</target>
       </trans-unit>
       <trans-unit id="eyU9tDw" resname="page.error.402.message">
         <source>page.error.402.message</source>
-        <target>__page.error.402.message</target>
+        <target>Un paiement est nécessaire pour accéder à cette ressource.</target>
       </trans-unit>
       <trans-unit id=".LWYsc6" resname="page.error.405.message">
         <source>page.error.405.message</source>
-        <target>__page.error.405.message</target>
+        <target>La méthode utilisée n'est pas autorisée pour cette ressource.</target>
       </trans-unit>
       <trans-unit id="juNFApi" resname="page.error.406.message">
         <source>page.error.406.message</source>
-        <target>__page.error.406.message</target>
+        <target>Le serveur ne peut générer une réponse acceptable selon les critères de la requête.</target>
       </trans-unit>
       <trans-unit id="ZZ3FCEk" resname="page.error.407.message">
         <source>page.error.407.message</source>
-        <target>__page.error.407.message</target>
+        <target>Vous devez vous authentifier auprès du proxy pour accéder à cette ressource.</target>
       </trans-unit>
       <trans-unit id="fDXlhvs" resname="page.error.408.message">
         <source>page.error.408.message</source>
-        <target>__page.error.408.message</target>
+        <target>Le serveur a mis trop de temps à répondre à la requête.</target>
       </trans-unit>
       <trans-unit id="jcy5fVb" resname="page.error.409.message">
         <source>page.error.409.message</source>
-        <target>__page.error.409.message</target>
+        <target>La requête est en conflit avec l'état actuel du serveur.</target>
       </trans-unit>
       <trans-unit id="Ms5veWl" resname="page.error.410.message">
         <source>page.error.410.message</source>
-        <target>__page.error.410.message</target>
+        <target>La ressource demandée n'est plus disponible et ne le sera plus.</target>
       </trans-unit>
       <trans-unit id="1r2jU1x" resname="page.error.411.message">
         <source>page.error.411.message</source>
-        <target>__page.error.411.message</target>
+        <target>Le serveur exige que la longueur du contenu soit définie dans la requête.</target>
       </trans-unit>
       <trans-unit id="g5k8yS1" resname="page.error.412.message">
         <source>page.error.412.message</source>
-        <target>__page.error.412.message</target>
+        <target>Une ou plusieurs conditions préalables dans les en-têtes de la requête ont échoué.</target>
       </trans-unit>
       <trans-unit id="sc2bP_W" resname="page.error.413.message">
         <source>page.error.413.message</source>
-        <target>__page.error.413.message</target>
+        <target>La requête est trop volumineuse pour être traitée par le serveur.</target>
       </trans-unit>
       <trans-unit id="UzCyqbf" resname="page.error.414.message">
         <source>page.error.414.message</source>
-        <target>__page.error.414.message</target>
+        <target>L'URI de la requête est trop longue pour être traitée par le serveur.</target>
       </trans-unit>
       <trans-unit id="MGCU3LY" resname="page.error.415.message">
         <source>page.error.415.message</source>
-        <target>__page.error.415.message</target>
+        <target>Le format du contenu de la requête n'est pas supporté par le serveur.</target>
       </trans-unit>
       <trans-unit id="94SP4wq" resname="page.error.416.message">
         <source>page.error.416.message</source>
-        <target>__page.error.416.message</target>
+        <target>La plage spécifiée dans la requête ne peut pas être satisfaite.</target>
       </trans-unit>
       <trans-unit id="HyT0aCl" resname="page.error.417.message">
         <source>page.error.417.message</source>
-        <target>__page.error.417.message</target>
+        <target>Le serveur ne peut pas satisfaire les attentes indiquées dans l'en-tête Expect.</target>
       </trans-unit>
       <trans-unit id="YebXvN_" resname="page.error.418.message">
         <source>page.error.418.message</source>
-        <target>__page.error.418.message</target>
+        <target>Je suis une théière et je ne peux pas préparer de café.</target>
       </trans-unit>
       <trans-unit id="HUZUsWt" resname="page.error.421.message">
         <source>page.error.421.message</source>
-        <target>__page.error.421.message</target>
+        <target>La requête a été dirigée vers un serveur incapable de produire une réponse.</target>
       </trans-unit>
       <trans-unit id="2_K3Koo" resname="page.error.422.message">
         <source>page.error.422.message</source>
-        <target>__page.error.422.message</target>
+        <target>La requête est bien formée mais contient des erreurs sémantiques.</target>
       </trans-unit>
       <trans-unit id="_dgVH_z" resname="page.error.423.message">
         <source>page.error.423.message</source>
-        <target>__page.error.423.message</target>
+        <target>La ressource à laquelle vous tentez d'accéder est verrouillée.</target>
       </trans-unit>
       <trans-unit id="djZYD9_" resname="page.error.424.message">
         <source>page.error.424.message</source>
-        <target>__page.error.424.message</target>
+        <target>La requête a échoué en raison de l'échec d'une requête précédente.</target>
       </trans-unit>
       <trans-unit id="2qE34Bv" resname="page.error.425.message">
         <source>page.error.425.message</source>
-        <target>__page.error.425.message</target>
+        <target>Le serveur refuse de traiter une requête qui pourrait être rejouée.</target>
       </trans-unit>
       <trans-unit id="9FAChgO" resname="page.error.426.message">
         <source>page.error.426.message</source>
-        <target>__page.error.426.message</target>
+        <target>Le client doit passer à un protocole différent pour continuer.</target>
       </trans-unit>
       <trans-unit id="eVjRjXj" resname="page.error.428.message">
         <source>page.error.428.message</source>
-        <target>__page.error.428.message</target>
+        <target>Le serveur exige que la requête soit conditionnelle.</target>
       </trans-unit>
       <trans-unit id="C7.93O2" resname="page.error.429.message">
         <source>page.error.429.message</source>
-        <target>__page.error.429.message</target>
+        <target>Vous avez envoyé trop de requêtes dans un laps de temps donné.</target>
       </trans-unit>
       <trans-unit id="ilTHMcI" resname="page.error.431.message">
         <source>page.error.431.message</source>
-        <target>__page.error.431.message</target>
+        <target>Les champs d'en-tête de la requête sont trop volumineux.</target>
       </trans-unit>
       <trans-unit id="Vfk3Trn" resname="page.error.451.message">
         <source>page.error.451.message</source>
-        <target>__page.error.451.message</target>
+        <target>Cette ressource n'est pas accessible pour des raisons légales.</target>
       </trans-unit>
       <trans-unit id="hs.2dYG" resname="page.error.501.message">
         <source>page.error.501.message</source>
-        <target>__page.error.501.message</target>
+        <target>Le serveur ne prend pas en charge la fonctionnalité nécessaire pour traiter cette requête.</target>
       </trans-unit>
       <trans-unit id="IOADmT2" resname="page.error.502.message">
         <source>page.error.502.message</source>
-        <target>__page.error.502.message</target>
+        <target>Le serveur a reçu une réponse invalide du serveur en amont.</target>
       </trans-unit>
       <trans-unit id="ESjFXwL" resname="page.error.503.message">
         <source>page.error.503.message</source>
-        <target>__page.error.503.message</target>
+        <target>Le serveur est temporairement indisponible. Veuillez réessayer plus tard.</target>
       </trans-unit>
       <trans-unit id="DSDhenm" resname="page.error.504.message">
         <source>page.error.504.message</source>
-        <target>__page.error.504.message</target>
+        <target>Le serveur passerelle n'a pas reçu de réponse à temps.</target>
       </trans-unit>
       <trans-unit id="bKd4yJM" resname="page.error.505.message">
         <source>page.error.505.message</source>
-        <target>__page.error.505.message</target>
+        <target>La version du protocole HTTP utilisée dans la requête n'est pas prise en charge.</target>
       </trans-unit>
       <trans-unit id="th85sDP" resname="page.error.506.message">
         <source>page.error.506.message</source>
-        <target>__page.error.506.message</target>
+        <target>Le serveur a une erreur de configuration interne.</target>
       </trans-unit>
       <trans-unit id="jZUSvKT" resname="page.error.507.message">
         <source>page.error.507.message</source>
-        <target>__page.error.507.message</target>
+        <target>Le serveur ne dispose pas de suffisamment d'espace de stockage pour traiter la requête.</target>
       </trans-unit>
       <trans-unit id="bkCpyhU" resname="page.error.508.message">
         <source>page.error.508.message</source>
-        <target>__page.error.508.message</target>
+        <target>Le serveur a détecté une boucle infinie lors du traitement de la requête.</target>
       </trans-unit>
       <trans-unit id="uQh3J.7" resname="page.error.510.message">
         <source>page.error.510.message</source>
-        <target>__page.error.510.message</target>
+        <target>Des extensions supplémentaires sont requises pour que le serveur puisse traiter la requête.</target>
       </trans-unit>
       <trans-unit id="nz1ei4y" resname="page.error.511.message">
         <source>page.error.511.message</source>
-        <target>__page.error.511.message</target>
+        <target>Vous devez vous authentifier auprès du réseau pour accéder à cette ressource.</target>
       </trans-unit>
     </body>
   </file>
