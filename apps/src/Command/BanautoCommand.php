@@ -2,6 +2,8 @@
 
 namespace Labstag\Command;
 
+use DateTime;
+use Labstag\Repository\BanIpRepository;
 use Labstag\Repository\HttpErrorLogsRepository;
 use Labstag\Service\SecurityService;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -14,6 +16,7 @@ class BanautoCommand
     public function __construct(
         protected HttpErrorLogsRepository $httpErrorLogsRepository,
         protected SecurityService $securityService,
+        protected BanIpRepository $banIpRepository
     )
     {
     }
@@ -33,6 +36,15 @@ class BanautoCommand
 
         $symfonyStyle->newLine();
         $symfonyStyle->success('Banning process completed!');
+
+        $banIps = $this->banIpRepository->findAll();
+        $oneWeekAgo = new DateTime('-1 week');
+            foreach ($banIps as $banIp) {
+                if ($banIp->getCreatedAt() < $oneWeekAgo) {
+                    $this->banIpRepository->remove($banIp, true);
+                    $symfonyStyle->note(sprintf('Ip %s unbanned (older than 1 week)', $banIp->getInternetProtocol()));
+                }
+            }
 
         return Command::SUCCESS;
     }
