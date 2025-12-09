@@ -5,6 +5,7 @@ namespace Labstag\Event\Abstract;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\BanIp;
 use Labstag\Entity\Block;
+use Labstag\Entity\Chapter;
 use Labstag\Entity\HttpErrorLogs;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
@@ -113,6 +114,7 @@ abstract class EventEntityLib
     protected function postPersistMethods(object $object, EntityManagerInterface $entityManager)
     {
         $this->updateEntityStory($object);
+        $this->updateEntityChapter($object);
         $this->updateEntityMovie($object);
         $this->updateEntitySerie($object);
         $this->updateEntitySaga($object);
@@ -234,5 +236,14 @@ abstract class EventEntityLib
         }
 
         $this->messageBus->dispatch(new StoryMessage($instance->getId()));
+    }
+
+    protected function updateEntityChapter(object $instance): void
+    {
+        if (!$instance instanceof Chapter) {
+            return;
+        }
+
+        $this->messageBus->dispatch(new StoryMessage($instance->getRefstory()->getId()));
     }
 }
