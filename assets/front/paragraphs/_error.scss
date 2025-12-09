@@ -1,7 +1,11 @@
 @use "../placeholders" as *;
 
 .paragraph_error {
-  @extend %head;
+  .first {
+    @extend %head;
+    height: 300px;
+
+  }
 
   .content {}
 
