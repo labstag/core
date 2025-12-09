@@ -1993,6 +1993,294 @@
         <source>Import games</source>
         <target>Importer des jeux</target>
       </trans-unit>
+      <trans-unit id="i6JgGSv" resname="page.error.400.title">
+        <source>page.error.400.title</source>
+        <target>Requête incorrecte</target>
+      </trans-unit>
+      <trans-unit id="FO8NniC" resname="page.error.402.title">
+        <source>page.error.402.title</source>
+        <target>Paiement requis</target>
+      </trans-unit>
+      <trans-unit id="ueDC_t2" resname="page.error.405.title">
+        <source>page.error.405.title</source>
+        <target>Méthode non autorisée</target>
+      </trans-unit>
+      <trans-unit id="dbingMZ" resname="page.error.406.title">
+        <source>page.error.406.title</source>
+        <target>Non acceptable</target>
+      </trans-unit>
+      <trans-unit id="1dZlPOp" resname="page.error.407.title">
+        <source>page.error.407.title</source>
+        <target>Authentification proxy requise</target>
+      </trans-unit>
+      <trans-unit id="Ygm42yd" resname="page.error.408.title">
+        <source>page.error.408.title</source>
+        <target>Délai d'attente dépassé</target>
+      </trans-unit>
+      <trans-unit id="k_tJWro" resname="page.error.409.title">
+        <source>page.error.409.title</source>
+        <target>Conflit</target>
+      </trans-unit>
+      <trans-unit id="t_SFyjA" resname="page.error.410.title">
+        <source>page.error.410.title</source>
+        <target>Disparu</target>
+      </trans-unit>
+      <trans-unit id=".Sb1e3k" resname="page.error.411.title">
+        <source>page.error.411.title</source>
+        <target>Longueur requise</target>
+      </trans-unit>
+      <trans-unit id="jwIiyRX" resname="page.error.412.title">
+        <source>page.error.412.title</source>
+        <target>Précondition échouée</target>
+      </trans-unit>
+      <trans-unit id="tbXGIuK" resname="page.error.413.title">
+        <source>page.error.413.title</source>
+        <target>Charge utile trop grande</target>
+      </trans-unit>
+      <trans-unit id="Ap9qz_V" resname="page.error.414.title">
+        <source>page.error.414.title</source>
+        <target>URI trop long</target>
+      </trans-unit>
+      <trans-unit id="Rf_XAB8" resname="page.error.415.title">
+        <source>page.error.415.title</source>
+        <target>Type de média non supporté</target>
+      </trans-unit>
+      <trans-unit id="tlzKLqf" resname="page.error.416.title">
+        <source>page.error.416.title</source>
+        <target>Plage non satisfaisante</target>
+      </trans-unit>
+      <trans-unit id="rZkMann" resname="page.error.417.title">
+        <source>page.error.417.title</source>
+        <target>Attente échouée</target>
+      </trans-unit>
+      <trans-unit id="Gg3YM.E" resname="page.error.418.title">
+        <source>page.error.418.title</source>
+        <target>Je suis une théière</target>
+      </trans-unit>
+      <trans-unit id="CToJC9c" resname="page.error.421.title">
+        <source>page.error.421.title</source>
+        <target>Requête mal dirigée</target>
+      </trans-unit>
+      <trans-unit id="Y6B7b9o" resname="page.error.422.title">
+        <source>page.error.422.title</source>
+        <target>Entité impossible à traiter</target>
+      </trans-unit>
+      <trans-unit id="ztyUjCN" resname="page.error.423.title">
+        <source>page.error.423.title</source>
+        <target>Verrouillé</target>
+      </trans-unit>
+      <trans-unit id="Ce8q30Q" resname="page.error.424.title">
+        <source>page.error.424.title</source>
+        <target>Dépendance échouée</target>
+      </trans-unit>
+      <trans-unit id="nkZICzq" resname="page.error.425.title">
+        <source>page.error.425.title</source>
+        <target>__page.error.425.title</target>
+      </trans-unit>
+      <trans-unit id="x8xS94P" resname="page.error.426.title">
+        <source>page.error.426.title</source>
+        <target>__page.error.426.title</target>
+      </trans-unit>
+      <trans-unit id="2osE9c." resname="page.error.428.title">
+        <source>page.error.428.title</source>
+        <target>__page.error.428.title</target>
+      </trans-unit>
+      <trans-unit id="KyG9J6C" resname="page.error.429.title">
+        <source>page.error.429.title</source>
+        <target>__page.error.429.title</target>
+      </trans-unit>
+      <trans-unit id="JwIZ6S4" resname="page.error.431.title">
+        <source>page.error.431.title</source>
+        <target>__page.error.431.title</target>
+      </trans-unit>
+      <trans-unit id="fwadkQy" resname="page.error.451.title">
+        <source>page.error.451.title</source>
+        <target>__page.error.451.title</target>
+      </trans-unit>
+      <trans-unit id="_IPKPko" resname="page.error.501.title">
+        <source>page.error.501.title</source>
+        <target>__page.error.501.title</target>
+      </trans-unit>
+      <trans-unit id="Aic1uP2" resname="page.error.502.title">
+        <source>page.error.502.title</source>
+        <target>__page.error.502.title</target>
+      </trans-unit>
+      <trans-unit id="VGGN1Zl" resname="page.error.503.title">
+        <source>page.error.503.title</source>
+        <target>__page.error.503.title</target>
+      </trans-unit>
+      <trans-unit id="IbDLdvB" resname="page.error.504.title">
+        <source>page.error.504.title</source>
+        <target>__page.error.504.title</target>
+      </trans-unit>
+      <trans-unit id="RAuTwcT" resname="page.error.505.title">
+        <source>page.error.505.title</source>
+        <target>__page.error.505.title</target>
+      </trans-unit>
+      <trans-unit id="7kd0vGP" resname="page.error.506.title">
+        <source>page.error.506.title</source>
+        <target>__page.error.506.title</target>
+      </trans-unit>
+      <trans-unit id="WczbfV." resname="page.error.507.title">
+        <source>page.error.507.title</source>
+        <target>__page.error.507.title</target>
+      </trans-unit>
+      <trans-unit id="tImePCE" resname="page.error.508.title">
+        <source>page.error.508.title</source>
+        <target>__page.error.508.title</target>
+      </trans-unit>
+      <trans-unit id="74aaG9P" resname="page.error.510.title">
+        <source>page.error.510.title</source>
+        <target>__page.error.510.title</target>
+      </trans-unit>
+      <trans-unit id="ztohEbV" resname="page.error.511.title">
+        <source>page.error.511.title</source>
+        <target>__page.error.511.title</target>
+      </trans-unit>
+      <trans-unit id="FnPOPKo" resname="page.error.400.message">
+        <source>page.error.400.message</source>
+        <target>__page.error.400.message</target>
+      </trans-unit>
+      <trans-unit id="eyU9tDw" resname="page.error.402.message">
+        <source>page.error.402.message</source>
+        <target>__page.error.402.message</target>
+      </trans-unit>
+      <trans-unit id=".LWYsc6" resname="page.error.405.message">
+        <source>page.error.405.message</source>
+        <target>__page.error.405.message</target>
+      </trans-unit>
+      <trans-unit id="juNFApi" resname="page.error.406.message">
+        <source>page.error.406.message</source>
+        <target>__page.error.406.message</target>
+      </trans-unit>
+      <trans-unit id="ZZ3FCEk" resname="page.error.407.message">
+        <source>page.error.407.message</source>
+        <target>__page.error.407.message</target>
+      </trans-unit>
+      <trans-unit id="fDXlhvs" resname="page.error.408.message">
+        <source>page.error.408.message</source>
+        <target>__page.error.408.message</target>
+      </trans-unit>
+      <trans-unit id="jcy5fVb" resname="page.error.409.message">
+        <source>page.error.409.message</source>
+        <target>__page.error.409.message</target>
+      </trans-unit>
+      <trans-unit id="Ms5veWl" resname="page.error.410.message">
+        <source>page.error.410.message</source>
+        <target>__page.error.410.message</target>
+      </trans-unit>
+      <trans-unit id="1r2jU1x" resname="page.error.411.message">
+        <source>page.error.411.message</source>
+        <target>__page.error.411.message</target>
+      </trans-unit>
+      <trans-unit id="g5k8yS1" resname="page.error.412.message">
+        <source>page.error.412.message</source>
+        <target>__page.error.412.message</target>
+      </trans-unit>
+      <trans-unit id="sc2bP_W" resname="page.error.413.message">
+        <source>page.error.413.message</source>
+        <target>__page.error.413.message</target>
+      </trans-unit>
+      <trans-unit id="UzCyqbf" resname="page.error.414.message">
+        <source>page.error.414.message</source>
+        <target>__page.error.414.message</target>
+      </trans-unit>
+      <trans-unit id="MGCU3LY" resname="page.error.415.message">
+        <source>page.error.415.message</source>
+        <target>__page.error.415.message</target>
+      </trans-unit>
+      <trans-unit id="94SP4wq" resname="page.error.416.message">
+        <source>page.error.416.message</source>
+        <target>__page.error.416.message</target>
+      </trans-unit>
+      <trans-unit id="HyT0aCl" resname="page.error.417.message">
+        <source>page.error.417.message</source>
+        <target>__page.error.417.message</target>
+      </trans-unit>
+      <trans-unit id="YebXvN_" resname="page.error.418.message">
+        <source>page.error.418.message</source>
+        <target>__page.error.418.message</target>
+      </trans-unit>
+      <trans-unit id="HUZUsWt" resname="page.error.421.message">
+        <source>page.error.421.message</source>
+        <target>__page.error.421.message</target>
+      </trans-unit>
+      <trans-unit id="2_K3Koo" resname="page.error.422.message">
+        <source>page.error.422.message</source>
+        <target>__page.error.422.message</target>
+      </trans-unit>
+      <trans-unit id="_dgVH_z" resname="page.error.423.message">
+        <source>page.error.423.message</source>
+        <target>__page.error.423.message</target>
+      </trans-unit>
+      <trans-unit id="djZYD9_" resname="page.error.424.message">
+        <source>page.error.424.message</source>
+        <target>__page.error.424.message</target>
+      </trans-unit>
+      <trans-unit id="2qE34Bv" resname="page.error.425.message">
+        <source>page.error.425.message</source>
+        <target>__page.error.425.message</target>
+      </trans-unit>
+      <trans-unit id="9FAChgO" resname="page.error.426.message">
+        <source>page.error.426.message</source>
+        <target>__page.error.426.message</target>
+      </trans-unit>
+      <trans-unit id="eVjRjXj" resname="page.error.428.message">
+        <source>page.error.428.message</source>
+        <target>__page.error.428.message</target>
+      </trans-unit>
+      <trans-unit id="C7.93O2" resname="page.error.429.message">
+        <source>page.error.429.message</source>
+        <target>__page.error.429.message</target>
+      </trans-unit>
+      <trans-unit id="ilTHMcI" resname="page.error.431.message">
+        <source>page.error.431.message</source>
+        <target>__page.error.431.message</target>
+      </trans-unit>
+      <trans-unit id="Vfk3Trn" resname="page.error.451.message">
+        <source>page.error.451.message</source>
+        <target>__page.error.451.message</target>
+      </trans-unit>
+      <trans-unit id="hs.2dYG" resname="page.error.501.message">
+        <source>page.error.501.message</source>
+        <target>__page.error.501.message</target>
+      </trans-unit>
+      <trans-unit id="IOADmT2" resname="page.error.502.message">
+        <source>page.error.502.message</source>
+        <target>__page.error.502.message</target>
+      </trans-unit>
+      <trans-unit id="ESjFXwL" resname="page.error.503.message">
+        <source>page.error.503.message</source>
+        <target>__page.error.503.message</target>
+      </trans-unit>
+      <trans-unit id="DSDhenm" resname="page.error.504.message">
+        <source>page.error.504.message</source>
+        <target>__page.error.504.message</target>
+      </trans-unit>
+      <trans-unit id="bKd4yJM" resname="page.error.505.message">
+        <source>page.error.505.message</source>
+        <target>__page.error.505.message</target>
+      </trans-unit>
+      <trans-unit id="th85sDP" resname="page.error.506.message">
+        <source>page.error.506.message</source>
+        <target>__page.error.506.message</target>
+      </trans-unit>
+      <trans-unit id="jZUSvKT" resname="page.error.507.message">
+        <source>page.error.507.message</source>
+        <target>__page.error.507.message</target>
+      </trans-unit>
+      <trans-unit id="bkCpyhU" resname="page.error.508.message">
+        <source>page.error.508.message</source>
+        <target>__page.error.508.message</target>
+      </trans-unit>
+      <trans-unit id="uQh3J.7" resname="page.error.510.message">
+        <source>page.error.510.message</source>
+        <target>__page.error.510.message</target>
+      </trans-unit>
+      <trans-unit id="nz1ei4y" resname="page.error.511.message">
+        <source>page.error.511.message</source>
+        <target>__page.error.511.message</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
