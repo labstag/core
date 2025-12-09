@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(name: 'labstag:email:template-add', description: '')]
-class EmailTemplateAddCommand extends Command
+class EmailTemplateAddCommand
 {
 
     private int $add = 0;
@@ -27,7 +27,6 @@ class EmailTemplateAddCommand extends Command
         protected TemplateRepository $templateRepository,
     )
     {
-        parent::__construct();
     }
 
     protected function addOrUpdate(?Template $template): void
@@ -40,12 +39,11 @@ class EmailTemplateAddCommand extends Command
 
         ++$this->update;
     }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(
+        SymfonyStyle $symfonyStyle,
+        OutputInterface $output
+    ): int
     {
-        $symfonyStyle = new SymfonyStyle($input, $output);
-
         $templates   = $this->emailService->all();
         $counter     = 0;
         $progressBar = new ProgressBar($output, is_countable($templates) ? count($templates) : 0);

@@ -96,29 +96,22 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
      */
     public function oembed(string $url): array
     {
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
-        if (!$media instanceof Media) {
+        $media = $this->fileService->getMediaByUrl($url);
+        if (is_null($media)) {
             return ['oembed' => ''];
         }
 
-        $html   = $media->has('html') ? $media->get('html') : '';
-        $oembed = $this->getOEmbedUrl($html);
+        $json = $media->jsonSerialize();
+        $oembed = $this->getOEmbedUrl($json['html'] ?? '');
         if (is_null($oembed)) {
             return ['oembed' => ''];
         }
 
+        $json = $media->jsonSerialize();
+
         return [
-            'title'    => $media->has('title') ? (string) $media->get('title') : '',
-            'provider' => $media->has('providerName') ? strtolower((string) $media->get('providerName')) : '',
+            'title'    => $json['title'] ?? '',
+            'provider' => $json['providerName'] ?? '',
             'oembed'   => $this->parseUrlAndAddAutoplay($oembed),
         ];
     }

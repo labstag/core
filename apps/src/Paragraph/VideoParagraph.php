@@ -24,7 +24,7 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        $media = $this->getMediaByUrl($paragraph->getUrl());
+        $media = $this->fileService->getMediaByUrl($paragraph->getUrl());
         unset($disable);
         if (!$media instanceof Media) {
             $this->setShow($paragraph, false);
@@ -32,8 +32,8 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $html   = $media->has('html') ? $media->get('html') : '';
-        $oembed = $this->getOEmbedUrl($html);
+        $json = $media->jsonSerialize();
+        $oembed = $this->getOEmbedUrl($json['html'] ?? '');
         if (is_null($oembed)) {
             $this->setShow($paragraph, false);
 
@@ -43,8 +43,8 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
         $this->setData(
             $paragraph,
             [
-                'title'     => $media->has('title') ? $media->get('title') : '',
-                'provider'  => $media->has('providerName') ? strtolower((string) $media->get('providerName')) : '',
+                'title'     => $json['title'] ?? '',
+                'provider'  => $json['providerName'] ?? '',
                 'oembed'    => $this->parseUrlAndAddAutoplay($oembed),
                 'paragraph' => $paragraph,
                 'data'      => $data,
@@ -102,12 +102,12 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $media = $this->getMediaByUrl($paragraph->getUrl());
+        $media = $this->fileService->getMediaByUrl($paragraph->getUrl());
         if (is_null($media)) {
             return;
         }
-
-        $thumbnailUrl = $media->get('thumbnailUrl');
-        $this->fileService->setUploadedFile($thumbnailUrl, $paragraph, 'imgFile');
+        
+        $json = $media->jsonSerialize();
+        $this->fileService->setUploadedFile($json['thumbnail_url'] ?? '', $paragraph, 'imgFile');
     }
 }

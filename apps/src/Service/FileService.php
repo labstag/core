@@ -4,6 +4,8 @@ namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Essence\Essence;
+use Essence\Media;
 use Exception;
 use Labstag\Message\FileDeleteMessage;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -33,6 +35,29 @@ final class FileService
         private PropertyMappingFactory $propertyMappingFactory,
     )
     {
+    }
+
+    public function getMediaByUrl(?string $url): ?Media
+    {
+        if (is_null($url) || '' === $url || '0' === $url) {
+            return null;
+        }
+
+        $essence = new Essence();
+
+        // Load any url:
+        $media = $essence->extract(
+            $url,
+            [
+                'maxwidth'  => 800,
+                'maxheight' => 600,
+            ]
+        );
+        if (!$media instanceof Media) {
+            return null;
+        }
+
+        return $media;
     }
 
     public function asset(mixed $entity, string $field): string
@@ -376,6 +401,10 @@ final class FileService
 
     public function setUploadedFile(string $filePath, object $entity, string|PropertyPathInterface $type): void
     {
+        if ($filePath === '') {
+            return;
+        }
+
         try {
             // Si c'est une URL, télécharger le fichier localement
             if (filter_var($filePath, FILTER_VALIDATE_URL)) {

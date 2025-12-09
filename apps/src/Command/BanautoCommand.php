@@ -11,20 +11,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(name: 'labstag:banauto', description: 'Add a short description for your command',)]
-class BanautoCommand extends Command
+class BanautoCommand
 {
     public function __construct(
         protected HttpErrorLogsRepository $httpErrorLogsRepository,
         protected SecurityService $securityService,
     )
     {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(SymfonyStyle $symfonyStyle): int
     {
-        $symfonyStyle = new SymfonyStyle($input, $output);
-
         $data = $this->httpErrorLogsRepository->getAllinternetProtocolWithNbr(5);
         foreach ($data as $httpErroLogs) {
             $internetProtocol = $httpErroLogs['internetProtocol'];

@@ -11,19 +11,16 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(name: 'labstag:page-cinema', description: 'Add a short description for your command',)]
-class PageCinemaCommand extends Command
+class PageCinemaCommand
 {
     public function __construct(
         protected MessageBusInterface $messageBus,
     )
     {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(SymfonyStyle $symfonyStyle): int
     {
-        $symfonyStyle = new SymfonyStyle($input, $output);
-
         $this->messageBus->dispatch(new PageCinemaMessage());
 
         $symfonyStyle->success('Cinema pages generation launched');

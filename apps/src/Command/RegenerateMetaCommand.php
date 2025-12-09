@@ -19,19 +19,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(name: 'labstag:regenerate:meta', description: 'Regenerate all entity metas')]
-class RegenerateMetaCommand extends Command
+class RegenerateMetaCommand
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     )
     {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(SymfonyStyle $symfonyStyle): int
     {
-        $symfonyStyle = new SymfonyStyle($input, $output);
-
         $entities = [
             Game::class,
             Movie::class,

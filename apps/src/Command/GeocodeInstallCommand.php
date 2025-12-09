@@ -8,6 +8,7 @@ use Labstag\Message\GeocodeMessage;
 use Labstag\Service\GeocodeService;
 use NumberFormatter;
 use Override;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -18,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(name: 'labstag:geocode-install', description: 'Retrieve geocodes')]
-class GeocodeInstallCommand extends Command
+class GeocodeInstallCommand
 {
 
     private int $add = 0;
@@ -30,7 +31,6 @@ class GeocodeInstallCommand extends Command
         protected MessageBusInterface $messageBus,
     )
     {
-        parent::__construct();
     }
 
     protected function addOrUpdate(GeoCode $geoCode): void
@@ -44,19 +44,13 @@ class GeocodeInstallCommand extends Command
         ++$this->update;
     }
 
-    #[Override]
-    protected function configure(): void
+    public function __invoke(
+        SymfonyStyle $symfonyStyle,
+        OutputInterface $output,
+        #[Argument] string $country
+    ): int
     {
-        $this->addArgument('country', InputArgument::REQUIRED, 'country code');
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $symfonyStyle = new SymfonyStyle($input, $output);
         $symfonyStyle->title('Retrieving postal codes');
-
-        $country = $input->getArgument('country');
         if (!is_string($country)) {
             throw new Exception('Argument country invalide');
         }

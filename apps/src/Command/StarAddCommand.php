@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(name: 'labstag:star-add', description: 'Get all star github with npm run star:get')]
-class StarAddCommand extends Command
+class StarAddCommand
 {
 
     private int $add = 0;
@@ -29,7 +29,6 @@ class StarAddCommand extends Command
         protected StarRepository $starRepository,
     )
     {
-        parent::__construct();
     }
 
     protected function addOrUpdate(Star $star): void
@@ -43,10 +42,11 @@ class StarAddCommand extends Command
         ++$this->update;
     }
 
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(
+        SymfonyStyle $symfonyStyle,
+        OutputInterface $output
+    ): int
     {
-        $symfonyStyle = new SymfonyStyle($input, $output);
         $filename     = 'stars.json';
         $file         = $this->fileService->getFileInAdapter('private', $filename);
         if (!is_file($file)) {

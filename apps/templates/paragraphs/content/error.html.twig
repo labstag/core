@@ -12,3 +12,13 @@
         </div>
     </div>
 </section>
+{% if app.environment == 'dev' or app.user.isGranted('ROLE_ADMIN') %}
+    <section>
+	    <div class="content">
+            <div class="wrapper">
+                <h2>Trace</h2>
+                <pre>{{ trace }}</pre>
+            </div>
+        </div>
+    </section>
+{% endif %}

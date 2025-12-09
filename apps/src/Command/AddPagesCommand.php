@@ -14,19 +14,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(name: 'labstag:add:pages', description: 'Add pages')]
-class AddPagesCommand extends Command
+class AddPagesCommand
 {
     public function __construct(
         protected PageRepository $pageRepository,
         protected ParagraphService $paragraphService,
     )
     {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(SymfonyStyle $symfonyStyle): int
     {
-        $symfonyStyle   = new SymfonyStyle($input, $output);
 
         $home = $this->pageRepository->findOneBy(
             [

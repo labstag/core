@@ -13,19 +13,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(name: 'correction:block:link', description: 'Add a short description for your command',)]
-class CorrectionBlockLinkCommand extends Command
+class CorrectionBlockLinkCommand
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
         protected BlockRepository $blockRepository,
     )
     {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(
+        SymfonyStyle $symfonyStyle,
+        OutputInterface $output
+    ): int
     {
-        $symfonyStyle     = new SymfonyStyle($input, $output);
         $blocks           = $this->entityManager->getRepository(LinksBlock::class)->findAll();
         $methods          = get_class_methods(LinksBlock::class);
         if (!in_array('getLinks', $methods)) {

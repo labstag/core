@@ -20,19 +20,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(name: 'labstag:regenerate:slug', description: 'Regenerate all entity slugs')]
-class RegenerateSlugCommand extends Command
+class RegenerateSlugCommand
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     )
     {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(SymfonyStyle $symfonyStyle): int
     {
-        $symfonyStyle = new SymfonyStyle($input, $output);
-
         $entities = [
             Category::class,
             Game::class,

@@ -286,29 +286,6 @@ abstract class ParagraphAbstract extends AbstractController
         return $request->query->get('categories');
     }
 
-    protected function getMediaByUrl(?string $url): ?Media
-    {
-        if (is_null($url) || '' === $url || '0' === $url) {
-            return null;
-        }
-
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
-        if (!$media instanceof Media) {
-            return null;
-        }
-
-        return $media;
-    }
-
     protected function getOEmbedUrl(string $html): ?string
     {
         $domDocument = new DOMDocument();

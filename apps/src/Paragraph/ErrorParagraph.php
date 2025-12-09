@@ -40,6 +40,7 @@ class ErrorParagraph extends ParagraphAbstract implements ParagraphInterface
         $this->setData(
             $paragraph,
             [
+                'trace'     => $exception->getTraceAsString(),
                 'message'   => $this->translator->trans($this->getMessage($statusCode)),
                 'post'      => $data['entity'],
                 'paragraph' => $paragraph,
