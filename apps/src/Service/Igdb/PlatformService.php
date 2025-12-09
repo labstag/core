@@ -39,7 +39,7 @@ final class PlatformService extends AbstractIgdb
         $platform->setGeneration($data['generation'] ?? 0);
         $platform->setTitle($data['name']);
 
-        $resultFamily = $this->getApiPlatformFamilyId($data['platform_family'] ?? '0');
+        $resultFamily = $this->getApiPlatformFamilyId($data['platform_family']['id'] ?? '0');
         if (!is_null($resultFamily)) {
             $platform->setFamily($resultFamily['name']);
         }

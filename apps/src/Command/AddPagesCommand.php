@@ -71,6 +71,7 @@ class AddPagesCommand
             'changepassword' => $this->setParagraphsChangePassword($page),
             'login'          => $this->setParagraphsLogin($page),
             'lostpassword'   => $this->setParagraphsLostPassword($page),
+            'error'          => $page->setEnable(true),
             default          => $page->setEnable(false),
         };
     }
@@ -81,6 +82,7 @@ class AddPagesCommand
             'changepassword' => $page->setHide(true),
             'login'          => $page->setHide(true),
             'lostpassword'   => $page->setHide(true),
+            'error'          => $page->setHide(true),
             default          => $page->setHide(false),
         };
     }

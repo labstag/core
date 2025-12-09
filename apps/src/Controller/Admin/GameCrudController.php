@@ -5,6 +5,7 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -194,7 +195,7 @@ class GameCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->titleField(),
                 $wysiwygField,
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
-                DateField::new('releaseDate', new TranslatableMessage('Release date')),
+                DateField::new('release_date', new TranslatableMessage('Release date')),
                 $textField,
                 $associationField,
                 $franchisesField,
@@ -221,6 +222,16 @@ class GameCrudController extends CrudControllerAbstract
         }
 
         return $this->redirect($url);
+    }
+
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->crudFieldFactory->addFilterEnable($filters);
+        $filters->add('release_date');
+        $filters->add('platforms');
+
+        return $filters;
     }
 
     public function importFile(Request $request): JsonResponse
