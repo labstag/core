@@ -14,4 +14,15 @@ class BanIpRepository extends RepositoryAbstract
     {
         parent::__construct($managerRegistry, BanIp::class);
     }
+
+    public function findOlderThanOneDay(): array
+    {
+        $oneDayAgo = new \DateTime('-1 day');
+                
+        $queryBuilder = $this->createQueryBuilder('b');
+        $queryBuilder->where('b.createdAt <= :oneDayAgo');
+        $queryBuilder->setParameter('oneDayAgo', $oneDayAgo);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }

@@ -34,13 +34,10 @@ final class BanIpMessageHandler
             dump(sprintf('Ip %s banned', $internetProtocol));
         }
 
-        $banIps = $this->banIpRepository->findAll();
-        $oneWeekAgo = new DateTime('-1 day');
+        $banIps = $this->banIpRepository->findOlderThanOneDay();
         foreach ($banIps as $banIp) {
-            if ($banIp->getCreatedAt() < $oneWeekAgo) {
-                $this->banIpRepository->delete($banIp, true);
-                dump(sprintf('Ip %s unbanned (older than 1 week)', $banIp->getInternetProtocol()));
-            }
+            $this->banIpRepository->delete($banIp, true);
+            dump(sprintf('Ip %s unbanned (older than 1 week)', $banIp->getInternetProtocol()));
         }
     }
 }
