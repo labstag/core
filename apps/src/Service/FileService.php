@@ -118,6 +118,9 @@ final class FileService
     public function getBasePath(mixed $entity, string $type): string
     {
         $object = $this->propertyMappingFactory->fromField(new $entity(), $type);
+        if (is_null($object)) {
+            return '';
+        }
 
         return $object->getUriPrefix();
     }

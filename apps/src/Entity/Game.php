@@ -14,7 +14,7 @@ use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\GameRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 #[ORM\Index(name: 'IDX_GAME_SLUG', columns: ['slug'])]

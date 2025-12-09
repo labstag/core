@@ -15,7 +15,7 @@ use Labstag\Repository\PlatformRepository;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: PlatformRepository::class)]
 #[ORM\Index(name: 'IDX_PLATFORM_SLUG', columns: ['slug'])]
