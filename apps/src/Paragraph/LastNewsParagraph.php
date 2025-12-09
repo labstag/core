@@ -42,6 +42,7 @@ class LastNewsParagraph extends ParagraphAbstract implements ParagraphInterface
         $nbr   = $paragraph->getNbr();
         $news  = $entityRepository->findLastByNbr($nbr);
         $total = $entityRepository->findTotalEnable();
+
         $this->setData(
             $paragraph,
             [

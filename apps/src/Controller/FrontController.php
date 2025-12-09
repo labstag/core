@@ -15,15 +15,14 @@ class FrontController extends AbstractController
 {
     public function __construct(
         protected SiteService $siteService,
-        private readonly FrontService $frontService,
-        private readonly FlattenException $flattenException,
+        private readonly FrontService $frontService
     )
     {
     }
 
     public function error(): Response
     {
-        return $this->frontService->errorView($this->flattenException);
+        return $this->frontService->errorView();
     }
 
     #[Route(

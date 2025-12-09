@@ -57,7 +57,7 @@ abstract class FixtureAbstract extends Fixture
             return;
         }
 
-        $max = random_int(0, count($this->categories));
+        $max = random_int(0, count($this->categories) < 5 ? count($this->categories) : 5);
         if (0 === $max) {
             return;
         }
@@ -91,7 +91,7 @@ abstract class FixtureAbstract extends Fixture
             return;
         }
 
-        $max = random_int(0, count($this->tags));
+        $max = random_int(0, count($this->tags) < 5 ? count($this->tags) : 5);
         if (0 === $max) {
             return;
         }

@@ -30,15 +30,14 @@ class FrontService extends AbstractController
         protected EtagCacheService $etagCacheService,
         protected ViewResolverService $viewResolverService,
         protected SiteService $siteService,
-        protected RequestStack $requestStack,
-        private readonly FlattenException $flattenException,
+        protected RequestStack $requestStack
     )
     {
     }
 
     public function errorView(): Response
     {
-        $entity = $this->getPageError($this->flattenException);
+        $entity = $this->getPageError();
         return $this->getResponse($entity);
     }
 
