@@ -2,6 +2,7 @@
 
 namespace Labstag\Scheduler;
 
+use Labstag\Message\BanIpMessage;
 use Labstag\Message\PageCinemaMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
@@ -23,6 +24,7 @@ final class PageCinemaSchedule implements ScheduleProviderInterface
         $schedule = new Schedule();
         $schedule->add(
             RecurringMessage::cron('0 0 * * 1', new PageCinemaMessage()),
+            RecurringMessage::cron('0 */1 * * *', new BanIpMessage()),
             // RecurringMessage::every('1 minute', new PageCinemaMessage()),
         );
         $schedule->stateful($this->cache);
