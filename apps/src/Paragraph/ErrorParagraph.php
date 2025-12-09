@@ -33,7 +33,7 @@ class ErrorParagraph extends ParagraphAbstract implements ParagraphInterface
 
         $exception = $this->context->getException();
 
-        $statusCode = $this->context->getException()->getStatusCode();
+        $statusCode = $exception->getStatusCode();
         $title = match ($statusCode) {
             401 => new TranslatableMessage('page.error.401.title'),
             404 => new TranslatableMessage('page.error.404.title'),
@@ -50,12 +50,12 @@ class ErrorParagraph extends ParagraphAbstract implements ParagraphInterface
             default => new TranslatableMessage('page.error.default.message'),
         };
 
-        $data['entity']->setTitle($title);
+        $data['entity']->setTitle($this->translator->trans($title));
 
         $this->setData(
             $paragraph,
             [
-                'message'   => $message,
+                'message'   => $this->translator->trans($message),
                 'post'      => $data['entity'],
                 'paragraph' => $paragraph,
                 'data'      => $data,
