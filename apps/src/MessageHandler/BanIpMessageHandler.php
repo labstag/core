@@ -35,7 +35,7 @@ final class BanIpMessageHandler
         }
 
         $banIps = $this->banIpRepository->findAll();
-        $oneWeekAgo = new DateTime('-1 week');
+        $oneWeekAgo = new DateTime('-1 day');
         foreach ($banIps as $banIp) {
             if ($banIp->getCreatedAt() < $oneWeekAgo) {
                 $this->banIpRepository->delete($banIp, true);
