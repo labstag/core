@@ -9,8 +9,6 @@ use Labstag\Repository\PageRepository;
 use Labstag\Service\ParagraphService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(name: 'labstag:add:pages', description: 'Add pages')]
@@ -25,7 +23,6 @@ class AddPagesCommand
 
     public function __invoke(SymfonyStyle $symfonyStyle): int
     {
-
         $home = $this->pageRepository->findOneBy(
             [
                 'type' => PageEnum::HOME->value,

@@ -73,7 +73,7 @@ class LibreTranslationApi
                         'confidence' => $detected['confidence'] ?? 0.0,
                         'success'    => true,
                     ];
-                } catch (TransportExceptionInterface|Exception $exception) {
+                } catch (TransportExceptionInterface | Exception $exception) {
                     return [
                         'language'   => '',
                         'confidence' => 0.0,
@@ -128,7 +128,7 @@ class LibreTranslationApi
                         'languages' => $content,
                         'success'   => true,
                     ];
-                } catch (TransportExceptionInterface|Exception $exception) {
+                } catch (TransportExceptionInterface | Exception $exception) {
                     return [
                         'languages' => [],
                         'success'   => false,
@@ -192,7 +192,7 @@ class LibreTranslationApi
                         'translatedText' => $content['translatedText'] ?? '',
                         'success'        => true,
                     ];
-                } catch (TransportExceptionInterface|Exception $exception) {
+                } catch (TransportExceptionInterface | Exception $exception) {
                     return [
                         'translatedText' => '',
                         'success'        => false,

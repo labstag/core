@@ -7,13 +7,10 @@ use Labstag\Entity\GeoCode;
 use Labstag\Message\GeocodeMessage;
 use Labstag\Service\GeocodeService;
 use NumberFormatter;
-use Override;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -33,22 +30,7 @@ class GeocodeInstallCommand
     {
     }
 
-    protected function addOrUpdate(GeoCode $geoCode): void
-    {
-        if (is_null($geoCode->getId())) {
-            ++$this->add;
-
-            return;
-        }
-
-        ++$this->update;
-    }
-
-    public function __invoke(
-        SymfonyStyle $symfonyStyle,
-        OutputInterface $output,
-        #[Argument] string $country
-    ): int
+    public function __invoke(SymfonyStyle $symfonyStyle, OutputInterface $output, #[Argument] string $country): int
     {
         $symfonyStyle->title('Retrieving postal codes');
         if (!is_string($country)) {
@@ -91,5 +73,16 @@ class GeocodeInstallCommand
         );
 
         return Command::SUCCESS;
+    }
+
+    protected function addOrUpdate(GeoCode $geoCode): void
+    {
+        if (is_null($geoCode->getId())) {
+            ++$this->add;
+
+            return;
+        }
+
+        ++$this->update;
     }
 }

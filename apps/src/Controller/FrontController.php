@@ -16,8 +16,14 @@ class FrontController extends AbstractController
     public function __construct(
         protected SiteService $siteService,
         private readonly FrontService $frontService,
+        private readonly FlattenException $flattenException,
     )
     {
+    }
+
+    public function error(): Response
+    {
+        return $this->frontService->errorView($this->flattenException);
     }
 
     #[Route(
@@ -44,11 +50,6 @@ class FrontController extends AbstractController
     public function logout(): void
     {
         throw new LogicException();
-    }
-
-    public function error(FlattenException $exception): Response
-    {
-        return $this->frontService->errorView($exception);
     }
 
     #[Route('/sitemap.css', name: 'sitemap.css', priority: 1)]

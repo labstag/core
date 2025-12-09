@@ -3,8 +3,6 @@
 namespace Labstag\Twig\Runtime;
 
 use DOMDocument;
-use Essence\Essence;
-use Essence\Media;
 use Labstag\Service\BlockService;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
@@ -101,7 +99,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
             return ['oembed' => ''];
         }
 
-        $json = $media->jsonSerialize();
+        $json   = $media->jsonSerialize();
         $oembed = $this->getOEmbedUrl($json['html'] ?? '');
         if (is_null($oembed)) {
             return ['oembed' => ''];

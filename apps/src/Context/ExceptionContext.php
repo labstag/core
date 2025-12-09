@@ -6,15 +6,16 @@ use Symfony\Component\ErrorHandler\Exception\FlattenException;
 
 class ExceptionContext
 {
-    private ?FlattenException $exception = null;
 
-    public function setException(FlattenException $exception): void
-    {
-        $this->exception = $exception;
-    }
+    private ?FlattenException $flattenException = null;
 
     public function getException(): ?FlattenException
     {
-        return $this->exception;
+        return $this->flattenException;
+    }
+
+    public function setException(FlattenException $flattenException): void
+    {
+        $this->flattenException = $flattenException;
     }
 }

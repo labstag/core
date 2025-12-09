@@ -21,8 +21,6 @@ class EpisodeRepository extends RepositoryAbstract
     }
 
     /**
-     * @param array<string, mixed> $query
-     *
      * @return Query<mixed, mixed>
      */
     public function getQueryPaginator(Season $season): Query

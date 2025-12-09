@@ -37,29 +37,6 @@ final class FileService
     {
     }
 
-    public function getMediaByUrl(?string $url): ?Media
-    {
-        if (is_null($url) || '' === $url || '0' === $url) {
-            return null;
-        }
-
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
-        if (!$media instanceof Media) {
-            return null;
-        }
-
-        return $media;
-    }
-
     public function asset(mixed $entity, string $field): string
     {
         $mappings         = $this->getMappingForEntity($entity);
@@ -277,6 +254,29 @@ final class FileService
         return $this->propertyMappingFactory->fromObject($entity);
     }
 
+    public function getMediaByUrl(?string $url): ?Media
+    {
+        if (is_null($url) || '' === $url || '0' === $url) {
+            return null;
+        }
+
+        $essence = new Essence();
+
+        // Load any url:
+        $media = $essence->extract(
+            $url,
+            [
+                'maxwidth'  => 800,
+                'maxheight' => 600,
+            ]
+        );
+        if (!$media instanceof Media) {
+            return null;
+        }
+
+        return $media;
+    }
+
     public function getSizeFormat(int $size): string
     {
         $units     = [
@@ -401,7 +401,7 @@ final class FileService
 
     public function setUploadedFile(string $filePath, object $entity, string|PropertyPathInterface $type): void
     {
-        if ($filePath === '') {
+        if ('' === $filePath) {
             return;
         }
 

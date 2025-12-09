@@ -6,6 +6,7 @@ enum PageEnum: string
 {
     case CHANGEPASSWORD = 'changepassword';
     case CV             = 'cv';
+    case ERRORS         = 'error';
     case GAMES          = 'game';
     case HOME           = 'home';
     case LOGIN          = 'login';
@@ -15,5 +16,4 @@ enum PageEnum: string
     case POSTS          = 'post';
     case SERIES         = 'series';
     case STORIES        = 'story';
-    case ERRORS         = 'error';
 }

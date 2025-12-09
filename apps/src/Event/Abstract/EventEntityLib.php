@@ -161,6 +161,15 @@ abstract class EventEntityLib
         $this->blockService->update($instance);
     }
 
+    protected function updateEntityChapter(object $instance): void
+    {
+        if (!$instance instanceof Chapter) {
+            return;
+        }
+
+        $this->messageBus->dispatch(new StoryMessage($instance->getRefstory()->getId()));
+    }
+
     protected function updateEntityMovie(object $instance): void
     {
         if (!$instance instanceof Movie) {
@@ -183,14 +192,11 @@ abstract class EventEntityLib
         }
 
         if (in_array($instance->getType(), [PageEnum::HOME->value, PageEnum::ERRORS->value])) {
-
             return;
         }
-        
+
         $code = (PageEnum::CV->value == $instance->getType()) ? 'head-cv' : 'head';
         $this->addParagraph($instance, $code, 0);
-
-        return;
     }
 
     protected function updateEntityParagraph(object $instance): void
@@ -236,14 +242,5 @@ abstract class EventEntityLib
         }
 
         $this->messageBus->dispatch(new StoryMessage($instance->getId()));
-    }
-
-    protected function updateEntityChapter(object $instance): void
-    {
-        if (!$instance instanceof Chapter) {
-            return;
-        }
-
-        $this->messageBus->dispatch(new StoryMessage($instance->getRefstory()->getId()));
     }
 }

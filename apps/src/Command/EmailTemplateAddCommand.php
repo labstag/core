@@ -6,11 +6,9 @@ use Labstag\Entity\Template;
 use Labstag\Repository\TemplateRepository;
 use Labstag\Service\EmailService;
 use NumberFormatter;
-use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -29,20 +27,7 @@ class EmailTemplateAddCommand
     {
     }
 
-    protected function addOrUpdate(?Template $template): void
-    {
-        if (is_null($template->getId())) {
-            ++$this->add;
-
-            return;
-        }
-
-        ++$this->update;
-    }
-    public function __invoke(
-        SymfonyStyle $symfonyStyle,
-        OutputInterface $output
-    ): int
+    public function __invoke(SymfonyStyle $symfonyStyle, OutputInterface $output): int
     {
         $templates   = $this->emailService->all();
         $counter     = 0;
@@ -78,5 +63,16 @@ class EmailTemplateAddCommand
         $symfonyStyle->success(sprintf('Added: %d', $numberFormatter->format($this->add)));
 
         return Command::SUCCESS;
+    }
+
+    protected function addOrUpdate(?Template $template): void
+    {
+        if (is_null($template->getId())) {
+            ++$this->add;
+
+            return;
+        }
+
+        ++$this->update;
     }
 }

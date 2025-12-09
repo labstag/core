@@ -32,7 +32,7 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $json = $media->jsonSerialize();
+        $json   = $media->jsonSerialize();
         $oembed = $this->getOEmbedUrl($json['html'] ?? '');
         if (is_null($oembed)) {
             $this->setShow($paragraph, false);
@@ -106,7 +106,7 @@ class VideoParagraph extends ParagraphAbstract implements ParagraphInterface
         if (is_null($media)) {
             return;
         }
-        
+
         $json = $media->jsonSerialize();
         $this->fileService->setUploadedFile($json['thumbnail_url'] ?? '', $paragraph, 'imgFile');
     }

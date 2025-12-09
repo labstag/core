@@ -203,6 +203,16 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         return $donneespersonnelles;
     }
 
+    private function setError(): Page
+    {
+        $page = new Page();
+        $page->setHide(true);
+        $page->setTitle('Page non trouvée');
+        $page->setType(PageEnum::ERRORS->value);
+
+        return $page;
+    }
+
     private function setHome(): Page
     {
         $page = new Page();
@@ -271,16 +281,6 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->addParagraphText($mentions);
 
         return $mentions;
-    }
-
-    private function setError(): Page
-    {
-        $errors = new Page();
-        $errors->setHide(true);
-        $errors->setTitle('Page non trouvée');
-        $errors->setType(PageEnum::ERRORS->value);
-
-        return $errors;
     }
 
     private function setMovies(Page $page): Page

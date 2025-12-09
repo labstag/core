@@ -2,10 +2,10 @@
 
 namespace Labstag\Data;
 
-use Override;
 use DateTime;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
+use Override;
 use Spatie\SchemaOrg\Schema;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

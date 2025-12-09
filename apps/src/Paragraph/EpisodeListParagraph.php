@@ -27,13 +27,13 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
 
             return;
         }
-        
+
         $request = $this->requestStack->getCurrentRequest();
-        $query   = $this->setQuery($request->query->all());
+        $this->setQuery($request->query->all());
 
         $entityRepository                = $this->getRepository(Episode::class);
-        $pagination = $this->getPaginator($entityRepository->getQueryPaginator($data['entity']), 30);
-        
+        $pagination                      = $this->getPaginator($entityRepository->getQueryPaginator($data['entity']), 30);
+
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
             $paragraph,
@@ -61,24 +61,6 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
                 'data'       => $data,
             ]
         );
-    }
-
-    /**
-     * @param array<string, mixed> $query
-     *
-     * @return array<string, mixed>
-     */
-    private function setQuery(array $query): array
-    {
-        if (!isset($query['order'])) {
-            $query['order'] = 'number';
-        }
-
-        if (!isset($query['orderby'])) {
-            $query['orderby'] = 'ASC';
-        }
-
-        return $query;
     }
 
     public function getClass(): string
@@ -117,5 +99,23 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
         }
 
         return $object instanceof Block;
+    }
+
+    /**
+     * @param array<string, mixed> $query
+     *
+     * @return array<string, mixed>
+     */
+    private function setQuery(array $query): array
+    {
+        if (!isset($query['order'])) {
+            $query['order'] = 'number';
+        }
+
+        if (!isset($query['orderby'])) {
+            $query['orderby'] = 'ASC';
+        }
+
+        return $query;
     }
 }

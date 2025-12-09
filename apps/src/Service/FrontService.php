@@ -31,8 +31,54 @@ class FrontService extends AbstractController
         protected ViewResolverService $viewResolverService,
         protected SiteService $siteService,
         protected RequestStack $requestStack,
+        private readonly FlattenException $flattenException,
     )
     {
+    }
+
+    public function errorView(): Response
+    {
+        $entity = $this->getPageError($this->flattenException);
+        return $this->getResponse($entity);
+    }
+
+    public function getPageError()
+    {
+        $entityRepository = $this->entityManager->getRepository(Page::class);
+        $page           = $entityRepository->findOneBy(
+            [
+                'type' => PageEnum::ERRORS->value,
+            ]
+        );
+        if (!$page instanceof Page) {
+            $page = new Page();
+            $page->setHide(true);
+            $page->setTitle(PageEnum::ERRORS->value);
+            $page->setType(PageEnum::ERRORS->value);
+            $entityRepository->save($page);
+        }
+
+        return $page;
+    }
+
+    public function getResponse($entity)
+    {
+        if (!is_object($entity)) {
+            throw $this->createNotFoundException();
+        }
+
+        if (!$this->siteService->isEnable($entity)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $response = $this->showContentEntity($entity);
+        foreach ($this->datas as $data) {
+            if ($data->supportsScriptBefore($entity)) {
+                $response = $data->scriptBefore($entity, $response);
+            }
+        }
+
+        return $response;
     }
 
     public function getSitemapCss(): Response
@@ -94,52 +140,10 @@ class FrontService extends AbstractController
         return $content;
     }
 
-    public function getPageError(FlattenException $exception)
-    {
-        $pageRepository = $this->entityManager->getRepository(Page::class);
-        $page = $pageRepository->findOneBy(['type' => PageEnum::ERRORS->value]);
-        if (!$page instanceof Page) {
-            $page = new Page();
-            $page->setHide(true);
-            $page->setTitle(PageEnum::ERRORS->value);
-            $page->setType(PageEnum::ERRORS->value);
-            $pageRepository->save($page);
-        }
-
-        return $page;
-    }
-
-    public function errorView(FlattenException $exception): Response
-    {
-        $entity = $this->getPageError($exception);
-        
-        return $this->getResponse($entity);
-    }
-
-    public function getResponse($entity)
-    {
-        if (!is_object($entity)) {
-            throw $this->createNotFoundException();
-        }
-
-        if (!$this->siteService->isEnable($entity)) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $response = $this->showContentEntity($entity);
-        foreach ($this->datas as $data) {
-            if ($data->supportsScriptBefore($entity)) {
-                $response = $data->scriptBefore($entity, $response);
-            }
-        }
-
-        return $response;
-    }
-
     public function showView(): Response
     {
         $entity = $this->slugService->getEntity();
-        
+
         return $this->getResponse($entity);
     }
 

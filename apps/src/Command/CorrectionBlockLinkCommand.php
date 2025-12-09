@@ -8,7 +8,6 @@ use Labstag\Repository\BlockRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -22,10 +21,7 @@ class CorrectionBlockLinkCommand
     {
     }
 
-    public function __invoke(
-        SymfonyStyle $symfonyStyle,
-        OutputInterface $output
-    ): int
+    public function __invoke(SymfonyStyle $symfonyStyle, OutputInterface $output): int
     {
         $blocks           = $this->entityManager->getRepository(LinksBlock::class)->findAll();
         $methods          = get_class_methods(LinksBlock::class);
