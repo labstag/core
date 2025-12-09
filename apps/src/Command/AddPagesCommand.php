@@ -81,7 +81,7 @@ class AddPagesCommand
             'changepassword' => $page->setHide(true),
             'login'          => $page->setHide(true),
             'lostpassword'   => $page->setHide(true),
-            default          => $page->setEnable(false),
+            default          => $page->setHide(false),
         };
     }
 
