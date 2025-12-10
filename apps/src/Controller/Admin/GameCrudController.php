@@ -128,6 +128,7 @@ class GameCrudController extends CrudControllerAbstract
             'type'      => $all['game']['type'] ?? '',
             'number'    => $all['game']['number'] ?? '',
         ];
+        dump($data);
         $games   = $this->gameService->getGameApi($data, $limit, $offset);
 
         return $this->render(
