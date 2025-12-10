@@ -269,7 +269,7 @@ class MovieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
     }
 
-    public function importFile(Request $request): JsonResponse
+    public function importFileMovie(Request $request): JsonResponse
     {
         $files   = $request->files->all();
         $file    = $files['movie_import']['file'] ?? null;

@@ -235,7 +235,7 @@ class GameCrudController extends CrudControllerAbstract
         return $this->redirect($url);
     }
 
-    public function importFile(Request $request): JsonResponse
+    public function importFileGame(Request $request): JsonResponse
     {
         $files   = $request->files->all();
         $all     = $request->request->all();

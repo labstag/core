@@ -7,6 +7,7 @@ use Labstag\Message\AddSerieMessage;
 use Labstag\Message\ImportMessage;
 use Labstag\Message\SearchGameMessage;
 use Labstag\Service\FileService;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -15,6 +16,7 @@ final class ImportMessageHandler
 {
     public function __construct(
         private FileService $fileService,
+        private LoggerInterface $logger,
         private MessageBusInterface $messageBus,
     )
     {
@@ -25,7 +27,6 @@ final class ImportMessageHandler
         $fileName = $importMessage->getFile();
         $type     = $importMessage->getType();
         $data     = $importMessage->getData();
-
         $file       = $this->fileService->getFileInAdapter('private', $fileName);
         $fileFormat = $this->detectFileFormat($file);
 

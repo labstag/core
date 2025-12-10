@@ -269,7 +269,7 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.imdb.com/title/' . $serie->getImdb() . '/');
     }
 
-    public function importFile(Request $request): JsonResponse
+    public function importFileSerie(Request $request): JsonResponse
     {
         $files   = $request->files->all();
         $file    = $files['serie_import']['file'] ?? null;
