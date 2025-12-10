@@ -36,7 +36,7 @@ final class BanIpMessageHandler
         $banIps = $this->banIpRepository->findOlderThanOneDay();
         foreach ($banIps as $banIp) {
             $this->banIpRepository->delete($banIp);
-            dump(sprintf('Ip %s unbanned (older than 1 week)', $banIp->getInternetProtocol()));
+            dump(sprintf('Ip %s unbanned (older than 1 day)', $banIp->getInternetProtocol()));
         }
     }
 }
