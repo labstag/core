@@ -1,12 +1,10 @@
 <?php
 
-namespace Labstag\Form\Block;
+namespace Labstag\Form\Block\Collection;
 
-use Labstag\Form\Block\Collection\LinkType as CollectionLinkType;
 use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -50,16 +48,6 @@ class LinkType extends AbstractType
             [
                 'label'    => new TranslatableMessage('Classes'),
                 'required' => false,
-            ]
-        );
-        $formBuilder->add(
-            'links',
-            CollectionType::class,
-            [
-                'entry_type'   => CollectionLinkType::class,
-                'allow_add'    => true,
-                'allow_delete' => true,
-                'label'        => false,
             ]
         );
 

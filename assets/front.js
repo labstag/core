@@ -6,6 +6,7 @@ import { Movie } from './front/js/movie';
 import { ContextMenu } from './front/js/contextmenu';
 import { Spoiler } from './front/js/spoiler';
 import { Form } from './front/js/form';
+import { Links } from './front/js/links';
 
 
 WebFont.load({
@@ -22,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
   new ContextMenu();
   new Form();
   new Spoiler();
+  new Links();
   new Slider(
     '.swiper-movie',
     '.swiper-movie-button-next',

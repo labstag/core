@@ -109,7 +109,7 @@ final class GameService extends AbstractIgdb
             $where[] = 'franchises.name ~ "' . $data['franchise'] . '"';
         }
 
-        if (isset($data['type']) && $data['type'] != '') {
+        if (isset($data['type']) && '' != $data['type']) {
             $where[] = 'game_type = ' . $data['type'];
         }
 

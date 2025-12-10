@@ -26,16 +26,38 @@ final class ImportMessageHandler
         $type     = $importMessage->getType();
         $data     = $importMessage->getData();
 
-        $file      = $this->fileService->getFileInAdapter('private', $fileName);
+        $file       = $this->fileService->getFileInAdapter('private', $fileName);
+        $fileFormat = $this->detectFileFormat($file);
+
+        match ($fileFormat) {
+            'csv'   => $this->importCsvFile($file, $data, $type),
+            'xml'   => $this->importXmlFile($file, $data, $type),
+            default => null,
+        };
+    }
+
+    private function createMessage(string $type, array $row, array $data): ?object
+    {
+        return match ($type) {
+            'game'  => new SearchGameMessage($row, 'game', $data['platform'] ?? ''),
+            'serie' => new AddSerieMessage($row),
+            'movie' => new AddMovieMessage($row),
+            default => null,
+        };
+    }
+
+    private function detectFileFormat(string $file): string
+    {
         $mimeType  = mime_content_type($file);
-        $extension = pathinfo((string) $file, PATHINFO_EXTENSION);
-        match ($mimeType) {
-            'text/csv' => $this->importCsvFile($file, $data, $type),
-            'text/xml' => $this->importXmlFile($file, $data, $type),
+        $extension = pathinfo($file, PATHINFO_EXTENSION);
+
+        return match ($mimeType) {
+            'text/csv' => 'csv',
+            'text/xml' => 'xml',
             default    => match ($extension) {
-                'csv'   => $this->importCsvFile($file, $data, $type),
-                'xml'   => $this->importXmlFile($file, $data, $type),
-                default => false,
+                'csv'   => 'csv',
+                'xml'   => 'xml',
+                default => 'unknown',
             },
         };
     }
@@ -49,15 +71,10 @@ final class ImportMessageHandler
             default => ',',
         };
 
-        $data = $this->fileService->getimportCsvFile($path, $delimiter);
+        $rows = $this->fileService->getimportCsvFile($path, $delimiter);
 
-        foreach ($data as $row) {
-            $message = match ($type) {
-                'game'  => new SearchGameMessage($row, 'game', $data['platform'] ?? ''),
-                'serie' => new AddSerieMessage($row),
-                'movie' => new AddMovieMessage($row),
-                default => null,
-            };
+        foreach ($rows as $row) {
+            $message = $this->createMessage($type, $row, $data);
 
             if (!is_null($message)) {
                 $this->messageBus->dispatch($message);
@@ -67,14 +84,9 @@ final class ImportMessageHandler
 
     private function importXmlFile(string $path, array $data, string $type): void
     {
-        $data = $this->fileService->getimportXmlFile($path);
-        foreach ($data as $row) {
-            $message = match ($type) {
-                'game'  => new SearchGameMessage($row, 'game', $data['platform'] ?? ''),
-                'serie' => new AddSerieMessage($row),
-                'movie' => new AddMovieMessage($row),
-                default => null,
-            };
+        $rows = $this->fileService->getimportXmlFile($path);
+        foreach ($rows as $row) {
+            $message = $this->createMessage($type, $row, $data);
 
             if (!is_null($message)) {
                 $this->messageBus->dispatch($message);

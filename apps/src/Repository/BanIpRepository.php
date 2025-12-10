@@ -2,6 +2,7 @@
 
 namespace Labstag\Repository;
 
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\BanIp;
 
@@ -17,8 +18,8 @@ class BanIpRepository extends RepositoryAbstract
 
     public function findOlderThanOneDay(): array
     {
-        $oneDayAgo = new \DateTime('-1 day');
-                
+        $oneDayAgo = new DateTime('-1 day');
+
         $queryBuilder = $this->createQueryBuilder('b');
         $queryBuilder->where('b.createdAt <= :oneDayAgo');
         $queryBuilder->setParameter('oneDayAgo', $oneDayAgo);

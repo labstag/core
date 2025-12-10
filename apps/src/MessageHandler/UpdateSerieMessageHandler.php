@@ -12,20 +12,17 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final class UpdateSerieMessageHandler
 {
     public function __construct(
-        protected MessageBusInterface $messageBus,
-        protected SerieRepository $serieRepository
+        private MessageBusInterface $messageBus,
+        private SerieRepository $serieRepository,
     )
     {
-
     }
 
-    public function __invoke(UpdateSerieMessage $message): void
+    public function __invoke(UpdateSerieMessage $updateSerieMessage): void
     {
-        unset($message);
+        unset($updateSerieMessage);
         $series = $this->serieRepository->findBy(
-            [
-                'inProduction' => true,
-            ]
+            ['inProduction' => true]
         );
         foreach ($series as $serie) {
             $this->messageBus->dispatch(new SerieMessage($serie->getId()));

@@ -54,10 +54,10 @@ class ErrorParagraph extends ParagraphAbstract implements ParagraphInterface
         return EntityErrorParagraph::class;
     }
 
-    public function getMessage($statusCode): TranslatableMessage
+    public function getMessage(string $statusCode): TranslatableMessage
     {
         $key = sprintf('page.error.%s.message', $statusCode);
-        
+
         return new TranslatableMessage($key);
     }
 
@@ -67,10 +67,10 @@ class ErrorParagraph extends ParagraphAbstract implements ParagraphInterface
         return new TranslatableMessage('Error');
     }
 
-    public function getTitle($statusCode): TranslatableMessage
+    public function getTitle(string $statusCode): TranslatableMessage
     {
         $key = sprintf('page.error.%s.title', $statusCode);
-        
+
         return new TranslatableMessage($key);
     }
 

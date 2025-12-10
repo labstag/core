@@ -62,7 +62,6 @@ abstract class FrontFormAbstract extends AbstractController implements FrontForm
 
     public function setParamsTwig(
         FormInterface $form,
-        bool $formCode,
         $paragraph,
         $data,
         bool $disable = false,

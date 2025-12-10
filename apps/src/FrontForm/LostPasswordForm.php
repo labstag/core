@@ -28,14 +28,13 @@ class LostPasswordForm extends FrontFormAbstract
     #[Override]
     public function setParamsTwig(
         FormInterface $form,
-        $formCode,
         $paragraph,
         $data,
         bool $disable = false,
         bool $save = true,
     ): array
     {
-        unset($save, $disable, $formCode);
+        unset($save, $disable);
         $request          = $this->requestStack->getCurrentRequest();
         $entityRepository = $this->entityManager->getRepository(User::class);
         $form->handleRequest($request);

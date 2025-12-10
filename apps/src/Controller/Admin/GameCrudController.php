@@ -206,6 +206,17 @@ class GameCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
+    #[Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        $this->crudFieldFactory->addFilterEnable($filters);
+        $filters->add('release_date');
+        $filters->add('platforms');
+        $filters->add('franchises');
+
+        return $filters;
+    }
+
     public static function getEntityFqcn(): string
     {
         return Game::class;
@@ -222,17 +233,6 @@ class GameCrudController extends CrudControllerAbstract
         }
 
         return $this->redirect($url);
-    }
-
-    #[Override]
-    public function configureFilters(Filters $filters): Filters
-    {
-        $this->crudFieldFactory->addFilterEnable($filters);
-        $filters->add('release_date');
-        $filters->add('platforms');
-        $filters->add('franchises');
-
-        return $filters;
     }
 
     public function importFile(Request $request): JsonResponse

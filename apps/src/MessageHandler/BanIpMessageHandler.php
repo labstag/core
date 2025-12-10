@@ -2,7 +2,6 @@
 
 namespace Labstag\MessageHandler;
 
-use DateTime;
 use Labstag\Message\BanIpMessage;
 use Labstag\Repository\BanIpRepository;
 use Labstag\Repository\HttpErrorLogsRepository;
@@ -13,16 +12,16 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final class BanIpMessageHandler
 {
     public function __construct(
-        protected HttpErrorLogsRepository $httpErrorLogsRepository,
-        protected SecurityService $securityService,
-        protected BanIpRepository $banIpRepository
+        private HttpErrorLogsRepository $httpErrorLogsRepository,
+        private SecurityService $securityService,
+        private BanIpRepository $banIpRepository,
     )
     {
     }
 
-    public function __invoke(BanIpMessage $message): void
+    public function __invoke(BanIpMessage $banIpMessage): void
     {
-        unset($message);
+        unset($banIpMessage);
         $data = $this->httpErrorLogsRepository->getAllinternetProtocolWithNbr(5);
         foreach ($data as $httpErroLogs) {
             $internetProtocol = $httpErroLogs['internetProtocol'];
@@ -36,7 +35,7 @@ final class BanIpMessageHandler
 
         $banIps = $this->banIpRepository->findOlderThanOneDay();
         foreach ($banIps as $banIp) {
-            $this->banIpRepository->delete($banIp, true);
+            $this->banIpRepository->delete($banIp);
             dump(sprintf('Ip %s unbanned (older than 1 week)', $banIp->getInternetProtocol()));
         }
     }

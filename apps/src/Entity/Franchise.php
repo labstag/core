@@ -8,11 +8,12 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Labstag\Repository\FranchiseRepository;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 
 #[ORM\Entity(repositoryClass: FranchiseRepository::class)]
 #[ORM\Index(name: 'IDX_FRANCHISE_SLUG', columns: ['slug'])]
-class Franchise
+class Franchise implements Stringable
 {
 
     #[ORM\Id]

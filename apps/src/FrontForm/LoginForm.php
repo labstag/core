@@ -29,14 +29,13 @@ class LoginForm extends FrontFormAbstract
     #[Override]
     public function setParamsTwig(
         FormInterface $form,
-        $formCode,
         $paragraph,
         $data,
         bool $disable = false,
         bool $save = true,
     ): array
     {
-        unset($save, $disable, $formCode);
+        unset($save, $disable);
 
         $error        = $this->authenticationUtils->getLastAuthenticationError();
         $request      = $this->requestStack->getCurrentRequest();

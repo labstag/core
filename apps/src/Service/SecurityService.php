@@ -205,7 +205,10 @@ final class SecurityService
 
         return array_any(
             $forbidden,
-            fn ($type): bool => str_contains($url, (string) $type) || str_contains(strtolower($url), strtolower((string) $type))
+            fn ($type): bool => str_contains($url, (string) $type) || str_contains(
+                strtolower($url),
+                strtolower((string) $type)
+            )
         );
     }
 

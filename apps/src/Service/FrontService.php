@@ -9,7 +9,6 @@ use Labstag\Enum\PageEnum;
 use Labstag\Message\FileDeleteMessage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -30,7 +29,7 @@ class FrontService extends AbstractController
         protected EtagCacheService $etagCacheService,
         protected ViewResolverService $viewResolverService,
         protected SiteService $siteService,
-        protected RequestStack $requestStack
+        protected RequestStack $requestStack,
     )
     {
     }
@@ -38,13 +37,14 @@ class FrontService extends AbstractController
     public function errorView(): Response
     {
         $entity = $this->getPageError();
+
         return $this->getResponse($entity);
     }
 
     public function getPageError()
     {
         $entityRepository = $this->entityManager->getRepository(Page::class);
-        $page           = $entityRepository->findOneBy(
+        $page             = $entityRepository->findOneBy(
             [
                 'type' => PageEnum::ERRORS->value,
             ]

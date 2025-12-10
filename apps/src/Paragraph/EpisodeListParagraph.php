@@ -32,7 +32,10 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
         $this->setQuery($request->query->all());
 
         $entityRepository                = $this->getRepository(Episode::class);
-        $pagination                      = $this->getPaginator($entityRepository->getQueryPaginator($data['entity']), 30);
+        $pagination                      = $this->getPaginator(
+            $entityRepository->getQueryPaginator($data['entity']),
+            30
+        );
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
