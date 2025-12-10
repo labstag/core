@@ -1325,7 +1325,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         enabled?: bool, // Default: true
  *     },
  *     markdown?: bool|array{
- *         enabled?: bool, // Default: false
+ *         enabled?: bool, // Default: true
  *     },
  *     intl?: bool|array{
  *         enabled?: bool, // Default: true
