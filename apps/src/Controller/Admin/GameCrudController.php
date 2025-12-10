@@ -128,7 +128,6 @@ class GameCrudController extends CrudControllerAbstract
             'type'      => $all['game']['type'] ?? '',
             'number'    => $all['game']['number'] ?? '',
         ];
-        dump($data);
         $games   = $this->gameService->getGameApi($data, $limit, $offset);
 
         return $this->render(
@@ -231,6 +230,7 @@ class GameCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFilterEnable($filters);
         $filters->add('release_date');
         $filters->add('platforms');
+        $filters->add('franchises');
 
         return $filters;
     }

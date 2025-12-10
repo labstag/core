@@ -42,6 +42,11 @@ class Franchise
         $this->games = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
+    }
+
     public function addGame(Game $game): static
     {
         if (!$this->games->contains($game)) {
