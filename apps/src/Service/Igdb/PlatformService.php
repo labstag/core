@@ -50,7 +50,6 @@ final class PlatformService extends AbstractIgdb
     public function getPlatformApi(array $data, int $limit, int $offset): array
     {
         $entityRepository   = $this->entityManager->getRepository(Platform::class);
-        $igbds              = $entityRepository->getAllIgdb();
         $platforms          = [];
         $search             = $data['title'] ?? '';
         $where              = [];
@@ -76,7 +75,7 @@ final class PlatformService extends AbstractIgdb
             $platforms = [];
         }
 
-        return array_filter($platforms, fn (array $platform): bool => !in_array($platform['id'], $igbds));
+        return $platforms;
     }
 
     public function update(Platform $platform): ?bool

@@ -4,6 +4,7 @@ namespace Labstag\MessageHandler;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Game;
+use Labstag\Entity\Platform;
 use Labstag\Message\AddGameMessage;
 use Labstag\Message\SearchGameMessage;
 use Labstag\Service\Igdb\GameService;
@@ -33,7 +34,7 @@ final class SearchGameMessageHandler
         }
 
         $platform = $searchGameMessage->getPlatform();
-        $result   = $this->getResultApiForData($data);
+        $result   = $this->getResultApiForData($data, $platform);
         if (is_null($result)) {
             $this->logger->info(
                 'Game not found',
@@ -58,12 +59,15 @@ final class SearchGameMessageHandler
         );
     }
 
-    private function getResultApiForData(array $data): ?array
+    private function getResultApiForData(array $data, string $platformId): ?array
     {
         $name   = $data['Nom'] ?? null;
         $name   = $data['name'] ?? $name;
 
-        $result = $this->gameService->getResultApiForDataArray($data);
+        $repository = $this->entityManager->getRepository(Platform::class);
+        $platform   = $repository->find($platformId);
+
+        $result = $this->gameService->getResultApiForDataArray($data, $platform);
         if (!is_null($result)) {
             return $result;
         }
@@ -71,7 +75,7 @@ final class SearchGameMessageHandler
         $parts = preg_split('/\s*[-:]\s*/', (string) $name);
         for ($i = count($parts) - 1; 0 < $i; --$i) {
             $data['Nom'] = implode(' - ', array_slice($parts, 0, $i));
-            $result        = $this->gameService->getResultApiForDataArray($data);
+            $result        = $this->gameService->getResultApiForDataArray($data, $platform);
             if (!is_null($result)) {
                 return $result;
             }
