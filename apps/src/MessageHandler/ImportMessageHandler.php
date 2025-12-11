@@ -93,7 +93,7 @@ final class ImportMessageHandler
             $data[$row['name']] = $row;
         }
 
-        foreach ($rows as $row) {
+        foreach ($data as $row) {
             $message = $this->createMessage($type, $row, $data);
 
             if (!is_null($message)) {
