@@ -34,13 +34,14 @@ final class SearchGameMessageHandler
         }
 
         $platform = $searchGameMessage->getPlatform();
+        $name   = $data['Nom'] ?? null;
+        $name   = $data['name'] ?? $name;
         $result   = $this->getResultApiForData($data, $platform);
         if (is_null($result)) {
             dump(
                 'Game not found',
                 [
-                    'data'     => $data,
-                    'platform' => $platform,
+                    'name' => $name,
                 ]
             );
 
@@ -50,9 +51,9 @@ final class SearchGameMessageHandler
         dump(
             'Game found',
             [
-                'data'     => $data,
+                'name'     => $name,
                 'platform' => $platform,
-                'result'   => $result,
+                'result'   => $result['id'],
             ]
         );
 
