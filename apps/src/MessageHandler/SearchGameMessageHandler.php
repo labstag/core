@@ -72,15 +72,6 @@ final class SearchGameMessageHandler
             return $result;
         }
 
-        $parts = preg_split('/\s*[-:]\s*/', (string) $name);
-        for ($i = count($parts) - 1; 0 < $i; --$i) {
-            $data['Nom'] = implode(' - ', array_slice($parts, 0, $i));
-            $result        = $this->gameService->getResultApiForDataArray($data, $platform);
-            if (!is_null($result)) {
-                return $result;
-            }
-        }
-
         return null;
     }
 }
