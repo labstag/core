@@ -95,32 +95,31 @@ final class GameService extends AbstractIgdb
         $platformRepository   = $this->entityManager->getRepository(Platform::class);
         $games                = [];
         $where                = [];
-        $search               = $data['title'] ?? '';
         if (isset($data['platform']) && !empty($data['platform'])) {
             $platform = $platformRepository->find($data['platform']);
             if ($platform instanceof Platform) {
                 $where[] = 'platforms = (' . $platform->getIgdb() . ')';
             }
         }
-
         if (isset($data['franchise']) && !empty($data['franchise'])) {
             $where[] = 'franchises.name ~ "' . $data['franchise'] . '"';
         }
-
         if (isset($data['type']) && '' != $data['type']) {
             $where[] = 'game_type = ' . $data['type'];
         }
-
         if (isset($data['number']) && !empty($data['number'])) {
             $where[] = 'id = ' . $data['number'];
         }
+        if (isset($data['title']) && !empty($data['title'])) {
+            $where[] = '(name ~ *"' . $data['title'] . '"* | alternative_names.name ~ *"' . $data['title'] . '"*)';
+        }
 
         $body  = $this->igdbApi->setBody(
-            search: $search,
             fields: [
                 '*',
                 'cover.*',
                 'game_type.*',
+                'alternative_names.*',
             ],
             where: $where,
             limit: $limit,
@@ -138,9 +137,9 @@ final class GameService extends AbstractIgdb
     {
         $name   = $data['Nom'] ?? $data['name'] ?? null;
         $fields = ['*', 'game_type.*', 'alternative_names.*'];
-        $where  = $this->buildDateFilter($data, $platform);
+        $where  = $this->buildDateFilter($data, $platform, $name);
 
-        $body    = $this->igdbApi->setBody(search: $name, fields: $fields, where: $where);
+        $body    = $this->igdbApi->setBody(fields: $fields, where: $where);
         $results = $this->igdbApi->setUrl('games', $body);
         if (is_null($results) || 0 === count($results)) {
             return null;
@@ -153,12 +152,16 @@ final class GameService extends AbstractIgdb
         return $this->findBestMatchingGame($results, $name);
     }
 
-    private function buildDateFilter(array $data, ?Platform $platform): array
+    private function buildDateFilter(array $data, ?Platform $platform, string $name): array
     {
         $where = [];
 
         if ($platform instanceof Platform && !empty($platform->getIgdb())) {
             $where[] = 'platforms = ' . $platform->getIgdb();
+        }
+
+        if ($name != '') {
+            $where[] = '(name ~ *"' . $name . '"* | alternative_names.name ~ *"' . $data['title'] . '"*)';
         }
 
         return $where;
