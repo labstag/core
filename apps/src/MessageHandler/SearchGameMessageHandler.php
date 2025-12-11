@@ -47,6 +47,15 @@ final class SearchGameMessageHandler
             return;
         }
 
+        $this->logger->info(
+            'Game found',
+            [
+                'data'     => $data,
+                'platform' => $platform,
+                'result'   => $result,
+            ]
+        );
+
         $this->messageBus->dispatch(new AddGameMessage($result['id'], 'game', $platform));
     }
 
