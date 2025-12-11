@@ -33,7 +33,6 @@ final class SearchGameMessageHandler
         }
 
         $platform = $searchGameMessage->getPlatform();
-
         $result = $this->getResultApiForData($name);
         if (is_null($result)) {
             $this->logger->info(

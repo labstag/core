@@ -40,7 +40,7 @@ final class ImportMessageHandler
     private function createMessage(string $type, array $row, array $data): ?object
     {
         return match ($type) {
-            'game'  => new SearchGameMessage($row, 'game', $data['platform'] ?? ''),
+            'game'  => new SearchGameMessage($row, $data['platform'] ?? ''),
             'serie' => new AddSerieMessage($row),
             'movie' => new AddMovieMessage($row),
             default => null,
