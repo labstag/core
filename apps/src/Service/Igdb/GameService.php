@@ -138,41 +138,6 @@ final class GameService extends AbstractIgdb
         return array_filter($games, fn (array $game): bool => isset($game['first_release_date']));
     }
 
-    public function getResultApiForData(string $name): ?array
-    {
-        $body    = $this->igdbApi->setBody(search: $name, fields: ['*', 'game_type.*', 'alternative_names.*']);
-        $results = $this->igdbApi->setUrl('games', $body);
-
-        if (is_null($results) || 0 === count($results)) {
-            return null;
-        }
-
-        if (1 === count($results)) {
-            return $results[0];
-        }
-
-        $nameLower = strtolower($name);
-
-        foreach ($results as $result) {
-            if (isset($result['game_type']['id']) && 0 === $result['game_type']['id'] && $this->matchesGameName(
-                $result,
-                $name,
-                $nameLower
-            )
-            ) {
-                return $result;
-            }
-        }
-
-        foreach ($results as $result) {
-            if ($this->matchesGameName($result, $name, $nameLower)) {
-                return $result;
-            }
-        }
-
-        return null;
-    }
-
     public function getResultApiForDataArray(array $data): ?array
     {
         $name   = $data['Nom'] ?? $data['name'] ?? null;

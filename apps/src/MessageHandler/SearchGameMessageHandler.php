@@ -70,8 +70,8 @@ final class SearchGameMessageHandler
 
         $parts = preg_split('/\s*[-:]\s*/', (string) $name);
         for ($i = count($parts) - 1; 0 < $i; --$i) {
-            $shortenedName = implode(' - ', array_slice($parts, 0, $i));
-            $result        = $this->gameService->getResultApiForData($shortenedName);
+            $data['Nom'] = implode(' - ', array_slice($parts, 0, $i));
+            $result        = $this->gameService->getResultApiForDataArray($data);
             if (!is_null($result)) {
                 return $result;
             }
