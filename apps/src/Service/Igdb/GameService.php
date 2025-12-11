@@ -175,25 +175,9 @@ final class GameService extends AbstractIgdb
 
     public function getResultApiForDataArray(array $data): ?array
     {
-        $name   = $data['Nom'] ?? null;
-        $name   = $data['name'] ?? $name;
-
-        $fields = [
-            '*',
-            'game_type.*',
-            'alternative_names.*',
-        ];
-        $where  = [];
-        if (isset($data['releasedate'])) {
-            $date      = DateTime::createFromFormat('Ymd\THis', $data['releasedate']);
-            $timestamp = $date->getTimestamp();
-            if (false !== $timestamp) {
-                $where[] = 'release_dates.date >= ' . ($timestamp - 604800);
-                // -7 days
-                $where[] = 'release_dates.date <= ' . ($timestamp + 604800);
-                // +7 days
-            }
-        }
+        $name   = $data['Nom'] ?? $data['name'] ?? null;
+        $fields = ['*', 'game_type.*', 'alternative_names.*'];
+        $where  = $this->buildDateFilter($data);
 
         $body    = $this->igdbApi->setBody(search: $name, fields: $fields, where: $where);
         $results = $this->igdbApi->setUrl('games', $body);
@@ -206,19 +190,42 @@ final class GameService extends AbstractIgdb
             return $results[0];
         }
 
+        return $this->findBestMatchingGame($results, $name);
+    }
+
+    private function buildDateFilter(array $data): array
+    {
+        $where = [];
+        
+        if (!isset($data['releasedate'])) {
+            return $where;
+        }
+
+        $date = DateTime::createFromFormat('Ymd\THis', $data['releasedate']);
+        $timestamp = $date->getTimestamp();
+        
+        if (false === $timestamp) {
+            return $where;
+        }
+
+        $where[] = 'release_dates.date >= ' . $timestamp;
+        $where[] = 'release_dates.date <= ' . $timestamp;
+
+        return $where;
+    }
+
+    private function findBestMatchingGame(array $results, ?string $name): ?array
+    {
         $nameLower = strtolower((string) $name);
 
+        // Prioriser les jeux de type 0 (jeux principaux)
         foreach ($results as $result) {
-            if (isset($result['game_type']['id']) && 0 === $result['game_type']['id'] && $this->matchesGameName(
-                $result,
-                $name,
-                $nameLower
-            )
-            ) {
+            if ($this->isMainGameType($result) && $this->matchesGameName($result, $name, $nameLower)) {
                 return $result;
             }
         }
 
+        // Sinon, chercher n'importe quel jeu correspondant
         foreach ($results as $result) {
             if ($this->matchesGameName($result, $name, $nameLower)) {
                 return $result;
@@ -226,6 +233,11 @@ final class GameService extends AbstractIgdb
         }
 
         return null;
+    }
+
+    private function isMainGameType(array $result): bool
+    {
+        return isset($result['game_type']['id']) && 0 === $result['game_type']['id'];
     }
 
     public function setAnotherName($name): string
