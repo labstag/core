@@ -137,12 +137,11 @@ final class GameService extends AbstractIgdb
     public function getResultApiForDataArray(array $data, ?Platform $platform): ?array
     {
         $name   = $data['Nom'] ?? $data['name'] ?? null;
-        $fields = ['*', 'game_type.*'];
+        $fields = ['*', 'game_type.*', 'alternative_names.*'];
         $where  = $this->buildDateFilter($data, $platform);
 
         $body    = $this->igdbApi->setBody(search: $name, fields: $fields, where: $where);
         $results = $this->igdbApi->setUrl('games', $body);
-
         if (is_null($results) || 0 === count($results)) {
             return null;
         }
@@ -159,25 +158,8 @@ final class GameService extends AbstractIgdb
         $where = [];
 
         if ($platform instanceof Platform && !empty($platform->getIgdb())) {
-            $where[] = 'platforms = (' . $platform->getIgdb() . ')';
+            $where[] = 'platforms = ' . $platform->getIgdb();
         }
-
-        if (isset($data['Date de sortie']) && !empty($data['Date de sortie'])) {
-            $date = DateTime::createFromFormat('d/m/Y', $data['Date de sortie']);
-            $timestamp = $date->getTimestamp();
-        }
-        
-        if (isset($data['releasedate'])) {
-            $date = DateTime::createFromFormat('Ymd\THis', $data['releasedate']);
-            $timestamp = $date->getTimestamp();
-        }
-
-        if (!isset($timestamp)) {
-            return $where;
-        }
-
-        $where[] = 'release_dates.date >= ' . $timestamp;
-        $where[] = 'release_dates.date <= ' . $timestamp;
 
         return $where;
     }

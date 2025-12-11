@@ -27,35 +27,19 @@ final class SearchGameMessageHandler
     public function __invoke(SearchGameMessage $searchGameMessage): void
     {
         $data = $searchGameMessage->getData();
-        $name = $data['Nom'] ?? null;
-        $name = $data['name'] ?? $name;
+        $name = $data['Nom'] ?? $data['name'] ?? null;
         if (is_null($name) || $this->getGameByData($name) instanceof Game) {
+
             return;
         }
 
         $platform = $searchGameMessage->getPlatform();
-        $name   = $data['Nom'] ?? null;
-        $name   = $data['name'] ?? $name;
         $result   = $this->getResultApiForData($data, $platform);
         if (is_null($result)) {
-            dump(
-                'Game not found',
-                [
-                    'name' => $name,
-                ]
-            );
+            dump('Game not found '.$name);
 
             return;
         }
-
-        dump(
-            'Game found',
-            [
-                'name'     => $name,
-                'platform' => $platform,
-                'result'   => $result['id'],
-            ]
-        );
 
         $this->messageBus->dispatch(new AddGameMessage($result['id'], 'game', $platform));
     }
@@ -71,12 +55,8 @@ final class SearchGameMessageHandler
 
     private function getResultApiForData(array $data, string $platformId): ?array
     {
-        $name   = $data['Nom'] ?? null;
-        $name   = $data['name'] ?? $name;
-
         $repository = $this->entityManager->getRepository(Platform::class);
         $platform   = $repository->find($platformId);
-
         $result = $this->gameService->getResultApiForDataArray($data, $platform);
         if (!is_null($result)) {
             return $result;
