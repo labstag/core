@@ -256,7 +256,7 @@ final class SecurityService
     {
         $redirect = null;
         foreach ($redirections as $redirection) {
-            if (preg_match('#' . $redirection->getSource() . '#', $pathinfo, $matches)) {
+            if (preg_match($redirection->getSource(), $pathinfo, $matches)) {
                 $redirection->incrementLastCount();
                 $this->redirectionRepository->save($redirection);
                 $destination = $redirection->getDestination();
@@ -268,7 +268,7 @@ final class SecurityService
                     $pathinfo = substr($pathinfo, 1);
                 }
 
-                $newUrl = preg_replace('#' . $redirection->getSource() . '#', (string) $destination, $pathinfo);
+                $newUrl = preg_replace($redirection->getSource(), (string) $destination, $pathinfo);
                 if (str_starts_with((string) $newUrl, '/')) {
                     $request = $this->requestStack->getCurrentRequest();
                     if (!is_null($request)) {
