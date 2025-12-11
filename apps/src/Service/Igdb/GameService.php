@@ -161,15 +161,18 @@ final class GameService extends AbstractIgdb
         if ($platform instanceof Platform && !empty($platform->getIgdb())) {
             $where[] = 'platforms = (' . $platform->getIgdb() . ')';
         }
+
+        if (isset($data['Date de sortie'])) {
+            $date = DateTime::createFromFormat('d/m/Y', $data['Date de sortie']);
+            $timestamp = $date->getTimestamp();
+        }
         
-        if (!isset($data['releasedate'])) {
-            return $where;
+        if (isset($data['releasedate'])) {
+            $date = DateTime::createFromFormat('Ymd\THis', $data['releasedate']);
+            $timestamp = $date->getTimestamp();
         }
 
-        $date = DateTime::createFromFormat('Ymd\THis', $data['releasedate']);
-        $timestamp = $date->getTimestamp();
-        
-        if (false === $timestamp) {
+        if (!isset($timestamp)) {
             return $where;
         }
 
