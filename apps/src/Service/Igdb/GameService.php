@@ -134,10 +134,13 @@ final class GameService extends AbstractIgdb
         return array_filter($games, fn (array $game): bool => isset($game['first_release_date']));
     }
 
-    public function getResultApiForDataArray(array $data, ?Platform $platform): ?array
+    public function getResultApiForDataArray(array $data, ?Platform $platform, bool $alternative): ?array
     {
         $name   = $data['Nom'] ?? $data['name'] ?? null;
-        $fields = ['*', 'game_type.*', 'alternative_names.*'];
+        $fields = ['*', 'game_type.*'];
+        if ($alternative) {
+            $fields[] = 'alternative_names.*';
+        }
         $where  = $this->buildDateFilter($data, $platform);
 
         $body    = $this->igdbApi->setBody(search: $name, fields: $fields, where: $where);
