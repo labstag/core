@@ -67,12 +67,7 @@ final class SearchGameMessageHandler
         $repository = $this->entityManager->getRepository(Platform::class);
         $platform   = $repository->find($platformId);
 
-        $result = $this->gameService->getResultApiForDataArray($data, $platform, false);
-        if (!is_null($result)) {
-            return $result;
-        }
-
-        $result = $this->gameService->getResultApiForDataArray($data, $platform, true);
+        $result = $this->gameService->getResultApiForDataArray($data, $platform);
         if (!is_null($result)) {
             return $result;
         }
