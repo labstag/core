@@ -36,7 +36,7 @@ final class SearchGameMessageHandler
         $platform = $searchGameMessage->getPlatform();
         $result   = $this->getResultApiForData($data, $platform);
         if (is_null($result)) {
-            $this->logger->info(
+            dump(
                 'Game not found',
                 [
                     'data'     => $data,
@@ -47,7 +47,7 @@ final class SearchGameMessageHandler
             return;
         }
 
-        $this->logger->info(
+        dump(
             'Game found',
             [
                 'data'     => $data,
