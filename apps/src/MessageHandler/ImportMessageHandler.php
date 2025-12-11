@@ -24,9 +24,9 @@ final class ImportMessageHandler
 
     public function __invoke(ImportMessage $importMessage): void
     {
-        $fileName = $importMessage->getFile();
-        $type     = $importMessage->getType();
-        $data     = $importMessage->getData();
+        $fileName   = $importMessage->getFile();
+        $type       = $importMessage->getType();
+        $data       = $importMessage->getData();
         $file       = $this->fileService->getFileInAdapter('private', $fileName);
         $fileFormat = $this->detectFileFormat($file);
 

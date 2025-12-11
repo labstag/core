@@ -173,6 +173,61 @@ final class GameService extends AbstractIgdb
         return null;
     }
 
+    public function getResultApiForDataArray(array $data): ?array
+    {
+        $name   = $data['Nom'] ?? null;
+        $name   = $data['name'] ?? $name;
+
+        $fields = [
+            '*',
+            'game_type.*',
+            'alternative_names.*',
+        ];
+        $where  = [];
+        if (isset($data['releasedate'])) {
+            $date      = DateTime::createFromFormat('Ymd\THis', $data['releasedate']);
+            $timestamp = $date->getTimestamp();
+            if (false !== $timestamp) {
+                $where[] = 'release_dates.date >= ' . ($timestamp - 604800);
+                // -7 days
+                $where[] = 'release_dates.date <= ' . ($timestamp + 604800);
+                // +7 days
+            }
+        }
+
+        $body    = $this->igdbApi->setBody(search: $name, fields: $fields, where: $where);
+        $results = $this->igdbApi->setUrl('games', $body);
+
+        if (is_null($results) || 0 === count($results)) {
+            return null;
+        }
+
+        if (1 === count($results)) {
+            return $results[0];
+        }
+
+        $nameLower = strtolower((string) $name);
+
+        foreach ($results as $result) {
+            if (isset($result['game_type']['id']) && 0 === $result['game_type']['id'] && $this->matchesGameName(
+                $result,
+                $name,
+                $nameLower
+            )
+            ) {
+                return $result;
+            }
+        }
+
+        foreach ($results as $result) {
+            if ($this->matchesGameName($result, $name, $nameLower)) {
+                return $result;
+            }
+        }
+
+        return null;
+    }
+
     public function setAnotherName($name): string
     {
         $name = preg_replace('/[^a-zA-Z0-9\s]/', '', (string) $name);

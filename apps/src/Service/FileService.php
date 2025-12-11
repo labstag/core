@@ -2,12 +2,12 @@
 
 namespace Labstag\Service;
 
-use GdImage;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Essence\Essence;
 use Essence\Media;
 use Exception;
+use GdImage;
 use Labstag\Message\FileDeleteMessage;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
