@@ -161,7 +161,7 @@ final class GameService extends AbstractIgdb
         }
 
         if ($name != '') {
-            $where[] = '(name ~ *"' . $name . '"* | alternative_names.name ~ *"' . $data['title'] . '"*)';
+            $where[] = '(name ~ *"' . $name . '"* | alternative_names.name ~ *"' . $name . '"*)';
         }
 
         return $where;
