@@ -90,7 +90,7 @@ final class GameService extends AbstractIgdb
         return $franchise;
     }
 
-    public function getGameApi(array $data, int $limit, int $offset): array
+    private function getGameApiSearch(array $data, int $limit, int $offset, bool $withSearch): array
     {
         $entityRepository   = $this->entityManager->getRepository(Platform::class);
         $games                = [];
@@ -114,30 +114,44 @@ final class GameService extends AbstractIgdb
             $where[] = 'id = ' . $data['number'];
         }
 
+        $fields = [
+            'id',
+            'url',
+            'name',
+            'cover.*',
+            'first_release_date',
+            'game_type.*',
+            'alternative_names.name',
+        ];
         $name   = $data['title'] ?? null;
-        if (!is_null($name)) {
-            $where[] = sprintf(
-                '(game_localizations.name ~ "%s" | name ~ "%s" | alternative_names.name ~ "%s")',
-                $name,
-                $name,
-                $name
-            );
-        }
+        if (!$withSearch) {
+            if (!is_null($name)) {
+                $where[] = $this->SetWhereName($name);
+            }
 
+            $body  = $this->igdbApi->setBody(
+                fields: $fields,
+                where: $where,
+                limit: $limit,
+                offset: $offset
+            );
+
+            $games = $this->igdbApi->setUrl('games', $body);
+            if (is_null($games)) {
+                $games = [];
+            }
+
+            return array_filter($games, fn (array $game): bool => isset($game['first_release_date']));
+        }
+        
         $body  = $this->igdbApi->setBody(
-            fields: [
-                'id',
-                'url',
-                'name',
-                'cover.*',
-                'first_release_date',
-                'game_type.*',
-                'alternative_names.name',
-            ],
+            search: $name,
+            fields: $fields,
             where: $where,
             limit: $limit,
             offset: $offset
         );
+
         $games = $this->igdbApi->setUrl('games', $body);
         if (is_null($games)) {
             $games = [];
@@ -146,7 +160,27 @@ final class GameService extends AbstractIgdb
         return array_filter($games, fn (array $game): bool => isset($game['first_release_date']));
     }
 
+    public function getGameApi(array $data, int $limit, int $offset): array
+    {
+        $games = $this->getGameApiSearch($data, $limit, $offset, false);
+        if (count($games) > 0) {
+            return $games;
+        }
+
+        return $this->getGameApiSearch($data, $limit, $offset, true);
+    }
+
     public function getResultApiForDataArray(array $data, ?Platform $platform): ?array
+    {
+        $games = $this->getResultApiForDataArraySearch($data, $platform, false);
+        if (!is_null($games)) {
+            return $games;
+        }
+
+        return $this->getResultApiForDataArraySearch($data, $platform, true);
+    }
+
+    public function getResultApiForDataArraySearch(array $data, ?Platform $platform, bool $withSearch): ?array
     {
         $name   = $data['Nom'] ?? $data['name'] ?? null;
         $fields = [
@@ -154,9 +188,30 @@ final class GameService extends AbstractIgdb
             'name',
             'alternative_names.name',
         ];
-        $where  = $this->buildDateFilter($data, $platform);
+        $name   = $data['Nom'] ?? $data['name'] ?? null;
+        $where  = $this->buildDateFilter($data, $platform, $withSearch);
+        if ($withSearch) {
+            $body    = $this->igdbApi->setBody(
+                search: $name,
+                fields: $fields,
+                where: $where
+            );
+            $results = $this->igdbApi->setUrl('games', $body);
+            if (is_null($results) || 0 === count($results)) {
+                return null;
+            }
 
-        $body    = $this->igdbApi->setBody(fields: $fields, where: $where);
+            if (1 === count($results)) {
+                return $results[0];
+            }
+
+            return $this->findBestMatchingGame($results, $name);
+        }
+
+        $body    = $this->igdbApi->setBody(
+            fields: $fields,
+            where: $where
+        );
         $results = $this->igdbApi->setUrl('games', $body);
         if (is_null($results) || 0 === count($results)) {
             return null;
@@ -216,25 +271,40 @@ final class GameService extends AbstractIgdb
         return true;
     }
 
-    private function buildDateFilter(array $data, ?Platform $platform): array
+    private function buildDateFilter(array $data, ?Platform $platform, bool $withSearch): array
     {
         $where = [];
 
         if ($platform instanceof Platform && !in_array($platform->getIgdb(), [null, '', '0'], true)) {
             $where[] = 'platforms = ' . $platform->getIgdb();
         }
-
-        $name   = $data['Nom'] ?? $data['name'] ?? null;
-        if (!is_null($name)) {
-            $where[] = sprintf(
-                '(game_localizations.name ~ "%s" | name ~ "%s" | alternative_names.name ~ "%s")',
-                $name,
-                $name,
-                $name
-            );
+        if (!$withSearch) {
+            $name   = $data['Nom'] ?? $data['name'] ?? null;
+            if (!is_null($name)) {
+                $where[] = $this->SetWhereName($name);
+            }
         }
 
         return $where;
+    }
+
+    private function SetWhereName($name)
+    {
+        $codes = [
+            'game_localizations.name',
+            'name',
+            'alternative_names.name',
+        ];
+
+        $name = str_replace(':', '', $name);
+        $name = str_replace('  ', ' ', $name);
+
+        $where = [];
+        foreach ($codes as $code) {
+            $where[] = sprintf('%s ~ "%s"', $code, $name);
+        }
+
+        return '('.implode(' | ', $where).')';
     }
 
     private function findBestMatchingGame(array $results, ?string $name): ?array
@@ -312,13 +382,18 @@ final class GameService extends AbstractIgdb
 
         // Vérifier les noms alternatifs
         $alternativeNames = $result['alternative_names'] ?? [];
-        if (!is_array($alternativeNames)) {
-            return false;
+        $gameLocalizations = $result['game_localizations'] ?? [];
+        $find = array_any(
+            $alternativeNames,
+            fn ($alternativeName): bool => isset($alternativeName['name']) && $checkName($alternativeName['name'])
+        );
+        if ($find) {
+            return true;
         }
 
         return array_any(
-            $alternativeNames,
-            fn ($alternativeName): bool => isset($alternativeName['name']) && $checkName($alternativeName['name'])
+            $gameLocalizations,
+            fn ($gameLocalization): bool => isset($gameLocalization['name']) && $checkName($gameLocalization['name'])
         );
     }
 
