@@ -66,8 +66,7 @@ final class SearchGameMessageHandler
     private function getGameByRow(array $data): ?Game
     {
         $entityRepository = $this->entityManager->getRepository(Game::class);
-        
-        
+
         return $entityRepository->findOneBy(
             [
                 'igdb' => $data['id'],
