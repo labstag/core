@@ -36,7 +36,6 @@ final class GameService extends AbstractIgdb
         $game = $this->getGameByRow($result);
         $this->update($game);
         $this->entityManager->getRepository(Game::class)->save($game);
-
         $platform = $this->entityManager->getRepository(Platform::class)->find($platformId);
         if ($platform instanceof Platform) {
             $game->addPlatform($platform);
