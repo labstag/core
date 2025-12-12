@@ -221,7 +221,7 @@ final class GameService extends AbstractIgdb
             'game_type.*',
             'alternative_names.name',
         ];
-        $name                 = $data['title'] ?? null;
+        $name = $data['title'] ?? null;
         if (!$withSearch) {
             $body  = $this->igdbApi->setBody(fields: $fields, where: $where, limit: $limit, offset: $offset);
 
