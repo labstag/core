@@ -43,10 +43,13 @@ final class SearchGameMessageHandler
             return;
         }
 
-        $this->notificationService->setNotification(
-            'Game found',
-            sprintf('The game "%s" was found on IGDB with the name "%s"', $name, $result['name'])
-        );
+        $game = $this->getGameByRow($result);
+        if ($game instanceof Game) {
+            $this->notificationService->setNotification(
+                'Game found',
+                sprintf('The game "%s" was found on IGDB with the name "%s"', $name, $result['name'])
+            );
+        }
 
         $this->messageBus->dispatch(new AddGameMessage($result['id'], 'game', $platform));
     }
@@ -57,6 +60,18 @@ final class SearchGameMessageHandler
 
         return $entityRepository->findOneBy(
             ['title' => $name]
+        );
+    }
+
+    private function getGameByRow(array $data): ?Game
+    {
+        $entityRepository = $this->entityManager->getRepository(Game::class);
+        
+        
+        return $entityRepository->findOneBy(
+            [
+                'igdb' => $data['id'],
+            ]
         );
     }
 
