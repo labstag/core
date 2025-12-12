@@ -71,12 +71,12 @@ final class ImportMessageHandler
         };
 
         $rows = $this->fileService->getimportCsvFile($path, $delimiter);
-        $data = [];
+        $newrow = [];
         foreach ($rows as $row) {
-            $data[$row['Nom']] = $row;
+            $newrow[$row['Nom']] = $row;
         }
 
-        foreach ($data as $row) {
+        foreach ($newrow as $row) {
             $message = $this->createMessage($type, $row, $data);
 
             if (!is_null($message)) {
@@ -88,12 +88,12 @@ final class ImportMessageHandler
     private function importXmlFile(string $path, array $data, string $type): void
     {
         $rows = $this->fileService->getimportXmlFile($path);
-        $data = [];
+        $newrow = [];
         foreach ($rows as $row) {
-            $data[$row['name']] = $row;
+            $newrow[$row['name']] = $row;
         }
 
-        foreach ($data as $row) {
+        foreach ($newrow as $row) {
             $message = $this->createMessage($type, $row, $data);
 
             if (!is_null($message)) {
