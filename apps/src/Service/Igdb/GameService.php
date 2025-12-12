@@ -101,49 +101,17 @@ final class GameService extends AbstractIgdb
 
     public function getResultApiForDataArray(array $data, ?Platform $platform): ?array
     {
-        $games = $this->getResultApiForDataArraySearch($data, $platform, false);
-        if (!is_null($games)) {
-            return $games;
-        }
-
-        return $this->getResultApiForDataArraySearch($data, $platform, true);
-    }
-
-    public function getResultApiForDataArraySearch(array $data, ?Platform $platform, bool $withSearch): ?array
-    {
-        $name   = $data['Nom'] ?? $data['name'] ?? null;
-        $fields = [
-            'id',
-            'name',
-            'alternative_names.name',
+        $data = [
+            'title'    => $data['Nom'] ?? $data['name'] ?? null,
+            'platform' => ($platform instanceof Platform) ? $platform : null,
         ];
-        $name   = $data['Nom'] ?? $data['name'] ?? null;
-        $where  = $this->buildDateFilter($data, $platform, $withSearch);
-        if ($withSearch) {
-            $body    = $this->igdbApi->setBody(search: $name, fields: $fields, where: $where);
-            $results = $this->igdbApi->setUrl('games', $body);
-            if (is_null($results) || 0 === count($results)) {
-                return null;
-            }
 
-            if (1 === count($results)) {
-                return $results[0];
-            }
+        $limit   = 50;
+        $offset  = 0;
 
-            return $this->findBestMatchingGame($results, $name);
-        }
+        $results = $this->getGameApi($data, $limit, $offset);
 
-        $body    = $this->igdbApi->setBody(fields: $fields, where: $where);
-        $results = $this->igdbApi->setUrl('games', $body);
-        if (is_null($results) || 0 === count($results)) {
-            return null;
-        }
-
-        if (1 === count($results)) {
-            return $results[0];
-        }
-
-        return $this->findBestMatchingGame($results, $name);
+        return $this->findBestMatchingGame($results, $data['title']);
     }
 
     public function setAnotherName($name): string
@@ -193,55 +161,11 @@ final class GameService extends AbstractIgdb
         return true;
     }
 
-    private function buildDateFilter(array $data, ?Platform $platform, bool $withSearch): array
+    private function buildDateFilter(array $data, bool $withSearch): array
     {
         $where = [];
-
-        if ($platform instanceof Platform && !in_array($platform->getIgdb(), [null, '', '0'], true)) {
-            $where[] = 'platforms = ' . $platform->getIgdb();
-        }
-
-        if (!$withSearch) {
-            $name   = $data['Nom'] ?? $data['name'] ?? null;
-            if (!is_null($name)) {
-                $where[] = $this->setWhereName($name);
-            }
-        }
-
-        return $where;
-    }
-
-    private function findBestMatchingGame(array $results, ?string $name): ?array
-    {
-        $nameLower = strtolower((string) $name);
-
-        // Prioriser les jeux de type 0 (jeux principaux)
-        foreach ($results as $result) {
-            if ($this->isMainGameType($result) && $this->matchesGameName($result, $name, $nameLower)) {
-                return $result;
-            }
-        }
-
-        // Sinon, chercher n'importe quel jeu correspondant
-        foreach ($results as $result) {
-            if ($this->matchesGameName($result, $name, $nameLower)) {
-                return $result;
-            }
-        }
-
-        return null;
-    }
-
-    private function getGameApiSearch(array $data, int $limit, int $offset, bool $withSearch): array
-    {
-        $entityRepository     = $this->entityManager->getRepository(Platform::class);
-        $games                = [];
-        $where                = [];
         if (isset($data['platform']) && !empty($data['platform'])) {
-            $platform = $entityRepository->find($data['platform']);
-            if ($platform instanceof Platform) {
-                $where[] = 'platforms = (' . $platform->getIgdb() . ')';
-            }
+            $where[] = 'platforms = (' . $data['platform']->getIgdb() . ')';
         }
 
         if (isset($data['franchise']) && !empty($data['franchise'])) {
@@ -256,7 +180,39 @@ final class GameService extends AbstractIgdb
             $where[] = 'id = ' . $data['number'];
         }
 
-        $fields = [
+        if (!$withSearch) {
+            $name   = empty($data['title']) ? '' : $data['title'];
+            if (!empty($name)) {
+                $where[] = $this->setWhereName($name);
+            }
+        }
+
+        return $where;
+    }
+
+    private function findBestMatchingGame(array $results, ?string $name): ?array
+    {
+        $nameLower = strtolower((string) $name);
+        foreach ($results as $result) {
+            if ($this->isMainGameType($result) && $this->matchesGameName($result, $name, $nameLower)) {
+                return $result;
+            }
+        }
+
+        foreach ($results as $result) {
+            if ($this->matchesGameName($result, $name, $nameLower)) {
+                return $result;
+            }
+        }
+
+        return null;
+    }
+
+    private function getGameApiSearch(array $data, int $limit, int $offset, bool $withSearch): array
+    {
+        $games                = [];
+        $where                = $this->buildDateFilter($data, $withSearch);
+        $fields               = [
             'id',
             'url',
             'name',
@@ -265,12 +221,8 @@ final class GameService extends AbstractIgdb
             'game_type.*',
             'alternative_names.name',
         ];
-        $name   = $data['title'] ?? null;
+        $name                 = $data['title'] ?? null;
         if (!$withSearch) {
-            if (!is_null($name)) {
-                $where[] = $this->setWhereName($name);
-            }
-
             $body  = $this->igdbApi->setBody(fields: $fields, where: $where, limit: $limit, offset: $offset);
 
             $games = $this->igdbApi->setUrl('games', $body);

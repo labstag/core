@@ -70,7 +70,7 @@ final class ImportMessageHandler
             default => ',',
         };
 
-        $rows = $this->fileService->getimportCsvFile($path, $delimiter);
+        $rows   = $this->fileService->getimportCsvFile($path, $delimiter);
         $newrow = $rows;
         if (isset($rows[0]['Nom'])) {
             $newrow = [];
@@ -90,7 +90,7 @@ final class ImportMessageHandler
 
     private function importXmlFile(string $path, array $data, string $type): void
     {
-        $rows = $this->fileService->getimportXmlFile($path);
+        $rows   = $this->fileService->getimportXmlFile($path);
         $newrow = [];
         foreach ($rows as $row) {
             $newrow[$row['name']] = $row;

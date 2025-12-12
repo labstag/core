@@ -128,6 +128,15 @@ class GameCrudController extends CrudControllerAbstract
             'type'      => $all['game']['type'] ?? '',
             'number'    => $all['game']['number'] ?? '',
         ];
+        if (isset($data['platform']) && !empty($data['platform'])) {
+            $repository       = $this->getRepository(Platform::class);
+            $platform         = $repository->find($data['platform']);
+            $data['platform'] = '';
+            if ($platform instanceof Platform) {
+                $data['platform'] = $platform;
+            }
+        }
+
         $games   = $this->gameService->getGameApi($data, $limit, $offset);
 
         return $this->render(
