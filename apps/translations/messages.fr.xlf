@@ -2281,6 +2281,18 @@
         <source>page.error.511.message</source>
         <target>Vous devez vous authentifier auprès du réseau pour accéder à cette ressource.</target>
       </trans-unit>
+      <trans-unit id="vtsk56f" resname="Message">
+        <source>Message</source>
+        <target>__Message</target>
+      </trans-unit>
+      <trans-unit id="gGxnmUA" resname="Notifications">
+        <source>Notifications</source>
+        <target>Notifications</target>
+      </trans-unit>
+      <trans-unit id="Sn__GSM" resname="No episodes found.">
+        <source>No episodes found.</source>
+        <target>Aucun épisode trouvé.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

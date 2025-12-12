@@ -4,6 +4,7 @@ namespace Labstag\MessageHandler;
 
 use Labstag\Generate\CinemaGenerate;
 use Labstag\Message\PageCinemaMessage;
+use Labstag\Service\NotificationService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -11,6 +12,7 @@ final class PageCinemaMessageHandler
 {
     public function __construct(
         private CinemaGenerate $cinemaGenerate,
+        private NotificationService $notificationService,
     )
     {
     }
@@ -18,8 +20,14 @@ final class PageCinemaMessageHandler
     public function __invoke(PageCinemaMessage $pageCinemaMessage): void
     {
         unset($pageCinemaMessage);
-        dump('Creating page with movie releases of the week...');
+        $this->notificationService->setNotification(
+            'Cinema Page Generation',
+            'The cinema page generation has started.'
+        );
         $this->cinemaGenerate->execute();
-        dump('Page created with movie releases of the week.');
+        $this->notificationService->setNotification(
+            'Cinema Page Generation',
+            'The cinema page has been created successfully.'
+        );
     }
 }

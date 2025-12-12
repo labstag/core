@@ -37,7 +37,7 @@ final class SearchGameMessageHandler
         if (is_null($result)) {
             $this->notificationService->setNotification(
                 'Game not found',
-                sprintf('The game %s was not found on IGDB', $name)
+                sprintf('The game "%s" was not found on IGDB', $name)
             );
 
             return;

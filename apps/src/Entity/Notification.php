@@ -25,9 +25,6 @@ class Notification
     #[ORM\ManyToOne(inversedBy: 'notifications')]
     private ?User $refuser = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?bool $seen = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
@@ -51,11 +48,6 @@ class Notification
         return $this->title;
     }
 
-    public function isSeen(): ?bool
-    {
-        return $this->seen;
-    }
-
     public function setMessage(?string $message): static
     {
         $this->message = $message;
@@ -66,13 +58,6 @@ class Notification
     public function setRefuser(?User $user): static
     {
         $this->refuser = $user;
-
-        return $this;
-    }
-
-    public function setSeen(?bool $seen): static
-    {
-        $this->seen = $seen;
 
         return $this;
     }

@@ -72,6 +72,11 @@ class DashboardController extends AbstractDashboardController
         $tags       = $this->menuItemFactory->createTagMenuItems();
         // Dashboard home
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
+        yield MenuItem::linkToCrud(
+            new TranslatableMessage('Notifications'),
+            'fas fa-bell',
+            NotificationCrudController::getEntityFqcn()
+        );
 
         // Shared taxonomy items (categories / tags) used in several content sub-menus
         $fieldsTAbs = [
