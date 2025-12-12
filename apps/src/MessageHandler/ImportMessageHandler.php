@@ -71,12 +71,15 @@ final class ImportMessageHandler
         };
 
         $rows = $this->fileService->getimportCsvFile($path, $delimiter);
-        $newrow = [];
-        foreach ($rows as $row) {
-            $newrow[$row['Nom']] = $row;
+        $newrow = $rows;
+        if (isset($rows[0]['Nom'])) {
+            $newrow = [];
+            foreach ($rows as $row) {
+                $newrow[$row['Nom']] = $row;
+            }
         }
 
-        foreach ($newrow as $row) {
+        foreach ($rows as $row) {
             $message = $this->createMessage($type, $row, $data);
 
             if (!is_null($message)) {
