@@ -85,14 +85,22 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, unique: true)]
     protected ?string $imdb = null;
 
-    #[ORM\OneToOne(inversedBy: 'movie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'movie', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'movie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'movie',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]

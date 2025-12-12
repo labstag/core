@@ -87,14 +87,22 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]
     protected ?DateTime $lastreleaseDate = null;
 
-    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'serie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'serie',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -112,7 +120,15 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     /**
      * @var Collection<int, Season>
      */
-    #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'refserie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Season::class,
+        mappedBy: 'refserie',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['number' => 'ASC']
     )]

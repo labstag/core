@@ -49,7 +49,6 @@ final class PlatformService extends AbstractIgdb
 
     public function getPlatformApi(array $data, int $limit, int $offset): array
     {
-        $entityRepository   = $this->entityManager->getRepository(Platform::class);
         $platforms          = [];
         $search             = $data['title'] ?? '';
         $where              = [];
@@ -72,7 +71,7 @@ final class PlatformService extends AbstractIgdb
         );
         $platforms = $this->igdbApi->setUrl('platforms', $body);
         if (is_null($platforms)) {
-            $platforms = [];
+            return [];
         }
 
         return $platforms;

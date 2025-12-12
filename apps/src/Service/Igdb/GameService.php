@@ -92,34 +92,47 @@ final class GameService extends AbstractIgdb
 
     public function getGameApi(array $data, int $limit, int $offset): array
     {
-        $platformRepository   = $this->entityManager->getRepository(Platform::class);
+        $entityRepository   = $this->entityManager->getRepository(Platform::class);
         $games                = [];
         $where                = [];
         if (isset($data['platform']) && !empty($data['platform'])) {
-            $platform = $platformRepository->find($data['platform']);
+            $platform = $entityRepository->find($data['platform']);
             if ($platform instanceof Platform) {
                 $where[] = 'platforms = (' . $platform->getIgdb() . ')';
             }
         }
+
         if (isset($data['franchise']) && !empty($data['franchise'])) {
             $where[] = 'franchises.name ~ "' . $data['franchise'] . '"';
         }
+
         if (isset($data['type']) && '' != $data['type']) {
             $where[] = 'game_type = ' . $data['type'];
         }
+
         if (isset($data['number']) && !empty($data['number'])) {
             $where[] = 'id = ' . $data['number'];
         }
-        if (isset($data['title']) && !empty($data['title'])) {
-            $where[] = '(name ~ *"' . $data['title'] . '"* | alternative_names.name ~ *"' . $data['title'] . '"*)';
+
+        $name   = $data['title'] ?? null;
+        if (!is_null($name)) {
+            $where[] = sprintf(
+                '(game_localizations.name ~ "%s" | name ~ "%s" | alternative_names.name ~ "%s")',
+                $name,
+                $name,
+                $name
+            );
         }
 
         $body  = $this->igdbApi->setBody(
             fields: [
-                '*',
+                'id',
+                'url',
+                'name',
                 'cover.*',
+                'first_release_date',
                 'game_type.*',
-                'alternative_names.*',
+                'alternative_names.name',
             ],
             where: $where,
             limit: $limit,
@@ -136,8 +149,12 @@ final class GameService extends AbstractIgdb
     public function getResultApiForDataArray(array $data, ?Platform $platform): ?array
     {
         $name   = $data['Nom'] ?? $data['name'] ?? null;
-        $fields = ['*', 'game_type.*', 'alternative_names.*'];
-        $where  = $this->buildDateFilter($data, $platform, $name);
+        $fields = [
+            'id',
+            'name',
+            'alternative_names.name',
+        ];
+        $where  = $this->buildDateFilter($data, $platform);
 
         $body    = $this->igdbApi->setBody(fields: $fields, where: $where);
         $results = $this->igdbApi->setUrl('games', $body);
@@ -150,47 +167,6 @@ final class GameService extends AbstractIgdb
         }
 
         return $this->findBestMatchingGame($results, $name);
-    }
-
-    private function buildDateFilter(array $data, ?Platform $platform, string $name): array
-    {
-        $where = [];
-
-        if ($platform instanceof Platform && !empty($platform->getIgdb())) {
-            $where[] = 'platforms = ' . $platform->getIgdb();
-        }
-
-        if ($name != '') {
-            $where[] = '(name ~ *"' . $name . '"* | alternative_names.name ~ *"' . $name . '"*)';
-        }
-
-        return $where;
-    }
-
-    private function findBestMatchingGame(array $results, ?string $name): ?array
-    {
-        $nameLower = strtolower((string) $name);
-
-        // Prioriser les jeux de type 0 (jeux principaux)
-        foreach ($results as $result) {
-            if ($this->isMainGameType($result) && $this->matchesGameName($result, $name, $nameLower)) {
-                return $result;
-            }
-        }
-
-        // Sinon, chercher n'importe quel jeu correspondant
-        foreach ($results as $result) {
-            if ($this->matchesGameName($result, $name, $nameLower)) {
-                return $result;
-            }
-        }
-
-        return null;
-    }
-
-    private function isMainGameType(array $result): bool
-    {
-        return isset($result['game_type']['id']) && 0 === $result['game_type']['id'];
     }
 
     public function setAnotherName($name): string
@@ -240,6 +216,48 @@ final class GameService extends AbstractIgdb
         return true;
     }
 
+    private function buildDateFilter(array $data, ?Platform $platform): array
+    {
+        $where = [];
+
+        if ($platform instanceof Platform && !in_array($platform->getIgdb(), [null, '', '0'], true)) {
+            $where[] = 'platforms = ' . $platform->getIgdb();
+        }
+
+        $name   = $data['Nom'] ?? $data['name'] ?? null;
+        if (!is_null($name)) {
+            $where[] = sprintf(
+                '(game_localizations.name ~ "%s" | name ~ "%s" | alternative_names.name ~ "%s")',
+                $name,
+                $name,
+                $name
+            );
+        }
+
+        return $where;
+    }
+
+    private function findBestMatchingGame(array $results, ?string $name): ?array
+    {
+        $nameLower = strtolower((string) $name);
+
+        // Prioriser les jeux de type 0 (jeux principaux)
+        foreach ($results as $result) {
+            if ($this->isMainGameType($result) && $this->matchesGameName($result, $name, $nameLower)) {
+                return $result;
+            }
+        }
+
+        // Sinon, chercher n'importe quel jeu correspondant
+        foreach ($results as $result) {
+            if ($this->matchesGameName($result, $name, $nameLower)) {
+                return $result;
+            }
+        }
+
+        return null;
+    }
+
     private function getGameByRow(array $data): Game
     {
         $entityRepository = $this->entityManager->getRepository(Game::class);
@@ -264,6 +282,11 @@ final class GameService extends AbstractIgdb
         $entityRepository->save($game);
 
         return $game;
+    }
+
+    private function isMainGameType(array $result): bool
+    {
+        return isset($result['game_type']['id']) && 0 === $result['game_type']['id'];
     }
 
     private function matchesGameName(array $result, string $name, string $nameLower): bool

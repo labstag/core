@@ -49,7 +49,7 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'saga', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'saga', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
@@ -66,7 +66,15 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'saga', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'saga',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]

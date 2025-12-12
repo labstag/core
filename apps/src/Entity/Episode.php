@@ -51,6 +51,7 @@ class Episode implements Stringable
     protected ?string $overview = null;
 
     #[ORM\ManyToOne(inversedBy: 'episodes')]
+    #[ORM\JoinColumn(name: 'refseason_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
     protected ?Season $refseason = null;
 
     #[ORM\Column(nullable: true)]

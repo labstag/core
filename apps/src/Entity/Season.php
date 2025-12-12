@@ -44,7 +44,15 @@ class Season implements Stringable, EntityWithParagraphsInterface
     /**
      * @var Collection<int, Episode>
      */
-    #[ORM\OneToMany(targetEntity: Episode::class, mappedBy: 'refseason', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Episode::class,
+        mappedBy: 'refseason',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['number' => 'ASC']
     )]
@@ -56,7 +64,7 @@ class Season implements Stringable, EntityWithParagraphsInterface
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'season', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'season', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
@@ -69,7 +77,15 @@ class Season implements Stringable, EntityWithParagraphsInterface
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'season', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'season',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -82,7 +98,7 @@ class Season implements Stringable, EntityWithParagraphsInterface
     protected ?File $posterFile = null;
 
     #[ORM\ManyToOne(inversedBy: 'seasons')]
-    #[ORM\JoinColumn(name: 'refserie_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ORM\JoinColumn(name: 'refserie_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
     protected ?Serie $refserie = null;
 
     #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]

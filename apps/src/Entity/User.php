@@ -126,6 +126,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'users')]
     private Collection $groups;
 
+    /**
+     * @var Collection<int, Notification>
+     */
+    #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'refuser')]
+    private Collection $notifications;
+
     public function __construct()
     {
         $this->stories        = new ArrayCollection();
@@ -136,6 +142,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         $this->httpErrorLogs  = new ArrayCollection();
         $this->groups         = new ArrayCollection();
         $this->configurations = new ArrayCollection();
+        $this->notifications  = new ArrayCollection();
     }
 
     /**
@@ -218,6 +225,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         if (!$this->memos->contains($memo)) {
             $this->memos->add($memo);
             $memo->setRefuser($this);
+        }
+
+        return $this;
+    }
+
+    public function addNotification(Notification $notification): static
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setRefuser($this);
         }
 
         return $this;
@@ -326,6 +343,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function getMemos(): Collection
     {
         return $this->memos;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
     }
 
     /**
@@ -444,6 +469,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         if ($this->memos->removeElement($memo) && $memo->getRefuser() === $this
         ) {
             $memo->setRefuser(null);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->notifications->removeElement($notification) && $notification->getRefuser() === $this) {
+            $notification->setRefuser(null);
         }
 
         return $this;

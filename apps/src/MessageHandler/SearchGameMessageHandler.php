@@ -8,7 +8,7 @@ use Labstag\Entity\Platform;
 use Labstag\Message\AddGameMessage;
 use Labstag\Message\SearchGameMessage;
 use Labstag\Service\Igdb\GameService;
-use Psr\Log\LoggerInterface;
+use Labstag\Service\NotificationService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -18,7 +18,7 @@ final class SearchGameMessageHandler
     public function __construct(
         private MessageBusInterface $messageBus,
         private GameService $gameService,
-        private LoggerInterface $logger,
+        private NotificationService $notificationService,
         private EntityManagerInterface $entityManager,
     )
     {
@@ -29,17 +29,24 @@ final class SearchGameMessageHandler
         $data = $searchGameMessage->getData();
         $name = $data['Nom'] ?? $data['name'] ?? null;
         if (is_null($name) || $this->getGameByData($name) instanceof Game) {
-
             return;
         }
 
         $platform = $searchGameMessage->getPlatform();
         $result   = $this->getResultApiForData($data, $platform);
         if (is_null($result)) {
-            dump('Game not found '.$name);
+            $this->notificationService->setNotification(
+                'Game not found',
+                sprintf('The game %s was not found on IGDB', $name)
+            );
 
             return;
         }
+
+        $this->notificationService->setNotification(
+            'Game found',
+            sprintf('The game "%s" was found on IGDB with the name "%s"', $name, $result['name'])
+        );
 
         $this->messageBus->dispatch(new AddGameMessage($result['id'], 'game', $platform));
     }
@@ -55,9 +62,9 @@ final class SearchGameMessageHandler
 
     private function getResultApiForData(array $data, string $platformId): ?array
     {
-        $repository = $this->entityManager->getRepository(Platform::class);
-        $platform   = $repository->find($platformId);
-        $result = $this->gameService->getResultApiForDataArray($data, $platform);
+        $entityRepository = $this->entityManager->getRepository(Platform::class);
+        $platform   = $entityRepository->find($platformId);
+        $result     = $this->gameService->getResultApiForDataArray($data, $platform);
         if (!is_null($result)) {
             return $result;
         }

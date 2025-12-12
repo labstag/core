@@ -43,14 +43,22 @@ class Game implements EntityWithParagraphsInterface
     #[Vich\UploadableField(mapping: 'game', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'game', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'game', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'game', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'game',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]

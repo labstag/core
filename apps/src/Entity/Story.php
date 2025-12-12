@@ -73,14 +73,22 @@ class Story implements Stringable, EntityWithParagraphsInterface
     #[Vich\UploadableField(mapping: 'story', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'story', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'story', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'story', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'story',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]

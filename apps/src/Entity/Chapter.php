@@ -47,14 +47,22 @@ class Chapter implements Stringable, EntityWithParagraphsInterface
     #[Vich\UploadableField(mapping: 'chapter', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'chapter', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'chapter', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'chapter', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'chapter',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
