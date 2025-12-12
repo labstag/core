@@ -63,8 +63,8 @@ final class SearchGameMessageHandler
     private function getResultApiForData(array $data, string $platformId): ?array
     {
         $entityRepository = $this->entityManager->getRepository(Platform::class);
-        $platform   = $entityRepository->find($platformId);
-        $result     = $this->gameService->getResultApiForDataArray($data, $platform);
+        $platform         = $entityRepository->find($platformId);
+        $result           = $this->gameService->getResultApiForDataArray($data, $platform);
         if (!is_null($result)) {
             return $result;
         }
