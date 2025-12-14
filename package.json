@@ -54,7 +54,7 @@
     "sass": "1.93.*",
     "sass-loader": "16.0.*",
     "stylelint": "16.24.*",
-    "stylelint-config-standard": "36.0.*",
+    "stylelint-config-standard": "39.0.*",
     "webfontloader": "1.6.*",
     "webpack": "5.97.*",
     "webpack-cli": "5.1.*",
