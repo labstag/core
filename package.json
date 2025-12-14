@@ -51,7 +51,7 @@
     "postcss-loader": "8.2.*",
     "regenerator-runtime": "0.14.*",
     "release-it": "19.0.*",
-    "sass": "1.93.*",
+    "sass": "1.96.*",
     "sass-loader": "16.0.*",
     "stylelint": "16.24.*",
     "stylelint-config-standard": "36.0.*",
