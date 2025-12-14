@@ -14,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Labstag\Context\ExceptionContext;
 use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\Paragraph;
 use Labstag\Service\ConfigurationService;
@@ -67,6 +68,7 @@ abstract class ParagraphAbstract extends AbstractController
     protected array $templates = [];
 
     public function __construct(
+        protected ExceptionContext $context,
         protected LoggerInterface $logger,
         protected Security $security,
         protected AdminUrlGenerator $adminUrlGenerator,
@@ -102,15 +104,15 @@ abstract class ParagraphAbstract extends AbstractController
                 [
                     'required'       => false,
                     'allow_delete'   => true,
-                    'delete_label'   => $deleteLabel->__toString(),
-                    'download_label' => $downloadLabel->__toString(),
+                    'delete_label'   => $this->translator->trans($deleteLabel),
+                    'download_label' => $this->translator->trans($downloadLabel),
                     'download_uri'   => true,
                     'asset_helper'   => true,
                     'constraints'    => [
                         new File(
                             [
                                 'maxSize'        => ini_get('upload_max_filesize'),
-                                'maxSizeMessage' => $maxSizeMessage->__toString(),
+                                'maxSizeMessage' => $this->translator->trans($maxSizeMessage),
                             ]
                         ),
                     ],
@@ -143,8 +145,8 @@ abstract class ParagraphAbstract extends AbstractController
                 [
                     'required'       => false,
                     'allow_delete'   => true,
-                    'delete_label'   => $deleteLabel->__toString(),
-                    'download_label' => $downloadLabel->__toString(),
+                    'delete_label'   => $this->translator->trans($deleteLabel),
+                    'download_label' => $this->translator->trans($downloadLabel),
                     'download_uri'   => true,
                     'image_uri'      => true,
                     'asset_helper'   => true,
@@ -158,8 +160,8 @@ abstract class ParagraphAbstract extends AbstractController
                                     'image/gif',
                                     'image/webp',
                                 ],
-                                'mimeTypesMessage' => $mimeTypesMessage->__toString(),
-                                'maxSizeMessage'   => $maxSizeMessage->__toString(),
+                                'mimeTypesMessage' => $this->translator->trans($mimeTypesMessage),
+                                'maxSizeMessage'   => $this->translator->trans($maxSizeMessage),
                             ]
                         ),
                     ],
@@ -243,7 +245,7 @@ abstract class ParagraphAbstract extends AbstractController
         return $this->header[$paragraphId] ?? null;
     }
 
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
         return '';
     }
@@ -278,19 +280,8 @@ abstract class ParagraphAbstract extends AbstractController
     protected function getCategorySlug(): ?string
     {
         $request = $this->requestStack->getCurrentRequest();
-        $slug    = $request->attributes->get('slug');
 
-        if (0 === substr_count((string) $slug, '/')) {
-            return null;
-        }
-
-        $slugSecond = basename((string) $slug);
-
-        if (0 === substr_count($slugSecond, 'category-')) {
-            return null;
-        }
-
-        return str_replace('category-', '', $slugSecond);
+        return $request->query->get('categories');
     }
 
     protected function getOEmbedUrl(string $html): ?string
@@ -329,19 +320,8 @@ abstract class ParagraphAbstract extends AbstractController
     protected function getTagSlug(): ?string
     {
         $request = $this->requestStack->getCurrentRequest();
-        $slug    = $request->attributes->get('slug');
 
-        if (0 === substr_count((string) $slug, '/')) {
-            return null;
-        }
-
-        $slugSecond = basename((string) $slug);
-
-        if (0 === substr_count($slugSecond, 'tag-')) {
-            return null;
-        }
-
-        return str_replace('tag-', '', $slugSecond);
+        return $request->query->get('tag');
     }
 
     /**

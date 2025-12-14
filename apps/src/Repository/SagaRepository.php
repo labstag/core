@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Saga;
 
@@ -57,6 +59,42 @@ class SagaRepository extends RepositoryAbstract
         $query->enableResultCache(3600, 'sagas-activate');
 
         return $query->getResult();
+    }
+
+    /**
+     * @param array<string, mixed> $query
+     */
+    public function getQueryBuilder(array $query): QueryBuilder
+    {
+        $subQuery = $this->createQueryBuilder('s2');
+        $subQuery->select('s2.id');
+        $subQuery->join('s2.movies', 'm2');
+        $subQuery->where('m2.enable = :enable');
+        $subQuery->setParameter('enable', true);
+        $subQuery->groupBy('s2.id');
+        $subQuery->having('COUNT(m2.id) >= 2');
+
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->where('s.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        $queryBuilder->andWhere($queryBuilder->expr()->in('s.id', $subQuery->getDQL()));
+
+        return $queryBuilder->orderBy('s.' . $query['order'], $query['orderby']);
+    }
+
+    /**
+     * @param array<string, mixed> $query
+     *
+     * @return Query<mixed, mixed>
+     */
+    public function getQueryPaginator(array $query): Query
+    {
+        $queryBuilder = $this->getQueryBuilder($query);
+        $query        = $queryBuilder->getQuery();
+        $dql          = $query->getDQL();
+        $query->enableResultCache(3600, 'sagas-query-paginator-' . md5((string) $dql));
+
+        return $query;
     }
 
     /**

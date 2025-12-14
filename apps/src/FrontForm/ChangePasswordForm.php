@@ -4,6 +4,7 @@ namespace Labstag\FrontForm;
 
 use Labstag\Entity\User;
 use Labstag\Form\Front\ChangePasswordType;
+use Override;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -21,20 +22,19 @@ class ChangePasswordForm extends FrontFormAbstract
 
     public function getName(): string
     {
-        return (string) new TranslatableMessage('Form change password');
+        return new TranslatableMessage('Form change password');
     }
 
-    #[\Override]
+    #[Override]
     public function setParamsTwig(
         FormInterface $form,
-        $formCode,
         $paragraph,
         $data,
         bool $disable = false,
         bool $save = true,
     ): array
     {
-        unset($save, $disable, $formCode);
+        unset($save, $disable);
         $request = $this->requestStack->getCurrentRequest();
         $uid     = $request->query->get('uid');
         if (empty($uid)) {

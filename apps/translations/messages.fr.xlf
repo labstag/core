@@ -1697,6 +1697,602 @@
         <source>TMDB page for the season</source>
         <target>Page TMDB de la saison</target>
       </trans-unit>
+      <trans-unit id="nh0Ghrw" resname="New game">
+        <source>New game</source>
+        <target>Nouveau jeu</target>
+      </trans-unit>
+      <trans-unit id="D6T_ooP" resname="Game">
+        <source>Game</source>
+        <target>Jeu</target>
+      </trans-unit>
+      <trans-unit id="TfHPH8U" resname="Games">
+        <source>Games</source>
+        <target>Jeux</target>
+      </trans-unit>
+      <trans-unit id="qTyvHnV" resname="Igdb">
+        <source>Igdb</source>
+        <target>IGDB</target>
+      </trans-unit>
+      <trans-unit id="YTeXRKE" resname="Platforms">
+        <source>Platforms</source>
+        <target>Plateformes</target>
+      </trans-unit>
+      <trans-unit id="cJ6vB5W" resname="IGDB Page">
+        <source>IGDB Page</source>
+        <target>Page IGDB</target>
+      </trans-unit>
+      <trans-unit id="6Lq470S" resname="New movie">
+        <source>New movie</source>
+        <target>Nouveau film</target>
+      </trans-unit>
+      <trans-unit id="9WTHohM" resname="The movie with the TMDB id %id% does not exist">
+        <source>The movie with the TMDB id %id% does not exist</source>
+        <target>Le film avec l'identifiant TMDB %id% n'existe pas</target>
+      </trans-unit>
+      <trans-unit id="GrkAosC" resname="New serie">
+        <source>New serie</source>
+        <target>Nouvelle série</target>
+      </trans-unit>
+      <trans-unit id="NwVzZMf" resname="The series with the TMDB id %id% does not exist">
+        <source>The series with the TMDB id %id% does not exist</source>
+        <target>La série avec l'identifiant TMDB %id% n'existe pas</target>
+      </trans-unit>
+      <trans-unit id="x2Zym9S" resname="New platform">
+        <source>New platform</source>
+        <target>Nouvelle plateforme</target>
+      </trans-unit>
+      <trans-unit id="oYU53RL" resname="Platform">
+        <source>Platform</source>
+        <target>Plateforme</target>
+      </trans-unit>
+      <trans-unit id="Zq4_5xf" resname="Family">
+        <source>Family</source>
+        <target>Famille</target>
+      </trans-unit>
+      <trans-unit id="QOCXiok" resname="Generation">
+        <source>Generation</source>
+        <target>Génération</target>
+      </trans-unit>
+      <trans-unit id="KNRiz0N" resname="Abbreviation">
+        <source>Abbreviation</source>
+        <target>Abréviation</target>
+      </trans-unit>
+      <trans-unit id="69OW9C2" resname="Franchise">
+        <source>Franchise</source>
+        <target>Franchise</target>
+      </trans-unit>
+      <trans-unit id="7X65_IG" resname="Franchises">
+        <source>Franchises</source>
+        <target>Franchises</target>
+      </trans-unit>
+      <trans-unit id="crAI1jT" resname="IGDB ID">
+        <source>IGDB ID</source>
+        <target>Identifiant IGDB</target>
+      </trans-unit>
+      <trans-unit id="F_k2krt" resname="Cover">
+        <source>Cover</source>
+        <target>Couverture</target>
+      </trans-unit>
+      <trans-unit id="BUIQ..a" resname="Action">
+        <source>Action</source>
+        <target>Action</target>
+      </trans-unit>
+      <trans-unit id="kAx.1At" resname="Link Tmdb">
+        <source>Link Tmdb</source>
+        <target>Lier à TMDB</target>
+      </trans-unit>
+      <trans-unit id="l_d5jYJ" resname="Select">
+        <source>Select</source>
+        <target>Sélectionner</target>
+      </trans-unit>
+      <trans-unit id="SVBWqlB" resname="Link igdb">
+        <source>Link igdb</source>
+        <target>Lier à IGDB</target>
+      </trans-unit>
+      <trans-unit id="i8XHUot" resname="Search a new movie">
+        <source>Search a new movie</source>
+        <target>Rechercher un nouveau film</target>
+      </trans-unit>
+      <trans-unit id="VAp4flC" resname="Search a new serie">
+        <source>Search a new serie</source>
+        <target>Rechercher une nouvelle série</target>
+      </trans-unit>
+      <trans-unit id="FboJG3Q" resname="Choose the type of Platform to create">
+        <source>Choose the type of Platform to create</source>
+        <target>Choisissez le type de plateforme à créer</target>
+      </trans-unit>
+      <trans-unit id="Liu4Rwu" resname="Search a new game">
+        <source>Search a new game</source>
+        <target>Rechercher un nouveau jeu</target>
+      </trans-unit>
+      <trans-unit id="AOlqz3s" resname="Search a new platform">
+        <source>Search a new platform</source>
+        <target>Rechercher une nouvelle plateforme</target>
+      </trans-unit>
+      <trans-unit id="NQTH1iy" resname="Game not found">
+        <source>Game not found</source>
+        <target>Jeu introuvable</target>
+      </trans-unit>
+      <trans-unit id="iqe7Mdf" resname="No data found">
+        <source>No data found</source>
+        <target>Aucune donnée trouvée</target>
+      </trans-unit>
+      <trans-unit id="8wdS5_C" resname="No platform selected">
+        <source>No platform selected</source>
+        <target>Aucune plateforme sélectionnée</target>
+      </trans-unit>
+      <trans-unit id="PMUZKKt" resname="Platforms added successfully">
+        <source>Platforms added successfully</source>
+        <target>Plateformes ajoutées avec succès</target>
+      </trans-unit>
+      <trans-unit id="3U3dIsT" resname="Game is being added">
+        <source>Game is being added</source>
+        <target>Le jeu est en cours d'ajout</target>
+      </trans-unit>
+      <trans-unit id="ZoBSxlJ" resname="Add to another platform">
+        <source>Add to another platform</source>
+        <target>Ajouter à une autre plateforme</target>
+      </trans-unit>
+      <trans-unit id="jo3KTiT" resname="Movie already exists">
+        <source>Movie already exists</source>
+        <target>Le film existe déjà</target>
+      </trans-unit>
+      <trans-unit id="MWtb46o" resname="No Imdb id for this movie">
+        <source>No Imdb id for this movie</source>
+        <target>Aucun identifiant IMDB pour ce film</target>
+      </trans-unit>
+      <trans-unit id="X49EcUx" resname="Movie is being added">
+        <source>Movie is being added</source>
+        <target>Le film est en cours d'ajout</target>
+      </trans-unit>
+      <trans-unit id="XLSvmi8" resname="Serie already exists">
+        <source>Serie already exists</source>
+        <target>La série existe déjà</target>
+      </trans-unit>
+      <trans-unit id="gL9xepk" resname="No Imdb id for this series">
+        <source>No Imdb id for this series</source>
+        <target>Aucun identifiant IMDB pour cette série</target>
+      </trans-unit>
+      <trans-unit id="vwah4Nh" resname="Serie added successfully">
+        <source>Serie added successfully</source>
+        <target>Série ajoutée avec succès</target>
+      </trans-unit>
+      <trans-unit id="28YPj2W" resname="Platform is being added">
+        <source>Platform is being added</source>
+        <target>La plateforme est en cours d'ajout</target>
+      </trans-unit>
+      <trans-unit id="oPzjCWg" resname="Import">
+        <source>Import</source>
+        <target>Importer</target>
+      </trans-unit>
+      <trans-unit id="Qb03LUA" resname="IMDB ID">
+        <source>IMDB ID</source>
+        <target>ID IMDB</target>
+      </trans-unit>
+      <trans-unit id="ePv7uFD" resname="Main Game">
+        <source>Main Game</source>
+        <target>Jeu principal</target>
+      </trans-unit>
+      <trans-unit id="ep6sr0m" resname="DLC">
+        <source>DLC</source>
+        <target>DLC</target>
+      </trans-unit>
+      <trans-unit id="p65D6wp" resname="Expansion">
+        <source>Expansion</source>
+        <target>Extension</target>
+      </trans-unit>
+      <trans-unit id="an7jS.4" resname="Bundle">
+        <source>Bundle</source>
+        <target>Pack</target>
+      </trans-unit>
+      <trans-unit id="OoCDNff" resname="Standalone Expansion">
+        <source>Standalone Expansion</source>
+        <target>Extension autonome</target>
+      </trans-unit>
+      <trans-unit id="9dbIdDO" resname="Mod">
+        <source>Mod</source>
+        <target>Mod</target>
+      </trans-unit>
+      <trans-unit id="Ev_fHcX" resname="Remake">
+        <source>Remake</source>
+        <target>Remake</target>
+      </trans-unit>
+      <trans-unit id="y3mlg16" resname="Remaster">
+        <source>Remaster</source>
+        <target>Remaster</target>
+      </trans-unit>
+      <trans-unit id="nPfEOqY" resname="Expanded Game">
+        <source>Expanded Game</source>
+        <target>Jeu étendu</target>
+      </trans-unit>
+      <trans-unit id="6202NhQ" resname="Port">
+        <source>Port</source>
+        <target>Portage</target>
+      </trans-unit>
+      <trans-unit id="LjiD8FQ" resname="Fork">
+        <source>Fork</source>
+        <target>Fork</target>
+      </trans-unit>
+      <trans-unit id="0yXaz1G" resname="Pack / Addon">
+        <source>Pack / Addon</source>
+        <target>Pack / Extension</target>
+      </trans-unit>
+      <trans-unit id="jVOF1aU" resname="Head game">
+        <source>Head game</source>
+        <target>Jeu principal</target>
+      </trans-unit>
+      <trans-unit id="EHqrclp" resname="No games match your search.">
+        <source>No games match your search.</source>
+        <target>Aucun jeu ne correspond à votre recherche.</target>
+      </trans-unit>
+      <trans-unit id="slsym1u" resname="Traitement in progress...">
+        <source>Traitement in progress...</source>
+        <target>Traitement en cours...</target>
+      </trans-unit>
+      <trans-unit id="5th_a2V" resname="Traitement finished">
+        <source>Traitement finished</source>
+        <target>Traitement terminé</target>
+      </trans-unit>
+      <trans-unit id="S13N6_U" resname="Summary">
+        <source>Summary</source>
+        <target>Résumé</target>
+      </trans-unit>
+      <trans-unit id="sXXx3Jc" resname="page.error.401.title">
+        <source>page.error.401.title</source>
+        <target>Non autorisé</target>
+      </trans-unit>
+      <trans-unit id="qiyS2Aj" resname="page.error.404.title">
+        <source>page.error.404.title</source>
+        <target>Page non trouvée</target>
+      </trans-unit>
+      <trans-unit id="HBiXNo." resname="page.error.403.title">
+        <source>page.error.403.title</source>
+        <target>Accès interdit</target>
+      </trans-unit>
+      <trans-unit id="cAD0qAJ" resname="page.error.500.title">
+        <source>page.error.500.title</source>
+        <target>Erreur interne du serveur</target>
+      </trans-unit>
+      <trans-unit id="h6uPIX2" resname="page.error.default.title">
+        <source>page.error.default.title</source>
+        <target>Une erreur est survenue</target>
+      </trans-unit>
+      <trans-unit id="fCST5i7" resname="page.error.401.message">
+        <source>page.error.401.message</source>
+        <target>Vous devez vous authentifier pour accéder à cette ressource.</target>
+      </trans-unit>
+      <trans-unit id="5Dkoz51" resname="page.error.404.message">
+        <source>page.error.404.message</source>
+        <target>La page que vous recherchez n'existe pas ou a été déplacée.</target>
+      </trans-unit>
+      <trans-unit id="gjxjUZs" resname="page.error.403.message">
+        <source>page.error.403.message</source>
+        <target>Vous n'avez pas les permissions nécessaires pour accéder à cette ressource.</target>
+      </trans-unit>
+      <trans-unit id="Zd03i2P" resname="page.error.500.message">
+        <source>page.error.500.message</source>
+        <target>Une erreur inattendue s'est produite. Veuillez réessayer plus tard.</target>
+      </trans-unit>
+      <trans-unit id="tmemtQn" resname="page.error.default.message">
+        <source>page.error.default.message</source>
+        <target>Une erreur s'est produite lors du traitement de votre demande.</target>
+      </trans-unit>
+      <trans-unit id="B9r0Hn5" resname="Error">
+        <source>Error</source>
+        <target>Erreur</target>
+      </trans-unit>
+      <trans-unit id="g0BY5ot" resname="Import movies">
+        <source>Import movies</source>
+        <target>Importer des films</target>
+      </trans-unit>
+      <trans-unit id="gzyF672" resname="Import series">
+        <source>Import series</source>
+        <target>Importer des séries</target>
+      </trans-unit>
+      <trans-unit id="LnDK4Bi" resname="Import games">
+        <source>Import games</source>
+        <target>Importer des jeux</target>
+      </trans-unit>
+      <trans-unit id="i6JgGSv" resname="page.error.400.title">
+        <source>page.error.400.title</source>
+        <target>Requête incorrecte</target>
+      </trans-unit>
+      <trans-unit id="FO8NniC" resname="page.error.402.title">
+        <source>page.error.402.title</source>
+        <target>Paiement requis</target>
+      </trans-unit>
+      <trans-unit id="ueDC_t2" resname="page.error.405.title">
+        <source>page.error.405.title</source>
+        <target>Méthode non autorisée</target>
+      </trans-unit>
+      <trans-unit id="dbingMZ" resname="page.error.406.title">
+        <source>page.error.406.title</source>
+        <target>Non acceptable</target>
+      </trans-unit>
+      <trans-unit id="1dZlPOp" resname="page.error.407.title">
+        <source>page.error.407.title</source>
+        <target>Authentification proxy requise</target>
+      </trans-unit>
+      <trans-unit id="Ygm42yd" resname="page.error.408.title">
+        <source>page.error.408.title</source>
+        <target>Délai d'attente dépassé</target>
+      </trans-unit>
+      <trans-unit id="k_tJWro" resname="page.error.409.title">
+        <source>page.error.409.title</source>
+        <target>Conflit</target>
+      </trans-unit>
+      <trans-unit id="t_SFyjA" resname="page.error.410.title">
+        <source>page.error.410.title</source>
+        <target>Disparu</target>
+      </trans-unit>
+      <trans-unit id=".Sb1e3k" resname="page.error.411.title">
+        <source>page.error.411.title</source>
+        <target>Longueur requise</target>
+      </trans-unit>
+      <trans-unit id="jwIiyRX" resname="page.error.412.title">
+        <source>page.error.412.title</source>
+        <target>Précondition échouée</target>
+      </trans-unit>
+      <trans-unit id="tbXGIuK" resname="page.error.413.title">
+        <source>page.error.413.title</source>
+        <target>Charge utile trop grande</target>
+      </trans-unit>
+      <trans-unit id="Ap9qz_V" resname="page.error.414.title">
+        <source>page.error.414.title</source>
+        <target>URI trop long</target>
+      </trans-unit>
+      <trans-unit id="Rf_XAB8" resname="page.error.415.title">
+        <source>page.error.415.title</source>
+        <target>Type de média non supporté</target>
+      </trans-unit>
+      <trans-unit id="tlzKLqf" resname="page.error.416.title">
+        <source>page.error.416.title</source>
+        <target>Plage non satisfaisante</target>
+      </trans-unit>
+      <trans-unit id="rZkMann" resname="page.error.417.title">
+        <source>page.error.417.title</source>
+        <target>Attente échouée</target>
+      </trans-unit>
+      <trans-unit id="Gg3YM.E" resname="page.error.418.title">
+        <source>page.error.418.title</source>
+        <target>Je suis une théière</target>
+      </trans-unit>
+      <trans-unit id="CToJC9c" resname="page.error.421.title">
+        <source>page.error.421.title</source>
+        <target>Requête mal dirigée</target>
+      </trans-unit>
+      <trans-unit id="Y6B7b9o" resname="page.error.422.title">
+        <source>page.error.422.title</source>
+        <target>Entité impossible à traiter</target>
+      </trans-unit>
+      <trans-unit id="ztyUjCN" resname="page.error.423.title">
+        <source>page.error.423.title</source>
+        <target>Verrouillé</target>
+      </trans-unit>
+      <trans-unit id="Ce8q30Q" resname="page.error.424.title">
+        <source>page.error.424.title</source>
+        <target>Dépendance échouée</target>
+      </trans-unit>
+      <trans-unit id="nkZICzq" resname="page.error.425.title">
+        <source>page.error.425.title</source>
+        <target>Trop tôt</target>
+      </trans-unit>
+      <trans-unit id="x8xS94P" resname="page.error.426.title">
+        <source>page.error.426.title</source>
+        <target>Mise à niveau requise</target>
+      </trans-unit>
+      <trans-unit id="2osE9c." resname="page.error.428.title">
+        <source>page.error.428.title</source>
+        <target>Précondition requise</target>
+      </trans-unit>
+      <trans-unit id="KyG9J6C" resname="page.error.429.title">
+        <source>page.error.429.title</source>
+        <target>Trop de requêtes</target>
+      </trans-unit>
+      <trans-unit id="JwIZ6S4" resname="page.error.431.title">
+        <source>page.error.431.title</source>
+        <target>Champs d'en-tête trop grands</target>
+      </trans-unit>
+      <trans-unit id="fwadkQy" resname="page.error.451.title">
+        <source>page.error.451.title</source>
+        <target>Indisponible pour des raisons légales</target>
+      </trans-unit>
+      <trans-unit id="_IPKPko" resname="page.error.501.title">
+        <source>page.error.501.title</source>
+        <target>Non implémenté</target>
+      </trans-unit>
+      <trans-unit id="Aic1uP2" resname="page.error.502.title">
+        <source>page.error.502.title</source>
+        <target>Mauvaise passerelle</target>
+      </trans-unit>
+      <trans-unit id="VGGN1Zl" resname="page.error.503.title">
+        <source>page.error.503.title</source>
+        <target>Service indisponible</target>
+      </trans-unit>
+      <trans-unit id="IbDLdvB" resname="page.error.504.title">
+        <source>page.error.504.title</source>
+        <target>Délai d'attente de la passerelle dépassé</target>
+      </trans-unit>
+      <trans-unit id="RAuTwcT" resname="page.error.505.title">
+        <source>page.error.505.title</source>
+        <target>Version HTTP non supportée</target>
+      </trans-unit>
+      <trans-unit id="7kd0vGP" resname="page.error.506.title">
+        <source>page.error.506.title</source>
+        <target>Négociation de variante</target>
+      </trans-unit>
+      <trans-unit id="WczbfV." resname="page.error.507.title">
+        <source>page.error.507.title</source>
+        <target>Espace de stockage insuffisant</target>
+      </trans-unit>
+      <trans-unit id="tImePCE" resname="page.error.508.title">
+        <source>page.error.508.title</source>
+        <target>Boucle détectée</target>
+      </trans-unit>
+      <trans-unit id="74aaG9P" resname="page.error.510.title">
+        <source>page.error.510.title</source>
+        <target>Non étendu</target>
+      </trans-unit>
+      <trans-unit id="ztohEbV" resname="page.error.511.title">
+        <source>page.error.511.title</source>
+        <target>Authentification réseau requise</target>
+      </trans-unit>
+      <trans-unit id="FnPOPKo" resname="page.error.400.message">
+        <source>page.error.400.message</source>
+        <target>La requête ne peut pas être traitée en raison d'une syntaxe incorrecte.</target>
+      </trans-unit>
+      <trans-unit id="eyU9tDw" resname="page.error.402.message">
+        <source>page.error.402.message</source>
+        <target>Un paiement est nécessaire pour accéder à cette ressource.</target>
+      </trans-unit>
+      <trans-unit id=".LWYsc6" resname="page.error.405.message">
+        <source>page.error.405.message</source>
+        <target>La méthode utilisée n'est pas autorisée pour cette ressource.</target>
+      </trans-unit>
+      <trans-unit id="juNFApi" resname="page.error.406.message">
+        <source>page.error.406.message</source>
+        <target>Le serveur ne peut générer une réponse acceptable selon les critères de la requête.</target>
+      </trans-unit>
+      <trans-unit id="ZZ3FCEk" resname="page.error.407.message">
+        <source>page.error.407.message</source>
+        <target>Vous devez vous authentifier auprès du proxy pour accéder à cette ressource.</target>
+      </trans-unit>
+      <trans-unit id="fDXlhvs" resname="page.error.408.message">
+        <source>page.error.408.message</source>
+        <target>Le serveur a mis trop de temps à répondre à la requête.</target>
+      </trans-unit>
+      <trans-unit id="jcy5fVb" resname="page.error.409.message">
+        <source>page.error.409.message</source>
+        <target>La requête est en conflit avec l'état actuel du serveur.</target>
+      </trans-unit>
+      <trans-unit id="Ms5veWl" resname="page.error.410.message">
+        <source>page.error.410.message</source>
+        <target>La ressource demandée n'est plus disponible et ne le sera plus.</target>
+      </trans-unit>
+      <trans-unit id="1r2jU1x" resname="page.error.411.message">
+        <source>page.error.411.message</source>
+        <target>Le serveur exige que la longueur du contenu soit définie dans la requête.</target>
+      </trans-unit>
+      <trans-unit id="g5k8yS1" resname="page.error.412.message">
+        <source>page.error.412.message</source>
+        <target>Une ou plusieurs conditions préalables dans les en-têtes de la requête ont échoué.</target>
+      </trans-unit>
+      <trans-unit id="sc2bP_W" resname="page.error.413.message">
+        <source>page.error.413.message</source>
+        <target>La requête est trop volumineuse pour être traitée par le serveur.</target>
+      </trans-unit>
+      <trans-unit id="UzCyqbf" resname="page.error.414.message">
+        <source>page.error.414.message</source>
+        <target>L'URI de la requête est trop longue pour être traitée par le serveur.</target>
+      </trans-unit>
+      <trans-unit id="MGCU3LY" resname="page.error.415.message">
+        <source>page.error.415.message</source>
+        <target>Le format du contenu de la requête n'est pas supporté par le serveur.</target>
+      </trans-unit>
+      <trans-unit id="94SP4wq" resname="page.error.416.message">
+        <source>page.error.416.message</source>
+        <target>La plage spécifiée dans la requête ne peut pas être satisfaite.</target>
+      </trans-unit>
+      <trans-unit id="HyT0aCl" resname="page.error.417.message">
+        <source>page.error.417.message</source>
+        <target>Le serveur ne peut pas satisfaire les attentes indiquées dans l'en-tête Expect.</target>
+      </trans-unit>
+      <trans-unit id="YebXvN_" resname="page.error.418.message">
+        <source>page.error.418.message</source>
+        <target>Je suis une théière et je ne peux pas préparer de café.</target>
+      </trans-unit>
+      <trans-unit id="HUZUsWt" resname="page.error.421.message">
+        <source>page.error.421.message</source>
+        <target>La requête a été dirigée vers un serveur incapable de produire une réponse.</target>
+      </trans-unit>
+      <trans-unit id="2_K3Koo" resname="page.error.422.message">
+        <source>page.error.422.message</source>
+        <target>La requête est bien formée mais contient des erreurs sémantiques.</target>
+      </trans-unit>
+      <trans-unit id="_dgVH_z" resname="page.error.423.message">
+        <source>page.error.423.message</source>
+        <target>La ressource à laquelle vous tentez d'accéder est verrouillée.</target>
+      </trans-unit>
+      <trans-unit id="djZYD9_" resname="page.error.424.message">
+        <source>page.error.424.message</source>
+        <target>La requête a échoué en raison de l'échec d'une requête précédente.</target>
+      </trans-unit>
+      <trans-unit id="2qE34Bv" resname="page.error.425.message">
+        <source>page.error.425.message</source>
+        <target>Le serveur refuse de traiter une requête qui pourrait être rejouée.</target>
+      </trans-unit>
+      <trans-unit id="9FAChgO" resname="page.error.426.message">
+        <source>page.error.426.message</source>
+        <target>Le client doit passer à un protocole différent pour continuer.</target>
+      </trans-unit>
+      <trans-unit id="eVjRjXj" resname="page.error.428.message">
+        <source>page.error.428.message</source>
+        <target>Le serveur exige que la requête soit conditionnelle.</target>
+      </trans-unit>
+      <trans-unit id="C7.93O2" resname="page.error.429.message">
+        <source>page.error.429.message</source>
+        <target>Vous avez envoyé trop de requêtes dans un laps de temps donné.</target>
+      </trans-unit>
+      <trans-unit id="ilTHMcI" resname="page.error.431.message">
+        <source>page.error.431.message</source>
+        <target>Les champs d'en-tête de la requête sont trop volumineux.</target>
+      </trans-unit>
+      <trans-unit id="Vfk3Trn" resname="page.error.451.message">
+        <source>page.error.451.message</source>
+        <target>Cette ressource n'est pas accessible pour des raisons légales.</target>
+      </trans-unit>
+      <trans-unit id="hs.2dYG" resname="page.error.501.message">
+        <source>page.error.501.message</source>
+        <target>Le serveur ne prend pas en charge la fonctionnalité nécessaire pour traiter cette requête.</target>
+      </trans-unit>
+      <trans-unit id="IOADmT2" resname="page.error.502.message">
+        <source>page.error.502.message</source>
+        <target>Le serveur a reçu une réponse invalide du serveur en amont.</target>
+      </trans-unit>
+      <trans-unit id="ESjFXwL" resname="page.error.503.message">
+        <source>page.error.503.message</source>
+        <target>Le serveur est temporairement indisponible. Veuillez réessayer plus tard.</target>
+      </trans-unit>
+      <trans-unit id="DSDhenm" resname="page.error.504.message">
+        <source>page.error.504.message</source>
+        <target>Le serveur passerelle n'a pas reçu de réponse à temps.</target>
+      </trans-unit>
+      <trans-unit id="bKd4yJM" resname="page.error.505.message">
+        <source>page.error.505.message</source>
+        <target>La version du protocole HTTP utilisée dans la requête n'est pas prise en charge.</target>
+      </trans-unit>
+      <trans-unit id="th85sDP" resname="page.error.506.message">
+        <source>page.error.506.message</source>
+        <target>Le serveur a une erreur de configuration interne.</target>
+      </trans-unit>
+      <trans-unit id="jZUSvKT" resname="page.error.507.message">
+        <source>page.error.507.message</source>
+        <target>Le serveur ne dispose pas de suffisamment d'espace de stockage pour traiter la requête.</target>
+      </trans-unit>
+      <trans-unit id="bkCpyhU" resname="page.error.508.message">
+        <source>page.error.508.message</source>
+        <target>Le serveur a détecté une boucle infinie lors du traitement de la requête.</target>
+      </trans-unit>
+      <trans-unit id="uQh3J.7" resname="page.error.510.message">
+        <source>page.error.510.message</source>
+        <target>Des extensions supplémentaires sont requises pour que le serveur puisse traiter la requête.</target>
+      </trans-unit>
+      <trans-unit id="nz1ei4y" resname="page.error.511.message">
+        <source>page.error.511.message</source>
+        <target>Vous devez vous authentifier auprès du réseau pour accéder à cette ressource.</target>
+      </trans-unit>
+      <trans-unit id="vtsk56f" resname="Message">
+        <source>Message</source>
+        <target>__Message</target>
+      </trans-unit>
+      <trans-unit id="gGxnmUA" resname="Notifications">
+        <source>Notifications</source>
+        <target>Notifications</target>
+      </trans-unit>
+      <trans-unit id="Sn__GSM" resname="No episodes found.">
+        <source>No episodes found.</source>
+        <target>Aucun épisode trouvé.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

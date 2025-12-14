@@ -11,11 +11,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Field\WysiwygField;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PageCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -23,7 +24,7 @@ class PageCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -36,7 +37,7 @@ class PageCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $currentEntity = $this->getContext()->getEntity()->getInstance();
@@ -64,7 +65,7 @@ class PageCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
@@ -77,7 +78,7 @@ class PageCrudController extends CrudControllerAbstract
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): Page
     {
         $page = parent::createEntity($entityFqcn);
@@ -127,8 +128,8 @@ class PageCrudController extends CrudControllerAbstract
     {
         $fields   = [
             $this->crudFieldFactory->slugField(),
-            $this->crudFieldFactory->booleanField('hide', (string) new TranslatableMessage('Hide')),
-            $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+            $this->crudFieldFactory->booleanField('hide', new TranslatableMessage('Hide')),
+            $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
             $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
         ];

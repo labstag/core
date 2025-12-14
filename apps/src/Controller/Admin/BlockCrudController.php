@@ -23,29 +23,31 @@ use Labstag\Entity\Block;
 use Labstag\Filter\DiscriminatorTypeFilter;
 use Labstag\Repository\BlockRepository;
 use LogicException;
+use Override;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class BlockCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
 
         $action = Action::new('positionBlock', new TranslatableMessage('Change Position'), 'fas fa-arrows-alt');
-        $action->displayAsLink();
+        $action->renderAsLink();
         $action->linkToCrudAction('positionBlock');
         $action->createAsGlobalAction();
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        $action = Action::new('showModal', new TranslatableMessage('New block'));
-        $action->linkToCrudAction('showModal');
+        $action = Action::new('showModalBlock', new TranslatableMessage('New block'));
+        $action->linkToCrudAction('showModalBlock');
         $action->setHtmlAttributes(
             ['data-action' => 'show-modal']
         );
@@ -56,7 +58,7 @@ class BlockCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -100,7 +102,7 @@ class BlockCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -113,7 +115,7 @@ class BlockCrudController extends CrudControllerAbstract
         $numberField->hideOnForm();
 
         $fields      = [
-            $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+            $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
             $regionField,
             $numberField,
@@ -141,8 +143,8 @@ class BlockCrudController extends CrudControllerAbstract
         $requestPathField->setRequired(true);
         $requestPathField->setChoices(
             [
-                (string) new TranslatableMessage('Show for listed pages') => '0',
-                (string) new TranslatableMessage('Hide for listed pages') => '1',
+                $this->translator->trans(new TranslatableMessage('Show for listed pages')) => '0',
+                $this->translator->trans(new TranslatableMessage('Hide for listed pages')) => '1',
             ]
         );
         $this->crudFieldFactory->addFieldsToTab(
@@ -158,7 +160,7 @@ class BlockCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -181,7 +183,7 @@ class BlockCrudController extends CrudControllerAbstract
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): object
     {
         unset($entityFqcn);
@@ -196,7 +198,7 @@ class BlockCrudController extends CrudControllerAbstract
         return new $classe();
     }
 
-    #[\Override]
+    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
@@ -224,7 +226,7 @@ class BlockCrudController extends CrudControllerAbstract
     /**
      * @return FormBuilderInterface<mixed>
      */
-    #[\Override]
+    #[Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
@@ -245,7 +247,6 @@ class BlockCrudController extends CrudControllerAbstract
     {
         $blocks = $this->blockService->getAll(null);
 
-        // Sinon affiche un formulaire simple de sélection
         return $this->render(
             'admin/block/new.html.twig',
             [
@@ -255,9 +256,8 @@ class BlockCrudController extends CrudControllerAbstract
         );
     }
 
-    public function positionBlock(AdminContext $adminContext): RedirectResponse|Response
+    public function positionBlock(Request $request): RedirectResponse|Response
     {
-        $request                         = $adminContext->getRequest();
         $repositoryAbstract              = $this->getRepository();
         if (!$repositoryAbstract instanceof BlockRepository) {
             throw new Exception('findAllOrderedByRegion not found');
@@ -270,7 +270,6 @@ class BlockCrudController extends CrudControllerAbstract
 
         $blocks    = $query->getResult();
         $generator = $this->container->get(AdminUrlGenerator::class);
-
         if ($request->isMethod('POST')) {
             $allTypes = $this->blockService->getRegions();
             foreach ($allTypes as $allType) {
@@ -304,9 +303,8 @@ class BlockCrudController extends CrudControllerAbstract
         );
     }
 
-    public function showModal(AdminContext $adminContext): Response
+    public function showModalBlock(): Response
     {
-        unset($adminContext);
         $blocks = $this->blockService->getAll(null);
 
         return $this->render(

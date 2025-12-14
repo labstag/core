@@ -17,7 +17,7 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -85,14 +85,22 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, unique: true)]
     protected ?string $imdb = null;
 
-    #[ORM\OneToOne(inversedBy: 'movie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'movie', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'movie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'movie',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -110,7 +118,7 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     #[ORM\ManyToOne(inversedBy: 'movies')]
     protected ?Saga $saga = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]
     #[Gedmo\SlugHandler(class: MovieSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $slug = null;
@@ -396,7 +404,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     {
         $this->backdrop = $backdrop;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $backdrop) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
@@ -490,7 +497,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     {
         $this->poster = $poster;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $poster) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

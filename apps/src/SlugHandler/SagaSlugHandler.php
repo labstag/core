@@ -17,7 +17,7 @@ class SagaSlugHandler implements SlugHandlerInterface
     {
     }
 
-    public function handlesUrlization()
+    public function handlesUrlization(): bool
     {
         return false;
     }

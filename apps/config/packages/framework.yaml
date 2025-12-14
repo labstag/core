@@ -1,5 +1,6 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
+  error_controller: Labstag\Controller\FrontController::error
   cache:
     pools:
       doctrine.result_cache_pool:

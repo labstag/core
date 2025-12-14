@@ -6,17 +6,15 @@ use Labstag\Entity\Star;
 use Labstag\Message\StarMessage;
 use Labstag\Repository\StarRepository;
 use Labstag\Service\FileService;
-use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(name: 'labstag:star-add', description: 'Get all star github with npm run star:get')]
-class StarAddCommand extends Command
+class StarAddCommand
 {
 
     private int $add = 0;
@@ -29,24 +27,10 @@ class StarAddCommand extends Command
         protected StarRepository $starRepository,
     )
     {
-        parent::__construct();
     }
 
-    protected function addOrUpdate(Star $star): void
+    public function __invoke(SymfonyStyle $symfonyStyle, OutputInterface $output): int
     {
-        if (is_null($star->getId())) {
-            ++$this->add;
-
-            return;
-        }
-
-        ++$this->update;
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $symfonyStyle = new SymfonyStyle($input, $output);
         $filename     = 'stars.json';
         $file         = $this->fileService->getFileInAdapter('private', $filename);
         if (!is_file($file)) {
@@ -85,5 +69,16 @@ class StarAddCommand extends Command
         $symfonyStyle->success('All star added');
 
         return Command::SUCCESS;
+    }
+
+    protected function addOrUpdate(Star $star): void
+    {
+        if (is_null($star->getId())) {
+            ++$this->add;
+
+            return;
+        }
+
+        ++$this->update;
     }
 }

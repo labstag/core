@@ -66,9 +66,9 @@ class SagaListParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Saga list');
+        return new TranslatableMessage('Saga list');
     }
 
     #[Override]

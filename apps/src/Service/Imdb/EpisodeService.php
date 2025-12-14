@@ -3,7 +3,6 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
-use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
@@ -109,16 +108,8 @@ final class EpisodeService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $this->fileService->setUploadedFile($poster, $episode, 'imgFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $episode, 'imgFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 }

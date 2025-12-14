@@ -8,7 +8,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -17,10 +16,10 @@ use Labstag\Entity\Story;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\StoryAllMessage;
 use Labstag\Message\StoryMessage;
+use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class StoryCrudController extends CrudControllerAbstract
@@ -69,19 +68,19 @@ class StoryCrudController extends CrudControllerAbstract
         return $associationField;
     }
 
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->setActionMoveChapter();
         $this->setActionNewChapter();
         $this->setUpdateAction();
-        $this->actionsFactory->setActionUpdateAll();
+        $this->actionsFactory->setActionUpdateAll('updateAllStory');
 
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -94,7 +93,7 @@ class StoryCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -105,7 +104,7 @@ class StoryCrudController extends CrudControllerAbstract
             'principal',
             [
                 $this->crudFieldFactory->slugField(),
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $this->chaptersFieldForPage(self::getEntityFqcn(), $pageName),
@@ -122,7 +121,7 @@ class StoryCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
@@ -138,27 +137,24 @@ class StoryCrudController extends CrudControllerAbstract
         return Story::class;
     }
 
-    public function moveChapter(AdminContext $adminContext): RedirectResponse|Response
+    public function moveChapter(Request $request): RedirectResponse|Response
     {
-        $request    = $adminContext->getRequest();
-        $repository = $this->getRepository();
         $entityId   = $request->query->get('entityId');
-        $story      = $repository->find($entityId);
+        $story      = $this->getRepository(Story::class)->find($entityId);
         $generator  = $this->container->get(AdminUrlGenerator::class);
         if ($request->isMethod('POST')) {
-            $repository = $this->getRepository(Chapter::class);
             $chapters   = $request->get('chapter');
             foreach ($chapters as $id => $position) {
-                $chapter = $repository->find($id);
+                $chapter = $this->getRepository(Chapter::class)->find($id);
                 if (!$chapter instanceof Chapter) {
                     continue;
                 }
 
                 $chapter->setPosition($position);
-                $repository->persist($chapter);
+                $this->getRepository(Chapter::class)->persist($chapter);
             }
 
-            $repository->flush();
+            $this->getRepository(Chapter::class)->flush();
             $this->addFlash('success', new TranslatableMessage('Position updated'));
 
             $url = $generator->setController(static::class)->setAction(Action::INDEX)->generateUrl();
@@ -174,23 +170,19 @@ class StoryCrudController extends CrudControllerAbstract
         );
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllStory(): RedirectResponse
     {
-        $messageBus->dispatch(new StoryAllMessage());
+        $this->messageBus->dispatch(new StoryAllMessage());
 
         return $this->redirectToRoute('admin_story_index');
     }
 
-    public function updateStory(
-        AdminContext $adminContext,
-        Request $request,
-        MessageBusInterface $messageBus,
-    ): RedirectResponse
+    public function updateStory(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $story                           = $repositoryAbstract->find($entityId);
-        $messageBus->dispatch(new StoryMessage($story->getId()));
+        $this->messageBus->dispatch(new StoryMessage($story->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

@@ -3,18 +3,24 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Exception;
 use Labstag\Api\TheMovieDbApi;
+use Labstag\Entity\Recommendation;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\SerieCategory;
 use Labstag\Message\SeasonMessage;
+use Labstag\Message\SerieMessage;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\CategoryService;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
-use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Labstag\Service\VideoService;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 
 final class SerieService
 {
@@ -32,14 +38,80 @@ final class SerieService
     public function __construct(
         private RecommendationService $recommendationService,
         private MessageBusInterface $messageBus,
+        private ConfigurationService $configurationService,
         private FileService $fileService,
         private CompanyService $companyService,
         private SeasonService $seasonService,
         private SerieRepository $serieRepository,
         private CategoryService $categoryService,
         private TheMovieDbApi $theMovieDbApi,
+        private RequestStack $requestStack,
+        private VideoService $videoService,
+        private RouterInterface $router,
     )
     {
+    }
+
+    public function addToBddSerie(Recommendation $recommendation, string $tmdbId): RedirectResponse
+    {
+        $details = $this->theMovieDbApi->tvserie()->getDetails($tmdbId);
+        if (0 === count($details)) {
+            return new RedirectResponse($this->router->generate('admin_recommendation_index'));
+        }
+
+        $serie = $this->serieRepository->findOneBy(
+            ['tmdb' => $tmdbId]
+        );
+        if ($serie instanceof Serie) {
+            $this->getFlashBag()->add(
+                'warning',
+                new TranslatableMessage(
+                    'The %name% series is already present in the database',
+                    [
+                        '%name%' => $serie->getTitle(),
+                    ]
+                )
+            );
+
+            return new RedirectResponse(
+                $this->router->generate(
+                    'admin_serie_detail',
+                    [
+                        'entityId' => $serie->getId(),
+                    ]
+                )
+            );
+        }
+
+        $data = $this->theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
+        $serie = new Serie();
+        $serie->setFile(false);
+        $serie->setEnable(true);
+        $serie->setAdult(false);
+        $serie->setImdb($data['imdb_id'] ?? '');
+        $serie->setTmdb($tmdbId);
+        $serie->setTitle($recommendation->getTitle() ?? '');
+
+        $this->serieRepository->save($serie);
+        $this->messageBus->dispatch(new SerieMessage($serie->getId()));
+        $this->getFlashBag()->add(
+            'success',
+            new TranslatableMessage(
+                'The %name% series has been added to the database',
+                [
+                    '%name%' => $serie->getTitle(),
+                ]
+            )
+        );
+
+        return new RedirectResponse(
+            $this->router->generate(
+                'admin_serie_detail',
+                [
+                    'entityId' => $serie->getId(),
+                ]
+            )
+        );
     }
 
     /**
@@ -56,6 +128,33 @@ final class SerieService
         $this->country = $country;
 
         return $country;
+    }
+
+    public function getSerieApi(array $data, int $page = 1): array
+    {
+        $series             = [];
+        $tmdbs              = $this->serieRepository->getAllTmdb();
+        $search             = '';
+        if (isset($data['imdb']) && !empty($data['imdb'])) {
+            $results = $this->theMovieDbApi->other()->findByImdb($data['imdb']);
+            if (isset($results['tv_results'])) {
+                $series = $results['tv_results'];
+            }
+
+            return $this->updateResult($series, $tmdbs);
+        }
+
+        if (isset($data['title'])) {
+            $search = $data['title'];
+        }
+
+        $locale             = $this->configurationService->getLocaleTmdb();
+        $results            = $this->theMovieDbApi->tvserie()->search(searchQuery: $search, page: $page, language: $locale);
+        if (isset($results['results'])) {
+            $series = $results['results'];
+        }
+
+        return $this->updateResult($series, $tmdbs);
     }
 
     /**
@@ -125,6 +224,13 @@ final class SerieService
         ];
 
         return in_array(true, $statuses, true);
+    }
+
+    private function getFlashBag(): FlashBagInterface
+    {
+        $session = $this->requestStack->getSession();
+
+        return $session->getFlashBag();
     }
 
     /**
@@ -249,17 +355,9 @@ final class SerieService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
+        $this->fileService->setUploadedFile($backdrop, $serie, 'backdropFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($backdrop));
-            $this->fileService->setUploadedFile($tempPath, $serie, 'backdropFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     /**
@@ -275,17 +373,9 @@ final class SerieService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $this->fileService->setUploadedFile($poster, $serie, 'posterFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $serie, 'posterFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     private function updateOther(Serie $serie, array $details): bool
@@ -305,6 +395,21 @@ final class SerieService
         $this->recommendationService->setRecommendations($serie, $details['similar']['results'] ?? null);
 
         return true;
+    }
+
+    private function updateResult($series, array $tmdbs): array
+    {
+        foreach ($series as &$serie) {
+            $serie['first_air_date'] = empty($serie['first_air_date']) ? null : new DateTime(
+                $serie['first_air_date']
+            );
+            $serie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
+                $serie['poster_path'] ?? '',
+                100
+            );
+        }
+
+        return array_filter($series, fn (array $serie): bool => !in_array($serie['id'], $tmdbs));
     }
 
     private function updateSeasons(Serie $serie, array $details): bool
@@ -358,21 +463,11 @@ final class SerieService
      */
     private function updateTrailer(Serie $serie, array $details): bool
     {
-        if (is_null($details['videos']) || !is_array($details['videos'])) {
-            return false;
-        }
-
-        $find = false;
-
-        foreach ($details['videos']['results'] as $result) {
-            if ('YouTube' == $result['site'] && 'Trailer' == $result['type']) {
-                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
-                $serie->setTrailer($url);
-
-                $find = true;
-
-                break;
-            }
+        $find  = false;
+        $video = $this->videoService->getTrailer($details['videos']);
+        if (!is_null($video)) {
+            $serie->setTrailer($video);
+            $find = true;
         }
 
         return $find;

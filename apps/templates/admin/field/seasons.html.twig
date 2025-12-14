@@ -1,6 +1,6 @@
 {# Use field.value for seasons collection to be robust on index/detail #}
 {% set seasons = field.value is defined and field.value is not null ? field.value : [] %}
-{% if ea.crud.currentAction == 'detail' %}
+{% if ea().crud.currentAction == 'detail' %}
   <ul>
     {% for season in seasons %}
         <li>

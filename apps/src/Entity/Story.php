@@ -17,7 +17,7 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: StoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -44,11 +44,11 @@ class Story implements Stringable, EntityWithParagraphsInterface
     #[ORM\OneToMany(
         targetEntity: Chapter::class,
         mappedBy: 'refstory',
-        orphanRemoval: true,
         cascade: [
             'persist',
             'remove',
-        ]
+        ],
+        orphanRemoval: true
     )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
@@ -73,14 +73,22 @@ class Story implements Stringable, EntityWithParagraphsInterface
     #[Vich\UploadableField(mapping: 'story', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'story', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'story', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'story', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'story',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -92,15 +100,15 @@ class Story implements Stringable, EntityWithParagraphsInterface
     #[Vich\UploadableField(mapping: 'story', fileNameProperty: 'pdf')]
     protected ?File $pdfFile = null;
 
-    #[ORM\ManyToOne(inversedBy: 'stories', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'stories')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?User $refuser = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     protected ?string $resume = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
     protected ?string $slug = null;
 
     /**

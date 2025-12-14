@@ -4,6 +4,7 @@ namespace Labstag\FileStorage;
 
 use Labstag\Entity\Star;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Override;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -20,7 +21,7 @@ class StarFileStorage extends FileStorageAbstract implements FileStorageInterfac
         $this->setType('star');
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(): array
     {
         return [Star::class];

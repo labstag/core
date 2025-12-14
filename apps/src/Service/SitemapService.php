@@ -3,8 +3,10 @@
 namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Exception;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\Game;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
@@ -13,6 +15,7 @@ use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class SitemapService
 {
@@ -25,6 +28,7 @@ final class SitemapService
     public function __construct(
         private ConfigurationService $configurationService,
         private SlugService $slugService,
+        private UrlGeneratorInterface $urlGenerator,
         private EntityManagerInterface $entityManager,
     )
     {
@@ -54,6 +58,10 @@ final class SitemapService
             $tabs = array_merge($tabs, $this->getDataMovie());
         }
 
+        if ($all) {
+            $tabs = array_merge($tabs, $this->getDataGame());
+        }
+
         $this->parent = [];
 
         return $this->setTabsByParent($tabs, '/');
@@ -64,7 +72,8 @@ final class SitemapService
      */
     private function formatData(object $entity): array
     {
-        $url = $this->slugService->forEntity($entity);
+        $params = $this->slugService->forEntity($entity);
+        $url    = $this->urlGenerator->generate('front', $params);
 
         return [
             '/' . $url => ['entity' => $entity],
@@ -82,6 +91,21 @@ final class SitemapService
         }
 
         return $entityRepository->getAllActivate();
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getDataGame(): array
+    {
+        $listing = $this->slugService->getPageByType(PageEnum::GAMES->value);
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
+
+        $games = $this->getDataFromRepository(Game::class);
+
+        return array_merge($this->setTabs($games));
     }
 
     /**
@@ -176,9 +200,9 @@ final class SitemapService
     }
 
     /**
-     * @return \Doctrine\ORM\EntityRepository<object>
+     * @return EntityRepository<object>
      */
-    private function getRepository(string $entity): \Doctrine\ORM\EntityRepository
+    private function getRepository(string $entity): EntityRepository
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (is_null($entityRepository)) {

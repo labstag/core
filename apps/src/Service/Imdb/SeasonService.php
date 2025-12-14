@@ -3,7 +3,6 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
-use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
@@ -100,6 +99,7 @@ final class SeasonService
         $statuses = [
             $this->updateSeason($season, $details),
             $this->updateImagePoster($season, $details),
+            $this->updateImageBackdrop($season),
             $this->updateEpisodes($season, $details),
         ];
 
@@ -123,6 +123,30 @@ final class SeasonService
         return true;
     }
 
+    private function updateImageBackdrop(Season $season): bool
+    {
+        $images = [];
+        foreach ($season->getEpisodes() as $episode) {
+            $file     = $episode->getImg();
+            if (is_null($file)) {
+                continue;
+            }
+
+            $images[] = $this->fileService->getFileInAdapter('episode', $file);
+        }
+
+        if ([] === $images) {
+            return false;
+        }
+
+        $patchwork = $this->fileService->setImgPatchwork($images);
+        if (!is_null($patchwork)) {
+            $this->fileService->setUploadedFile($patchwork, $season, 'backdropFile');
+        }
+
+        return true;
+    }
+
     /**
      * @param array<string, mixed> $details
      */
@@ -133,18 +157,9 @@ final class SeasonService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $this->fileService->setUploadedFile($poster, $season, 'posterFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-
-            $this->fileService->setUploadedFile($tempPath, $season, 'posterFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     private function updateSeason(Season $season, array $details): bool

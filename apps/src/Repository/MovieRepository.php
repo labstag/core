@@ -159,6 +159,16 @@ class MovieRepository extends RepositoryAbstract
         return array_column($rows, 'tmdb');
     }
 
+    public function getAllTmdb(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->select('m.tmdb');
+
+        $result = $queryBuilder->getQuery()->getArrayResult();
+
+        return array_column($result, 'tmdb');
+    }
+
     public function getCertifications(): array
     {
         $queryBuilder = $this->createQueryBuilder('m');

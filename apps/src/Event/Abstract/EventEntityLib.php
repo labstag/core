@@ -5,6 +5,7 @@ namespace Labstag\Event\Abstract;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\BanIp;
 use Labstag\Entity\Block;
+use Labstag\Entity\Chapter;
 use Labstag\Entity\HttpErrorLogs;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
@@ -113,6 +114,7 @@ abstract class EventEntityLib
     protected function postPersistMethods(object $object, EntityManagerInterface $entityManager)
     {
         $this->updateEntityStory($object);
+        $this->updateEntityChapter($object);
         $this->updateEntityMovie($object);
         $this->updateEntitySerie($object);
         $this->updateEntitySaga($object);
@@ -159,6 +161,15 @@ abstract class EventEntityLib
         $this->blockService->update($instance);
     }
 
+    protected function updateEntityChapter(object $instance): void
+    {
+        if (!$instance instanceof Chapter) {
+            return;
+        }
+
+        $this->messageBus->dispatch(new StoryMessage($instance->getRefstory()->getId()));
+    }
+
     protected function updateEntityMovie(object $instance): void
     {
         if (!$instance instanceof Movie) {
@@ -180,12 +191,12 @@ abstract class EventEntityLib
             return;
         }
 
-        if (PageEnum::HOME->value != $instance->getType()) {
-            $code = (PageEnum::CV->value == $instance->getType()) ? 'head-cv' : 'head';
-            $this->addParagraph($instance, $code, 0);
-
+        if (in_array($instance->getType(), [PageEnum::HOME->value, PageEnum::ERRORS->value])) {
             return;
         }
+
+        $code = (PageEnum::CV->value == $instance->getType()) ? 'head-cv' : 'head';
+        $this->addParagraph($instance, $code, 0);
     }
 
     protected function updateEntityParagraph(object $instance): void

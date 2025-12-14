@@ -16,7 +16,7 @@ use Labstag\SlugHandler\SeasonSlugHandler;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: SeasonRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -26,8 +26,10 @@ class Season implements Stringable, EntityWithParagraphsInterface
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
+    #[ORM\Column(length: 255, nullable: true)]
     public $backdrop;
 
+    #[Vich\UploadableField(mapping: 'season', fileNameProperty: 'backdrop')]
     public $backdropFile;
 
     #[ORM\Column(name: 'air_date', type: Types::DATE_MUTABLE, nullable: true)]
@@ -42,7 +44,15 @@ class Season implements Stringable, EntityWithParagraphsInterface
     /**
      * @var Collection<int, Episode>
      */
-    #[ORM\OneToMany(targetEntity: Episode::class, mappedBy: 'refseason', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Episode::class,
+        mappedBy: 'refseason',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['number' => 'ASC']
     )]
@@ -54,7 +64,7 @@ class Season implements Stringable, EntityWithParagraphsInterface
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'season', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'season', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
@@ -67,7 +77,15 @@ class Season implements Stringable, EntityWithParagraphsInterface
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'season', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'season',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -80,10 +98,10 @@ class Season implements Stringable, EntityWithParagraphsInterface
     protected ?File $posterFile = null;
 
     #[ORM\ManyToOne(inversedBy: 'seasons')]
-    #[ORM\JoinColumn(name: 'refserie_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ORM\JoinColumn(name: 'refserie_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
     protected ?Serie $refserie = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]
     #[Gedmo\SlugHandler(class: SeasonSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $slug = null;
@@ -230,11 +248,42 @@ class Season implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getSeason() === $this
+        ) {
+            $paragraph->setSeason(null);
+        }
+
+        return $this;
+    }
+
     public function setAirDate(?DateTime $airDate): static
     {
         $this->airDate = $airDate;
 
         return $this;
+    }
+
+    public function setBackdrop(?string $backdrop): void
+    {
+        $this->backdrop = $backdrop;
+
+        if (null === $backdrop) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setBackdropFile(?File $backdropFile = null): void
+    {
+        $this->backdropFile = $backdropFile;
+
+        if ($backdropFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setEnable(bool $enable): static
@@ -269,7 +318,6 @@ class Season implements Stringable, EntityWithParagraphsInterface
     {
         $this->poster = $poster;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $poster) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

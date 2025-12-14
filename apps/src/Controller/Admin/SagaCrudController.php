@@ -7,35 +7,33 @@ use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Saga;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\SagaAllMessage;
 use Labstag\Message\SagaMessage;
+use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
-        $this->actionsFactory->setActionUpdateAll();
+        $this->actionsFactory->setActionUpdateAll('updateAllSaga');
 
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -48,7 +46,7 @@ class SagaCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -60,7 +58,7 @@ class SagaCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField(
@@ -89,13 +87,12 @@ class SagaCrudController extends CrudControllerAbstract
         return Saga::class;
     }
 
-    public function jsonSaga(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
+    public function jsonSaga(Request $request): JsonResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
-
-        $details = $theMovieDbApi->getDetailsSaga($saga);
+        $details                         = $this->theMovieDbApi->getDetailsSaga($saga);
 
         return new JsonResponse($details);
     }
@@ -144,32 +141,28 @@ class SagaCrudController extends CrudControllerAbstract
         return $associationField;
     }
 
-    public function tmdb(AdminContext $adminContext): RedirectResponse
+    public function tmdb(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
 
         return $this->redirect('https://www.themoviedb.org/collection/' . $saga->getTmdb());
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllSaga(): RedirectResponse
     {
-        $messageBus->dispatch(new SagaAllMessage());
+        $this->messageBus->dispatch(new SagaAllMessage());
 
         return $this->redirectToRoute('admin_saga_index');
     }
 
-    public function updateSaga(
-        AdminContext $adminContext,
-        Request $request,
-        MessageBusInterface $messageBus,
-    ): RedirectResponse
+    public function updateSaga(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
-        $messageBus->dispatch(new SagaMessage($saga->getId()));
+        $this->messageBus->dispatch(new SagaMessage($saga->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {
@@ -186,7 +179,7 @@ class SagaCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('updateSaga', new TranslatableMessage('Update'));
+        $action = Action::new('updateSaga', new TranslatableMessage('Update'), 'fas fa-sync-alt');
         $action->linkToCrudAction('updateSaga');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

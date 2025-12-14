@@ -13,12 +13,10 @@ class ParagraphsBlock extends ParagraphBlockAbstract
         return EntityParagraphsBlock::class;
     }
 
-    // Utilise l'implémentation par défaut d'ParagraphBlockAbstract
-
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Paragraphs');
+        return new TranslatableMessage('Paragraphs');
     }
 
     #[Override]

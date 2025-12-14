@@ -10,14 +10,15 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\EpisodeRepository;
+use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: EpisodeRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Episode
+class Episode implements Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
@@ -50,6 +51,7 @@ class Episode
     protected ?string $overview = null;
 
     #[ORM\ManyToOne(inversedBy: 'episodes')]
+    #[ORM\JoinColumn(name: 'refseason_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
     protected ?Season $refseason = null;
 
     #[ORM\Column(nullable: true)]
@@ -66,6 +68,11 @@ class Episode
 
     #[ORM\Column(name: 'vote_count', nullable: true)]
     protected ?int $voteCount = null;
+
+    public function __toString(): string
+    {
+        return (string) $this->getTitle();
+    }
 
     public function getAirDate(): ?DateTime
     {
@@ -150,7 +157,6 @@ class Episode
     {
         $this->img = $img;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
         if (null === $img) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

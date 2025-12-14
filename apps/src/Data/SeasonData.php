@@ -2,14 +2,16 @@
 
 namespace Labstag\Data;
 
+use DateTime;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
+use Override;
 use Spatie\SchemaOrg\Schema;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SeasonData extends SerieData implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function asset(mixed $entity, string $field): string
     {
         $asset = $this->fileService->asset($entity, $field);
@@ -17,26 +19,25 @@ class SeasonData extends SerieData implements DataInterface
             return $asset;
         }
 
-        if ('backdrop' === $field) {
-            return $this->fileService->asset($entity, 'poster');
-        }
-
         return parent::asset($entity->getRefserie(), $field);
     }
 
-    #[\Override]
-    public function generateSlug(object $entity): string
+    #[Override]
+    public function generateSlug(object $entity): array
     {
-        return parent::generateSlug($entity->getRefserie()) . '/' . $entity->getSlug();
+        $slug = parent::generateSlug($entity->getRefserie());
+        $slug['slug'] .= '/' . $entity->getSlug();
+
+        return $slug;
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugSeason($slug);
     }
 
-    #[\Override]
+    #[Override]
     public function getJsonLd(object $entity): object
     {
         $schema = $this->getJsonLdSeason($entity);
@@ -54,14 +55,8 @@ class SeasonData extends SerieData implements DataInterface
         $tvSeries = Schema::tvSeries();
         $tvSeries->name($entity->getRefserie()->getTitle());
 
-        $slug = $this->slugService->forEntity($entity->getRefserie());
-        $tvSeries->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            )
-        );
+        $params = $this->slugService->forEntity($entity->getRefserie());
+        $tvSeries->url($this->router->generate('front', $params, UrlGeneratorInterface::ABSOLUTE_URL));
         $schema->partOfSeries($tvSeries);
 
         return $schema;
@@ -72,19 +67,19 @@ class SeasonData extends SerieData implements DataInterface
         return 'saison-';
     }
 
-    #[\Override]
+    #[Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
     }
 
-    #[\Override]
+    #[Override]
     public function getTitleMeta(object $entity): string
     {
         return parent::getTitle($entity->getRefserie()) . ' - ' . $this->getTitle($entity);
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlugSeason($slug);
@@ -92,7 +87,7 @@ class SeasonData extends SerieData implements DataInterface
         return $page instanceof Season;
     }
 
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('season');
@@ -103,19 +98,19 @@ class SeasonData extends SerieData implements DataInterface
         return parent::configPlaceholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Season;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Season;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsJsonLd(object $entity): bool
     {
         return $entity instanceof Season;
@@ -155,7 +150,7 @@ class SeasonData extends SerieData implements DataInterface
         $tvepisode = Schema::tvEpisode();
         $tvepisode->name($episode->getTitle());
         $tvepisode->episodeNumber($episode->getNumber());
-        if ($episode->getAirDate() instanceof \DateTime) {
+        if ($episode->getAirDate() instanceof DateTime) {
             $tvepisode->episodeNumber($episode->getAirDate()->format('Y-m-d'));
         }
 

@@ -7,12 +7,13 @@ use Labstag\Entity\PostTag;
 use Labstag\Entity\StoryTag;
 use Labstag\Entity\Tag;
 use Labstag\Enum\PageEnum;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class TagData extends DataAbstract implements DataInterface
 {
-    #[\Override]
-    public function generateSlug(object $entity): string
+    #[Override]
+    public function generateSlug(object $entity): array
     {
         $entityRepository = $this->entityManager->getRepository(Page::class);
         $page             = match ($entity::class) {
@@ -30,23 +31,29 @@ class TagData extends DataAbstract implements DataInterface
         };
 
         if (!$page instanceof Page) {
-            return '';
+            return ['slug' => ''];
         }
 
         return match ($entity::class) {
-            PostTag::class  => $page->getSlug() . '/tag-' . $entity->getSlug(),
-            StoryTag::class => $page->getSlug() . '/tag-' . $entity->getSlug(),
-            default         => '',
+            PostTag::class  => [
+                'slug' => $page->getSlug(),
+                'tag'  => $entity->getSlug(),
+            ],
+            StoryTag::class => [
+                'slug' => $page->getSlug(),
+                'tag'  => $entity->getSlug(),
+            ],
+            default         => ['slug' => ''],
         };
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugTag($slug);
     }
 
-    #[\Override]
+    #[Override]
     public function getTitle(object $entity): string
     {
         unset($entity);
@@ -61,7 +68,7 @@ class TagData extends DataAbstract implements DataInterface
         return $this->translator->trans(new TranslatableMessage('Tag %tag%'), $params);
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlugTag($slug);
@@ -69,7 +76,7 @@ class TagData extends DataAbstract implements DataInterface
         return $page instanceof Page;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Tag;

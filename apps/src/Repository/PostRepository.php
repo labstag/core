@@ -20,7 +20,7 @@ class PostRepository extends RepositoryAbstract
 
     public function findLastByNbr(int $nbr): mixed
     {
-        $queryBuilder = $this->getOptimizedBaseQB();
+        $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
@@ -48,7 +48,7 @@ class PostRepository extends RepositoryAbstract
 
     public function getAllActivate(): mixed
     {
-        $queryBuilder = $this->getOptimizedBaseQB();
+        $queryBuilder = $this->getQueryBuilder();
         $query        = $queryBuilder->getQuery();
         $query->enableResultCache(600, 'post-activate');
 
@@ -71,13 +71,15 @@ class PostRepository extends RepositoryAbstract
      */
     public function getQueryPaginator(?string $categorySlug, ?string $tagSlug): Query
     {
-        $queryBuilder = $this->getOptimizedBaseQB();
+        $queryBuilder = $this->getQueryBuilder();
         if ($categorySlug) {
+            $queryBuilder->leftJoin('p.categories', 'c')->addSelect('c');
             $queryBuilder->andWhere('c.slug = :categorySlug');
             $queryBuilder->setParameter('categorySlug', $categorySlug);
         }
 
         if ($tagSlug) {
+            $queryBuilder->leftJoin('p.tags', 't')->addSelect('t');
             $queryBuilder->andWhere('t.slug = :tagSlug');
             $queryBuilder->setParameter('tagSlug', $tagSlug);
         }
@@ -86,19 +88,5 @@ class PostRepository extends RepositoryAbstract
         $query->enableResultCache(300, 'post-query-paginator-' . $categorySlug . '-' . $tagSlug);
 
         return $query;
-    }
-
-    /**
-     * Base optimisée : pré-chargement des relations nécessaires pour éviter N+1.
-     */
-    private function getOptimizedBaseQB(): QueryBuilder
-    {
-        $queryBuilder = $this->getQueryBuilder();
-        // Relations hypothétiques : tags, categories, meta (ajuster selon mapping réel)
-        $queryBuilder->leftJoin('p.tags', 't')->addSelect('t');
-        $queryBuilder->leftJoin('p.categories', 'c')->addSelect('c');
-        $queryBuilder->leftJoin('p.meta', 'm')->addSelect('m');
-
-        return $queryBuilder;
     }
 }

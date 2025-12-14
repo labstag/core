@@ -4,6 +4,7 @@ namespace Labstag\Paragraph;
 
 use Labstag\Entity\Paragraph;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 
 interface ParagraphInterface
 {
@@ -21,7 +22,7 @@ interface ParagraphInterface
 
     public function getHeader(Paragraph $paragraph): mixed;
 
-    public function getName(): string;
+    public function getName(): TranslatableMessage;
 
     public function getType(): string;
 

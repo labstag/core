@@ -3,8 +3,6 @@
 namespace Labstag\Twig\Runtime;
 
 use DOMDocument;
-use Essence\Essence;
-use Essence\Media;
 use Labstag\Service\BlockService;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
@@ -96,40 +94,31 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
      */
     public function oembed(string $url): array
     {
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
-        if (!$media instanceof Media) {
+        $media = $this->fileService->getMediaByUrl($url);
+        if (is_null($media)) {
             return ['oembed' => ''];
         }
 
-        $html   = $media->has('html') ? $media->get('html') : '';
-        $oembed = $this->getOEmbedUrl($html);
+        $json   = $media->jsonSerialize();
+        $oembed = $this->getOEmbedUrl($json['html'] ?? '');
         if (is_null($oembed)) {
             return ['oembed' => ''];
         }
 
+        $json = $media->jsonSerialize();
+
         return [
-            'provider' => $media->has('providerName') ? strtolower((string) $media->get('providerName')) : '',
+            'title'    => $json['title'] ?? '',
+            'provider' => $json['providerName'] ?? '',
             'oembed'   => $this->parseUrlAndAddAutoplay($oembed),
         ];
     }
 
     public function path(object $entity): string
     {
-        $slug = $this->slugService->forEntity($entity);
+        $params = $this->slugService->forEntity($entity);
 
-        return $this->router->generate(
-            'front',
-            ['slug' => $slug]
-        );
+        return $this->router->generate('front', $params);
     }
 
     public function tarteaucitron(): string

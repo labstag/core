@@ -2,22 +2,16 @@
 
 namespace Labstag\Service\Imdb;
 
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Exception;
 use Labstag\Api\TheMovieDbApi;
-use Labstag\Entity\Movie;
 use Labstag\Entity\Saga;
 use Labstag\Message\SagaMessage;
-use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
 use Labstag\Service\FileService;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SagaService
 {
-
     public function __construct(
         private LoggerInterface $logger,
         private RecommendationService $recommendationService,
@@ -104,17 +98,9 @@ final class SagaService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
+        $this->fileService->setUploadedFile($backdrop, $saga, 'backdropFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($backdrop));
-            $this->fileService->setUploadedFile($tempPath, $saga, 'backdropFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     private function updateImagePoster(Saga $saga, array $data): bool
@@ -127,17 +113,9 @@ final class SagaService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $this->fileService->setUploadedFile($poster, $saga, 'posterFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $saga, 'posterFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     private function updateRecommendations(Saga $saga, array $details): bool

@@ -1,0 +1,59 @@
+<table class="table datagrid{% if platforms|length == 0 %} datagrid-empty{% endif %} data-ajax" data-page="{{ page }}">
+    {% if platforms|length != 0 %}
+        <thead>
+            <tr>
+                <th>
+                    {{ 'Name'|trans }}
+                </th>
+                <th>
+                    {{ 'Family'|trans }}
+                </th>
+                <th>
+                    {{ 'Action'|trans }}
+                </th>
+            </tr>
+        </thead>
+    {% endif %}
+    <tbody>
+        {% for platform in platforms %}
+            <tr data-id="{{ platform.id }}">
+                <td class="text-left" dir="ltr">
+                    <span title="{{ platform.name|e('html_attr') }}">{{ platform.name }}</span>
+                </td>
+                <td class="text-left" dir="ltr">
+                    {% if platform.platform_family.name is defined %}
+                        <span title="{{ platform.platform_family.name|e('html_attr') }}">{{ platform.platform_family.name }}</span>
+                    {% else %}
+                        <span title="N/A">N/A</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ ea_url().setController(controller).setAction('addByApi').set('id', platform.id) }}" class="addtobdd">
+                        {{ 'Select'|trans }}
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            {% block table_body_empty %}
+				{% for i in 1..6 %}
+					<tr class="empty-row">
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+					</tr>
+
+					{% if 3 == loop.index %}
+						<tr class="no-results">
+							<td colspan="100">
+								{{ t('datagrid.no_results', ea().i18n.translationParameters, 'EasyAdminBundle')|trans }}
+							</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			{% endblock table_body_empty %}
+        {% endfor %}
+    </tbody>
+</table>

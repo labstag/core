@@ -19,11 +19,14 @@ class Meta implements Stringable
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected ?Chapter $chapter = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $description = null;
+
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected ?Game $game = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -34,25 +37,25 @@ class Meta implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $keywords = null;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected ?Movie $movie = null;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected ?Page $page = null;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected ?Post $post = null;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected ?Saga $saga = null;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected ?Season $season = null;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected ?Serie $serie = null;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected ?Story $story = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -72,6 +75,11 @@ class Meta implements Stringable
     public function getDescription(): ?string
     {
         return $this->description;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
     }
 
     public function getId(): ?string
@@ -139,6 +147,18 @@ class Meta implements Stringable
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function setGame(Game $game): static
+    {
+        // set the owning side of the relation if necessary
+        if ($game->getMeta() !== $this) {
+            $game->setMeta($this);
+        }
+
+        $this->game = $game;
 
         return $this;
     }

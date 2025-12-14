@@ -5,12 +5,13 @@ namespace Labstag\Data;
 use Labstag\Entity\Page;
 use Labstag\Entity\Serie;
 use Labstag\Enum\PageEnum;
+use Override;
 use Spatie\SchemaOrg\Schema;
 use Symfony\Component\Routing\RouterInterface;
 
 class SerieData extends PageData implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function asset(mixed $entity, string $field): string
     {
         $asset = $this->fileService->asset($entity, $field);
@@ -25,8 +26,8 @@ class SerieData extends PageData implements DataInterface
         return $this->fileService->asset($entity, $field);
     }
 
-    #[\Override]
-    public function generateSlug(object $entity): string
+    #[Override]
+    public function generateSlug(object $entity): array
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
             [
@@ -34,10 +35,13 @@ class SerieData extends PageData implements DataInterface
             ]
         );
 
-        return parent::generateSlug($page) . '/' . $entity->getSlug();
+        $slug = parent::generateSlug($page);
+        $slug['slug'] .= '/' . $entity->getSlug();
+
+        return $slug;
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugSerie($slug);
@@ -65,14 +69,8 @@ class SerieData extends PageData implements DataInterface
         $description = (string) $entity->getDescription();
         $clean       = trim(html_entity_decode(strip_tags($description), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
         $tvSeries->description($clean);
-        $slug = $this->slugService->forEntity($entity);
-        $tvSeries->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                RouterInterface::ABSOLUTE_URL
-            )
-        );
+        $params = $this->slugService->forEntity($entity);
+        $tvSeries->url($this->router->generate('front', $params, RouterInterface::ABSOLUTE_URL));
         $tvSeries->numberOfSeasons(count($entity->getSeasons()));
 
         $seasons = [];
@@ -85,19 +83,19 @@ class SerieData extends PageData implements DataInterface
         return $tvSeries;
     }
 
-    #[\Override]
+    #[Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
     }
 
-    #[\Override]
+    #[Override]
     public function getTitleMeta(object $entity): string
     {
         return $this->getTitle($entity);
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlugSerie($slug);
@@ -105,7 +103,7 @@ class SerieData extends PageData implements DataInterface
         return $page instanceof Serie;
     }
 
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('serie');
@@ -116,19 +114,19 @@ class SerieData extends PageData implements DataInterface
         return $this->configPlaceholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Serie;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Serie;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsJsonLd(object $entity): bool
     {
         return $entity instanceof Serie;
@@ -165,14 +163,8 @@ class SerieData extends PageData implements DataInterface
         $tvseason->name($entity->getTitle());
         $tvseason->seasonNumber($entity->getNumber());
 
-        $slug = $this->slugService->forEntity($entity);
-        $tvseason->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                RouterInterface::ABSOLUTE_URL
-            )
-        );
+        $params = $this->slugService->forEntity($entity);
+        $tvseason->url($this->router->generate('front', $params, RouterInterface::ABSOLUTE_URL));
 
         return $tvseason;
     }

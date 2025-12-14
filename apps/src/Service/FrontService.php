@@ -3,10 +3,16 @@
 namespace Labstag\Service;
 
 use Carbon\Carbon;
+use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Entity\Page;
+use Labstag\Enum\PageEnum;
+use Labstag\Message\FileDeleteMessage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 class FrontService extends AbstractController
 {
@@ -14,6 +20,9 @@ class FrontService extends AbstractController
         #[AutowireIterator('labstag.datas')]
         private readonly iterable $datas,
         protected CacheService $cacheService,
+        protected EntityManagerInterface $entityManager,
+        protected MessageBusInterface $messageBus,
+        protected FileService $fileService,
         protected ConfigurationService $configurationService,
         protected SlugService $slugService,
         protected SitemapService $sitemapService,
@@ -23,6 +32,52 @@ class FrontService extends AbstractController
         protected RequestStack $requestStack,
     )
     {
+    }
+
+    public function errorView(): Response
+    {
+        $entity = $this->getPageError();
+
+        return $this->getResponse($entity);
+    }
+
+    public function getPageError()
+    {
+        $entityRepository = $this->entityManager->getRepository(Page::class);
+        $page             = $entityRepository->findOneBy(
+            [
+                'type' => PageEnum::ERRORS->value,
+            ]
+        );
+        if (!$page instanceof Page) {
+            $page = new Page();
+            $page->setHide(true);
+            $page->setTitle(PageEnum::ERRORS->value);
+            $page->setType(PageEnum::ERRORS->value);
+            $entityRepository->save($page);
+        }
+
+        return $page;
+    }
+
+    public function getResponse($entity)
+    {
+        if (!is_object($entity)) {
+            throw $this->createNotFoundException();
+        }
+
+        if (!$this->siteService->isEnable($entity)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $response = $this->showContentEntity($entity);
+        foreach ($this->datas as $data) {
+            if ($data->supportsScriptBefore($entity)) {
+                $response = $data->scriptBefore($entity, $response);
+            }
+        }
+
+        return $response;
     }
 
     public function getSitemapCss(): Response
@@ -51,7 +106,18 @@ class FrontService extends AbstractController
 
     public function getSitemapXml(): Response
     {
-        return $this->cacheService->get(
+        $filePath      = $this->fileService->getFileInAdapter('public', 'sitemap.xml');
+        if (!is_null($filePath)) {
+            $content  = file_get_contents($filePath);
+
+            $this->messageBus->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(86_400_000)]);
+            $response = new Response(false === $content ? '' : $content, Response::HTTP_OK);
+            $response->headers->set('Content-Type', 'text/xml');
+
+            return $response;
+        }
+
+        $content = $this->cacheService->get(
             'sitemap.xml',
             function (): Response
             {
@@ -67,28 +133,17 @@ class FrontService extends AbstractController
                 );
             }
         );
+
+        $this->fileService->saveFileInAdapter('public', 'sitemap.xml', $content->getContent());
+
+        return $content;
     }
 
     public function showView(): Response
     {
         $entity = $this->slugService->getEntity();
 
-        if (!is_object($entity)) {
-            throw $this->createNotFoundException();
-        }
-
-        if (!$this->siteService->isEnable($entity)) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $response = $this->showContentEntity($entity);
-        foreach ($this->datas as $data) {
-            if ($data->supportsScriptBefore($entity)) {
-                $response = $data->scriptBefore($entity, $response);
-            }
-        }
-
-        return $response;
+        return $this->getResponse($entity);
     }
 
     private function showContentEntity(?object $entity): Response
@@ -113,7 +168,6 @@ class FrontService extends AbstractController
         // 304 Not Modified support
         if ($response->isNotModified($request)) {
             return $response;
-            // Symfony ajuste automatiquement le contenu pour 304
         }
 
         return $response;

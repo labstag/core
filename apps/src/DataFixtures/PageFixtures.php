@@ -69,6 +69,19 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $objectManager->flush();
     }
 
+    public function setGame(Page $page): Page
+    {
+        $sagas = new Page();
+        $sagas->setPage($page);
+        $sagas->setTitle('Ma ludothèque');
+        $sagas->setType(PageEnum::GAMES->value);
+
+        $this->addParagraphText($sagas);
+        $this->paragraphService->addParagraph($sagas, 'game');
+
+        return $sagas;
+    }
+
     public function setSaga(Page $page): Page
     {
         $sagas = new Page();
@@ -88,7 +101,9 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
     private function data(): array
     {
         $page                = $this->setHome();
+        $errors              = $this->setError();
         $movies              = $this->setMovies($page);
+        $game                = $this->setGame($page);
         $sagas               = $this->setSaga($movies);
         $cvpage              = $this->setCv($page);
         $series              = $this->setSeries($page);
@@ -106,6 +121,8 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 
         return [
             $page,
+            $errors,
+            $game,
             $changepassword,
             $lostpassword,
             $login,
@@ -184,6 +201,16 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->addParagraphText($donneespersonnelles);
 
         return $donneespersonnelles;
+    }
+
+    private function setError(): Page
+    {
+        $page = new Page();
+        $page->setHide(true);
+        $page->setTitle('Page non trouvée');
+        $page->setType(PageEnum::ERRORS->value);
+
+        return $page;
     }
 
     private function setHome(): Page

@@ -6,7 +6,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
@@ -15,34 +14,124 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\CountriesFilter;
+use Labstag\Form\Admin\SerieImportType;
+use Labstag\Form\Admin\SerieType;
+use Labstag\Message\ImportMessage;
 use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
+use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SerieCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    public function addByApi(Request $request): JsonResponse
+    {
+        $tmdbId       = $request->query->get('id');
+        $serie        = $this->getRepository(Serie::class)->findOneBy(
+            ['tmdb' => $tmdbId]
+        );
+        if ($serie instanceof Serie) {
+            return new JsonResponse(
+                [
+                    'status'  => 'warning',
+                    'id'      => $tmdbId,
+                    'message' => $this->translator->trans(new TranslatableMessage('Serie already exists')),
+                ]
+            );
+        }
+
+        $locale = $this->configurationService->getLocaleTmdb();
+        $tmdb   = $this->theMovieDbApi->tvserie()->getDetails($tmdbId, $locale);
+        if (is_null($tmdb)) {
+            return new JsonResponse(
+                [
+                    'status'  => 'warning',
+                    'id'      => $tmdbId,
+                    'message' => $this->translator->trans(
+                        new TranslatableMessage(
+                            'The series with the TMDB id %id% does not exist',
+                            ['%id%' => $tmdbId]
+                        )
+                    ),
+                ]
+            );
+        }
+
+        $other  = $this->theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
+        if (!isset($other['imdb_id'])) {
+            return new JsonResponse(
+                [
+                    'status'  => 'warning',
+                    'id'      => $tmdbId,
+                    'message' => $this->translator->trans(new TranslatableMessage('No Imdb id for this series')),
+                ]
+            );
+        }
+
+        $serie = new Serie();
+        $serie->setFile(false);
+        $serie->setEnable(true);
+        $serie->setAdult(false);
+        $serie->setTmdb($tmdbId);
+        $serie->setImdb($other['imdb_id']);
+        $serie->setTitle($tmdb['name']);
+
+        $this->getRepository(Serie::class)->save($serie);
+        $this->messageBus->dispatch(new SerieMessage($serie->getId()));
+
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'id'      => $tmdbId,
+                'message' => $this->translator->trans(new TranslatableMessage('Serie added successfully')),
+            ]
+        );
+    }
+
+    public function apiSerie(Request $request): Response
+    {
+        $page               = $request->query->get('page', 1);
+        $all                = $request->request->all();
+        $data               = [
+            'imdb'  => $all['serie']['imdb'] ?? '',
+            'title' => $all['serie']['title'] ?? '',
+        ];
+        $series = $this->serieService->getSerieApi($data, $page);
+
+        return $this->render(
+            'admin/api/serie/list.html.twig',
+            [
+                'page'       => $page,
+                'controller' => self::class,
+                'series'     => $series,
+            ]
+        );
+    }
+
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
         $this->actionsFactory->setLinkImdbAction();
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
-        $this->actionsFactory->setActionUpdateAll();
+        $this->actionsFactory->setActionUpdateAll('updateAllSerie');
+        $this->addActionNewSerie();
+        $this->addActionImportSerie();
 
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -55,7 +144,7 @@ class SerieCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -91,14 +180,14 @@ class SerieCrudController extends CrudControllerAbstract
         $descriptionField = WysiwygField::new('description', new TranslatableMessage('Description'));
         $descriptionField->hideOnIndex();
 
-        $booleanField = $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'));
+        $booleanField = $this->crudFieldFactory->booleanField('file', new TranslatableMessage('File'));
         $booleanField->hideOnIndex();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
                 $this->crudFieldFactory->slugField(),
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField(
                     'poster',
@@ -112,10 +201,7 @@ class SerieCrudController extends CrudControllerAbstract
                     self::getEntityFqcn(),
                     new TranslatableMessage('Backdrop')
                 ),
-                $this->crudFieldFactory->booleanField(
-                    'inProduction',
-                    (string) new TranslatableMessage('in Production')
-                ),
+                $this->crudFieldFactory->booleanField('inProduction', new TranslatableMessage('in Production')),
                 $textField,
                 $tmdField,
                 $certificationField,
@@ -132,7 +218,7 @@ class SerieCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->companiesFieldForPage(self::getEntityFqcn(), $pageName),
                 $associationField,
                 $booleanField,
-                $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
+                $this->crudFieldFactory->booleanField('adult', new TranslatableMessage('Adult')),
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);
@@ -140,7 +226,7 @@ class SerieCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -171,9 +257,9 @@ class SerieCrudController extends CrudControllerAbstract
         return Serie::class;
     }
 
-    public function imdb(AdminContext $adminContext): RedirectResponse
+    public function imdb(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
         if (empty($serie->getImdb())) {
@@ -183,43 +269,93 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.imdb.com/title/' . $serie->getImdb() . '/');
     }
 
-    public function jsonSerie(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
+    public function importFileSerie(Request $request): JsonResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $files   = $request->files->all();
+        $file    = $files['serie_import']['file'] ?? null;
+        if (null === $file) {
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'message' => 'No file uploaded',
+                ]
+            );
+        }
+
+        $content   = file_get_contents($file->getPathname());
+        $extension = $file->getClientOriginalExtension();
+        $filename  = uniqid('import_', true) . '.' . $extension;
+        $this->fileService->saveFileInAdapter('private', $filename, $content);
+        $this->messageBus->dispatch(new ImportMessage($filename, 'serie', []));
+
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'message' => 'Import started',
+            ]
+        );
+    }
+
+    public function jsonSerie(Request $request): JsonResponse
+    {
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
-
-        $details = $theMovieDbApi->getDetailsSerie($serie);
+        $details                         = $this->theMovieDbApi->getDetailsSerie($serie);
 
         return new JsonResponse($details);
     }
 
-    public function tmdb(AdminContext $adminContext): RedirectResponse
+    public function showModalImportSerie(Request $request): Response
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $form    = $this->createForm(SerieImportType::class);
+        $form->handleRequest($request);
+
+        return $this->render(
+            'admin/serie/import.html.twig',
+            [
+                'controller' => self::class,
+                'form'       => $form->createView(),
+            ]
+        );
+    }
+
+    public function showModalSerie(Request $request): Response
+    {
+        $form    = $this->createForm(SerieType::class);
+        $form->handleRequest($request);
+
+        return $this->render(
+            'admin/serie/new.html.twig',
+            [
+                'controller' => self::class,
+                'form'       => $form->createView(),
+            ]
+        );
+    }
+
+    public function tmdb(Request $request): RedirectResponse
+    {
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
 
         return $this->redirect('https://www.themoviedb.org/tv/' . $serie->getTmdb());
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllSerie(): RedirectResponse
     {
-        $messageBus->dispatch(new SerieAllMessage());
+        $this->messageBus->dispatch(new SerieAllMessage());
 
         return $this->redirectToRoute('admin_serie_index');
     }
 
-    public function updateSerie(
-        AdminContext $adminContext,
-        Request $request,
-        MessageBusInterface $messageBus,
-    ): RedirectResponse
+    public function updateSerie(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
-        $messageBus->dispatch(new SerieMessage($serie->getId()));
+        $this->messageBus->dispatch(new SerieMessage($serie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {
@@ -236,13 +372,45 @@ class SerieCrudController extends CrudControllerAbstract
         $filters->add($entityFilter);
     }
 
+    private function addActionImportSerie(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('showModalImportSerie', new TranslatableMessage('Import'), 'fas fa-file-import');
+        $action->linkToCrudAction('showModalImportSerie');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function addActionNewSerie(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('showModalSerie', new TranslatableMessage('New serie'), 'fas fa-plus');
+        $action->linkToCrudAction('showModalSerie');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
     private function setUpdateAction(): void
     {
         if (!$this->actionsFactory->isTrash()) {
             return;
         }
 
-        $action = Action::new('updateSerie', new TranslatableMessage('Update'));
+        $action = Action::new('updateSerie', new TranslatableMessage('Update'), 'fas fa-sync-alt');
         $action->linkToCrudAction('updateSerie');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

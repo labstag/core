@@ -73,9 +73,9 @@ class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInt
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Training courses');
+        return new TranslatableMessage('Training courses');
     }
 
     #[Override]

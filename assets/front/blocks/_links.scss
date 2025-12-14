@@ -1,19 +1,95 @@
 @use "../mixins";
+@use "../variables" as *;
 
 .block_links {
-  .wrapper {}
-
   ul {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 
     @include mixins.respond-to(md) {
       flex-direction: row;
     }
   }
 
-  li {}
+  // Premier niveau de liste
+  > .wrapper > ul {
+    > li {
+      position: relative;
 
-  a {}
+      // Lien du menu principal
+      > a {
+        display: block;
+        padding: 10px 15px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.1);
+        }
+      }
+
+      // Sous-menu
+      > ul {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        min-width: 200px;
+        background-color: $colorbg;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        flex-direction: column;
+        gap: 0;
+
+        @include mixins.respond-to(md) {
+          flex-direction: column;
+        }
+
+        li {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          a {
+            display: block;
+            padding: 10px 15px;
+            color: $colortext;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+
+            &:hover {
+              background-color: rgba(255, 255, 255, 0.1);
+            }
+          }
+        }
+      }
+
+      // Afficher le sous-menu au survol
+      &:hover > ul,
+      &:focus-within > ul,
+      &.is-open > ul {
+        display: flex;
+      }
+    }
+  }
+
+  // Indicateur visuel pour les liens avec sous-menu
+  > .wrapper > ul > li:has(> ul) > a::after {
+    content: " ▾";
+    font-size: 0.8em;
+    margin-left: 5px;
+  }
+
+  // Sur mobile, afficher la flèche différemment quand ouvert
+  > .wrapper > ul > li.is-open > a::after {
+    content: " ▴";
+  }
 }

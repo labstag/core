@@ -7,14 +7,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\Redirection;
 use Labstag\Form\Admin\RedirectionImportType;
-use Labstag\Repository\RedirectionRepository;
+use Override;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -30,7 +29,7 @@ class RedirectionCrudController extends CrudControllerAbstract
 {
     private const FIELDCSV = 2;
 
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -41,7 +40,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -57,18 +56,10 @@ class RedirectionCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->addFieldsToTab('principal', [$textField]);
 
-        $booleanField = $this->crudFieldFactory->booleanField(
-            'regex',
-            (string) new TranslatableMessage('Regex'),
-            false
-        );
+        $booleanField = $this->crudFieldFactory->booleanField('regex', new TranslatableMessage('Regex'), false);
         $booleanField->hideOnForm();
 
-        $regexField2 = $this->crudFieldFactory->booleanField(
-            'regex',
-            (string) new TranslatableMessage('Regex'),
-            false
-        );
+        $regexField2 = $this->crudFieldFactory->booleanField('regex', new TranslatableMessage('Regex'), false);
         $regexField2->hideOnIndex();
 
         $integerField = IntegerField::new('last_count', new TranslatableMessage('Last count'));
@@ -81,7 +72,7 @@ class RedirectionCrudController extends CrudControllerAbstract
                 IntegerField::new('action_code', new TranslatableMessage('Action code')),
                 $booleanField,
                 $regexField2,
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $integerField,
             ]
         );
@@ -91,7 +82,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -99,7 +90,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): Redirection
     {
         $redirection = parent::createEntity($entityFqcn);
@@ -110,9 +101,9 @@ class RedirectionCrudController extends CrudControllerAbstract
         return $redirection;
     }
 
-    public function export(RedirectionRepository $redirectionRepository): void
+    public function export(): void
     {
-        $all    = $redirectionRepository->findAll();
+        $all    = $this->getRepository(Redirection::class)->findAll();
         $row    = [];
         $header = [
             'Source',
@@ -127,7 +118,6 @@ class RedirectionCrudController extends CrudControllerAbstract
         }
 
         $response = $this->sendToExport($header, $row);
-
         $response->send();
     }
 
@@ -136,7 +126,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         return Redirection::class;
     }
 
-    public function import(Request $request, RedirectionRepository $redirectionRepository): RedirectResponse|Response
+    public function import(Request $request): RedirectResponse|Response
     {
         $form = $this->createForm(
             RedirectionImportType::class,
@@ -149,13 +139,13 @@ class RedirectionCrudController extends CrudControllerAbstract
 
         if ($form->isSubmitted() && $form->isValid()) {
             $file = $form->get('file')->getData();
-            $data = $this->importCsv($file, $redirectionRepository);
+            $data = $this->importCsv($file);
 
             foreach ($data as $row) {
-                $redirectionRepository->persist($row);
+                $this->getRepository(Redirection::class)->persist($row);
             }
 
-            $redirectionRepository->flush();
+            $this->getRepository(Redirection::class)->flush();
 
             return $this->redirectToIndex();
         }
@@ -168,9 +158,9 @@ class RedirectionCrudController extends CrudControllerAbstract
         );
     }
 
-    public function testSource(AdminContext $adminContext): RedirectResponse
+    public function testSource(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $redirection                     = $repositoryAbstract->find($entityId);
 
@@ -299,7 +289,7 @@ class RedirectionCrudController extends CrudControllerAbstract
     /**
      * @return Redirection[]
      */
-    private function importCsv(UploadedFile $uploadedFile, RedirectionRepository $redirectionRepository): array
+    private function importCsv(UploadedFile $uploadedFile): array
     {
         $data        = [];
         $csv         = new Csv();
@@ -321,7 +311,7 @@ class RedirectionCrudController extends CrudControllerAbstract
             $destination = $row[$head['Destination']];
             $source      = $source['path'];
             $source .= isset($source['query']) ? '?' . $source['query'] : '';
-            $redirection = $redirectionRepository->findOneBy(
+            $redirection = $this->getRepository(Redirection::class)->findOneBy(
                 ['source' => $source]
             );
             if (null === $redirection) {

@@ -62,6 +62,75 @@ class TmdbMoviesApi extends AbstractTmdbApi
         );
     }
 
+    public function discovers(
+        array $filters = [],
+        ?string $language = null,
+        ?string $region = null,
+        int $page = 1,
+    ): ?array
+    {
+        $data = $this->discover(filters: $filters, language: $language, region: $region, page: $page);
+
+        if (null !== $data && isset($data['total_pages']) && $data['total_pages'] > $page) {
+            $nextPageData = $this->discovers(
+                filters: $filters,
+                language: $language,
+                region: $region,
+                page: $page + 1,
+            );
+
+            if (null !== $nextPageData && isset($nextPageData['results'])) {
+                $data['results'] = array_merge($data['results'], $nextPageData['results']);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get movie credits (cast and crew).
+     *
+     * @param string      $movieId  Movie ID
+     * @param string|null $language Language (e.g., 'en-US', 'fr-FR')
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getCredits(string $movieId, ?string $language = null): ?array
+    {
+        if ('' === trim($movieId)) {
+            return null;
+        }
+
+        $params = array_filter(
+            [
+                'language' => $language ?? 'fr-FR',
+            ]
+        );
+
+        $query    = $this->buildQueryParams($params);
+        $cacheKey = 'tmdb_movie_credits_' . $movieId . '_' . md5($query);
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($movieId, $query): ?array {
+                $url  = self::BASE_URL . '/movie/' . $movieId . '/credits' . $query;
+                $data = $this->makeRequest($url);
+
+                if (null === $data || (empty($data['cast']) && empty($data['crew']))) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+                // 24 hours cache
+
+                return $data;
+            },
+            86400
+        );
+    }
+
     /**
      * Get movie details by ID.
      *

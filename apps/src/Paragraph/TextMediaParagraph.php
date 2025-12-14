@@ -5,7 +5,6 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
-use Essence\Essence;
 use Essence\Media;
 use Generator;
 use Labstag\Entity\Block;
@@ -27,7 +26,7 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        $media = $this->getMedia($paragraph);
+        $media = $this->fileService->getMediaByUrl($paragraph->getUrl());
 
         unset($disable);
         if (!$media instanceof Media) {
@@ -36,8 +35,8 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        $html   = $media->has('html') ? $media->get('html') : '';
-        $oembed = $this->getOEmbedUrl($html);
+        $json   = $media->jsonSerialize();
+        $oembed = $this->getOEmbedUrl($json['html'] ?? '');
         if (is_null($oembed)) {
             $this->setShow($paragraph, false);
 
@@ -47,8 +46,8 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
         $this->setData(
             $paragraph,
             [
-                'title'     => $media->has('title') ? $media->get('title') : '',
-                'provider'  => $media->has('providerName') ? strtolower((string) $media->get('providerName')) : '',
+                'title'     => $json['title'] ?? '',
+                'provider'  => $json['providerName'] ?? '',
                 'oembed'    => $this->parseUrlAndAddAutoplay($oembed),
                 'paragraph' => $paragraph,
                 'data'      => $data,
@@ -88,9 +87,9 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Text media');
+        return new TranslatableMessage('Text media');
     }
 
     #[Override]
@@ -118,63 +117,17 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
             return;
         }
 
-        if (!is_null($paragraph->getImg())) {
+        if (!is_null($paragraph->getImg()) && is_null($paragraph->getImgFile())) {
             return;
         }
 
-        $url = $paragraph->getUrl();
-        if (is_null($url) || '' === $url || '0' === $url) {
+        $media = $this->fileService->getMediaByUrl($paragraph->getUrl());
+        if (is_null($media)) {
             return;
         }
 
-        $essence = new Essence();
+        $json = $media->jsonSerialize();
 
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
-
-        if (!$media->has('thumbnailUrl')) {
-            return;
-        }
-
-        $thumbnailUrl = $media->get('thumbnailUrl');
-        $tempPath     = tempnam(sys_get_temp_dir(), 'poster_');
-
-        // Télécharger l'image et l'écrire dans le fichier temporaire
-        file_put_contents($tempPath, file_get_contents($thumbnailUrl));
-        $this->fileService->setUploadedFile($tempPath, $paragraph, 'imgFile');
-    }
-
-    protected function getMedia(Paragraph $paragraph): ?Media
-    {
-        if (!$paragraph instanceof EntityTextMediaParagraph) {
-            return null;
-        }
-
-        $url = $paragraph->getUrl();
-        if (is_null($url) || '' === $url || '0' === $url) {
-            return null;
-        }
-
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
-        if (!$media instanceof Media) {
-            return null;
-        }
-
-        return $media;
+        $this->fileService->setUploadedFile($json['thumbnail_url'] ?? '', $paragraph, 'imgFile');
     }
 }

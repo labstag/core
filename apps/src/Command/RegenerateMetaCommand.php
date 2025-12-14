@@ -3,6 +3,7 @@
 namespace Labstag\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Entity\Game;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
@@ -13,29 +14,25 @@ use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(name: 'labstag:regenerate:meta', description: 'Regenerate all entity metas')]
-class RegenerateMetaCommand extends Command
+class RegenerateMetaCommand
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     )
     {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(SymfonyStyle $symfonyStyle): int
     {
-        $symfonyStyle = new SymfonyStyle($input, $output);
-
         $entities = [
+            Game::class,
+            Movie::class,
             Page::class,
             Post::class,
             Saga::class,
-            Movie::class,
             Season::class,
             Serie::class,
             Story::class,

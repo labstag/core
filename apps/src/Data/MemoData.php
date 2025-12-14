@@ -3,10 +3,11 @@
 namespace Labstag\Data;
 
 use Labstag\Entity\Memo;
+use Override;
 
 class MemoData extends DataAbstract implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('memo');
@@ -17,7 +18,7 @@ class MemoData extends DataAbstract implements DataInterface
         return $this->configPlaceholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Memo;

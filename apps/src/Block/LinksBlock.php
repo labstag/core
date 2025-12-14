@@ -100,9 +100,9 @@ class LinksBlock extends BlockAbstract
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Links');
+        return new TranslatableMessage('Links');
     }
 
     #[Override]
@@ -123,8 +123,13 @@ class LinksBlock extends BlockAbstract
     private function correctionLinks(array $links): array
     {
         $data  = [];
-
         foreach ($links as $link) {
+            if (isset($link['links'])) {
+                $link['links'] = $this->correctionLinks($link['links']);
+                $data[]        = $link;
+                continue;
+            }
+
             $url = $this->shortCodeService->getContent($link['url']);
             if (null === $url) {
                 continue;

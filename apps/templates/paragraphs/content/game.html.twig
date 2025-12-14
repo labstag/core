@@ -1,0 +1,23 @@
+{% use "elements.html.twig" %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
+    <div class="wrapper">
+        <div class="content">
+            {% if pagination|length == 0 %}
+                <div class="notfound">
+                    <span class="text">{{ 'No games match your search.'|trans }}</span>
+                </div>
+            {% else %}
+                <ul>
+                    {% for row in pagination %}
+                        <li class="teaser-game">
+                            {% include  "teasers/game.html.twig"  with {'game': row} %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+</section>

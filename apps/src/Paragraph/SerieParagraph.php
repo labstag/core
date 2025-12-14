@@ -71,9 +71,9 @@ class SerieParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Serie');
+        return new TranslatableMessage('Serie');
     }
 
     #[Override]

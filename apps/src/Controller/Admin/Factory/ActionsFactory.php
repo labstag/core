@@ -140,7 +140,8 @@ class ActionsFactory
             return;
         }
 
-        $action = Action::new('linkPublic', new TranslatableMessage('View Page'))->setHtmlAttributes(
+        $action = Action::new('linkPublic', new TranslatableMessage('View Page'), 'fas fa-external-link-alt');
+        $action->setHtmlAttributes(
             ['target' => '_blank']
         );
         $action->linkToCrudAction('linkPublic');
@@ -171,7 +172,8 @@ class ActionsFactory
             return;
         }
 
-        $w3cAction = Action::new('linkw3CValidator', new TranslatableMessage('W3C Validator'))->setHtmlAttributes(
+        $w3cAction = Action::new('linkw3CValidator', new TranslatableMessage('W3C Validator'), 'fas fa-check-circle');
+        $w3cAction->setHtmlAttributes(
             ['target' => '_blank']
         );
         $w3cAction->linkToCrudAction('linkw3CValidator');
@@ -181,15 +183,15 @@ class ActionsFactory
         $this->add(Crud::PAGE_INDEX, $w3cAction);
     }
 
-    public function setActionUpdateAll(): void
+    public function setActionUpdateAll(string $type): void
     {
         if (!$this->isTrash()) {
             return;
         }
 
-        $action = Action::new('updateAll', new TranslatableMessage('Update all'), 'fas fa-sync-alt');
-        $action->displayAsLink();
-        $action->linkToCrudAction('updateAll');
+        $action = Action::new($type, new TranslatableMessage('Update all'), 'fas fa-sync-alt');
+        $action->renderAsLink();
+        $action->linkToCrudAction($type);
         $action->createAsGlobalAction();
         $this->add(Crud::PAGE_INDEX, $action);
     }
@@ -200,7 +202,7 @@ class ActionsFactory
             return;
         }
 
-        $action = Action::new('imdb', new TranslatableMessage('IMDB Page'));
+        $action = Action::new('imdb', new TranslatableMessage('IMDB Page'), 'fas fa-film');
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
@@ -218,7 +220,7 @@ class ActionsFactory
             return;
         }
 
-        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
+        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'), 'fas fa-database');
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
@@ -246,6 +248,8 @@ class ActionsFactory
             $this->addTrashActions();
             $this->addTrashMode();
         }
+
+        $this->applyRead();
 
         $this->addDetailMode();
         $this->addActions();
@@ -290,7 +294,7 @@ class ActionsFactory
         $this->actions->remove(Crud::PAGE_INDEX, Action::BATCH_DELETE);
         $this->actions->disable(Action::DELETE);
 
-        $action = Action::new('list', new TranslatableMessage('List'), 'fa fa-list');
+        $action = Action::new(Crud::PAGE_INDEX, new TranslatableMessage('List'), 'fa fa-list');
         $action->linkToCrudAction(Crud::PAGE_INDEX)->createAsGlobalAction();
         $this->add(Crud::PAGE_INDEX, $action);
 
@@ -316,6 +320,16 @@ class ActionsFactory
 
         $this->remove(Crud::PAGE_INDEX, Action::NEW);
         $this->remove(Crud::PAGE_INDEX, Action::EDIT);
+    }
+
+    private function applyRead(): void
+    {
+        if ($this->readOnly) {
+            return;
+        }
+
+        $this->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
+        $this->add(Crud::PAGE_NEW, Action::INDEX);
     }
 
     private function applyReadOnly(): void

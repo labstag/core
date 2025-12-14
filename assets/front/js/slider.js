@@ -2,7 +2,7 @@ import Swiper from 'swiper';
 import { Navigation } from 'swiper/modules';
 import '@nm/swiper/swiper-bundle.min.css';
 export class Slider {
-  constructor(element, nextbutton, prevbutton) {
+  constructor(element, nextbutton, prevbutton, slidesperview) {
     new Swiper(
       element,
       {
@@ -21,7 +21,7 @@ export class Slider {
         },
         breakpoints: {
           1200: {
-            slidesPerView: 3,
+            slidesPerView: slidesperview,
             centeredSlides: false,
             centerInsufficientSlides: true,
           },

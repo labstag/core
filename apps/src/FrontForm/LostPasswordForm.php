@@ -4,6 +4,7 @@ namespace Labstag\FrontForm;
 
 use Labstag\Entity\User;
 use Labstag\Form\Front\LostPasswordType;
+use Override;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -21,20 +22,19 @@ class LostPasswordForm extends FrontFormAbstract
 
     public function getName(): string
     {
-        return (string) new TranslatableMessage('Form lost password');
+        return new TranslatableMessage('Form lost password');
     }
 
-    #[\Override]
+    #[Override]
     public function setParamsTwig(
         FormInterface $form,
-        $formCode,
         $paragraph,
         $data,
         bool $disable = false,
         bool $save = true,
     ): array
     {
-        unset($save, $disable, $formCode);
+        unset($save, $disable);
         $request          = $this->requestStack->getCurrentRequest();
         $entityRepository = $this->entityManager->getRepository(User::class);
         $form->handleRequest($request);

@@ -5,6 +5,7 @@ namespace Labstag\FrontForm;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Labstag\Form\Front\LoginType;
+use Override;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -22,20 +23,19 @@ class LoginForm extends FrontFormAbstract
 
     public function getName(): string
     {
-        return (string) new TranslatableMessage('Form login');
+        return new TranslatableMessage('Form login');
     }
 
-    #[\Override]
+    #[Override]
     public function setParamsTwig(
         FormInterface $form,
-        $formCode,
         $paragraph,
         $data,
         bool $disable = false,
         bool $save = true,
     ): array
     {
-        unset($save, $disable, $formCode);
+        unset($save, $disable);
 
         $error        = $this->authenticationUtils->getLastAuthenticationError();
         $request      = $this->requestStack->getCurrentRequest();

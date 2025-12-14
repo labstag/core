@@ -8,11 +8,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Media;
 use Labstag\Field\UploadFileField;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MediaCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -20,7 +21,7 @@ class MediaCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -33,7 +34,7 @@ class MediaCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -47,6 +48,10 @@ class MediaCrudController extends CrudControllerAbstract
         );
         $integerField->hideOnForm();
 
+        $uploadFileField = UploadFileField::new('file', new TranslatableMessage('File'));
+        $uploadFileField->setTranslator($this->translator);
+        $uploadFileField->onlyOnForms();
+
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
@@ -54,7 +59,7 @@ class MediaCrudController extends CrudControllerAbstract
                 TextField::new('name', new TranslatableMessage('Name')),
                 TextField::new('mimeType', new TranslatableMessage('Mime type'))->hideOnForm(),
                 $integerField,
-                UploadFileField::new('file', new TranslatableMessage('File'))->onlyOnForms(),
+                $uploadFileField,
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);

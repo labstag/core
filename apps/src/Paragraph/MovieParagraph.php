@@ -75,9 +75,9 @@ class MovieParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Movie');
+        return new TranslatableMessage('Movie');
     }
 
     #[Override]

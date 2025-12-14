@@ -8,6 +8,7 @@ use Labstag\Entity\TextImgParagraph;
 use Labstag\Entity\TextMediaParagraph;
 use Labstag\Entity\VideoParagraph;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Override;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -24,7 +25,7 @@ class ParagraphFileStorage extends FileStorageAbstract implements FileStorageInt
         $this->setType('paragraph');
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(): array
     {
         return [

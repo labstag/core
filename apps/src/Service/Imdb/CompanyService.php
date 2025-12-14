@@ -2,7 +2,6 @@
 
 namespace Labstag\Service\Imdb;
 
-use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Company;
 use Labstag\Message\CompanyMessage;
@@ -81,16 +80,8 @@ final class CompanyService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $this->fileService->setUploadedFile($poster, $company, 'imgFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $company, 'imgFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 }

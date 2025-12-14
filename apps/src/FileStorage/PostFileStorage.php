@@ -4,6 +4,7 @@ namespace Labstag\FileStorage;
 
 use Labstag\Entity\Post;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Override;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -20,7 +21,7 @@ class PostFileStorage extends FileStorageAbstract implements FileStorageInterfac
         $this->setType('post');
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(): array
     {
         return [Post::class];

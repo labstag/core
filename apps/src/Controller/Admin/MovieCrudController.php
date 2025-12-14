@@ -6,7 +6,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -15,36 +14,124 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\CountriesFilter;
+use Labstag\Form\Admin\MovieImportType;
+use Labstag\Form\Admin\MovieType;
+use Labstag\Message\ImportMessage;
 use Labstag\Message\MovieAllMessage;
 use Labstag\Message\MovieMessage;
+use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    public function addByApi(Request $request): JsonResponse
+    {
+        $tmdbId       = $request->query->get('id');
+        $movie        = $this->getRepository(Movie::class)->findOneBy(
+            ['tmdb' => $tmdbId]
+        );
+        if ($movie instanceof Movie) {
+            return new JsonResponse(
+                [
+                    'status'  => 'warning',
+                    'id'      => $tmdbId,
+                    'message' => $this->translator->trans(new TranslatableMessage('Movie already exists')),
+                ]
+            );
+        }
+
+        $locale = $this->configurationService->getLocaleTmdb();
+        $tmdb   = $this->theMovieDbApi->movies()->getDetails($tmdbId, $locale);
+        if (is_null($tmdb)) {
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'id'      => $tmdbId,
+                    'message' => $this->translator->trans(
+                        new TranslatableMessage(
+                            'The movie with the TMDB id %id% does not exist',
+                            ['%id%' => $tmdbId]
+                        )
+                    ),
+                ]
+            );
+        }
+
+        $other  = $this->theMovieDbApi->movies()->getMovieExternalIds($tmdbId);
+        if (!isset($other['imdb_id'])) {
+            return new JsonResponse(
+                [
+                    'status'  => 'warning',
+                    'id'      => $tmdbId,
+                    'message' => $this->translator->trans(new TranslatableMessage('No Imdb id for this movie')),
+                ]
+            );
+        }
+
+        $movie = new Movie();
+        $movie->setEnable(true);
+        $movie->setAdult(false);
+        $movie->setFile(false);
+        $movie->setTmdb($tmdbId);
+        $movie->setImdb($other['imdb_id']);
+        $movie->setTitle($tmdb['title']);
+
+        $this->getRepository(Movie::class)->save($movie);
+        $this->messageBus->dispatch(new MovieMessage($movie->getId()));
+
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'id'      => $tmdbId,
+                'message' => $this->translator->trans(new TranslatableMessage('Movie is being added')),
+            ]
+        );
+    }
+
+    public function apiMovie(Request $request): Response
+    {
+        $page               = $request->query->get('page', 1);
+        $all                = $request->request->all();
+        $data               = [
+            'imdb'  => $all['movie']['imdb'] ?? '',
+            'title' => $all['movie']['title'] ?? '',
+        ];
+        $movies = $this->movieService->getMovieApi($data, $page);
+
+        return $this->render(
+            'admin/api/movie/list.html.twig',
+            [
+                'page'       => $page,
+                'controller' => self::class,
+                'movies'     => $movies,
+            ]
+        );
+    }
+
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
-
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
         $this->actionsFactory->setLinkImdbAction();
         $this->actionsFactory->setLinkTmdbAction();
         $this->setUpdateAction();
-        $this->actionsFactory->setActionUpdateAll();
+        $this->actionsFactory->setActionUpdateAll('updateAllMovie');
+        $this->addActionNewMovie();
+        $this->addActionImportMovie();
 
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -57,7 +144,7 @@ class MovieCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -88,14 +175,14 @@ class MovieCrudController extends CrudControllerAbstract
         $descriptionField = WysiwygField::new('description', new TranslatableMessage('Description'));
         $descriptionField->hideOnIndex();
 
-        $booleanField = $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'));
+        $booleanField = $this->crudFieldFactory->booleanField('file', new TranslatableMessage('File'));
         $booleanField->hideOnIndex();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
                 $this->crudFieldFactory->slugField(),
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField(
                     'poster',
@@ -125,7 +212,7 @@ class MovieCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->companiesFieldForPage(self::getEntityFqcn(), $pageName),
                 // image field déjà incluse dans baseIdentitySet
                 $booleanField,
-                $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
+                $this->crudFieldFactory->booleanField('adult', new TranslatableMessage('Adult')),
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);
@@ -133,7 +220,7 @@ class MovieCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -175,52 +262,102 @@ class MovieCrudController extends CrudControllerAbstract
         return Movie::class;
     }
 
-    public function imdb(AdminContext $adminContext): RedirectResponse
+    public function imdb(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
 
         return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
     }
 
-    public function jsonMovie(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
+    public function importFileMovie(Request $request): JsonResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $files   = $request->files->all();
+        $file    = $files['movie_import']['file'] ?? null;
+        if (null === $file) {
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'message' => 'No file uploaded',
+                ]
+            );
+        }
+
+        $content   = file_get_contents($file->getPathname());
+        $extension = $file->getClientOriginalExtension();
+        $filename  = uniqid('import_', true) . '.' . $extension;
+        $this->fileService->saveFileInAdapter('private', $filename, $content);
+        $this->messageBus->dispatch(new ImportMessage($filename, 'movie', []));
+
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'message' => 'Import started',
+            ]
+        );
+    }
+
+    public function jsonMovie(Request $request): JsonResponse
+    {
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
-
-        $details = $theMovieDbApi->getDetailsMovie($movie);
+        $details                         = $this->theMovieDbApi->getDetailsMovie($movie);
 
         return new JsonResponse($details);
     }
 
-    public function tmdb(AdminContext $adminContext): RedirectResponse
+    public function showModalImportMovie(Request $request): Response
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $form    = $this->createForm(MovieImportType::class);
+        $form->handleRequest($request);
+
+        return $this->render(
+            'admin/movie/import.html.twig',
+            [
+                'controller' => self::class,
+                'form'       => $form->createView(),
+            ]
+        );
+    }
+
+    public function showModalMovie(Request $request): Response
+    {
+        $form    = $this->createForm(MovieType::class);
+        $form->handleRequest($request);
+
+        return $this->render(
+            'admin/movie/new.html.twig',
+            [
+                'controller' => self::class,
+                'form'       => $form->createView(),
+            ]
+        );
+    }
+
+    public function tmdb(Request $request): RedirectResponse
+    {
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
 
         return $this->redirect('https://www.themoviedb.org/movie/' . $movie->getTmdb());
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllMovie(): RedirectResponse
     {
-        $messageBus->dispatch(new MovieAllMessage());
+        $this->messageBus->dispatch(new MovieAllMessage());
 
         return $this->redirectToRoute('admin_movie_index');
     }
 
-    public function updateMovie(
-        AdminContext $adminContext,
-        Request $request,
-        MessageBusInterface $messageBus,
-    ): RedirectResponse
+    public function updateMovie(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
-        $messageBus->dispatch(new MovieMessage($movie->getId()));
+        $this->messageBus->dispatch(new MovieMessage($movie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {
@@ -252,13 +389,45 @@ class MovieCrudController extends CrudControllerAbstract
         $filters->add($entityFilter);
     }
 
+    private function addActionImportMovie(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('showModalImportMovie', new TranslatableMessage('Import'), 'fas fa-file-import');
+        $action->linkToCrudAction('showModalImportMovie');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function addActionNewMovie(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('showModalMovie', new TranslatableMessage('New movie'), 'fas fa-plus-circle');
+        $action->linkToCrudAction('showModalMovie');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
     private function setUpdateAction(): void
     {
         if (!$this->actionsFactory->isTrash()) {
             return;
         }
 
-        $action = Action::new('updateMovie', new TranslatableMessage('Update'));
+        $action = Action::new('updateMovie', new TranslatableMessage('Update'), 'fas fa-sync-alt');
         $action->linkToCrudAction('updateMovie');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

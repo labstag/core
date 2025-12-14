@@ -4,6 +4,7 @@ namespace Labstag\Block;
 
 use Labstag\Entity\Block;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 
 interface BlockInterface
 {
@@ -16,7 +17,7 @@ interface BlockInterface
 
     public function getClass(): string;
 
-    public function getName(): string;
+    public function getName(): TranslatableMessage;
 
     public function getType(): string;
 

@@ -3,12 +3,13 @@
 namespace Labstag\Data;
 
 use Labstag\Entity\Chapter;
+use Override;
 use Spatie\SchemaOrg\Schema;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ChapterData extends StoryData implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function asset(mixed $entity, string $field): string
     {
         $asset = $this->fileService->asset($entity, $field);
@@ -19,19 +20,22 @@ class ChapterData extends StoryData implements DataInterface
         return parent::asset($entity->getStory(), $field);
     }
 
-    #[\Override]
-    public function generateSlug(object $entity): string
+    #[Override]
+    public function generateSlug(object $entity): array
     {
-        return parent::generateSlug($entity->getRefstory()) . '/' . $entity->getSlug();
+        $slug = parent::generateSlug($entity->getRefstory());
+        $slug['slug'] .= '/' . $entity->getSlug();
+
+        return $slug;
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugChapter($slug);
     }
 
-    #[\Override]
+    #[Override]
     public function getJsonLd(object $entity): object
     {
         $schema = $this->getJsonLdChapter($entity);
@@ -39,32 +43,26 @@ class ChapterData extends StoryData implements DataInterface
         $creativeWorkSeries = Schema::creativeWorkSeries();
         $creativeWorkSeries->name($entity->getRefstory()->getTitle());
 
-        $slug = $this->slugService->forEntity($entity->getRefstory());
-        $creativeWorkSeries->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            )
-        );
+        $params = $this->slugService->forEntity($entity->getRefstory());
+        $creativeWorkSeries->url($this->router->generate('front', $params, UrlGeneratorInterface::ABSOLUTE_URL));
         $schema->isPartOf($creativeWorkSeries);
 
         return $schema;
     }
 
-    #[\Override]
+    #[Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
     }
 
-    #[\Override]
+    #[Override]
     public function getTitleMeta(object $entity): string
     {
         return parent::getTitleMeta($entity->getRefstory()) . ' - ' . $this->getTitle($entity);
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlugChapter($slug);
@@ -72,7 +70,7 @@ class ChapterData extends StoryData implements DataInterface
         return $page instanceof Chapter;
     }
 
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('chapter');
@@ -83,19 +81,19 @@ class ChapterData extends StoryData implements DataInterface
         return parent::placeholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Chapter;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Chapter;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsJsonLd(object $entity): bool
     {
         return $entity instanceof Chapter;

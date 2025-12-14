@@ -7,7 +7,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Chapter;
@@ -15,14 +14,14 @@ use Labstag\Entity\Story;
 use Labstag\Entity\User;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\StoryMessage;
+use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ChapterCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -31,7 +30,7 @@ class ChapterCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -44,13 +43,13 @@ class ChapterCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $fields = [
             $this->crudFieldFactory->slugField(readOnly: true),
-            $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+            $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
             $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
             $this->addFieldRefStory(),
@@ -64,7 +63,7 @@ class ChapterCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -74,15 +73,14 @@ class ChapterCrudController extends CrudControllerAbstract
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): Chapter
     {
         $chapter      = parent::createEntity($entityFqcn);
         $request      = $this->requestStack->getCurrentRequest();
         $defaultStory = $request->query->get('story');
         if ($defaultStory) {
-            $repository = $this->getRepository(Story::class);
-            $story      = $repository->find($defaultStory);
+            $story      = $this->getRepository(Story::class)->find($defaultStory);
             $chapter->setRefstory($story);
         }
 
@@ -94,16 +92,12 @@ class ChapterCrudController extends CrudControllerAbstract
         return Chapter::class;
     }
 
-    public function updateChapter(
-        AdminContext $adminContext,
-        Request $request,
-        MessageBusInterface $messageBus,
-    ): RedirectResponse
+    public function updateChapter(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $chapter                         = $repositoryAbstract->find($entityId);
-        $messageBus->dispatch(new StoryMessage($chapter->getRefstory()->getId()));
+        $this->messageBus->dispatch(new StoryMessage($chapter->getRefstory()->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

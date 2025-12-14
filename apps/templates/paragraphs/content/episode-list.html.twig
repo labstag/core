@@ -7,13 +7,22 @@
             </h3>
         {% endif %}
         <div class="episode-list">
-            <ul>
-                {% for row in episodes %}
-                    <li class="teaser-episode">
-                        {% include  "teasers/episode.html.twig"  with {'episode': row} %}
-                    </li>
-                {% endfor %}
-            </ul>
+            {% if pagination|length == 0 %}
+                <div class="notfound">
+                    <span class="text">{{ 'No episodes found.'|trans }}</span>
+                </div>
+            {% else %}
+                <ul>
+                    {% for row in pagination %}
+                        <li class="teaser-episode" id="episode-{{ row.number }}">
+                            {% include  "teasers/episode.html.twig"  with {'episode': row} %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
         </div>
         <div class="season-navigation">
             <ul>

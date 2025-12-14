@@ -17,6 +17,7 @@ use Labstag\Service\ParagraphService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 abstract class FixtureAbstract extends Fixture
@@ -35,6 +36,11 @@ abstract class FixtureAbstract extends Fixture
     protected int $enable;
 
     public function __construct(
+        /**
+         * @var iterable<TemplateAbstract>
+         */
+        #[AutowireIterator('labstag.templates')]
+        protected readonly iterable $templates,
         protected EmailService $emailService,
         protected WorkflowService $workflowService,
         protected BlockService $blockService,
@@ -51,7 +57,7 @@ abstract class FixtureAbstract extends Fixture
             return;
         }
 
-        $max = random_int(0, count($this->categories));
+        $max = random_int(0, 5 > count($this->categories) ? count($this->categories) : 5);
         if (0 === $max) {
             return;
         }
@@ -85,7 +91,7 @@ abstract class FixtureAbstract extends Fixture
             return;
         }
 
-        $max = random_int(0, count($this->tags));
+        $max = random_int(0, 5 > count($this->tags) ? count($this->tags) : 5);
         if (0 === $max) {
             return;
         }

@@ -18,7 +18,7 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: PageRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -63,24 +63,32 @@ class Page implements Stringable, EntityWithParagraphsInterface
     #[Vich\UploadableField(mapping: 'page', fileNameProperty: 'img')]
     protected ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'page', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'page', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(targetEntity: self::class, cascade: ['persist', 'detach'], inversedBy: 'children')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?self $page = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'page', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'page',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
     protected Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'pages', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'pages')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?User $refuser = null;
 
@@ -95,7 +103,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
             'separator'           => '/',
         ]
     )]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
     protected ?string $slug = null;
 
     /**
@@ -323,7 +331,6 @@ class Page implements Stringable, EntityWithParagraphsInterface
     {
         $this->img = $img;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
         if (null === $img) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

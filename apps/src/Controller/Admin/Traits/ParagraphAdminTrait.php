@@ -4,8 +4,7 @@ namespace Labstag\Controller\Admin\Traits;
 
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Labstag\Repository\ParagraphRepository;
-use Labstag\Repository\RepositoryAbstract;
+use Labstag\Entity\Paragraph;
 use Labstag\Service\ParagraphService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,22 +33,17 @@ trait ParagraphAdminTrait
 
         $type = $request->request->get('paragraph');
         if (null !== $type) {
-            $repository = $this->getRepository();
-            $entity     = $repository->find($entityId);
+            $entity     = $this->getRepository()->find($entityId);
             if ($entity) {
                 $paragraphService->addParagraph($entity, $type);
-                $repository->save($entity);
+                $this->getRepository()->save($entity);
             }
         }
 
         return $this->redirect($urlGenerator->generateUrl());
     }
 
-    public function deleteParagraph(
-        AdminContext $adminContext,
-        AdminUrlGenerator $urlGenerator,
-        ParagraphRepository $paragraphRepository,
-    ): RedirectResponse
+    public function deleteParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator): RedirectResponse
     {
         $request  = $adminContext->getRequest();
         $entityId = $request->query->get('entityId');
@@ -57,10 +51,10 @@ trait ParagraphAdminTrait
 
         $paragraphId = $request->request->get('paragraph');
         if (null !== $paragraphId) {
-            $paragraph = $paragraphRepository->find($paragraphId);
+            $paragraph = $this->getRepository(Paragraph::class)->find($paragraphId);
             if (null !== $paragraph) {
-                $paragraphRepository->remove($paragraph);
-                $paragraphRepository->flush();
+                $this->getRepository(Paragraph::class)->remove($paragraph);
+                $this->getRepository(Paragraph::class)->flush();
             }
         }
 
@@ -72,8 +66,7 @@ trait ParagraphAdminTrait
     public function listParagraph(AdminContext $adminContext): Response
     {
         $entityId   = $adminContext->getRequest()->query->get('entityId');
-        $repository = $this->getRepository();
-        $entity     = $repository->find($entityId);
+        $entity     = $this->getRepository()->find($entityId);
         $paragraphs = method_exists($entity, 'getParagraphs') ? $entity->getParagraphs() : [];
 
         return $this->render(
@@ -82,11 +75,7 @@ trait ParagraphAdminTrait
         );
     }
 
-    public function updateParagraph(
-        AdminContext $adminContext,
-        AdminUrlGenerator $urlGenerator,
-        ParagraphRepository $paragraphRepository,
-    ): RedirectResponse
+    public function updateParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator): RedirectResponse
     {
         $request    = $adminContext->getRequest();
         $entityId   = $request->query->get('entityId');
@@ -95,10 +84,10 @@ trait ParagraphAdminTrait
         if (null !== $paragraphs) {
             $ids = explode(',', $paragraphs);
             foreach ($ids as $position => $id) {
-                $paragraph = $paragraphRepository->find($id);
+                $paragraph = $this->getRepository(Paragraph::class)->find($id);
                 if ($paragraph && method_exists($paragraph, 'setPosition')) {
                     $paragraph->setPosition($position + 1);
-                    $paragraphRepository->save($paragraph);
+                    $this->getRepository(Paragraph::class)->save($paragraph);
                 }
             }
         }

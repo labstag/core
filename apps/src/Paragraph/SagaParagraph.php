@@ -7,17 +7,11 @@ use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Saga;
 use Labstag\Entity\SagaParagraph as EntitySagaParagraph;
-use Labstag\Repository\MovieRepository;
-use Labstag\Repository\SagaRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
 {
-    private const MINMOVIES = 2;
-
-    private const MINSAGA   = 3;
-
     /**
      * @param mixed[] $data
      */
@@ -26,59 +20,27 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
     {
         unset($disable);
 
-        $request = $this->requestStack->getCurrentRequest();
-        if (1 != $request->attributes->get('page')) {
-            $this->setShow($paragraph, false);
-
-            return;
-        }
-
-        $types = [
-            'title',
-            'country',
-            'categories',
-            'sagas',
-            'year',
-            'order',
-            'orderby',
-        ];
-        foreach ($types as $type) {
-            if ($request->query->has($type)) {
-                $this->setShow($paragraph, false);
-
-                return;
-            }
-        }
-
-        /** @var MovieRepository $entityRepository */
+        $request          = $this->requestStack->getCurrentRequest();
         $entityRepository = $this->getRepository(Saga::class);
-        if (!$entityRepository instanceof SagaRepository) {
-            $this->logger->error('SagaParagraph: Saga repository not found.');
-            $this->setShow($paragraph, false);
+        $query            = $this->setQuery($request->query->all());
 
-            return;
-        }
+        $pagination = $this->getPaginator($entityRepository->getQueryPaginator($query), $paragraph->getNbr());
 
-        $sagas = $entityRepository->showPublic();
-        foreach ($sagas as $key => $saga) {
-            $total = $saga->getMovies()->filter(fn ($movie) => $movie->isEnable());
-            if (self::MINMOVIES > count($total)) {
-                unset($sagas[$key]);
-            }
-        }
-
-        if (self::MINSAGA > count($sagas)) {
-            $this->setShow($paragraph, false);
-
-            return;
-        }
+        $templates = $this->templates($paragraph, 'header');
+        $this->setHeader(
+            $paragraph,
+            $this->render(
+                $templates['view'],
+                ['pagination' => $pagination]
+            )
+        );
 
         $this->setData(
             $paragraph,
             [
-                'sagas'     => $sagas,
-                'paragraph' => $paragraph,
-                'data'      => $data,
+                'pagination' => $pagination,
+                'paragraph'  => $paragraph,
+                'data'       => $data,
             ]
         );
     }
@@ -99,9 +61,9 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Saga');
+        return new TranslatableMessage('Saga');
     }
 
     #[Override]
@@ -121,5 +83,23 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
         $paragraph                       = $entityRepository->findOneBy([]);
 
         return !$paragraph instanceof Paragraph;
+    }
+
+    /**
+     * @param array<string, mixed> $query
+     *
+     * @return array<string, mixed>
+     */
+    private function setQuery(array $query): array
+    {
+        if (!isset($query['order'])) {
+            $query['order'] = 'title';
+        }
+
+        if (!isset($query['orderby'])) {
+            $query['orderby'] = 'ASC';
+        }
+
+        return $query;
     }
 }

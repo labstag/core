@@ -9,25 +9,20 @@ use Labstag\Repository\PageRepository;
 use Labstag\Service\ParagraphService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(name: 'labstag:add:pages', description: 'Add pages')]
-class AddPagesCommand extends Command
+class AddPagesCommand
 {
     public function __construct(
         protected PageRepository $pageRepository,
         protected ParagraphService $paragraphService,
     )
     {
-        parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(SymfonyStyle $symfonyStyle): int
     {
-        $symfonyStyle   = new SymfonyStyle($input, $output);
-
         $home = $this->pageRepository->findOneBy(
             [
                 'type' => PageEnum::HOME->value,
@@ -76,6 +71,7 @@ class AddPagesCommand extends Command
             'changepassword' => $this->setParagraphsChangePassword($page),
             'login'          => $this->setParagraphsLogin($page),
             'lostpassword'   => $this->setParagraphsLostPassword($page),
+            'error'          => $page->setEnable(true),
             default          => $page->setEnable(false),
         };
     }
@@ -86,7 +82,8 @@ class AddPagesCommand extends Command
             'changepassword' => $page->setHide(true),
             'login'          => $page->setHide(true),
             'lostpassword'   => $page->setHide(true),
-            default          => $page->setEnable(false),
+            'error'          => $page->setHide(true),
+            default          => $page->setHide(false),
         };
     }
 

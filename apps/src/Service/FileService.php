@@ -3,10 +3,20 @@
 namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Essence\Essence;
+use Essence\Media;
 use Exception;
+use GdImage;
+use Labstag\Message\FileDeleteMessage;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
@@ -18,8 +28,11 @@ final class FileService
     public function __construct(
         #[AutowireIterator('labstag.filestorage')]
         private readonly iterable $fileStorages,
+        private MessageBusInterface $messageBus,
+        private LoggerInterface $logger,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag,
+
         private PropertyMappingFactory $propertyMappingFactory,
     )
     {
@@ -108,6 +121,9 @@ final class FileService
     public function getBasePath(mixed $entity, string $type): string
     {
         $object = $this->propertyMappingFactory->fromField(new $entity(), $type);
+        if (is_null($object)) {
+            return '';
+        }
 
         return $object->getUriPrefix();
     }
@@ -171,6 +187,38 @@ final class FileService
         return $this->parameterBag->get('kernel.project_dir') . '/public' . $basePath;
     }
 
+    public function getimportCsvFile(string $path, string $delimiter = ','): array
+    {
+        $csv = new Csv();
+        $csv->setDelimiter($delimiter);
+        $csv->setSheetIndex(0);
+
+        $spreadsheet = $csv->load($path);
+        $worksheet   = $spreadsheet->getActiveSheet();
+
+        return $this->generateJsonCSV($worksheet);
+    }
+
+    public function getimportXmlFile(string $path): array
+    {
+        $xml = simplexml_load_file($path);
+        if (false === $xml) {
+            throw new Exception('Error loading XML file');
+        }
+
+        $dataJson = [];
+        foreach ($xml->children() as $item) {
+            $row = [];
+            foreach ($item->children() as $child) {
+                $row[$child->getName()] = (string) $child;
+            }
+
+            $dataJson[] = $row;
+        }
+
+        return $dataJson;
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -205,6 +253,29 @@ final class FileService
     public function getMappingForEntity(object|array $entity): array
     {
         return $this->propertyMappingFactory->fromObject($entity);
+    }
+
+    public function getMediaByUrl(?string $url): ?Media
+    {
+        if (is_null($url) || '' === $url || '0' === $url) {
+            return null;
+        }
+
+        $essence = new Essence();
+
+        // Load any url:
+        $media = $essence->extract(
+            $url,
+            [
+                'maxwidth'  => 800,
+                'maxheight' => 600,
+            ]
+        );
+        if (!$media instanceof Media) {
+            return null;
+        }
+
+        return $media;
     }
 
     public function getSizeFormat(int $size): string
@@ -250,9 +321,50 @@ final class FileService
         return null;
     }
 
+    public function setImgPatchwork(array $files): ?string
+    {
+        if ([] === $files) {
+            return null;
+        }
+
+        $cellSize    = 300;
+        $jpegQuality = 90;
+        $files       = $this->fillGridFiles($files);
+        $count       = count($files);
+        $cols        = (int) ceil(sqrt($count));
+
+        $final = $this->createCanvas($files, $cellSize, $cols);
+        if (is_null($final)) {
+            return null;
+        }
+
+        $this->placeImagesOnCanvas($final, $files, $cellSize, $cols);
+
+        return $this->saveCanvas($final, $jpegQuality);
+    }
+
     public function setUploadedFile(string $filePath, object $entity, string|PropertyPathInterface $type): void
     {
+        if ('' === $filePath) {
+            return;
+        }
+
         try {
+            // Si c'est une URL, télécharger le fichier localement
+            if (filter_var($filePath, FILTER_VALIDATE_URL)) {
+                $tempPath = tempnam(sys_get_temp_dir(), 'download_');
+                $content  = file_get_contents($filePath);
+                if (false === $content) {
+                    $this->logger->error('Failed to download file from URL: ' . $filePath);
+                    throw new Exception('Failed to download file from URL: ' . $filePath);
+                }
+
+                file_put_contents($tempPath, $content);
+                $filePath = $tempPath;
+            }
+
+            $this->messageBus->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(60_000)]);
+
             $uploadedFile = new UploadedFile(
                 path: $filePath,
                 originalName: basename($filePath),
@@ -263,14 +375,86 @@ final class FileService
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $propertyAccessor->setValue($entity, $type, $uploadedFile);
         } catch (Exception $exception) {
-            echo $exception->getMessage();
+            $this->logger->error('Error setting uploaded file: ' . $exception->getMessage());
+            throw new Exception(
+                'Error setting uploaded file: ' . $exception->getMessage(),
+                $exception->getCode(),
+                $exception
+            );
         }
     }
 
+    private function createCanvas(array $files, int $cellSize, int $cols): ?GdImage
+    {
+        $count       = count($files);
+        $rows        = (int) ceil($count / $cols);
+        $finalWidth  = $cols * $cellSize;
+        $finalHeight = $rows * $cellSize;
+        $final       = imagecreatetruecolor($finalWidth, $finalHeight);
+
+        if (false === $final) {
+            return null;
+        }
+
+        $white = imagecolorallocate($final, 255, 255, 255);
+        if (false === $white) {
+            return null;
+        }
+
+        imagefill($final, 0, 0, $white);
+
+        return $final;
+    }
+
+    private function fillGridFiles(array $files): array
+    {
+        $count = count($files);
+        $cols  = (int) ceil(sqrt($count));
+        $rows  = (int) ceil($count / $cols);
+
+        if ($rows * $cols > $count) {
+            $rest = $rows * $cols - $count;
+            for ($i = 0; $i < $rest; ++$i) {
+                $files[] = $files[$i % $count];
+            }
+        }
+
+        return $files;
+    }
+
     /**
-     * @return \Doctrine\ORM\EntityRepository<object>
+     * @return list<array>
      */
-    private function getRepository(string $entity): \Doctrine\ORM\EntityRepository
+    private function generateJsonCSV(Worksheet $worksheet): array
+    {
+        $dataJson    = [];
+        $headers     = [];
+        foreach ($worksheet->getRowIterator() as $i => $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+            if (1 === $i) {
+                foreach ($cellIterator as $cell) {
+                    $headers[] = trim((string) $cell->getValue());
+                }
+
+                continue;
+            }
+
+            $columns = [];
+            foreach ($cellIterator as $cell) {
+                $columns[] = trim((string) $cell->getValue());
+            }
+
+            $dataJson[] = array_combine($headers, $columns);
+        }
+
+        return $dataJson;
+    }
+
+    /**
+     * @return EntityRepository<object>
+     */
+    private function getRepository(string $entity): EntityRepository
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (is_null($entityRepository)) {
@@ -278,5 +462,50 @@ final class FileService
         }
 
         return $entityRepository;
+    }
+
+    private function loadImageFromFile(string $file): GdImage|false
+    {
+        $imgInfo = @getimagesize($file);
+        if (false === $imgInfo || !isset($imgInfo['mime'])) {
+            return false;
+        }
+
+        return match ($imgInfo['mime']) {
+            'image/jpeg' => @imagecreatefromjpeg($file),
+            'image/png'  => @imagecreatefrompng($file),
+            'image/gif'  => @imagecreatefromgif($file),
+            default      => false,
+        };
+    }
+
+    private function placeImagesOnCanvas(GdImage $gdImage, array $files, int $cellSize, int $cols): void
+    {
+        $i = 0;
+        foreach ($files as $file) {
+            $src = $this->loadImageFromFile($file);
+            if (false === $src) {
+                continue;
+            }
+
+            $x = ($i % $cols) * $cellSize;
+            $y = (int) floor($i / $cols) * $cellSize;
+
+            imagecopyresampled($gdImage, $src, $x, $y, 0, 0, $cellSize, $cellSize, imagesx($src), imagesy($src));
+
+            ++$i;
+        }
+    }
+
+    private function saveCanvas(GdImage $gdImage, int $jpegQuality): ?string
+    {
+        $output = tempnam(sys_get_temp_dir(), 'poster_grid_');
+        if (false === $output) {
+            return null;
+        }
+
+        $success = imagejpeg($gdImage, $output, $jpegQuality);
+
+        return $success ? $output : null;
     }
 }

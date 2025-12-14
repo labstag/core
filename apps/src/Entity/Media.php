@@ -12,7 +12,7 @@ use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\MediaRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 #[Vich\Uploadable]
@@ -21,7 +21,7 @@ class Media
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
-    #[Vich\UploadableField(mapping: 'media', fileNameProperty: 'name', mimeType: 'mimeType', size: 'size')]
+    #[Vich\UploadableField(mapping: 'media', fileNameProperty: 'name', size: 'size', mimeType: 'mimeType')]
     protected ?File $file = null;
 
     #[ORM\Id]
@@ -39,8 +39,8 @@ class Media
     #[ORM\Column(nullable: true)]
     protected ?int $size = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['name'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[Gedmo\Slug(fields: ['name'], updatable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
     protected ?string $slug = null;
 
     public function getFile(): ?File
@@ -93,7 +93,6 @@ class Media
     {
         $this->name = $name;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
         if (null === $name) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

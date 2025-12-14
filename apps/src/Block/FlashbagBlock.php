@@ -13,12 +13,10 @@ class FlashbagBlock extends SimpleBlockAbstract
         return EntityFlashbagBlock::class;
     }
 
-    // Utilise l'implémentation par défaut d'SimpleBlockAbstract
-
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Flashbag');
+        return new TranslatableMessage('Flashbag');
     }
 
     #[Override]

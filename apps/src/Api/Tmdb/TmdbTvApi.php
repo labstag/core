@@ -11,6 +11,65 @@ use Symfony\Contracts\Cache\ItemInterface;
 class TmdbTvApi extends AbstractTmdbApi
 {
     /**
+     * Discover TV series with filters.
+     *
+     * @param array<string, mixed> $filters  Optional filters (genre, year, etc.)
+     * @param string|null          $language Language (e.g., 'en-US', 'fr-FR')
+     * @param int                  $page     Page number
+     *
+     * @return array<string, mixed>|null
+     */
+    public function discover(array $filters = [], ?string $language = null, int $page = 1): ?array
+    {
+        $params = array_merge(
+            $filters,
+            array_filter(
+                [
+                    'language' => $language ?? 'en-US',
+                    'page'     => 1 < $page ? $page : null,
+                ]
+            )
+        );
+
+        $query    = http_build_query($params);
+        $cacheKey = 'tmdb_tv_' . md5($query);
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($query): ?array {
+                $url  = self::BASE_URL . '/discover/tv?' . $query;
+                $data = $this->makeRequest($url);
+
+                if (null === $data || 0 === count($data['results'])) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(3600);
+                // 1 hour cache
+
+                return $data;
+            },
+            3600
+        );
+    }
+
+    public function discovers(array $filters = [], ?string $language = null, int $page = 1): ?array
+    {
+        $data = $this->discover($filters, $language, $page);
+        if (null !== $data && isset($data['total_pages']) && $data['total_pages'] > $page) {
+            $nextPageData = $this->discovers(filters: $filters, language: $language, page: $page + 1);
+
+            if (null !== $nextPageData && isset($nextPageData['results'])) {
+                $data['results'] = array_merge($data['results'], $nextPageData['results']);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Get TV series details by ID.
      *
      * @param string      $seriesId         TV series ID

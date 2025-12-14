@@ -14,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Controller\Admin\Factory\ActionsFactory;
 use Labstag\Controller\Admin\Factory\CrudFieldFactory;
 use Labstag\Controller\Admin\Traits\ParagraphAdminTrait;
@@ -22,9 +23,12 @@ use Labstag\Entity\Paragraph;
 use Labstag\Repository\ParagraphRepository;
 use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\BlockService;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\EmailService;
 use Labstag\Service\FileService;
 use Labstag\Service\FormService;
+use Labstag\Service\Igdb\GameService;
+use Labstag\Service\Igdb\PlatformService;
 use Labstag\Service\Imdb\EpisodeService;
 use Labstag\Service\Imdb\MovieService;
 use Labstag\Service\Imdb\SagaService;
@@ -36,10 +40,12 @@ use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
+use Override;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -55,12 +61,17 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     use ParagraphAdminTrait;
 
     public function __construct(
+        protected GameService $gameService,
+        protected PlatformService $platformService,
+        protected TheMovieDbApi $theMovieDbApi,
+        protected ConfigurationService $configurationService,
         protected EmailService $emailService,
         protected SerieService $serieService,
         protected FormService $formService,
         protected FileService $fileService,
         protected SiteService $siteService,
         protected SlugService $slugService,
+        protected MessageBusInterface $messageBus,
         protected SeasonService $seasonService,
         protected SecurityService $securityService,
         protected BlockService $blockService,
@@ -80,7 +91,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     {
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud->addFormTheme('admin/form.html.twig');
@@ -95,7 +106,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): object
     {
         $entity = new $entityFqcn();
@@ -113,7 +124,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return $entity;
     }
 
-    #[\Override]
+    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
@@ -130,33 +141,29 @@ abstract class CrudControllerAbstract extends AbstractCrudController
 
     public function linkPublic(AdminContext $adminContext): RedirectResponse
     {
-        $request            = $adminContext->getRequest();
-        $entityId           = $request->query->get('entityId');
-        $repositoryAbstract = $this->getRepository();
-        $entity             = $repositoryAbstract->find($entityId);
-        $slug               = $this->slugService->forEntity($entity);
+        $request              = $adminContext->getRequest();
+        $entityId             = $request->query->get('entityId');
+        $repositoryAbstract   = $this->getRepository();
+        $entity               = $repositoryAbstract->find($entityId);
+        $params               = $this->slugService->forEntity($entity);
 
-        return $this->redirectToRoute(
-            'front',
-            ['slug' => $slug]
-        );
+        return $this->redirectToRoute('front', $params);
     }
 
     public function linkw3CValidator(AdminContext $adminContext): RedirectResponse
     {
         $request                         = $adminContext->getRequest();
         $entityId                        = $request->query->get('entityId');
-        $repository                      = $this->getRepository();
-        $entity                          = $repository->find($entityId);
+        $entity                          = $this->getRepository()->find($entityId);
         $repositoryAbstract              = $this->getRepository();
         $repositoryAbstract->find($entity);
 
-        $slug                            = $this->slugService->forEntity($entity);
+        $params                            = $this->slugService->forEntity($entity);
 
         return $this->redirect(
             'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
                 'front',
-                ['slug' => $slug],
+                $params,
                 UrlGeneratorInterface::ABSOLUTE_URL
             )
         );

@@ -16,7 +16,7 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: SerieRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -87,14 +87,22 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]
     protected ?DateTime $lastreleaseDate = null;
 
-    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'serie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'serie',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -112,14 +120,22 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     /**
      * @var Collection<int, Season>
      */
-    #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'refserie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Season::class,
+        mappedBy: 'refserie',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['number' => 'ASC']
     )]
     protected Collection $seasons;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
     protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
@@ -433,7 +449,6 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     {
         $this->backdrop = $backdrop;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $backdrop) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
@@ -534,7 +549,6 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     {
         $this->poster = $poster;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $poster) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

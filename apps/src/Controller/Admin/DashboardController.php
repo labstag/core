@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Controller\Admin\Factory\MenuItemFactory;
+use Labstag\Entity\Configuration;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
 use Labstag\Repository\ConfigurationRepository;
@@ -23,6 +24,7 @@ use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
+use Override;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -44,13 +46,13 @@ class DashboardController extends AbstractDashboardController
     {
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(): Crud
     {
         return Crud::new()->setFormThemes(['admin/form.html.twig', '@EasyAdmin/crud/form_theme.html.twig']);
     }
 
-    #[\Override]
+    #[Override]
     public function configureDashboard(): Dashboard
     {
         $data      = $this->configurationService->getConfiguration();
@@ -63,13 +65,18 @@ class DashboardController extends AbstractDashboardController
         return $dashboard;
     }
 
-    #[\Override]
+    #[Override]
     public function configureMenuItems(): iterable
     {
         $categories = $this->menuItemFactory->createCategoryMenuItems();
         $tags       = $this->menuItemFactory->createTagMenuItems();
         // Dashboard home
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
+        yield MenuItem::linkToCrud(
+            new TranslatableMessage('Notifications'),
+            'fas fa-bell',
+            NotificationCrudController::getEntityFqcn()
+        );
 
         // Shared taxonomy items (categories / tags) used in several content sub-menus
         $fieldsTAbs = [
@@ -98,7 +105,7 @@ class DashboardController extends AbstractDashboardController
         yield from $this->buildUtilityMenus();
     }
 
-    #[\Override]
+    #[Override]
     public function configureUserMenu(UserInterface $user): UserMenu
     {
         $userMenu = parent::configureUserMenu($user);
@@ -136,7 +143,7 @@ class DashboardController extends AbstractDashboardController
         return $userMenu;
     }
 
-    #[\Override]
+    #[Override]
     public function index(): Response
     {
         $repositoryAbstract = $this->getRepository(Memo::class);
@@ -210,7 +217,7 @@ class DashboardController extends AbstractDashboardController
      */
     private function buildConfigurationMenuItem(): ?object
     {
-        $configurations = $this->configurationRepository->findAll();
+        $configurations = $this->getRepository(Configuration::class)->findAll();
         $configuration  = $configurations[0] ?? null;
         if (!$configuration) {
             return null;
@@ -247,6 +254,7 @@ class DashboardController extends AbstractDashboardController
                 $categories,
                 $tags,
                 [],
+                false,
             ],
             [
                 'chapter',
@@ -256,6 +264,7 @@ class DashboardController extends AbstractDashboardController
                 null,
                 null,
                 [],
+                false,
             ],
             [
                 'movie',
@@ -271,6 +280,7 @@ class DashboardController extends AbstractDashboardController
                         SagaCrudController::getEntityFqcn()
                     ),
                 ],
+                true,
             ],
             [
                 'serie',
@@ -291,6 +301,28 @@ class DashboardController extends AbstractDashboardController
                         EpisodeCrudController::getEntityFqcn()
                     ),
                 ],
+                true,
+            ],
+            [
+                'game',
+                new TranslatableMessage('Game'),
+                'fas fa-gamepad',
+                GameCrudController::class,
+                $categories,
+                null,
+                [
+                    MenuItem::linkToCrud(
+                        new TranslatableMessage('Platform'),
+                        'fas fa-desktop',
+                        PlatformCrudController::getEntityFqcn()
+                    ),
+                    MenuItem::linkToCrud(
+                        new TranslatableMessage('Franchise'),
+                        'fas fa-th-large',
+                        FranchiseCrudController::getEntityFqcn()
+                    ),
+                ],
+                true,
             ],
             [
                 'page',
@@ -300,6 +332,7 @@ class DashboardController extends AbstractDashboardController
                 $categories,
                 $tags,
                 [],
+                false,
             ],
             [
                 'post',
@@ -309,15 +342,17 @@ class DashboardController extends AbstractDashboardController
                 $categories,
                 $tags,
                 [],
+                false,
             ],
         ];
 
-        foreach ($definitions as [$code, $label, $icon, $controller, $cats, $tgs, $children]) {
+        foreach ($definitions as [$code, $label, $icon, $controller, $cats, $tgs, $children, $disableAdd]) {
             yield $this->menuItemFactory->createContentSubMenu(
                 $code,
                 $label,
                 $icon,
                 $controller,
+                $disableAdd,
                 $cats,
                 $tgs,
                 $children

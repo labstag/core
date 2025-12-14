@@ -4,6 +4,7 @@ namespace Labstag\FileStorage;
 
 use Labstag\Entity\Memo;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Override;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -20,7 +21,7 @@ class MemoFileStorage extends FileStorageAbstract implements FileStorageInterfac
         $this->setType('memo');
     }
 
-    #[\Override]
+    #[Override]
     public function getEntity(): array
     {
         return [Memo::class];
