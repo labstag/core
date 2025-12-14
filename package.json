@@ -35,7 +35,7 @@
     "@babel/core": "7.28.*",
     "@babel/preset-env": "7.28.*",
     "@eslint/js": "9.36.*",
-    "@symfony/webpack-encore": "5.0.*",
+    "@symfony/webpack-encore": "5.3.*",
     "autoprefixer": "10.4.*",
     "clean-webpack-plugin": "4.0.*",
     "core-js": "3.45.*",
