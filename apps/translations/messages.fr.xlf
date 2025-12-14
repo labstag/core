@@ -2283,7 +2283,7 @@
       </trans-unit>
       <trans-unit id="vtsk56f" resname="Message">
         <source>Message</source>
-        <target>__Message</target>
+        <target>Message</target>
       </trans-unit>
       <trans-unit id="gGxnmUA" resname="Notifications">
         <source>Notifications</source>
