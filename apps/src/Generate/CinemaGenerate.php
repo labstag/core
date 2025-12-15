@@ -47,11 +47,6 @@ class CinemaGenerate
         $page             = $entityRepository->findOneBy(
             ['title' => $title]
         );
-        $home = $entityRepository->findOneBy(
-            [
-                'type' => PageEnum::HOME->value,
-            ]
-        );
 
         $configuration = $this->configurationService->getConfiguration();
         if (!$page instanceof Page) {
@@ -60,10 +55,15 @@ class CinemaGenerate
             $page->setType(PageEnum::PAGE->value);
             $page->setEnable(true);
             $page->setTitle($title);
+            $home = $entityRepository->findOneBy(
+                [
+                    'type' => PageEnum::HOME->value,
+                ]
+            );
+            $page->setPage($home);
             $entityRepository->save($page);
         }
 
-        $page->setPage($home);
         $page->setResume($this->pageCinemaResumeTemplate->getTemplate()->getHtml());
         $this->setParagraphs($page, $configuration);
         $entityRepository->save($page);
