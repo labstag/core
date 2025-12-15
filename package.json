@@ -42,7 +42,7 @@
     "cypress": "15.6.*",
     "dotenv": "17.2.*",
     "dotenv-webpack": "8.1.*",
-    "eslint": "9.36.*",
+    "eslint": "9.39.*",
     "favicons-webpack-plugin": "6.0.*",
     "file-loader": "6.2.*",
     "globals": "15.13.*",
