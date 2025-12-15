@@ -93,7 +93,9 @@ class ParagraphCrudController extends CrudControllerAbstract
                     return $value;
                 }
 
-                return $this->translator->trans($paragraph->getName());
+                $message = $paragraph->getName();
+
+                return $this->translator->trans($message->getMessage(), $message->getParameters());
             }
         );
         $textField->setDisabled(true);
@@ -114,7 +116,8 @@ class ParagraphCrudController extends CrudControllerAbstract
             return $filters;
         }
 
-        $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', new TranslatableMessage('Type'));
+        $typeTranslation = new TranslatableMessage('Type');
+        $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', $typeTranslation->getMessage());
         $discriminatorTypeFilter->setParagraphService($this->paragraphService);
         $discriminatorTypeFilter->setChoices(
             array_merge(

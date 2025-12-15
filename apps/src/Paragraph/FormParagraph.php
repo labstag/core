@@ -65,7 +65,8 @@ class FormParagraph extends ParagraphAbstract implements ParagraphInterface
         $choiceField->setChoices($this->formService->all());
         yield $choiceField;
         yield BooleanField::new('save', new TranslatableMessage('Save data in database'));
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Confirm message'));
+        $wysiwgTranslation = new TranslatableMessage('Confirm message');
+        $wysiwygField = WysiwygField::new('content', $wysiwgTranslation->getMessage());
         yield $wysiwygField;
     }
 

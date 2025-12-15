@@ -19,6 +19,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 #[AutoconfigureTag('labstag.blocks')]
@@ -53,6 +54,7 @@ abstract class BlockAbstract extends AbstractController implements BlockInterfac
     public function __construct(
         #[AutowireIterator('labstag.datas')]
         protected iterable $datas,
+        protected TranslatorInterface $translator,
         protected ShortCodeService $shortCodeService,
         protected LoggerInterface $logger,
         protected Security $security,
@@ -76,7 +78,7 @@ abstract class BlockAbstract extends AbstractController implements BlockInterfac
     {
         $blockId = $block->getId();
 
-        return $this->data[$blockId] ?? null;
+        return $this->data[$blockId] ?? ['block' => $block];
     }
 
     public function getFields(Block $block, string $pageName): mixed

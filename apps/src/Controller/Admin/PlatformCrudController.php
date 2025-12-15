@@ -23,12 +23,13 @@ class PlatformCrudController extends CrudControllerAbstract
     {
         $id      = $request->query->get('id');
         $this->messageBus->dispatch(new AddGameMessage($id, 'platform'));
+        $translatableMessage = new TranslatableMessage('Platform is being added');
 
         return new JsonResponse(
             [
                 'status'  => 'success',
                 'id'      => $id,
-                'message' => $this->translator->trans(new TranslatableMessage('Platform is being added')),
+                'message' => $this->translator->trans($translatableMessage->getMessage(), $translatableMessage->getParameters()),
             ]
         );
     }

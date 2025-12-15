@@ -84,8 +84,9 @@ final class BlockService
     {
         $blocks = [];
         foreach ($this->blocks as $block) {
-            $type  = $block->getType();
-            $name  = $this->translator->trans($block->getName());
+            $type    = $block->getType();
+            $message = $block->getName();
+            $name    = $this->translator->trans($message->getMessage(), $message->getParameters());
             if ($block->isEnable() || is_null($entity)) {
                 $blocks[$name] = $type;
             }
@@ -195,7 +196,8 @@ final class BlockService
         $name = '';
         foreach ($this->blocks as $row) {
             if ($row->getClass() == $block::class) {
-                $name = $this->translator->trans($row->getName());
+                $message = $row->getName();
+                $name    = $this->translator->trans($message->getMessage(), $message->getParameters());
 
                 break;
             }

@@ -58,7 +58,6 @@ class LinksBlock extends BlockAbstract
         }
 
         $links = $this->correctionLinks($links);
-
         $this->setData(
             $block,
             [

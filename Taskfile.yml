@@ -428,22 +428,6 @@ tasks:
       vars:
         COMMAND: "php -d memory_limit=-1 phploc.phar src"
 
-  lint:phpmd:
-    desc: "Check code with PHP Mess Detector"
-    silent: true
-    cmds:
-    - task: labstag:cmd-exec
-      vars:
-        COMMAND: "php -d memory_limit=-1 -d error_reporting=24575 bin/phpmd config,public,src,tests ansi phpmd.xml"
-
-  lint:phpmnd:
-    desc: "Detect magic numbers with PHPMND"
-    silent: true
-    cmds:
-    - task: composer:exec
-      vars:
-        CMD: "run phpmnd"
-
   phpstan:
     desc: "Analyze code with PHPStan"
     silent: true
@@ -637,8 +621,6 @@ tasks:
     silent: true
     cmds:
     - task: lint:phpcs:error
-    - task: lint:phpmd
-    - task: lint:phpmnd
     - task: phpstan
       vars:
         LEVEL: "0"

@@ -26,13 +26,14 @@ class MetaCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
+        $metaParentTranslation = new TranslatableMessage('Parent');
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
                 $this->crudFieldFactory->titleField(),
                 TextField::new('keywords', new TranslatableMessage('Keywords')),
                 TextField::new('description', new TranslatableMessage('Description')),
-                MetaParentField::new('parent', new TranslatableMessage('Parent')),
+                MetaParentField::new('parent', $metaParentTranslation->getMessage()),
             ]
         );
 

@@ -41,16 +41,17 @@ final class UploadFileField implements FieldInterface
             [
                 'required'       => false,
                 'allow_delete'   => true,
-                'delete_label'   => $translator->trans($deleteLabel),
-                'download_label' => $translator->trans($downloadLabel),
+                'delete_label'   => $translator->trans($deleteLabel->getMessage(), $deleteLabel->getParameters()),
+                'download_label' => $translator->trans($downloadLabel->getMessage(), $downloadLabel->getParameters()),
                 'download_uri'   => true,
                 'asset_helper'   => true,
                 'constraints'    => [
                     new File(
-                        [
-                            'maxSize'          => ini_get('upload_max_filesize'),
-                            'maxSizeMessage'   => $translator->trans($maxSizeMessage),
-                        ]
+                        maxSize: ini_get('upload_max_filesize'),
+                        maxSizeMessage: $translator->trans(
+                            $maxSizeMessage->getMessage(),
+                            $maxSizeMessage->getParameters()
+                        ),
                     ),
                 ],
             ]

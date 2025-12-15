@@ -283,7 +283,8 @@ final class CrudFieldFactory
     ): TextField|UploadFileField
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            return UploadFileField::new($type . 'File', $label ?? new TranslatableMessage('File'));
+            $fileTranslation = new TranslatableMessage('File');
+            return UploadFileField::new($type . 'File', $label ?? $fileTranslation->getMessage());
         }
 
         $this->fileService->getBasePath($entityFqcn, $type . 'File');
@@ -323,7 +324,8 @@ final class CrudFieldFactory
     ): ImageField|UploadImageField
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $uploadImageField = UploadImageField::new($type . 'File', $label ?? new TranslatableMessage('Image'));
+            $fileTranslation = new TranslatableMessage('Image');
+            $uploadImageField = UploadImageField::new($type . 'File', $label ?? $fileTranslation->getMessage());
             $uploadImageField->setTranslator($this->translator);
 
             return $uploadImageField;
@@ -577,7 +579,8 @@ final class CrudFieldFactory
 
         $key = 'paragraphs';
         $this->addTab($key, FormField::addTab(new TranslatableMessage('Paragraphs')));
-        $paragraphsField = ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'));
+        $paragraphsTranslation = new TranslatableMessage('Paragraphs');
+        $paragraphsField = ParagraphsField::new('paragraphs', $paragraphsTranslation->getMessage());
         $paragraphsField->hideWhenCreating();
         $paragraphsField->hideOnIndex();
         $this->addFieldsToTab($key, [$paragraphsField]);

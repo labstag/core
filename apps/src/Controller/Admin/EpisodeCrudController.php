@@ -79,8 +79,9 @@ class EpisodeCrudController extends CrudControllerAbstract
         $integerField = IntegerField::new('runtime', new TranslatableMessage('Runtime'));
         $integerField->setTemplatePath('admin/field/runtime-episode.html.twig');
 
-        $wysiwygField = WysiwygField::new('overview', new TranslatableMessage('Overview'));
-        $wysiwygField->hideOnIndex();
+        $wysiwgTranslation = new TranslatableMessage('Overview');
+        $wysiwgField = WysiwygField::new('overview', $wysiwgTranslation->getMessage());
+        $wysiwgField->hideOnIndex();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -107,17 +108,19 @@ class EpisodeCrudController extends CrudControllerAbstract
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
+        $seasonTranslation = new TranslatableMessage('Season');
         $filters->add(
-            SerieEpisodeFilter::new('number', new TranslatableMessage('Season'))->setChoices(
+            SerieEpisodeFilter::new('number', $seasonTranslation->getMessage())->setChoices(
                 array_merge(
                     ['' => ''],
                     $this->seasonService->getSeasonsChoice()
                 )
             )
         );
+        $serieTranslation = new TranslatableMessage('Serie');
         $filters->add(DateTimeFilter::new('airDate', new TranslatableMessage('Air date')));
         $filters->add(
-            SeasonEpisodeFilter::new('serie', new TranslatableMessage('Serie'))->setChoices(
+            SeasonEpisodeFilter::new('serie', $serieTranslation->getMessage())->setChoices(
                 array_merge(
                     ['' => ''],
                     $this->serieService->getSeriesChoice()

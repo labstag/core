@@ -34,29 +34,35 @@ class GameCrudController extends CrudControllerAbstract
         $repositoryAbstract = $this->getRepository();
         $game               = $repositoryAbstract->find($entityId);
         if (!$game instanceof Game) {
+            $message = new TranslatableMessage('Game not found');
+
             return new JsonResponse(
                 [
                     'status'  => 'error',
-                    'message' => $this->translator->trans(new TranslatableMessage('Game not found')),
+                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
                 ]
             );
         }
 
         $post = $request->request->all();
         if (!isset($post['game_other_platform'])) {
+            $message = new TranslatableMessage('No data found');
+
             return new JsonResponse(
                 [
                     'status'  => 'error',
-                    'message' => $this->translator->trans(new TranslatableMessage('No data found')),
+                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
                 ]
             );
         }
 
         if (!isset($post['game_other_platform']['platforms'])) {
+            $message = new TranslatableMessage('No platform selected');
+
             return new JsonResponse(
                 [
                     'status'  => 'error',
-                    'message' => $this->translator->trans(new TranslatableMessage('No platform selected')),
+                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
                 ]
             );
         }
@@ -70,11 +76,12 @@ class GameCrudController extends CrudControllerAbstract
         }
 
         $repositoryAbstract->save($game);
+        $message = new TranslatableMessage('Platforms added successfully');
 
         return new JsonResponse(
             [
                 'status'  => 'success',
-                'message' => $this->translator->trans(new TranslatableMessage('Platforms added successfully')),
+                'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
             ]
         );
     }
@@ -85,11 +92,13 @@ class GameCrudController extends CrudControllerAbstract
         $platform = $request->query->get('platform', '');
         $this->messageBus->dispatch(new AddGameMessage($id, 'game', $platform));
 
+        $translatableMessage = new TranslatableMessage('Game is being added');
+
         return new JsonResponse(
             [
                 'status'  => 'success',
                 'id'      => $id,
-                'message' => $this->translator->trans(new TranslatableMessage('Game is being added')),
+                'message' => $this->translator->trans($translatableMessage->getMessage(), $translatableMessage->getParameters()),
             ]
         );
     }
@@ -193,7 +202,8 @@ class GameCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->setTabDate($pageName);
 
-        $wysiwygField = WysiwygField::new('summary', new TranslatableMessage('Summary'));
+        $wysiwgTranslation = new TranslatableMessage('Summary');
+        $wysiwygField = WysiwygField::new('summary', $wysiwgTranslation->getMessage());
         $wysiwygField->hideOnIndex();
 
         $this->crudFieldFactory->addFieldsToTab(

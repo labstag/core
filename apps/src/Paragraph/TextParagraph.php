@@ -48,7 +48,8 @@ class TextParagraph extends ParagraphAbstract implements ParagraphInterface
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Text'));
+        $wysiwgTranslation = new TranslatableMessage('Text');
+        $wysiwygField = WysiwygField::new('content', $wysiwgTranslation->getMessage());
 
         yield $wysiwygField;
     }

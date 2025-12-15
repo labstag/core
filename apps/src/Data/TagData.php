@@ -64,8 +64,9 @@ class TagData extends DataAbstract implements DataInterface
         $params = [
             '%tag%' => $tag->getTitle(),
         ];
+        $translatableMessage = new TranslatableMessage('Tag %tag%', $params);
 
-        return $this->translator->trans(new TranslatableMessage('Tag %tag%'), $params);
+        return $this->translator->trans($translatableMessage->getMessage(), $translatableMessage->getParameters());
     }
 
     #[Override]

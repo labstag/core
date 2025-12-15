@@ -67,7 +67,9 @@ class CategoryData extends DataAbstract implements DataInterface
             '%category%' => $category->getTitle(),
         ];
 
-        return $this->translator->trans(new TranslatableMessage('Category %category%'), $params);
+        $translatableMessage = new TranslatableMessage('Category %category%', $params);
+
+        return $this->translator->trans($translatableMessage->getMessage(), $translatableMessage->getParameters());
     }
 
     #[Override]

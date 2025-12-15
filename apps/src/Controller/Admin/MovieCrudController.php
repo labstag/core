@@ -39,11 +39,13 @@ class MovieCrudController extends CrudControllerAbstract
             ['tmdb' => $tmdbId]
         );
         if ($movie instanceof Movie) {
+            $message = new TranslatableMessage('Movie already exists');
+
             return new JsonResponse(
                 [
                     'status'  => 'warning',
                     'id'      => $tmdbId,
-                    'message' => $this->translator->trans(new TranslatableMessage('Movie already exists')),
+                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
                 ]
             );
         }
@@ -51,27 +53,29 @@ class MovieCrudController extends CrudControllerAbstract
         $locale = $this->configurationService->getLocaleTmdb();
         $tmdb   = $this->theMovieDbApi->movies()->getDetails($tmdbId, $locale);
         if (is_null($tmdb)) {
+            $message = new TranslatableMessage(
+                'The movie with the TMDB id %id% does not exist',
+                ['%id%' => $tmdbId]
+            );
+
             return new JsonResponse(
                 [
                     'status'  => 'error',
                     'id'      => $tmdbId,
-                    'message' => $this->translator->trans(
-                        new TranslatableMessage(
-                            'The movie with the TMDB id %id% does not exist',
-                            ['%id%' => $tmdbId]
-                        )
-                    ),
+                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
                 ]
             );
         }
 
         $other  = $this->theMovieDbApi->movies()->getMovieExternalIds($tmdbId);
         if (!isset($other['imdb_id'])) {
+            $message = new TranslatableMessage('No Imdb id for this movie');
+
             return new JsonResponse(
                 [
                     'status'  => 'warning',
                     'id'      => $tmdbId,
-                    'message' => $this->translator->trans(new TranslatableMessage('No Imdb id for this movie')),
+                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
                 ]
             );
         }
@@ -86,12 +90,13 @@ class MovieCrudController extends CrudControllerAbstract
 
         $this->getRepository(Movie::class)->save($movie);
         $this->messageBus->dispatch(new MovieMessage($movie->getId()));
+        $message = new TranslatableMessage('Movie is being added');
 
         return new JsonResponse(
             [
                 'status'  => 'success',
                 'id'      => $tmdbId,
-                'message' => $this->translator->trans(new TranslatableMessage('Movie is being added')),
+                'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
             ]
         );
     }
@@ -169,15 +174,19 @@ class MovieCrudController extends CrudControllerAbstract
         $trailerField = TextField::new('trailer', new TranslatableMessage('Trailer'));
         $trailerField->hideOnIndex();
 
-        $wysiwygField = WysiwygField::new('citation', new TranslatableMessage('Citation'));
+        $wysiwgTranslation = new TranslatableMessage('Citation');
+        $wysiwygField = WysiwygField::new('citation', $wysiwgTranslation->getMessage());
         $wysiwygField->hideOnIndex();
 
-        $descriptionField = WysiwygField::new('description', new TranslatableMessage('Description'));
+        $descriptionTranslation = new TranslatableMessage('Description');
+        $descriptionField = WysiwygField::new('description', $descriptionTranslation->getMessage());
         $descriptionField->hideOnIndex();
 
         $booleanField = $this->crudFieldFactory->booleanField('file', new TranslatableMessage('File'));
         $booleanField->hideOnIndex();
 
+        $posterTranslation = new TranslatableMessage('Poster');
+        $backdropTranslation = new TranslatableMessage('Backdrop');
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
@@ -188,13 +197,13 @@ class MovieCrudController extends CrudControllerAbstract
                     'poster',
                     $pageName,
                     self::getEntityFqcn(),
-                    new TranslatableMessage('Poster')
+                    $posterTranslation->getMessage()
                 ),
                 $this->crudFieldFactory->imageField(
                     'backdrop',
                     $pageName,
                     self::getEntityFqcn(),
-                    new TranslatableMessage('Backdrop')
+                    $backdropTranslation->getMessage()
                 ),
                 $textField,
                 $tmdbField,
@@ -229,7 +238,8 @@ class MovieCrudController extends CrudControllerAbstract
         $filters->add('releaseDate');
         $countries = $repositoryAbstract->getCountries();
         if ([] != $countries) {
-            $countriesFilter = CountriesFilter::new('countries', new TranslatableMessage('Countries'));
+            $countriesTranslation = new TranslatableMessage('Countries');
+            $countriesFilter = CountriesFilter::new('countries', $countriesTranslation->getMessage());
             $countriesFilter->setChoices(
                 array_merge(
                     ['' => ''],

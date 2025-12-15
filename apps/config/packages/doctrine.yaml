@@ -12,13 +12,8 @@ doctrine:
       enabled: true
     filters:
       deletedfile: Labstag\Doctrine\Filter\DeleteFileFilter
-    auto_generate_proxy_classes: true
-    enable_native_lazy_objects: true
-    enable_lazy_ghost_objects: true
-    report_fields_where_declared: true
     validate_xml_mapping: true
     naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-    auto_mapping: true
     mappings:
       Labstag:
         type: attribute
@@ -26,8 +21,6 @@ doctrine:
         dir: '%kernel.project_dir%/src/Entity'
         prefix: 'Labstag\Entity'
         alias: Labstag
-    controller_resolver:
-      auto_mapping: false
 
 when@test:
   doctrine:
@@ -41,7 +34,6 @@ when@test:
 when@prod:
   doctrine:
     orm:
-      auto_generate_proxy_classes: false
       proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
       query_cache_driver:
         type: pool
@@ -49,7 +41,6 @@ when@prod:
       result_cache_driver:
         type: pool
         pool: doctrine.result_cache_pool
-      enable_lazy_ghost_objects: true
 
   framework:
     cache:

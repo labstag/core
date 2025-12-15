@@ -97,7 +97,8 @@ class StoryCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
-        $wysiwygField = WysiwygField::new('resume', new TranslatableMessage('resume'));
+        $wysiwgTranslation = new TranslatableMessage('resume');
+        $wysiwygField = WysiwygField::new('resume', $wysiwgTranslation->getMessage());
         $wysiwygField->hideOnIndex();
 
         $this->crudFieldFactory->addFieldsToTab(

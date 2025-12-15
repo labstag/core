@@ -65,7 +65,10 @@ final class StoryService
         $translatableMessage = new TranslatableMessage('Table of Contents');
         $mpdf->TOCpagebreakByArray(
             [
-                'toc-preHTML' => '<h1>' . $this->translator->trans($translatableMessage) . '</h1>',
+                'toc-preHTML' => '<h1>' . $this->translator->trans(
+                    $translatableMessage->getMessage(),
+                    $translatableMessage->getParameters()
+                ) . '</h1>',
                 'links'       => true,
             ]
         );

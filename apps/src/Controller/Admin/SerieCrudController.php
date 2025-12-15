@@ -39,11 +39,13 @@ class SerieCrudController extends CrudControllerAbstract
             ['tmdb' => $tmdbId]
         );
         if ($serie instanceof Serie) {
+            $message = new TranslatableMessage('Serie already exists');
+
             return new JsonResponse(
                 [
                     'status'  => 'warning',
                     'id'      => $tmdbId,
-                    'message' => $this->translator->trans(new TranslatableMessage('Serie already exists')),
+                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
                 ]
             );
         }
@@ -51,27 +53,29 @@ class SerieCrudController extends CrudControllerAbstract
         $locale = $this->configurationService->getLocaleTmdb();
         $tmdb   = $this->theMovieDbApi->tvserie()->getDetails($tmdbId, $locale);
         if (is_null($tmdb)) {
+            $message = new TranslatableMessage(
+                'The series with the TMDB id %id% does not exist',
+                ['%id%' => $tmdbId]
+            );
+
             return new JsonResponse(
                 [
                     'status'  => 'warning',
                     'id'      => $tmdbId,
-                    'message' => $this->translator->trans(
-                        new TranslatableMessage(
-                            'The series with the TMDB id %id% does not exist',
-                            ['%id%' => $tmdbId]
-                        )
-                    ),
+                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
                 ]
             );
         }
 
         $other  = $this->theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
         if (!isset($other['imdb_id'])) {
+            $message = new TranslatableMessage('No Imdb id for this series');
+
             return new JsonResponse(
                 [
                     'status'  => 'warning',
                     'id'      => $tmdbId,
-                    'message' => $this->translator->trans(new TranslatableMessage('No Imdb id for this series')),
+                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
                 ]
             );
         }
@@ -86,12 +90,13 @@ class SerieCrudController extends CrudControllerAbstract
 
         $this->getRepository(Serie::class)->save($serie);
         $this->messageBus->dispatch(new SerieMessage($serie->getId()));
+        $message = new TranslatableMessage('Serie is being added');
 
         return new JsonResponse(
             [
                 'status'  => 'success',
                 'id'      => $tmdbId,
-                'message' => $this->translator->trans(new TranslatableMessage('Serie added successfully')),
+                'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
             ]
         );
     }
@@ -174,14 +179,18 @@ class SerieCrudController extends CrudControllerAbstract
         $trailerField = TextField::new('trailer', new TranslatableMessage('Trailer'));
         $trailerField->hideOnIndex();
 
-        $wysiwygField = WysiwygField::new('citation', new TranslatableMessage('Citation'));
+        $wysiwgTranslation = new TranslatableMessage('Citation');
+        $wysiwygField = WysiwygField::new('citation', $wysiwgTranslation->getMessage());
         $wysiwygField->hideOnIndex();
 
-        $descriptionField = WysiwygField::new('description', new TranslatableMessage('Description'));
+        $descriptionTranslation = new TranslatableMessage('Description');
+        $descriptionField = WysiwygField::new('description', $descriptionTranslation->getMessage());
         $descriptionField->hideOnIndex();
 
         $booleanField = $this->crudFieldFactory->booleanField('file', new TranslatableMessage('File'));
         $booleanField->hideOnIndex();
+        $posterTranslation = new TranslatableMessage('Poster');
+        $backdropTranslation = new TranslatableMessage('Backdrop');
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -193,13 +202,13 @@ class SerieCrudController extends CrudControllerAbstract
                     'poster',
                     $pageName,
                     self::getEntityFqcn(),
-                    new TranslatableMessage('Poster')
+                    $posterTranslation->getMessage()
                 ),
                 $this->crudFieldFactory->imageField(
                     'backdrop',
                     $pageName,
                     self::getEntityFqcn(),
-                    new TranslatableMessage('Backdrop')
+                    $backdropTranslation->getMessage()
                 ),
                 $this->crudFieldFactory->booleanField('inProduction', new TranslatableMessage('in Production')),
                 $textField,
@@ -234,7 +243,8 @@ class SerieCrudController extends CrudControllerAbstract
         $filters->add('releaseDate');
         $countries = $this->getRepository()->getCountries();
         if ([] != $countries) {
-            $countriesFilter = CountriesFilter::new('countries', new TranslatableMessage('Countries'));
+            $countriesTranslation = new TranslatableMessage('Countries');
+            $countriesFilter = CountriesFilter::new('countries', $countriesTranslation->getMessage());
             $countriesFilter->setChoices(
                 array_merge(
                     ['' => ''],

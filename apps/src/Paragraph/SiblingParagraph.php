@@ -58,7 +58,8 @@ class SiblingParagraph extends ParagraphAbstract implements ParagraphInterface
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Description'));
+        $wysiwgTranslation = new TranslatableMessage('Description');
+        $wysiwygField = WysiwygField::new('content', $wysiwgTranslation->getMessage());
         yield $wysiwygField;
     }
 

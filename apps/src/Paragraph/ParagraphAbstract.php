@@ -104,16 +104,23 @@ abstract class ParagraphAbstract extends AbstractController
                 [
                     'required'       => false,
                     'allow_delete'   => true,
-                    'delete_label'   => $this->translator->trans($deleteLabel),
-                    'download_label' => $this->translator->trans($downloadLabel),
+                    'delete_label'   => $this->translator->trans(
+                        $deleteLabel->getMessage(),
+                        $deleteLabel->getParameters()
+                    ),
+                    'download_label' => $this->translator->trans(
+                        $downloadLabel->getMessage(),
+                        $downloadLabel->getParameters()
+                    ),
                     'download_uri'   => true,
                     'asset_helper'   => true,
                     'constraints'    => [
                         new File(
-                            [
-                                'maxSize'        => ini_get('upload_max_filesize'),
-                                'maxSizeMessage' => $this->translator->trans($maxSizeMessage),
-                            ]
+                            maxSize: ini_get('upload_max_filesize'),
+                            maxSizeMessage: $this->translator->trans(
+                                $maxSizeMessage->getMessage(),
+                                $maxSizeMessage->getParameters()
+                            ),
                         ),
                     ],
                 ]
@@ -145,24 +152,34 @@ abstract class ParagraphAbstract extends AbstractController
                 [
                     'required'       => false,
                     'allow_delete'   => true,
-                    'delete_label'   => $this->translator->trans($deleteLabel),
-                    'download_label' => $this->translator->trans($downloadLabel),
+                    'delete_label'   => $this->translator->trans(
+                        $deleteLabel->getMessage(),
+                        $deleteLabel->getParameters()
+                    ),
+                    'download_label' => $this->translator->trans(
+                        $downloadLabel->getMessage(),
+                        $downloadLabel->getParameters()
+                    ),
                     'download_uri'   => true,
                     'image_uri'      => true,
                     'asset_helper'   => true,
                     'constraints'    => [
                         new File(
-                            [
-                                'maxSize'          => ini_get('upload_max_filesize'),
-                                'mimeTypes'        => [
-                                    'image/jpeg',
-                                    'image/png',
-                                    'image/gif',
-                                    'image/webp',
-                                ],
-                                'mimeTypesMessage' => $this->translator->trans($mimeTypesMessage),
-                                'maxSizeMessage'   => $this->translator->trans($maxSizeMessage),
-                            ]
+                            maxSize: ini_get('upload_max_filesize'),
+                            mimeTypes: [
+                                'image/jpeg',
+                                'image/png',
+                                'image/gif',
+                                'image/webp',
+                            ],
+                            mimeTypesMessage: $this->translator->trans(
+                                $mimeTypesMessage->getMessage(),
+                                $mimeTypesMessage->getParameters()
+                            ),
+                            maxSizeMessage: $this->translator->trans(
+                                $maxSizeMessage->getMessage(),
+                                $maxSizeMessage->getParameters()
+                            ),
                         ),
                     ],
                 ]
@@ -221,7 +238,7 @@ abstract class ParagraphAbstract extends AbstractController
     {
         $paragraphId = $paragraph->getId();
 
-        return $this->data[$paragraphId] ?? [];
+        return $this->data[$paragraphId] ?? ['paragraph' => $paragraph];
     }
 
     public function getFields(Paragraph $paragraph, string $pageName): mixed

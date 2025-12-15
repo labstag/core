@@ -128,7 +128,8 @@ final class ParagraphService
     {
         $paragraphs = [];
         foreach ($this->paragraphs as $paragraph) {
-            $name  = $this->translator->trans($paragraph->getName());
+            $message = $paragraph->getName();
+            $name    = $this->translator->trans($message->getMessage(), $message->getParameters());
             if ($paragraph->supports($entity)) {
                 $paragraphs[$name] = $paragraph->getType();
             }
@@ -280,7 +281,8 @@ final class ParagraphService
         $name = '';
         foreach ($this->paragraphs as $row) {
             if ($row->getClass() == $paragraph::class) {
-                $name = $this->translator->trans($row->getName());
+                $message = $row->getName();
+                $name    = $this->translator->trans($message->getMessage(), $message->getParameters());
 
                 break;
             }

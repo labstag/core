@@ -61,9 +61,11 @@ class SeasonCrudController extends CrudControllerAbstract
         $collectionField->setTemplatePath('admin/field/runtime-season.html.twig');
         $collectionField->hideOnForm();
 
-        $wysiwygField = WysiwygField::new('overview', new TranslatableMessage('Overview'));
+        $wysiwgTranslation = new TranslatableMessage('Overview');
+        $wysiwygField = WysiwygField::new('overview', $wysiwgTranslation->getMessage());
         $wysiwygField->hideOnIndex();
-
+        $posterTranslation = new TranslatableMessage('Poster');
+        $backdropTranslation = new TranslatableMessage('Backdrop');
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
@@ -74,13 +76,13 @@ class SeasonCrudController extends CrudControllerAbstract
                     'poster',
                     $pageName,
                     self::getEntityFqcn(),
-                    new TranslatableMessage('Poster')
+                    $posterTranslation->getMessage()
                 ),
                 $this->crudFieldFactory->imageField(
                     'backdrop',
                     $pageName,
                     self::getEntityFqcn(),
-                    new TranslatableMessage('Backdrop')
+                    $backdropTranslation->getMessage()
                 ),
                 $textField,
                 AssociationField::new('refserie', new TranslatableMessage('Serie')),

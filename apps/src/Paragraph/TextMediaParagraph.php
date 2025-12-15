@@ -81,7 +81,8 @@ class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
 
         yield BooleanField::new('leftposition', new TranslatableMessage('Media on the left'));
         yield UrlField::new('url', new TranslatableMessage('Url'));
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Text'));
+        $wysiwgTranslation = new TranslatableMessage('Text');
+        $wysiwygField = WysiwygField::new('content', $wysiwgTranslation->getMessage());
 
         yield $wysiwygField;
     }

@@ -61,8 +61,9 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         $collectionField->setEntryToStringMethod(
             function ($link): string {
                 unset($link);
+                $translatableMessage = new TranslatableMessage('Skill');
 
-                return $this->translator->trans(new TranslatableMessage('Skill'));
+                return $this->translator->trans($translatableMessage->getMessage(), $translatableMessage->getParameters());
             }
         );
         $collectionField->setFormTypeOption(

@@ -42,19 +42,23 @@ final class UploadImageField implements FieldInterface
             [
                 'required'       => false,
                 'allow_delete'   => true,
-                'delete_label'   => $translator->trans($deleteLabel),
-                'download_label' => $translator->trans($downloadLabel),
+                'delete_label'   => $translator->trans($deleteLabel->getMessage(), $deleteLabel->getParameters()),
+                'download_label' => $translator->trans($downloadLabel->getMessage(), $downloadLabel->getParameters()),
                 'download_uri'   => true,
                 'image_uri'      => true,
                 'asset_helper'   => true,
                 'constraints'    => [
                     new File(
-                        [
-                            'maxSize'          => ini_get('upload_max_filesize'),
-                            'mimeTypes'        => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-                            'mimeTypesMessage' => $translator->trans($mimeTypesMessage),
-                            'maxSizeMessage'   => $translator->trans($maxSizeMessage),
-                        ]
+                        maxSize: ini_get('upload_max_filesize'),
+                        mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+                        mimeTypesMessage: $translator->trans(
+                            $mimeTypesMessage->getMessage(),
+                            $mimeTypesMessage->getParameters()
+                        ),
+                        maxSizeMessage: $translator->trans(
+                            $maxSizeMessage->getMessage(),
+                            $maxSizeMessage->getParameters()
+                        ),
                     ),
                 ],
             ]

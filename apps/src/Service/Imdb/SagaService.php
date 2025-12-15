@@ -14,7 +14,6 @@ final class SagaService
 {
     public function __construct(
         private LoggerInterface $logger,
-        private RecommendationService $recommendationService,
         private MessageBusInterface $messageBus,
         private SagaRepository $sagaRepository,
         private FileService $fileService,
@@ -72,7 +71,6 @@ final class SagaService
         }
 
         $statuses = [
-            $this->updateRecommendations($saga, $details),
             $this->updateSaga($saga, $details),
             $this->updateImagePoster($saga, $details),
             $this->updateImageBackdrop($saga, $details),
@@ -114,20 +112,6 @@ final class SagaService
         }
 
         $this->fileService->setUploadedFile($poster, $saga, 'posterFile');
-
-        return true;
-    }
-
-    private function updateRecommendations(Saga $saga, array $details): bool
-    {
-        $recommandations = $details['tmdb']['parts'] ?? null;
-        if (is_null($recommandations) || !is_array($recommandations)) {
-            foreach ($saga->getRecommendations() as $recommendation) {
-                $saga->removeRecommendation($recommendation);
-            }
-        }
-
-        $this->recommendationService->setRecommendations($saga, $recommandations);
 
         return true;
     }

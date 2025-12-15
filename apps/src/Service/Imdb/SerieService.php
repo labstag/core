@@ -36,7 +36,6 @@ final class SerieService
     private array $year = [];
 
     public function __construct(
-        private RecommendationService $recommendationService,
         private MessageBusInterface $messageBus,
         private ConfigurationService $configurationService,
         private FileService $fileService,
@@ -208,7 +207,6 @@ final class SerieService
 
         $statuses = [
             $this->updateSerie($serie, $details),
-            $this->updateRecommendations($serie, $details),
             $this->updateOther($serie, $details),
             $this->setCertification($details, $serie),
             $this->setCitation($serie, $details),
@@ -385,14 +383,6 @@ final class SerieService
         }
 
         $serie->setImdb((string) $details['other']['imdb_id']);
-
-        return true;
-    }
-
-    private function updateRecommendations(Serie $serie, array $details): bool
-    {
-        $this->recommendationService->setRecommendations($serie, $details['recommendations']['results'] ?? null);
-        $this->recommendationService->setRecommendations($serie, $details['similar']['results'] ?? null);
 
         return true;
     }

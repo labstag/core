@@ -141,10 +141,13 @@ class BlockCrudController extends CrudControllerAbstract
         $requestPathField->renderExpanded();
         $requestPathField->hideOnIndex();
         $requestPathField->setRequired(true);
+
+        $message1 = new TranslatableMessage('Show for listed pages');
+        $message2 = new TranslatableMessage('Hide for listed pages');
         $requestPathField->setChoices(
             [
-                $this->translator->trans(new TranslatableMessage('Show for listed pages')) => '0',
-                $this->translator->trans(new TranslatableMessage('Hide for listed pages')) => '1',
+                $this->translator->trans($message1->getMessage(), $message1->getParameters()) => '0',
+                $this->translator->trans($message2->getMessage(), $message2->getParameters()) => '1',
             ]
         );
         $this->crudFieldFactory->addFieldsToTab(
@@ -169,7 +172,8 @@ class BlockCrudController extends CrudControllerAbstract
             return $filters;
         }
 
-        $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', new TranslatableMessage('Type'));
+        $typeTranslation = new TranslatableMessage('Type');
+        $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', $typeTranslation->getMessage());
         $discriminatorTypeFilter->setBlockService($this->blockService);
         $discriminatorTypeFilter->setChoices(
             array_merge(

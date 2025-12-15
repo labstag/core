@@ -36,7 +36,6 @@ final class MovieService
 
     public function __construct(
         private ConfigurationService $configurationService,
-        private RecommendationService $recommendationService,
         private FileService $fileService,
         private CompanyService $companyService,
         private CategoryService $categoryService,
@@ -192,7 +191,6 @@ final class MovieService
         }
 
         $statuses = [
-            $this->updateRecommendations($movie, $details),
             $this->updateMovie($movie, $details),
             $this->updateOther($movie, $details),
             $this->updateImagePoster($movie, $details),
@@ -364,14 +362,6 @@ final class MovieService
         }
 
         $movie->setImdb((string) $details['other']['imdb_id']);
-
-        return true;
-    }
-
-    private function updateRecommendations(Movie $movie, array $details): bool
-    {
-        $this->recommendationService->setRecommendations($movie, $details['recommendations']['results'] ?? null);
-        $this->recommendationService->setRecommendations($movie, $details['similar']['results'] ?? null);
 
         return true;
     }

@@ -58,7 +58,8 @@ class TextImgParagraph extends ParagraphAbstract implements ParagraphInterface
     {
         yield $this->addFieldImageUpload('img', $pageName, $paragraph);
         yield BooleanField::new('leftposition', new TranslatableMessage('Image on the left'));
-        $wysiwygField = WysiwygField::new('content', 'Texte');
+        $wysiwgTranslation = new TranslatableMessage('Text');
+        $wysiwygField = WysiwygField::new('content', $wysiwgTranslation->getMessage());
 
         yield $wysiwygField;
     }

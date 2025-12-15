@@ -144,18 +144,11 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     )]
     private Collection $companies;
 
-    /**
-     * @var Collection<int, Recommendation>
-     */
-    #[ORM\OneToMany(targetEntity: Recommendation::class, mappedBy: 'refmovie')]
-    private Collection $recommendations;
-
     public function __construct()
     {
         $this->categories      = new ArrayCollection();
         $this->paragraphs      = new ArrayCollection();
         $this->companies       = new ArrayCollection();
-        $this->recommendations = new ArrayCollection();
     }
 
     #[Override]
@@ -189,16 +182,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         if (!$this->paragraphs->contains($paragraph)) {
             $this->paragraphs->add($paragraph);
             $paragraph->setMovie($this);
-        }
-
-        return $this;
-    }
-
-    public function addRecommendation(Recommendation $recommendation): static
-    {
-        if (!$this->recommendations->contains($recommendation)) {
-            $this->recommendations->add($recommendation);
-            $recommendation->setRefmovie($this);
         }
 
         return $this;
@@ -296,14 +279,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         return $this->posterFile;
     }
 
-    /**
-     * @return Collection<int, Recommendation>
-     */
-    public function getRecommendations(): Collection
-    {
-        return $this->recommendations;
-    }
-
     public function getReleaseDate(): ?DateTime
     {
         return $this->releaseDate;
@@ -378,16 +353,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this
         ) {
             $paragraph->setMovie(null);
-        }
-
-        return $this;
-    }
-
-    public function removeRecommendation(Recommendation $recommendation): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->recommendations->removeElement($recommendation) && $recommendation->getRefmovie() === $this) {
-            $recommendation->setRefmovie(null);
         }
 
         return $this;

@@ -97,17 +97,10 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $tmdb = null;
 
-    /**
-     * @var Collection<int, Recommendation>
-     */
-    #[ORM\OneToMany(targetEntity: Recommendation::class, mappedBy: 'refsaga')]
-    private Collection $recommendations;
-
     public function __construct()
     {
         $this->movies          = new ArrayCollection();
         $this->paragraphs      = new ArrayCollection();
-        $this->recommendations = new ArrayCollection();
     }
 
     #[Override]
@@ -131,16 +124,6 @@ class Saga implements Stringable, EntityWithParagraphsInterface
         if (!$this->paragraphs->contains($paragraph)) {
             $this->paragraphs->add($paragraph);
             $paragraph->setSaga($this);
-        }
-
-        return $this;
-    }
-
-    public function addRecommendation(Recommendation $recommendation): static
-    {
-        if (!$this->recommendations->contains($recommendation)) {
-            $this->recommendations->add($recommendation);
-            $recommendation->setRefsaga($this);
         }
 
         return $this;
@@ -197,14 +180,6 @@ class Saga implements Stringable, EntityWithParagraphsInterface
         return $this->posterFile;
     }
 
-    /**
-     * @return Collection<int, Recommendation>
-     */
-    public function getRecommendations(): Collection
-    {
-        return $this->recommendations;
-    }
-
     public function getSlug(): ?string
     {
         return $this->slug;
@@ -242,16 +217,6 @@ class Saga implements Stringable, EntityWithParagraphsInterface
         if ($this->paragraphs->removeElement($paragraph) && $paragraph->getSaga() === $this
         ) {
             $paragraph->setStory(null);
-        }
-
-        return $this;
-    }
-
-    public function removeRecommendation(Recommendation $recommendation): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->recommendations->removeElement($recommendation) && $recommendation->getRefsaga() === $this) {
-            $recommendation->setRefsaga(null);
         }
 
         return $this;

@@ -28,11 +28,8 @@ class ParagraphType extends AbstractType
         );
     }
 
-    /**
-     * @return string
-     */
     #[Override]
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'paragraph';
     }
