@@ -1,6 +1,6 @@
 <?php
 
-namespace Labstag\Command;
+namespace Labstag\MessageHandler;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Game;
@@ -12,20 +12,42 @@ use Labstag\Entity\Saga;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Labstag\Message\MetaMessage;
+use Labstag\Repository\MetaRepository;
+use Labstag\Service\MetaService;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsCommand(name: 'labstag:regenerate:meta', description: 'Regenerate all entity metas')]
-class RegenerateMetaCommand
+#[AsMessageHandler]
+final class MetaMessageHandler
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        protected MetaService $metaService,
+        protected EntityManagerInterface $entityManager,
+        protected MetaRepository $metaRepository,
     )
     {
     }
 
-    public function __invoke(SymfonyStyle $symfonyStyle): int
+    public function __invoke(MetaMessage $message): void
+    {
+        unset($message);
+        $this->deleteUselessMeta();
+        $this->correctionMeta();
+    }
+
+    private function deleteUselessMeta(): void
+    {
+        $repository = $this->entityManager->getRepository(Meta::class);
+        $metas           = $repository->findAll();
+        foreach ($metas as $meta) {
+            $object   = $this->metaService->getEntityParent($meta);
+            if (is_null($object->value) || is_null($object->name) || is_null($object)) {
+                $repository->delete($meta);
+            }
+        }
+    }
+
+    private function correctionMeta(): void
     {
         $entities = [
             Game::class,
@@ -39,7 +61,6 @@ class RegenerateMetaCommand
         ];
 
         foreach ($entities as $entity) {
-            $symfonyStyle->section('Regenerating slugs for ' . $entity);
 
             $repository = $this->entityManager->getRepository($entity);
             $items      = $repository->findAll();
@@ -60,15 +81,8 @@ class RegenerateMetaCommand
 
             if (0 < $count) {
                 $this->entityManager->flush();
-                $symfonyStyle->success(sprintf('✅ %d metas regenerated for %s', $count, $entity));
                 continue;
             }
-
-            $symfonyStyle->info('ℹ️  No metas to regenerate for ' . $entity);
         }
-
-        $symfonyStyle->success('🎉 All metas have been successfully regenerated!');
-
-        return Command::SUCCESS;
     }
 }

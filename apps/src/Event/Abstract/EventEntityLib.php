@@ -11,7 +11,6 @@ use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Recommendation;
 use Labstag\Entity\Redirection;
 use Labstag\Entity\Saga;
 use Labstag\Entity\Serie;
@@ -60,26 +59,6 @@ abstract class EventEntityLib
         }
 
         $this->paragraphService->addParagraph($instance, $type, $position);
-    }
-
-    protected function deleteRecommendation(object $instance): void
-    {
-        if (!$instance instanceof Movie && !$instance instanceof Serie) {
-            return;
-        }
-
-        $tmdb                     = $instance->getTmdb();
-        $entityRepository         = $this->entityManager->getRepository(Recommendation::class);
-        $recommendation           = $entityRepository->findOneBy(
-            ['tmdb' => $tmdb]
-        );
-        if (!$recommendation instanceof Recommendation) {
-            return;
-        }
-
-        $this->entityManager->remove($recommendation);
-
-        // Script to execute only if instance is Movie or Serie
     }
 
     protected function initEntityMeta(object $instance): void
@@ -132,7 +111,6 @@ abstract class EventEntityLib
         $this->updateEntityParagraph($object);
         $this->initEntityMeta($object);
         $this->updateEntityPage($object);
-        $this->deleteRecommendation($object);
     }
 
     protected function updateEntityBanIp(object $instance, EntityManagerInterface $entityManager): void

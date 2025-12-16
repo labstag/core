@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
-use Labstag\Entity\Recommendation;
 use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
 use Labstag\Service\CategoryService;
@@ -49,68 +48,6 @@ final class MovieService
         private RouterInterface $router,
     )
     {
-    }
-
-    public function addToBddMovie(Recommendation $recommendation, string $tmdbId): RedirectResponse
-    {
-        $details = $this->theMovieDbApi->movies()->getDetails($tmdbId);
-        if (0 === count($details)) {
-            return new RedirectResponse($this->router->generate('admin_recommendation_index'));
-        }
-
-        $movie = $this->movieRepository->findOneBy(
-            ['tmdb' => $tmdbId]
-        );
-        if ($movie instanceof Movie) {
-            $this->getFlashBag()->add(
-                'warning',
-                new TranslatableMessage(
-                    'The %name% movie is already present in the database',
-                    [
-                        '%name%' => $movie->getTitle(),
-                    ]
-                )
-            );
-
-            return new RedirectResponse(
-                $this->router->generate(
-                    'admin_movie_detail',
-                    [
-                        'entityId' => $movie->getId(),
-                    ]
-                )
-            );
-        }
-
-        $data = $this->theMovieDbApi->movies()->getMovieExternalIds($tmdbId);
-        $movie = new Movie();
-        $movie->setFile(false);
-        $movie->setEnable(true);
-        $movie->setAdult(false);
-        $movie->setImdb($data['imdb_id'] ?? '');
-        $movie->setTmdb($tmdbId);
-        $movie->setTitle($recommendation->getTitle() ?? '');
-
-        $this->movieRepository->save($movie);
-        $this->messageBus->dispatch(new MovieMessage($movie->getId()));
-        $this->getFlashBag()->add(
-            'success',
-            new TranslatableMessage(
-                'The %name% movie has been added to the database',
-                [
-                    '%name%' => $movie->getTitle(),
-                ]
-            )
-        );
-
-        return new RedirectResponse(
-            $this->router->generate(
-                'admin_movie_detail',
-                [
-                    'entityId' => $movie->getId(),
-                ]
-            )
-        );
     }
 
     /**

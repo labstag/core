@@ -3,6 +3,8 @@
 namespace Labstag\Command;
 
 use Labstag\Message\BanIpMessage;
+use Labstag\Message\FilesMessage;
+use Labstag\Message\MetaMessage;
 use Labstag\Message\NotificationMessage;
 use Labstag\Message\PageCinemaMessage;
 use Labstag\Message\UpdateSerieMessage;
@@ -27,6 +29,8 @@ class ExecuteMessageCommand
             'BanIp' => 'Ban IP addresses',
             'UpdateSerie' => 'Update series',
             'Notification' => 'Send notifications',
+            'Meta' => 'Clean meta entries',
+            'Files' => 'Clean files',
             'All' => 'Execute all tasks',
             'Cancel' => 'Cancel execution',
         ];
@@ -34,7 +38,7 @@ class ExecuteMessageCommand
         $selected = $symfonyStyle->choice(
             'Which task do you want to execute?',
             array_values($choices),
-            5
+            6
         );
 
         $selectedKey = array_search($selected, $choices);
@@ -43,6 +47,8 @@ class ExecuteMessageCommand
             'PageCinema' => PageCinemaMessage::class,
             'BanIp' => BanIpMessage::class,
             'UpdateSerie' => UpdateSerieMessage::class,
+            'Meta' => MetaMessage::class,
+            'Files' => FilesMessage::class,
             'Notification' => NotificationMessage::class,
         ];
 

@@ -4,7 +4,6 @@ namespace Labstag\Service\Imdb;
 
 use DateTime;
 use Labstag\Api\TheMovieDbApi;
-use Labstag\Entity\Recommendation;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\SerieCategory;
@@ -49,68 +48,6 @@ final class SerieService
         private RouterInterface $router,
     )
     {
-    }
-
-    public function addToBddSerie(Recommendation $recommendation, string $tmdbId): RedirectResponse
-    {
-        $details = $this->theMovieDbApi->tvserie()->getDetails($tmdbId);
-        if (0 === count($details)) {
-            return new RedirectResponse($this->router->generate('admin_recommendation_index'));
-        }
-
-        $serie = $this->serieRepository->findOneBy(
-            ['tmdb' => $tmdbId]
-        );
-        if ($serie instanceof Serie) {
-            $this->getFlashBag()->add(
-                'warning',
-                new TranslatableMessage(
-                    'The %name% series is already present in the database',
-                    [
-                        '%name%' => $serie->getTitle(),
-                    ]
-                )
-            );
-
-            return new RedirectResponse(
-                $this->router->generate(
-                    'admin_serie_detail',
-                    [
-                        'entityId' => $serie->getId(),
-                    ]
-                )
-            );
-        }
-
-        $data = $this->theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
-        $serie = new Serie();
-        $serie->setFile(false);
-        $serie->setEnable(true);
-        $serie->setAdult(false);
-        $serie->setImdb($data['imdb_id'] ?? '');
-        $serie->setTmdb($tmdbId);
-        $serie->setTitle($recommendation->getTitle() ?? '');
-
-        $this->serieRepository->save($serie);
-        $this->messageBus->dispatch(new SerieMessage($serie->getId()));
-        $this->getFlashBag()->add(
-            'success',
-            new TranslatableMessage(
-                'The %name% series has been added to the database',
-                [
-                    '%name%' => $serie->getTitle(),
-                ]
-            )
-        );
-
-        return new RedirectResponse(
-            $this->router->generate(
-                'admin_serie_detail',
-                [
-                    'entityId' => $serie->getId(),
-                ]
-            )
-        );
     }
 
     /**
