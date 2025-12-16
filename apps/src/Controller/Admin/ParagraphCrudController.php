@@ -70,9 +70,10 @@ class ParagraphCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
+        $parentTranslation = new TranslatableMessage('Parent');
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
-            [ParagraphParentField::new('parent', new TranslatableMessage('Parent'))]
+            [ParagraphParentField::new('parent', $parentTranslation->getMessage())]
         );
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
