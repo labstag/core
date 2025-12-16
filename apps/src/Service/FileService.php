@@ -77,6 +77,7 @@ final class FileService
     public function deletedFileByEntities(): int
     {
         $total = 0;
+        $this->entityManager->getFilters()->disable('softdeleteable');
         foreach ($this->fileStorages as $fileStorage) {
             $deletes     = [];
             $entities    = $fileStorage->getEntity();
