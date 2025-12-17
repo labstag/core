@@ -273,7 +273,7 @@ final class SerieService
         if (isset($details['credits']['cast']) || is_array($details['credits']['cast'])) {
             foreach ($details['credits']['cast'] as $cast) {
                 $person = $this->personService->getPerson($cast);
-                $this->personService->addToCastingSerie($person, $serie, $cast);
+                $casting = $this->personService->addToCastingSerie($person, $serie, $cast);
                 $serie->addCasting($casting);
             }
         }
@@ -281,7 +281,7 @@ final class SerieService
         if (isset($details['credits']['crew']) || is_array($details['credits']['crew'])) {
             foreach ($details['credits']['crew'] as $crew) {
                 $person = $this->personService->getPerson($crew);
-                $this->personService->addToCastingSerie($person, $serie, $crew);
+                $casting = $this->personService->addToCastingSerie($person, $serie, $crew);
                 $serie->addCasting($casting);
             }
         }

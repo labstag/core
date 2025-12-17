@@ -47,7 +47,7 @@ final class PersonService
         $entityRepository->save($casting);
     }
 
-    public function addToCastingMovie(Person $person, Movie $movie, array $data): void
+    public function addToCastingMovie(Person $person, Movie $movie, array $data): Casting
     {
         $entityRepository = $this->entityManager->getRepository(Casting::class);
         $casting          = $entityRepository->findOneBy(
@@ -62,10 +62,10 @@ final class PersonService
             $casting->setRefPerson($person);
         }
 
-        $this->addToCasting($casting, $data);
+        return $this->addToCasting($casting, $data);
     }
 
-    public function addToCastingSeason(Person $person, Season $season, array $data): void
+    public function addToCastingSeason(Person $person, Season $season, array $data): Casting
     {
         $entityRepository = $this->entityManager->getRepository(Casting::class);
         $casting          = $entityRepository->findOneBy(
@@ -80,10 +80,10 @@ final class PersonService
             $casting->setRefPerson($person);
         }
 
-        $this->addToCasting($casting, $data);
+        return $this->addToCasting($casting, $data);
     }
 
-    public function addToCastingSerie(Person $person, Serie $serie, array $data): void
+    public function addToCastingSerie(Person $person, Serie $serie, array $data): Casting
     {
         $entityRepository = $this->entityManager->getRepository(Casting::class);
         $casting          = $entityRepository->findOneBy(
@@ -98,7 +98,7 @@ final class PersonService
             $casting->setRefPerson($person);
         }
 
-        $this->addToCasting($casting, $data);
+        return $this->addToCasting($casting, $data);
     }
 
     public function getPerson(array $data): Person
@@ -138,13 +138,15 @@ final class PersonService
         return in_array(true, $statuses, true);
     }
 
-    private function addToCasting(Casting $casting, array $data): void
+    private function addToCasting(Casting $casting, array $data): Casting
     {
         $entityRepository = $this->entityManager->getRepository(Casting::class);
         $casting->setKnownForDepartment($data['known_for_department'] ?? null);
         $casting->setFigure($data['character'] ?? null);
 
         $entityRepository->save($casting);
+
+        return $casting;
     }
 
     /**
