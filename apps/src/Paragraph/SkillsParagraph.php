@@ -62,7 +62,10 @@ class SkillsParagraph extends ParagraphAbstract implements ParagraphInterface
                 unset($link);
                 $translatableMessage = new TranslatableMessage('Skill');
 
-                return $this->translator->trans($translatableMessage->getMessage(), $translatableMessage->getParameters());
+                return $this->translator->trans(
+                    $translatableMessage->getMessage(),
+                    $translatableMessage->getParameters()
+                );
             }
         );
         $collectionField->setFormTypeOption(

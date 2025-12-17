@@ -70,10 +70,10 @@ class ParagraphCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        $parentTranslation = new TranslatableMessage('Parent');
+        $translatableMessage = new TranslatableMessage('Parent');
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
-            [ParagraphParentField::new('parent', $parentTranslation->getMessage())]
+            [ParagraphParentField::new('parent', $translatableMessage->getMessage())]
         );
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -117,8 +117,8 @@ class ParagraphCrudController extends CrudControllerAbstract
             return $filters;
         }
 
-        $typeTranslation = new TranslatableMessage('Type');
-        $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', $typeTranslation->getMessage());
+        $translatableMessage         = new TranslatableMessage('Type');
+        $discriminatorTypeFilter     = DiscriminatorTypeFilter::new('type', $translatableMessage->getMessage());
         $discriminatorTypeFilter->setParagraphService($this->paragraphService);
         $discriminatorTypeFilter->setChoices(
             array_merge(

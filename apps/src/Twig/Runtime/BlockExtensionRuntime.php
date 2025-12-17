@@ -33,7 +33,7 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
             return $data;
         }
 
-        $data['data-context_url']  = $urlAdmin;
+        $data['data-context_url']              = $urlAdmin;
         $translatableMessage                   = new TranslatableMessage(
             'Update block (%name%) #%type%',
             [
@@ -41,7 +41,10 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
                 '%type%' => $this->blockService->getType($block),
             ]
         );
-        $data['data-context_text'] = $this->translator->trans($translatableMessage->getMessage(), $translatableMessage->getParameters());
+        $data['data-context_text'] = $this->translator->trans(
+            $translatableMessage->getMessage(),
+            $translatableMessage->getParameters()
+        );
 
         return $data;
     }

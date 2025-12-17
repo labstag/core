@@ -7,18 +7,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
-use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
 use Labstag\Service\CategoryService;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\VideoService;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Translation\TranslatableMessage;
 
 final class MovieService
 {
@@ -36,16 +29,14 @@ final class MovieService
     public function __construct(
         private ConfigurationService $configurationService,
         private FileService $fileService,
+        private PersonService $personService,
         private CompanyService $companyService,
         private CategoryService $categoryService,
         private SagaService $sagaService,
         private EntityManagerInterface $entityManager,
         private MovieRepository $movieRepository,
         private VideoService $videoService,
-        private MessageBusInterface $messageBus,
         private TheMovieDbApi $theMovieDbApi,
-        private RequestStack $requestStack,
-        private RouterInterface $router,
     )
     {
     }
@@ -135,17 +126,36 @@ final class MovieService
             $this->updateSaga($movie, $details),
             $this->updateCategory($movie, $details),
             $this->updateCompany($movie, $details),
+            $this->updateCredits($movie, $details),
             $this->updateTrailer($movie, $details),
         ];
 
         return in_array(true, $statuses, true);
     }
 
-    private function getFlashBag(): FlashBagInterface
+    public function updateCredits(Movie $movie, array $details): bool
     {
-        $session = $this->requestStack->getSession();
+        foreach ($movie->getCastings() as $casting) {
+            $movie->removeCasting($casting);
+        }
 
-        return $session->getFlashBag();
+        if (isset($details['credits']['cast']) && is_array($details['credits']['cast'])) {
+            foreach ($details['credits']['cast'] as $cast) {
+                $person = $this->personService->getPerson($cast);
+                $this->personService->addToCastingMovie($person, $movie, $cast);
+                $movie->addCasting($casting);
+            }
+        }
+
+        if (isset($details['credits']['crew']) && is_array($details['credits']['crew'])) {
+            foreach ($details['credits']['crew'] as $crew) {
+                $person = $this->personService->getPerson($crew);
+                $this->personService->addToCastingMovie($person, $movie, $crew);
+                $movie->addCasting($casting);
+            }
+        }
+
+        return true;
     }
 
     /**

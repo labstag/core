@@ -29,7 +29,10 @@ class PlatformCrudController extends CrudControllerAbstract
             [
                 'status'  => 'success',
                 'id'      => $id,
-                'message' => $this->translator->trans($translatableMessage->getMessage(), $translatableMessage->getParameters()),
+                'message' => $this->translator->trans(
+                    $translatableMessage->getMessage(),
+                    $translatableMessage->getParameters()
+                ),
             ]
         );
     }

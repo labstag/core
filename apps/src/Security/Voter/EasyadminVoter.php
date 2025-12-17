@@ -48,6 +48,7 @@ final class EasyadminVoter extends Voter
         ?Vote $vote = null,
     ): bool
     {
+        unset($vote);
         $user = $token->getUser();
         // if the user is anonymous, do not grant access
         if (!$user instanceof UserInterface) {

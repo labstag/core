@@ -48,8 +48,8 @@ class MediaCrudController extends CrudControllerAbstract
         );
         $integerField->hideOnForm();
 
-        $fileTranslation = new TranslatableMessage('File');
-        $uploadFileField = UploadFileField::new('file', $fileTranslation->getMessage());
+        $translatableMessage = new TranslatableMessage('File');
+        $uploadFileField     = UploadFileField::new('file', $translatableMessage->getMessage());
         $uploadFileField->setTranslator($this->translator);
         $uploadFileField->onlyOnForms();
 

@@ -77,6 +77,19 @@ class TmdbImagesApi extends AbstractTmdbApi
     }
 
     /**
+     * Get poster URL with optimal size.
+     *
+     * @param string $profilePath The profile path from TMDB API
+     * @param int    $targetWidth Desired width (default: 185px)
+     *
+     * @return string|null Complete profile URL
+     */
+    public function getProfileUrl(string $profilePath, int $targetWidth = 185): ?string
+    {
+        return $this->getOptimizedUrl($profilePath, 'profile', $targetWidth);
+    }
+
+    /**
      * Get episode still image URL with optimal size.
      *
      * @param string $stillPath   The still path from TMDB API (episode image)

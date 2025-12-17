@@ -51,13 +51,13 @@ final class UploadImageField implements FieldInterface
                     new File(
                         maxSize: ini_get('upload_max_filesize'),
                         mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-                        mimeTypesMessage: $translator->trans(
-                            $mimeTypesMessage->getMessage(),
-                            $mimeTypesMessage->getParameters()
-                        ),
                         maxSizeMessage: $translator->trans(
                             $maxSizeMessage->getMessage(),
                             $maxSizeMessage->getParameters()
+                        ),
+                        mimeTypesMessage: $translator->trans(
+                            $mimeTypesMessage->getMessage(),
+                            $mimeTypesMessage->getParameters()
                         ),
                     ),
                 ],

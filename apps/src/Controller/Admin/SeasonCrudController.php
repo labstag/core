@@ -62,10 +62,16 @@ class SeasonCrudController extends CrudControllerAbstract
         $collectionField->hideOnForm();
 
         $wysiwgTranslation = new TranslatableMessage('Overview');
-        $wysiwygField = WysiwygField::new('overview', $wysiwgTranslation->getMessage());
+        $wysiwygField      = WysiwygField::new('overview', $wysiwgTranslation->getMessage());
         $wysiwygField->hideOnIndex();
-        $posterTranslation = new TranslatableMessage('Poster');
+
+        $posterTranslation   = new TranslatableMessage('Poster');
         $backdropTranslation = new TranslatableMessage('Backdrop');
+
+        $associationField = AssociationField::new('castings', new TranslatableMessage('Casting'));
+        $associationField->setTemplatePath('admin/field/castings.html.twig');
+        $associationField->onlyOnDetail();
+
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
@@ -91,6 +97,7 @@ class SeasonCrudController extends CrudControllerAbstract
                 $this->episodesFieldForPage(self::getEntityFqcn(), $pageName),
                 $collectionField,
                 $wysiwygField,
+                $associationField,
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);

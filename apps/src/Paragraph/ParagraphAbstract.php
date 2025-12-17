@@ -172,13 +172,13 @@ abstract class ParagraphAbstract extends AbstractController
                                 'image/gif',
                                 'image/webp',
                             ],
-                            mimeTypesMessage: $this->translator->trans(
-                                $mimeTypesMessage->getMessage(),
-                                $mimeTypesMessage->getParameters()
-                            ),
                             maxSizeMessage: $this->translator->trans(
                                 $maxSizeMessage->getMessage(),
                                 $maxSizeMessage->getParameters()
+                            ),
+                            mimeTypesMessage: $this->translator->trans(
+                                $mimeTypesMessage->getMessage(),
+                                $mimeTypesMessage->getParameters()
                             ),
                         ),
                     ],

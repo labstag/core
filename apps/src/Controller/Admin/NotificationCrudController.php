@@ -43,6 +43,7 @@ class NotificationCrudController extends CrudControllerAbstract
     #[Override]
     public function configureFields(string $pageName): iterable
     {
+        unset($pageName);
         yield TextField::new('title', new TranslatableMessage('Title'));
         yield TextEditorField::new('message', new TranslatableMessage('Message'));
         yield DateTimeField::new('createdAt', new TranslatableMessage('Created At'));

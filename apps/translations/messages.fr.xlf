@@ -2293,6 +2293,66 @@
         <source>No episodes found.</source>
         <target>Aucun épisode trouvé.</target>
       </trans-unit>
+      <trans-unit id="WZu0Wqu" resname="Person">
+        <source>Person</source>
+        <target>Personne</target>
+      </trans-unit>
+      <trans-unit id="NdC6DSv" resname="Persons">
+        <source>Persons</source>
+        <target>Personnes</target>
+      </trans-unit>
+      <trans-unit id="_QVl8W." resname="Gender">
+        <source>Gender</source>
+        <target>Genre</target>
+      </trans-unit>
+      <trans-unit id="3x9tM_i" resname="Not set / not specified">
+        <source>Not set / not specified</source>
+        <target>Non défini / non spécifié</target>
+      </trans-unit>
+      <trans-unit id="a1bbbE9" resname="Female">
+        <source>Female</source>
+        <target>Féminin</target>
+      </trans-unit>
+      <trans-unit id="BNlPsYd" resname="Male">
+        <source>Male</source>
+        <target>Masculin</target>
+      </trans-unit>
+      <trans-unit id="Hp5aGMO" resname="Non-binary">
+        <source>Non-binary</source>
+        <target>Non-binaire</target>
+      </trans-unit>
+      <trans-unit id="V1HFodk" resname="Biography">
+        <source>Biography</source>
+        <target>Biographie</target>
+      </trans-unit>
+      <trans-unit id="84XY_f_" resname="Place of birth">
+        <source>Place of birth</source>
+        <target>Lieu de naissance</target>
+      </trans-unit>
+      <trans-unit id="5Y34z39" resname="Profile">
+        <source>Profile</source>
+        <target>Profil</target>
+      </trans-unit>
+      <trans-unit id="GK8r04p" resname="Birthday">
+        <source>Birthday</source>
+        <target>Date de naissance</target>
+      </trans-unit>
+      <trans-unit id="kFw5G7T" resname="Deathday">
+        <source>Deathday</source>
+        <target>Date de décès</target>
+      </trans-unit>
+      <trans-unit id="XaRjSMP" resname="Reason">
+        <source>Reason</source>
+        <target>Raison</target>
+      </trans-unit>
+      <trans-unit id="yGkZ66k" resname="Serie is being added">
+        <source>Serie is being added</source>
+        <target>La série est en cours d'ajout</target>
+      </trans-unit>
+      <trans-unit id="PBtghlG" resname="Casting">
+        <source>Casting</source>
+        <target>Distribution</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

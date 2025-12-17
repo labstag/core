@@ -70,6 +70,46 @@ class TmdbTvApi extends AbstractTmdbApi
     }
 
     /**
+     * Get TV series credits (cast and crew).
+     *
+     * @param string      $seriesId TV series ID
+     * @param string|null $language Language (e.g., 'en-US', 'fr-FR')
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getCredits(string $seriesId, ?string $language = null): ?array
+    {
+        $params = array_filter(
+            [
+                'language' => $language ?? 'fr-FR',
+            ]
+        );
+
+        $query    = $this->buildQueryParams($params);
+        $cacheKey = 'tmdb_tv_credits_' . $seriesId . '_' . md5($query);
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($seriesId, $query): ?array {
+                $url  = self::BASE_URL . '/tv/' . $seriesId . '/credits' . $query;
+                $data = $this->makeRequest($url);
+
+                if (null === $data || (empty($data['cast']) && empty($data['crew']))) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+                // 24 hours cache
+
+                return $data;
+            },
+            86400
+        );
+    }
+
+    /**
      * Get TV series details by ID.
      *
      * @param string      $seriesId         TV series ID
@@ -95,6 +135,55 @@ class TmdbTvApi extends AbstractTmdbApi
                 $data = $this->makeRequest($url);
 
                 if (null === $data || empty($data['name'])) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+                // 24 hours cache
+
+                return $data;
+            },
+            86400
+        );
+    }
+
+    /**
+     * Get episode credits (cast and crew).
+     *
+     * @param string      $seriesId      TV series ID
+     * @param int         $seasonNumber  Season number
+     * @param int         $episodeNumber Episode number
+     * @param string|null $language      Language (e.g., 'en-US', 'fr-FR')
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getEpisodeCredits(
+        string $seriesId,
+        int $seasonNumber,
+        int $episodeNumber,
+        ?string $language = null,
+    ): ?array
+    {
+        $params = array_filter(
+            [
+                'language' => $language ?? 'en-US',
+            ]
+        );
+
+        $query    = $this->buildQueryParams($params);
+        $cacheKey = 'tmdb_tv_episode_credits_' . $seriesId . '_s' . $seasonNumber . 'e' . $episodeNumber . '_' . md5(
+            $query
+        );
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($seriesId, $seasonNumber, $episodeNumber, $query): ?array {
+                $url  = self::BASE_URL . '/tv/' . $seriesId . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '/credits' . $query;
+                $data = $this->makeRequest($url);
+
+                if (null === $data || (empty($data['cast']) && empty($data['crew']) && empty($data['guest_stars']))) {
                     $item->expiresAfter(0);
 
                     return null;
@@ -311,6 +400,47 @@ class TmdbTvApi extends AbstractTmdbApi
                 return $data;
             },
             3600
+        );
+    }
+
+    /**
+     * Get TV season credits (cast and crew).
+     *
+     * @param string      $seriesId     TV series ID
+     * @param int         $seasonNumber Season number
+     * @param string|null $language     Language (e.g., 'en-US', 'fr-FR')
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getSeasonCredits(string $seriesId, int $seasonNumber, ?string $language = null): ?array
+    {
+        $params = array_filter(
+            [
+                'language' => $language ?? 'fr-FR',
+            ]
+        );
+
+        $query    = $this->buildQueryParams($params);
+        $cacheKey = 'tmdb_tv_season_credits_' . $seriesId . '_s' . $seasonNumber . '_' . md5($query);
+
+        return $this->getCached(
+            $cacheKey,
+            function (ItemInterface $item) use ($seriesId, $seasonNumber, $query): ?array {
+                $url  = self::BASE_URL . '/tv/' . $seriesId . '/season/' . $seasonNumber . '/credits' . $query;
+                $data = $this->makeRequest($url);
+
+                if (null === $data || (empty($data['cast']) && empty($data['crew']))) {
+                    $item->expiresAfter(0);
+
+                    return null;
+                }
+
+                $item->expiresAfter(86400);
+                // 24 hours cache
+
+                return $data;
+            },
+            86400
         );
     }
 

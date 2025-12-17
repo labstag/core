@@ -10,15 +10,14 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final class NotificationMessageHandler
 {
     public function __construct(
-        private NotificationRepository $notificationRepository
+        private NotificationRepository $notificationRepository,
     )
     {
-
     }
 
-    public function __invoke(NotificationMessage $message): void
+    public function __invoke(NotificationMessage $notificationMessage): void
     {
-        unset($message);
+        unset($notificationMessage);
 
         $notifications = $this->notificationRepository->getAllBefore1week();
         foreach ($notifications as $notification) {

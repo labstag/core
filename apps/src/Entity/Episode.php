@@ -4,6 +4,8 @@ namespace Labstag\Entity;
 
 use DateTime;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -69,14 +71,43 @@ class Episode implements Stringable
     #[ORM\Column(name: 'vote_count', nullable: true)]
     protected ?int $voteCount = null;
 
+    /**
+     * @var Collection<int, Casting>
+     */
+    #[ORM\OneToMany(targetEntity: Casting::class, mappedBy: 'refEpisode')]
+    private Collection $castings;
+
+    public function __construct()
+    {
+        $this->castings = new ArrayCollection();
+    }
+
     public function __toString(): string
     {
         return (string) $this->getTitle();
     }
 
+    public function addCasting(Casting $casting): static
+    {
+        if (!$this->castings->contains($casting)) {
+            $this->castings->add($casting);
+            $casting->setRefEpisode($this);
+        }
+
+        return $this;
+    }
+
     public function getAirDate(): ?DateTime
     {
         return $this->airDate;
+    }
+
+    /**
+     * @return Collection<int, Casting>
+     */
+    public function getCastings(): Collection
+    {
+        return $this->castings;
     }
 
     public function getId(): ?string
@@ -137,6 +168,16 @@ class Episode implements Stringable
     public function isEnable(): ?bool
     {
         return $this->enable;
+    }
+
+    public function removeCasting(Casting $casting): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->castings->removeElement($casting) && $casting->getRefEpisode() === $this) {
+            $casting->setRefEpisode(null);
+        }
+
+        return $this;
     }
 
     public function setAirDate(?DateTime $airDate): static

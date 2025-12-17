@@ -153,7 +153,7 @@ class CinemaGenerate
         $paragraph->setLeftposition(($key % 2) === 0);
         $html = $this->pageMovieInfoTemplate->getTemplate()->getHtml();
         $casts = $cast['cast'] ?? [];
-        $html = str_replace(
+        $html  = str_replace(
             [
                 '%title%',
                 '%release_date%',
@@ -191,7 +191,7 @@ class CinemaGenerate
 
     private function setVideo(Page $page, array $movieData): void
     {
-        $videos = $this->theMovieDbApi->getVideosMovie($movieData['id']);
+        $videos   = $this->theMovieDbApi->getVideosMovie($movieData['id']);
         $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($movieData['backdrop_path'] ?? '');
         $trailer = $this->videoService->getTrailer($videos);
         if (is_null($trailer)) {

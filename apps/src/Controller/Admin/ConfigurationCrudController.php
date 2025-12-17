@@ -38,7 +38,7 @@ class ConfigurationCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $copyrightTranslation = new TranslatableMessage('Copyright');
-        $fields = [
+        $fields               = [
             TextField::new('titleFormat', new TranslatableMessage('Title format')),
             TextField::new('name', new TranslatableMessage('Site name')),
             EmailField::new('email', new TranslatableMessage('Email')),
@@ -83,7 +83,8 @@ class ConfigurationCrudController extends CrudControllerAbstract
         );
 
         $this->crudFieldFactory->addTab('medias', FormField::addTab(new TranslatableMessage('Medias')));
-        $logoTranslation = new TranslatableMessage('Logo');
+
+        $logoTranslation        = new TranslatableMessage('Logo');
         $placeHolderTranslation = new TranslatableMessage('Placeholder');
         $this->crudFieldFactory->addFieldsToTab(
             'medias',
@@ -120,7 +121,7 @@ class ConfigurationCrudController extends CrudControllerAbstract
     private function addConfigureFieldsPlaceHolders(string $pageName): array
     {
         $chapterTranslation = new TranslatableMessage('Chapter');
-        $editoTranslation  = new TranslatableMessage('Edito');
+        $editoTranslation   = new TranslatableMessage('Edito');
         $episodeTranslation = new TranslatableMessage('Episode');
         $memoTranslation    = new TranslatableMessage('Memo');
         $movieTranslation   = new TranslatableMessage('Movie');
@@ -129,10 +130,11 @@ class ConfigurationCrudController extends CrudControllerAbstract
         $postTranslation    = new TranslatableMessage('Post');
         $sagaTranslation    = new TranslatableMessage('Saga');
         $seasonTranslation  = new TranslatableMessage('Season');
-        $serieTranslation  = new TranslatableMessage('Serie');
-        $starTranslation = new TranslatableMessage('Star');
-        $storyTranslation = new TranslatableMessage('Story');
-        $userTranslation = new TranslatableMessage('User');
+        $serieTranslation   = new TranslatableMessage('Serie');
+        $starTranslation    = new TranslatableMessage('Star');
+        $storyTranslation   = new TranslatableMessage('Story');
+        $userTranslation    = new TranslatableMessage('User');
+
         return [
             FormField::addColumn(6),
             $this->crudFieldFactory->imageField(

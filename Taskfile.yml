@@ -338,14 +338,6 @@ tasks:
       vars:
         CMD: "run ecs-fix"
 
-  labstag:delete-oldfiles:
-    desc: "Delete old temporary files"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:delete-oldfiles"
-
   labstag:geocode-install:
     desc: "Install geocoding data"
     silent: true
@@ -667,7 +659,6 @@ tasks:
     silent: true
     cmds:
     - task: doctrine:fixtures
-    - task: labstag:delete-oldfiles
     - task: star:add
 
   labstag:set-env-ids:

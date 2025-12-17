@@ -44,9 +44,9 @@ class PageCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $this->crudFieldFactory->addFieldsToTab('principal', $this->getIdEntity($pageName, $currentEntity));
 
-        $fieldChoice  = $this->addFieldIsHome($currentEntity, $pageName);
-        $wysiwgTranslation = new TranslatableMessage('resume');
-        $wysiwygField = WysiwygField::new('resume', $wysiwgTranslation->getMessage());
+        $fieldChoice         = $this->addFieldIsHome($currentEntity, $pageName);
+        $translatableMessage = new TranslatableMessage('resume');
+        $wysiwygField        = WysiwygField::new('resume', $translatableMessage->getMessage());
         $wysiwygField->hideOnIndex();
         if ($fieldChoice instanceof ChoiceField) {
             $this->crudFieldFactory->addFieldsToTab('principal', [$fieldChoice, $wysiwygField]);

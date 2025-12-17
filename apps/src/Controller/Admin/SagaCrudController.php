@@ -53,9 +53,10 @@ class SagaCrudController extends CrudControllerAbstract
         $textField        = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
 
         $wysiwgTranslation = new TranslatableMessage('Description');
-        $wysiwygField = WysiwygField::new('description', $wysiwgTranslation->getMessage());
+        $wysiwygField      = WysiwygField::new('description', $wysiwgTranslation->getMessage());
         $wysiwygField->hideOnIndex();
-        $posterTranslation = new TranslatableMessage('Poster');
+
+        $posterTranslation   = new TranslatableMessage('Poster');
         $backdropTranslation = new TranslatableMessage('Backdrop');
         $this->crudFieldFactory->addFieldsToTab(
             'principal',

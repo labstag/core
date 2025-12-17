@@ -151,6 +151,12 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     protected ?int $votes = null;
 
     /**
+     * @var Collection<int, Casting>
+     */
+    #[ORM\OneToMany(targetEntity: Casting::class, mappedBy: 'refSerie')]
+    private Collection $castings;
+
+    /**
      * @var Collection<int, Company>
      */
     #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'series')]
@@ -165,12 +171,23 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         $this->seasons         = new ArrayCollection();
         $this->paragraphs      = new ArrayCollection();
         $this->companies       = new ArrayCollection();
+        $this->castings        = new ArrayCollection();
     }
 
     #[Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();
+    }
+
+    public function addCasting(Casting $casting): static
+    {
+        if (!$this->castings->contains($casting)) {
+            $this->castings->add($casting);
+            $casting->setRefSerie($this);
+        }
+
+        return $this;
     }
 
     public function addCategory(SerieCategory $serieCategory): static
@@ -221,6 +238,14 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     public function getBackdropFile(): ?File
     {
         return $this->backdropFile;
+    }
+
+    /**
+     * @return Collection<int, Casting>
+     */
+    public function getCastings(): Collection
+    {
+        return $this->castings;
     }
 
     /**
@@ -361,6 +386,16 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     public function isInProduction(): ?bool
     {
         return $this->inProduction;
+    }
+
+    public function removeCasting(Casting $casting): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->castings->removeElement($casting) && $casting->getRefSerie() === $this) {
+            $casting->setRefSerie(null);
+        }
+
+        return $this;
     }
 
     public function removeCategory(SerieCategory $serieCategory): static

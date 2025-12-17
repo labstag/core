@@ -24,8 +24,8 @@ class HtmlBlock extends SimpleBlockAbstract
     public function getFields(Block $block, string $pageName): mixed
     {
         unset($block, $pageName);
-        $wysiwygTranslation = new TranslatableMessage('Content');
-        $wysiwygField = WysiwygField::new('content', $wysiwygTranslation->getMessage());
+        $translatableMessage = new TranslatableMessage('Content');
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
 
         yield $wysiwygField;
     }

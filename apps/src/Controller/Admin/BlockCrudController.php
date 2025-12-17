@@ -172,8 +172,8 @@ class BlockCrudController extends CrudControllerAbstract
             return $filters;
         }
 
-        $typeTranslation = new TranslatableMessage('Type');
-        $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', $typeTranslation->getMessage());
+        $translatableMessage         = new TranslatableMessage('Type');
+        $discriminatorTypeFilter     = DiscriminatorTypeFilter::new('type', $translatableMessage->getMessage());
         $discriminatorTypeFilter->setBlockService($this->blockService);
         $discriminatorTypeFilter->setChoices(
             array_merge(

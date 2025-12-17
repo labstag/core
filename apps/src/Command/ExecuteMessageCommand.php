@@ -25,41 +25,38 @@ class ExecuteMessageCommand
     public function __invoke(SymfonyStyle $symfonyStyle): int
     {
         $choices = [
-            'PageCinema' => 'Generate cinema pages',
-            'BanIp' => 'Ban IP addresses',
-            'UpdateSerie' => 'Update series',
+            'PageCinema'   => 'Generate cinema pages',
+            'BanIp'        => 'Ban IP addresses',
+            'UpdateSerie'  => 'Update series',
             'Notification' => 'Send notifications',
-            'Meta' => 'Clean meta entries',
-            'Files' => 'Clean files',
-            'All' => 'Execute all tasks',
-            'Cancel' => 'Cancel execution',
+            'Meta'         => 'Clean meta entries',
+            'Files'        => 'Clean files',
+            'All'          => 'Execute all tasks',
+            'Cancel'       => 'Cancel execution',
         ];
 
-        $selected = $symfonyStyle->choice(
-            'Which task do you want to execute?',
-            array_values($choices),
-            6
-        );
+        $selected = $symfonyStyle->choice('Which task do you want to execute?', array_values($choices), 6);
 
-        $selectedKey = array_search($selected, $choices);
+        $selectedKey = array_search($selected, $choices, true);
 
         $messages = [
-            'PageCinema' => PageCinemaMessage::class,
-            'BanIp' => BanIpMessage::class,
-            'UpdateSerie' => UpdateSerieMessage::class,
-            'Meta' => MetaMessage::class,
-            'Files' => FilesMessage::class,
+            'PageCinema'   => PageCinemaMessage::class,
+            'BanIp'        => BanIpMessage::class,
+            'UpdateSerie'  => UpdateSerieMessage::class,
+            'Meta'         => MetaMessage::class,
+            'Files'        => FilesMessage::class,
             'Notification' => NotificationMessage::class,
         ];
 
-        $toExecute = $selectedKey === 'All' ? array_keys($messages) : [$selectedKey];
-        if ($selectedKey === 'Cancel') {
+        $toExecute = 'All' === $selectedKey ? array_keys($messages) : [$selectedKey];
+        if ('Cancel' === $selectedKey) {
             $symfonyStyle->warning('Execution cancelled by user.');
+
             return Command::SUCCESS;
         }
 
         foreach ($toExecute as $key) {
-            $symfonyStyle->section("Dispatching {$key}Message");
+            $symfonyStyle->section(sprintf('Dispatching %sMessage', $key));
             $this->messageBus->dispatch(new $messages[$key]());
         }
 

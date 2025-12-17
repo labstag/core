@@ -15,6 +15,7 @@ final class EpisodeService
         private FileService $fileService,
         private EpisodeRepository $episodeRepository,
         private TheMovieDbApi $theMovieDbApi,
+        private PersonService $personService,
     )
     {
     }
@@ -70,10 +71,36 @@ final class EpisodeService
 
         $statuses = [
             $this->updateEpisode($episode, $details),
+            $this->updateCredits($episode, $details),
             $this->updateImage($episode, $details),
         ];
 
         return in_array(true, $statuses, true);
+    }
+
+    private function updateCredits(Episode $episode, array $details): bool
+    {
+        foreach ($episode->getCastings() as $casting) {
+            $episode->removeCasting($casting);
+        }
+
+        if (isset($details['credits']['cast']) && is_array($details['credits']['cast'])) {
+            foreach ($details['credits']['cast'] as $cast) {
+                $person = $this->personService->getPerson($cast);
+                $this->personService->addToCastingEpisode($person, $episode, $cast);
+                $episode->addCasting($casting);
+            }
+        }
+
+        if (isset($details['credits']['crew']) && is_array($details['credits']['crew'])) {
+            foreach ($details['credits']['crew'] as $crew) {
+                $person = $this->personService->getPerson($crew);
+                $this->personService->addToCastingEpisode($person, $episode, $crew);
+                $episode->addCasting($casting);
+            }
+        }
+
+        return true;
     }
 
     private function updateEpisode(Episode $episode, array $details): bool

@@ -10,14 +10,14 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final class FilesMessageHandler
 {
     public function __construct(
-        protected FileService $fileService,
+        private FileService $fileService,
     )
     {
     }
 
-    public function __invoke(FilesMessage $message): void
+    public function __invoke(FilesMessage $filesMessage): void
     {
-        unset($message);
-        $total = $this->fileService->deletedFileByEntities();
+        unset($filesMessage);
+        $this->fileService->deletedFileByEntities();
     }
 }

@@ -8,18 +8,12 @@ use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\SerieCategory;
 use Labstag\Message\SeasonMessage;
-use Labstag\Message\SerieMessage;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\CategoryService;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\VideoService;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Translation\TranslatableMessage;
 
 final class SerieService
 {
@@ -43,9 +37,8 @@ final class SerieService
         private SerieRepository $serieRepository,
         private CategoryService $categoryService,
         private TheMovieDbApi $theMovieDbApi,
-        private RequestStack $requestStack,
         private VideoService $videoService,
-        private RouterInterface $router,
+        private PersonService $personService,
     )
     {
     }
@@ -155,17 +148,11 @@ final class SerieService
             $this->updateCategory($serie, $details),
             $this->updateTrailer($serie, $details),
             $this->updateCompany($serie, $details),
+            $this->updateCredits($serie, $details),
             $this->updateSeasons($serie, $details),
         ];
 
         return in_array(true, $statuses, true);
-    }
-
-    private function getFlashBag(): FlashBagInterface
-    {
-        $session = $this->requestStack->getSession();
-
-        return $session->getFlashBag();
     }
 
     /**
@@ -272,6 +259,31 @@ final class SerieService
         foreach ($details['tmdb']['production_companies'] as $company) {
             $company = $this->companyService->getCompany($company);
             $serie->addCompany($company);
+        }
+
+        return true;
+    }
+
+    private function updateCredits(Serie $serie, array $details): bool
+    {
+        foreach ($serie->getCastings() as $casting) {
+            $serie->removeCasting($casting);
+        }
+
+        if (isset($details['credits']['cast']) || is_array($details['credits']['cast'])) {
+            foreach ($details['credits']['cast'] as $cast) {
+                $person = $this->personService->getPerson($cast);
+                $this->personService->addToCastingSerie($person, $serie, $cast);
+                $serie->addCasting($casting);
+            }
+        }
+
+        if (isset($details['credits']['crew']) || is_array($details['credits']['crew'])) {
+            foreach ($details['credits']['crew'] as $crew) {
+                $person = $this->personService->getPerson($crew);
+                $this->personService->addToCastingSerie($person, $serie, $crew);
+                $serie->addCasting($casting);
+            }
         }
 
         return true;

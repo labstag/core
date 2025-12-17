@@ -37,9 +37,11 @@ class MovieType extends AbstractType
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void
     {
         unset($options);
-        $formBuilder->add('title', TextType::class, [
-                'required' => false,
-            ]);
+        $formBuilder->add(
+            'title',
+            TextType::class,
+            ['required' => false]
+        );
         $formBuilder->add(
             'country',
             ChoiceType::class,
@@ -73,9 +75,18 @@ class MovieType extends AbstractType
                 'choices'  => $this->movieService->getYearForForm(),
             ]
         );
-        $title       = new TranslatableMessage('Title');
-        $releaseDate = new TranslatableMessage('Release date');
-        $dateAdded   = new TranslatableMessage('Date added');
+        $titleTranslation       = new TranslatableMessage('Title');
+        $title                  = $this->translator->trans($titleTranslation->getMessage(), $titleTranslation->getParameters());
+        $releaseDateTranslation = new TranslatableMessage('Release date');
+        $releaseDate            = $this->translator->trans(
+            $releaseDateTranslation->getMessage(),
+            $releaseDateTranslation->getParameters()
+        );
+        $dateAddedTranslation   = new TranslatableMessage('Date added');
+        $dateAdded              = $this->translator->trans(
+            $dateAddedTranslation->getMessage(),
+            $dateAddedTranslation->getParameters()
+        );
         $formBuilder->add(
             'order',
             ChoiceType::class,
@@ -83,17 +94,22 @@ class MovieType extends AbstractType
                 'required' => false,
                 'label'    => new TranslatableMessage('Order'),
                 'choices'  => [
-                    $this->translator->trans($title->getMessage(), $title->getParameters())       => 'title',
-                    $this->translator->trans(
-                        $releaseDate->getMessage(),
-                        $releaseDate->getParameters()
-                    )                                                                                 => 'releaseDate',
-                    $this->translator->trans($dateAdded->getMessage(), $dateAdded->getParameters())   => 'createdAt',
+                    $title       => 'title',
+                    $releaseDate => 'releaseDate',
+                    $dateAdded   => 'createdAt',
                 ],
             ]
         );
-        $ascending  = new TranslatableMessage('Ascending');
-        $descending = new TranslatableMessage('Descending');
+        $ascendingTranslation  = new TranslatableMessage('Ascending');
+        $ascending             = $this->translator->trans(
+            $ascendingTranslation->getMessage(),
+            $ascendingTranslation->getParameters()
+        );
+        $descendingTranslation = new TranslatableMessage('Descending');
+        $descending            = $this->translator->trans(
+            $descendingTranslation->getMessage(),
+            $descendingTranslation->getParameters()
+        );
         $formBuilder->add(
             'orderby',
             ChoiceType::class,
@@ -101,17 +117,25 @@ class MovieType extends AbstractType
                 'required' => false,
                 'label'    => new TranslatableMessage('Sort'),
                 'choices'  => [
-                    $this->translator->trans($ascending->getMessage(), $ascending->getParameters())   => 'ASC',
-                    $this->translator->trans($descending->getMessage(), $descending->getParameters()) => 'DESC',
+                    $ascending  => 'ASC',
+                    $descending => 'DESC',
                 ],
             ]
         );
-        $formBuilder->add('submit', SubmitType::class, [
+        $formBuilder->add(
+            'submit',
+            SubmitType::class,
+            [
                 'label' => new TranslatableMessage('Search'),
-            ]);
-        $formBuilder->add('reset', ResetType::class, [
+            ]
+        );
+        $formBuilder->add(
+            'reset',
+            ResetType::class,
+            [
                 'label' => new TranslatableMessage('Reset'),
-            ]);
+            ]
+        );
     }
 
     public function configureOptions(OptionsResolver $optionsResolver): void
@@ -122,9 +146,10 @@ class MovieType extends AbstractType
         $optionsResolver->setDefaults(
             [
                 'csrf_protection' => false,
-                'action'          => $this->router->generate('front', [
-                        'slug' => $slug,
-                    ]),
+                'action'          => $this->router->generate(
+                    'front',
+                    ['slug' => $slug]
+                ),
                 'method'          => 'GET',
                 'data_class'      => null,
             ]

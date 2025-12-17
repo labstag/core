@@ -38,11 +38,11 @@ class BanIpCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
-        $wysiwygTranslation = new TranslatableMessage('Reason');
-        $fields = [
+        $translatableMessage = new TranslatableMessage('Reason');
+        $fields              = [
             $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
             TextField::new('InternetProtocol', new TranslatableMessage('IP')),
-            WysiwygField::new('reason', $wysiwygTranslation->getMessage()),
+            WysiwygField::new('reason', $translatableMessage->getMessage()),
         ];
         $this->crudFieldFactory->addFieldsToTab('principal', $fields);
         $this->crudFieldFactory->setTabDate($pageName);

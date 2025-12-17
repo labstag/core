@@ -98,7 +98,10 @@ class GameCrudController extends CrudControllerAbstract
             [
                 'status'  => 'success',
                 'id'      => $id,
-                'message' => $this->translator->trans($translatableMessage->getMessage(), $translatableMessage->getParameters()),
+                'message' => $this->translator->trans(
+                    $translatableMessage->getMessage(),
+                    $translatableMessage->getParameters()
+                ),
             ]
         );
     }
@@ -202,8 +205,8 @@ class GameCrudController extends CrudControllerAbstract
 
         $this->crudFieldFactory->setTabDate($pageName);
 
-        $wysiwgTranslation = new TranslatableMessage('Summary');
-        $wysiwygField = WysiwygField::new('summary', $wysiwgTranslation->getMessage());
+        $translatableMessage = new TranslatableMessage('Summary');
+        $wysiwygField        = WysiwygField::new('summary', $translatableMessage->getMessage());
         $wysiwygField->hideOnIndex();
 
         $this->crudFieldFactory->addFieldsToTab(

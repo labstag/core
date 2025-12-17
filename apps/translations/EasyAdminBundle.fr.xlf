@@ -173,6 +173,10 @@
         <source>action.save_and_continue</source>
         <target>Sauvegarder et continuer</target>
       </trans-unit>
+      <trans-unit id="sWw5MDD" resname="action.toggle_dropdown">
+        <source>action.toggle_dropdown</source>
+        <target>Basculer le menu déroulant</target>
+      </trans-unit>
       <trans-unit id="IvOrJqD" resname="batch_action_modal.title">
         <source>batch_action_modal.title</source>
         <target>Vous allez appliquer l'action "%action_name%" à %num_items% élément(s).</target>

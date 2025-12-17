@@ -5,10 +5,12 @@ namespace Labstag\Api;
 use Labstag\Api\Tmdb\TmdbImagesApi;
 use Labstag\Api\Tmdb\TmdbMoviesApi;
 use Labstag\Api\Tmdb\TmdbOtherApi;
+use Labstag\Api\Tmdb\TmdbPersonApi;
 use Labstag\Api\Tmdb\TmdbTvApi;
 use Labstag\Entity\Company;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Movie;
+use Labstag\Entity\Person;
 use Labstag\Entity\Saga;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
@@ -33,6 +35,8 @@ class TheMovieDbApi
 
     private TmdbOtherApi $tmdbOtherApi;
 
+    private TmdbPersonApi $tmdbPersonApi;
+
     private TmdbTvApi $tmdbTvApi;
 
     public function __construct(
@@ -47,6 +51,22 @@ class TheMovieDbApi
         $this->tmdbMoviesApi             = new TmdbMoviesApi($cacheService, $httpClient, $tmdbBearerToken);
         $this->tmdbImagesApi             = new TmdbImagesApi($cacheService, $httpClient, $tmdbBearerToken);
         $this->tmdbTvApi                 = new TmdbTvApi($cacheService, $httpClient, $tmdbBearerToken);
+        $this->tmdbPersonApi             = new TmdbPersonApi($cacheService, $httpClient, $tmdbBearerToken);
+    }
+
+    public function getDetailPerson(Person $person): ?array
+    {
+        $json = $this->getJson($person);
+        if (0 !== count($json)) {
+            return $json;
+        }
+
+        $locale          = $this->configurationService->getLocaleTmdb();
+        $details['tmdb'] = $this->tmdbPersonApi->getDetails($person->getTmdb(), $locale);
+
+        $this->setJson($person, $details);
+
+        return $details;
     }
 
     public function getDetailsCompany(Company $company): array
@@ -74,11 +94,12 @@ class TheMovieDbApi
         $details                = [];
         $tmdb                   = $episode->getRefseason()->getRefserie()->getTmdb();
         $seasonNumber = $episode->getRefseason()->getNumber();
-        $episodeNumber     = $episode->getNumber();
-        $locale            = $this->configurationService->getLocaleTmdb();
-        $details['tmdb']   = $this->tvserie()->getEpisodeDetails($tmdb, $seasonNumber, $episodeNumber, $locale);
-        $details['other']  = $this->tvserie()->getEpisodeExternalIds($tmdb, $seasonNumber, $episodeNumber);
-        $details['images'] = $this->tvserie()->getEpisodeImages($tmdb, $seasonNumber, $episodeNumber, $locale);
+        $episodeNumber      = $episode->getNumber();
+        $locale             = $this->configurationService->getLocaleTmdb();
+        $details['tmdb']    = $this->tvserie()->getEpisodeDetails($tmdb, $seasonNumber, $episodeNumber, $locale);
+        $details['other']   = $this->tvserie()->getEpisodeExternalIds($tmdb, $seasonNumber, $episodeNumber);
+        $details['images']  = $this->tvserie()->getEpisodeImages($tmdb, $seasonNumber, $episodeNumber, $locale);
+        $details['credits'] = $this->tvserie()->getEpisodeCredits($tmdb, $seasonNumber, $episodeNumber, $locale);
         $this->setJson($episode, $details);
 
         return $details;
@@ -159,11 +180,12 @@ class TheMovieDbApi
 
         $details                = [];
         $tmdb                   = $season->getRefserie()->getTmdb();
-        $numberSeason      = $season->getNumber();
-        $locale            = $this->configurationService->getLocaleTmdb();
-        $details['tmdb']   = $this->tvserie()->getSeasonDetails($tmdb, $numberSeason, $locale);
-        $details['videos'] = $this->getVideosSeason($tmdb, $numberSeason);
-        $details['other']  = $this->tvserie()->getTvExternalIds($tmdb);
+        $numberSeason       = $season->getNumber();
+        $locale             = $this->configurationService->getLocaleTmdb();
+        $details['tmdb']    = $this->tvserie()->getSeasonDetails($tmdb, $numberSeason, $locale);
+        $details['videos']  = $this->getVideosSeason($tmdb, $numberSeason);
+        $details['other']   = $this->tvserie()->getTvExternalIds($tmdb);
+        $details['credits'] = $this->tvserie()->getSeasonCredits($tmdb, $numberSeason, $locale);
         $this->setJson($season, $details);
 
         return $details;
@@ -204,6 +226,7 @@ class TheMovieDbApi
             $tmdbId,
             ['language' => $locale]
         );
+        $details['credits'] = $this->tvserie()->getCredits($tmdbId, $locale);
         $this->setJson($serie, $details);
 
         return $details;
