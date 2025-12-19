@@ -32,4 +32,56 @@
     margin-bottom: 11px;
     @extend %video;
   }
+
+  .actings {
+    margin: 20px 0;
+    padding: 20px;
+
+    .subtitle {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .wrapper {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 20px;
+    }
+
+    .acting {
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+
+      .actor {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .profile {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          background-image: var(--image-url);
+          background-size: cover;
+          background-position: center;
+          margin-bottom: 10px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .name {
+          font-weight: 600;
+          font-size: 0.95rem;
+        }
+      }
+
+      .character {
+        font-size: 0.85rem;
+        color: #666;
+        font-style: italic;
+      }
+    }
+  }
 }

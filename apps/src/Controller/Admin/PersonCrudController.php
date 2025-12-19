@@ -5,8 +5,10 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Person;
 use Labstag\Field\WysiwygField;
@@ -71,6 +73,22 @@ class PersonCrudController extends CrudControllerAbstract
         $textField = TextField::new('placeOfBirth', new TranslatableMessage('Place of birth'));
         $textField->hideOnIndex();
 
+        $serieField = AssociationField::new('castings', new TranslatableMessage('Series'));
+        $serieField->setTemplatePath('admin/field/casting-series.html.twig');
+        $serieField->onlyOnDetail();
+
+        $movieField = AssociationField::new('castings', new TranslatableMessage('Movies'));
+        $movieField->setTemplatePath('admin/field/casting-movies.html.twig');
+        $movieField->onlyOnDetail();
+
+        $seasonField = AssociationField::new('castings', new TranslatableMessage('Seasons'));
+        $seasonField->setTemplatePath('admin/field/casting-seasons.html.twig');
+        $seasonField->onlyOnDetail();
+
+        $episodeField = AssociationField::new('castings', new TranslatableMessage('Episodes'));
+        $episodeField->setTemplatePath('admin/field/casting-episodes.html.twig');
+        $episodeField->onlyOnDetail();
+
         $profileTranslation = new TranslatableMessage('Profile');
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -90,6 +108,17 @@ class PersonCrudController extends CrudControllerAbstract
                 $wysiwygField,
             ]
         );
+        $this->crudFieldFactory->addTab('casting', FormField::addTab(new TranslatableMessage('Casting')));
+        $this->crudFieldFactory->addFieldsToTab(
+            'casting',
+            [
+                $serieField,
+                $movieField,
+                $seasonField,
+                $episodeField,
+            ]
+        );
+        $this->crudFieldFactory->setTabDate($pageName);
 
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }

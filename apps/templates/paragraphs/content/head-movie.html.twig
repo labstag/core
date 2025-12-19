@@ -112,5 +112,28 @@
                 </div>
             {% endif %}
         {% endif %}
+        {% set actings = casting_acting(movie.castings) %}
+        {% if actings|length > 0 %}
+            <div class="actings">
+                <h4 class="subtitle">
+                    {{ 'Cast'|trans }}
+                </h4>
+                <div class="wrapper">
+                    {% for acting in actings %}
+                        <div class="acting">
+                            <div class="actor">
+                                <div class="profile" style="--image-url: url('{{ site_asset(acting.refperson, 'profile') }}')"></div>
+                                <div class="name">
+                                    {{ acting.refperson.title }}
+                                </div>
+                            </div>
+                            <div class="character">
+                                {{ acting.figure }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
     </div>
 </section>
