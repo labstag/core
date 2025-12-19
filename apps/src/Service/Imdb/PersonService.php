@@ -26,7 +26,7 @@ final class PersonService
     {
     }
 
-    public function addToCastingEpisode(Person $person, Episode $episode, array $data): void
+    public function addToCastingEpisode(Person $person, Episode $episode, array $data): Casting
     {
         $entityRepository = $this->entityManager->getRepository(Casting::class);
         $casting          = $entityRepository->findOneBy(
@@ -41,10 +41,7 @@ final class PersonService
             $casting->setRefPerson($person);
         }
 
-        $casting->setKnownForDepartment($data['known_for_department'] ?? null);
-        $casting->setFigure($data['character'] ?? null);
-
-        $entityRepository->save($casting);
+        return $this->addToCasting($casting, $data);
     }
 
     public function addToCastingMovie(Person $person, Movie $movie, array $data): Casting
