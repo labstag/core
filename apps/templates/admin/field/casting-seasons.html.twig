@@ -1,6 +1,16 @@
 {% set instance = entity.instance %}
 {% if ea().crud.currentAction == 'detail' %}
   <table class="table datagrid">
+    <thead>
+      <tr>
+        <th>{{ 'Person'|trans }}</th>
+        <th>{{ 'Known For Department'|trans }}</th>
+        <th>{{ 'Figure'|trans }}</th>
+        <th>{{ 'Serie'|trans }}</th>
+        <th>{{ 'Season'|trans }}</th>
+      </tr>
+    </thead>
+    <tbody>
     {% for casting in instance.castings %}
       {% if casting.refSeason is not null %}
         <tr>
@@ -12,6 +22,11 @@
           <td>{{ casting.knownForDepartment }}</td>
           <td>{{ casting.figure }}</td>
           <td>
+            <a href="{{ admin_url('detail', casting.refSeason.refserie) }}">
+              {{ casting.refSeason.refserie.title }}
+            </a>
+          </td>
+          <td>
             <a href="{{ admin_url('detail', casting.refSeason) }}">
               {{ casting.refSeason.title }}
             </a>
@@ -19,6 +34,7 @@
         </tr>
       {% endif %}
     {% endfor %}
+    </tbody>
   </table>
 {% else %}
   {{ instance.castings|length }}

@@ -2353,6 +2353,18 @@
         <source>Casting</source>
         <target>Distribution</target>
       </trans-unit>
+      <trans-unit id="gLYEInz" resname="Cast">
+        <source>Cast</source>
+        <target>Acteurs</target>
+      </trans-unit>
+      <trans-unit id="avRs5fO" resname="Known For Department">
+        <source>Known For Department</source>
+        <target>Connu pour</target>
+      </trans-unit>
+      <trans-unit id="SOZF8NU" resname="Figure">
+        <source>Figure</source>
+        <target>Personnage</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

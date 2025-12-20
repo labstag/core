@@ -1,6 +1,15 @@
 {% set instance = entity.instance %}
 {% if ea().crud.currentAction == 'detail' %}
   <table class="table datagrid">
+    <thead>
+      <tr>
+        <th>{{ 'Person'|trans }}</th>
+        <th>{{ 'Known For Department'|trans }}</th>
+        <th>{{ 'Figure'|trans }}</th>
+        <th>{{ 'Movie'|trans }}</th>
+      </tr>
+    </thead>
+    <tbody>
     {% for casting in instance.castings %}
       {% if casting.refMovie is not null %}
         <tr>
@@ -19,6 +28,7 @@
         </tr>
       {% endif %}
     {% endfor %}
+    </tbody>
   </table>
 {% else %}
   {{ instance.castings|length }}
