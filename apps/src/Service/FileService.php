@@ -8,10 +8,13 @@ use Essence\Essence;
 use Essence\Media;
 use Exception;
 use GdImage;
+use Labstag\Entity\Block;
+use Labstag\Entity\Paragraph;
 use Labstag\Message\FileDeleteMessage;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -74,49 +77,67 @@ final class FileService
         }
     }
 
-    public function deletedFileByEntities(): int
+    public function deletedFileByEntities(): void
     {
-        $total = 0;
         $this->entityManager->getFilters()->disable('softdeleteable');
         foreach ($this->fileStorages as $fileStorage) {
-            $deletes     = [];
-            $entities    = $fileStorage->getEntity();
+            $deletes  = [];
+            $entities = $fileStorage->getEntity();
             if (0 === count($entities)) {
                 continue;
             }
 
-            foreach ($entities as $entityClass) {
-                $repository = $this->getRepository($entityClass);
-                $mappings   = $this->propertyMappingFactory->fromObject(new $entityClass());
-                $files      = $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), '');
-                foreach ($files as $row) {
-                    $file = $row['path'];
-                    $find = 0;
-                    foreach ($mappings as $mapping) {
-                        $field  = $mapping->getFileNamePropertyName();
-                        $entity = $repository->findOneBy(
-                            [$field => $file]
-                        );
-                        if (!$entity instanceof $entityClass) {
-                            continue;
-                        }
-
-                        $find = 1;
-
-                        break;
-                    }
-
-                    if (0 === $find) {
-                        $deletes[] = $file;
-                    }
+            $files = $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), '');
+            foreach ($files as $row) {
+                $find = $this->findInEntities($entities, $row['path']);
+                if (!$find) {
+                    $deletes[] = $row['path'];
                 }
+            }
 
-                $total += count($deletes);
-                $fileStorage->deleteFilesByType($deletes);
+            $fileStorage->deleteFilesByType($deletes);
+        }
+    }
+
+    private function findInEntities(array $entities, string $file): bool
+    {
+        $find = false;
+        foreach ($entities as $entityClass) {
+            $find = $this->findInEntity($entityClass, $file);
+            if ($find) {
+                break;
             }
         }
 
-        return $total;
+        return $find;
+    }
+
+    private function findInEntity(string $entityClass, string $file): bool
+    {
+        $repository = $this->getRepository($entityClass);
+        $mappings   = $this->propertyMappingFactory->fromObject(new $entityClass());
+        $search = [];
+        foreach ($mappings as $mapping) {
+            $field  = $mapping->getFileNamePropertyName();
+            $search[$field] = $file;
+        }
+
+        $entity = $this->findInFields($repository, $search);
+
+        return (0 !== count($entity));
+    }
+
+    private function findInFields($repository, array $fields)
+    {
+        $queryBuilder = $repository->createQueryBuilder('entity');
+        foreach ($fields as $field => $value) {
+            $queryBuilder->orWhere("entity.$field = :$field");
+            $queryBuilder->setParameter($field, $value);
+        }
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
     }
 
     public function getBasePath(mixed $entity, string $type): string
