@@ -16,7 +16,7 @@ final class MessageDispatcherService
     private array $dispatchedMessages = [];
 
     public function __construct(
-        private MessageDispatcherService $messageBus,
+        private MessageBusInterface $messageBus,
     )
     {
     }
