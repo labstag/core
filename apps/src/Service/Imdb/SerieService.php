@@ -12,6 +12,7 @@ use Labstag\Repository\SerieRepository;
 use Labstag\Service\CategoryService;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\VideoService;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -29,7 +30,7 @@ final class SerieService
     private array $year = [];
 
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private ConfigurationService $configurationService,
         private FileService $fileService,
         private CompanyService $companyService,

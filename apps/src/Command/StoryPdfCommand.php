@@ -4,6 +4,7 @@ namespace Labstag\Command;
 
 use Labstag\Message\StoryMessage;
 use Labstag\Repository\StoryRepository;
+use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\StoryService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -18,7 +19,7 @@ class StoryPdfCommand
 {
     public function __construct(
         protected StoryRepository $storyRepository,
-        protected MessageBusInterface $messageBus,
+        protected MessageDispatcherService $messageBus,
         protected StoryService $storyService,
     )
     {

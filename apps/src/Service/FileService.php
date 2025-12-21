@@ -31,7 +31,7 @@ final class FileService
     public function __construct(
         #[AutowireIterator('labstag.filestorage')]
         private readonly iterable $fileStorages,
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private LoggerInterface $logger,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag,

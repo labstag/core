@@ -9,13 +9,14 @@ use Labstag\Entity\Serie;
 use Labstag\Message\EpisodeMessage;
 use Labstag\Repository\SeasonRepository;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SeasonService
 {
     public function __construct(
         private FileService $fileService,
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private SeasonRepository $seasonRepository,
         private EpisodeService $episodeService,
         private TheMovieDbApi $theMovieDbApi,

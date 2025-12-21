@@ -8,6 +8,7 @@ use Labstag\Entity\Platform;
 use Labstag\Message\AddGameMessage;
 use Labstag\Message\SearchGameMessage;
 use Labstag\Service\Igdb\GameService;
+use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\NotificationService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -16,7 +17,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final class SearchGameMessageHandler
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private GameService $gameService,
         private NotificationService $notificationService,
         private EntityManagerInterface $entityManager,

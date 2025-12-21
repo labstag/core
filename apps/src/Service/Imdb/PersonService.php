@@ -13,12 +13,13 @@ use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Message\PersonMessage;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 final class PersonService
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private EntityManagerInterface $entityManager,
         private FileService $fileService,
         private TheMovieDbApi $theMovieDbApi,

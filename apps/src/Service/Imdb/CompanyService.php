@@ -7,6 +7,7 @@ use Labstag\Entity\Company;
 use Labstag\Message\CompanyMessage;
 use Labstag\Repository\CompanyRepository;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -14,7 +15,7 @@ final class CompanyService
 {
     public function __construct(
         private LoggerInterface $logger,
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private CompanyRepository $companyRepository,
         private FileService $fileService,
         private TheMovieDbApi $theMovieDbApi,

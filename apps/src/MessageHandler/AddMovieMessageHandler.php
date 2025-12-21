@@ -6,6 +6,7 @@ use Labstag\Entity\Movie;
 use Labstag\Message\AddMovieMessage;
 use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -13,7 +14,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final class AddMovieMessageHandler
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private MovieRepository $movieRepository,
     )
     {

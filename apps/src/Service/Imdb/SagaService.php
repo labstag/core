@@ -7,6 +7,7 @@ use Labstag\Entity\Saga;
 use Labstag\Message\SagaMessage;
 use Labstag\Repository\SagaRepository;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -14,7 +15,7 @@ final class SagaService
 {
     public function __construct(
         private LoggerInterface $logger,
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private SagaRepository $sagaRepository,
         private FileService $fileService,
         private TheMovieDbApi $theMovieDbApi,

@@ -6,6 +6,7 @@ use Exception;
 use Labstag\Entity\GeoCode;
 use Labstag\Message\GeocodeMessage;
 use Labstag\Service\GeocodeService;
+use Labstag\Service\MessageDispatcherService;
 use NumberFormatter;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -25,7 +26,7 @@ class GeocodeInstallCommand
 
     public function __construct(
         private readonly GeocodeService $geocodeService,
-        protected MessageBusInterface $messageBus,
+        protected MessageDispatcherService $messageBus,
     )
     {
     }

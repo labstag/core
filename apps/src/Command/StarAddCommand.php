@@ -6,6 +6,7 @@ use Labstag\Entity\Star;
 use Labstag\Message\StarMessage;
 use Labstag\Repository\StarRepository;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -23,7 +24,7 @@ class StarAddCommand
 
     public function __construct(
         protected FileService $fileService,
-        protected MessageBusInterface $messageBus,
+        protected MessageDispatcherService $messageBus,
         protected StarRepository $starRepository,
     )
     {

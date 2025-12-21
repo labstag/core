@@ -22,6 +22,7 @@ use Labstag\Message\SerieMessage;
 use Labstag\Message\StoryMessage;
 use Labstag\Service\BlockService;
 use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\WorkflowService;
 use ReflectionClass;
@@ -34,7 +35,7 @@ abstract class EventEntityLib
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
-        protected MessageBusInterface $messageBus,
+        protected MessageDispatcherService $messageBus,
         protected WorkflowService $workflowService,
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,

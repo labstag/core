@@ -12,6 +12,7 @@ use Labstag\Message\ClearCacheMessage;
 use Labstag\Message\DeleteOldFileMessage;
 use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
@@ -32,7 +33,7 @@ class BackController extends AbstractController
         protected WorkflowService $workflowService,
         protected SiteService $siteService,
         protected IgdbApi $igdbApi,
-        private readonly MessageBusInterface $messageBus,
+        private readonly MessageDispatcherService $messageBus,
     )
     {
     }

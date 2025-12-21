@@ -21,7 +21,7 @@ class FrontService extends AbstractController
         private readonly iterable $datas,
         protected CacheService $cacheService,
         protected EntityManagerInterface $entityManager,
-        protected MessageBusInterface $messageBus,
+        protected MessageDispatcherService $messageBus,
         protected FileService $fileService,
         protected ConfigurationService $configurationService,
         protected SlugService $slugService,

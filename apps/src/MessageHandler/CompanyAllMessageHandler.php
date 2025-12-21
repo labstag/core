@@ -5,6 +5,7 @@ namespace Labstag\MessageHandler;
 use Labstag\Message\CompanyAllMessage;
 use Labstag\Message\CompanyMessage;
 use Labstag\Repository\CompanyRepository;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -12,7 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final class CompanyAllMessageHandler
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private CompanyRepository $companyRepository,
     )
     {

@@ -5,6 +5,7 @@ namespace Labstag\MessageHandler;
 use Labstag\Message\SeasonAllMessage;
 use Labstag\Message\SeasonMessage;
 use Labstag\Repository\SeasonRepository;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -12,7 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final class SeasonAllMessageHandler
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private SeasonRepository $seasonRepository,
     )
     {

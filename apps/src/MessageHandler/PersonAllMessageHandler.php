@@ -5,6 +5,7 @@ namespace Labstag\MessageHandler;
 use Labstag\Message\PersonAllMessage;
 use Labstag\Message\PersonMessage;
 use Labstag\Repository\PersonRepository;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -12,7 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final class PersonAllMessageHandler
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private PersonRepository $personRepository,
     )
     {

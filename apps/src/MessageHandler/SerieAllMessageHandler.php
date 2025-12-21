@@ -5,6 +5,7 @@ namespace Labstag\MessageHandler;
 use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Repository\SerieRepository;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -12,7 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final class SerieAllMessageHandler
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private SerieRepository $serieRepository,
     )
     {

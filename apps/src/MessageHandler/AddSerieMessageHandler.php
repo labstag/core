@@ -6,6 +6,7 @@ use Labstag\Entity\Serie;
 use Labstag\Message\AddSerieMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Repository\SerieRepository;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -13,7 +14,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 final class AddSerieMessageHandler
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageBus,
         private SerieRepository $serieRepository,
     )
     {
