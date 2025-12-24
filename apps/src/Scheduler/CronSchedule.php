@@ -4,7 +4,7 @@ namespace Labstag\Scheduler;
 
 use Labstag\Message\BanIpMessage;
 use Labstag\Message\FilesMessage;
-use Labstag\Message\MetaMessage;
+use Labstag\Message\MetaAllMessage;
 use Labstag\Message\NotificationMessage;
 use Labstag\Message\UpdateSerieMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
@@ -30,7 +30,7 @@ final class CronSchedule implements ScheduleProviderInterface
             RecurringMessage::cron('0 10 * * *', new UpdateSerieMessage()),
             RecurringMessage::cron('0 12 * * *', new NotificationMessage()),
             RecurringMessage::cron('0 0 * * 6', new FilesMessage()),
-            RecurringMessage::cron('0 20 * * *', new MetaMessage()),
+            RecurringMessage::cron('0 20 * * *', new MetaAllMessage()),
             // RecurringMessage::every('1 minute', new PageCinemaMessage()),
         );
         $schedule->stateful($this->cache);

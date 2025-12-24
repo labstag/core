@@ -4,7 +4,7 @@ namespace Labstag\Command;
 
 use Labstag\Message\BanIpMessage;
 use Labstag\Message\FilesMessage;
-use Labstag\Message\MetaMessage;
+use Labstag\Message\MetaAllMessage;
 use Labstag\Message\NotificationMessage;
 use Labstag\Message\PageCinemaMessage;
 use Labstag\Message\UpdateSerieMessage;
@@ -44,7 +44,7 @@ class ExecuteMessageCommand
             'PageCinema'   => PageCinemaMessage::class,
             'BanIp'        => BanIpMessage::class,
             'UpdateSerie'  => UpdateSerieMessage::class,
-            'Meta'         => MetaMessage::class,
+            'Meta'         => MetaAllMessage::class,
             'Files'        => FilesMessage::class,
             'Notification' => NotificationMessage::class,
         ];

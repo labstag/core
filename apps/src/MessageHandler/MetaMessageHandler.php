@@ -23,56 +23,38 @@ final class MetaMessageHandler
 {
     public function __construct(
         private MetaService $metaService,
-        private EntityManagerInterface $entityManager,
-        private MetaRepository $metaRepository,
+        private EntityManagerInterface $entityManager
     )
     {
     }
 
     public function __invoke(MetaMessage $metaMessage): void
     {
-        unset($metaMessage);
-        $this->deleteUselessMeta();
-        $this->correctionMeta();
+        $type = $metaMessage->getType();
+        $entity = $metaMessage->getEntity();
+        match ($type) {
+            'delete' => $this->deleteUselessMeta(),
+            'check' => $this->correctionMeta($entity),
+            default => null,
+        };
     }
 
-    private function correctionMeta(): void
+    private function correctionMeta($entity): void
     {
-        $entities = [
-            Game::class,
-            Movie::class,
-            Page::class,
-            Person::class,
-            Post::class,
-            Saga::class,
-            Season::class,
-            Serie::class,
-            Story::class,
-        ];
-
-        foreach ($entities as $entity) {
-            $repository = $this->entityManager->getRepository($entity);
-            $items      = $repository->findAll();
-
-            $count = 0;
-            foreach ($items as $item) {
-                $meta = $item->getMeta();
-                if (!$meta instanceof Meta) {
-                    continue;
-                }
-
-                $meta = new Meta();
-                $item->setMeta($meta);
-                $this->entityManager->persist($item);
-
-                ++$count;
-            }
-
-            if (0 < $count) {
-                $this->entityManager->flush();
+        $repository = $this->entityManager->getRepository($entity);
+        $items      = $repository->findAll();
+        foreach ($items as $item) {
+            $meta = $item->getMeta();
+            if (!$meta instanceof Meta) {
                 continue;
             }
+
+            $meta = new Meta();
+            $item->setMeta($meta);
+            $this->entityManager->persist($item);
         }
+        
+        $this->entityManager->flush();
     }
 
     private function deleteUselessMeta(): void
