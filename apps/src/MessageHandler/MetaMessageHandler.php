@@ -3,18 +3,9 @@
 namespace Labstag\MessageHandler;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Labstag\Entity\Game;
+use Exception;
 use Labstag\Entity\Meta;
-use Labstag\Entity\Movie;
-use Labstag\Entity\Page;
-use Labstag\Entity\Person;
-use Labstag\Entity\Post;
-use Labstag\Entity\Saga;
-use Labstag\Entity\Season;
-use Labstag\Entity\Serie;
-use Labstag\Entity\Story;
 use Labstag\Message\MetaMessage;
-use Labstag\Repository\MetaRepository;
 use Labstag\Service\MetaService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -41,31 +32,37 @@ final class MetaMessageHandler
 
     private function correctionMeta($entity): void
     {
-        $repository = $this->entityManager->getRepository($entity);
-        $items      = $repository->findAll();
-        foreach ($items as $item) {
-            $meta = $item->getMeta();
-            if (!$meta instanceof Meta) {
-                continue;
-            }
+        try {
+            $repository = $this->entityManager->getRepository($entity);
+            $items      = $repository->findAll();
+            foreach ($items as $item) {
+                $meta = $item->getMeta();
+                if (!$meta instanceof Meta) {
+                    continue;
+                }
 
-            $meta = new Meta();
-            $item->setMeta($meta);
-            $this->entityManager->persist($item);
+                $meta = new Meta();
+                $item->setMeta($meta);
+                $repository->save($item);
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage();
         }
-        
-        $this->entityManager->flush();
     }
 
     private function deleteUselessMeta(): void
     {
-        $entityRepository      = $this->entityManager->getRepository(Meta::class);
-        $metas                 = $entityRepository->findAll();
-        foreach ($metas as $meta) {
-            $object   = $this->metaService->getEntityParent($meta);
-            if (is_null($object->value) || is_null($object->name) || is_null($object)) {
-                $entityRepository->delete($meta);
+        try {
+            $repository      = $this->entityManager->getRepository(Meta::class);
+            $metas                 = $repository->findAll();
+            foreach ($metas as $meta) {
+                $object   = $this->metaService->getEntityParent($meta);
+                if (is_null($object->value) || is_null($object->name) || is_null($object)) {
+                    $repository->delete($meta);
+                }
             }
+        } catch (Exception $e) {
+            echo $e->getMessage();
         }
     }
 }
