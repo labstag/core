@@ -13,4 +13,15 @@ class PersonData extends DataAbstract implements DataInterface
     {
         return $entity instanceof Person;
     }
+
+    #[Override]
+    public function placeholder(): string
+    {
+        $placeholder = $this->globalPlaceholder('person');
+        if ('' !== $placeholder) {
+            return $placeholder;
+        }
+
+        return parent::placeholder();
+    }
 }

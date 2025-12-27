@@ -28,6 +28,7 @@ final class Version20251217202932 extends AbstractMigration
         $this->addSql('ALTER TABLE casting ADD CONSTRAINT FK_D11BBA50984707B FOREIGN KEY (ref_movie_id) REFERENCES movie (id)');
         $this->addSql('ALTER TABLE casting ADD CONSTRAINT FK_D11BBA505F544E3A FOREIGN KEY (ref_serie_id) REFERENCES serie (id)');
         $this->addSql('ALTER TABLE person ADD CONSTRAINT FK_34DCD17639FCA6F9 FOREIGN KEY (meta_id) REFERENCES meta (id)');
+        $this->addSql('ALTER TABLE configuration ADD person_placeholder VARCHAR(255) DEFAULT NULL;');
     }
 
     public function down(Schema $schema): void
@@ -41,5 +42,6 @@ final class Version20251217202932 extends AbstractMigration
         $this->addSql('ALTER TABLE person DROP FOREIGN KEY FK_34DCD17639FCA6F9');
         $this->addSql('DROP TABLE casting');
         $this->addSql('DROP TABLE person');
+        $this->addSql('ALTER TABLE configuration DROP person_placeholder');
     }
 }

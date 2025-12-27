@@ -40,17 +40,21 @@ class ConfigFixtures extends FixtureAbstract implements DependentFixtureInterfac
         $configuration->setDisableEmptyAgent(false);
         $this->setImage($configuration, 'logoFile');
         $this->setImage($configuration, 'placeholderFile');
-        $this->setImage($configuration, 'chapterPlaceholder');
-        $this->setImage($configuration, 'editoPlaceholder');
-        $this->setImage($configuration, 'episodePlaceholder');
-        $this->setImage($configuration, 'memoPlaceholder');
-        $this->setImage($configuration, 'moviePlaceholder');
-        $this->setImage($configuration, 'gamePlaceholder');
-        $this->setImage($configuration, 'postPlaceholder');
-        $this->setImage($configuration, 'sagaPlaceholder');
-        $this->setImage($configuration, 'starPlaceholder');
-        $this->setImage($configuration, 'storyPlaceholder');
-        $this->setImage($configuration, 'userPlaceholder');
+        $this->setImage($configuration, 'chapterPlaceholderFile');
+        $this->setImage($configuration, 'editoPlaceholderFile');
+        $this->setImage($configuration, 'episodePlaceholderFile');
+        $this->setImage($configuration, 'gamePlaceholderFile');
+        $this->setImage($configuration, 'memoPlaceholderFile');
+        $this->setImage($configuration, 'moviePlaceholderFile');
+        $this->setImage($configuration, 'pagePlaceholderFile');
+        $this->setImage($configuration, 'personPlaceholderFile');
+        $this->setImage($configuration, 'postPlaceholderFile');
+        $this->setImage($configuration, 'sagaPlaceholderFile');
+        $this->setImage($configuration, 'seasonPlaceholderFile');
+        $this->setImage($configuration, 'seriePlaceholderFile');
+        $this->setImage($configuration, 'starPlaceholderFile');
+        $this->setImage($configuration, 'storyPlaceholderFile');
+        $this->setImage($configuration, 'userPlaceholderFile');
 
         $objectManager->persist($configuration);
 

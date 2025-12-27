@@ -120,121 +120,36 @@ class ConfigurationCrudController extends CrudControllerAbstract
 
     private function addConfigureFieldsPlaceHolders(string $pageName): array
     {
-        $chapterTranslation = new TranslatableMessage('Chapter');
-        $editoTranslation   = new TranslatableMessage('Edito');
-        $episodeTranslation = new TranslatableMessage('Episode');
-        $memoTranslation    = new TranslatableMessage('Memo');
-        $movieTranslation   = new TranslatableMessage('Movie');
-        $gameTranslation    = new TranslatableMessage('Game');
-        $pageTranslation    = new TranslatableMessage('Page');
-        $postTranslation    = new TranslatableMessage('Post');
-        $sagaTranslation    = new TranslatableMessage('Saga');
-        $seasonTranslation  = new TranslatableMessage('Season');
-        $serieTranslation   = new TranslatableMessage('Serie');
-        $starTranslation    = new TranslatableMessage('Star');
-        $storyTranslation   = new TranslatableMessage('Story');
-        $userTranslation    = new TranslatableMessage('User');
-
-        return [
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'chapterPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $chapterTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'editoPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $editoTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'episodePlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $episodeTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'memoPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $memoTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'moviePlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $movieTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'gamePlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $gameTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'pagePlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $pageTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'postPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $postTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'sagaPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $sagaTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'seasonPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $seasonTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'seriePlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $serieTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'starPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $starTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'storyPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $storyTranslation->getMessage()
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'userPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                $userTranslation->getMessage()
-            ),
+        $placeholders = [
+            'chapter' => new TranslatableMessage('Chapter'),
+            'edito' => new TranslatableMessage('Edito'),
+            'episode' => new TranslatableMessage('Episode'),
+            'memo' => new TranslatableMessage('Memo'),
+            'movie' => new TranslatableMessage('Movie'),
+            'game' => new TranslatableMessage('Game'),
+            'page' => new TranslatableMessage('Page'),
+            'post' => new TranslatableMessage('Post'),
+            'saga' => new TranslatableMessage('Saga'),
+            'season' => new TranslatableMessage('Season'),
+            'serie' => new TranslatableMessage('Serie'),
+            'star' => new TranslatableMessage('Star'),
+            'story' => new TranslatableMessage('Story'),
+            'user' => new TranslatableMessage('User'),
+            'person' => new TranslatableMessage('Person'),
         ];
+
+        $fields = [];
+        foreach ($placeholders as $key => $label) {
+            $fields[] = FormField::addColumn(6);
+            $fields[] = $this->crudFieldFactory->imageField(
+                $key . 'Placeholder',
+                $pageName,
+                self::getEntityFqcn(),
+                $label->getMessage()
+            );
+        }
+
+        return $fields;
     }
 
     /**
