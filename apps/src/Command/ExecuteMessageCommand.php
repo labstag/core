@@ -3,7 +3,7 @@
 namespace Labstag\Command;
 
 use Labstag\Message\BanIpMessage;
-use Labstag\Message\FilesMessage;
+use Labstag\Message\DeleteOldFileMessage;
 use Labstag\Message\MetaAllMessage;
 use Labstag\Message\NotificationMessage;
 use Labstag\Message\PageCinemaMessage;
@@ -45,7 +45,7 @@ class ExecuteMessageCommand
             'BanIp'        => BanIpMessage::class,
             'UpdateSerie'  => UpdateSerieMessage::class,
             'Meta'         => MetaAllMessage::class,
-            'Files'        => FilesMessage::class,
+            'Files'        => DeleteOldFileMessage::class,
             'Notification' => NotificationMessage::class,
         ];
 
