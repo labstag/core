@@ -53,14 +53,14 @@ final class MetaMessageHandler
     private function deleteUselessMeta(): void
     {
         try {
-            $repository      = $this->entityManager->getRepository(Meta::class);
-            $metas                 = $repository->findAll();
-            foreach ($metas as $meta) {
-                $object   = $this->metaService->getEntityParent($meta);
-                if (is_null($object->value) || is_null($object->name) || is_null($object)) {
-                    $repository->delete($meta);
-                }
-            }
+            // $repository      = $this->entityManager->getRepository(Meta::class);
+            // $metas                 = $repository->findAll();
+            // foreach ($metas as $meta) {
+            //     $object   = $this->metaService->getEntityParent($meta);
+            //     if (is_null($object->value) || is_null($object->name) || is_null($object)) {
+            //         $repository->delete($meta);
+            //     }
+            // }
         } catch (Exception $e) {
             echo $e->getMessage();
         }
