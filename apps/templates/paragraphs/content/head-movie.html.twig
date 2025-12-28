@@ -112,7 +112,8 @@
                 </div>
             {% endif %}
         {% endif %}
-        {% set actings = casting_acting(movie.castings) %}
+        {% set castings = casting_cast(movie) %}
+        {% set actings = casting_acting(castings) %}
         {% if actings|length > 0 %}
             <div class="actings">
                 <h4 class="subtitle">

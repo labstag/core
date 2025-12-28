@@ -1,7 +1,8 @@
 {% set instance = entity.instance %}
 {% if ea().crud.currentAction == 'detail' %}
+  {% set castings = casting_cast(instance) %}
   <table class="table datagrid">
-    {% for casting in instance.castings %}
+    {% for casting in castings %}
       <tr>
         <td>
           <a href="{{ admin_url('detail', casting.refPerson) }}">

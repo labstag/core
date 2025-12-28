@@ -150,6 +150,8 @@ class DashboardController extends AbstractDashboardController
         $memos              = $repositoryAbstract->findBy(
             ['enable' => true]
         );
+
+        $paragraphs = [];
         foreach ($memos as $memo) {
             $idMemo     = $memo->getId();
             $paragraphs = $memo->getParagraphs()->getValues();

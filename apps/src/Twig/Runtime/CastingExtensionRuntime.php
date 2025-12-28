@@ -2,14 +2,26 @@
 
 namespace Labstag\Twig\Runtime;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\PersistentCollection;
+use Labstag\Entity\Casting;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class CastingExtensionRuntime implements RuntimeExtensionInterface
 {
-    public function __construct()
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+    )
     {
         // Inject dependencies if needed
+    }
+
+    public function cast($data): mixed
+    {
+        $repository = $this->entityManager->getRepository(Casting::class);
+        $castings = $repository->findWithActiveCastings($data);
+
+        return $castings;
     }
 
     public function acting(PersistentCollection $data): array

@@ -13,6 +13,7 @@ class CastingExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
+            new TwigFunction('casting_cast', [CastingExtensionRuntime::class, 'cast']),
             new TwigFunction('casting_acting', [CastingExtensionRuntime::class, 'acting']),
             new TwigFunction('casting_directing', [CastingExtensionRuntime::class, 'directing']),
             new TwigFunction('casting_writing', [CastingExtensionRuntime::class, 'writing']),
