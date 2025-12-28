@@ -24,32 +24,32 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
         return $castings;
     }
 
-    public function acting(PersistentCollection $data): array
+    public function acting($data): array
     {
         return $this->getByType('Acting', $data);
     }
 
-    public function writing(PersistentCollection $data): array
+    public function writing($data): array
     {
         return $this->getByType('Writing', $data);
     }
 
-    public function directing(PersistentCollection $data): array
+    public function directing($data): array
     {
         return $this->getByType('Directing', $data);
     }
 
-    public function production(PersistentCollection $data): array
+    public function production($data): array
     {
         return $this->getByType('Production', $data);
     }
 
-    public function editing(PersistentCollection $data): array
+    public function editing($data): array
     {
         return $this->getByType('Editing', $data);
     }
 
-    private function getByType(string $type, PersistentCollection $data): array
+    private function getByType(string $type, $data): array
     {
         $casting = [];
         foreach ($data as $row) {
