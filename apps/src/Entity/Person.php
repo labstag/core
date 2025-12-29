@@ -38,6 +38,12 @@ class Person
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $profile = null;
 
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    protected ?bool $enable = null;
+
     #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'profile')]
     protected ?File $profileFile = null;
 
@@ -72,9 +78,68 @@ class Person
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tmdb = null;
 
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'person',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    protected Collection $paragraphs;
+
     public function __construct()
     {
         $this->castings = new ArrayCollection();
+        $this->paragraphs      = new ArrayCollection();
+    }
+
+    public function isEnable(): ?bool
+    {
+        return $this->enable;
+    }
+
+    public function setEnable(bool $enable): static
+    {
+        $this->enable = $enable;
+
+        return $this;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPerson() === $this
+        ) {
+            $paragraph->setPerson(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
     }
 
     public function addCasting(Casting $casting): static

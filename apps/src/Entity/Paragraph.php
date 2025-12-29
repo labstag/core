@@ -80,6 +80,9 @@ abstract class Paragraph implements Stringable
     #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Edito $edito = null;
 
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Person $person = null;
+
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
@@ -149,6 +152,11 @@ abstract class Paragraph implements Stringable
     public function getEdito(): ?Edito
     {
         return $this->edito;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
     }
 
     public function getFond(): ?string
@@ -240,6 +248,13 @@ abstract class Paragraph implements Stringable
     public function setEdito(?Edito $edito): static
     {
         $this->edito = $edito;
+
+        return $this;
+    }
+
+    public function setPerson(?Person $person): static
+    {
+        $this->person = $person;
 
         return $this;
     }

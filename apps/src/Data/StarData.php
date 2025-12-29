@@ -18,6 +18,11 @@ class StarData extends DataAbstract implements DataInterface
         return $this->configPlaceholder();
     }
 
+    public function getDefaultImage(object $entity): string
+    {
+        return $entity->getImg();
+    }
+
     #[Override]
     public function supportsAsset(object $entity): bool
     {

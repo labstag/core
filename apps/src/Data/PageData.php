@@ -25,6 +25,11 @@ class PageData extends HomeData implements DataInterface
         return $slug;
     }
 
+    public function getDefaultImage(object $entity): string
+    {
+        return $entity->getImg();
+    }
+
     #[Override]
     public function getEntity(?string $slug): object
     {

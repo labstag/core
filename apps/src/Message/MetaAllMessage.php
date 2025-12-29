@@ -4,7 +4,7 @@ namespace Labstag\Message;
 
 use Symfony\Component\Messenger\Attribute\AsMessage;
 
-#[AsMessage('async')]
+#[AsMessage('sync')]
 final class MetaAllMessage
 {
     /*

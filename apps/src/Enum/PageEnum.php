@@ -11,6 +11,7 @@ enum PageEnum: string
     case HOME           = 'home';
     case LOGIN          = 'login';
     case LOSTPASSWORD   = 'lostpassword';
+    case PERSONS        = 'person';
     case MOVIES         = 'movie';
     case PAGE           = 'page';
     case POSTS          = 'post';

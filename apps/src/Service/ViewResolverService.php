@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Meta;
 use Labstag\Repository\BlockRepository;
 use ReflectionClass;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Twig\Environment;
 
 final class ViewResolverService
@@ -17,6 +18,8 @@ final class ViewResolverService
     private array $requestCache = [];
 
     public function __construct(
+        #[AutowireIterator('labstag.datas')]
+        private iterable $datas,
         private EntityManagerInterface $entityManager,
         private ConfigurationService $configurationService,
         private BlockService $blockService,
@@ -24,6 +27,18 @@ final class ViewResolverService
         private Environment $twigEnvironment,
     )
     {
+    }
+
+    private function getDefaultImageEntity($entity)
+    {
+        $image = '';
+        foreach ($this->datas as $data) {
+            if ($data->supportsData($entity)) {
+                $image = $data->getDefaultImage($entity);
+            }
+        }
+
+        return $image;
     }
 
     /**
@@ -42,7 +57,7 @@ final class ViewResolverService
             'paragraphs' => $entity->getParagraphs()->getValues(),
         ];
 
-        $data['img'] = $reflectionClass->hasMethod('getImg') ? $entity->getImg() : $entity->getPoster();
+        $data['img'] = $this->getDefaultImageEntity($entity);
 
         if (method_exists($entity, 'getTags')) {
             $data['tags'] = $entity->getTags();
