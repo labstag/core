@@ -109,6 +109,7 @@ final class PersonService
         );
         if (!$person instanceof Person) {
             $person = new Person();
+            $person->setEnable(true);
             $person->setTmdb($data['id']);
             $person->setTitle($data['name']);
             $entityRepository->save($person);

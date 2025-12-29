@@ -123,10 +123,12 @@
                     {% for acting in actings %}
                         <div class="acting">
                             <div class="actor">
-                                <div class="profile" style="--image-url: url('{{ site_asset(acting.refperson, 'profile') }}')"></div>
-                                <div class="name">
-                                    {{ acting.refperson.title }}
-                                </div>
+                                <a href="{{ site_path(acting.refperson) }}">
+                                    <div class="profile" style="--image-url: url('{{ site_asset(acting.refperson, 'profile') }}')"></div>
+                                    <div class="name">
+                                        {{ acting.refperson.title }}
+                                    </div>
+                                </a>
                             </div>
                             <div class="character">
                                 {{ acting.figure }}
