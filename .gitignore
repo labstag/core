@@ -2,7 +2,6 @@
 /apps/vendor
 /apps/bin/
 /apps/.symfony5
-/apps/config/reference.php
 /apps/.composer
 /apps/.pdepend
 /apps/.bash_history

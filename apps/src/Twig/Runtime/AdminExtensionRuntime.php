@@ -25,8 +25,9 @@ class AdminExtensionRuntime implements RuntimeExtensionInterface
             $entityClass = $controller->getEntityFqcn();
             if ($entityClass == $entity::class || $entity instanceof $entityClass) {
                 $crud = $controller->configureCrud(Crud::new());
+                $singular = $crud->getAsDto()->getEntityLabelInSingular();
 
-                return $this->translator->trans($crud->getAsDto()->getEntityLabelInSingular());
+                return $this->translator->trans($singular->getMessage());
             }
         }
 
