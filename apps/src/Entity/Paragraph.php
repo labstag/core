@@ -31,6 +31,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
         'head-cv'          => HeadCvParagraph::class,
         'head-game'        => HeadGameParagraph::class,
         'head-movie'       => HeadMovieParagraph::class,
+        'head-person'      => HeadPersonParagraph::class,
         'head-post'        => HeadPostParagraph::class,
         'head-saga'        => HeadSagaParagraph::class,
         'head-season'      => HeadSeasonParagraph::class,

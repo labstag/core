@@ -2365,6 +2365,18 @@
         <source>Figure</source>
         <target>Personnage</target>
       </trans-unit>
+      <trans-unit id="R8QQs6M" resname="Head person">
+        <source>Head person</source>
+        <target>En-tête personne</target>
+      </trans-unit>
+      <trans-unit id="G0Qs0b_" resname="Date of birth : %date%">
+        <source>Date of birth : %date%</source>
+        <target>Date de naissance : %date%</target>
+      </trans-unit>
+      <trans-unit id="XyijfjT" resname="Date of death : %date%">
+        <source>Date of death : %date%</source>
+        <target>Date de décès : %date%</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

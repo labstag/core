@@ -1,0 +1,65 @@
+{% use "elements.html.twig" %}
+{% set castings = casting_cast(person) %}
+{% set series = casting_series(castings) %}
+{% set movies = casting_movies(castings) %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
+	<div class="first">
+        <div class="background" style="--image-url: url('{{ site_asset(person, 'profile') }}')"></div>
+        <div class="content">
+            <div class="wrapper">
+                <h3 class="title">
+                    {{ person.title }}
+                </h3>
+                <div class="birthday">
+                    {{ 'Date of birth : %date%'|trans({ '%date%': person.birthday|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
+                </div>
+                {% if person.deathday %}
+                    <div class="deathday">
+                        {{ 'Date of death : %date%'|trans({ '%date%': person.deathday|format_date(locale: 'fr_FR', dateFormat: 'full') }) }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="second">
+        <div class="biography">
+            <div class="wrapper">
+                {{ person.biography|raw }}
+            </div>
+        </div>
+        {% if series|length != 0 or movies|length != 0 %}
+            <div class="casting">
+                <div class="wrapper">
+                    <div class="content">
+                        {% if series|length != 0 %}
+                            <h4>{{ 'Series'|trans }}</h4>
+                            <ul>
+                                {% for row in series %}
+                                    <li class="teaser-serie">
+                                        {% if row.refSerie is defined %}
+                                            {% include  "teasers/serie.html.twig"  with {'serie': row.refSerie} %}
+                                        {% elseif row.refSeason is defined %}
+                                            {% include  "teasers/serie.html.twig"  with {'serie': row.refSeason.refSerie} %}
+                                        {% else %}
+                                            {% include  "teasers/serie.html.twig"  with {'serie': row.refEpisode.refSeason.refSerie} %}
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if movies|length != 0 %}
+                            <h4>{{ 'Movies'|trans }}</h4>
+                            <ul>
+                                {% for row in movies %}
+                                    <li class="teaser-movie">
+                                        {% include  "teasers/movie.html.twig"  with {'movie': row.refMovie} %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</section>

@@ -39,7 +39,7 @@ class PersonData extends PageData implements DataInterface
         return $page instanceof Person;
     }
 
-    public function getDefaultImage(object $entity): string
+    public function getDefaultImage(object $entity): ?string
     {
         return $entity->getProfile();
     }

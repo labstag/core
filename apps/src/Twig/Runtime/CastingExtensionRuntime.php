@@ -3,8 +3,11 @@
 namespace Labstag\Twig\Runtime;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\PersistentCollection;
 use Labstag\Entity\Casting;
+use Labstag\Entity\Episode;
+use Labstag\Entity\Movie;
+use Labstag\Entity\Season;
+use Labstag\Entity\Serie;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class CastingExtensionRuntime implements RuntimeExtensionInterface
@@ -22,6 +25,38 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
         $castings = $repository->findWithActiveCastings($data);
 
         return $castings;
+    }
+
+    public function series($data): array
+    {
+        $tab = [];
+        foreach ($data as $row) {
+            if ($row->getRefSerie() instanceof Serie) {
+                $id = $row->getRefSerie()->getId();
+                $tab[$id] = $row;
+            }elseif ($row->getRefEpisode() instanceof Episode) {
+                $id = $row->getRefEpisode()->getRefSerie()->getId();
+                $tab[$id] = $row;
+            }elseif ($row->getRefSeason() instanceof Season) {
+                $id = $row->getRefSeason()->getRefSerie()->getId();
+                $tab[$id] = $row;
+            }
+        }
+
+        return $tab;
+    }
+
+    public function movies($data): array
+    {
+        $tab = [];
+        foreach ($data as $row) {
+            if ($row->getRefMovie() instanceof Movie) {
+                $id = $row->getRefMovie()->getId();
+                $tab[$id] = $row;
+            }
+        }
+
+        return $tab;
     }
 
     public function acting($data): array

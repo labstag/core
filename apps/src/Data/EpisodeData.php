@@ -18,7 +18,7 @@ class EpisodeData extends SeasonData implements DataInterface
         return parent::asset($entity->getRefseason(), 'backdrop');
     }
 
-    public function getDefaultImage(object $entity): string
+    public function getDefaultImage(object $entity): ?string
     {
         return $entity->getImg();
     }

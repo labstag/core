@@ -28,7 +28,7 @@ class StoryData extends PageData implements DataInterface
         return $slug;
     }
 
-    public function getDefaultImage(object $entity): string
+    public function getDefaultImage(object $entity): ?string
     {
         return $entity->getImg();
     }

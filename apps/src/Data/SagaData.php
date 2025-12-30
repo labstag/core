@@ -27,7 +27,7 @@ class SagaData extends PageData implements DataInterface
         return $this->fileService->asset($entity, $field);
     }
 
-    public function getDefaultImage(object $entity): string
+    public function getDefaultImage(object $entity): ?string
     {
         return $entity->getPoster();
     }
