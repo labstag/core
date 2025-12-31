@@ -41,6 +41,7 @@
 @use 'paragraphs/head-story' as paragraphhead-story;
 @use 'paragraphs/head' as paragraphhead;
 @use 'paragraphs/error' as paragrapherror;
+@use 'paragraphs/person' as paragraphperson;
 @use 'paragraphs/hero' as paragraphhero;
 @use 'paragraphs/html' as paragraphhtml;
 @use 'paragraphs/img' as paragraphimg;
@@ -67,6 +68,7 @@
 @use 'paragraphs/video' as paragraphvideo;
 
 @use 'teasers/chapter' as teaserchapter;
+@use 'teasers/person' as teaserperson;
 @use 'teasers/skill' as teaserskill;
 @use 'teasers/experience' as teaserexperience;
 @use 'teasers/game' as teasergame;

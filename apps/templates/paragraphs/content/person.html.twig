@@ -2,9 +2,9 @@
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
         <ul>
-            {% for row in pagination %}
-                <li class="teaser-post">
-                    {% include "teasers/post.html.twig"  with {'post': row} %}
+            {% for person in pagination %}
+                <li class="teaser-person">
+                    {% include "teasers/person.html.twig"  with {'person': person} %}
                 </li>
             {% endfor %}
         </ul>

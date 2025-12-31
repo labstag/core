@@ -48,6 +48,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
         'movie-slider'     => MovieSliderParagraph::class,
         'movie'            => MovieParagraph::class,
         'news-list'        => NewsListParagraph::class,
+        'person'           => PersonParagraph::class,
         'saga-list'        => SagaListParagraph::class,
         'saga'             => SagaParagraph::class,
         'season-list'      => SeasonListParagraph::class,

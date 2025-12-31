@@ -93,6 +93,7 @@ class PersonCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->titleField(),
                 $choiceField,

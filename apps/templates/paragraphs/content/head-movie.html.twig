@@ -120,21 +120,13 @@
                     {{ 'Cast'|trans }}
                 </h4>
                 <div class="wrapper">
+                    <ul> 
                     {% for acting in actings %}
-                        <div class="acting">
-                            <div class="actor">
-                                <a href="{{ site_path(acting.refperson) }}">
-                                    <div class="profile" style="--image-url: url('{{ site_asset(acting.refperson, 'profile') }}')"></div>
-                                    <div class="name">
-                                        {{ acting.refperson.title }}
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="character">
-                                {{ acting.figure }}
-                            </div>
-                        </div>
+                        <li class="teaser-person">
+                            {% include "teasers/person.html.twig"  with {'person': acting.refperson, 'figure': acting.figure} %}
+                        </li>
                     {% endfor %}
+                    </ul>
                 </div>
             </div>
         {% endif %}

@@ -37,11 +37,11 @@
                                 {% for row in series %}
                                     <li class="teaser-serie">
                                         {% if row.refSerie is defined %}
-                                            {% include  "teasers/serie.html.twig"  with {'serie': row.refSerie} %}
+                                            {% include "teasers/serie.html.twig"  with {'serie': row.refSerie} %}
                                         {% elseif row.refSeason is defined %}
-                                            {% include  "teasers/serie.html.twig"  with {'serie': row.refSeason.refSerie} %}
+                                            {% include "teasers/serie.html.twig"  with {'serie': row.refSeason.refSerie} %}
                                         {% else %}
-                                            {% include  "teasers/serie.html.twig"  with {'serie': row.refEpisode.refSeason.refSerie} %}
+                                            {% include "teasers/serie.html.twig"  with {'serie': row.refEpisode.refSeason.refSerie} %}
                                         {% endif %}
                                     </li>
                                 {% endfor %}
@@ -52,7 +52,7 @@
                             <ul>
                                 {% for row in movies %}
                                     <li class="teaser-movie">
-                                        {% include  "teasers/movie.html.twig"  with {'movie': row.refMovie} %}
+                                        {% include "teasers/movie.html.twig"  with {'movie': row.refMovie} %}
                                     </li>
                                 {% endfor %}
                             </ul>

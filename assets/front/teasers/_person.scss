@@ -1,0 +1,20 @@
+@use "../placeholders" as *;
+
+.teaser-person {
+  @extend %teaser;
+
+  .background {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    align-items: flex-end;
+    justify-content: flex-start;
+
+    .movies {
+      background-color: #363636;
+      color: yellow;
+      padding: 5px;
+      margin: 5px;
+    }
+  }
+}

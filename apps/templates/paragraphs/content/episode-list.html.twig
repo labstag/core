@@ -15,7 +15,7 @@
                 <ul>
                     {% for row in pagination %}
                         <li class="teaser-episode" id="episode-{{ row.number }}">
-                            {% include  "teasers/episode.html.twig"  with {'episode': row} %}
+                            {% include "teasers/episode.html.twig"  with {'episode': row} %}
                         </li>
                     {% endfor %}
                 </ul>
