@@ -1,9 +1,7 @@
 {% use "elements.html.twig" %}
-{# {% set castings = casting_cast(person) %} #}
-{% set series = [] %}
-{% set movies = [] %}
-{# {% set series = casting_series(castings) %}
-{% set movies = casting_movies(castings) %} #}
+{% set castings = casting_cast(person) %}
+{% set series = casting_series(castings) %}
+{% set movies = casting_movies(castings) %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
 	<div class="first">
         <div class="background" style="--image-url: url('{{ site_asset(person, 'profile') }}')"></div>

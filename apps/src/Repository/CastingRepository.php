@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Casting;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Movie;
+use Labstag\Entity\Person;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 
@@ -26,6 +27,7 @@ class CastingRepository extends RepositoryAbstract
         $queryBuilder->addSelect('p');
         $queryBuilder->andWhere('p.deletedAt IS NULL');
         $entityMap = [
+            Person::class  => ['refPerson', 'person'],
             Movie::class   => ['refMovie', 'movie'],
             Serie::class   => ['refSerie', 'serie'],
             Season::class  => ['refSeason', 'season'],
