@@ -33,13 +33,13 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
         foreach ($data as $row) {
             if ($row->getRefSerie() instanceof Serie) {
                 $id = $row->getRefSerie()->getId();
-                $tab[$id] = $row;
+                $tab[$id] = $row->getRefSerie();
             }elseif ($row->getRefEpisode() instanceof Episode) {
                 $id = $row->getRefEpisode()->getRefseason()->getRefserie()->getId();
-                $tab[$id] = $row;
+                $tab[$id] = $row->getRefEpisode()->getRefseason()->getRefserie();
             }elseif ($row->getRefSeason() instanceof Season) {
                 $id = $row->getRefSeason()->getRefserie()->getId();
-                $tab[$id] = $row;
+                $tab[$id] = $row->getRefSeason()->getRefserie();
             }
         }
 
@@ -52,7 +52,7 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
         foreach ($data as $row) {
             if ($row->getRefMovie() instanceof Movie) {
                 $id = $row->getRefMovie()->getId();
-                $tab[$id] = $row;
+                $tab[$id] = $row->getRefMovie();
             }
         }
 
