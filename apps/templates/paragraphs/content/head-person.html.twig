@@ -34,15 +34,9 @@
                         {% if series|length != 0 %}
                             <h4>{{ 'Series'|trans }}</h4>
                             <ul>
-                                {% for row in series %}
+                                {% for serie in series %}
                                     <li class="teaser-serie">
-                                        {% if row.refSerie is defined %}
-                                            {% include "teasers/serie.html.twig"  with {'serie': row.refSerie} %}
-                                        {% elseif row.refSeason is defined %}
-                                            {% include "teasers/serie.html.twig"  with {'serie': row.refSeason.refSerie} %}
-                                        {% else %}
-                                            {% include "teasers/serie.html.twig"  with {'serie': row.refEpisode.refSeason.refSerie} %}
-                                        {% endif %}
+                                        {% include "teasers/serie.html.twig"  with {'serie': serie} %}
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -50,9 +44,9 @@
                         {% if movies|length != 0 %}
                             <h4>{{ 'Movies'|trans }}</h4>
                             <ul>
-                                {% for row in movies %}
+                                {% for movie in movies %}
                                     <li class="teaser-movie">
-                                        {% include "teasers/movie.html.twig"  with {'movie': row.refMovie} %}
+                                        {% include "teasers/movie.html.twig"  with {'movie': movie} %}
                                     </li>
                                 {% endfor %}
                             </ul>
