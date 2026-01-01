@@ -84,10 +84,15 @@ class LinksBlock extends BlockAbstract
         yield FormField::addColumn(12);
         $collectionField = CollectionField::new('links', new TranslatableMessage('Links'));
         $collectionField->setEntryToStringMethod(
-            function ($link): TranslatableMessage {
+            function ($link): string {
                 unset($link);
 
-                return new TranslatableMessage('Link');
+                $translatableMessage = new TranslatableMessage('Link');
+
+                return $this->translator->trans(
+                    $translatableMessage->getMessage(),
+                    $translatableMessage->getParameters()
+                );
             }
         );
         $collectionField->setFormTypeOption(
