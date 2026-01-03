@@ -1,13 +1,21 @@
 {% use "elements.html.twig" %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
-        <ul>
-            {% for person in pagination %}
-                <li class="teaser-person">
-                    {% include "teasers/person.html.twig"  with {'person': person} %}
-                </li>
-            {% endfor %}
-        </ul>
+       <div class="content">
+            {% if pagination|length == 0 %}
+                <div class="notfound">
+                    <span class="text">{{ 'No artists match your search.'|trans }}</span>
+                </div>
+            {% else %}
+                <ul>
+                    {% for person in pagination %}
+                        <li class="teaser-person">
+                            {% include "teasers/person.html.twig"  with {'person': person} %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+       </div> 
         <div class="navigation">
             {{ knp_pagination_render(pagination) }}
         </div>

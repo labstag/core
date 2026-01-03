@@ -29,7 +29,7 @@ final class CronSchedule implements ScheduleProviderInterface
             RecurringMessage::cron('0 */1 * * *', new BanIpMessage()),
             RecurringMessage::cron('0 10 * * *', new UpdateSerieMessage()),
             RecurringMessage::cron('0 12 * * *', new NotificationMessage()),
-            RecurringMessage::cron('0 0 * * 6', new FilesMessage()),
+            // RecurringMessage::cron('0 0 * * 6', new FilesMessage()),
             // RecurringMessage::cron('0 20 * * *', new MetaAllMessage()),
         );
         $schedule->stateful($this->cache);
