@@ -44,7 +44,7 @@ class Person
     )]
     protected ?bool $enable = null;
 
-    #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'profile')]
+    #[Vich\UploadableField(mapping: 'person', fileNameProperty: 'profile')]
     protected ?File $profileFile = null;
 
     #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]
