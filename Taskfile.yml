@@ -158,7 +158,6 @@ tasks:
     cmds:
     - task: docker:stack:shell
       vars:
-        STACK_NAME: "labstag"
         SERVICE_NAME: "www"
 
   labstag:cmd-exec:
@@ -172,7 +171,6 @@ tasks:
     cmds:
     - task: docker:stack:exec
       vars:
-        STACK_NAME: "labstag"
         SERVICE_NAME: "www"
         COMMAND: "{{.COMMAND}}"
         INTERACTIVE: "{{.INTERACTIVE}}"
