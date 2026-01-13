@@ -103,6 +103,7 @@ tasks:
     desc: "Deploy Docker stacks defined in docker-compose files"
     silent: true
     cmds:
+    - docker build -f Dockerfile.messenger -t labstag/messenger:latest .
     - task: docker:stack:deploy
       vars:
         COMPOSE_FILE: "{{.DOCKERCOMPOSEFILE}}"
@@ -444,7 +445,7 @@ tasks:
     cmds:
     - task: symfony:console
       vars:
-        CMD: "messenger:consume --all"
+        CMD: "messenger:consume --all --time-limit=3600 --memory-limit=128M --sleep=1 --failure-limit=10"
 
   messenger:stats:
     desc: "Show Messenger statistics"
