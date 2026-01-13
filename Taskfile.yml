@@ -439,14 +439,6 @@ tasks:
       vars:
         CMD: "lint:twig templates"
 
-  messenger:consume:
-    desc: "Start Messenger message consumer"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "messenger:consume --all --time-limit=3600 --memory-limit=128M --sleep=1 --failure-limit=10"
-
   messenger:stats:
     desc: "Show Messenger statistics"
     silent: true
