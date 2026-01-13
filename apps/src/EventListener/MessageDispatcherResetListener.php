@@ -19,9 +19,9 @@ final class MessageDispatcherResetListener
     {
     }
 
-    public function __invoke(RequestEvent $event): void
+    public function __invoke(RequestEvent $requestEvent): void
     {
-        if (!$event->isMainRequest()) {
+        if (!$requestEvent->isMainRequest()) {
             return;
         }
 

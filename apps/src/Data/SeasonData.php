@@ -22,6 +22,7 @@ class SeasonData extends SerieData implements DataInterface
         return parent::asset($entity->getRefserie(), $field);
     }
 
+    #[Override]
     public function getDefaultImage(object $entity): ?string
     {
         return $entity->getPoster();

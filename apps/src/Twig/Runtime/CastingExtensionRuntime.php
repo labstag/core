@@ -21,10 +21,9 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
 
     public function cast($data): mixed
     {
-        $repository = $this->entityManager->getRepository(Casting::class);
-        $castings = $repository->findWithActiveCastings($data);
+        $entityRepository = $this->entityManager->getRepository(Casting::class);
 
-        return $castings;
+        return $entityRepository->findWithActiveCastings($data);
     }
 
     public function series($data): array
@@ -91,6 +90,7 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
             if ($row->getKnownForDepartment() != $type) {
                 continue;
             }
+
             $casting[] = $row;
         }
 

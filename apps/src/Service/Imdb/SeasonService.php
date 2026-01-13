@@ -10,13 +10,12 @@ use Labstag\Message\EpisodeMessage;
 use Labstag\Repository\SeasonRepository;
 use Labstag\Service\FileService;
 use Labstag\Service\MessageDispatcherService;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SeasonService
 {
     public function __construct(
         private FileService $fileService,
-        private MessageDispatcherService $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private SeasonRepository $seasonRepository,
         private EpisodeService $episodeService,
         private TheMovieDbApi $theMovieDbApi,
@@ -145,7 +144,7 @@ final class SeasonService
 
         $episodes = $this->episodeService->getEpisodes($season);
         foreach ($episodes as $episode) {
-            $this->messageBus->dispatch(new EpisodeMessage($episode->getId()));
+            $this->messageDispatcherService->dispatch(new EpisodeMessage($episode->getId()));
         }
 
         return true;

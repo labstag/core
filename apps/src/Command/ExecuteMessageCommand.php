@@ -12,7 +12,6 @@ use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(name: 'labstag:execute:message', description: 'Execute selected messages',)]
 class ExecuteMessageCommand

@@ -7,13 +7,12 @@ use Labstag\Message\SagaMessage;
 use Labstag\Repository\SagaRepository;
 use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class SagaAllMessageHandler
 {
     public function __construct(
-        private MessageDispatcherService $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private SagaRepository $sagaRepository,
     )
     {
@@ -24,7 +23,7 @@ final class SagaAllMessageHandler
         unset($sagaAllMessage);
         $sagas                           = $this->sagaRepository->findAll();
         foreach ($sagas as $saga) {
-            $this->messageBus->dispatch(new SagaMessage($saga->getId()));
+            $this->messageDispatcherService->dispatch(new SagaMessage($saga->getId()));
         }
     }
 }

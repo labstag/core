@@ -73,9 +73,9 @@ class PersonCrudController extends CrudControllerAbstract
         $textField = TextField::new('placeOfBirth', new TranslatableMessage('Place of birth'));
         $textField->hideOnIndex();
 
-        $serieField = AssociationField::new('castings', new TranslatableMessage('Series'));
-        $serieField->setTemplatePath('admin/field/casting-series.html.twig');
-        $serieField->onlyOnDetail();
+        $associationField = AssociationField::new('castings', new TranslatableMessage('Series'));
+        $associationField->setTemplatePath('admin/field/casting-series.html.twig');
+        $associationField->onlyOnDetail();
 
         $movieField = AssociationField::new('castings', new TranslatableMessage('Movies'));
         $movieField->setTemplatePath('admin/field/casting-movies.html.twig');
@@ -113,7 +113,7 @@ class PersonCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab(
             'casting',
             [
-                $serieField,
+                $associationField,
                 $movieField,
                 $seasonField,
                 $episodeField,

@@ -24,6 +24,7 @@ class EpisodeData extends SeasonData implements DataInterface
         return $entity instanceof Episode;
     }
 
+    #[Override]
     public function getDefaultImage(object $entity): ?string
     {
         return $entity->getImg();

@@ -29,7 +29,7 @@ final class ViewResolverService
     {
     }
 
-    private function getDefaultImageEntity($entity)
+    private function getDefaultImageEntity(object $entity)
     {
         $image = '';
         foreach ($this->datas as $data) {
@@ -51,7 +51,7 @@ final class ViewResolverService
             return $this->requestCache[$cacheKey];
         }
 
-        $reflectionClass = new ReflectionClass($entity);
+        new ReflectionClass($entity);
         $data            = [
             'entity'     => $entity,
             'paragraphs' => $entity->getParagraphs()->getValues(),

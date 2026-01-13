@@ -20,16 +20,17 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 final class MetaAllMessageHandler
 {
     public function __construct(
-        private MessageDispatcherService $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
     )
     {
 
     }
-    public function __invoke(MetaAllMessage $message): void
-    {
-        unset($message);
 
-        $this->messageBus->dispatch(new MetaMessage('delete'));
+    public function __invoke(MetaAllMessage $metaAllMessage): void
+    {
+        unset($metaAllMessage);
+
+        $this->messageDispatcherService->dispatch(new MetaMessage('delete'));
         $entities = [
             Game::class,
             Movie::class,
@@ -42,7 +43,7 @@ final class MetaAllMessageHandler
             Story::class,
         ];
         foreach ($entities as $entity) {
-            $this->messageBus->dispatch(new MetaMessage('check', $entity));
+            $this->messageDispatcherService->dispatch(new MetaMessage('check', $entity));
         }
     }
 }

@@ -20,7 +20,6 @@ use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -33,7 +32,7 @@ class BackController extends AbstractController
         protected WorkflowService $workflowService,
         protected SiteService $siteService,
         protected IgdbApi $igdbApi,
-        private readonly MessageDispatcherService $messageBus,
+        private readonly MessageDispatcherService $messageDispatcherService,
     )
     {
     }
@@ -55,8 +54,8 @@ class BackController extends AbstractController
     )]
     public function cacheclear(Request $request): Response
     {
-        $this->messageBus->dispatch(new ClearCacheMessage());
-        $this->messageBus->dispatch(new DeleteOldFileMessage());
+        $this->messageDispatcherService->dispatch(new ClearCacheMessage());
+        $this->messageDispatcherService->dispatch(new DeleteOldFileMessage());
         $this->addFlash('success', new TranslatableMessage('Cache cleared'));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');

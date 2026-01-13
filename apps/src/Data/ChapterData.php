@@ -20,6 +20,7 @@ class ChapterData extends StoryData implements DataInterface
         return parent::asset($entity->getStory(), $field);
     }
 
+    #[Override]
     public function getDefaultImage(object $entity): ?string
     {
         return $entity->getImg();

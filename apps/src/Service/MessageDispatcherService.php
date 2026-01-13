@@ -2,6 +2,7 @@
 
 namespace Labstag\Service;
 
+use ReflectionClass;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -77,15 +78,14 @@ final class MessageDispatcherService
      */
     private function getMessageKey(object $message): string
     {
-        $className  = get_class($message);
-        $reflection = new \ReflectionClass($message);
+        $className  = $message::class;
+        $reflectionClass = new ReflectionClass($message);
         $properties = [];
 
-        foreach ($reflection->getProperties() as $property) {
-            $property->setAccessible(true);
-            $value = $property->getValue($message);
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            $value = $reflectionProperty->getValue($message);
             // Convertir les valeurs en string pour la comparaison
-            $properties[$property->getName()] = $this->serializeValue($value);
+            $properties[$reflectionProperty->getName()] = $this->serializeValue($value);
         }
 
         ksort($properties);
@@ -103,8 +103,6 @@ final class MessageDispatcherService
 
     /**
      * Sérialise une valeur pour la comparaison.
-     *
-     * @return mixed
      */
     private function serializeValue(mixed $value): mixed
     {

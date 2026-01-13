@@ -26,6 +26,7 @@ class SerieData extends PageData implements DataInterface
         return $this->fileService->asset($entity, $field);
     }
 
+    #[Override]
     public function getDefaultImage(object $entity): ?string
     {
         return $entity->getPoster();

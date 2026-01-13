@@ -8,17 +8,13 @@ use Essence\Essence;
 use Essence\Media;
 use Exception;
 use GdImage;
-use Labstag\Entity\Block;
-use Labstag\Entity\Paragraph;
 use Labstag\Message\FileDeleteMessage;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Psr\Log\LoggerInterface;
-use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
@@ -31,7 +27,7 @@ final class FileService
     public function __construct(
         #[AutowireIterator('labstag.filestorage')]
         private readonly iterable $fileStorages,
-        private MessageDispatcherService $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private LoggerInterface $logger,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag,
@@ -88,10 +84,10 @@ final class FileService
             }
 
             $files = $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), '');
-            foreach ($files as $row) {
-                $find = $this->findInEntities($entities, $row['path']);
+            foreach ($files as $file) {
+                $find = $this->findInEntities($entities, $file['path']);
                 if (!$find) {
-                    $deletes[] = $row['path'];
+                    $deletes[] = $file['path'];
                 }
             }
 
@@ -102,8 +98,8 @@ final class FileService
     private function findInEntities(array $entities, string $file): bool
     {
         $find = false;
-        foreach ($entities as $entityClass) {
-            $find = $this->findInEntity($entityClass, $file);
+        foreach ($entities as $entity) {
+            $find = $this->findInEntity($entity, $file);
             if ($find) {
                 break;
             }
@@ -114,7 +110,7 @@ final class FileService
 
     private function findInEntity(string $entityClass, string $file): bool
     {
-        $repository = $this->getRepository($entityClass);
+        $entityRepository = $this->getRepository($entityClass);
         $mappings   = $this->propertyMappingFactory->fromObject(new $entityClass());
         $search = [];
         foreach ($mappings as $mapping) {
@@ -122,16 +118,16 @@ final class FileService
             $search[$field] = $file;
         }
 
-        $entity = $this->findInFields($repository, $search);
+        $entity = $this->findInFields($entityRepository, $search);
 
         return (0 !== count($entity));
     }
 
-    private function findInFields($repository, array $fields)
+    private function findInFields(EntityRepository $entityRepository, array $fields): mixed
     {
-        $queryBuilder = $repository->createQueryBuilder('entity');
+        $queryBuilder = $entityRepository->createQueryBuilder('entity');
         foreach ($fields as $field => $value) {
-            $queryBuilder->orWhere("entity.$field = :$field");
+            $queryBuilder->orWhere(sprintf('entity.%s = :%s', $field, $field));
             $queryBuilder->setParameter($field, $value);
         }
 
@@ -385,7 +381,7 @@ final class FileService
                 $filePath = $tempPath;
             }
 
-            $this->messageBus->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(60_000)]);
+            $this->messageDispatcherService->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(60_000)]);
 
             $uploadedFile = new UploadedFile(
                 path: $filePath,

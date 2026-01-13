@@ -9,13 +9,12 @@ use Labstag\Repository\SagaRepository;
 use Labstag\Service\FileService;
 use Labstag\Service\MessageDispatcherService;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SagaService
 {
     public function __construct(
         private LoggerInterface $logger,
-        private MessageDispatcherService $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private SagaRepository $sagaRepository,
         private FileService $fileService,
         private TheMovieDbApi $theMovieDbApi,
@@ -36,7 +35,7 @@ final class SagaService
             $saga->setTitle($this->setName($data['name']));
             $saga->setTmdb($data['id']);
             $this->sagaRepository->save($saga);
-            $this->messageBus->dispatch(new SagaMessage($saga->getId()));
+            $this->messageDispatcherService->dispatch(new SagaMessage($saga->getId()));
         }
 
         return $saga;

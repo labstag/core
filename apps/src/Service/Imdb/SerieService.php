@@ -14,7 +14,6 @@ use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\VideoService;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SerieService
 {
@@ -30,7 +29,7 @@ final class SerieService
     private array $year = [];
 
     public function __construct(
-        private MessageDispatcherService $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private ConfigurationService $configurationService,
         private FileService $fileService,
         private CompanyService $companyService,
@@ -365,7 +364,7 @@ final class SerieService
 
         $seasons = $this->seasonService->getSeasons($serie);
         foreach ($seasons as $season) {
-            $this->messageBus->dispatch(new SeasonMessage($season->getId()));
+            $this->messageDispatcherService->dispatch(new SeasonMessage($season->getId()));
         }
 
         return true;

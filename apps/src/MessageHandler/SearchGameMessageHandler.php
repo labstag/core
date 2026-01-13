@@ -11,13 +11,12 @@ use Labstag\Service\Igdb\GameService;
 use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\NotificationService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class SearchGameMessageHandler
 {
     public function __construct(
-        private MessageDispatcherService $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private GameService $gameService,
         private NotificationService $notificationService,
         private EntityManagerInterface $entityManager,
@@ -52,7 +51,7 @@ final class SearchGameMessageHandler
             );
         }
 
-        $this->messageBus->dispatch(new AddGameMessage($result['id'], 'game', $platform));
+        $this->messageDispatcherService->dispatch(new AddGameMessage($result['id'], 'game', $platform));
     }
 
     private function getGameByData(string $name): ?Game

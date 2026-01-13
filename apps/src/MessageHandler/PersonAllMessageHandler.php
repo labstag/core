@@ -7,13 +7,12 @@ use Labstag\Message\PersonMessage;
 use Labstag\Repository\PersonRepository;
 use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class PersonAllMessageHandler
 {
     public function __construct(
-        private MessageDispatcherService $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private PersonRepository $personRepository,
     )
     {
@@ -24,7 +23,7 @@ final class PersonAllMessageHandler
         unset($personAllMessage);
         $persons = $this->personRepository->findAll();
         foreach ($persons as $person) {
-            $this->messageBus->dispatch(new PersonMessage($person->getId()));
+            $this->messageDispatcherService->dispatch(new PersonMessage($person->getId()));
         }
     }
 }

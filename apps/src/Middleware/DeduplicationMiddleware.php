@@ -2,6 +2,7 @@
 
 namespace Labstag\Middleware;
 
+use ReflectionClass;
 use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
@@ -37,14 +38,13 @@ final class DeduplicationMiddleware implements MiddlewareInterface
 
     private function getMessageKey(object $message): string
     {
-        $className  = get_class($message);
-        $reflection = new \ReflectionClass($message);
+        $className  = $message::class;
+        $reflectionClass = new ReflectionClass($message);
         $properties = [];
 
-        foreach ($reflection->getProperties() as $property) {
-            $property->setAccessible(true);
-            $value = $property->getValue($message);
-            $properties[$property->getName()] = $this->serializeValue($value);
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            $value = $reflectionProperty->getValue($message);
+            $properties[$reflectionProperty->getName()] = $this->serializeValue($value);
         }
 
         ksort($properties);

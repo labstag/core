@@ -14,12 +14,11 @@ use Labstag\Entity\Serie;
 use Labstag\Message\PersonMessage;
 use Labstag\Service\FileService;
 use Labstag\Service\MessageDispatcherService;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 final class PersonService
 {
     public function __construct(
-        private MessageDispatcherService $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private EntityManagerInterface $entityManager,
         private FileService $fileService,
         private TheMovieDbApi $theMovieDbApi,
@@ -113,7 +112,7 @@ final class PersonService
             $person->setTmdb($data['id']);
             $person->setTitle($data['name']);
             $entityRepository->save($person);
-            $this->messageBus->dispatch(new PersonMessage($person->getId()));
+            $this->messageDispatcherService->dispatch(new PersonMessage($person->getId()));
         }
 
         return $person;

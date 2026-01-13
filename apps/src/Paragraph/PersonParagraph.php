@@ -6,7 +6,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Person;
-use Labstag\Entity\Saga;
 use Labstag\Entity\PersonParagraph as EntityPersonParagraph;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;

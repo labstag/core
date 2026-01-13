@@ -26,6 +26,7 @@ class CastingRepository extends RepositoryAbstract
         $queryBuilder->innerJoin('c.refPerson', 'p');
         $queryBuilder->addSelect('p');
         $queryBuilder->andWhere('p.deletedAt IS NULL');
+
         $entityMap = [
             Person::class  => ['refPerson', 'person'],
             Movie::class   => ['refMovie', 'movie'],
@@ -35,7 +36,7 @@ class CastingRepository extends RepositoryAbstract
         ];
         foreach ($entityMap as $class => [$field, $param]) {
             if ($data instanceof $class) {
-                $queryBuilder->andWhere("c.{$field} = :{$param}");
+                $queryBuilder->andWhere(sprintf('c.%s = :%s', $field, $param));
                 $queryBuilder->setParameter($param, $data);
                 break;
             }

@@ -28,6 +28,7 @@ class PostData extends PageData implements DataInterface
         return $slug;
     }
 
+    #[Override]
     public function getDefaultImage(object $entity): ?string
     {
         return $entity->getImg();

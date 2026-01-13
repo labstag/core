@@ -27,7 +27,6 @@ use Labstag\Service\ParagraphService;
 use Labstag\Service\WorkflowService;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\Registry;
 
 abstract class EventEntityLib

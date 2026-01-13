@@ -3,7 +3,6 @@
 namespace Labstag\Event\Workflow;
 
 use Labstag\Service\MessageDispatcherService;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 abstract class WorkflowAbstract
 {

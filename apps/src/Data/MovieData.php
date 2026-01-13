@@ -70,6 +70,7 @@ class MovieData extends SagaData implements DataInterface
         return $this->configPlaceholder();
     }
 
+    #[Override]
     public function getDefaultImage(object $entity): ?string
     {
         return $entity->getPoster();

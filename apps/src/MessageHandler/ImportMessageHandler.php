@@ -9,14 +9,13 @@ use Labstag\Message\SearchGameMessage;
 use Labstag\Service\FileService;
 use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class ImportMessageHandler
 {
     public function __construct(
         private FileService $fileService,
-        private MessageDispatcherService $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
     )
     {
     }
@@ -84,7 +83,7 @@ final class ImportMessageHandler
             $message = $this->createMessage($type, $row, $data);
 
             if (!is_null($message)) {
-                $this->messageBus->dispatch($message);
+                $this->messageDispatcherService->dispatch($message);
             }
         }
     }
@@ -101,7 +100,7 @@ final class ImportMessageHandler
             $message = $this->createMessage($type, $row, $data);
 
             if (!is_null($message)) {
-                $this->messageBus->dispatch($message);
+                $this->messageDispatcherService->dispatch($message);
             }
         }
     }
