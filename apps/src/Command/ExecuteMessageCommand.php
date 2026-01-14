@@ -30,29 +30,27 @@ class ExecuteMessageCommand
         $choices = [
             'PageCinema'   => 'Generate cinema pages',
             'BanIp'        => 'Ban IP addresses',
-            'UpdateSerie'  => 'Update series',
+            'Series'  => 'Update series',
             'Notification' => 'Send notifications',
             'Meta'         => 'Clean meta entries',
             'Person'       => 'Update persons',
             'Movie'        => 'Update movies',
-            'Serie'        => 'Update series',
             'Files'        => 'Clean files',
             'All'          => 'Execute all tasks',
             'Cancel'       => 'Cancel execution',
         ];
 
-        $selected = $symfonyStyle->choice('Which task do you want to execute?', array_values($choices), 9);
+        $selected = $symfonyStyle->choice('Which task do you want to execute?', array_values($choices), 8);
 
         $selectedKey = array_search($selected, $choices, true);
 
         $messages = [
             'PageCinema'   => PageCinemaMessage::class,
             'BanIp'        => BanIpMessage::class,
-            'UpdateSerie'  => UpdateSerieMessage::class,
+            'Series'       => [UpdateSerieMessage::class, SerieAllMessage::class],
             'Meta'         => MetaAllMessage::class,
             'Person'       => PersonAllMessage::class,
             'Movie'        => MovieAllMessage::class,
-            'Serie'        => SerieAllMessage::class,
             'Files'        => DeleteOldFileMessage::class,
             'Notification' => NotificationMessage::class,
         ];
@@ -66,7 +64,10 @@ class ExecuteMessageCommand
 
         foreach ($toExecute as $key) {
             $symfonyStyle->section(sprintf('Dispatching %sMessage', $key));
-            $this->messageBus->dispatch(new $messages[$key]());
+            $messageClasses = is_array($messages[$key]) ? $messages[$key] : [$messages[$key]];
+            foreach ($messageClasses as $messageClass) {
+                $this->messageBus->dispatch(new $messageClass());
+            }
         }
 
         return Command::SUCCESS;
