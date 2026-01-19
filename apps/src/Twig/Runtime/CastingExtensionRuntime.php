@@ -42,6 +42,14 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
             }
         }
 
+        foreach ($tab as $key => $serie) {
+            if ($serie->isEnable()) {
+                continue;
+            }
+            
+            unset($tab[$key]);
+        }
+
         return $tab;
     }
 
@@ -53,6 +61,14 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
                 $id = $row->getRefMovie()->getId();
                 $tab[$id] = $row->getRefMovie();
             }
+        }
+
+        foreach ($tab as $key => $movie) {
+            if ($movie->isEnable()) {
+                continue;
+            }
+            
+            unset($tab[$key]);
         }
 
         return $tab;
