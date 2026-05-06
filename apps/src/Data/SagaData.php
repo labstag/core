@@ -185,10 +185,7 @@ class SagaData extends PageData implements DataInterface
         foreach ($movie->getCastings() as $casting) {
             $person             = $casting->getRefPerson();
             $knownForDepartment = $casting->getKnownForDepartment();
-            if ('Acting' !== $knownForDepartment) {
-                continue;
-            }
-            if (false === $person->isEnable()) {
+            if ('Acting' !== $knownForDepartment || false === $person->isEnable()) {
                 continue;
             }
 
