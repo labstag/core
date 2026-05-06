@@ -34,7 +34,7 @@ class StarAddCommand
         $filename     = 'stars.json';
         $file         = $this->fileService->getFileInAdapter('private', $filename);
         if (!is_file($file)) {
-            $symfonyStyle->error('File not found ' . $filename);
+            $symfonyStyle->error('File not found '.$filename);
 
             return Command::SUCCESS;
         }

@@ -150,7 +150,7 @@ class SagaCrudController extends CrudControllerAbstract
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
 
-        return $this->redirect('https://www.themoviedb.org/collection/' . $saga->getTmdb());
+        return $this->redirect('https://www.themoviedb.org/collection/'.$saga->getTmdb());
     }
 
     public function updateAllSaga(): RedirectResponse

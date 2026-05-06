@@ -90,7 +90,7 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         $type = $this->blockService->getType($block);
         $tab  = [
             'block',
-            'block_' . $type,
+            'block_'.$type,
         ];
 
         $classes = explode(' ', (string) $block->getClasses());
@@ -104,6 +104,6 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
     {
         $type = $this->blockService->getType($block);
 
-        return 'block_' . $type . '-' . $block->getId();
+        return 'block_'.$type.'-'.$block->getId();
     }
 }

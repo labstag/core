@@ -284,7 +284,7 @@ class MovieCrudController extends CrudControllerAbstract
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
 
-        return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
+        return $this->redirect('https://www.imdb.com/title/'.$movie->getImdb().'/');
     }
 
     public function importFileMovie(Request $request): JsonResponse
@@ -302,7 +302,7 @@ class MovieCrudController extends CrudControllerAbstract
 
         $content   = file_get_contents($file->getPathname());
         $extension = $file->getClientOriginalExtension();
-        $filename  = uniqid('import_', true) . '.' . $extension;
+        $filename  = uniqid('import_', true).'.'.$extension;
         $this->fileService->saveFileInAdapter('private', $filename, $content);
         $this->messageBus->dispatch(new ImportMessage($filename, 'movie', []));
 
@@ -358,7 +358,7 @@ class MovieCrudController extends CrudControllerAbstract
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
 
-        return $this->redirect('https://www.themoviedb.org/movie/' . $movie->getTmdb());
+        return $this->redirect('https://www.themoviedb.org/movie/'.$movie->getTmdb());
     }
 
     public function updateAllMovie(): RedirectResponse

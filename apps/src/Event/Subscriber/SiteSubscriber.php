@@ -83,7 +83,7 @@ class SiteSubscriber
                     sprintf(
                         'Your IP "%s" is banned<br />',
                         $this->securityService->getCurrentClientIp()
-                    ) . $banIp->getReason(),
+                    ).$banIp->getReason(),
                     Response::HTTP_FORBIDDEN
                 )
             );

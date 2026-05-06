@@ -21,9 +21,7 @@ final class GenerateSchedule implements ScheduleProviderInterface
     public function getSchedule(): Schedule
     {
         $schedule = new Schedule();
-        $schedule->add(
-            RecurringMessage::cron('0 0 * * 1', new PageCinemaMessage()),
-        );
+        $schedule->add(RecurringMessage::cron('0 0 * * 1', new PageCinemaMessage()));
         $schedule->stateful($this->cache);
 
         return $schedule;

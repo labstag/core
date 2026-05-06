@@ -285,7 +285,7 @@ class TheMovieDbApi
 
     private function getJson(object $object)
     {
-        $cacheKey      = 'api_tmdb_' . $object->getId();
+        $cacheKey      = 'api_tmdb_'.$object->getId();
         $cacheItem     = $this->filesystemAdapter->getItem($cacheKey);
         if ($cacheItem->isHit()) {
             return $cacheItem->get();
@@ -307,7 +307,7 @@ class TheMovieDbApi
 
     private function setJson(object $object, array $data, int $ttl = 3600): void
     {
-        $cacheKey      = 'api_tmdb_' . $object->getId();
+        $cacheKey      = 'api_tmdb_'.$object->getId();
         $cacheItem     = $this->filesystemAdapter->getItem($cacheKey);
         $cacheItem->set($data);
         $cacheItem->expiresAfter($ttl);

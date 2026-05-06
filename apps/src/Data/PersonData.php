@@ -9,13 +9,6 @@ use Override;
 
 class PersonData extends PageData implements DataInterface
 {
-
-    #[Override]
-    public function supportsAsset(object $entity): bool
-    {
-        return $entity instanceof Person;
-    }
-
     #[Override]
     public function generateSlug(object $entity): array
     {
@@ -26,9 +19,21 @@ class PersonData extends PageData implements DataInterface
         );
 
         $slug = parent::generateSlugPage($page);
-        $slug['slug'] .= '/' . $entity->getSlug();
+        $slug['slug'] .= '/'.$entity->getSlug();
 
         return $slug;
+    }
+
+    #[Override]
+    public function getDefaultImage(object $entity): ?string
+    {
+        return $entity->getProfile();
+    }
+
+    #[Override]
+    public function getEntity(?string $slug): object
+    {
+        return $this->getEntityBySlugPerson($slug);
     }
 
     #[Override]
@@ -40,9 +45,26 @@ class PersonData extends PageData implements DataInterface
     }
 
     #[Override]
-    public function getDefaultImage(object $entity): ?string
+    public function placeholder(): string
     {
-        return $entity->getProfile();
+        $placeholder = $this->globalPlaceholder('person');
+        if ('' !== $placeholder) {
+            return $placeholder;
+        }
+
+        return parent::placeholder();
+    }
+
+    #[Override]
+    public function supportsAsset(object $entity): bool
+    {
+        return $entity instanceof Person;
+    }
+
+    #[Override]
+    public function supportsData(object $entity): bool
+    {
+        return $entity instanceof Person;
     }
 
     protected function getEntityBySlugPerson(?string $slug): ?object
@@ -68,28 +90,5 @@ class PersonData extends PageData implements DataInterface
         return $this->entityManager->getRepository(Person::class)->findOneBy(
             ['slug' => $slugSecond]
         );
-    }
-
-    #[Override]
-    public function getEntity(?string $slug): object
-    {
-        return $this->getEntityBySlugPerson($slug);
-    }
-
-    #[Override]
-    public function supportsData(object $entity): bool
-    {
-        return $entity instanceof Person;
-    }
-
-    #[Override]
-    public function placeholder(): string
-    {
-        $placeholder = $this->globalPlaceholder('person');
-        if ('' !== $placeholder) {
-            return $placeholder;
-        }
-
-        return parent::placeholder();
     }
 }

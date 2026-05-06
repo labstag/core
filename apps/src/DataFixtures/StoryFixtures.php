@@ -58,7 +58,7 @@ class StoryFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->setImage($story, 'imgFile');
         $this->addTagToEntity($story, StoryTag::class);
         $this->addCategoryToEntity($story, StoryCategory::class);
-        $this->addReference('story_' . md5(uniqid()), $story);
+        $this->addReference('story_'.md5(uniqid()), $story);
         $objectManager->persist($story);
     }
 }

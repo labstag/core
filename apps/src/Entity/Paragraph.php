@@ -82,9 +82,6 @@ abstract class Paragraph implements Stringable
     #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Edito $edito = null;
 
-    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
-    protected ?Person $person = null;
-
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
@@ -111,6 +108,9 @@ abstract class Paragraph implements Stringable
 
     #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Page $page = null;
+
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Person $person = null;
 
     #[ORM\Column]
     protected ?int $position = null;
@@ -156,11 +156,6 @@ abstract class Paragraph implements Stringable
         return $this->edito;
     }
 
-    public function getPerson(): ?Person
-    {
-        return $this->person;
-    }
-
     public function getFond(): ?string
     {
         return $this->fond;
@@ -189,6 +184,11 @@ abstract class Paragraph implements Stringable
     public function getPage(): ?Page
     {
         return $this->page;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
     }
 
     public function getPosition(): ?int
@@ -254,13 +254,6 @@ abstract class Paragraph implements Stringable
         return $this;
     }
 
-    public function setPerson(?Person $person): static
-    {
-        $this->person = $person;
-
-        return $this;
-    }
-
     public function setEnable(bool $enable): static
     {
         $this->enable = $enable;
@@ -299,6 +292,13 @@ abstract class Paragraph implements Stringable
     public function setPage(?Page $page): static
     {
         $this->page = $page;
+
+        return $this;
+    }
+
+    public function setPerson(?Person $person): static
+    {
+        $this->person = $person;
 
         return $this;
     }

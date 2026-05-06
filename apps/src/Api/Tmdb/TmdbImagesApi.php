@@ -52,7 +52,7 @@ class TmdbImagesApi extends AbstractTmdbApi
         }
 
         $sizes     = $this->getAvailableSizes();
-        $typeSizes = $sizes[$imageType . '_sizes'] ?? [];
+        $typeSizes = $sizes[$imageType.'_sizes'] ?? [];
 
         if (empty($typeSizes)) {
             return $this->getUrl($imagePath, 'w500');
@@ -119,10 +119,10 @@ class TmdbImagesApi extends AbstractTmdbApi
         $config = $this->getConfiguration();
         if (null === $config || !isset($config['images']['secure_base_url'])) {
             // Fallback to known TMDB base URL if config fails
-            return 'https://image.tmdb.org/t/p/' . $size . $imagePath;
+            return 'https://image.tmdb.org/t/p/'.$size.$imagePath;
         }
 
-        return $config['images']['secure_base_url'] . $size . $imagePath;
+        return $config['images']['secure_base_url'].$size.$imagePath;
     }
 
     /**
@@ -227,7 +227,7 @@ class TmdbImagesApi extends AbstractTmdbApi
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item): ?array {
-                $url  = self::BASE_URL . '/configuration';
+                $url  = self::BASE_URL.'/configuration';
                 $data = $this->makeRequest($url);
 
                 if (null === $data) {

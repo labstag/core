@@ -20,7 +20,7 @@ class GameData extends PageData implements DataInterface
         );
 
         $slug = parent::generateSlugPage($page);
-        $slug['slug'] .= '/' . $entity->getSlug();
+        $slug['slug'] .= '/'.$entity->getSlug();
 
         return $slug;
     }

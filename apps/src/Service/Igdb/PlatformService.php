@@ -55,7 +55,7 @@ final class PlatformService extends AbstractIgdb
         if (isset($data['family']) && !empty($data['family'])) {
             $family = $data['family'];
 
-            $where[] = 'platform_family.name ~ "' . $family . '"';
+            $where[] = 'platform_family.name ~ "'.$family.'"';
         }
 
         $fields    = [
@@ -91,7 +91,7 @@ final class PlatformService extends AbstractIgdb
 
     private function getApiPlatformFamilyId(string $id): ?array
     {
-        $where = ['id = ' . $id];
+        $where = ['id = '.$id];
         $body  = $this->igdbApi->setBody(where: $where, limit: 1);
 
         $results = $this->igdbApi->setUrl('platform_families', $body);
@@ -104,7 +104,7 @@ final class PlatformService extends AbstractIgdb
 
     private function getApiPlatformId(string $id): ?array
     {
-        $where  = ['id = ' . $id];
+        $where  = ['id = '.$id];
         $fields = [
             '*',
             'platform_logo.*',

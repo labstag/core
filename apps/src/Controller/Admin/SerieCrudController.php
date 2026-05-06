@@ -281,7 +281,7 @@ class SerieCrudController extends CrudControllerAbstract
             return $this->redirectToRoute('admin_serie_index');
         }
 
-        return $this->redirect('https://www.imdb.com/title/' . $serie->getImdb() . '/');
+        return $this->redirect('https://www.imdb.com/title/'.$serie->getImdb().'/');
     }
 
     public function importFileSerie(Request $request): JsonResponse
@@ -299,7 +299,7 @@ class SerieCrudController extends CrudControllerAbstract
 
         $content   = file_get_contents($file->getPathname());
         $extension = $file->getClientOriginalExtension();
-        $filename  = uniqid('import_', true) . '.' . $extension;
+        $filename  = uniqid('import_', true).'.'.$extension;
         $this->fileService->saveFileInAdapter('private', $filename, $content);
         $this->messageBus->dispatch(new ImportMessage($filename, 'serie', []));
 
@@ -355,7 +355,7 @@ class SerieCrudController extends CrudControllerAbstract
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
 
-        return $this->redirect('https://www.themoviedb.org/tv/' . $serie->getTmdb());
+        return $this->redirect('https://www.themoviedb.org/tv/'.$serie->getTmdb());
     }
 
     public function updateAllSerie(): RedirectResponse

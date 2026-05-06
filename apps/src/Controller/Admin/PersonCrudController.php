@@ -145,7 +145,7 @@ class PersonCrudController extends CrudControllerAbstract
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
 
-        return $this->redirect('https://www.themoviedb.org/person/' . $movie->getTmdb());
+        return $this->redirect('https://www.themoviedb.org/person/'.$movie->getTmdb());
     }
 
     public function updateAllPerson(): RedirectResponse

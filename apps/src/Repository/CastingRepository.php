@@ -19,7 +19,7 @@ class CastingRepository extends RepositoryAbstract
     {
         parent::__construct($registry, Casting::class);
     }
-    
+
     public function findWithActiveCastings(mixed $data): mixed
     {
         $queryBuilder = $this->createQueryBuilder('c');
@@ -28,11 +28,26 @@ class CastingRepository extends RepositoryAbstract
         $queryBuilder->andWhere('p.deletedAt IS NULL');
 
         $entityMap = [
-            Person::class  => ['refPerson', 'person'],
-            Movie::class   => ['refMovie', 'movie'],
-            Serie::class   => ['refSerie', 'serie'],
-            Season::class  => ['refSeason', 'season'],
-            Episode::class => ['refEpisode', 'episode'],
+            Person::class  => [
+                'refPerson',
+                'person',
+            ],
+            Movie::class   => [
+                'refMovie',
+                'movie',
+            ],
+            Serie::class   => [
+                'refSerie',
+                'serie',
+            ],
+            Season::class  => [
+                'refSeason',
+                'season',
+            ],
+            Episode::class => [
+                'refEpisode',
+                'episode',
+            ],
         ];
         foreach ($entityMap as $class => [$field, $param]) {
             if ($data instanceof $class) {

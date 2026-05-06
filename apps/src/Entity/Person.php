@@ -25,6 +25,12 @@ class Person
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    protected ?bool $enable = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
@@ -35,14 +41,25 @@ class Person
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'person',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    protected Collection $paragraphs;
+
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $profile = null;
-
-    #[ORM\Column(
-        type: Types::BOOLEAN,
-        options: ['default' => 1]
-    )]
-    protected ?bool $enable = null;
 
     #[Vich\UploadableField(mapping: 'person', fileNameProperty: 'profile')]
     protected ?File $profileFile = null;
@@ -78,37 +95,18 @@ class Person
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $tmdb = null;
 
-    /**
-     * @var Collection<int, Paragraph>
-     */
-    #[ORM\OneToMany(
-        targetEntity: Paragraph::class,
-        mappedBy: 'person',
-        cascade: [
-            'persist',
-            'remove',
-        ],
-        orphanRemoval: true
-    )]
-    #[ORM\OrderBy(
-        ['position' => 'ASC']
-    )]
-    protected Collection $paragraphs;
-
     public function __construct()
     {
-        $this->castings = new ArrayCollection();
+        $this->castings        = new ArrayCollection();
         $this->paragraphs      = new ArrayCollection();
     }
 
-    public function isEnable(): ?bool
+    public function addCasting(Casting $casting): static
     {
-        return $this->enable;
-    }
-
-    public function setEnable(bool $enable): static
-    {
-        $this->enable = $enable;
+        if (!$this->castings->contains($casting)) {
+            $this->castings->add($casting);
+            $casting->setRefPerson($this);
+        }
 
         return $this;
     }
@@ -118,35 +116,6 @@ class Person
         if (!$this->paragraphs->contains($paragraph)) {
             $this->paragraphs->add($paragraph);
             $paragraph->setPerson($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParagraph(Paragraph $paragraph): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPerson() === $this
-        ) {
-            $paragraph->setPerson(null);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Paragraph>
-     */
-    public function getParagraphs(): Collection
-    {
-        return $this->paragraphs;
-    }
-
-    public function addCasting(Casting $casting): static
-    {
-        if (!$this->castings->contains($casting)) {
-            $this->castings->add($casting);
-            $casting->setRefPerson($this);
         }
 
         return $this;
@@ -190,6 +159,14 @@ class Person
         return $this->meta;
     }
 
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
     public function getPlaceOfBirth(): ?string
     {
         return $this->placeOfBirth;
@@ -220,11 +197,27 @@ class Person
         return $this->tmdb;
     }
 
+    public function isEnable(): ?bool
+    {
+        return $this->enable;
+    }
+
     public function removeCasting(Casting $casting): static
     {
         // set the owning side to null (unless already changed)
         if ($this->castings->removeElement($casting) && $casting->getRefPerson() === $this) {
             $casting->setRefPerson(null);
+        }
+
+        return $this;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPerson() === $this
+        ) {
+            $paragraph->setPerson(null);
         }
 
         return $this;
@@ -247,6 +240,13 @@ class Person
     public function setDeathday(?DateTime $deathday): static
     {
         $this->deathday = $deathday;
+
+        return $this;
+    }
+
+    public function setEnable(bool $enable): static
+    {
+        $this->enable = $enable;
 
         return $this;
     }

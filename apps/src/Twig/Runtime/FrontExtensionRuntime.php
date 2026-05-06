@@ -155,7 +155,7 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         $contentTitle = $this->siteService->getTitleMeta($data['entity']);
         $page         = $request->attributes->getInt('page', 1);
         if (1 != $page) {
-            $contentTitle .= ' - Page ' . $page;
+            $contentTitle .= ' - Page '.$page;
         }
 
         return str_replace(['%content_title%', '%site_name%'], [$contentTitle, $siteTitle], $format);

@@ -19,12 +19,6 @@ class EpisodeData extends SeasonData implements DataInterface
     }
 
     #[Override]
-    public function supportsData(object $entity): bool
-    {
-        return $entity instanceof Episode;
-    }
-
-    #[Override]
     public function getDefaultImage(object $entity): ?string
     {
         return $entity->getImg();
@@ -43,6 +37,12 @@ class EpisodeData extends SeasonData implements DataInterface
 
     #[Override]
     public function supportsAsset(object $entity): bool
+    {
+        return $entity instanceof Episode;
+    }
+
+    #[Override]
+    public function supportsData(object $entity): bool
     {
         return $entity instanceof Episode;
     }

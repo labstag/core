@@ -65,7 +65,7 @@ final class SagaService
         $details  = $this->theMovieDbApi->getDetailsSaga($saga);
         if (!isset($details['tmdb']) || is_null($details['tmdb'])) {
             $this->sagaRepository->delete($saga);
-            $this->logger->error('Saga not found TMDB id ' . $saga->getTmdb());
+            $this->logger->error('Saga not found TMDB id '.$saga->getTmdb());
 
             return false;
         }

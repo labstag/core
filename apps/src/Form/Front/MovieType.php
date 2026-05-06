@@ -76,7 +76,10 @@ class MovieType extends AbstractType
             ]
         );
         $titleTranslation       = new TranslatableMessage('Title');
-        $title                  = $this->translator->trans($titleTranslation->getMessage(), $titleTranslation->getParameters());
+        $title                  = $this->translator->trans(
+            $titleTranslation->getMessage(),
+            $titleTranslation->getParameters()
+        );
         $releaseDateTranslation = new TranslatableMessage('Release date');
         $releaseDate            = $this->translator->trans(
             $releaseDateTranslation->getMessage(),

@@ -102,9 +102,7 @@ class BackController extends AbstractController
         name: 'admin_permission',
         defaults: ['_locale' => 'fr']
     )]
-    public function permission(
-        Request $request,
-    ): Response
+    public function permission(Request $request): Response
     {
         if ($request->isMethod('POST')) {
             $groupId      = $request->query->get('groupId');

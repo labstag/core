@@ -161,7 +161,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         $params                            = $this->slugService->forEntity($entity);
 
         return $this->redirect(
-            'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
+            'https://validator.w3.org/nu/?doc='.$this->generateUrl(
                 'front',
                 $params,
                 UrlGeneratorInterface::ABSOLUTE_URL

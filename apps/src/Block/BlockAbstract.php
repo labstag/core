@@ -159,8 +159,8 @@ abstract class BlockAbstract extends AbstractController implements BlockInterfac
 
         $htmltwig = '.html.twig';
         $files    = [
-            'blocks/' . $folder . '/' . $type . $htmltwig,
-            'blocks/' . $folder . '/default' . $htmltwig,
+            'blocks/'.$folder.'/'.$type.$htmltwig,
+            'blocks/'.$folder.'/default'.$htmltwig,
         ];
 
         $view   = end($files);

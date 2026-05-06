@@ -34,7 +34,7 @@ abstract class AbstractTmdbApi
     {
         $filtered = array_filter($params, fn ($value): bool => null !== $value && '' !== $value);
 
-        return [] === $filtered ? '' : '?' . http_build_query($filtered);
+        return [] === $filtered ? '' : '?'.http_build_query($filtered);
     }
 
     /**
@@ -67,7 +67,7 @@ abstract class AbstractTmdbApi
             $url,
             [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $this->tmdbBearerToken,
+                    'Authorization' => 'Bearer '.$this->tmdbBearerToken,
                     'accept'        => 'application/json',
                 ],
             ]

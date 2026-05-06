@@ -14,19 +14,19 @@ final class MetaMessageHandler
 {
     public function __construct(
         private MetaService $metaService,
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
     )
     {
     }
 
     public function __invoke(MetaMessage $metaMessage): void
     {
-        $type = $metaMessage->getType();
+        $type   = $metaMessage->getType();
         $entity = $metaMessage->getEntity();
         match ($type) {
             'delete' => $this->deleteUselessMeta(),
-            'check' => $this->correctionMeta($entity),
-            default => null,
+            'check'  => $this->correctionMeta($entity),
+            default  => null,
         };
     }
 

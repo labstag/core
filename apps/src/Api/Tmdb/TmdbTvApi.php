@@ -32,12 +32,12 @@ class TmdbTvApi extends AbstractTmdbApi
         );
 
         $query    = http_build_query($params);
-        $cacheKey = 'tmdb_tv_' . md5($query);
+        $cacheKey = 'tmdb_tv_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($query): ?array {
-                $url  = self::BASE_URL . '/discover/tv?' . $query;
+                $url  = self::BASE_URL.'/discover/tv?'.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || 0 === count($data['results'])) {
@@ -86,12 +86,12 @@ class TmdbTvApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_tv_credits_' . $seriesId . '_' . md5($query);
+        $cacheKey = 'tmdb_tv_credits_'.$seriesId.'_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($seriesId, $query): ?array {
-                $url  = self::BASE_URL . '/tv/' . $seriesId . '/credits' . $query;
+                $url  = self::BASE_URL.'/tv/'.$seriesId.'/credits'.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || (empty($data['cast']) && empty($data['crew']))) {
@@ -126,12 +126,12 @@ class TmdbTvApi extends AbstractTmdbApi
         ];
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_tv_series_details_' . $seriesId . '_' . md5($query);
+        $cacheKey = 'tmdb_tv_series_details_'.$seriesId.'_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($seriesId, $query) {
-                $url  = self::BASE_URL . '/tv/' . $seriesId . $query;
+                $url  = self::BASE_URL.'/tv/'.$seriesId.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || empty($data['name'])) {
@@ -173,14 +173,14 @@ class TmdbTvApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_tv_episode_credits_' . $seriesId . '_s' . $seasonNumber . 'e' . $episodeNumber . '_' . md5(
+        $cacheKey = 'tmdb_tv_episode_credits_'.$seriesId.'_s'.$seasonNumber.'e'.$episodeNumber.'_'.md5(
             $query
         );
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($seriesId, $seasonNumber, $episodeNumber, $query): ?array {
-                $url  = self::BASE_URL . '/tv/' . $seriesId . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '/credits' . $query;
+                $url  = self::BASE_URL.'/tv/'.$seriesId.'/season/'.$seasonNumber.'/episode/'.$episodeNumber.'/credits'.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || (empty($data['cast']) && empty($data['crew']) && empty($data['guest_stars']))) {
@@ -220,12 +220,12 @@ class TmdbTvApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_tv_episode_' . $seriesId . '_s' . $seasonNumber . 'e' . $episodeNumber . '_' . md5($query);
+        $cacheKey = 'tmdb_tv_episode_'.$seriesId.'_s'.$seasonNumber.'e'.$episodeNumber.'_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($seriesId, $seasonNumber, $episodeNumber, $query) {
-                $url  = self::BASE_URL . '/tv/' . $seriesId . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . $query;
+                $url  = self::BASE_URL.'/tv/'.$seriesId.'/season/'.$seasonNumber.'/episode/'.$episodeNumber.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || empty($data['name'])) {
@@ -254,12 +254,12 @@ class TmdbTvApi extends AbstractTmdbApi
      */
     public function getEpisodeExternalIds(string $seriesId, int $seasonNumber, int $episodeNumber): ?array
     {
-        $cacheKey = 'tmdb_tv_episode_external_ids_' . $seriesId . '_s' . $seasonNumber . 'e' . $episodeNumber;
+        $cacheKey = 'tmdb_tv_episode_external_ids_'.$seriesId.'_s'.$seasonNumber.'e'.$episodeNumber;
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($seriesId, $seasonNumber, $episodeNumber): ?array {
-                $url  = self::BASE_URL . '/tv/' . $seriesId . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '/external_ids';
+                $url  = self::BASE_URL.'/tv/'.$seriesId.'/season/'.$seasonNumber.'/episode/'.$episodeNumber.'/external_ids';
                 $data = $this->makeRequest($url);
 
                 if (null === $data) {
@@ -299,14 +299,14 @@ class TmdbTvApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_tv_episode_images_' . $seriesId . '_s' . $seasonNumber . 'e' . $episodeNumber . '_' . md5(
+        $cacheKey = 'tmdb_tv_episode_images_'.$seriesId.'_s'.$seasonNumber.'e'.$episodeNumber.'_'.md5(
             $query
         );
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($seriesId, $seasonNumber, $episodeNumber, $query): ?array {
-                $url  = self::BASE_URL . '/tv/' . $seriesId . '/season/' . $seasonNumber . '/episode/' . $episodeNumber . '/images' . $query;
+                $url  = self::BASE_URL.'/tv/'.$seriesId.'/season/'.$seasonNumber.'/episode/'.$episodeNumber.'/images'.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || empty($data['stills'])) {
@@ -339,12 +339,12 @@ class TmdbTvApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_tv_images_' . $seriesId . '_' . md5($query);
+        $cacheKey = 'tmdb_tv_images_'.$seriesId.'_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($seriesId, $query): ?array {
-                $url  = self::BASE_URL . '/tv/' . $seriesId . '/images' . $query;
+                $url  = self::BASE_URL.'/tv/'.$seriesId.'/images'.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || (empty($data['backdrops']) && empty($data['posters']))) {
@@ -380,12 +380,12 @@ class TmdbTvApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_popular_tv_' . md5($query);
+        $cacheKey = 'tmdb_popular_tv_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($query): ?array {
-                $url  = self::BASE_URL . '/tv/popular' . $query;
+                $url  = self::BASE_URL.'/tv/popular'.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || 0 === count($data['results'] ?? [])) {
@@ -421,12 +421,12 @@ class TmdbTvApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_tv_season_credits_' . $seriesId . '_s' . $seasonNumber . '_' . md5($query);
+        $cacheKey = 'tmdb_tv_season_credits_'.$seriesId.'_s'.$seasonNumber.'_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($seriesId, $seasonNumber, $query): ?array {
-                $url  = self::BASE_URL . '/tv/' . $seriesId . '/season/' . $seasonNumber . '/credits' . $query;
+                $url  = self::BASE_URL.'/tv/'.$seriesId.'/season/'.$seasonNumber.'/credits'.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || (empty($data['cast']) && empty($data['crew']))) {
@@ -460,12 +460,12 @@ class TmdbTvApi extends AbstractTmdbApi
         ];
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_tv_season_' . $seriesId . '_' . $seasonNumber . '_' . md5($query);
+        $cacheKey = 'tmdb_tv_season_'.$seriesId.'_'.$seasonNumber.'_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($seriesId, $seasonNumber, $query) {
-                $url  = self::BASE_URL . '/tv/' . $seriesId . '/season/' . $seasonNumber . $query;
+                $url  = self::BASE_URL.'/tv/'.$seriesId.'/season/'.$seasonNumber.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || empty($data['name'])) {
@@ -499,12 +499,12 @@ class TmdbTvApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_tv_season_videos_' . $seriesId . '_s' . $seasonNumber . '_' . md5($query);
+        $cacheKey = 'tmdb_tv_season_videos_'.$seriesId.'_s'.$seasonNumber.'_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($seriesId, $seasonNumber, $query): ?array {
-                $url  = self::BASE_URL . '/tv/' . $seriesId . '/season/' . $seasonNumber . '/videos' . $query;
+                $url  = self::BASE_URL.'/tv/'.$seriesId.'/season/'.$seasonNumber.'/videos'.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || 0 === count($data['results'] ?? [])) {
@@ -531,12 +531,12 @@ class TmdbTvApi extends AbstractTmdbApi
      */
     public function getTvExternalIds(string $tvId): ?array
     {
-        $cacheKey = 'tmdb_tv_external_ids_' . $tvId;
+        $cacheKey = 'tmdb_tv_external_ids_'.$tvId;
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($tvId): ?array {
-                $url  = self::BASE_URL . '/tv/' . $tvId . '/external_ids';
+                $url  = self::BASE_URL.'/tv/'.$tvId.'/external_ids';
                 $data = $this->makeRequest($url);
 
                 if (null === $data) {
@@ -565,12 +565,12 @@ class TmdbTvApi extends AbstractTmdbApi
     public function getTvRecommendations(string $tvId, array $additionalFilters = []): ?array
     {
         $query    = http_build_query($additionalFilters);
-        $cacheKey = 'tmdb_tv_recommendations_' . $tvId . '_' . md5($query);
+        $cacheKey = 'tmdb_tv_recommendations_'.$tvId.'_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($tvId, $query): ?array {
-                $url  = self::BASE_URL . '/tv/' . $tvId . '/recommendations?' . $query;
+                $url  = self::BASE_URL.'/tv/'.$tvId.'/recommendations?'.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data) {
@@ -599,12 +599,12 @@ class TmdbTvApi extends AbstractTmdbApi
     public function getTvSimilar(string $tvId, array $additionalFilters = []): ?array
     {
         $query    = http_build_query($additionalFilters);
-        $cacheKey = 'tmdb_tv_similar_' . $tvId . '_' . md5($query);
+        $cacheKey = 'tmdb_tv_similar_'.$tvId.'_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($tvId, $query): ?array {
-                $url  = self::BASE_URL . '/tv/' . $tvId . '/similar?' . $query;
+                $url  = self::BASE_URL.'/tv/'.$tvId.'/similar?'.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data) {
@@ -637,12 +637,12 @@ class TmdbTvApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_tv_videos_' . $seriesId . '_' . md5($query);
+        $cacheKey = 'tmdb_tv_videos_'.$seriesId.'_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($seriesId, $query): ?array {
-                $url  = self::BASE_URL . '/tv/' . $seriesId . '/videos' . $query;
+                $url  = self::BASE_URL.'/tv/'.$seriesId.'/videos'.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || 0 === count($data['results'] ?? [])) {
@@ -700,12 +700,12 @@ class TmdbTvApi extends AbstractTmdbApi
             $params['page'] = $page;
         }
 
-        $cacheKey = 'tmdb_search_tv_' . md5(serialize($params));
+        $cacheKey = 'tmdb_search_tv_'.md5(serialize($params));
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($params): ?array {
-                $url  = self::BASE_URL . '/search/tv?' . http_build_query($params);
+                $url  = self::BASE_URL.'/search/tv?'.http_build_query($params);
                 $data = $this->makeRequest($url);
 
                 if (null === $data || 0 === count($data['results'])) {

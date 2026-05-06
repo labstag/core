@@ -181,7 +181,7 @@ class SeasonCrudController extends CrudControllerAbstract
         $season                           = $repositoryAbstract->find($entityId);
 
         return $this->redirect(
-            'https://www.themoviedb.org/tv/' . $season->getRefserie()->getTmdb() . '/season/' . $season->getNumber()
+            'https://www.themoviedb.org/tv/'.$season->getRefserie()->getTmdb().'/season/'.$season->getNumber()
         );
     }
 

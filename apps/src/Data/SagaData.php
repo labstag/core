@@ -28,12 +28,6 @@ class SagaData extends PageData implements DataInterface
     }
 
     #[Override]
-    public function getDefaultImage(object $entity): ?string
-    {
-        return $entity->getPoster();
-    }
-
-    #[Override]
     public function generateSlug(object $entity): array
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
@@ -43,9 +37,15 @@ class SagaData extends PageData implements DataInterface
         );
 
         $slug = parent::generateSlug($page);
-        $slug['slug'] .= '/' . $entity->getSlug();
+        $slug['slug'] .= '/'.$entity->getSlug();
 
         return $slug;
+    }
+
+    #[Override]
+    public function getDefaultImage(object $entity): ?string
+    {
+        return $entity->getPoster();
     }
 
     #[Override]
@@ -87,6 +87,9 @@ class SagaData extends PageData implements DataInterface
         if ('' !== $img) {
             $movie->image($img);
         }
+
+        $actors = $this->getJsonLdActors($entity);
+        $movie->actor($actors);
 
         return $movie;
     }
@@ -174,5 +177,40 @@ class SagaData extends PageData implements DataInterface
         return $this->entityManager->getRepository(Saga::class)->findOneBy(
             ['slug' => $slugSecond]
         );
+    }
+
+    private function getJsonLdActors(Movie $movie): array
+    {
+        $actors = [];
+        foreach ($movie->getCastings() as $casting) {
+            $person             = $casting->getRefPerson();
+            $knownForDepartment = $casting->getKnownForDepartment();
+            if ('Acting' !== $knownForDepartment) {
+                continue;
+            }
+            if (false === $person->isEnable()) {
+                continue;
+            }
+
+            $actors[] = $this->getJsonLdPerson($person);
+        }
+
+        return $actors;
+    }
+
+    private function getJsonLdPerson(object $entity): object
+    {
+        $person = Schema::person();
+        $person->name($entity->getTitle());
+
+        $img = $this->siteService->asset($entity, 'profile', true, true);
+        $person->url(
+            $this->router->generate('front', $this->slugService->forEntity($entity), RouterInterface::ABSOLUTE_URL)
+        );
+        if ('' !== $img) {
+            $person->image($img);
+        }
+
+        return $person;
     }
 }

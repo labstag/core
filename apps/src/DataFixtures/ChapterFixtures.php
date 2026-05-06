@@ -70,7 +70,7 @@ class ChapterFixtures extends FixtureAbstract implements DependentFixtureInterfa
         }
 
         $this->setImage($chapter, 'imgFile');
-        $this->addReference('chapter_' . md5(uniqid()), $chapter);
+        $this->addReference('chapter_'.md5(uniqid()), $chapter);
         $this->position[$storyId][] = $chapter;
         $objectManager->persist($chapter);
     }

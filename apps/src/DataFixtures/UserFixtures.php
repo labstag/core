@@ -67,7 +67,7 @@ class UserFixtures extends FixtureAbstract
         $user->setPassword($hash);
         $this->setImage($user, 'avatarFile');
 
-        $this->addReference('user_' . $user->getUsername(), $user);
+        $this->addReference('user_'.$user->getUsername(), $user);
 
         $objectManager->persist($user);
     }

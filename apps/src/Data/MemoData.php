@@ -7,6 +7,11 @@ use Override;
 
 class MemoData extends DataAbstract implements DataInterface
 {
+    public function getDefaultImage(object $entity): ?string
+    {
+        return $entity->getImg();
+    }
+
     #[Override]
     public function placeholder(): string
     {
@@ -16,11 +21,6 @@ class MemoData extends DataAbstract implements DataInterface
         }
 
         return $this->configPlaceholder();
-    }
-
-    public function getDefaultImage(object $entity): ?string
-    {
-        return $entity->getImg();
     }
 
     #[Override]

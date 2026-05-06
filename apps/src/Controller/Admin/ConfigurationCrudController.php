@@ -122,27 +122,27 @@ class ConfigurationCrudController extends CrudControllerAbstract
     {
         $placeholders = [
             'chapter' => new TranslatableMessage('Chapter'),
-            'edito' => new TranslatableMessage('Edito'),
+            'edito'   => new TranslatableMessage('Edito'),
             'episode' => new TranslatableMessage('Episode'),
-            'memo' => new TranslatableMessage('Memo'),
-            'movie' => new TranslatableMessage('Movie'),
-            'game' => new TranslatableMessage('Game'),
-            'page' => new TranslatableMessage('Page'),
-            'post' => new TranslatableMessage('Post'),
-            'saga' => new TranslatableMessage('Saga'),
-            'season' => new TranslatableMessage('Season'),
-            'serie' => new TranslatableMessage('Serie'),
-            'star' => new TranslatableMessage('Star'),
-            'story' => new TranslatableMessage('Story'),
-            'user' => new TranslatableMessage('User'),
-            'person' => new TranslatableMessage('Person'),
+            'memo'    => new TranslatableMessage('Memo'),
+            'movie'   => new TranslatableMessage('Movie'),
+            'game'    => new TranslatableMessage('Game'),
+            'page'    => new TranslatableMessage('Page'),
+            'post'    => new TranslatableMessage('Post'),
+            'saga'    => new TranslatableMessage('Saga'),
+            'season'  => new TranslatableMessage('Season'),
+            'serie'   => new TranslatableMessage('Serie'),
+            'star'    => new TranslatableMessage('Star'),
+            'story'   => new TranslatableMessage('Story'),
+            'user'    => new TranslatableMessage('User'),
+            'person'  => new TranslatableMessage('Person'),
         ];
 
         $fields = [];
         foreach ($placeholders as $key => $label) {
             $fields[] = FormField::addColumn(6);
             $fields[] = $this->crudFieldFactory->imageField(
-                $key . 'Placeholder',
+                $key.'Placeholder',
                 $pageName,
                 self::getEntityFqcn(),
                 $label->getMessage()

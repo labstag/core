@@ -11,6 +11,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
  */
 final class MessageDispatcherService
 {
+
     /**
      * @var array<string, array<string, bool>>
      */
@@ -25,8 +26,8 @@ final class MessageDispatcherService
     /**
      * Dispatch un message seulement s'il n'a pas déjà été dispatché.
      *
-     * @param object $message      Le message à dispatcher
-     * @param array  $stamps       Les stamps Symfony Messenger optionnels
+     * @param object $message       Le message à dispatcher
+     * @param array  $stamps        Les stamps Symfony Messenger optionnels
      * @param bool   $forceDispatch Force le dispatch même si déjà dispatché
      */
     public function dispatch(object $message, array $stamps = [], bool $forceDispatch = false): void
@@ -39,6 +40,21 @@ final class MessageDispatcherService
 
         $this->markAsDispatched($messageKey);
         $this->messageBus->dispatch($message, $stamps);
+    }
+
+    /**
+     * Retourne le nombre de messages dispatchés par type.
+     *
+     * @return array<string, int>
+     */
+    public function getDispatchStats(): array
+    {
+        $stats = [];
+        foreach ($this->dispatchedMessages as $className => $messages) {
+            $stats[$className] = count($messages);
+        }
+
+        return $stats;
     }
 
     /**
@@ -74,13 +90,21 @@ final class MessageDispatcherService
     }
 
     /**
+     * Extrait le nom de classe depuis une clé de message.
+     */
+    private function extractClassName(string $messageKey): string
+    {
+        return explode('::', $messageKey)[0];
+    }
+
+    /**
      * Génère une clé unique pour un message basée sur sa classe et ses propriétés.
      */
     private function getMessageKey(object $message): string
     {
-        $className  = $message::class;
+        $className       = $message::class;
         $reflectionClass = new ReflectionClass($message);
-        $properties = [];
+        $properties      = [];
 
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             $value = $reflectionProperty->getValue($message);
@@ -90,15 +114,7 @@ final class MessageDispatcherService
 
         ksort($properties);
 
-        return $className . '::' . md5(serialize($properties));
-    }
-
-    /**
-     * Extrait le nom de classe depuis une clé de message.
-     */
-    private function extractClassName(string $messageKey): string
-    {
-        return explode('::', $messageKey)[0];
+        return $className.'::'.md5(serialize($properties));
     }
 
     /**
@@ -111,20 +127,5 @@ final class MessageDispatcherService
         }
 
         return $value;
-    }
-
-    /**
-     * Retourne le nombre de messages dispatchés par type.
-     *
-     * @return array<string, int>
-     */
-    public function getDispatchStats(): array
-    {
-        $stats = [];
-        foreach ($this->dispatchedMessages as $className => $messages) {
-            $stats[$className] = count($messages);
-        }
-
-        return $stats;
     }
 }

@@ -39,7 +39,7 @@ class EpisodeRepository extends RepositoryAbstract
 
         $query        = $queryBuilder->getQuery();
         $dql          = $query->getDQL();
-        $query->enableResultCache(3600, 'movies-query-paginator-' . md5((string) $dql));
+        $query->enableResultCache(3600, 'movies-query-paginator-'.md5((string) $dql));
 
         return $query;
     }

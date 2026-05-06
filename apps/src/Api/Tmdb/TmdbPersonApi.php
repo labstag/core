@@ -31,12 +31,12 @@ class TmdbPersonApi extends AbstractTmdbApi
         ];
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_person_details_' . $personId . '_' . md5($query);
+        $cacheKey = 'tmdb_person_details_'.$personId.'_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($personId, $query): ?array {
-                $url  = self::BASE_URL . '/person/' . $personId . $query;
+                $url  = self::BASE_URL.'/person/'.$personId.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || empty($data['name'])) {

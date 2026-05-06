@@ -99,7 +99,7 @@ class FormParagraph extends ParagraphAbstract implements ParagraphInterface
             return [];
         }
 
-        $templates = $this->getTemplateContent($type, $this->getType() . '/' . $paragraph->getForm());
+        $templates = $this->getTemplateContent($type, $this->getType().'/'.$paragraph->getForm());
 
         if ($templates['view'] != end($templates['files'])) {
             return $templates;

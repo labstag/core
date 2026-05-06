@@ -19,6 +19,11 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
+    public function acting($data): array
+    {
+        return $this->getByType('Acting', $data);
+    }
+
     public function cast($data): mixed
     {
         $entityRepository = $this->entityManager->getRepository(Casting::class);
@@ -26,31 +31,14 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
         return $entityRepository->findWithActiveCastings($data);
     }
 
-    public function series($data): array
+    public function directing($data): array
     {
-        $tab = [];
-        foreach ($data as $row) {
-            if ($row->getRefSerie() instanceof Serie) {
-                $id = $row->getRefSerie()->getId();
-                $tab[$id] = $row->getRefSerie();
-            }elseif ($row->getRefEpisode() instanceof Episode) {
-                $id = $row->getRefEpisode()->getRefseason()->getRefserie()->getId();
-                $tab[$id] = $row->getRefEpisode()->getRefseason()->getRefserie();
-            }elseif ($row->getRefSeason() instanceof Season) {
-                $id = $row->getRefSeason()->getRefserie()->getId();
-                $tab[$id] = $row->getRefSeason()->getRefserie();
-            }
-        }
+        return $this->getByType('Directing', $data);
+    }
 
-        foreach ($tab as $key => $serie) {
-            if ($serie->isEnable()) {
-                continue;
-            }
-            
-            unset($tab[$key]);
-        }
-
-        return $tab;
+    public function editing($data): array
+    {
+        return $this->getByType('Editing', $data);
     }
 
     public function movies($data): array
@@ -67,26 +55,11 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
             if ($movie->isEnable()) {
                 continue;
             }
-            
+
             unset($tab[$key]);
         }
 
         return $tab;
-    }
-
-    public function acting($data): array
-    {
-        return $this->getByType('Acting', $data);
-    }
-
-    public function writing($data): array
-    {
-        return $this->getByType('Writing', $data);
-    }
-
-    public function directing($data): array
-    {
-        return $this->getByType('Directing', $data);
     }
 
     public function production($data): array
@@ -94,9 +67,36 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
         return $this->getByType('Production', $data);
     }
 
-    public function editing($data): array
+    public function series($data): array
     {
-        return $this->getByType('Editing', $data);
+        $tab = [];
+        foreach ($data as $row) {
+            if ($row->getRefSerie() instanceof Serie) {
+                $id = $row->getRefSerie()->getId();
+                $tab[$id] = $row->getRefSerie();
+            } elseif ($row->getRefEpisode() instanceof Episode) {
+                $id = $row->getRefEpisode()->getRefseason()->getRefserie()->getId();
+                $tab[$id] = $row->getRefEpisode()->getRefseason()->getRefserie();
+            } elseif ($row->getRefSeason() instanceof Season) {
+                $id = $row->getRefSeason()->getRefserie()->getId();
+                $tab[$id] = $row->getRefSeason()->getRefserie();
+            }
+        }
+
+        foreach ($tab as $key => $serie) {
+            if ($serie->isEnable()) {
+                continue;
+            }
+
+            unset($tab[$key]);
+        }
+
+        return $tab;
+    }
+
+    public function writing($data): array
+    {
+        return $this->getByType('Writing', $data);
     }
 
     private function getByType(string $type, $data): array

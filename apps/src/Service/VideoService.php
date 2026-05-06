@@ -39,8 +39,8 @@ class VideoService
     {
         $type  = strtolower((string) $data['site']);
         $video = match ($type) {
-            'youtube' => 'https://www.youtube.com/watch?v=' . $data['key'],
-            'vimeo'   => 'https://vimeo.com/' . $data['key'],
+            'youtube' => 'https://www.youtube.com/watch?v='.$data['key'],
+            'vimeo'   => 'https://vimeo.com/'.$data['key'],
             default   => null,
         };
 

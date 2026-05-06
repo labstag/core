@@ -48,7 +48,7 @@ final class GameService extends AbstractIgdb
 
     public function getApiGameId(string $id): ?array
     {
-        $where  = ['id = ' . $id];
+        $where  = ['id = '.$id];
         $fields = [
             '*',
             'cover.*',
@@ -155,7 +155,7 @@ final class GameService extends AbstractIgdb
             }
         }
 
-        $summary = '<p>' . implode('</p><p>', $new) . '</p>';
+        $summary = '<p>'.implode('</p><p>', $new).'</p>';
         $game->setSummary($summary);
 
         return true;
@@ -165,19 +165,19 @@ final class GameService extends AbstractIgdb
     {
         $where = [];
         if (isset($data['platform']) && !empty($data['platform'])) {
-            $where[] = 'platforms = (' . $data['platform']->getIgdb() . ')';
+            $where[] = 'platforms = ('.$data['platform']->getIgdb().')';
         }
 
         if (isset($data['franchise']) && !empty($data['franchise'])) {
-            $where[] = 'franchises.name ~ "' . $data['franchise'] . '"';
+            $where[] = 'franchises.name ~ "'.$data['franchise'].'"';
         }
 
         if (isset($data['type']) && '' != $data['type']) {
-            $where[] = 'game_type = ' . $data['type'];
+            $where[] = 'game_type = '.$data['type'];
         }
 
         if (isset($data['number']) && !empty($data['number'])) {
-            $where[] = 'id = ' . $data['number'];
+            $where[] = 'id = '.$data['number'];
         }
 
         if (!$withSearch) {
@@ -334,7 +334,7 @@ final class GameService extends AbstractIgdb
             $where[] = sprintf('%s ~ "%s"', $code, $name);
         }
 
-        return '(' . implode(' | ', $where) . ')';
+        return '('.implode(' | ', $where).')';
     }
 
     private function updateArtworks(Game $game, array $data): bool

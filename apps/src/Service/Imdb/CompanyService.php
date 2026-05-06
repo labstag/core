@@ -45,7 +45,7 @@ final class CompanyService
         $details = $this->theMovieDbApi->getDetailsCompany($company);
         if (is_null($details['tmdb'])) {
             $this->companyRepository->delete($company);
-            $this->logger->error('Company not found TMDB id ' . $company->getTmdb());
+            $this->logger->error('Company not found TMDB id '.$company->getTmdb());
 
             return false;
         }

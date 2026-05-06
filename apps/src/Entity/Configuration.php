@@ -54,12 +54,6 @@ class Configuration
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'gamePlaceholder')]
     protected ?File $gamePlaceholderFile = null;
 
-    #[ORM\Column(name: 'person_placeholder', length: 255, nullable: true)]
-    protected ?string $personPlaceholder = null;
-
-    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'personPlaceholder')]
-    protected ?File $personPlaceholderFile = null;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
@@ -98,6 +92,12 @@ class Configuration
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'pagePlaceholder')]
     protected ?File $pagePlaceholderFile = null;
+
+    #[ORM\Column(name: 'person_placeholder', length: 255, nullable: true)]
+    protected ?string $personPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'personPlaceholder')]
+    protected ?File $personPlaceholderFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $placeholder = null;
@@ -414,16 +414,6 @@ class Configuration
         return $this->gamePlaceholderFile;
     }
 
-    public function getPersonPlaceholder(): ?string
-    {
-        return $this->personPlaceholder;
-    }
-
-    public function getPersonPlaceholderFile(): ?File
-    {
-        return $this->personPlaceholderFile;
-    }
-
     public function getId(): ?string
     {
         return $this->id;
@@ -482,6 +472,16 @@ class Configuration
     public function getPagePlaceholderFile(): ?File
     {
         return $this->pagePlaceholderFile;
+    }
+
+    public function getPersonPlaceholder(): ?string
+    {
+        return $this->personPlaceholder;
+    }
+
+    public function getPersonPlaceholderFile(): ?File
+    {
+        return $this->personPlaceholderFile;
     }
 
     public function getPlaceholder(): ?string
@@ -886,22 +886,6 @@ class Configuration
         }
     }
 
-    public function setPersonPlaceholder(?string $personPlaceholder): void
-    {
-        $this->personPlaceholder = $personPlaceholder;
-    }
-
-    public function setPersonPlaceholderFile(?File $personPlaceholderFile = null): void
-    {
-        $this->personPlaceholderFile = $personPlaceholderFile;
-
-        if ($personPlaceholderFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
-    }
-
     public function setLanguageTmdb(?string $languageTmdb): static
     {
         $this->languageTmdb = $languageTmdb;
@@ -981,6 +965,22 @@ class Configuration
         $this->pagePlaceholderFile = $pagePlaceholderFile;
 
         if ($pagePlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setPersonPlaceholder(?string $personPlaceholder): void
+    {
+        $this->personPlaceholder = $personPlaceholder;
+    }
+
+    public function setPersonPlaceholderFile(?File $personPlaceholderFile = null): void
+    {
+        $this->personPlaceholderFile = $personPlaceholderFile;
+
+        if ($personPlaceholderFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());

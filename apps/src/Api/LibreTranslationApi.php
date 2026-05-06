@@ -33,7 +33,7 @@ class LibreTranslationApi
      */
     public function detectLanguage(string $text): array
     {
-        $cacheKey = 'language_detect_' . md5($text);
+        $cacheKey = 'language_detect_'.md5($text);
 
         return $this->cacheService->get(
             $cacheKey,
@@ -41,7 +41,7 @@ class LibreTranslationApi
                 $headers = ['Content-Type' => 'application/json'];
 
                 if (null !== $this->translationApiKey) {
-                    $headers['Authorization'] = 'Basic ' . $this->translationApiKey;
+                    $headers['Authorization'] = 'Basic '.$this->translationApiKey;
                 }
 
                 try {
@@ -61,7 +61,7 @@ class LibreTranslationApi
                             'language'   => '',
                             'confidence' => 0.0,
                             'success'    => false,
-                            'error'      => 'HTTP Error: ' . $statusCode,
+                            'error'      => 'HTTP Error: '.$statusCode,
                         ];
                     }
 
@@ -102,7 +102,7 @@ class LibreTranslationApi
                 $headers = [];
 
                 if (null !== $this->translationApiKey) {
-                    $headers['Authorization'] = 'Basic ' . $this->translationApiKey;
+                    $headers['Authorization'] = 'Basic '.$this->translationApiKey;
                 }
 
                 try {
@@ -118,7 +118,7 @@ class LibreTranslationApi
                         return [
                             'languages' => [],
                             'success'   => false,
-                            'error'     => 'HTTP Error: ' . $statusCode,
+                            'error'     => 'HTTP Error: '.$statusCode,
                         ];
                     }
 
@@ -160,7 +160,7 @@ class LibreTranslationApi
                 $headers = ['Content-Type' => 'application/json'];
 
                 if (null !== $this->translationApiKey) {
-                    $headers['Authorization'] = 'Basic ' . $this->translationApiKey;
+                    $headers['Authorization'] = 'Basic '.$this->translationApiKey;
                 }
 
                 try {
@@ -182,7 +182,7 @@ class LibreTranslationApi
                         return [
                             'translatedText' => '',
                             'success'        => false,
-                            'error'          => 'HTTP Error: ' . $statusCode,
+                            'error'          => 'HTTP Error: '.$statusCode,
                         ];
                     }
 

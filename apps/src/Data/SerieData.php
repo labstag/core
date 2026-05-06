@@ -27,12 +27,6 @@ class SerieData extends PageData implements DataInterface
     }
 
     #[Override]
-    public function getDefaultImage(object $entity): ?string
-    {
-        return $entity->getPoster();
-    }
-
-    #[Override]
     public function generateSlug(object $entity): array
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
@@ -42,9 +36,15 @@ class SerieData extends PageData implements DataInterface
         );
 
         $slug = parent::generateSlug($page);
-        $slug['slug'] .= '/' . $entity->getSlug();
+        $slug['slug'] .= '/'.$entity->getSlug();
 
         return $slug;
+    }
+
+    #[Override]
+    public function getDefaultImage(object $entity): ?string
+    {
+        return $entity->getPoster();
     }
 
     #[Override]

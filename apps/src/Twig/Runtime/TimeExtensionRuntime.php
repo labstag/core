@@ -28,23 +28,23 @@ class TimeExtensionRuntime implements RuntimeExtensionInterface
 
         $parts = [];
         if (0 !== $years) {
-            $parts[] = $years . 'a';
+            $parts[] = $years.'a';
         }
 
         if (0 !== $months) {
-            $parts[] = $months . 'm';
+            $parts[] = $months.'m';
         }
 
         if (0 !== $days) {
-            $parts[] = $days . 'j';
+            $parts[] = $days.'j';
         }
 
         if (0 !== $hours) {
-            $parts[] = $hours . 'h';
+            $parts[] = $hours.'h';
         }
 
         if (0 !== $mins) {
-            $parts[] = $mins . 'min';
+            $parts[] = $mins.'min';
         }
 
         return implode(' ', $parts);

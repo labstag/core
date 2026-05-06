@@ -2,14 +2,13 @@
 
 namespace Labstag\Twig\Extension;
 
-use Override;
 use Labstag\Twig\Runtime\CastingExtensionRuntime;
+use Override;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class CastingExtension extends AbstractExtension
 {
-
     #[Override]
     public function getFunctions(): array
     {

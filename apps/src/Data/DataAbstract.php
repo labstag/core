@@ -135,6 +135,6 @@ abstract class DataAbstract
 
     protected function globalPlaceholder(string $key): string
     {
-        return $this->fileService->asset($this->configurationService->getConfiguration(), $key . 'Placeholder');
+        return $this->fileService->asset($this->configurationService->getConfiguration(), $key.'Placeholder');
     }
 }

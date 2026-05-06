@@ -23,7 +23,6 @@ final class MetaAllMessageHandler
         private MessageDispatcherService $messageDispatcherService,
     )
     {
-
     }
 
     public function __invoke(MetaAllMessage $metaAllMessage): void

@@ -95,7 +95,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         $type = $this->paragraphService->getType($paragraph);
         $tab  = [
             'paragraph',
-            'paragraph_' . $type,
+            'paragraph_'.$type,
         ];
 
         $tab = array_merge($tab, $this->paragraphService->getClasses($paragraph));
@@ -107,6 +107,6 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
     {
         $type = $this->paragraphService->getType($paragraph);
 
-        return 'paragraph_' . $type . '-' . $paragraph->getId();
+        return 'paragraph_'.$type.'-'.$paragraph->getId();
     }
 }

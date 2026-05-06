@@ -133,7 +133,7 @@ class DashboardController extends AbstractDashboardController
         $avatar = $user->getAvatar();
         if ('' != $avatar) {
             $basePath = $this->fileService->getBasePath($user, 'avatarFile');
-            $userMenu->setAvatarUrl($basePath . '/' . $avatar);
+            $userMenu->setAvatarUrl($basePath.'/'.$avatar);
 
             return $userMenu;
         }

@@ -30,7 +30,7 @@ class ExecuteMessageCommand
         $choices = [
             'PageCinema'   => 'Generate cinema pages',
             'BanIp'        => 'Ban IP addresses',
-            'Series'  => 'Update series',
+            'Series'       => 'Update series',
             'Notification' => 'Send notifications',
             'Meta'         => 'Clean meta entries',
             'Person'       => 'Update persons',
@@ -47,7 +47,10 @@ class ExecuteMessageCommand
         $messages = [
             'PageCinema'   => PageCinemaMessage::class,
             'BanIp'        => BanIpMessage::class,
-            'Series'       => [UpdateSerieMessage::class, SerieAllMessage::class],
+            'Series'       => [
+                UpdateSerieMessage::class,
+                SerieAllMessage::class,
+            ],
             'Meta'         => MetaAllMessage::class,
             'Person'       => PersonAllMessage::class,
             'Movie'        => MovieAllMessage::class,

@@ -40,14 +40,14 @@ class CategoryFixtures extends FixtureAbstract
 
             $parent = random_int(0, 1);
             if (1 === $parent) {
-                $categories = $this->getParent('category' . $code);
+                $categories = $this->getParent('category'.$code);
                 if ([] !== $categories) {
                     $parentCategory = $this->getReference(array_rand($categories), $class);
                     $category->setParent($parentCategory);
                 }
             }
 
-            $id = 'category' . $code . '_' . md5(uniqid());
+            $id = 'category'.$code.'_'.md5(uniqid());
             $this->addReference($id, $category);
             $this->categories[$id] = $category;
             $objectManager->persist($category);

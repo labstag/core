@@ -166,7 +166,7 @@ class CinemaGenerate
                 $releaseDate->format('d/m/Y'),
                 (string) $movieData['overview'],
                 implode(', ', array_map(fn (array $actor) => $actor['name'], array_slice($casts, 0, 5))),
-                'https://www.themoviedb.org/movie/' . $movieData['id'],
+                'https://www.themoviedb.org/movie/'.$movieData['id'],
             ],
             $html
         );

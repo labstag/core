@@ -29,24 +29,12 @@ final class ViewResolverService
     {
     }
 
-    private function getDefaultImageEntity(object $entity)
-    {
-        $image = '';
-        foreach ($this->datas as $data) {
-            if ($data->supportsData($entity)) {
-                $image = $data->getDefaultImage($entity);
-            }
-        }
-
-        return $image;
-    }
-
     /**
      * @return mixed[]
      */
     public function getDataByEntity(object $entity, bool $disable = false): array
     {
-        $cacheKey = 'data:' . spl_object_hash($entity) . ':' . ($disable ? '1' : '0');
+        $cacheKey = 'data:'.spl_object_hash($entity).':'.($disable ? '1' : '0');
         if (isset($this->requestCache[$cacheKey])) {
             return $this->requestCache[$cacheKey];
         }
@@ -153,6 +141,18 @@ final class ViewResolverService
         ];
     }
 
+    private function getDefaultImageEntity(object $entity)
+    {
+        $image = '';
+        foreach ($this->datas as $data) {
+            if ($data->supportsData($entity)) {
+                $image = $data->getDefaultImage($entity);
+            }
+        }
+
+        return $image;
+    }
+
     private function getMetaByEntity(Meta $meta): Meta
     {
         return $meta;
@@ -160,7 +160,7 @@ final class ViewResolverService
 
     private function getViewByEntity(object $entity): string
     {
-        $cacheKey = 'view:' . spl_object_hash($entity);
+        $cacheKey = 'view:'.spl_object_hash($entity);
         if (isset($this->requestCache[$cacheKey])) {
             return $this->requestCache[$cacheKey];
         }
@@ -175,7 +175,7 @@ final class ViewResolverService
     {
         $loader = $this->twigEnvironment->getLoader();
         $files  = [
-            'views/' . $entityName . '.html.twig',
+            'views/'.$entityName.'.html.twig',
             'views/default.html.twig',
         ];
 

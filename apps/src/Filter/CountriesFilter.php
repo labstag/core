@@ -31,7 +31,7 @@ class CountriesFilter implements FilterInterface
         $value         = $filterDataDto->getValue();
         $search        = ('=' === $comparison) ? 'JSON_CONTAINS(%s.%s, :%s) = 1' : 'JSON_CONTAINS(%s.%s, :%s) = 0';
         $queryBuilder->andWhere(sprintf($search, $alias, $property, $parameterName));
-        $queryBuilder->setParameter($parameterName, '"' . $value . '"');
+        $queryBuilder->setParameter($parameterName, '"'.$value.'"');
     }
 
     /**
