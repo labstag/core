@@ -1,6 +1,7 @@
 /node_modules
 /apps/vendor
 /apps/bin/
+/apps/supervisord.*
 /apps/.symfony5
 /apps/.composer
 /apps/.pdepend

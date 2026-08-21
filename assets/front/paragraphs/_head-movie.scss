@@ -25,6 +25,7 @@
       }
     }
   }
+
   .trailer {
     width: 50%;
     margin: auto;
@@ -36,9 +37,11 @@
   }
 
   .actings {
+    width: 80%;
+    margin: auto;
     ul {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
 
       @include mixins.respond-to(md) {
