@@ -47,14 +47,14 @@ class ChapterCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
-        $wysiwygTranslation = new TranslatableMessage('resume');
-        $fields = [
+        $translatableMessage = new TranslatableMessage('resume');
+        $fields              = [
             $this->crudFieldFactory->slugField(readOnly: true),
             $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
             $this->crudFieldFactory->titleField(),
             $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
             $this->addFieldRefStory(),
-            WysiwygField::new('resume', $wysiwygTranslation->getMessage())->hideOnIndex(),
+            WysiwygField::new('resume', $translatableMessage->getMessage())->hideOnIndex(),
         ];
 
         $this->crudFieldFactory->addFieldsToTab('principal', $fields);

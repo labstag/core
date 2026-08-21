@@ -45,8 +45,8 @@ class TemplateCrudController extends CrudControllerAbstract
             $textField->setDisabled(true);
         }
 
-        $wysiwgTranslation = new TranslatableMessage('HTML');
-        $wysiwygField  = WysiwygField::new('html', $wysiwgTranslation->getMessage());
+        $translatableMessage = new TranslatableMessage('HTML');
+        $wysiwygField        = WysiwygField::new('html', $translatableMessage->getMessage());
         $wysiwygField->onlyOnForms();
 
         $textareaField = TextareaField::new('text', new TranslatableMessage('Texte brut'));

@@ -79,7 +79,7 @@ class SagaRepository extends RepositoryAbstract
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->andWhere($queryBuilder->expr()->in('s.id', $subQuery->getDQL()));
 
-        return $queryBuilder->orderBy('s.' . $query['order'], $query['orderby']);
+        return $queryBuilder->orderBy('s.'.$query['order'], $query['orderby']);
     }
 
     /**
@@ -92,7 +92,7 @@ class SagaRepository extends RepositoryAbstract
         $queryBuilder = $this->getQueryBuilder($query);
         $query        = $queryBuilder->getQuery();
         $dql          = $query->getDQL();
-        $query->enableResultCache(3600, 'sagas-query-paginator-' . md5((string) $dql));
+        $query->enableResultCache(3600, 'sagas-query-paginator-'.md5((string) $dql));
 
         return $query;
     }

@@ -115,15 +115,32 @@ class Season implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(name: 'vote_average', nullable: true)]
     protected ?float $voteAverage = null;
 
+    /**
+     * @var Collection<int, Casting>
+     */
+    #[ORM\OneToMany(targetEntity: Casting::class, mappedBy: 'refSeason')]
+    private Collection $castings;
+
     public function __construct()
     {
         $this->paragraphs = new ArrayCollection();
         $this->episodes   = new ArrayCollection();
+        $this->castings   = new ArrayCollection();
     }
 
     public function __toString(): string
     {
         return (string) $this->getTitle();
+    }
+
+    public function addCasting(Casting $casting): static
+    {
+        if (!$this->castings->contains($casting)) {
+            $this->castings->add($casting);
+            $casting->setRefSeason($this);
+        }
+
+        return $this;
     }
 
     public function addEpisode(Episode $episode): static
@@ -159,6 +176,14 @@ class Season implements Stringable, EntityWithParagraphsInterface
     public function getBackdropFile(): ?File
     {
         return $this->backdropFile;
+    }
+
+    /**
+     * @return Collection<int, Casting>
+     */
+    public function getCastings(): Collection
+    {
+        return $this->castings;
     }
 
     /**
@@ -235,6 +260,16 @@ class Season implements Stringable, EntityWithParagraphsInterface
     public function isEnable(): ?bool
     {
         return $this->enable;
+    }
+
+    public function removeCasting(Casting $casting): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->castings->removeElement($casting) && $casting->getRefSeason() === $this) {
+            $casting->setRefSeason(null);
+        }
+
+        return $this;
     }
 
     public function removeEpisode(Episode $episode): static

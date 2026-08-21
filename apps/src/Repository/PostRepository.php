@@ -25,7 +25,7 @@ class PostRepository extends RepositoryAbstract
 
         $query = $queryBuilder->getQuery();
 
-        $query->enableResultCache(600, 'post-last-' . $nbr);
+        $query->enableResultCache(600, 'post-last-'.$nbr);
 
         return $query->getResult();
     }
@@ -85,7 +85,7 @@ class PostRepository extends RepositoryAbstract
         }
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(300, 'post-query-paginator-' . $categorySlug . '-' . $tagSlug);
+        $query->enableResultCache(300, 'post-query-paginator-'.$categorySlug.'-'.$tagSlug);
 
         return $query;
     }

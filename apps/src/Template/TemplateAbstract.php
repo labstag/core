@@ -54,7 +54,7 @@ abstract class TemplateAbstract
 
         $template = new Template();
         $template->setCode($code);
-        $template->setTitle('Template ' . $code);
+        $template->setTitle('Template '.$code);
         $template->setHtml($html);
         $template->setText($text);
 
@@ -72,10 +72,10 @@ abstract class TemplateAbstract
             return $this->templates[$code][$type];
         }
 
-        $extension = '.' . $type . '.twig';
+        $extension = '.'.$type.'.twig';
         $files     = [
-            'template/' . $code . $extension,
-            'template/default' . $extension,
+            'template/'.$code.$extension,
+            'template/default'.$extension,
         ];
 
         $view   = end($files);

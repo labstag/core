@@ -313,7 +313,7 @@ class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->addTagToEntity($page, PageTag::class);
         $this->addCategoryToEntity($page, PageCategory::class);
 
-        $this->addReference('page_' . md5(uniqid()), $page);
+        $this->addReference('page_'.md5(uniqid()), $page);
         $objectManager->persist($page);
     }
 

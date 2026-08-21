@@ -62,7 +62,10 @@ class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInt
                 unset($link);
                 $translatableMessage = new TranslatableMessage('Training course');
 
-                return $this->translator->trans($translatableMessage->getMessage(), $translatableMessage->getParameters());
+                return $this->translator->trans(
+                    $translatableMessage->getMessage(),
+                    $translatableMessage->getParameters()
+                );
             }
         );
         $collectionField->setFormTypeOption(

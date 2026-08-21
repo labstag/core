@@ -21,11 +21,11 @@ class StarRepository extends RepositoryAbstract
     {
         $queryBuilder = $this->createQueryBuilder('s');
 
-        $queryBuilder = $queryBuilder->select('s.' . $type . ', count(s.id) as count');
-        $queryBuilder->groupBy('s.' . $type);
+        $queryBuilder = $queryBuilder->select('s.'.$type.', count(s.id) as count');
+        $queryBuilder->groupBy('s.'.$type);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'star-' . md5($type));
+        $query->enableResultCache(3600, 'star-'.md5($type));
 
         return $query->getResult();
     }

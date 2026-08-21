@@ -50,7 +50,7 @@ class IgdbApi
      */
     public function getGameDetails(int $gameId): ?array
     {
-        $cacheKey = 'igdb_game_' . $gameId;
+        $cacheKey = 'igdb_game_'.$gameId;
 
         return $this->getCached(
             $cacheKey,
@@ -106,22 +106,22 @@ class IgdbApi
             $body[] = sprintf('search "%s"', $search);
         }
 
-        $body[] = ([] === $fields) ? 'fields *' : 'fields ' . implode(',', $fields);
+        $body[] = ([] === $fields) ? 'fields *' : 'fields '.implode(',', $fields);
         if ([] !== $where) {
-            $body[] = 'where ' . implode(' & ', $where);
+            $body[] = 'where '.implode(' & ', $where);
         }
 
-        $body[] = 'limit ' . min($limit, 500);
+        $body[] = 'limit '.min($limit, 500);
         if (0 !== $offset) {
-            $body[] = 'offset ' . $offset;
+            $body[] = 'offset '.$offset;
         }
 
-        return implode(';', $body) . ';';
+        return implode(';', $body).';';
     }
 
     public function setUrl(string $url, string $body): mixed
     {
-        $cacheKey = 'igdb_' . $url . '_' . md5($body);
+        $cacheKey = 'igdb_'.$url.'_'.md5($body);
 
         return $this->getCached(
             $cacheKey,
@@ -231,11 +231,11 @@ class IgdbApi
         try {
             $response = $this->httpClient->request(
                 'POST',
-                self::BASE_URL . '/' . $endpoint,
+                self::BASE_URL.'/'.$endpoint,
                 [
                     'headers' => [
                         'Client-ID'     => $this->igdbClientId,
-                        'Authorization' => 'Bearer ' . $token,
+                        'Authorization' => 'Bearer '.$token,
                     ],
                     'body'    => $body,
                 ]

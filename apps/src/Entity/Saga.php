@@ -31,7 +31,7 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $backdrop = null;
 
-    #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'backdrop')]
+    #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'backdrop')]
     protected ?File $backdropFile = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]

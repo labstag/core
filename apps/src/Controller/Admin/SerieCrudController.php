@@ -169,7 +169,6 @@ class SerieCrudController extends CrudControllerAbstract
 
         $associationField = AssociationField::new('seasons', new TranslatableMessage('Seasons'));
         $associationField->setTemplatePath('admin/field/seasons.html.twig');
-        $associationField->onlyOnDetail();
 
         $collectionField = CollectionField::new('runtime', new TranslatableMessage('Runtime'));
         $collectionField->setTemplatePath('admin/field/runtime-serie.html.twig');
@@ -180,17 +179,22 @@ class SerieCrudController extends CrudControllerAbstract
         $trailerField->hideOnIndex();
 
         $wysiwgTranslation = new TranslatableMessage('Citation');
-        $wysiwygField = WysiwygField::new('citation', $wysiwgTranslation->getMessage());
+        $wysiwygField      = WysiwygField::new('citation', $wysiwgTranslation->getMessage());
         $wysiwygField->hideOnIndex();
 
         $descriptionTranslation = new TranslatableMessage('Description');
-        $descriptionField = WysiwygField::new('description', $descriptionTranslation->getMessage());
+        $descriptionField       = WysiwygField::new('description', $descriptionTranslation->getMessage());
         $descriptionField->hideOnIndex();
 
         $booleanField = $this->crudFieldFactory->booleanField('file', new TranslatableMessage('File'));
         $booleanField->hideOnIndex();
-        $posterTranslation = new TranslatableMessage('Poster');
+
+        $posterTranslation   = new TranslatableMessage('Poster');
         $backdropTranslation = new TranslatableMessage('Backdrop');
+
+        $castingField = AssociationField::new('castings', new TranslatableMessage('Casting'));
+        $castingField->setTemplatePath('admin/field/castings.html.twig');
+        $castingField->onlyOnDetail();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -227,6 +231,7 @@ class SerieCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->companiesFieldForPage(self::getEntityFqcn(), $pageName),
                 $associationField,
                 $booleanField,
+                $castingField,
                 $this->crudFieldFactory->booleanField('adult', new TranslatableMessage('Adult')),
             ]
         );
@@ -243,8 +248,8 @@ class SerieCrudController extends CrudControllerAbstract
         $filters->add('releaseDate');
         $countries = $this->getRepository()->getCountries();
         if ([] != $countries) {
-            $countriesTranslation = new TranslatableMessage('Countries');
-            $countriesFilter = CountriesFilter::new('countries', $countriesTranslation->getMessage());
+            $translatableMessage  = new TranslatableMessage('Countries');
+            $countriesFilter      = CountriesFilter::new('countries', $translatableMessage->getMessage());
             $countriesFilter->setChoices(
                 array_merge(
                     ['' => ''],
@@ -276,7 +281,7 @@ class SerieCrudController extends CrudControllerAbstract
             return $this->redirectToRoute('admin_serie_index');
         }
 
-        return $this->redirect('https://www.imdb.com/title/' . $serie->getImdb() . '/');
+        return $this->redirect('https://www.imdb.com/title/'.$serie->getImdb().'/');
     }
 
     public function importFileSerie(Request $request): JsonResponse
@@ -294,7 +299,7 @@ class SerieCrudController extends CrudControllerAbstract
 
         $content   = file_get_contents($file->getPathname());
         $extension = $file->getClientOriginalExtension();
-        $filename  = uniqid('import_', true) . '.' . $extension;
+        $filename  = uniqid('import_', true).'.'.$extension;
         $this->fileService->saveFileInAdapter('private', $filename, $content);
         $this->messageBus->dispatch(new ImportMessage($filename, 'serie', []));
 
@@ -350,7 +355,7 @@ class SerieCrudController extends CrudControllerAbstract
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
 
-        return $this->redirect('https://www.themoviedb.org/tv/' . $serie->getTmdb());
+        return $this->redirect('https://www.themoviedb.org/tv/'.$serie->getTmdb());
     }
 
     public function updateAllSerie(): RedirectResponse

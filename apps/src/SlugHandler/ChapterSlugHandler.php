@@ -88,7 +88,7 @@ class ChapterSlugHandler implements SlugHandlerInterface
                 break;
             }
 
-            $slug = $unicodeString . '-' . $number;
+            $slug = $unicodeString.'-'.$number;
             ++$number;
         }
 

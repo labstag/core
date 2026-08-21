@@ -29,7 +29,7 @@ class SeasonEpisodeFilter implements FilterInterface
 
         $alias = $filterDataDto->getEntityAlias();
         if (!$this->hasJoin($queryBuilder, 'season')) {
-            $queryBuilder->join($alias . '.refseason', 'season');
+            $queryBuilder->join($alias.'.refseason', 'season');
         }
 
         if (!$this->hasJoin($queryBuilder, 'serie')) {

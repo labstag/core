@@ -285,7 +285,7 @@ final class EtagCacheServiceTest extends TestCase
         $idProperty->setValue($user, $id);
 
         $user->setEmail($email);
-        $user->setUsername('test_user_' . substr($id, 0, 8));
+        $user->setUsername('test_user_'.substr($id, 0, 8));
 
         if ($createdAt instanceof DateTimeImmutable) {
             $createdAtProperty = new ReflectionProperty(User::class, 'createdAt');

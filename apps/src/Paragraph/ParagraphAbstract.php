@@ -93,7 +93,7 @@ abstract class ParagraphAbstract extends AbstractController
     {
         $label = new TranslatableMessage('File');
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $textField = TextField::new($type . 'File', $label);
+            $textField = TextField::new($type.'File', $label);
             $textField->setFormType(VichFileType::class);
             $deleteLabel      = new TranslatableMessage('Delete file');
             $downloadLabel    = new TranslatableMessage('Download');
@@ -129,7 +129,7 @@ abstract class ParagraphAbstract extends AbstractController
             return $textField;
         }
 
-        $this->fileService->getBasePath($paragraph::class, $type . 'File');
+        $this->fileService->getBasePath($paragraph::class, $type.'File');
         $imageField = TextField::new($type, $label);
         $imageField->setTemplatePath('admin/field/file-upload.html.twig');
 
@@ -140,7 +140,7 @@ abstract class ParagraphAbstract extends AbstractController
     {
         $label = new TranslatableMessage('Image');
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $textField = TextField::new($type . 'File', $label);
+            $textField = TextField::new($type.'File', $label);
             $textField->setFormType(VichImageType::class);
             $deleteLabel      = new TranslatableMessage('Delete image');
             $downloadLabel    = new TranslatableMessage('Download');
@@ -172,13 +172,13 @@ abstract class ParagraphAbstract extends AbstractController
                                 'image/gif',
                                 'image/webp',
                             ],
-                            mimeTypesMessage: $this->translator->trans(
-                                $mimeTypesMessage->getMessage(),
-                                $mimeTypesMessage->getParameters()
-                            ),
                             maxSizeMessage: $this->translator->trans(
                                 $maxSizeMessage->getMessage(),
                                 $maxSizeMessage->getParameters()
+                            ),
+                            mimeTypesMessage: $this->translator->trans(
+                                $mimeTypesMessage->getMessage(),
+                                $mimeTypesMessage->getParameters()
                             ),
                         ),
                     ],
@@ -188,7 +188,7 @@ abstract class ParagraphAbstract extends AbstractController
             return $textField;
         }
 
-        $basePath   = $this->fileService->getBasePath($paragraph::class, $type . 'File');
+        $basePath   = $this->fileService->getBasePath($paragraph::class, $type.'File');
         $imageField = ImageField::new($type, $label);
         $imageField->setBasePath($basePath);
 
@@ -352,8 +352,8 @@ abstract class ParagraphAbstract extends AbstractController
 
         $htmltwig = '.html.twig';
         $files    = [
-            'paragraphs/' . $folder . '/' . $type . $htmltwig,
-            'paragraphs/' . $folder . '/default' . $htmltwig,
+            'paragraphs/'.$folder.'/'.$type.$htmltwig,
+            'paragraphs/'.$folder.'/default'.$htmltwig,
         ];
 
         $view   = end($files);

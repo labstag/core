@@ -103,6 +103,7 @@ tasks:
     desc: "Deploy Docker stacks defined in docker-compose files"
     silent: true
     cmds:
+    - docker build -f Dockerfile.messenger -t labstag/messenger:latest .
     - task: docker:stack:deploy
       vars:
         COMPOSE_FILE: "{{.DOCKERCOMPOSEFILE}}"
@@ -157,7 +158,6 @@ tasks:
     cmds:
     - task: docker:stack:shell
       vars:
-        STACK_NAME: "labstag"
         SERVICE_NAME: "www"
 
   labstag:cmd-exec:
@@ -171,7 +171,6 @@ tasks:
     cmds:
     - task: docker:stack:exec
       vars:
-        STACK_NAME: "labstag"
         SERVICE_NAME: "www"
         COMMAND: "{{.COMMAND}}"
         INTERACTIVE: "{{.INTERACTIVE}}"
@@ -338,14 +337,6 @@ tasks:
       vars:
         CMD: "run ecs-fix"
 
-  labstag:delete-oldfiles:
-    desc: "Delete old temporary files"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:delete-oldfiles"
-
   labstag:geocode-install:
     desc: "Install geocoding data"
     silent: true
@@ -445,14 +436,6 @@ tasks:
     - task: symfony:console
       vars:
         CMD: "lint:twig templates"
-
-  messenger:consume:
-    desc: "Start Messenger message consumer"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "messenger:consume --all"
 
   messenger:stats:
     desc: "Show Messenger statistics"
@@ -667,7 +650,6 @@ tasks:
     silent: true
     cmds:
     - task: doctrine:fixtures
-    - task: labstag:delete-oldfiles
     - task: star:add
 
   labstag:set-env-ids:

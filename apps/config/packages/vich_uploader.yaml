@@ -13,6 +13,16 @@ vich_uploader:
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
+    person:
+      uri_prefix: /uploads/person
+      upload_destination: person.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
     media:
       uri_prefix: /uploads/media
       upload_destination: media.storage

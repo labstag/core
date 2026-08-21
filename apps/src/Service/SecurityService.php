@@ -50,7 +50,7 @@ final class SecurityService
         }
 
         $pathinfo = $request->getPathInfo();
-        $slug     = '/' . $request->attributes->get('slug');
+        $slug     = '/'.$request->attributes->get('slug');
         if ($slug !== $pathinfo) {
             $pathinfo = $slug;
         }
@@ -125,7 +125,7 @@ final class SecurityService
 
         $server        = $request->server;
         $httpErrorLogs = new HttpErrorLogs();
-        $domain        = $server->get('REQUEST_SCHEME') . '://' . $server->get('SERVER_NAME');
+        $domain        = $server->get('REQUEST_SCHEME').'://'.$server->get('SERVER_NAME');
         $url           = $server->get('REQUEST_URI');
         if ($this->isDisableUrl($url)) {
             return;
@@ -272,7 +272,7 @@ final class SecurityService
                 if (str_starts_with((string) $newUrl, '/')) {
                     $request = $this->requestStack->getCurrentRequest();
                     if (!is_null($request)) {
-                        $newUrl = $request->getSchemeAndHttpHost() . $newUrl;
+                        $newUrl = $request->getSchemeAndHttpHost().$newUrl;
                     }
                 }
 

@@ -50,7 +50,7 @@ class SagaSlugHandler implements SlugHandlerInterface
         );
 
         if ($existingMovies) {
-            $slug = $originalSlug . '-saga';
+            $slug = $originalSlug.'-saga';
         }
     }
 

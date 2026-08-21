@@ -23,7 +23,7 @@ class StoryRepository extends RepositoryAbstract
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'stories-last-' . $nbr);
+        $query->enableResultCache(3600, 'stories-last-'.$nbr);
 
         return $query->getResult();
     }

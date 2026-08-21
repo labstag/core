@@ -5,14 +5,14 @@ namespace Labstag\MessageHandler;
 use Labstag\Message\GameAllMessage;
 use Labstag\Message\GameMessage;
 use Labstag\Repository\GameRepository;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class GameAllMessageHandler
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private GameRepository $gameRepository,
     )
     {
@@ -23,7 +23,7 @@ final class GameAllMessageHandler
         unset($gameAllMessage);
         $games = $this->gameRepository->findAll();
         foreach ($games as $game) {
-            $this->messageBus->dispatch(new GameMessage($game->getId()));
+            $this->messageDispatcherService->dispatch(new GameMessage($game->getId()));
         }
     }
 }

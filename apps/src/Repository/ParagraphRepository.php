@@ -23,7 +23,7 @@ class ParagraphRepository extends RepositoryAbstract
         $queryBuilder->setMaxResults(1);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'paragraph-' . $class);
+        $query->enableResultCache(3600, 'paragraph-'.$class);
 
         return $query->getOneOrNullResult();
     }

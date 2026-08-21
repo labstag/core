@@ -4,13 +4,13 @@ namespace Labstag\Command;
 
 use Labstag\Message\StoryMessage;
 use Labstag\Repository\StoryRepository;
+use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\StoryService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 #[AsCommand(name: 'labstag:story-pdf', description: 'Generate PDF for story',)]
@@ -18,7 +18,7 @@ class StoryPdfCommand
 {
     public function __construct(
         protected StoryRepository $storyRepository,
-        protected MessageBusInterface $messageBus,
+        protected MessageDispatcherService $messageBus,
         protected StoryService $storyService,
     )
     {

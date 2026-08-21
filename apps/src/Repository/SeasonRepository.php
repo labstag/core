@@ -34,7 +34,7 @@ class SeasonRepository extends RepositoryAbstract
         $queryBuilder->orderBy('s.number', 'ASC');
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'seasons-activate-serie-' . $serie->getId());
+        $query->enableResultCache(3600, 'seasons-activate-serie-'.$serie->getId());
 
         return $query->getResult();
     }
@@ -55,7 +55,7 @@ class SeasonRepository extends RepositoryAbstract
         $queryBuilder->setParameters($data);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'season-serie-' . $serie->getId() . '-position-' . $position);
+        $query->enableResultCache(3600, 'season-serie-'.$serie->getId().'-position-'.$position);
 
         return $query->getOneOrNullResult();
     }

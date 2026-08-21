@@ -34,9 +34,15 @@ class MovieData extends SagaData implements DataInterface
         );
 
         $slug = parent::generateSlugPage($page);
-        $slug['slug'] .= '/' . $entity->getSlug();
+        $slug['slug'] .= '/'.$entity->getSlug();
 
         return $slug;
+    }
+
+    #[Override]
+    public function getDefaultImage(object $entity): ?string
+    {
+        return $entity->getPoster();
     }
 
     #[Override]

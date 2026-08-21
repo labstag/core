@@ -1,4 +1,6 @@
 @use "../placeholders" as *;
+@use "../mixins";
+@use "../variables";
 @use "../icons";
 
 .paragraph_head-movie {
@@ -23,6 +25,7 @@
       }
     }
   }
+
   .trailer {
     width: 50%;
     margin: auto;
@@ -31,5 +34,19 @@
     margin-top: 11px;
     margin-bottom: 11px;
     @extend %video;
+  }
+
+  .actings {
+    width: 80%;
+    margin: auto;
+    ul {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+
+      @include mixins.respond-to(md) {
+        grid-template-columns: repeat(8, 1fr);
+      }
+    }
   }
 }

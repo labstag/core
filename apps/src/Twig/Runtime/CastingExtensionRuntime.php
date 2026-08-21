@@ -1,0 +1,115 @@
+<?php
+
+namespace Labstag\Twig\Runtime;
+
+use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Entity\Casting;
+use Labstag\Entity\Episode;
+use Labstag\Entity\Movie;
+use Labstag\Entity\Season;
+use Labstag\Entity\Serie;
+use Twig\Extension\RuntimeExtensionInterface;
+
+class CastingExtensionRuntime implements RuntimeExtensionInterface
+{
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+    )
+    {
+        // Inject dependencies if needed
+    }
+
+    public function acting($data): array
+    {
+        return $this->getByType('Acting', $data);
+    }
+
+    public function cast($data): mixed
+    {
+        $entityRepository = $this->entityManager->getRepository(Casting::class);
+
+        return $entityRepository->findWithActiveCastings($data);
+    }
+
+    public function directing($data): array
+    {
+        return $this->getByType('Directing', $data);
+    }
+
+    public function editing($data): array
+    {
+        return $this->getByType('Editing', $data);
+    }
+
+    public function movies($data): array
+    {
+        $tab = [];
+        foreach ($data as $row) {
+            if ($row->getRefMovie() instanceof Movie) {
+                $id = $row->getRefMovie()->getId();
+                $tab[$id] = $row->getRefMovie();
+            }
+        }
+
+        foreach ($tab as $key => $movie) {
+            if ($movie->isEnable()) {
+                continue;
+            }
+
+            unset($tab[$key]);
+        }
+
+        return $tab;
+    }
+
+    public function production($data): array
+    {
+        return $this->getByType('Production', $data);
+    }
+
+    public function series($data): array
+    {
+        $tab = [];
+        foreach ($data as $row) {
+            if ($row->getRefSerie() instanceof Serie) {
+                $id = $row->getRefSerie()->getId();
+                $tab[$id] = $row->getRefSerie();
+            } elseif ($row->getRefEpisode() instanceof Episode) {
+                $id = $row->getRefEpisode()->getRefseason()->getRefserie()->getId();
+                $tab[$id] = $row->getRefEpisode()->getRefseason()->getRefserie();
+            } elseif ($row->getRefSeason() instanceof Season) {
+                $id = $row->getRefSeason()->getRefserie()->getId();
+                $tab[$id] = $row->getRefSeason()->getRefserie();
+            }
+        }
+
+        foreach ($tab as $key => $serie) {
+            if ($serie->isEnable()) {
+                continue;
+            }
+
+            unset($tab[$key]);
+        }
+
+        return $tab;
+    }
+
+    public function writing($data): array
+    {
+        return $this->getByType('Writing', $data);
+    }
+
+    private function getByType(string $type, $data): array
+    {
+        $casting = [];
+        foreach ($data as $row) {
+            if ($row->getKnownForDepartment() != $type) {
+                continue;
+            }
+
+            $casting[] = $row;
+        }
+
+        return $casting;
+    }
+}

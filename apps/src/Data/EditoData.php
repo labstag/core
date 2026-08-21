@@ -7,6 +7,11 @@ use Override;
 
 class EditoData extends DataAbstract implements DataInterface
 {
+    public function getDefaultImage(object $entity): ?string
+    {
+        return $entity->getImg();
+    }
+
     #[Override]
     public function placeholder(): string
     {

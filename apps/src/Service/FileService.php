@@ -15,7 +15,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
@@ -28,7 +27,7 @@ final class FileService
     public function __construct(
         #[AutowireIterator('labstag.filestorage')]
         private readonly iterable $fileStorages,
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private LoggerInterface $logger,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag,
@@ -51,7 +50,7 @@ final class FileService
             $basePath = $this->getBasePath($entity, $mapping->getFilePropertyName());
             $content  = $propertyAccessor->getValue($entity, $mapping->getFileNamePropertyName());
             if ('' != $content) {
-                $file = $basePath . '/' . $content;
+                $file = $basePath.'/'.$content;
             }
         }
 
@@ -74,49 +73,26 @@ final class FileService
         }
     }
 
-    public function deletedFileByEntities(): int
+    public function deletedFileByEntities(): void
     {
-        $total = 0;
         $this->entityManager->getFilters()->disable('softdeleteable');
         foreach ($this->fileStorages as $fileStorage) {
-            $deletes     = [];
-            $entities    = $fileStorage->getEntity();
+            $deletes  = [];
+            $entities = $fileStorage->getEntity();
             if (0 === count($entities)) {
                 continue;
             }
 
-            foreach ($entities as $entityClass) {
-                $repository = $this->getRepository($entityClass);
-                $mappings   = $this->propertyMappingFactory->fromObject(new $entityClass());
-                $files      = $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), '');
-                foreach ($files as $row) {
-                    $file = $row['path'];
-                    $find = 0;
-                    foreach ($mappings as $mapping) {
-                        $field  = $mapping->getFileNamePropertyName();
-                        $entity = $repository->findOneBy(
-                            [$field => $file]
-                        );
-                        if (!$entity instanceof $entityClass) {
-                            continue;
-                        }
-
-                        $find = 1;
-
-                        break;
-                    }
-
-                    if (0 === $find) {
-                        $deletes[] = $file;
-                    }
+            $files = $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), '');
+            foreach ($files as $file) {
+                $find = $this->findInEntities($entities, $file['path']);
+                if (!$find) {
+                    $deletes[] = $file['path'];
                 }
-
-                $total += count($deletes);
-                $fileStorage->deleteFilesByType($deletes);
             }
-        }
 
-        return $total;
+            $fileStorage->deleteFilesByType($deletes);
+        }
     }
 
     public function getBasePath(mixed $entity, string $type): string
@@ -185,7 +161,7 @@ final class FileService
     {
         $basePath = $this->getBasePath($entity, $type);
 
-        return $this->parameterBag->get('kernel.project_dir') . '/public' . $basePath;
+        return $this->parameterBag->get('kernel.project_dir').'/public'.$basePath;
     }
 
     public function getimportCsvFile(string $path, string $delimiter = ','): array
@@ -233,7 +209,7 @@ final class FileService
             $mimetype = 'image/jpeg';
         }
 
-        $public = str_replace($this->parameterBag->get('kernel.project_dir') . '/public', '', $file);
+        $public = str_replace($this->parameterBag->get('kernel.project_dir').'/public', '', $file);
 
         return [
             'src'    => $file,
@@ -298,10 +274,10 @@ final class FileService
         }
 
         if (0 === $unitIndex) {
-            return (int) $bytes . ' ' . $units[$unitIndex];
+            return (int) $bytes.' '.$units[$unitIndex];
         }
 
-        return number_format($bytes, 2) . ' ' . $units[$unitIndex];
+        return number_format($bytes, 2).' '.$units[$unitIndex];
     }
 
     public function saveFileInAdapter(string $type, string $fileName, $content): null
@@ -356,15 +332,15 @@ final class FileService
                 $tempPath = tempnam(sys_get_temp_dir(), 'download_');
                 $content  = file_get_contents($filePath);
                 if (false === $content) {
-                    $this->logger->error('Failed to download file from URL: ' . $filePath);
-                    throw new Exception('Failed to download file from URL: ' . $filePath);
+                    $this->logger->error('Failed to download file from URL: '.$filePath);
+                    throw new Exception('Failed to download file from URL: '.$filePath);
                 }
 
                 file_put_contents($tempPath, $content);
                 $filePath = $tempPath;
             }
 
-            $this->messageBus->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(60_000)]);
+            $this->messageDispatcherService->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(60_000)]);
 
             $uploadedFile = new UploadedFile(
                 path: $filePath,
@@ -376,9 +352,9 @@ final class FileService
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $propertyAccessor->setValue($entity, $type, $uploadedFile);
         } catch (Exception $exception) {
-            $this->logger->error('Error setting uploaded file: ' . $exception->getMessage());
+            $this->logger->error('Error setting uploaded file: '.$exception->getMessage());
             throw new Exception(
-                'Error setting uploaded file: ' . $exception->getMessage(),
+                'Error setting uploaded file: '.$exception->getMessage(),
                 $exception->getCode(),
                 $exception
             );
@@ -421,6 +397,47 @@ final class FileService
         }
 
         return $files;
+    }
+
+    private function findInEntities(array $entities, string $file): bool
+    {
+        $find = false;
+        foreach ($entities as $entity) {
+            $find = $this->findInEntity($entity, $file);
+            if ($find) {
+                break;
+            }
+        }
+
+        return $find;
+    }
+
+    private function findInEntity(string $entityClass, string $file): bool
+    {
+        $entityRepository = $this->getRepository($entityClass);
+        $mappings         = $this->propertyMappingFactory->fromObject(new $entityClass());
+        $search           = [];
+        foreach ($mappings as $mapping) {
+            $field          = $mapping->getFileNamePropertyName();
+            $search[$field] = $file;
+        }
+
+        $entity = $this->findInFields($entityRepository, $search);
+
+        return 0 !== count($entity);
+    }
+
+    private function findInFields(EntityRepository $entityRepository, array $fields): mixed
+    {
+        $queryBuilder = $entityRepository->createQueryBuilder('entity');
+        foreach ($fields as $field => $value) {
+            $queryBuilder->orWhere(sprintf('entity.%s = :%s', $field, $field));
+            $queryBuilder->setParameter($field, $value);
+        }
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
     }
 
     /**

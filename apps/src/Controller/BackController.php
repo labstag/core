@@ -12,6 +12,7 @@ use Labstag\Message\ClearCacheMessage;
 use Labstag\Message\DeleteOldFileMessage;
 use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
@@ -19,7 +20,6 @@ use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -32,7 +32,7 @@ class BackController extends AbstractController
         protected WorkflowService $workflowService,
         protected SiteService $siteService,
         protected IgdbApi $igdbApi,
-        private readonly MessageBusInterface $messageBus,
+        private readonly MessageDispatcherService $messageDispatcherService,
     )
     {
     }
@@ -54,8 +54,8 @@ class BackController extends AbstractController
     )]
     public function cacheclear(Request $request): Response
     {
-        $this->messageBus->dispatch(new ClearCacheMessage());
-        $this->messageBus->dispatch(new DeleteOldFileMessage());
+        $this->messageDispatcherService->dispatch(new ClearCacheMessage());
+        $this->messageDispatcherService->dispatch(new DeleteOldFileMessage());
         $this->addFlash('success', new TranslatableMessage('Cache cleared'));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -102,9 +102,7 @@ class BackController extends AbstractController
         name: 'admin_permission',
         defaults: ['_locale' => 'fr']
     )]
-    public function permission(
-        Request $request,
-    ): Response
+    public function permission(Request $request): Response
     {
         if ($request->isMethod('POST')) {
             $groupId      = $request->query->get('groupId');

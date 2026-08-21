@@ -5,14 +5,14 @@ namespace Labstag\MessageHandler;
 use Labstag\Message\StoryAllMessage;
 use Labstag\Message\StoryMessage;
 use Labstag\Repository\StoryRepository;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class StoryAllMessageHandler
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private StoryRepository $storyRepository,
     )
     {
@@ -23,7 +23,7 @@ final class StoryAllMessageHandler
         unset($storyAllMessage);
         $stories                          = $this->storyRepository->findAll();
         foreach ($stories as $story) {
-            $this->messageBus->dispatch(new StoryMessage($story->getId()));
+            $this->messageDispatcherService->dispatch(new StoryMessage($story->getId()));
         }
     }
 }

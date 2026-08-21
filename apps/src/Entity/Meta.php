@@ -44,6 +44,9 @@ class Meta implements Stringable
     protected ?Page $page = null;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected ?Person $person = null;
+
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected ?Post $post = null;
 
     #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -100,6 +103,11 @@ class Meta implements Stringable
     public function getPage(): ?Page
     {
         return $this->page;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
     }
 
     public function getPost(): ?Post
@@ -190,6 +198,18 @@ class Meta implements Stringable
         }
 
         $this->page = $page;
+
+        return $this;
+    }
+
+    public function setPerson(Person $person): static
+    {
+        // set the owning side of the relation if necessary
+        if ($person->getMeta() !== $this) {
+            $person->setMeta($this);
+        }
+
+        $this->person = $person;
 
         return $this;
     }

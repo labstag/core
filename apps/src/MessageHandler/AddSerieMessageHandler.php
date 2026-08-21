@@ -6,14 +6,14 @@ use Labstag\Entity\Serie;
 use Labstag\Message\AddSerieMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Repository\SerieRepository;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class AddSerieMessageHandler
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private SerieRepository $serieRepository,
     )
     {
@@ -46,6 +46,6 @@ final class AddSerieMessageHandler
         $serie->setFile(true);
 
         $this->serieRepository->save($serie);
-        $this->messageBus->dispatch(new SerieMessage($serie->getId()));
+        $this->messageDispatcherService->dispatch(new SerieMessage($serie->getId()));
     }
 }

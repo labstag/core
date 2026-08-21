@@ -175,18 +175,23 @@ class MovieCrudController extends CrudControllerAbstract
         $trailerField->hideOnIndex();
 
         $wysiwgTranslation = new TranslatableMessage('Citation');
-        $wysiwygField = WysiwygField::new('citation', $wysiwgTranslation->getMessage());
+        $wysiwygField      = WysiwygField::new('citation', $wysiwgTranslation->getMessage());
         $wysiwygField->hideOnIndex();
 
         $descriptionTranslation = new TranslatableMessage('Description');
-        $descriptionField = WysiwygField::new('description', $descriptionTranslation->getMessage());
+        $descriptionField       = WysiwygField::new('description', $descriptionTranslation->getMessage());
         $descriptionField->hideOnIndex();
 
         $booleanField = $this->crudFieldFactory->booleanField('file', new TranslatableMessage('File'));
         $booleanField->hideOnIndex();
 
-        $posterTranslation = new TranslatableMessage('Poster');
+        $posterTranslation   = new TranslatableMessage('Poster');
         $backdropTranslation = new TranslatableMessage('Backdrop');
+
+        $associationField = AssociationField::new('castings', new TranslatableMessage('Casting'));
+        $associationField->setTemplatePath('admin/field/castings.html.twig');
+        $associationField->onlyOnDetail();
+
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
@@ -221,6 +226,7 @@ class MovieCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->companiesFieldForPage(self::getEntityFqcn(), $pageName),
                 // image field déjà incluse dans baseIdentitySet
                 $booleanField,
+                $associationField,
                 $this->crudFieldFactory->booleanField('adult', new TranslatableMessage('Adult')),
             ]
         );
@@ -238,8 +244,8 @@ class MovieCrudController extends CrudControllerAbstract
         $filters->add('releaseDate');
         $countries = $repositoryAbstract->getCountries();
         if ([] != $countries) {
-            $countriesTranslation = new TranslatableMessage('Countries');
-            $countriesFilter = CountriesFilter::new('countries', $countriesTranslation->getMessage());
+            $translatableMessage  = new TranslatableMessage('Countries');
+            $countriesFilter      = CountriesFilter::new('countries', $translatableMessage->getMessage());
             $countriesFilter->setChoices(
                 array_merge(
                     ['' => ''],
@@ -278,7 +284,7 @@ class MovieCrudController extends CrudControllerAbstract
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
 
-        return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
+        return $this->redirect('https://www.imdb.com/title/'.$movie->getImdb().'/');
     }
 
     public function importFileMovie(Request $request): JsonResponse
@@ -296,7 +302,7 @@ class MovieCrudController extends CrudControllerAbstract
 
         $content   = file_get_contents($file->getPathname());
         $extension = $file->getClientOriginalExtension();
-        $filename  = uniqid('import_', true) . '.' . $extension;
+        $filename  = uniqid('import_', true).'.'.$extension;
         $this->fileService->saveFileInAdapter('private', $filename, $content);
         $this->messageBus->dispatch(new ImportMessage($filename, 'movie', []));
 
@@ -352,7 +358,7 @@ class MovieCrudController extends CrudControllerAbstract
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
 
-        return $this->redirect('https://www.themoviedb.org/movie/' . $movie->getTmdb());
+        return $this->redirect('https://www.themoviedb.org/movie/'.$movie->getTmdb());
     }
 
     public function updateAllMovie(): RedirectResponse

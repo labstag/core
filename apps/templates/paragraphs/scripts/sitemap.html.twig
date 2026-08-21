@@ -3,7 +3,7 @@
         <li>
             <a href="{{ site_path(data.entity) }}" title="{{ data.entity.title|e('html_attr') }}">{{ data.entity.title }}</a>
             {% if data.parent|length != 0 %}
-                {% include  "paragraphs/scripts/sitemap.html.twig"  with {'key': url, 'sitemap': data.parent} %}
+                {% include "paragraphs/scripts/sitemap.html.twig"  with {'key': url, 'sitemap': data.parent} %}
             {% endif %}
         </li>
     {% endfor %}

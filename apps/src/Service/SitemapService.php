@@ -76,7 +76,7 @@ final class SitemapService
         $url    = $this->urlGenerator->generate('front', $params);
 
         return [
-            '/' . $url => ['entity' => $entity],
+            '/'.$url => ['entity' => $entity],
         ];
     }
 
@@ -242,7 +242,7 @@ final class SitemapService
             )
             ) {
                 $this->parent[$url] = true;
-                $data['parent']     = $this->setTabsByParent($urls, $url . '/');
+                $data['parent']     = $this->setTabsByParent($urls, $url.'/');
                 $tabs[$url]         = $data;
             }
         }

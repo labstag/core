@@ -33,7 +33,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
             return $data;
         }
 
-        $data['data-context_url']  = $urlAdmin;
+        $data['data-context_url']              = $urlAdmin;
         $translatableMessage                   = new TranslatableMessage(
             'Update paragraph (%name%) #%type%',
             [
@@ -41,7 +41,10 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
                 '%type%' => $this->paragraphService->getType($paragraph),
             ]
         );
-        $data['data-context_text'] = $this->translator->trans($translatableMessage->getMessage(), $translatableMessage->getParameters());
+        $data['data-context_text'] = $this->translator->trans(
+            $translatableMessage->getMessage(),
+            $translatableMessage->getParameters()
+        );
 
         return $data;
     }
@@ -92,7 +95,7 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
         $type = $this->paragraphService->getType($paragraph);
         $tab  = [
             'paragraph',
-            'paragraph_' . $type,
+            'paragraph_'.$type,
         ];
 
         $tab = array_merge($tab, $this->paragraphService->getClasses($paragraph));
@@ -104,6 +107,6 @@ class ParagraphExtensionRuntime implements RuntimeExtensionInterface
     {
         $type = $this->paragraphService->getType($paragraph);
 
-        return 'paragraph_' . $type . '-' . $paragraph->getId();
+        return 'paragraph_'.$type.'-'.$paragraph->getId();
     }
 }

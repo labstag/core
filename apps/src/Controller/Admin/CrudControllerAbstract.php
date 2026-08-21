@@ -34,6 +34,7 @@ use Labstag\Service\Imdb\MovieService;
 use Labstag\Service\Imdb\SagaService;
 use Labstag\Service\Imdb\SeasonService;
 use Labstag\Service\Imdb\SerieService;
+use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SecurityService;
 use Labstag\Service\SiteService;
@@ -45,7 +46,6 @@ use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -71,7 +71,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         protected FileService $fileService,
         protected SiteService $siteService,
         protected SlugService $slugService,
-        protected MessageBusInterface $messageBus,
+        protected MessageDispatcherService $messageBus,
         protected SeasonService $seasonService,
         protected SecurityService $securityService,
         protected BlockService $blockService,
@@ -161,7 +161,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         $params                            = $this->slugService->forEntity($entity);
 
         return $this->redirect(
-            'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
+            'https://validator.w3.org/nu/?doc='.$this->generateUrl(
                 'front',
                 $params,
                 UrlGeneratorInterface::ABSOLUTE_URL

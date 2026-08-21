@@ -41,7 +41,7 @@ class RegenerateSlugCommand
         ];
 
         foreach ($entities as $entity) {
-            $symfonyStyle->section('Regenerating slugs for ' . $entity);
+            $symfonyStyle->section('Regenerating slugs for '.$entity);
 
             $repository = $this->entityManager->getRepository($entity);
             $items      = $repository->findAll();
@@ -51,7 +51,7 @@ class RegenerateSlugCommand
             $count = 0;
             foreach ($items as $item) {
                 $title = $item->getTitle();
-                $item->setTitle($title . ' ');
+                $item->setTitle($title.' ');
                 $this->entityManager->persist($item);
 
                 ++$count;
@@ -75,7 +75,7 @@ class RegenerateSlugCommand
                 continue;
             }
 
-            $symfonyStyle->info('ℹ️  No slugs to regenerate for ' . $entity);
+            $symfonyStyle->info('ℹ️  No slugs to regenerate for '.$entity);
         }
 
         $symfonyStyle->success('🎉 All slugs have been successfully regenerated!');

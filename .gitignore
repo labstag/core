@@ -1,8 +1,8 @@
 /node_modules
 /apps/vendor
 /apps/bin/
+/apps/supervisord.*
 /apps/.symfony5
-/apps/config/reference.php
 /apps/.composer
 /apps/.pdepend
 /apps/.bash_history

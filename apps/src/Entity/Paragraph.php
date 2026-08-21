@@ -31,6 +31,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
         'head-cv'          => HeadCvParagraph::class,
         'head-game'        => HeadGameParagraph::class,
         'head-movie'       => HeadMovieParagraph::class,
+        'head-person'      => HeadPersonParagraph::class,
         'head-post'        => HeadPostParagraph::class,
         'head-saga'        => HeadSagaParagraph::class,
         'head-season'      => HeadSeasonParagraph::class,
@@ -47,6 +48,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
         'movie-slider'     => MovieSliderParagraph::class,
         'movie'            => MovieParagraph::class,
         'news-list'        => NewsListParagraph::class,
+        'person'           => PersonParagraph::class,
         'saga-list'        => SagaListParagraph::class,
         'saga'             => SagaParagraph::class,
         'season-list'      => SeasonListParagraph::class,
@@ -106,6 +108,9 @@ abstract class Paragraph implements Stringable
 
     #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Page $page = null;
+
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Person $person = null;
 
     #[ORM\Column]
     protected ?int $position = null;
@@ -179,6 +184,11 @@ abstract class Paragraph implements Stringable
     public function getPage(): ?Page
     {
         return $this->page;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
     }
 
     public function getPosition(): ?int
@@ -282,6 +292,13 @@ abstract class Paragraph implements Stringable
     public function setPage(?Page $page): static
     {
         $this->page = $page;
+
+        return $this;
+    }
+
+    public function setPerson(?Person $person): static
+    {
+        $this->person = $person;
 
         return $this;
     }

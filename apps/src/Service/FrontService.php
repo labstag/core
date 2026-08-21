@@ -11,7 +11,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 class FrontService extends AbstractController
@@ -21,7 +20,7 @@ class FrontService extends AbstractController
         private readonly iterable $datas,
         protected CacheService $cacheService,
         protected EntityManagerInterface $entityManager,
-        protected MessageBusInterface $messageBus,
+        protected MessageDispatcherService $messageBus,
         protected FileService $fileService,
         protected ConfigurationService $configurationService,
         protected SlugService $slugService,

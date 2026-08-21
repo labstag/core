@@ -53,8 +53,8 @@ class PostCrudController extends CrudControllerAbstract
         );
 
         // Additional specific field (resume) not yet in factory bundle - placed at end of principal tab
-        $wysiwgTranslation = new TranslatableMessage('resume');
-        $wysiwygField = WysiwygField::new('resume', $wysiwgTranslation->getMessage());
+        $translatableMessage = new TranslatableMessage('resume');
+        $wysiwygField        = WysiwygField::new('resume', $translatableMessage->getMessage());
         $wysiwygField->hideOnIndex();
 
         $this->crudFieldFactory->addFieldsToTab('principal', [$wysiwygField]);

@@ -16,12 +16,12 @@ class NotificationRepository extends RepositoryAbstract
         parent::__construct($registry, Notification::class);
     }
 
-    public function getAllBefore1week()
+    public function getAllBefore1week(): mixed
     {
-        $qb = $this->createQueryBuilder('n');
-        $qb->where('n.createdAt <= :date');
-        $qb->setParameter('date', new DateTime('-7 days'));
+        $queryBuilder = $this->createQueryBuilder('n');
+        $queryBuilder->where('n.createdAt <= :date');
+        $queryBuilder->setParameter('date', new DateTime('-7 days'));
 
-        return $qb->getQuery()->getResult();
+        return $queryBuilder->getQuery()->getResult();
     }
 }

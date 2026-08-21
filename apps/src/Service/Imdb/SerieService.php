@@ -8,18 +8,12 @@ use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\SerieCategory;
 use Labstag\Message\SeasonMessage;
-use Labstag\Message\SerieMessage;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\CategoryService;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\VideoService;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Translation\TranslatableMessage;
 
 final class SerieService
 {
@@ -35,7 +29,7 @@ final class SerieService
     private array $year = [];
 
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private ConfigurationService $configurationService,
         private FileService $fileService,
         private CompanyService $companyService,
@@ -43,9 +37,8 @@ final class SerieService
         private SerieRepository $serieRepository,
         private CategoryService $categoryService,
         private TheMovieDbApi $theMovieDbApi,
-        private RequestStack $requestStack,
         private VideoService $videoService,
-        private RouterInterface $router,
+        private PersonService $personService,
     )
     {
     }
@@ -155,17 +148,11 @@ final class SerieService
             $this->updateCategory($serie, $details),
             $this->updateTrailer($serie, $details),
             $this->updateCompany($serie, $details),
+            $this->updateCredits($serie, $details),
             $this->updateSeasons($serie, $details),
         ];
 
         return in_array(true, $statuses, true);
-    }
-
-    private function getFlashBag(): FlashBagInterface
-    {
-        $session = $this->requestStack->getSession();
-
-        return $session->getFlashBag();
     }
 
     /**
@@ -277,6 +264,31 @@ final class SerieService
         return true;
     }
 
+    private function updateCredits(Serie $serie, array $details): bool
+    {
+        foreach ($serie->getCastings() as $casting) {
+            $serie->removeCasting($casting);
+        }
+
+        if (isset($details['credits']['cast']) || is_array($details['credits']['cast'])) {
+            foreach ($details['credits']['cast'] as $cast) {
+                $person  = $this->personService->getPerson($cast);
+                $casting = $this->personService->addToCastingSerie($person, $serie, $cast);
+                $serie->addCasting($casting);
+            }
+        }
+
+        if (isset($details['credits']['crew']) || is_array($details['credits']['crew'])) {
+            foreach ($details['credits']['crew'] as $crew) {
+                $person  = $this->personService->getPerson($crew);
+                $casting = $this->personService->addToCastingSerie($person, $serie, $crew);
+                $serie->addCasting($casting);
+            }
+        }
+
+        return true;
+    }
+
     /**
      * @param array<string, mixed> $details
      */
@@ -352,7 +364,7 @@ final class SerieService
 
         $seasons = $this->seasonService->getSeasons($serie);
         foreach ($seasons as $season) {
-            $this->messageBus->dispatch(new SeasonMessage($season->getId()));
+            $this->messageDispatcherService->dispatch(new SeasonMessage($season->getId()));
         }
 
         return true;

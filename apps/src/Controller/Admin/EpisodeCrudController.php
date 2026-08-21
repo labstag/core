@@ -79,9 +79,13 @@ class EpisodeCrudController extends CrudControllerAbstract
         $integerField = IntegerField::new('runtime', new TranslatableMessage('Runtime'));
         $integerField->setTemplatePath('admin/field/runtime-episode.html.twig');
 
-        $wysiwgTranslation = new TranslatableMessage('Overview');
-        $wysiwgField = WysiwygField::new('overview', $wysiwgTranslation->getMessage());
-        $wysiwgField->hideOnIndex();
+        $translatableMessage = new TranslatableMessage('Overview');
+        $wysiwygField        = WysiwygField::new('overview', $translatableMessage->getMessage());
+        $wysiwygField->hideOnIndex();
+
+        $associationField = AssociationField::new('castings', new TranslatableMessage('Casting'));
+        $associationField->setTemplatePath('admin/field/castings.html.twig');
+        $associationField->onlyOnDetail();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -96,6 +100,7 @@ class EpisodeCrudController extends CrudControllerAbstract
                 DateField::new('air_date', new TranslatableMessage('Air date')),
                 $integerField,
                 $wysiwygField,
+                $associationField,
             ]
         );
 

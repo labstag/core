@@ -155,9 +155,6 @@ jobs:
           task doctrine:schema:validate
           task doctrine:fixtures
       
-      - name: Cleanup and test preparation
-        run: task labstag:delete-oldfiles
-      
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
         continue-on-error: true

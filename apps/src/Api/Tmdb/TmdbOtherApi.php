@@ -33,12 +33,12 @@ class TmdbOtherApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_find_' . $externalId . '_' . md5($query);
+        $cacheKey = 'tmdb_find_'.$externalId.'_'.md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($externalId, $query): ?array {
-                $url  = self::BASE_URL . '/find/' . $externalId . $query;
+                $url  = self::BASE_URL.'/find/'.$externalId.$query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data) {
@@ -69,12 +69,12 @@ class TmdbOtherApi extends AbstractTmdbApi
             return null;
         }
 
-        $cacheKey = 'tmdb_company_details_' . $companyId;
+        $cacheKey = 'tmdb_company_details_'.$companyId;
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($companyId): ?array {
-                $url  = self::BASE_URL . '/company/' . $companyId;
+                $url  = self::BASE_URL.'/company/'.$companyId;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || empty($data['name'])) {

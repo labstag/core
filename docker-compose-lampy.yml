@@ -1,13 +1,37 @@
 networks:
-  net:
-    driver: overlay
-    attachable: true
   proxylampy:
     external: true
   serverlampy:
     external: true
 
 services:
+  messenger:
+    image: labstag/messenger:latest
+    command: ["/usr/local/bin/start-messenger.sh"]
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      TZ: Europe/Paris
+      APP_SECRET: "CHANGEME"
+      MAILER_DSN: "smtp://mailtest:1025"
+      MESSENGER_TRANSPORT_DSN: "doctrine://default"
+      LOCK_DNS: semaphore
+      DATABASE_BDD: labstag_bdd
+      DATABASE_USER: labstag
+      DATABASE_PASSWORD: password
+      DATABASE_URL: "mysqli://labstag:password@mariadb:3306/labstag_bdd"
+      HOME: "/var/www"
+    volumes:
+      - ${PWD}/apps:/var/www/:rw
+      - ${PWD}/docker/start-messenger.sh:/usr/local/bin/start-messenger.sh:ro
+      - ${PWD}/conf/php.ini-development://usr/local/etc/php/conf.d/php.ini
+      - ${PWD}/conf/apache2/000-default.conf:/etc/apache2/sites-available/000-default.conf:ro
+      - ${PWD}/docker/supervisor:/etc/supervisor:ro
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    networks:
+      - serverlampy
   www:
     image: koromerzhin/php:8.4.13-apache-symfony
     user: "${UID:-1000}:${GID:-1000}"
@@ -29,7 +53,6 @@ services:
       - ${PWD}/conf/apache2/apache2.conf:/etc/apache2/apache2.conf:ro
     networks:
       - serverlampy
-      - net
       - proxylampy
     deploy:
       labels:

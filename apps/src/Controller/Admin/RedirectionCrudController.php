@@ -195,7 +195,7 @@ class RedirectionCrudController extends CrudControllerAbstract
 
         try {
             foreach (['Xlsx', 'Xls', 'Ods'] as $writerType) {
-                $path   = $this->getFilename($now->format('Ymd') . '-export.', mb_strtolower($writerType));
+                $path   = $this->getFilename($now->format('Ymd').'-export.', mb_strtolower($writerType));
                 $writer = IOFactory::createWriter($spreadsheet, $writerType);
                 $writer->save($path);
                 $zipArchive->addFile($path, basename($path));
@@ -211,10 +211,10 @@ class RedirectionCrudController extends CrudControllerAbstract
             Response::HTTP_OK,
             [
                 'Content-Type'        => 'application/x-zip',
-                'Content-Disposition' => 'attachment; filename="' . $now->format('Ymd') . '-export.zip"',
+                'Content-Disposition' => 'attachment; filename="'.$now->format('Ymd').'-export.zip"',
                 'Cache:Control'       => 'no-cache, must-revalidate',
                 'Expires'             => 'Mon, 26 Jul 1997 05:00:00 GMT',
-                'Last-Modified'       => gmdate('D, d M Y H:i:s') . ' GMT',
+                'Last-Modified'       => gmdate('D, d M Y H:i:s').' GMT',
                 'Pragma'              => 'no-cache',
             ]
         );
@@ -269,9 +269,9 @@ class RedirectionCrudController extends CrudControllerAbstract
     {
         $originalExtension = pathinfo($filename, PATHINFO_EXTENSION);
 
-        return $this->getTemporaryFolder() . '/' . str_replace(
-            '.' . $originalExtension,
-            '.' . $extension,
+        return $this->getTemporaryFolder().'/'.str_replace(
+            '.'.$originalExtension,
+            '.'.$extension,
             basename($filename)
         );
     }
@@ -310,7 +310,7 @@ class RedirectionCrudController extends CrudControllerAbstract
             $source      = parse_url((string) $row[$head['Source']]);
             $destination = $row[$head['Destination']];
             $source      = $source['path'];
-            $source .= isset($source['query']) ? '?' . $source['query'] : '';
+            $source .= isset($source['query']) ? '?'.$source['query'] : '';
             $redirection = $this->getRepository(Redirection::class)->findOneBy(
                 ['source' => $source]
             );

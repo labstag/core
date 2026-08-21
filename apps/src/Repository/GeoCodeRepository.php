@@ -19,11 +19,11 @@ class GeoCodeRepository extends RepositoryAbstract
     {
         $queryBuilder = $this->createQueryBuilder('g');
 
-        $queryBuilder->select('g.' . $type . ', count(g.id) as count');
-        $queryBuilder->groupBy('g.' . $type);
+        $queryBuilder->select('g.'.$type.', count(g.id) as count');
+        $queryBuilder->groupBy('g.'.$type);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'geocode-' . md5($type));
+        $query->enableResultCache(3600, 'geocode-'.md5($type));
 
         return $query->getResult();
     }

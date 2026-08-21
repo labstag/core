@@ -5,7 +5,7 @@ namespace Labstag\Message;
 use Symfony\Component\Messenger\Attribute\AsMessage;
 
 #[AsMessage('async')]
-final class FilesMessage
+final class PersonAllMessage
 {
     /*
      * Add whatever properties and methods you need

@@ -17,7 +17,7 @@ class LinkApprovalReplace extends ReplaceAbstract
             return '#linkdisabled';
         }
 
-        return $configuration->getUrl() . $this->router->generate(
+        return $configuration->getUrl().$this->router->generate(
             'admin_workflow',
             [
                 '_locale'    => 'fr',

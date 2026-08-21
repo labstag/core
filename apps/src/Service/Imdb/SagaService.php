@@ -7,14 +7,14 @@ use Labstag\Entity\Saga;
 use Labstag\Message\SagaMessage;
 use Labstag\Repository\SagaRepository;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SagaService
 {
     public function __construct(
         private LoggerInterface $logger,
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private SagaRepository $sagaRepository,
         private FileService $fileService,
         private TheMovieDbApi $theMovieDbApi,
@@ -35,7 +35,7 @@ final class SagaService
             $saga->setTitle($this->setName($data['name']));
             $saga->setTmdb($data['id']);
             $this->sagaRepository->save($saga);
-            $this->messageBus->dispatch(new SagaMessage($saga->getId()));
+            $this->messageDispatcherService->dispatch(new SagaMessage($saga->getId()));
         }
 
         return $saga;
@@ -65,7 +65,7 @@ final class SagaService
         $details  = $this->theMovieDbApi->getDetailsSaga($saga);
         if (!isset($details['tmdb']) || is_null($details['tmdb'])) {
             $this->sagaRepository->delete($saga);
-            $this->logger->error('Saga not found TMDB id ' . $saga->getTmdb());
+            $this->logger->error('Saga not found TMDB id '.$saga->getTmdb());
 
             return false;
         }

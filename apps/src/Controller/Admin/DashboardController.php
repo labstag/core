@@ -133,7 +133,7 @@ class DashboardController extends AbstractDashboardController
         $avatar = $user->getAvatar();
         if ('' != $avatar) {
             $basePath = $this->fileService->getBasePath($user, 'avatarFile');
-            $userMenu->setAvatarUrl($basePath . '/' . $avatar);
+            $userMenu->setAvatarUrl($basePath.'/'.$avatar);
 
             return $userMenu;
         }
@@ -150,6 +150,8 @@ class DashboardController extends AbstractDashboardController
         $memos              = $repositoryAbstract->findBy(
             ['enable' => true]
         );
+
+        $paragraphs = [];
         foreach ($memos as $memo) {
             $idMemo     = $memo->getId();
             $paragraphs = $memo->getParagraphs()->getValues();
@@ -369,6 +371,11 @@ class DashboardController extends AbstractDashboardController
     private function buildSimpleCrudMenus(): iterable
     {
         $items = [
+            [
+                new TranslatableMessage('Person'),
+                'fas fa-users',
+                PersonCrudController::getEntityFqcn(),
+            ],
             [
                 new TranslatableMessage('Company'),
                 'fas fa-building',

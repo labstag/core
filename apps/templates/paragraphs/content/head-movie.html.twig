@@ -112,5 +112,23 @@
                 </div>
             {% endif %}
         {% endif %}
+        {% set castings = casting_cast(movie) %}
+        {% set actings = casting_acting(castings) %}
+        {% if actings|length > 0 %}
+            <div class="actings">
+                <h4 class="subtitle">
+                    {{ 'Cast'|trans }}
+                </h4>
+                <div class="wrapper">
+                    <ul> 
+                    {% for acting in actings %}
+                        <li class="teaser-person">
+                            {% include "teasers/person.html.twig"  with {'person': acting.refperson, 'figure': acting.figure} %}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </section>

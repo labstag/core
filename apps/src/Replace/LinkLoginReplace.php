@@ -22,7 +22,7 @@ class LinkLoginReplace extends ReplaceAbstract
 
         $params = $this->slugService->forEntity($login);
 
-        return $configuration->getUrl() . $this->router->generate('front', $params);
+        return $configuration->getUrl().$this->router->generate('front', $params);
     }
 
     public function getCode(): string

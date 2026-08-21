@@ -60,13 +60,13 @@ class MovieSlugHandler implements SlugHandlerInterface
             }
 
             $date    = $object->getReleaseDate();
-            $newSlug = $date ? $originalSlug . '-' . $date->format('Y') : $originalSlug . '-' . uniqid();
+            $newSlug = $date ? $originalSlug.'-'.$date->format('Y') : $originalSlug.'-'.uniqid();
             $existingMovie->setSlug($newSlug);
             $objectManager->persist($existingMovie);
         }
 
         $date = $object->getReleaseDate();
-        $slug = $date ? $originalSlug . '-' . $date->format('Y') : $originalSlug . '-' . uniqid();
+        $slug = $date ? $originalSlug.'-'.$date->format('Y') : $originalSlug.'-'.uniqid();
     }
 
     public function postSlugBuild(SluggableAdapter $sluggableAdapter, array &$config, $object, &$slug): void

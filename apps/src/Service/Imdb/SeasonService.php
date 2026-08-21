@@ -9,16 +9,17 @@ use Labstag\Entity\Serie;
 use Labstag\Message\EpisodeMessage;
 use Labstag\Repository\SeasonRepository;
 use Labstag\Service\FileService;
-use Symfony\Component\Messenger\MessageBusInterface;
+use Labstag\Service\MessageDispatcherService;
 
 final class SeasonService
 {
     public function __construct(
         private FileService $fileService,
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private SeasonRepository $seasonRepository,
         private EpisodeService $episodeService,
         private TheMovieDbApi $theMovieDbApi,
+        private PersonService $personService,
     )
     {
     }
@@ -100,10 +101,36 @@ final class SeasonService
             $this->updateSeason($season, $details),
             $this->updateImagePoster($season, $details),
             $this->updateImageBackdrop($season),
+            $this->updateCredits($season, $details),
             $this->updateEpisodes($season, $details),
         ];
 
         return in_array(true, $statuses, true);
+    }
+
+    private function updateCredits(Season $season, array $details): bool
+    {
+        foreach ($season->getCastings() as $casting) {
+            $season->removeCasting($casting);
+        }
+
+        if (isset($details['credits']['cast']) && is_array($details['credits']['cast'])) {
+            foreach ($details['credits']['cast'] as $cast) {
+                $person  = $this->personService->getPerson($cast);
+                $casting = $this->personService->addToCastingSeason($person, $season, $cast);
+                $season->addCasting($casting);
+            }
+        }
+
+        if (isset($details['credits']['crew']) && is_array($details['credits']['crew'])) {
+            foreach ($details['credits']['crew'] as $crew) {
+                $person  = $this->personService->getPerson($crew);
+                $casting = $this->personService->addToCastingSeason($person, $season, $crew);
+                $season->addCasting($casting);
+            }
+        }
+
+        return true;
     }
 
     private function updateEpisodes(Season $season, array $details): bool
@@ -117,7 +144,7 @@ final class SeasonService
 
         $episodes = $this->episodeService->getEpisodes($season);
         foreach ($episodes as $episode) {
-            $this->messageBus->dispatch(new EpisodeMessage($episode->getId()));
+            $this->messageDispatcherService->dispatch(new EpisodeMessage($episode->getId()));
         }
 
         return true;

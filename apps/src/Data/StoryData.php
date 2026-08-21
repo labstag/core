@@ -23,9 +23,15 @@ class StoryData extends PageData implements DataInterface
         );
 
         $slug = parent::generateSlug($page);
-        $slug['slug'] .= '/' . $entity->getSlug();
+        $slug['slug'] .= '/'.$entity->getSlug();
 
         return $slug;
+    }
+
+    #[Override]
+    public function getDefaultImage(object $entity): ?string
+    {
+        return $entity->getImg();
     }
 
     #[Override]

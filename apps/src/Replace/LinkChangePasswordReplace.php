@@ -34,7 +34,7 @@ class LinkChangePasswordReplace extends ReplaceAbstract
         $params        = $this->slugService->forEntity($page);
         $params['uid'] = $entity->getId();
 
-        return $configuration->getUrl() . $this->router->generate('front', $params);
+        return $configuration->getUrl().$this->router->generate('front', $params);
     }
 
     public function getCode(): string

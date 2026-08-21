@@ -6,6 +6,7 @@ use Exception;
 use Labstag\Entity\GeoCode;
 use Labstag\Message\GeocodeMessage;
 use Labstag\Service\GeocodeService;
+use Labstag\Service\MessageDispatcherService;
 use NumberFormatter;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -13,7 +14,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(name: 'labstag:geocode-install', description: 'Retrieve geocodes')]
 class GeocodeInstallCommand
@@ -25,7 +25,7 @@ class GeocodeInstallCommand
 
     public function __construct(
         private readonly GeocodeService $geocodeService,
-        protected MessageBusInterface $messageBus,
+        protected MessageDispatcherService $messageBus,
     )
     {
     }
