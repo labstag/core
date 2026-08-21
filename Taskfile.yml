@@ -575,7 +575,9 @@ tasks:
     - echo "🔍 Complete quality checks in progress..."
     - task: lint:all
     - task: test:all
-    - task: phpstan:5
+    - task: phpstan
+      vars:
+        LEVEL: "5"
     - echo "✅ Quality checks completed!"
 
   quality:ci:
@@ -584,7 +586,9 @@ tasks:
     - echo "🔄 CI quality checks in progress..."
     - task: lint:phpaudit
     - task: test:quick
-    - task: phpstan:8
+    - task: phpstan
+      vars:
+        LEVEL: "8"
     - echo "✅ CI quality checks completed!"
 
   fix:all:

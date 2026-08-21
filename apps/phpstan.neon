@@ -11,6 +11,9 @@ parameters:
         - public
         - src
         - tests
+    excludePaths:
+        analyse:
+            - config/reference.php
     treatPhpDocTypesAsCertain: false
     doctrine:
         objectManagerLoader: tests/object-manager.php

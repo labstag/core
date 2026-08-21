@@ -154,6 +154,8 @@ final class EasyadminVoter extends Voter
                 return true;
             }
         }
+
+        return false;
     }
 
     private function menuCrud(MenuItemDto $menuItemDto, UserInterface $user): bool
