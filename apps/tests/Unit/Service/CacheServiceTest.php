@@ -107,7 +107,7 @@ final class CacheServiceTest extends TestCase
     {
         // Arrange
         $key           = 'test_key';
-        $expectedValue = 'cached_value';
+        $expectedValue = 'callback_value';
         $defaultTtl    = 3600;
         $callback      = fn (): string => 'callback_value';
 
