@@ -1,0 +1,76 @@
+<table class="table datagrid{% if movies|length == 0 %} datagrid-empty{% endif %} data-ajax" data-page="{{ page }}">
+    {% if movies|length != 0 %}
+        <thead>
+            <tr>
+                <th>
+                    {{ 'Name'|trans }}
+                </th>
+                <th>
+                    {{ 'Cover'|trans }}
+                </th>
+                <th>
+                    {{ 'Release date'|trans }}
+                </th>
+                <th>
+                    {{ 'Url'|trans }}
+                </th>
+                <th>
+                    {{ 'Action'|trans }}
+                </th>
+            </tr>
+        </thead>
+    {% endif %}
+    <tbody>
+        {% for movie in movies %}
+            <tr data-id="{{ movie.id }}">
+                <td class="text-left" dir="ltr">
+                    <span title="{{ movie.title|e('html_attr') }}">{{ movie.title }}</span>
+                </td>
+                <td>
+                    {% if movie.poster_path is defined and movie.poster_path != '' %}
+                        <img src="{{ movie.poster_path }}" alt="{{ movie.title|e('html_attr') }}">
+                    {% else %}
+                        <span title="N/A">N/A</span>
+                    {% endif %}
+                <td>
+                    {% if movie.release_date is defined %}
+                        {{ movie.release_date|date('d/m/Y') }}
+                    {% else %}
+                        <span title="N/A">N/A</span>
+                    {% endif %}
+                </td>
+                <td class="text-left" dir="ltr">
+                    <a href="https://www.themoviedb.org/movie/{{ movie.id }}" target="_blank">
+                        {{ 'Link Tmdb'|trans }}
+                    </a>
+                </td>
+                <td>
+                    <a href="{{ ea_url().setController(controller).setAction('addByApi').set('id', movie.id) }}" class="addtobdd">
+                        {{ 'Select'|trans }}
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            {% block table_body_empty %}
+				{% for i in 1..6 %}
+					<tr class="empty-row">
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+					</tr>
+
+					{% if 3 == loop.index %}
+						<tr class="no-results">
+							<td colspan="100">
+								{{ t('datagrid.no_results', ea().i18n.translationParameters, 'EasyAdminBundle')|trans }}
+							</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			{% endblock table_body_empty %}
+        {% endfor %}
+    </tbody>
+</table>

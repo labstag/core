@@ -4,7 +4,6 @@ namespace Labstag\MessageHandler;
 
 use Labstag\Entity\Serie;
 use Labstag\Message\SerieMessage;
-use Labstag\Repository\SeasonRepository;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\Imdb\SerieService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -15,7 +14,6 @@ final class SerieMessageHandler
     public function __construct(
         private SerieService $serieService,
         private SerieRepository $serieRepository,
-        private SeasonRepository $seasonRepository,
     )
     {
     }

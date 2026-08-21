@@ -97,14 +97,14 @@ abstract class FileStorageAbstract
 
     private function getFolder(): mixed
     {
-        $config = Yaml::parse(file_get_contents($this->kernel->getProjectDir() . '/config/packages/flysystem.yaml'));
+        $config = Yaml::parse(file_get_contents($this->kernel->getProjectDir().'/config/packages/flysystem.yaml'));
 
         $storages = $config['flysystem']['storages'];
-        if (!array_key_exists($this->type . '.storage', $storages)) {
+        if (!array_key_exists($this->type.'.storage', $storages)) {
             throw new Exception('Type not found');
         }
 
-        $storage = $storages[$this->type . '.storage'];
+        $storage = $storages[$this->type.'.storage'];
 
         return $storage['options']['directory'];
     }

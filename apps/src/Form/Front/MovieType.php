@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @extends AbstractType<mixed>
@@ -27,6 +28,7 @@ class MovieType extends AbstractType
         protected CategoryService $categoryService,
         protected SagaService $sagaService,
         protected RouterInterface $router,
+        protected TranslatorInterface $translator,
         protected RequestStack $requestStack,
     )
     {
@@ -73,9 +75,21 @@ class MovieType extends AbstractType
                 'choices'  => $this->movieService->getYearForForm(),
             ]
         );
-        $title       = new TranslatableMessage('Title');
-        $releaseDate = new TranslatableMessage('Release date');
-        $dateAdded   = new TranslatableMessage('Date added');
+        $titleTranslation       = new TranslatableMessage('Title');
+        $title                  = $this->translator->trans(
+            $titleTranslation->getMessage(),
+            $titleTranslation->getParameters()
+        );
+        $releaseDateTranslation = new TranslatableMessage('Release date');
+        $releaseDate            = $this->translator->trans(
+            $releaseDateTranslation->getMessage(),
+            $releaseDateTranslation->getParameters()
+        );
+        $dateAddedTranslation   = new TranslatableMessage('Date added');
+        $dateAdded              = $this->translator->trans(
+            $dateAddedTranslation->getMessage(),
+            $dateAddedTranslation->getParameters()
+        );
         $formBuilder->add(
             'order',
             ChoiceType::class,
@@ -83,14 +97,22 @@ class MovieType extends AbstractType
                 'required' => false,
                 'label'    => new TranslatableMessage('Order'),
                 'choices'  => [
-                    $title->__toString()       => 'title',
-                    $releaseDate->__toString() => 'releaseDate',
-                    $dateAdded->__toString()   => 'createdAt',
+                    $title       => 'title',
+                    $releaseDate => 'releaseDate',
+                    $dateAdded   => 'createdAt',
                 ],
             ]
         );
-        $ascending  = new TranslatableMessage('Ascending');
-        $descending = new TranslatableMessage('Descending');
+        $ascendingTranslation  = new TranslatableMessage('Ascending');
+        $ascending             = $this->translator->trans(
+            $ascendingTranslation->getMessage(),
+            $ascendingTranslation->getParameters()
+        );
+        $descendingTranslation = new TranslatableMessage('Descending');
+        $descending            = $this->translator->trans(
+            $descendingTranslation->getMessage(),
+            $descendingTranslation->getParameters()
+        );
         $formBuilder->add(
             'orderby',
             ChoiceType::class,
@@ -98,8 +120,8 @@ class MovieType extends AbstractType
                 'required' => false,
                 'label'    => new TranslatableMessage('Sort'),
                 'choices'  => [
-                    $ascending->__toString()  => 'ASC',
-                    $descending->__toString() => 'DESC',
+                    $ascending  => 'ASC',
+                    $descending => 'DESC',
                 ],
             ]
         );

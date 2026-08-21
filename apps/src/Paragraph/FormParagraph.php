@@ -65,14 +65,15 @@ class FormParagraph extends ParagraphAbstract implements ParagraphInterface
         $choiceField->setChoices($this->formService->all());
         yield $choiceField;
         yield BooleanField::new('save', new TranslatableMessage('Save data in database'));
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Confirm message'));
+        $translatableMessage = new TranslatableMessage('Confirm message');
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
         yield $wysiwygField;
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Formulaire');
+        return new TranslatableMessage('Formulaire');
     }
 
     #[Override]
@@ -98,7 +99,7 @@ class FormParagraph extends ParagraphAbstract implements ParagraphInterface
             return [];
         }
 
-        $templates = $this->getTemplateContent($type, $this->getType() . '/' . $paragraph->getForm());
+        $templates = $this->getTemplateContent($type, $this->getType().'/'.$paragraph->getForm());
 
         if ($templates['view'] != end($templates['files'])) {
             return $templates;

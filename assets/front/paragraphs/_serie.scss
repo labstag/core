@@ -1,5 +1,6 @@
 @use "../mixins";
 @use "../variables";
+@use "../icons";
 
 @use "sass:color";
 
@@ -25,6 +26,10 @@
       color: #c0392b;
       font-weight: bold;
       font-size: 1.2em;
+      &::before {
+        @extend .iconbefore;
+        @extend .icon-tvshow;
+      }
     }
   }
 

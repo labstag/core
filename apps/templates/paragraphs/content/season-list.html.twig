@@ -8,8 +8,8 @@
         {% endif %}
         <ul>
             {% for row in seasons %}
-                <li class="teaser-season">
-                    {% include  "teasers/season.html.twig"  with {'season': row} %}
+                <li class="teaser-season" id="season-{{ row.number }}">
+                    {% include "teasers/season.html.twig"  with {'season': row} %}
                 </li>
             {% endfor %}
         </ul>

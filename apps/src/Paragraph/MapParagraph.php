@@ -36,9 +36,9 @@ class MapParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Map');
+        return new TranslatableMessage('Map');
     }
 
     #[Override]

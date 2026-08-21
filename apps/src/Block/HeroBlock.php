@@ -15,9 +15,9 @@ class HeroBlock extends ParagraphBlockAbstract
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Hero');
+        return new TranslatableMessage('Hero');
     }
 
     #[Override]

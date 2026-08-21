@@ -51,9 +51,9 @@ class ChapterLastNextParagraph extends ParagraphAbstract implements ParagraphInt
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Chapitre last next');
+        return new TranslatableMessage('Chapitre last next');
     }
 
     #[Override]

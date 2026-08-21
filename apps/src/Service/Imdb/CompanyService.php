@@ -2,20 +2,19 @@
 
 namespace Labstag\Service\Imdb;
 
-use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Company;
 use Labstag\Message\CompanyMessage;
 use Labstag\Repository\CompanyRepository;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 final class CompanyService
 {
     public function __construct(
         private LoggerInterface $logger,
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private CompanyRepository $companyRepository,
         private FileService $fileService,
         private TheMovieDbApi $theMovieDbApi,
@@ -35,7 +34,7 @@ final class CompanyService
             $company->setTitle($data['name']);
             $company->setTmdb($data['id']);
             $this->companyRepository->save($company);
-            $this->messageBus->dispatch(new CompanyMessage($company->getId()));
+            $this->messageDispatcherService->dispatch(new CompanyMessage($company->getId()));
         }
 
         return $company;
@@ -46,7 +45,7 @@ final class CompanyService
         $details = $this->theMovieDbApi->getDetailsCompany($company);
         if (is_null($details['tmdb'])) {
             $this->companyRepository->delete($company);
-            $this->logger->error('Company not found TMDB id ' . $company->getTmdb());
+            $this->logger->error('Company not found TMDB id '.$company->getTmdb());
 
             return false;
         }
@@ -81,16 +80,8 @@ final class CompanyService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $this->fileService->setUploadedFile($poster, $company, 'imgFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $company, 'imgFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 }

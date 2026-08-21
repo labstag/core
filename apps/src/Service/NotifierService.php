@@ -4,9 +4,6 @@ namespace Labstag\Service;
 
 use Exception;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Notifier\Bridge\Bluesky\BlueskyOptions;
-use Symfony\Component\Notifier\Bridge\Discord\DiscordOptions;
-use Symfony\Component\Notifier\Bridge\Mastodon\MastodonOptions;
 use Symfony\Component\Notifier\Bridge\Telegram\TelegramOptions;
 use Symfony\Component\Notifier\ChatterInterface;
 use Symfony\Component\Notifier\Message\ChatMessage;

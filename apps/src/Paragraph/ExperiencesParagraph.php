@@ -61,8 +61,12 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
         $collectionField->setEntryToStringMethod(
             function ($link): string {
                 unset($link);
+                $translatableMessage = new TranslatableMessage('Skill');
 
-                return $this->translator->trans(new TranslatableMessage('Skill'));
+                return $this->translator->trans(
+                    $translatableMessage->getMessage(),
+                    $translatableMessage->getParameters()
+                );
             }
         );
         $collectionField->setFormTypeOption(
@@ -74,9 +78,9 @@ class ExperiencesParagraph extends ParagraphAbstract implements ParagraphInterfa
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Experiences');
+        return new TranslatableMessage('Experiences');
     }
 
     #[Override]

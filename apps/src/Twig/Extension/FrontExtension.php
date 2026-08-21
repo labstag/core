@@ -11,7 +11,7 @@ use Twig\TwigFunction;
 class FrontExtension extends AbstractExtension
 {
     #[Override]
-    public function getFilters()
+    public function getFilters(): array
     {
         return [new TwigFilter('enable', [FrontExtensionRuntime::class, 'enable'])];
     }

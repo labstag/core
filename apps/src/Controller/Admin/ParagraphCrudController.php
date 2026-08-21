@@ -11,11 +11,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
 use Labstag\Filter\DiscriminatorTypeFilter;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ParagraphCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -30,7 +31,7 @@ class ParagraphCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -64,14 +65,15 @@ class ParagraphCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
+        $translatableMessage = new TranslatableMessage('Parent');
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
-            [ParagraphParentField::new('parent', new TranslatableMessage('Parent'))]
+            [ParagraphParentField::new('parent', $translatableMessage->getMessage())]
         );
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -92,7 +94,9 @@ class ParagraphCrudController extends CrudControllerAbstract
                     return $value;
                 }
 
-                return $this->translator->trans($paragraph->getName());
+                $message = $paragraph->getName();
+
+                return $this->translator->trans($message->getMessage(), $message->getParameters());
             }
         );
         $textField->setDisabled(true);
@@ -105,7 +109,7 @@ class ParagraphCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $types = $this->paragraphService->getAll(null);
@@ -113,7 +117,8 @@ class ParagraphCrudController extends CrudControllerAbstract
             return $filters;
         }
 
-        $discriminatorTypeFilter = DiscriminatorTypeFilter::new('type', new TranslatableMessage('Type'));
+        $translatableMessage         = new TranslatableMessage('Type');
+        $discriminatorTypeFilter     = DiscriminatorTypeFilter::new('type', $translatableMessage->getMessage());
         $discriminatorTypeFilter->setParagraphService($this->paragraphService);
         $discriminatorTypeFilter->setChoices(
             array_merge(

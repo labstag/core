@@ -1,5 +1,5 @@
 {% set instance = entity.instance %}
-{% if ea.crud.currentAction == 'detail' %}
+{% if ea().crud.currentAction == 'detail' %}
   <ul>
     {% for movie in instance.movies %}
       <li>

@@ -21,6 +21,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
 #[ORM\DiscriminatorMap(
     [
+        'game'  => GameCategory::class,
         'movie' => MovieCategory::class,
         'page'  => PageCategory::class,
         'post'  => PostCategory::class,
@@ -44,11 +45,11 @@ abstract class Category implements Stringable
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(targetEntity: self::class, cascade: ['persist', 'detach'], inversedBy: 'children')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     protected ?self $parent = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[Gedmo\Slug(fields: ['title'], updatable: true)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     protected ?string $slug = null;
 

@@ -4,14 +4,14 @@ namespace Labstag\Service\Imdb;
 
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
+use Labstag\Repository\MovieRepository;
 use Labstag\Service\CategoryService;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
-use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Labstag\Service\VideoService;
 
 final class MovieService
 {
@@ -27,12 +27,15 @@ final class MovieService
     private array $year = [];
 
     public function __construct(
-        private RecommendationService $recommendationService,
+        private ConfigurationService $configurationService,
         private FileService $fileService,
+        private PersonService $personService,
         private CompanyService $companyService,
         private CategoryService $categoryService,
         private SagaService $sagaService,
         private EntityManagerInterface $entityManager,
+        private MovieRepository $movieRepository,
+        private VideoService $videoService,
         private TheMovieDbApi $theMovieDbApi,
     )
     {
@@ -54,6 +57,33 @@ final class MovieService
         $this->country = $country;
 
         return $country;
+    }
+
+    public function getMovieApi(array $data, int $page = 1): array
+    {
+        $movies             = [];
+        $tmdbs              = $this->movieRepository->getAllTmdb();
+        if (isset($data['imdb']) && !empty($data['imdb'])) {
+            $results = $this->theMovieDbApi->other()->findByImdb($data['imdb']);
+            if (isset($results['movie_results'])) {
+                $movies = $results['movie_results'];
+            }
+
+            return $this->updateResult($movies, $tmdbs);
+        }
+
+        $search             = '';
+        if (isset($data['title'])) {
+            $search = $data['title'];
+        }
+
+        $locale             = $this->configurationService->getLocaleTmdb();
+        $results            = $this->theMovieDbApi->movies()->search(searchQuery: $search, page: $page, language: $locale);
+        if (isset($results['results'])) {
+            $movies = $results['results'];
+        }
+
+        return $this->updateResult($movies, $tmdbs);
     }
 
     /**
@@ -89,7 +119,6 @@ final class MovieService
         }
 
         $statuses = [
-            $this->updateRecommendations($movie, $details),
             $this->updateMovie($movie, $details),
             $this->updateOther($movie, $details),
             $this->updateImagePoster($movie, $details),
@@ -97,10 +126,36 @@ final class MovieService
             $this->updateSaga($movie, $details),
             $this->updateCategory($movie, $details),
             $this->updateCompany($movie, $details),
+            $this->updateCredits($movie, $details),
             $this->updateTrailer($movie, $details),
         ];
 
         return in_array(true, $statuses, true);
+    }
+
+    public function updateCredits(Movie $movie, array $details): bool
+    {
+        foreach ($movie->getCastings() as $casting) {
+            $movie->removeCasting($casting);
+        }
+
+        if (isset($details['credits']['cast']) && is_array($details['credits']['cast'])) {
+            foreach ($details['credits']['cast'] as $cast) {
+                $person  = $this->personService->getPerson($cast);
+                $casting = $this->personService->addToCastingMovie($person, $movie, $cast);
+                $movie->addCasting($casting);
+            }
+        }
+
+        if (isset($details['credits']['crew']) && is_array($details['credits']['crew'])) {
+            foreach ($details['credits']['crew'] as $crew) {
+                $person  = $this->personService->getPerson($crew);
+                $casting = $this->personService->addToCastingMovie($person, $movie, $crew);
+                $movie->addCasting($casting);
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -182,17 +237,9 @@ final class MovieService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
+        $this->fileService->setUploadedFile($backdrop, $movie, 'backdropFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($backdrop));
-            $this->fileService->setUploadedFile($tempPath, $movie, 'backdropFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     /**
@@ -208,17 +255,9 @@ final class MovieService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $this->fileService->setUploadedFile($poster, $movie, 'posterFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $movie, 'posterFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     /**
@@ -274,12 +313,17 @@ final class MovieService
         return true;
     }
 
-    private function updateRecommendations(Movie $movie, array $details): bool
+    private function updateResult($movies, array $tmdbs): array
     {
-        $this->recommendationService->setRecommendations($movie, $details['recommendations']['results'] ?? null);
-        $this->recommendationService->setRecommendations($movie, $details['similar']['results'] ?? null);
+        foreach ($movies as &$movie) {
+            $movie['release_date']   = empty($movie['release_date']) ? null : new DateTime($movie['release_date']);
+            $movie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
+                $movie['poster_path'] ?? '',
+                100
+            );
+        }
 
-        return true;
+        return array_filter($movies, fn (array $movie): bool => !in_array($movie['id'], $tmdbs));
     }
 
     /**
@@ -303,21 +347,11 @@ final class MovieService
      */
     private function updateTrailer(Movie $movie, array $details): bool
     {
-        if (is_null($details['videos']) || !is_array($details['videos'])) {
-            return false;
-        }
-
-        $find = false;
-
-        foreach ($details['videos']['results'] as $result) {
-            if ('YouTube' == $result['site'] && 'Trailer' == $result['type']) {
-                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
-                $movie->setTrailer($url);
-
-                $find = true;
-
-                break;
-            }
+        $find  = false;
+        $video = $this->videoService->getTrailer($details['videos']);
+        if (!is_null($video)) {
+            $movie->setTrailer($video);
+            $find = true;
         }
 
         return $find;

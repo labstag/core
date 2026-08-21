@@ -8,6 +8,7 @@ use Labstag\Entity\Post;
 use Labstag\Entity\User;
 use Labstag\Service\EtagCacheService;
 use Labstag\Tests\AbstractTestCase;
+use Override;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -44,7 +45,7 @@ final class CachePerformanceTest extends AbstractTestCase
         for ($i = 0; self::CACHE_INVALIDATION_TEST_ENTITIES > $i; ++$i) {
             $user = new User();
             $user->setEmail(sprintf('invalidation%d@example.com', $i));
-            $user->setUsername('invaliduser' . $i);
+            $user->setUsername('invaliduser'.$i);
             $user->setPassword('password');
             $user->setEnable(true);
             $user->setLanguage('fr');
@@ -81,7 +82,7 @@ final class CachePerformanceTest extends AbstractTestCase
         $posts = [];
         for ($i = 0; self::CACHE_VALIDATION_TEST_ENTITIES > $i; ++$i) {
             $post = new Post();
-            $post->setTitle('Cache Validation Post ' . $i);
+            $post->setTitle('Cache Validation Post '.$i);
             $post->setEnable(true);
             $this->persistAndFlush($post);
             $posts[] = $post;
@@ -113,7 +114,7 @@ final class CachePerformanceTest extends AbstractTestCase
         $entities = [];
         for ($i = 0; self::COLLECTION_ETAG_TEST_ENTITIES > $i; ++$i) {
             $post = new Post();
-            $post->setTitle('Performance Post ' . $i);
+            $post->setTitle('Performance Post '.$i);
             $post->setEnable(true);
             $this->persistAndFlush($post);
             $entities[] = $post;
@@ -203,7 +204,7 @@ final class CachePerformanceTest extends AbstractTestCase
         for ($i = 0; self::ETAG_GENERATION_TEST_ENTITIES > $i; ++$i) {
             $user = new User();
             $user->setEmail(sprintf('performance%d@example.com', $i));
-            $user->setUsername('perfuser' . $i);
+            $user->setUsername('perfuser'.$i);
             $user->setPassword('password');
             $user->setEnable(true);
             $user->setLanguage('fr');
@@ -241,7 +242,7 @@ final class CachePerformanceTest extends AbstractTestCase
         for ($i = 0; self::MEMORY_LEAK_TEST_ENTITIES > $i; ++$i) {
             $user = new User();
             $user->setEmail(sprintf('leak%d@example.com', $i));
-            $user->setUsername('leakuser' . $i);
+            $user->setUsername('leakuser'.$i);
             $user->setPassword('password');
             $user->setEnable(true);
             $user->setLanguage('fr');
@@ -264,7 +265,7 @@ final class CachePerformanceTest extends AbstractTestCase
         $this->assertLessThan(10 * 1024 * 1024, $memoryIncrease, 'Memory increase should be less than 10MB');
     }
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -272,7 +273,7 @@ final class CachePerformanceTest extends AbstractTestCase
         $this->stopwatch        = new Stopwatch();
     }
 
-    #[\Override]
+    #[Override]
     protected function tearDown(): void
     {
         // Clean cache after each test

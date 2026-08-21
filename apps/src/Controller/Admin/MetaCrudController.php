@@ -8,11 +8,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Meta;
 use Labstag\Field\MetaParentField;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class MetaCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -21,17 +22,18 @@ class MetaCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
+        $translatableMessage = new TranslatableMessage('Parent');
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
                 $this->crudFieldFactory->titleField(),
                 TextField::new('keywords', new TranslatableMessage('Keywords')),
                 TextField::new('description', new TranslatableMessage('Description')),
-                MetaParentField::new('parent', new TranslatableMessage('Parent')),
+                MetaParentField::new('parent', $translatableMessage->getMessage()),
             ]
         );
 

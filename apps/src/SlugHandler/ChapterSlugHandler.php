@@ -17,7 +17,7 @@ class ChapterSlugHandler implements SlugHandlerInterface
     {
     }
 
-    public function handlesUrlization()
+    public function handlesUrlization(): bool
     {
         return false;
     }
@@ -88,7 +88,7 @@ class ChapterSlugHandler implements SlugHandlerInterface
                 break;
             }
 
-            $slug = $unicodeString . '-' . $number;
+            $slug = $unicodeString.'-'.$number;
             ++$number;
         }
 

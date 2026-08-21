@@ -33,7 +33,7 @@ class UserRepository extends RepositoryAbstract implements PasswordUpgraderInter
         $queryBuilder->setParameters($data);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'user-by-username-' . md5($field));
+        $query->enableResultCache(3600, 'user-by-username-'.md5($field));
 
         return $query->getOneOrNullResult();
     }

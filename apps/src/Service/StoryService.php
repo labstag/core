@@ -47,11 +47,11 @@ final class StoryService
 
     public function update(Story $story): bool
     {
-        $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug() . '.pdf';
+        $tempPath = $this->getTemporaryFolder().'/'.$story->getSlug().'.pdf';
 
         $mpdf = new Mpdf(
             [
-                'tempDir' => $this->getTemporaryFolder() . '/tmp',
+                'tempDir' => $this->getTemporaryFolder().'/tmp',
             ]
         );
         $mpdf->SetAuthor($story->getRefuser()->getUsername());
@@ -65,7 +65,10 @@ final class StoryService
         $translatableMessage = new TranslatableMessage('Table of Contents');
         $mpdf->TOCpagebreakByArray(
             [
-                'toc-preHTML' => '<h1>' . $this->translator->trans($translatableMessage) . '</h1>',
+                'toc-preHTML' => '<h1>'.$this->translator->trans(
+                    $translatableMessage->getMessage(),
+                    $translatableMessage->getParameters()
+                ).'</h1>',
                 'links'       => true,
             ]
         );
@@ -87,8 +90,8 @@ final class StoryService
         $mpdf->WriteHTML(
             '
             <div style="text-align:center;">
-                <h1>' . $story->getTitle() . '</h1>
-                <h3>Auteur : ' . $story->getRefuser()->getUsername() . '</h3>
+                <h1>'.$story->getTitle().'</h1>
+                <h3>Auteur : '.$story->getRefuser()->getUsername().'</h3>
             </div>
         '
         );
@@ -102,7 +105,7 @@ final class StoryService
     private function getChapters(Story $story): array
     {
         return $this->cacheService->get(
-            'story_chapters_' . $story->getId(),
+            'story_chapters_'.$story->getId(),
             function () use ($story): array {
                 $chapters = [];
                 $data     = $story->getChapters();
@@ -138,7 +141,7 @@ final class StoryService
         foreach ($paragraphs as $paragraph) {
             if ($paragraph instanceof TextParagraph) {
                 if (0 === $position) {
-                    $mpdf->WriteHTML('<h2>' . $chapter->getTitle() . '</h2>');
+                    $mpdf->WriteHTML('<h2>'.$chapter->getTitle().'</h2>');
                 }
 
                 $mpdf->WriteHTML($paragraph->getContent());

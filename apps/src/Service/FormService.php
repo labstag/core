@@ -65,6 +65,6 @@ final class FormService
             return [];
         }
 
-        return $frontform->setParamsTwig($form, $formCode, $paragraph, $data, $disable, $save);
+        return $frontform->setParamsTwig($form, $paragraph, $data, $disable, $save);
     }
 }

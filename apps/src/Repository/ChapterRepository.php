@@ -31,7 +31,7 @@ class ChapterRepository extends RepositoryAbstract
         $queryBuilder->orderBy('c.position', 'ASC');
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'chapter-activate-story-' . $story->getId());
+        $query->enableResultCache(3600, 'chapter-activate-story-'.$story->getId());
 
         return $query->getResult();
     }

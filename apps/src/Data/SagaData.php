@@ -6,12 +6,13 @@ use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Saga;
 use Labstag\Enum\PageEnum;
+use Override;
 use Spatie\SchemaOrg\Schema;
 use Symfony\Component\Routing\RouterInterface;
 
 class SagaData extends PageData implements DataInterface
 {
-    #[\Override]
+    #[Override]
     public function asset(mixed $entity, string $field): string
     {
         $asset = $this->fileService->asset($entity, $field);
@@ -26,8 +27,8 @@ class SagaData extends PageData implements DataInterface
         return $this->fileService->asset($entity, $field);
     }
 
-    #[\Override]
-    public function generateSlug(object $entity): string
+    #[Override]
+    public function generateSlug(object $entity): array
     {
         $page = $this->entityManager->getRepository(Page::class)->findOneBy(
             [
@@ -35,10 +36,19 @@ class SagaData extends PageData implements DataInterface
             ]
         );
 
-        return parent::generateSlug($page) . '/' . $entity->getSlug();
+        $slug = parent::generateSlug($page);
+        $slug['slug'] .= '/'.$entity->getSlug();
+
+        return $slug;
     }
 
-    #[\Override]
+    #[Override]
+    public function getDefaultImage(object $entity): ?string
+    {
+        return $entity->getPoster();
+    }
+
+    #[Override]
     public function getEntity(?string $slug): object
     {
         return $this->getEntityBySlugSaga($slug);
@@ -78,6 +88,9 @@ class SagaData extends PageData implements DataInterface
             $movie->image($img);
         }
 
+        $actors = $this->getJsonLdActors($entity);
+        $movie->actor($actors);
+
         return $movie;
     }
 
@@ -86,31 +99,25 @@ class SagaData extends PageData implements DataInterface
         $movieSeries = Schema::movieSeries();
         $movieSeries->name($saga->getTitle());
 
-        $slug = $this->slugService->forEntity($saga);
-        $movieSeries->url(
-            $this->router->generate(
-                'front',
-                ['slug' => $slug],
-                RouterInterface::ABSOLUTE_URL
-            )
-        );
+        $params = $this->slugService->forEntity($saga);
+        $movieSeries->url($this->router->generate('front', $params, RouterInterface::ABSOLUTE_URL));
 
         return $movieSeries;
     }
 
-    #[\Override]
+    #[Override]
     public function getTitle(object $entity): string
     {
         return $entity->getTitle();
     }
 
-    #[\Override]
+    #[Override]
     public function getTitleMeta(object $entity): string
     {
         return $this->getTitle($entity);
     }
 
-    #[\Override]
+    #[Override]
     public function match(?string $slug): bool
     {
         $page = $this->getEntityBySlugSaga($slug);
@@ -118,7 +125,7 @@ class SagaData extends PageData implements DataInterface
         return $page instanceof Saga;
     }
 
-    #[\Override]
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('saga');
@@ -129,19 +136,19 @@ class SagaData extends PageData implements DataInterface
         return $this->configPlaceholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Saga;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsData(object $entity): bool
     {
         return $entity instanceof Saga;
     }
 
-    #[\Override]
+    #[Override]
     public function supportsJsonLd(object $entity): bool
     {
         return $entity instanceof Saga;
@@ -170,5 +177,37 @@ class SagaData extends PageData implements DataInterface
         return $this->entityManager->getRepository(Saga::class)->findOneBy(
             ['slug' => $slugSecond]
         );
+    }
+
+    private function getJsonLdActors(Movie $movie): array
+    {
+        $actors = [];
+        foreach ($movie->getCastings() as $casting) {
+            $person             = $casting->getRefPerson();
+            $knownForDepartment = $casting->getKnownForDepartment();
+            if ('Acting' !== $knownForDepartment || false === $person->isEnable()) {
+                continue;
+            }
+
+            $actors[] = $this->getJsonLdPerson($person);
+        }
+
+        return $actors;
+    }
+
+    private function getJsonLdPerson(object $entity): object
+    {
+        $person = Schema::person();
+        $person->name($entity->getTitle());
+
+        $img = $this->siteService->asset($entity, 'profile', true, true);
+        $person->url(
+            $this->router->generate('front', $this->slugService->forEntity($entity), RouterInterface::ABSOLUTE_URL)
+        );
+        if ('' !== $img) {
+            $person->image($img);
+        }
+
+        return $person;
     }
 }

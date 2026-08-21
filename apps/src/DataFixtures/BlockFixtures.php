@@ -89,9 +89,11 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($block, 'head-chapter');
         $this->paragraphService->addParagraph($block, 'head-season');
         $this->paragraphService->addParagraph($block, 'head-saga');
+        $this->paragraphService->addParagraph($block, 'head-game');
         $this->paragraphService->addParagraph($block, 'season-list');
         $this->paragraphService->addParagraph($block, 'episode-list');
         $this->paragraphService->addParagraph($block, 'saga-list');
+        $this->paragraphService->addParagraph($block, 'error');
     }
 
     private function addParagraphsTest(Block $block): void
@@ -196,7 +198,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
     {
         $block = $this->blockService->getByCode($code);
         if (is_null($block)) {
-            throw new Exception('Block ' . $code . ' not found');
+            throw new Exception('Block '.$code.' not found');
         }
 
         $blockClass = $block->getClass();
@@ -216,7 +218,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
 
         $data[] = [
             'title'   => $page->getTitle(),
-            'url'     => '[pageurl:' . $page->getId() . ']',
+            'url'     => '[pageurl:'.$page->getId().']',
             'classes' => null,
             'blank'   => false,
         ];

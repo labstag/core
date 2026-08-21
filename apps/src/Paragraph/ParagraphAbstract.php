@@ -14,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Labstag\Context\ExceptionContext;
 use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\Paragraph;
 use Labstag\Service\ConfigurationService;
@@ -67,6 +68,7 @@ abstract class ParagraphAbstract extends AbstractController
     protected array $templates = [];
 
     public function __construct(
+        protected ExceptionContext $context,
         protected LoggerInterface $logger,
         protected Security $security,
         protected AdminUrlGenerator $adminUrlGenerator,
@@ -91,7 +93,7 @@ abstract class ParagraphAbstract extends AbstractController
     {
         $label = new TranslatableMessage('File');
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $textField = TextField::new($type . 'File', $label);
+            $textField = TextField::new($type.'File', $label);
             $textField->setFormType(VichFileType::class);
             $deleteLabel      = new TranslatableMessage('Delete file');
             $downloadLabel    = new TranslatableMessage('Download');
@@ -102,16 +104,23 @@ abstract class ParagraphAbstract extends AbstractController
                 [
                     'required'       => false,
                     'allow_delete'   => true,
-                    'delete_label'   => $deleteLabel->__toString(),
-                    'download_label' => $downloadLabel->__toString(),
+                    'delete_label'   => $this->translator->trans(
+                        $deleteLabel->getMessage(),
+                        $deleteLabel->getParameters()
+                    ),
+                    'download_label' => $this->translator->trans(
+                        $downloadLabel->getMessage(),
+                        $downloadLabel->getParameters()
+                    ),
                     'download_uri'   => true,
                     'asset_helper'   => true,
                     'constraints'    => [
                         new File(
-                            [
-                                'maxSize'        => ini_get('upload_max_filesize'),
-                                'maxSizeMessage' => $maxSizeMessage->__toString(),
-                            ]
+                            maxSize: ini_get('upload_max_filesize'),
+                            maxSizeMessage: $this->translator->trans(
+                                $maxSizeMessage->getMessage(),
+                                $maxSizeMessage->getParameters()
+                            ),
                         ),
                     ],
                 ]
@@ -120,7 +129,7 @@ abstract class ParagraphAbstract extends AbstractController
             return $textField;
         }
 
-        $this->fileService->getBasePath($paragraph::class, $type . 'File');
+        $this->fileService->getBasePath($paragraph::class, $type.'File');
         $imageField = TextField::new($type, $label);
         $imageField->setTemplatePath('admin/field/file-upload.html.twig');
 
@@ -131,7 +140,7 @@ abstract class ParagraphAbstract extends AbstractController
     {
         $label = new TranslatableMessage('Image');
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
-            $textField = TextField::new($type . 'File', $label);
+            $textField = TextField::new($type.'File', $label);
             $textField->setFormType(VichImageType::class);
             $deleteLabel      = new TranslatableMessage('Delete image');
             $downloadLabel    = new TranslatableMessage('Download');
@@ -143,24 +152,34 @@ abstract class ParagraphAbstract extends AbstractController
                 [
                     'required'       => false,
                     'allow_delete'   => true,
-                    'delete_label'   => $deleteLabel->__toString(),
-                    'download_label' => $downloadLabel->__toString(),
+                    'delete_label'   => $this->translator->trans(
+                        $deleteLabel->getMessage(),
+                        $deleteLabel->getParameters()
+                    ),
+                    'download_label' => $this->translator->trans(
+                        $downloadLabel->getMessage(),
+                        $downloadLabel->getParameters()
+                    ),
                     'download_uri'   => true,
                     'image_uri'      => true,
                     'asset_helper'   => true,
                     'constraints'    => [
                         new File(
-                            [
-                                'maxSize'          => ini_get('upload_max_filesize'),
-                                'mimeTypes'        => [
-                                    'image/jpeg',
-                                    'image/png',
-                                    'image/gif',
-                                    'image/webp',
-                                ],
-                                'mimeTypesMessage' => $mimeTypesMessage->__toString(),
-                                'maxSizeMessage'   => $maxSizeMessage->__toString(),
-                            ]
+                            maxSize: ini_get('upload_max_filesize'),
+                            mimeTypes: [
+                                'image/jpeg',
+                                'image/png',
+                                'image/gif',
+                                'image/webp',
+                            ],
+                            maxSizeMessage: $this->translator->trans(
+                                $maxSizeMessage->getMessage(),
+                                $maxSizeMessage->getParameters()
+                            ),
+                            mimeTypesMessage: $this->translator->trans(
+                                $mimeTypesMessage->getMessage(),
+                                $mimeTypesMessage->getParameters()
+                            ),
                         ),
                     ],
                 ]
@@ -169,7 +188,7 @@ abstract class ParagraphAbstract extends AbstractController
             return $textField;
         }
 
-        $basePath   = $this->fileService->getBasePath($paragraph::class, $type . 'File');
+        $basePath   = $this->fileService->getBasePath($paragraph::class, $type.'File');
         $imageField = ImageField::new($type, $label);
         $imageField->setBasePath($basePath);
 
@@ -219,7 +238,7 @@ abstract class ParagraphAbstract extends AbstractController
     {
         $paragraphId = $paragraph->getId();
 
-        return $this->data[$paragraphId] ?? [];
+        return $this->data[$paragraphId] ?? ['paragraph' => $paragraph];
     }
 
     public function getFields(Paragraph $paragraph, string $pageName): mixed
@@ -243,7 +262,7 @@ abstract class ParagraphAbstract extends AbstractController
         return $this->header[$paragraphId] ?? null;
     }
 
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
         return '';
     }
@@ -278,19 +297,8 @@ abstract class ParagraphAbstract extends AbstractController
     protected function getCategorySlug(): ?string
     {
         $request = $this->requestStack->getCurrentRequest();
-        $slug    = $request->attributes->get('slug');
 
-        if (0 === substr_count((string) $slug, '/')) {
-            return null;
-        }
-
-        $slugSecond = basename((string) $slug);
-
-        if (0 === substr_count($slugSecond, 'category-')) {
-            return null;
-        }
-
-        return str_replace('category-', '', $slugSecond);
+        return $request->query->get('categories');
     }
 
     protected function getOEmbedUrl(string $html): ?string
@@ -329,19 +337,8 @@ abstract class ParagraphAbstract extends AbstractController
     protected function getTagSlug(): ?string
     {
         $request = $this->requestStack->getCurrentRequest();
-        $slug    = $request->attributes->get('slug');
 
-        if (0 === substr_count((string) $slug, '/')) {
-            return null;
-        }
-
-        $slugSecond = basename((string) $slug);
-
-        if (0 === substr_count($slugSecond, 'tag-')) {
-            return null;
-        }
-
-        return str_replace('tag-', '', $slugSecond);
+        return $request->query->get('tag');
     }
 
     /**
@@ -355,8 +352,8 @@ abstract class ParagraphAbstract extends AbstractController
 
         $htmltwig = '.html.twig';
         $files    = [
-            'paragraphs/' . $folder . '/' . $type . $htmltwig,
-            'paragraphs/' . $folder . '/default' . $htmltwig,
+            'paragraphs/'.$folder.'/'.$type.$htmltwig,
+            'paragraphs/'.$folder.'/default'.$htmltwig,
         ];
 
         $view   = end($files);

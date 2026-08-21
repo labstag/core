@@ -6,26 +6,25 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Api\TheMovieDbApi;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use Labstag\Entity\Episode;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\SeasonEpisodeFilter;
 use Labstag\Filter\SerieEpisodeFilter;
 use Labstag\Message\EpisodeMessage;
+use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class EpisodeCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -35,7 +34,7 @@ class EpisodeCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -48,7 +47,7 @@ class EpisodeCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -80,13 +79,18 @@ class EpisodeCrudController extends CrudControllerAbstract
         $integerField = IntegerField::new('runtime', new TranslatableMessage('Runtime'));
         $integerField->setTemplatePath('admin/field/runtime-episode.html.twig');
 
-        $wysiwygField = WysiwygField::new('overview', new TranslatableMessage('Overview'));
+        $translatableMessage = new TranslatableMessage('Overview');
+        $wysiwygField        = WysiwygField::new('overview', $translatableMessage->getMessage());
         $wysiwygField->hideOnIndex();
+
+        $associationField = AssociationField::new('castings', new TranslatableMessage('Casting'));
+        $associationField->setTemplatePath('admin/field/castings.html.twig');
+        $associationField->onlyOnDetail();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
                 $textField,
@@ -96,6 +100,7 @@ class EpisodeCrudController extends CrudControllerAbstract
                 DateField::new('air_date', new TranslatableMessage('Air date')),
                 $integerField,
                 $wysiwygField,
+                $associationField,
             ]
         );
 
@@ -104,20 +109,23 @@ class EpisodeCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
+        $seasonTranslation = new TranslatableMessage('Season');
         $filters->add(
-            SerieEpisodeFilter::new('number', new TranslatableMessage('Season'))->setChoices(
+            SerieEpisodeFilter::new('number', $seasonTranslation->getMessage())->setChoices(
                 array_merge(
                     ['' => ''],
                     $this->seasonService->getSeasonsChoice()
                 )
             )
         );
+        $serieTranslation = new TranslatableMessage('Serie');
+        $filters->add(DateTimeFilter::new('airDate', new TranslatableMessage('Air date')));
         $filters->add(
-            SeasonEpisodeFilter::new('serie', new TranslatableMessage('Serie'))->setChoices(
+            SeasonEpisodeFilter::new('serie', $serieTranslation->getMessage())->setChoices(
                 array_merge(
                     ['' => ''],
                     $this->serieService->getSeriesChoice()
@@ -133,27 +141,22 @@ class EpisodeCrudController extends CrudControllerAbstract
         return Episode::class;
     }
 
-    public function jsonEpisode(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
+    public function jsonEpisode(Request $request): JsonResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                          = $request->query->get('entityId');
         $repositoryAbstract                = $this->getRepository();
         $episode                           = $repositoryAbstract->find($entityId);
-
-        $details = $theMovieDbApi->getDetailsEpisode($episode);
+        $details                           = $this->theMovieDbApi->getDetailsEpisode($episode);
 
         return new JsonResponse($details);
     }
 
-    public function updateEpisode(
-        AdminContext $adminContext,
-        Request $request,
-        MessageBusInterface $messageBus,
-    ): RedirectResponse
+    public function updateEpisode(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                          = $request->query->get('entityId');
         $repositoryAbstract                = $this->getRepository();
         $episode                           = $repositoryAbstract->find($entityId);
-        $messageBus->dispatch(new EpisodeMessage($episode->getId()));
+        $this->messageBus->dispatch(new EpisodeMessage($episode->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {
@@ -170,7 +173,7 @@ class EpisodeCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('updateEpisode', new TranslatableMessage('Update'));
+        $action = Action::new('updateEpisode', new TranslatableMessage('Update'), 'fas fa-sync-alt');
         $action->linkToCrudAction('updateEpisode');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

@@ -8,38 +8,36 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Season;
 use Labstag\Field\WysiwygField;
 use Labstag\Message\SeasonAllMessage;
 use Labstag\Message\SeasonMessage;
+use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SeasonCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->setUpdateAction();
         $this->actionsFactory->setLinkTmdbAction();
-        $this->actionsFactory->setActionUpdateAll();
+        $this->actionsFactory->setActionUpdateAll('updateAllSeason');
 
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -52,7 +50,7 @@ class SeasonCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -63,20 +61,34 @@ class SeasonCrudController extends CrudControllerAbstract
         $collectionField->setTemplatePath('admin/field/runtime-season.html.twig');
         $collectionField->hideOnForm();
 
-        $wysiwygField = WysiwygField::new('overview', new TranslatableMessage('Overview'));
+        $wysiwgTranslation = new TranslatableMessage('Overview');
+        $wysiwygField      = WysiwygField::new('overview', $wysiwgTranslation->getMessage());
         $wysiwygField->hideOnIndex();
+
+        $posterTranslation   = new TranslatableMessage('Poster');
+        $backdropTranslation = new TranslatableMessage('Backdrop');
+
+        $associationField = AssociationField::new('castings', new TranslatableMessage('Casting'));
+        $associationField->setTemplatePath('admin/field/castings.html.twig');
+        $associationField->onlyOnDetail();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
             [
-                $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
                 $this->crudFieldFactory->slugField(),
                 $this->crudFieldFactory->titleField(),
                 $this->crudFieldFactory->imageField(
                     'poster',
                     $pageName,
                     self::getEntityFqcn(),
-                    new TranslatableMessage('Poster')
+                    $posterTranslation->getMessage()
+                ),
+                $this->crudFieldFactory->imageField(
+                    'backdrop',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    $backdropTranslation->getMessage()
                 ),
                 $textField,
                 AssociationField::new('refserie', new TranslatableMessage('Serie')),
@@ -85,6 +97,7 @@ class SeasonCrudController extends CrudControllerAbstract
                 $this->episodesFieldForPage(self::getEntityFqcn(), $pageName),
                 $collectionField,
                 $wysiwygField,
+                $associationField,
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);
@@ -92,7 +105,7 @@ class SeasonCrudController extends CrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -105,6 +118,7 @@ class SeasonCrudController extends CrudControllerAbstract
     {
         $associationField = AssociationField::new('episodes', new TranslatableMessage('Episodes'));
         $associationField->setTemplatePath('admin/field/episodes.html.twig');
+        $associationField->hideOnForm();
 
         return $associationField;
     }
@@ -150,45 +164,40 @@ class SeasonCrudController extends CrudControllerAbstract
         return Season::class;
     }
 
-    public function jsonSeason(AdminContext $adminContext, TheMovieDbApi $theMovieDbApi): JsonResponse
+    public function jsonSeason(Request $request): JsonResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                         = $request->query->get('entityId');
         $repositoryAbstract               = $this->getRepository();
         $season                           = $repositoryAbstract->find($entityId);
-
-        $details = $theMovieDbApi->getDetailsSeason($season);
+        $details                          = $this->theMovieDbApi->getDetailsSeason($season);
 
         return new JsonResponse($details);
     }
 
-    public function tmdb(AdminContext $adminContext): RedirectResponse
+    public function tmdb(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                         = $request->query->get('entityId');
         $repositoryAbstract               = $this->getRepository();
         $season                           = $repositoryAbstract->find($entityId);
 
         return $this->redirect(
-            'https://www.themoviedb.org/tv/' . $season->getRefserie()->getTmdb() . '/season/' . $season->getNumber()
+            'https://www.themoviedb.org/tv/'.$season->getRefserie()->getTmdb().'/season/'.$season->getNumber()
         );
     }
 
-    public function updateAll(MessageBusInterface $messageBus): RedirectResponse
+    public function updateAllSeason(): RedirectResponse
     {
-        $messageBus->dispatch(new SeasonAllMessage());
+        $this->messageBus->dispatch(new SeasonAllMessage());
 
         return $this->redirectToRoute('admin_season_index');
     }
 
-    public function updateSeason(
-        AdminContext $adminContext,
-        Request $request,
-        MessageBusInterface $messageBus,
-    ): RedirectResponse
+    public function updateSeason(Request $request): RedirectResponse
     {
-        $entityId = $adminContext->getRequest()->query->get('entityId');
+        $entityId                         = $request->query->get('entityId');
         $repositoryAbstract               = $this->getRepository();
         $season                           = $repositoryAbstract->find($entityId);
-        $messageBus->dispatch(new SeasonMessage($season->getId()));
+        $this->messageBus->dispatch(new SeasonMessage($season->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {
@@ -205,7 +214,7 @@ class SeasonCrudController extends CrudControllerAbstract
             return;
         }
 
-        $action = Action::new('updateSeason', new TranslatableMessage('Update'));
+        $action = Action::new('updateSeason', new TranslatableMessage('Update'), 'fas fa-sync-alt');
         $action->linkToCrudAction('updateSeason');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 

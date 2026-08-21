@@ -2,12 +2,12 @@
 
 namespace Labstag\Event\Workflow;
 
-use Symfony\Component\Messenger\MessageBusInterface;
+use Labstag\Service\MessageDispatcherService;
 
 abstract class WorkflowAbstract
 {
     public function __construct(
-        protected MessageBusInterface $messageBus,
+        protected MessageDispatcherService $messageBus,
     )
     {
     }

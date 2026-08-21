@@ -28,13 +28,23 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
             return;
         }
 
-        $entityRepository                = $this->getRepository(Episode::class);
-        $episodes                        = $entityRepository->getAllActivateBySeason($data['entity']);
-        if (0 === count($episodes)) {
-            $this->setShow($paragraph, false);
+        $request = $this->requestStack->getCurrentRequest();
+        $this->setQuery($request->query->all());
 
-            return;
-        }
+        $entityRepository                = $this->getRepository(Episode::class);
+        $pagination                      = $this->getPaginator(
+            $entityRepository->getQueryPaginator($data['entity']),
+            30
+        );
+
+        $templates = $this->templates($paragraph, 'header');
+        $this->setHeader(
+            $paragraph,
+            $this->render(
+                $templates['view'],
+                ['pagination' => $pagination]
+            )
+        );
 
         $serie      = $data['entity']->getRefSerie();
         $number     = $data['entity']->getNumber();
@@ -46,12 +56,12 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
         $this->setData(
             $paragraph,
             [
-                'prev'      => $prev,
-                'next'      => $next,
-                'serie'     => $serie,
-                'episodes'  => $episodes,
-                'paragraph' => $paragraph,
-                'data'      => $data,
+                'prev'       => $prev,
+                'next'       => $next,
+                'serie'      => $serie,
+                'pagination' => $pagination,
+                'paragraph'  => $paragraph,
+                'data'       => $data,
             ]
         );
     }
@@ -73,9 +83,9 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Episode list');
+        return new TranslatableMessage('Episode list');
     }
 
     #[Override]
@@ -92,5 +102,23 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
         }
 
         return $object instanceof Block;
+    }
+
+    /**
+     * @param array<string, mixed> $query
+     *
+     * @return array<string, mixed>
+     */
+    private function setQuery(array $query): array
+    {
+        if (!isset($query['order'])) {
+            $query['order'] = 'number';
+        }
+
+        if (!isset($query['orderby'])) {
+            $query['orderby'] = 'ASC';
+        }
+
+        return $query;
     }
 }

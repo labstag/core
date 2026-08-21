@@ -48,14 +48,15 @@ class HtmlParagraph extends ParagraphAbstract implements ParagraphInterface
         unset($paragraph, $pageName);
 
         yield TextField::new('title', new TranslatableMessage('Title'));
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Content'));
+        $translatableMessage = new TranslatableMessage('Content');
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
         yield $wysiwygField;
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('HTML');
+        return new TranslatableMessage('HTML');
     }
 
     #[Override]

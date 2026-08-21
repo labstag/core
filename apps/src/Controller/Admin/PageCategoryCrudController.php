@@ -4,11 +4,12 @@ namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Labstag\Entity\PageCategory;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PageCategoryCrudController extends CategoryCrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());

@@ -5,14 +5,14 @@ namespace Labstag\MessageHandler;
 use Labstag\Message\CompanyAllMessage;
 use Labstag\Message\CompanyMessage;
 use Labstag\Repository\CompanyRepository;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class CompanyAllMessageHandler
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private CompanyRepository $companyRepository,
     )
     {
@@ -23,7 +23,7 @@ final class CompanyAllMessageHandler
         unset($companyAllMessage);
         $companies                          = $this->companyRepository->findAll();
         foreach ($companies as $company) {
-            $this->messageBus->dispatch(new CompanyMessage($company->getId()));
+            $this->messageDispatcherService->dispatch(new CompanyMessage($company->getId()));
         }
     }
 }

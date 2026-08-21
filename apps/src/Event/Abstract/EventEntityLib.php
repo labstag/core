@@ -5,12 +5,12 @@ namespace Labstag\Event\Abstract;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\BanIp;
 use Labstag\Entity\Block;
+use Labstag\Entity\Chapter;
 use Labstag\Entity\HttpErrorLogs;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Recommendation;
 use Labstag\Entity\Redirection;
 use Labstag\Entity\Saga;
 use Labstag\Entity\Serie;
@@ -22,11 +22,11 @@ use Labstag\Message\SerieMessage;
 use Labstag\Message\StoryMessage;
 use Labstag\Service\BlockService;
 use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\WorkflowService;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Workflow\Registry;
 
 abstract class EventEntityLib
@@ -34,7 +34,7 @@ abstract class EventEntityLib
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
-        protected MessageBusInterface $messageBus,
+        protected MessageDispatcherService $messageBus,
         protected WorkflowService $workflowService,
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
@@ -59,26 +59,6 @@ abstract class EventEntityLib
         }
 
         $this->paragraphService->addParagraph($instance, $type, $position);
-    }
-
-    protected function deleteRecommendation(object $instance): void
-    {
-        if (!$instance instanceof Movie && !$instance instanceof Serie) {
-            return;
-        }
-
-        $tmdb                     = $instance->getTmdb();
-        $entityRepository         = $this->entityManager->getRepository(Recommendation::class);
-        $recommendation           = $entityRepository->findOneBy(
-            ['tmdb' => $tmdb]
-        );
-        if (!$recommendation instanceof Recommendation) {
-            return;
-        }
-
-        $this->entityManager->remove($recommendation);
-
-        // Script to execute only if instance is Movie or Serie
     }
 
     protected function initEntityMeta(object $instance): void
@@ -113,6 +93,7 @@ abstract class EventEntityLib
     protected function postPersistMethods(object $object, EntityManagerInterface $entityManager)
     {
         $this->updateEntityStory($object);
+        $this->updateEntityChapter($object);
         $this->updateEntityMovie($object);
         $this->updateEntitySerie($object);
         $this->updateEntitySaga($object);
@@ -130,7 +111,6 @@ abstract class EventEntityLib
         $this->updateEntityParagraph($object);
         $this->initEntityMeta($object);
         $this->updateEntityPage($object);
-        $this->deleteRecommendation($object);
     }
 
     protected function updateEntityBanIp(object $instance, EntityManagerInterface $entityManager): void
@@ -159,6 +139,15 @@ abstract class EventEntityLib
         $this->blockService->update($instance);
     }
 
+    protected function updateEntityChapter(object $instance): void
+    {
+        if (!$instance instanceof Chapter) {
+            return;
+        }
+
+        $this->messageBus->dispatch(new StoryMessage($instance->getRefstory()->getId()));
+    }
+
     protected function updateEntityMovie(object $instance): void
     {
         if (!$instance instanceof Movie) {
@@ -180,12 +169,12 @@ abstract class EventEntityLib
             return;
         }
 
-        if (PageEnum::HOME->value != $instance->getType()) {
-            $code = (PageEnum::CV->value == $instance->getType()) ? 'head-cv' : 'head';
-            $this->addParagraph($instance, $code, 0);
-
+        if (in_array($instance->getType(), [PageEnum::HOME->value, PageEnum::ERRORS->value])) {
             return;
         }
+
+        $code = (PageEnum::CV->value == $instance->getType()) ? 'head-cv' : 'head';
+        $this->addParagraph($instance, $code, 0);
     }
 
     protected function updateEntityParagraph(object $instance): void

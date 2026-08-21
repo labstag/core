@@ -24,15 +24,16 @@ class HtmlBlock extends SimpleBlockAbstract
     public function getFields(Block $block, string $pageName): mixed
     {
         unset($block, $pageName);
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Content'));
+        $translatableMessage = new TranslatableMessage('Content');
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
 
         yield $wysiwygField;
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('HTML');
+        return new TranslatableMessage('HTML');
     }
 
     #[Override]

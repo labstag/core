@@ -8,11 +8,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Submission;
 use Labstag\FrontForm\FrontFormAbstract;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class SubmissionCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -21,7 +22,7 @@ class SubmissionCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -31,7 +32,7 @@ class SubmissionCrudController extends CrudControllerAbstract
             [TextField::new('type', new TranslatableMessage('Type'))]
         );
         if (Action::DETAIL === $pageName) {
-            $this->crudFieldFactory->addFieldsToTab('principal', [$this->addFieldsSubmission($currentEntity)]);
+            $this->crudFieldFactory->addFieldsToTab('principal', $this->addFieldsSubmission($currentEntity));
         }
 
         $this->crudFieldFactory->setTabDate($pageName);

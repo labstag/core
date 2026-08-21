@@ -50,7 +50,7 @@ final class SecurityService
         }
 
         $pathinfo = $request->getPathInfo();
-        $slug     = '/' . $request->attributes->get('slug');
+        $slug     = '/'.$request->attributes->get('slug');
         if ($slug !== $pathinfo) {
             $pathinfo = $slug;
         }
@@ -100,12 +100,8 @@ final class SecurityService
 
         foreach ($headers as $header) {
             if (!empty($server->get($header))) {
-                $ipList = explode(',', (string) $server->get($header));
-                // Si plusieurs IPs sont présentes (cas d'un proxy chainé)
+                $ipList           = explode(',', (string) $server->get($header));
                 $internetProtocol = trim(end($ipList));
-                // On prend la dernière IP de la liste (client réel)
-
-                // Valider que c'est une IP valide (IPv4 ou IPv6)
                 if (filter_var(
                     $internetProtocol,
                     FILTER_VALIDATE_IP,
@@ -129,7 +125,7 @@ final class SecurityService
 
         $server        = $request->server;
         $httpErrorLogs = new HttpErrorLogs();
-        $domain        = $server->get('REQUEST_SCHEME') . '://' . $server->get('SERVER_NAME');
+        $domain        = $server->get('REQUEST_SCHEME').'://'.$server->get('SERVER_NAME');
         $url           = $server->get('REQUEST_URI');
         if ($this->isDisableUrl($url)) {
             return;
@@ -199,7 +195,7 @@ final class SecurityService
         $file    = $this->fileService->getFileInAdapter('private', 'disable.txt');
         $disable = explode("\n", file_get_contents($file));
 
-        return array_any($disable, fn ($type): bool => str_contains($url, $type));
+        return array_any($disable, fn ($type): bool => str_contains($url, (string) $type));
     }
 
     private function isForbiddenUrl(string $url): bool
@@ -209,7 +205,10 @@ final class SecurityService
 
         return array_any(
             $forbidden,
-            fn ($type): bool => str_contains($url, $type) || str_contains(strtolower($url), strtolower($type))
+            fn ($type): bool => str_contains($url, (string) $type) || str_contains(
+                strtolower($url),
+                strtolower((string) $type)
+            )
         );
     }
 
@@ -257,7 +256,7 @@ final class SecurityService
     {
         $redirect = null;
         foreach ($redirections as $redirection) {
-            if (preg_match('#' . $redirection->getSource() . '#', $pathinfo, $matches)) {
+            if (preg_match($redirection->getSource(), $pathinfo, $matches)) {
                 $redirection->incrementLastCount();
                 $this->redirectionRepository->save($redirection);
                 $destination = $redirection->getDestination();
@@ -269,11 +268,11 @@ final class SecurityService
                     $pathinfo = substr($pathinfo, 1);
                 }
 
-                $newUrl = preg_replace('#' . $redirection->getSource() . '#', (string) $destination, $pathinfo);
+                $newUrl = preg_replace($redirection->getSource(), (string) $destination, $pathinfo);
                 if (str_starts_with((string) $newUrl, '/')) {
                     $request = $this->requestStack->getCurrentRequest();
                     if (!is_null($request)) {
-                        $newUrl = $request->getSchemeAndHttpHost() . $newUrl;
+                        $newUrl = $request->getSchemeAndHttpHost().$newUrl;
                     }
                 }
 

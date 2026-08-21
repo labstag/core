@@ -3,23 +3,23 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
-use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Message\EpisodeMessage;
 use Labstag\Repository\SeasonRepository;
 use Labstag\Service\FileService;
-use Symfony\Component\Messenger\MessageBusInterface;
+use Labstag\Service\MessageDispatcherService;
 
 final class SeasonService
 {
     public function __construct(
         private FileService $fileService,
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private SeasonRepository $seasonRepository,
         private EpisodeService $episodeService,
         private TheMovieDbApi $theMovieDbApi,
+        private PersonService $personService,
     )
     {
     }
@@ -100,10 +100,37 @@ final class SeasonService
         $statuses = [
             $this->updateSeason($season, $details),
             $this->updateImagePoster($season, $details),
+            $this->updateImageBackdrop($season),
+            $this->updateCredits($season, $details),
             $this->updateEpisodes($season, $details),
         ];
 
         return in_array(true, $statuses, true);
+    }
+
+    private function updateCredits(Season $season, array $details): bool
+    {
+        foreach ($season->getCastings() as $casting) {
+            $season->removeCasting($casting);
+        }
+
+        if (isset($details['credits']['cast']) && is_array($details['credits']['cast'])) {
+            foreach ($details['credits']['cast'] as $cast) {
+                $person  = $this->personService->getPerson($cast);
+                $casting = $this->personService->addToCastingSeason($person, $season, $cast);
+                $season->addCasting($casting);
+            }
+        }
+
+        if (isset($details['credits']['crew']) && is_array($details['credits']['crew'])) {
+            foreach ($details['credits']['crew'] as $crew) {
+                $person  = $this->personService->getPerson($crew);
+                $casting = $this->personService->addToCastingSeason($person, $season, $crew);
+                $season->addCasting($casting);
+            }
+        }
+
+        return true;
     }
 
     private function updateEpisodes(Season $season, array $details): bool
@@ -117,7 +144,31 @@ final class SeasonService
 
         $episodes = $this->episodeService->getEpisodes($season);
         foreach ($episodes as $episode) {
-            $this->messageBus->dispatch(new EpisodeMessage($episode->getId()));
+            $this->messageDispatcherService->dispatch(new EpisodeMessage($episode->getId()));
+        }
+
+        return true;
+    }
+
+    private function updateImageBackdrop(Season $season): bool
+    {
+        $images = [];
+        foreach ($season->getEpisodes() as $episode) {
+            $file     = $episode->getImg();
+            if (is_null($file)) {
+                continue;
+            }
+
+            $images[] = $this->fileService->getFileInAdapter('episode', $file);
+        }
+
+        if ([] === $images) {
+            return false;
+        }
+
+        $patchwork = $this->fileService->setImgPatchwork($images);
+        if (!is_null($patchwork)) {
+            $this->fileService->setUploadedFile($patchwork, $season, 'backdropFile');
         }
 
         return true;
@@ -133,18 +184,9 @@ final class SeasonService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $this->fileService->setUploadedFile($poster, $season, 'posterFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-
-            $this->fileService->setUploadedFile($tempPath, $season, 'posterFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     private function updateSeason(Season $season, array $details): bool

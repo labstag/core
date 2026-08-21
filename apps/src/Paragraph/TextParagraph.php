@@ -7,6 +7,7 @@ use Generator;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Edito;
+use Labstag\Entity\Game;
 use Labstag\Entity\Memo;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
@@ -47,15 +48,16 @@ class TextParagraph extends ParagraphAbstract implements ParagraphInterface
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Text'));
+        $translatableMessage = new TranslatableMessage('Text');
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
 
         yield $wysiwygField;
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Text');
+        return new TranslatableMessage('Text');
     }
 
     #[Override]
@@ -77,10 +79,11 @@ class TextParagraph extends ParagraphAbstract implements ParagraphInterface
                 Block::class,
                 Chapter::class,
                 Edito::class,
-                Story::class,
+                Game::class,
                 Memo::class,
                 Page::class,
                 Post::class,
+                Story::class,
             ]
         );
 

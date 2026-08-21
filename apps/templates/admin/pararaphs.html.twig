@@ -48,23 +48,26 @@
 				</td>
 			</tr>
         {% else %}
-            {% for i in 1..6 %}
-                <tr class="empty-row">
-                    <td><span></span></td>
-                    <td><span></span></td>
-                    <td><span></span></td>
-                    <td><span></span></td>
-                    <td><span></span></td>
-                </tr>
+			{% block table_body_empty %}
+				{% for i in 1..14 %}
+					<tr class="empty-row">
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+						<td><span></span></td>
+					</tr>
 
-                {% if 3 == loop.index %}
-                    <tr class="no-results">
-                        <td colspan="100">
-                            {{ t('datagrid.no_results', ea.i18n.translationParameters, 'EasyAdminBundle')|trans }}
-                        </td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
+					{% if 3 == loop.index %}
+						<tr class="no-results">
+							<td colspan="100">
+								{{ t('datagrid.no_results', ea().i18n.translationParameters, 'EasyAdminBundle')|trans }}
+							</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			{% endblock table_body_empty %}
 		{% endfor %}
 	</tbody>
 </table>

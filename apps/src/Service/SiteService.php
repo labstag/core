@@ -26,13 +26,13 @@ final class SiteService
         $configuration = $this->configurationService->getConfiguration();
         $data          = $this->getAsset($entity);
         if (is_null($entity) || is_null($data)) {
-            return ($placeholder) ? 'https://picsum.photos/1200/1200?md5=' . bin2hex(random_bytes(16)) : '';
+            return ($placeholder) ? 'https://picsum.photos/1200/1200?md5='.bin2hex(random_bytes(16)) : '';
         }
 
         $file = $data->asset($entity, $field);
 
         if ('' !== $file) {
-            return $absolute ? $configuration->getUrl() . $file : $file;
+            return $absolute ? $configuration->getUrl().$file : $file;
         }
 
         if (!$placeholder) {
@@ -41,10 +41,10 @@ final class SiteService
 
         $dataPlaceholder = $data->placeholder();
         if ('' !== $dataPlaceholder) {
-            return $absolute ? $configuration->getUrl() . $dataPlaceholder : $dataPlaceholder;
+            return $absolute ? $configuration->getUrl().$dataPlaceholder : $dataPlaceholder;
         }
 
-        return 'https://picsum.photos/1200/1200?md5=' . md5((string) $entity->getId());
+        return 'https://picsum.photos/1200/1200?md5='.md5((string) $entity->getId());
     }
 
     /**

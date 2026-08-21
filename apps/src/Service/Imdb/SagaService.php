@@ -2,26 +2,19 @@
 
 namespace Labstag\Service\Imdb;
 
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Exception;
 use Labstag\Api\TheMovieDbApi;
-use Labstag\Entity\Movie;
 use Labstag\Entity\Saga;
 use Labstag\Message\SagaMessage;
-use Labstag\Repository\MovieRepository;
 use Labstag\Repository\SagaRepository;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 final class SagaService
 {
-
     public function __construct(
         private LoggerInterface $logger,
-        private RecommendationService $recommendationService,
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private SagaRepository $sagaRepository,
         private FileService $fileService,
         private TheMovieDbApi $theMovieDbApi,
@@ -42,7 +35,7 @@ final class SagaService
             $saga->setTitle($this->setName($data['name']));
             $saga->setTmdb($data['id']);
             $this->sagaRepository->save($saga);
-            $this->messageBus->dispatch(new SagaMessage($saga->getId()));
+            $this->messageDispatcherService->dispatch(new SagaMessage($saga->getId()));
         }
 
         return $saga;
@@ -72,13 +65,12 @@ final class SagaService
         $details  = $this->theMovieDbApi->getDetailsSaga($saga);
         if (!isset($details['tmdb']) || is_null($details['tmdb'])) {
             $this->sagaRepository->delete($saga);
-            $this->logger->error('Saga not found TMDB id ' . $saga->getTmdb());
+            $this->logger->error('Saga not found TMDB id '.$saga->getTmdb());
 
             return false;
         }
 
         $statuses = [
-            $this->updateRecommendations($saga, $details),
             $this->updateSaga($saga, $details),
             $this->updateImagePoster($saga, $details),
             $this->updateImageBackdrop($saga, $details),
@@ -104,17 +96,9 @@ final class SagaService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
+        $this->fileService->setUploadedFile($backdrop, $saga, 'backdropFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($backdrop));
-            $this->fileService->setUploadedFile($tempPath, $saga, 'backdropFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     private function updateImagePoster(Saga $saga, array $data): bool
@@ -127,29 +111,7 @@ final class SagaService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
-
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $saga, 'posterFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
-    }
-
-    private function updateRecommendations(Saga $saga, array $details): bool
-    {
-        $recommandations = $details['tmdb']['parts'] ?? null;
-        if (is_null($recommandations) || !is_array($recommandations)) {
-            foreach ($saga->getRecommendations() as $recommendation) {
-                $saga->removeRecommendation($recommendation);
-            }
-        }
-
-        $this->recommendationService->setRecommendations($saga, $recommandations);
+        $this->fileService->setUploadedFile($poster, $saga, 'posterFile');
 
         return true;
     }

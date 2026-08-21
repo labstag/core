@@ -23,11 +23,15 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
         'chapter-list'     => ChapterListParagraph::class,
         'edito'            => EditoParagraph::class,
         'episode-list'     => EpisodeListParagraph::class,
+        'error'            => ErrorParagraph::class,
         'experiences'      => ExperiencesParagraph::class,
         'form'             => FormParagraph::class,
+        'game'             => GameParagraph::class,
         'head-chapter'     => HeadChapterParagraph::class,
         'head-cv'          => HeadCvParagraph::class,
+        'head-game'        => HeadGameParagraph::class,
         'head-movie'       => HeadMovieParagraph::class,
+        'head-person'      => HeadPersonParagraph::class,
         'head-post'        => HeadPostParagraph::class,
         'head-saga'        => HeadSagaParagraph::class,
         'head-season'      => HeadSeasonParagraph::class,
@@ -44,6 +48,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
         'movie-slider'     => MovieSliderParagraph::class,
         'movie'            => MovieParagraph::class,
         'news-list'        => NewsListParagraph::class,
+        'person'           => PersonParagraph::class,
         'saga-list'        => SagaListParagraph::class,
         'saga'             => SagaParagraph::class,
         'season-list'      => SeasonListParagraph::class,
@@ -65,16 +70,16 @@ abstract class Paragraph implements Stringable
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Block $block = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Chapter $chapter = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $classes = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Edito $edito = null;
 
     #[ORM\Column(
@@ -86,37 +91,43 @@ abstract class Paragraph implements Stringable
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $fond = null;
 
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Game $game = null;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Memo $memo = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Movie $movie = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Page $page = null;
+
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Person $person = null;
 
     #[ORM\Column]
     protected ?int $position = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Post $post = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Saga $saga = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Season $season = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Serie $serie = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
     protected ?Story $story = null;
 
     #[Override]
@@ -150,6 +161,11 @@ abstract class Paragraph implements Stringable
         return $this->fond;
     }
 
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
     public function getId(): ?string
     {
         return $this->id;
@@ -168,6 +184,11 @@ abstract class Paragraph implements Stringable
     public function getPage(): ?Page
     {
         return $this->page;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
     }
 
     public function getPosition(): ?int
@@ -247,6 +268,13 @@ abstract class Paragraph implements Stringable
         return $this;
     }
 
+    public function setGame(?Game $game): static
+    {
+        $this->game = $game;
+
+        return $this;
+    }
+
     public function setMemo(?Memo $memo): static
     {
         $this->memo = $memo;
@@ -264,6 +292,13 @@ abstract class Paragraph implements Stringable
     public function setPage(?Page $page): static
     {
         $this->page = $page;
+
+        return $this;
+    }
+
+    public function setPerson(?Person $person): static
+    {
+        $this->person = $person;
 
         return $this;
     }

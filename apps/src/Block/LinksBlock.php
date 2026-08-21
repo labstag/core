@@ -58,7 +58,6 @@ class LinksBlock extends BlockAbstract
         }
 
         $links = $this->correctionLinks($links);
-
         $this->setData(
             $block,
             [
@@ -85,10 +84,15 @@ class LinksBlock extends BlockAbstract
         yield FormField::addColumn(12);
         $collectionField = CollectionField::new('links', new TranslatableMessage('Links'));
         $collectionField->setEntryToStringMethod(
-            function ($link): TranslatableMessage {
+            function ($link): string {
                 unset($link);
 
-                return new TranslatableMessage('Link');
+                $translatableMessage = new TranslatableMessage('Link');
+
+                return $this->translator->trans(
+                    $translatableMessage->getMessage(),
+                    $translatableMessage->getParameters()
+                );
             }
         );
         $collectionField->setFormTypeOption(
@@ -100,9 +104,9 @@ class LinksBlock extends BlockAbstract
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Links');
+        return new TranslatableMessage('Links');
     }
 
     #[Override]
@@ -123,8 +127,13 @@ class LinksBlock extends BlockAbstract
     private function correctionLinks(array $links): array
     {
         $data  = [];
-
         foreach ($links as $link) {
+            if (isset($link['links'])) {
+                $link['links'] = $this->correctionLinks($link['links']);
+                $data[]        = $link;
+                continue;
+            }
+
             $url = $this->shortCodeService->getContent($link['url']);
             if (null === $url) {
                 continue;

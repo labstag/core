@@ -84,9 +84,9 @@ class ContentBlock extends BlockAbstract
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Content');
+        return new TranslatableMessage('Content');
     }
 
     #[Override]

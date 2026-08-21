@@ -37,7 +37,7 @@ class PageRepository extends RepositoryAbstract
         $queryBuilder->setParameter('slug', $slug);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'page-slug_' . md5($slug));
+        $query->enableResultCache(3600, 'page-slug_'.md5($slug));
 
         return $query->getOneOrNullResult();
     }
@@ -49,7 +49,7 @@ class PageRepository extends RepositoryAbstract
         $queryBuilder->setParameter('type', $type);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'page-type_' . md5($type));
+        $query->enableResultCache(3600, 'page-type_'.md5($type));
 
         return $query->getOneOrNullResult();
     }

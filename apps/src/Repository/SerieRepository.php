@@ -125,6 +125,16 @@ class SerieRepository extends RepositoryAbstract
         return array_column($rows, 'tmdb');
     }
 
+    public function getAllTmdb(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->select('s.tmdb');
+
+        $result = $queryBuilder->getQuery()->getArrayResult();
+
+        return array_column($result, 'tmdb');
+    }
+
     public function getCountries(): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
@@ -174,7 +184,7 @@ class SerieRepository extends RepositoryAbstract
 
         $query        = $queryBuilder->getQuery();
         $dql          = $query->getDQL();
-        $query->enableResultCache(3600, 'series-query-paginator-' . md5((string) $dql));
+        $query->enableResultCache(3600, 'series-query-paginator-'.md5((string) $dql));
 
         return $query;
     }

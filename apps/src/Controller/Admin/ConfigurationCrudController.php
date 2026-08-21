@@ -15,12 +15,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Labstag\Entity\Configuration;
 use Labstag\Field\WysiwygField;
+use Override;
 use Symfony\Component\Intl\Locales;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ConfigurationCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -32,17 +33,18 @@ class ConfigurationCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
-        $fields = [
+        $copyrightTranslation = new TranslatableMessage('Copyright');
+        $fields               = [
             TextField::new('titleFormat', new TranslatableMessage('Title format')),
             TextField::new('name', new TranslatableMessage('Site name')),
             EmailField::new('email', new TranslatableMessage('Email')),
             UrlField::new('url', new TranslatableMessage('Url')),
             EmailField::new('noreply', new TranslatableMessage('Email no-reply')),
-            WysiwygField::new('Copyright', new TranslatableMessage('Copyright')),
+            WysiwygField::new('Copyright', $copyrightTranslation->getMessage()),
             BooleanField::new('userShow', new TranslatableMessage('Show user')),
             BooleanField::new('userLink', new TranslatableMessage('Link user')),
         ];
@@ -63,7 +65,8 @@ class ConfigurationCrudController extends CrudControllerAbstract
         }
 
         $choiceField->setChoices($languages);
-        $this->crudFieldFactory->addFieldsToTab('tmdb', [$choiceField]);
+        $textField = TextField::new('regionTmdb', new TranslatableMessage('Region'));
+        $this->crudFieldFactory->addFieldsToTab('tmdb', [$choiceField, $textField]);
 
         $this->crudFieldFactory->addTab('security', FormField::addTab(new TranslatableMessage('Security')));
 
@@ -80,6 +83,9 @@ class ConfigurationCrudController extends CrudControllerAbstract
         );
 
         $this->crudFieldFactory->addTab('medias', FormField::addTab(new TranslatableMessage('Medias')));
+
+        $logoTranslation        = new TranslatableMessage('Logo');
+        $placeHolderTranslation = new TranslatableMessage('Placeholder');
         $this->crudFieldFactory->addFieldsToTab(
             'medias',
             [
@@ -87,13 +93,13 @@ class ConfigurationCrudController extends CrudControllerAbstract
                     'logo',
                     $pageName,
                     self::getEntityFqcn(),
-                    (string) new TranslatableMessage('Logo')
+                    $logoTranslation->getMessage()
                 ),
                 $this->crudFieldFactory->imageField(
                     'placeholder',
                     $pageName,
                     self::getEntityFqcn(),
-                    (string) new TranslatableMessage('Placeholder')
+                    $placeHolderTranslation->getMessage()
                 ),
             ]
         );
@@ -114,99 +120,36 @@ class ConfigurationCrudController extends CrudControllerAbstract
 
     private function addConfigureFieldsPlaceHolders(string $pageName): array
     {
-        return [
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'chapterPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('Chapter')
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'editoPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('Edito')
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'episodePlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('Episode')
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'memoPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('Memo')
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'moviePlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('Movie')
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'pagePlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('Page')
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'postPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('Post')
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'sagaPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('Saga')
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'seasonPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('Season')
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'seriePlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('Serie')
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'starPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('Star')
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'storyPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('Story')
-            ),
-            FormField::addColumn(6),
-            $this->crudFieldFactory->imageField(
-                'userPlaceholder',
-                $pageName,
-                self::getEntityFqcn(),
-                (string) new TranslatableMessage('User')
-            ),
+        $placeholders = [
+            'chapter' => new TranslatableMessage('Chapter'),
+            'edito'   => new TranslatableMessage('Edito'),
+            'episode' => new TranslatableMessage('Episode'),
+            'memo'    => new TranslatableMessage('Memo'),
+            'movie'   => new TranslatableMessage('Movie'),
+            'game'    => new TranslatableMessage('Game'),
+            'page'    => new TranslatableMessage('Page'),
+            'post'    => new TranslatableMessage('Post'),
+            'saga'    => new TranslatableMessage('Saga'),
+            'season'  => new TranslatableMessage('Season'),
+            'serie'   => new TranslatableMessage('Serie'),
+            'star'    => new TranslatableMessage('Star'),
+            'story'   => new TranslatableMessage('Story'),
+            'user'    => new TranslatableMessage('User'),
+            'person'  => new TranslatableMessage('Person'),
         ];
+
+        $fields = [];
+        foreach ($placeholders as $key => $label) {
+            $fields[] = FormField::addColumn(6);
+            $fields[] = $this->crudFieldFactory->imageField(
+                $key.'Placeholder',
+                $pageName,
+                self::getEntityFqcn(),
+                $label->getMessage()
+            );
+        }
+
+        return $fields;
     }
 
     /**
@@ -236,26 +179,26 @@ class ConfigurationCrudController extends CrudControllerAbstract
         $iconPositionField->setChoices($iconPosition);
 
         $booleanLabels = [
-            'tacGroupServices'           => (string) new TranslatableMessage('Group Services'),
-            'tacShowDetailsOnClick'      => (string) new TranslatableMessage('Show Details On Click'),
-            'tacShowAlertSmall'          => (string) new TranslatableMessage('Show Alert Small'),
-            'tacCookieslist'             => (string) new TranslatableMessage('Cookies List'),
-            'tacClosePopup'              => (string) new TranslatableMessage('Close popup'),
-            'tacShowIcon'                => (string) new TranslatableMessage('Show Icon'),
-            'tacAdblocker'               => (string) new TranslatableMessage('Adblocker'),
-            'tacDenyAllCta'              => (string) new TranslatableMessage('Deny All CTA'),
-            'tacAcceptAllCta'            => (string) new TranslatableMessage('Accept All CTA'),
-            'tacHighPrivacy'             => (string) new TranslatableMessage('High Privacy'),
-            'tacAlwaysNeedConsent'       => (string) new TranslatableMessage('Always Need Consent'),
-            'tacHandleBrowserDNTRequest' => (string) new TranslatableMessage('Handle Browser DNT Request'),
-            'tacRemoveCredit'            => (string) new TranslatableMessage('Remove Credit'),
-            'tacMoreInfoLink'            => (string) new TranslatableMessage('More Info Link'),
-            'tacUseExternalCss'          => (string) new TranslatableMessage('User External CSS'),
-            'tacUseExternalJs'           => (string) new TranslatableMessage('Use External Js'),
-            'tacMandatory'               => (string) new TranslatableMessage('Mandatory'),
-            'tacMandatoryCta'            => (string) new TranslatableMessage('Mandatory CTA'),
-            'tacGoogleConsentMode'       => (string) new TranslatableMessage('Google Censent Mode'),
-            'tacPartnersList'            => (string) new TranslatableMessage('Partners List'),
+            'tacGroupServices'           => new TranslatableMessage('Group Services'),
+            'tacShowDetailsOnClick'      => new TranslatableMessage('Show Details On Click'),
+            'tacShowAlertSmall'          => new TranslatableMessage('Show Alert Small'),
+            'tacCookieslist'             => new TranslatableMessage('Cookies List'),
+            'tacClosePopup'              => new TranslatableMessage('Close popup'),
+            'tacShowIcon'                => new TranslatableMessage('Show Icon'),
+            'tacAdblocker'               => new TranslatableMessage('Adblocker'),
+            'tacDenyAllCta'              => new TranslatableMessage('Deny All CTA'),
+            'tacAcceptAllCta'            => new TranslatableMessage('Accept All CTA'),
+            'tacHighPrivacy'             => new TranslatableMessage('High Privacy'),
+            'tacAlwaysNeedConsent'       => new TranslatableMessage('Always Need Consent'),
+            'tacHandleBrowserDNTRequest' => new TranslatableMessage('Handle Browser DNT Request'),
+            'tacRemoveCredit'            => new TranslatableMessage('Remove Credit'),
+            'tacMoreInfoLink'            => new TranslatableMessage('More Info Link'),
+            'tacUseExternalCss'          => new TranslatableMessage('User External CSS'),
+            'tacUseExternalJs'           => new TranslatableMessage('Use External Js'),
+            'tacMandatory'               => new TranslatableMessage('Mandatory'),
+            'tacMandatoryCta'            => new TranslatableMessage('Mandatory CTA'),
+            'tacGoogleConsentMode'       => new TranslatableMessage('Google Censent Mode'),
+            'tacPartnersList'            => new TranslatableMessage('Partners List'),
         ];
 
         return [

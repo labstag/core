@@ -17,7 +17,7 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -85,14 +85,22 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, unique: true)]
     protected ?string $imdb = null;
 
-    #[ORM\OneToOne(inversedBy: 'movie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'movie', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'movie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'movie',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -110,7 +118,7 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     #[ORM\ManyToOne(inversedBy: 'movies')]
     protected ?Saga $saga = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]
     #[Gedmo\SlugHandler(class: MovieSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $slug = null;
@@ -128,6 +136,12 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     protected ?int $votes = null;
 
     /**
+     * @var Collection<int, Casting>
+     */
+    #[ORM\OneToMany(targetEntity: Casting::class, mappedBy: 'refMovie')]
+    private Collection $castings;
+
+    /**
      * @var Collection<int, Company>
      */
     #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'movies')]
@@ -136,24 +150,28 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     )]
     private Collection $companies;
 
-    /**
-     * @var Collection<int, Recommendation>
-     */
-    #[ORM\OneToMany(targetEntity: Recommendation::class, mappedBy: 'refmovie')]
-    private Collection $recommendations;
-
     public function __construct()
     {
         $this->categories      = new ArrayCollection();
         $this->paragraphs      = new ArrayCollection();
         $this->companies       = new ArrayCollection();
-        $this->recommendations = new ArrayCollection();
+        $this->castings        = new ArrayCollection();
     }
 
     #[Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();
+    }
+
+    public function addCasting(Casting $casting): static
+    {
+        if (!$this->castings->contains($casting)) {
+            $this->castings->add($casting);
+            $casting->setRefMovie($this);
+        }
+
+        return $this;
     }
 
     public function addCategory(MovieCategory $movieCategory): static
@@ -186,16 +204,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
-    public function addRecommendation(Recommendation $recommendation): static
-    {
-        if (!$this->recommendations->contains($recommendation)) {
-            $this->recommendations->add($recommendation);
-            $recommendation->setRefmovie($this);
-        }
-
-        return $this;
-    }
-
     public function getBackdrop(): ?string
     {
         return $this->backdrop;
@@ -204,6 +212,14 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     public function getBackdropFile(): ?File
     {
         return $this->backdropFile;
+    }
+
+    /**
+     * @return Collection<int, Casting>
+     */
+    public function getCastings(): Collection
+    {
+        return $this->castings;
     }
 
     /**
@@ -288,14 +304,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         return $this->posterFile;
     }
 
-    /**
-     * @return Collection<int, Recommendation>
-     */
-    public function getRecommendations(): Collection
-    {
-        return $this->recommendations;
-    }
-
     public function getReleaseDate(): ?DateTime
     {
         return $this->releaseDate;
@@ -346,6 +354,16 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         return $this->file;
     }
 
+    public function removeCasting(Casting $casting): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->castings->removeElement($casting) && $casting->getRefMovie() === $this) {
+            $casting->setRefMovie(null);
+        }
+
+        return $this;
+    }
+
     public function removeCategory(MovieCategory $movieCategory): static
     {
         if ($this->categories->removeElement($movieCategory)) {
@@ -375,16 +393,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
-    public function removeRecommendation(Recommendation $recommendation): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->recommendations->removeElement($recommendation) && $recommendation->getRefmovie() === $this) {
-            $recommendation->setRefmovie(null);
-        }
-
-        return $this;
-    }
-
     public function setAdult(bool $adult): static
     {
         $this->adult = $adult;
@@ -396,7 +404,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     {
         $this->backdrop = $backdrop;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $backdrop) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
@@ -490,7 +497,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     {
         $this->poster = $poster;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $poster) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

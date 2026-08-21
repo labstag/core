@@ -27,7 +27,7 @@ final class SlugService
     {
     }
 
-    public function forEntity(object $entity): string
+    public function forEntity(object $entity): array
     {
         foreach ($this->datas as $data) {
             if ($data->supportsData($entity)) {

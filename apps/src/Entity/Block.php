@@ -52,7 +52,15 @@ abstract class Block implements Stringable
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'block', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'block',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -75,7 +83,7 @@ abstract class Block implements Stringable
     #[ORM\Column(type: Types::JSON, nullable: true)]
     protected ?array $roles = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
+    #[Gedmo\Slug(fields: ['title'], updatable: true)]
     #[ORM\Column(length: 255, unique: true)]
     protected string $slug;
 

@@ -3,10 +3,16 @@
 namespace Labstag\Data;
 
 use Labstag\Entity\Edito;
+use Override;
 
 class EditoData extends DataAbstract implements DataInterface
 {
-    #[\Override]
+    public function getDefaultImage(object $entity): ?string
+    {
+        return $entity->getImg();
+    }
+
+    #[Override]
     public function placeholder(): string
     {
         $placeholder = $this->globalPlaceholder('edito');
@@ -17,7 +23,7 @@ class EditoData extends DataAbstract implements DataInterface
         return $this->configPlaceholder();
     }
 
-    #[\Override]
+    #[Override]
     public function supportsAsset(object $entity): bool
     {
         return $entity instanceof Edito;

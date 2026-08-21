@@ -6,6 +6,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\CrudMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Menu\SubMenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use Labstag\Controller\Admin\GameCategoryCrudController;
 use Labstag\Controller\Admin\MovieCategoryCrudController;
 use Labstag\Controller\Admin\PageCategoryCrudController;
 use Labstag\Controller\Admin\PageTagCrudController;
@@ -15,6 +16,7 @@ use Labstag\Controller\Admin\SerieCategoryCrudController;
 use Labstag\Controller\Admin\StoryCategoryCrudController;
 use Labstag\Controller\Admin\StoryTagCrudController;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 /**
  * Factory for generating dashboard menu items to reduce duplication in DashboardController.
@@ -34,6 +36,10 @@ final class MenuItemFactory
             'page'  => [
                 'crud'       => PageCategoryCrudController::getEntityFqcn(),
                 'controller' => PageCategoryCrudController::class,
+            ],
+            'game'  => [
+                'crud'       => GameCategoryCrudController::getEntityFqcn(),
+                'controller' => GameCategoryCrudController::class,
             ],
             'post'  => [
                 'crud'       => PostCategoryCrudController::getEntityFqcn(),
@@ -59,9 +65,10 @@ final class MenuItemFactory
      */
     public function createContentSubMenu(
         string $type,
-        string $label,
+        TranslatableInterface|string $label,
         string $icon,
         string $controllerClass,
+        $disableAdd = false,
         ?array $categories = null,
         ?array $tags = null,
         array $additionalItems = [],
@@ -69,12 +76,17 @@ final class MenuItemFactory
     {
         $items = [
             MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', $controllerClass::getEntityFqcn()),
-            MenuItem::linkToCrud(
+        ];
+
+        if (!$disableAdd) {
+            $menuItem = MenuItem::linkToCrud(
                 new TranslatableMessage('New'),
                 'fas fa-plus',
                 $controllerClass::getEntityFqcn()
-            )->setAction(Action::NEW),
-        ];
+            );
+            $menuItem->setAction(Action::NEW);
+            $items[] = $menuItem;
+        }
 
         // Add additional items (like Sagas for movies)
         foreach ($additionalItems as $additionalItem) {
@@ -122,11 +134,11 @@ final class MenuItemFactory
      *
      * @return array<string, CrudMenuItem>
      */
-    private function createMenuItems(array $controllers, string $label, string $icon): array
+    private function createMenuItems(array $controllers, TranslatableMessage $translatableMessage, string $icon): array
     {
         $menuItems = [];
         foreach ($controllers as $key => $data) {
-            $menuItem = MenuItem::linkToCrud($label, $icon, $data['crud']);
+            $menuItem = MenuItem::linkToCrud($translatableMessage, $icon, $data['crud']);
             $menuItem->setController($data['controller']);
             $menuItems[$key] = $menuItem;
         }

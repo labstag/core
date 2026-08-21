@@ -3,7 +3,7 @@
 {# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
 {% trans_default_domain 'EasyAdminBundle' %}
 
-{% if ea.crud.currentAction == 'detail' or not field.customOptions.get('renderAsSwitch') %}
+{% if ea().crud.currentAction == 'detail' or not field.customOptions.get('renderAsSwitch') %}
     <span class="badge {{ field.value == true ? 'badge-boolean-true' : 'badge-boolean-false' }}">
         {{ (field.value == true ? 'label.true' : 'label.false')|trans }}
     </span>

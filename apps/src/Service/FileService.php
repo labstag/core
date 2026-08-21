@@ -3,10 +3,19 @@
 namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Essence\Essence;
+use Essence\Media;
 use Exception;
+use GdImage;
+use Labstag\Message\FileDeleteMessage;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
@@ -18,8 +27,11 @@ final class FileService
     public function __construct(
         #[AutowireIterator('labstag.filestorage')]
         private readonly iterable $fileStorages,
+        private MessageDispatcherService $messageDispatcherService,
+        private LoggerInterface $logger,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag,
+
         private PropertyMappingFactory $propertyMappingFactory,
     )
     {
@@ -38,7 +50,7 @@ final class FileService
             $basePath = $this->getBasePath($entity, $mapping->getFilePropertyName());
             $content  = $propertyAccessor->getValue($entity, $mapping->getFileNamePropertyName());
             if ('' != $content) {
-                $file = $basePath . '/' . $content;
+                $file = $basePath.'/'.$content;
             }
         }
 
@@ -61,53 +73,34 @@ final class FileService
         }
     }
 
-    public function deletedFileByEntities(): int
+    public function deletedFileByEntities(): void
     {
-        $total = 0;
+        $this->entityManager->getFilters()->disable('softdeleteable');
         foreach ($this->fileStorages as $fileStorage) {
-            $deletes     = [];
-            $entities    = $fileStorage->getEntity();
+            $deletes  = [];
+            $entities = $fileStorage->getEntity();
             if (0 === count($entities)) {
                 continue;
             }
 
-            foreach ($entities as $entityClass) {
-                $repository = $this->getRepository($entityClass);
-                $mappings   = $this->propertyMappingFactory->fromObject(new $entityClass());
-                $files      = $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), '');
-                foreach ($files as $row) {
-                    $file = $row['path'];
-                    $find = 0;
-                    foreach ($mappings as $mapping) {
-                        $field  = $mapping->getFileNamePropertyName();
-                        $entity = $repository->findOneBy(
-                            [$field => $file]
-                        );
-                        if (!$entity instanceof $entityClass) {
-                            continue;
-                        }
-
-                        $find = 1;
-
-                        break;
-                    }
-
-                    if (0 === $find) {
-                        $deletes[] = $file;
-                    }
+            $files = $fileStorage->getFilesByDirectory($fileStorage->getFilesystem(), '');
+            foreach ($files as $file) {
+                $find = $this->findInEntities($entities, $file['path']);
+                if (!$find) {
+                    $deletes[] = $file['path'];
                 }
-
-                $total += count($deletes);
-                $fileStorage->deleteFilesByType($deletes);
             }
-        }
 
-        return $total;
+            $fileStorage->deleteFilesByType($deletes);
+        }
     }
 
     public function getBasePath(mixed $entity, string $type): string
     {
         $object = $this->propertyMappingFactory->fromField(new $entity(), $type);
+        if (is_null($object)) {
+            return '';
+        }
 
         return $object->getUriPrefix();
     }
@@ -168,7 +161,39 @@ final class FileService
     {
         $basePath = $this->getBasePath($entity, $type);
 
-        return $this->parameterBag->get('kernel.project_dir') . '/public' . $basePath;
+        return $this->parameterBag->get('kernel.project_dir').'/public'.$basePath;
+    }
+
+    public function getimportCsvFile(string $path, string $delimiter = ','): array
+    {
+        $csv = new Csv();
+        $csv->setDelimiter($delimiter);
+        $csv->setSheetIndex(0);
+
+        $spreadsheet = $csv->load($path);
+        $worksheet   = $spreadsheet->getActiveSheet();
+
+        return $this->generateJsonCSV($worksheet);
+    }
+
+    public function getimportXmlFile(string $path): array
+    {
+        $xml = simplexml_load_file($path);
+        if (false === $xml) {
+            throw new Exception('Error loading XML file');
+        }
+
+        $dataJson = [];
+        foreach ($xml->children() as $item) {
+            $row = [];
+            foreach ($item->children() as $child) {
+                $row[$child->getName()] = (string) $child;
+            }
+
+            $dataJson[] = $row;
+        }
+
+        return $dataJson;
     }
 
     /**
@@ -184,7 +209,7 @@ final class FileService
             $mimetype = 'image/jpeg';
         }
 
-        $public = str_replace($this->parameterBag->get('kernel.project_dir') . '/public', '', $file);
+        $public = str_replace($this->parameterBag->get('kernel.project_dir').'/public', '', $file);
 
         return [
             'src'    => $file,
@@ -207,6 +232,29 @@ final class FileService
         return $this->propertyMappingFactory->fromObject($entity);
     }
 
+    public function getMediaByUrl(?string $url): ?Media
+    {
+        if (is_null($url) || '' === $url || '0' === $url) {
+            return null;
+        }
+
+        $essence = new Essence();
+
+        // Load any url:
+        $media = $essence->extract(
+            $url,
+            [
+                'maxwidth'  => 800,
+                'maxheight' => 600,
+            ]
+        );
+        if (!$media instanceof Media) {
+            return null;
+        }
+
+        return $media;
+    }
+
     public function getSizeFormat(int $size): string
     {
         $units     = [
@@ -226,10 +274,10 @@ final class FileService
         }
 
         if (0 === $unitIndex) {
-            return (int) $bytes . ' ' . $units[$unitIndex];
+            return (int) $bytes.' '.$units[$unitIndex];
         }
 
-        return number_format($bytes, 2) . ' ' . $units[$unitIndex];
+        return number_format($bytes, 2).' '.$units[$unitIndex];
     }
 
     public function saveFileInAdapter(string $type, string $fileName, $content): null
@@ -250,9 +298,50 @@ final class FileService
         return null;
     }
 
+    public function setImgPatchwork(array $files): ?string
+    {
+        if ([] === $files) {
+            return null;
+        }
+
+        $cellSize    = 300;
+        $jpegQuality = 90;
+        $files       = $this->fillGridFiles($files);
+        $count       = count($files);
+        $cols        = (int) ceil(sqrt($count));
+
+        $final = $this->createCanvas($files, $cellSize, $cols);
+        if (is_null($final)) {
+            return null;
+        }
+
+        $this->placeImagesOnCanvas($final, $files, $cellSize, $cols);
+
+        return $this->saveCanvas($final, $jpegQuality);
+    }
+
     public function setUploadedFile(string $filePath, object $entity, string|PropertyPathInterface $type): void
     {
+        if ('' === $filePath) {
+            return;
+        }
+
         try {
+            // Si c'est une URL, télécharger le fichier localement
+            if (filter_var($filePath, FILTER_VALIDATE_URL)) {
+                $tempPath = tempnam(sys_get_temp_dir(), 'download_');
+                $content  = file_get_contents($filePath);
+                if (false === $content) {
+                    $this->logger->error('Failed to download file from URL: '.$filePath);
+                    throw new Exception('Failed to download file from URL: '.$filePath);
+                }
+
+                file_put_contents($tempPath, $content);
+                $filePath = $tempPath;
+            }
+
+            $this->messageDispatcherService->dispatch(new FileDeleteMessage($filePath), [new DelayStamp(60_000)]);
+
             $uploadedFile = new UploadedFile(
                 path: $filePath,
                 originalName: basename($filePath),
@@ -263,14 +352,127 @@ final class FileService
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $propertyAccessor->setValue($entity, $type, $uploadedFile);
         } catch (Exception $exception) {
-            echo $exception->getMessage();
+            $this->logger->error('Error setting uploaded file: '.$exception->getMessage());
+            throw new Exception(
+                'Error setting uploaded file: '.$exception->getMessage(),
+                $exception->getCode(),
+                $exception
+            );
         }
     }
 
+    private function createCanvas(array $files, int $cellSize, int $cols): ?GdImage
+    {
+        $count       = count($files);
+        $rows        = (int) ceil($count / $cols);
+        $finalWidth  = $cols * $cellSize;
+        $finalHeight = $rows * $cellSize;
+        $final       = imagecreatetruecolor($finalWidth, $finalHeight);
+
+        if (false === $final) {
+            return null;
+        }
+
+        $white = imagecolorallocate($final, 255, 255, 255);
+        if (false === $white) {
+            return null;
+        }
+
+        imagefill($final, 0, 0, $white);
+
+        return $final;
+    }
+
+    private function fillGridFiles(array $files): array
+    {
+        $count = count($files);
+        $cols  = (int) ceil(sqrt($count));
+        $rows  = (int) ceil($count / $cols);
+
+        if ($rows * $cols > $count) {
+            $rest = $rows * $cols - $count;
+            for ($i = 0; $i < $rest; ++$i) {
+                $files[] = $files[$i % $count];
+            }
+        }
+
+        return $files;
+    }
+
+    private function findInEntities(array $entities, string $file): bool
+    {
+        $find = false;
+        foreach ($entities as $entity) {
+            $find = $this->findInEntity($entity, $file);
+            if ($find) {
+                break;
+            }
+        }
+
+        return $find;
+    }
+
+    private function findInEntity(string $entityClass, string $file): bool
+    {
+        $entityRepository = $this->getRepository($entityClass);
+        $mappings         = $this->propertyMappingFactory->fromObject(new $entityClass());
+        $search           = [];
+        foreach ($mappings as $mapping) {
+            $field          = $mapping->getFileNamePropertyName();
+            $search[$field] = $file;
+        }
+
+        $entity = $this->findInFields($entityRepository, $search);
+
+        return 0 !== count($entity);
+    }
+
+    private function findInFields(EntityRepository $entityRepository, array $fields): mixed
+    {
+        $queryBuilder = $entityRepository->createQueryBuilder('entity');
+        foreach ($fields as $field => $value) {
+            $queryBuilder->orWhere(sprintf('entity.%s = :%s', $field, $field));
+            $queryBuilder->setParameter($field, $value);
+        }
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->getResult();
+    }
+
     /**
-     * @return \Doctrine\ORM\EntityRepository<object>
+     * @return list<array>
      */
-    private function getRepository(string $entity): \Doctrine\ORM\EntityRepository
+    private function generateJsonCSV(Worksheet $worksheet): array
+    {
+        $dataJson    = [];
+        $headers     = [];
+        foreach ($worksheet->getRowIterator() as $i => $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+            if (1 === $i) {
+                foreach ($cellIterator as $cell) {
+                    $headers[] = trim((string) $cell->getValue());
+                }
+
+                continue;
+            }
+
+            $columns = [];
+            foreach ($cellIterator as $cell) {
+                $columns[] = trim((string) $cell->getValue());
+            }
+
+            $dataJson[] = array_combine($headers, $columns);
+        }
+
+        return $dataJson;
+    }
+
+    /**
+     * @return EntityRepository<object>
+     */
+    private function getRepository(string $entity): EntityRepository
     {
         $entityRepository = $this->entityManager->getRepository($entity);
         if (is_null($entityRepository)) {
@@ -278,5 +480,50 @@ final class FileService
         }
 
         return $entityRepository;
+    }
+
+    private function loadImageFromFile(string $file): GdImage|false
+    {
+        $imgInfo = @getimagesize($file);
+        if (false === $imgInfo || !isset($imgInfo['mime'])) {
+            return false;
+        }
+
+        return match ($imgInfo['mime']) {
+            'image/jpeg' => @imagecreatefromjpeg($file),
+            'image/png'  => @imagecreatefrompng($file),
+            'image/gif'  => @imagecreatefromgif($file),
+            default      => false,
+        };
+    }
+
+    private function placeImagesOnCanvas(GdImage $gdImage, array $files, int $cellSize, int $cols): void
+    {
+        $i = 0;
+        foreach ($files as $file) {
+            $src = $this->loadImageFromFile($file);
+            if (false === $src) {
+                continue;
+            }
+
+            $x = ($i % $cols) * $cellSize;
+            $y = (int) floor($i / $cols) * $cellSize;
+
+            imagecopyresampled($gdImage, $src, $x, $y, 0, 0, $cellSize, $cellSize, imagesx($src), imagesy($src));
+
+            ++$i;
+        }
+    }
+
+    private function saveCanvas(GdImage $gdImage, int $jpegQuality): ?string
+    {
+        $output = tempnam(sys_get_temp_dir(), 'poster_grid_');
+        if (false === $output) {
+            return null;
+        }
+
+        $success = imagejpeg($gdImage, $output, $jpegQuality);
+
+        return $success ? $output : null;
     }
 }

@@ -42,6 +42,7 @@ class LastNewsParagraph extends ParagraphAbstract implements ParagraphInterface
         $nbr   = $paragraph->getNbr();
         $news  = $entityRepository->findLastByNbr($nbr);
         $total = $entityRepository->findTotalEnable();
+
         $this->setData(
             $paragraph,
             [
@@ -72,9 +73,9 @@ class LastNewsParagraph extends ParagraphAbstract implements ParagraphInterface
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Last news');
+        return new TranslatableMessage('Last news');
     }
 
     #[Override]

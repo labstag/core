@@ -5,7 +5,6 @@
 namespace Labstag\Field\Configurator;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;

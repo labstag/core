@@ -9,11 +9,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Email\EmailAbstract;
 use Labstag\Entity\Template;
 use Labstag\Field\WysiwygField;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class TemplateCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
@@ -21,7 +22,7 @@ class TemplateCrudController extends CrudControllerAbstract
         return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -34,7 +35,7 @@ class TemplateCrudController extends CrudControllerAbstract
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -44,7 +45,8 @@ class TemplateCrudController extends CrudControllerAbstract
             $textField->setDisabled(true);
         }
 
-        $wysiwygField  = WysiwygField::new('html', new TranslatableMessage('HTML'));
+        $translatableMessage = new TranslatableMessage('HTML');
+        $wysiwygField        = WysiwygField::new('html', $translatableMessage->getMessage());
         $wysiwygField->onlyOnForms();
 
         $textareaField = TextareaField::new('text', new TranslatableMessage('Texte brut'));

@@ -60,8 +60,12 @@ class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInt
         $collectionField->setEntryToStringMethod(
             function ($link): string {
                 unset($link);
+                $translatableMessage = new TranslatableMessage('Training course');
 
-                return $this->translator->trans(new TranslatableMessage('Training course'));
+                return $this->translator->trans(
+                    $translatableMessage->getMessage(),
+                    $translatableMessage->getParameters()
+                );
             }
         );
         $collectionField->setFormTypeOption(
@@ -73,9 +77,9 @@ class TrainingCoursesParagraph extends ParagraphAbstract implements ParagraphInt
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Training courses');
+        return new TranslatableMessage('Training courses');
     }
 
     #[Override]

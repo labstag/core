@@ -40,9 +40,9 @@ class HeadChapterParagraph extends ParagraphAbstract implements ParagraphInterfa
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Head chapter');
+        return new TranslatableMessage('Head chapter');
     }
 
     #[Override]

@@ -10,7 +10,6 @@ use Labstag\Repository\UserRepository;
 use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
 use Override;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,7 +45,6 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     #[Override]
     public function authenticate(Request $request): Passport
     {
-        // Récupération des données du formulaire login
         $loginData = $request->request->all('login');
         $username  = $loginData['username'] ?? '';
         $password  = $loginData['password'] ?? '';
@@ -69,7 +67,6 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             new PasswordCredentials($password),
             [
                 new CsrfTokenBadge('login', $csrfToken),
-                // Le nom doit correspondre au nom du formulaire
                 new RememberMeBadge(),
             ]
         );
@@ -101,11 +98,8 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             return '#linkdisabled';
         }
 
-        $slug = $this->slugService->forEntity($login);
+        $params = $this->slugService->forEntity($login);
 
-        return $this->urlGenerator->generate(
-            'front',
-            ['slug' => $slug]
-        );
+        return $this->urlGenerator->generate('front', $params);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Labstag\Block;
 
+use Exception;
 use Labstag\Block\Traits\CacheableTrait;
 use Labstag\Entity\Block;
 use Labstag\Entity\BreadcrumbBlock as EntityBreadcrumbBlock;
@@ -24,7 +25,9 @@ class BreadcrumbBlock extends BlockAbstract
             return null;
         }
 
-        return $this->render($view, $this->getData($block));
+        $data = $this->getData($block);
+
+        return $this->render($view, $data);
     }
 
     /**
@@ -45,11 +48,6 @@ class BreadcrumbBlock extends BlockAbstract
         $slug    = $request->attributes->get('slug');
         $urls    = $this->setBreadcrumb($slug);
         $params  = $this->getParamsAttributes($request);
-        if ($entity instanceof Page && $entity->isHide()) {
-            // delete last $urls element
-            array_pop($urls);
-        }
-
         if ([] === $urls) {
             $this->setShow($block, false);
 
@@ -57,7 +55,6 @@ class BreadcrumbBlock extends BlockAbstract
         }
 
         $jsonLd = $this->getJsonLd($urls);
-
         $this->setData(
             $block,
             [
@@ -77,35 +74,39 @@ class BreadcrumbBlock extends BlockAbstract
 
     public function getJsonLd($urls)
     {
-        $breadcrumbList  = Schema::breadcrumbList();
-        $breadcrumbs     = [];
-        foreach ($urls as $position => $data) {
-            $item = Schema::listItem();
-            $item->position($position + 1);
-            $item->name($data['title']);
-            $item->item(
-                $this->router->generate(
-                    'front',
-                    [
-                        'slug' => $data['url'],
-                    ],
-                    0
-                )
-            );
-            $breadcrumbs[] = $item;
+        try {
+            $breadcrumbList  = Schema::breadcrumbList();
+            $breadcrumbs     = [];
+            foreach ($urls as $position => $data) {
+                $item = Schema::listItem();
+                $item->position($position + 1);
+                $item->name($data['title']);
+                $item->item(
+                    $this->router->generate(
+                        'front',
+                        [
+                            'slug' => $data['url'],
+                        ],
+                        0
+                    )
+                );
+                $breadcrumbs[] = $item;
+            }
+
+            $breadcrumbList->itemListElement($breadcrumbs);
+
+            $jsonLd = $breadcrumbList->jsonSerialize();
+        } catch (Exception $exception) {
+            return $exception->getMessage();
         }
-
-        $breadcrumbList->itemListElement($breadcrumbs);
-
-        $jsonLd = $breadcrumbList->jsonSerialize();
 
         return json_encode($jsonLd);
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return (string) new TranslatableMessage('Breadcrumb');
+        return new TranslatableMessage('Breadcrumb');
     }
 
     #[Override]
@@ -164,7 +165,7 @@ class BreadcrumbBlock extends BlockAbstract
         }
 
         $urls[] = [
-            'title' => (string) new TranslatableMessage('Home'),
+            'title' => $this->translator->trans('Home'),
             'url'   => '',
         ];
 

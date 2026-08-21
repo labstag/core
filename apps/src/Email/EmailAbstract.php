@@ -164,10 +164,10 @@ abstract class EmailAbstract extends Email
             return $this->templates[$type];
         }
 
-        $twig  = '.' . $type . '.twig';
+        $twig  = '.'.$type.'.twig';
         $files = [
-            'emails/' . $folder . $twig,
-            'emails/default' . $twig,
+            'emails/'.$folder.$twig,
+            'emails/default'.$twig,
         ];
 
         $view   = end($files);
@@ -210,7 +210,7 @@ abstract class EmailAbstract extends Email
     {
         foreach ($this->replaces as $replace) {
             $replace->setData($this->data);
-            $content = str_replace('%' . $replace->getCode() . '%', $replace->exec(), $content);
+            $content = str_replace('%'.$replace->getCode().'%', $replace->exec(), $content);
         }
 
         return $content;

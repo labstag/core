@@ -6,14 +6,14 @@ use Labstag\Entity\Movie;
 use Labstag\Message\AddMovieMessage;
 use Labstag\Message\MovieMessage;
 use Labstag\Repository\MovieRepository;
+use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 final class AddMovieMessageHandler
 {
     public function __construct(
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
         private MovieRepository $movieRepository,
     )
     {
@@ -48,7 +48,7 @@ final class AddMovieMessageHandler
         $movie->setFile(true);
 
         $this->movieRepository->save($movie);
-        $this->messageBus->dispatch(new MovieMessage($movie->getId()));
+        $this->messageDispatcherService->dispatch(new MovieMessage($movie->getId()));
         // do something with your message
     }
 }

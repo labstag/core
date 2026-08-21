@@ -4,11 +4,12 @@ namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Labstag\Entity\PageTag;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PageTagCrudController extends TagCrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -22,7 +23,7 @@ class PageTagCrudController extends TagCrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return PageTag::class;

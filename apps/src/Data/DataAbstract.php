@@ -39,11 +39,11 @@ abstract class DataAbstract
         return $this->fileService->asset($entity, $field);
     }
 
-    public function generateSlug(object $entity): string
+    public function generateSlug(object $entity): array
     {
         unset($entity);
 
-        return '';
+        return ['slug' => ''];
     }
 
     public function getEntity(?string $slug): object
@@ -135,6 +135,6 @@ abstract class DataAbstract
 
     protected function globalPlaceholder(string $key): string
     {
-        return $this->fileService->asset($this->configurationService->getConfiguration(), $key . 'Placeholder');
+        return $this->fileService->asset($this->configurationService->getConfiguration(), $key.'Placeholder');
     }
 }

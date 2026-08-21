@@ -6,6 +6,7 @@ import { Movie } from './front/js/movie';
 import { ContextMenu } from './front/js/contextmenu';
 import { Spoiler } from './front/js/spoiler';
 import { Form } from './front/js/form';
+import { Links } from './front/js/links';
 
 
 WebFont.load({
@@ -22,10 +23,24 @@ document.addEventListener('DOMContentLoaded', function () {
   new ContextMenu();
   new Form();
   new Spoiler();
+  new Links();
   new Slider(
     '.swiper-movie',
     '.swiper-movie-button-next',
-    '.swiper-movie-button-prev'
+    '.swiper-movie-button-prev',
+    3
+  );
+  new Slider(
+    '.swiper-game-video',
+    '.swiper-game-video-button-next',
+    '.swiper-game-video-button-prev',
+    1
+  );
+  new Slider(
+    '.swiper-game-artworks',
+    '.swiper-game-artworks-button-next',
+    '.swiper-game-artworks-button-prev',
+    3
   );
   new Movie();
 });

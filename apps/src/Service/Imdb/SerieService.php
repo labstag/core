@@ -3,8 +3,6 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Exception;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
@@ -12,9 +10,10 @@ use Labstag\Entity\SerieCategory;
 use Labstag\Message\SeasonMessage;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\CategoryService;
+use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
-use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use Symfony\Component\Messenger\MessageBusInterface;
+use Labstag\Service\MessageDispatcherService;
+use Labstag\Service\VideoService;
 
 final class SerieService
 {
@@ -30,14 +29,16 @@ final class SerieService
     private array $year = [];
 
     public function __construct(
-        private RecommendationService $recommendationService,
-        private MessageBusInterface $messageBus,
+        private MessageDispatcherService $messageDispatcherService,
+        private ConfigurationService $configurationService,
         private FileService $fileService,
         private CompanyService $companyService,
         private SeasonService $seasonService,
         private SerieRepository $serieRepository,
         private CategoryService $categoryService,
         private TheMovieDbApi $theMovieDbApi,
+        private VideoService $videoService,
+        private PersonService $personService,
     )
     {
     }
@@ -56,6 +57,33 @@ final class SerieService
         $this->country = $country;
 
         return $country;
+    }
+
+    public function getSerieApi(array $data, int $page = 1): array
+    {
+        $series             = [];
+        $tmdbs              = $this->serieRepository->getAllTmdb();
+        $search             = '';
+        if (isset($data['imdb']) && !empty($data['imdb'])) {
+            $results = $this->theMovieDbApi->other()->findByImdb($data['imdb']);
+            if (isset($results['tv_results'])) {
+                $series = $results['tv_results'];
+            }
+
+            return $this->updateResult($series, $tmdbs);
+        }
+
+        if (isset($data['title'])) {
+            $search = $data['title'];
+        }
+
+        $locale             = $this->configurationService->getLocaleTmdb();
+        $results            = $this->theMovieDbApi->tvserie()->search(searchQuery: $search, page: $page, language: $locale);
+        if (isset($results['results'])) {
+            $series = $results['results'];
+        }
+
+        return $this->updateResult($series, $tmdbs);
     }
 
     /**
@@ -109,7 +137,6 @@ final class SerieService
 
         $statuses = [
             $this->updateSerie($serie, $details),
-            $this->updateRecommendations($serie, $details),
             $this->updateOther($serie, $details),
             $this->setCertification($details, $serie),
             $this->setCitation($serie, $details),
@@ -121,6 +148,7 @@ final class SerieService
             $this->updateCategory($serie, $details),
             $this->updateTrailer($serie, $details),
             $this->updateCompany($serie, $details),
+            $this->updateCredits($serie, $details),
             $this->updateSeasons($serie, $details),
         ];
 
@@ -236,6 +264,31 @@ final class SerieService
         return true;
     }
 
+    private function updateCredits(Serie $serie, array $details): bool
+    {
+        foreach ($serie->getCastings() as $casting) {
+            $serie->removeCasting($casting);
+        }
+
+        if (isset($details['credits']['cast']) || is_array($details['credits']['cast'])) {
+            foreach ($details['credits']['cast'] as $cast) {
+                $person  = $this->personService->getPerson($cast);
+                $casting = $this->personService->addToCastingSerie($person, $serie, $cast);
+                $serie->addCasting($casting);
+            }
+        }
+
+        if (isset($details['credits']['crew']) || is_array($details['credits']['crew'])) {
+            foreach ($details['credits']['crew'] as $crew) {
+                $person  = $this->personService->getPerson($crew);
+                $casting = $this->personService->addToCastingSerie($person, $serie, $crew);
+                $serie->addCasting($casting);
+            }
+        }
+
+        return true;
+    }
+
     /**
      * @param array<string, mixed> $details
      */
@@ -249,17 +302,9 @@ final class SerieService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'backdrop_');
+        $this->fileService->setUploadedFile($backdrop, $serie, 'backdropFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($backdrop));
-            $this->fileService->setUploadedFile($tempPath, $serie, 'backdropFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     /**
@@ -275,17 +320,9 @@ final class SerieService
             return false;
         }
 
-        try {
-            $tempPath = tempnam(sys_get_temp_dir(), 'poster_');
+        $this->fileService->setUploadedFile($poster, $serie, 'posterFile');
 
-            // Télécharger l'image et l'écrire dans le fichier temporaire
-            file_put_contents($tempPath, file_get_contents($poster));
-            $this->fileService->setUploadedFile($tempPath, $serie, 'posterFile');
-
-            return true;
-        } catch (Exception) {
-            return false;
-        }
+        return true;
     }
 
     private function updateOther(Serie $serie, array $details): bool
@@ -299,12 +336,19 @@ final class SerieService
         return true;
     }
 
-    private function updateRecommendations(Serie $serie, array $details): bool
+    private function updateResult($series, array $tmdbs): array
     {
-        $this->recommendationService->setRecommendations($serie, $details['recommendations']['results'] ?? null);
-        $this->recommendationService->setRecommendations($serie, $details['similar']['results'] ?? null);
+        foreach ($series as &$serie) {
+            $serie['first_air_date'] = empty($serie['first_air_date']) ? null : new DateTime(
+                $serie['first_air_date']
+            );
+            $serie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl(
+                $serie['poster_path'] ?? '',
+                100
+            );
+        }
 
-        return true;
+        return array_filter($series, fn (array $serie): bool => !in_array($serie['id'], $tmdbs));
     }
 
     private function updateSeasons(Serie $serie, array $details): bool
@@ -320,7 +364,7 @@ final class SerieService
 
         $seasons = $this->seasonService->getSeasons($serie);
         foreach ($seasons as $season) {
-            $this->messageBus->dispatch(new SeasonMessage($season->getId()));
+            $this->messageDispatcherService->dispatch(new SeasonMessage($season->getId()));
         }
 
         return true;
@@ -358,21 +402,11 @@ final class SerieService
      */
     private function updateTrailer(Serie $serie, array $details): bool
     {
-        if (is_null($details['videos']) || !is_array($details['videos'])) {
-            return false;
-        }
-
-        $find = false;
-
-        foreach ($details['videos']['results'] as $result) {
-            if ('YouTube' == $result['site'] && 'Trailer' == $result['type']) {
-                $url = 'https://www.youtube.com/watch?v=' . $result['key'];
-                $serie->setTrailer($url);
-
-                $find = true;
-
-                break;
-            }
+        $find  = false;
+        $video = $this->videoService->getTrailer($details['videos']);
+        if (!is_null($video)) {
+            $serie->setTrailer($video);
+            $find = true;
         }
 
         return $find;

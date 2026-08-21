@@ -102,11 +102,11 @@ final class EtagCacheService
 
         $headers = [
             'Cache-Control' => 'public, max-age=3600, must-revalidate',
-            'ETag'          => '"' . $etag . '"',
+            'ETag'          => '"'.$etag.'"',
         ];
 
         if ($lastModified instanceof DateTimeInterface) {
-            $headers['Last-Modified'] = $lastModified->format('D, d M Y H:i:s') . ' GMT';
+            $headers['Last-Modified'] = $lastModified->format('D, d M Y H:i:s').' GMT';
         }
 
         return [
@@ -147,7 +147,6 @@ final class EtagCacheService
     {
         $baseHeaders = $this->getCacheHeaders($entity);
 
-        // Personnaliser la durée de cache selon le type d'entité
         $maxAge                                  = $this->getOptimalCacheTime($entity);
         $baseHeaders['headers']['Cache-Control'] = sprintf('public, max-age=%d, must-revalidate', $maxAge);
 
@@ -216,7 +215,7 @@ final class EtagCacheService
                     return true;
                 }
             } catch (Exception) {
-                throw new Exception('Invalid If-Modified-Since date: ' . $ifModifiedSince);
+                throw new Exception('Invalid If-Modified-Since date: '.$ifModifiedSince);
                 // Date invalide, ignorer
             }
         }
@@ -289,8 +288,7 @@ final class EtagCacheService
                 }
             }
         } catch (ReflectionException) {
-            throw new Exception('Reflection error on entity: ' . $entity::class);
-            // En cas d'erreur de réflection, continuer sans les propriétés
+            throw new Exception('Reflection error on entity: '.$entity::class);
         }
 
         return $properties;
@@ -340,7 +338,7 @@ final class EtagCacheService
         $className = $entity::class;
         $id        = $this->extractEntityId($entity);
 
-        return $className . ':' . ($id ?? 'no-id') . ':' . spl_object_hash($entity);
+        return $className.':'.($id ?? 'no-id').':'.spl_object_hash($entity);
     }
 
     /**

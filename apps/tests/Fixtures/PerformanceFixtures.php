@@ -38,7 +38,7 @@ final class PerformanceFixtures extends Fixture
         for ($i = 1; self::PERFORMANCE_USERS_COUNT >= $i; ++$i) {
             $user = new User();
             $user->setEmail(sprintf('perf.user.%d@labstag.test', $i));
-            $user->setUsername('perfuser' . $i);
+            $user->setUsername('perfuser'.$i);
             $user->setEnable(true);
             $user->setLanguage('fr');
 

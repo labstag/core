@@ -103,6 +103,7 @@ tasks:
     desc: "Deploy Docker stacks defined in docker-compose files"
     silent: true
     cmds:
+    - docker build -f Dockerfile.messenger -t labstag/messenger:latest .
     - task: docker:stack:deploy
       vars:
         COMPOSE_FILE: "{{.DOCKERCOMPOSEFILE}}"
@@ -157,7 +158,6 @@ tasks:
     cmds:
     - task: docker:stack:shell
       vars:
-        STACK_NAME: "labstag"
         SERVICE_NAME: "www"
 
   labstag:cmd-exec:
@@ -171,7 +171,6 @@ tasks:
     cmds:
     - task: docker:stack:exec
       vars:
-        STACK_NAME: "labstag"
         SERVICE_NAME: "www"
         COMMAND: "{{.COMMAND}}"
         INTERACTIVE: "{{.INTERACTIVE}}"
@@ -338,14 +337,6 @@ tasks:
       vars:
         CMD: "run ecs-fix"
 
-  labstag:delete-oldfiles:
-    desc: "Delete old temporary files"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:delete-oldfiles"
-
   labstag:geocode-install:
     desc: "Install geocoding data"
     silent: true
@@ -428,22 +419,6 @@ tasks:
       vars:
         COMMAND: "php -d memory_limit=-1 phploc.phar src"
 
-  lint:phpmd:
-    desc: "Check code with PHP Mess Detector"
-    silent: true
-    cmds:
-    - task: labstag:cmd-exec
-      vars:
-        COMMAND: "php -d memory_limit=-1 -d error_reporting=24575 bin/phpmd config,public,src,tests ansi phpmd.xml"
-
-  lint:phpmnd:
-    desc: "Detect magic numbers with PHPMND"
-    silent: true
-    cmds:
-    - task: composer:exec
-      vars:
-        CMD: "run phpmnd"
-
   phpstan:
     desc: "Analyze code with PHPStan"
     silent: true
@@ -461,46 +436,6 @@ tasks:
     - task: symfony:console
       vars:
         CMD: "lint:twig templates"
-
-  labstag:movies:add:
-    desc: "Add demonstration movies"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:movies:add"
-
-  labstag:movies:update:
-    desc: "Update demonstration movies"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:movies:update"
-
-  labstag:series:add:
-    desc: "Add demonstration series"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:series:add"
-
-  labstag:series:update:
-    desc: "Update demonstration series"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:series:update"
-
-  messenger:consume:
-    desc: "Start Messenger message consumer"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "messenger:consume async"
 
   messenger:stats:
     desc: "Show Messenger statistics"
@@ -524,7 +459,7 @@ tasks:
     cmds:
     - task: composer:exec
       vars:
-        CMD: "run rector --dry-run"
+        CMD: "run rector-dry"
 
   star:get:
     desc: "Download star data"
@@ -669,8 +604,6 @@ tasks:
     silent: true
     cmds:
     - task: lint:phpcs:error
-    - task: lint:phpmd
-    - task: lint:phpmnd
     - task: phpstan
       vars:
         LEVEL: "0"
@@ -717,10 +650,7 @@ tasks:
     silent: true
     cmds:
     - task: doctrine:fixtures
-    - task: labstag:delete-oldfiles
     - task: star:add
-    - task: labstag:movies:add
-    - task: labstag:series:add
 
   labstag:set-env-ids:
     desc: "Update UID/GID in .env file"

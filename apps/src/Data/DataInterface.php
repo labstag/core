@@ -8,7 +8,7 @@ interface DataInterface
 {
     public function asset(mixed $entity, string $field): string;
 
-    public function generateSlug(object $entity): string;
+    public function generateSlug(object $entity): array;
 
     public function getEntity(?string $slug): object;
 

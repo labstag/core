@@ -52,7 +52,7 @@ class TmdbImagesApi extends AbstractTmdbApi
         }
 
         $sizes     = $this->getAvailableSizes();
-        $typeSizes = $sizes[$imageType . '_sizes'] ?? [];
+        $typeSizes = $sizes[$imageType.'_sizes'] ?? [];
 
         if (empty($typeSizes)) {
             return $this->getUrl($imagePath, 'w500');
@@ -74,6 +74,19 @@ class TmdbImagesApi extends AbstractTmdbApi
     public function getPosterUrl(string $posterPath, int $targetWidth = 342): ?string
     {
         return $this->getOptimizedUrl($posterPath, 'poster', $targetWidth);
+    }
+
+    /**
+     * Get poster URL with optimal size.
+     *
+     * @param string $profilePath The profile path from TMDB API
+     * @param int    $targetWidth Desired width (default: 185px)
+     *
+     * @return string|null Complete profile URL
+     */
+    public function getProfileUrl(string $profilePath, int $targetWidth = 185): ?string
+    {
+        return $this->getOptimizedUrl($profilePath, 'profile', $targetWidth);
     }
 
     /**
@@ -106,10 +119,10 @@ class TmdbImagesApi extends AbstractTmdbApi
         $config = $this->getConfiguration();
         if (null === $config || !isset($config['images']['secure_base_url'])) {
             // Fallback to known TMDB base URL if config fails
-            return 'https://image.tmdb.org/t/p/' . $size . $imagePath;
+            return 'https://image.tmdb.org/t/p/'.$size.$imagePath;
         }
 
-        return $config['images']['secure_base_url'] . $size . $imagePath;
+        return $config['images']['secure_base_url'].$size.$imagePath;
     }
 
     /**
@@ -214,7 +227,7 @@ class TmdbImagesApi extends AbstractTmdbApi
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item): ?array {
-                $url  = self::BASE_URL . '/configuration';
+                $url  = self::BASE_URL.'/configuration';
                 $data = $this->makeRequest($url);
 
                 if (null === $data) {

@@ -16,7 +16,7 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: SerieRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -33,7 +33,7 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $backdrop = null;
 
-    #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'backdrop')]
+    #[Vich\UploadableField(mapping: 'serie', fileNameProperty: 'backdrop')]
     protected ?File $backdropFile = null;
 
     /**
@@ -87,14 +87,22 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]
     protected ?DateTime $lastreleaseDate = null;
 
-    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'serie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'serie',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -112,14 +120,22 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     /**
      * @var Collection<int, Season>
      */
-    #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'refserie', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Season::class,
+        mappedBy: 'refserie',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['number' => 'ASC']
     )]
     protected Collection $seasons;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
     protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
@@ -135,6 +151,12 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     protected ?int $votes = null;
 
     /**
+     * @var Collection<int, Casting>
+     */
+    #[ORM\OneToMany(targetEntity: Casting::class, mappedBy: 'refSerie')]
+    private Collection $castings;
+
+    /**
      * @var Collection<int, Company>
      */
     #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'series')]
@@ -143,25 +165,29 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     )]
     private Collection $companies;
 
-    /**
-     * @var Collection<int, Recommendation>
-     */
-    #[ORM\OneToMany(targetEntity: Recommendation::class, mappedBy: 'refserie')]
-    private Collection $recommendations;
-
     public function __construct()
     {
         $this->categories      = new ArrayCollection();
         $this->seasons         = new ArrayCollection();
         $this->paragraphs      = new ArrayCollection();
         $this->companies       = new ArrayCollection();
-        $this->recommendations = new ArrayCollection();
+        $this->castings        = new ArrayCollection();
     }
 
     #[Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();
+    }
+
+    public function addCasting(Casting $casting): static
+    {
+        if (!$this->castings->contains($casting)) {
+            $this->castings->add($casting);
+            $casting->setRefSerie($this);
+        }
+
+        return $this;
     }
 
     public function addCategory(SerieCategory $serieCategory): static
@@ -194,16 +220,6 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
-    public function addRecommendation(Recommendation $recommendation): static
-    {
-        if (!$this->recommendations->contains($recommendation)) {
-            $this->recommendations->add($recommendation);
-            $recommendation->setRefserie($this);
-        }
-
-        return $this;
-    }
-
     public function addSeason(Season $season): static
     {
         if (!$this->seasons->contains($season)) {
@@ -222,6 +238,14 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     public function getBackdropFile(): ?File
     {
         return $this->backdropFile;
+    }
+
+    /**
+     * @return Collection<int, Casting>
+     */
+    public function getCastings(): Collection
+    {
+        return $this->castings;
     }
 
     /**
@@ -306,14 +330,6 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         return $this->posterFile;
     }
 
-    /**
-     * @return Collection<int, Recommendation>
-     */
-    public function getRecommendations(): Collection
-    {
-        return $this->recommendations;
-    }
-
     public function getReleaseDate(): ?DateTime
     {
         return $this->releaseDate;
@@ -372,6 +388,16 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         return $this->inProduction;
     }
 
+    public function removeCasting(Casting $casting): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->castings->removeElement($casting) && $casting->getRefSerie() === $this) {
+            $casting->setRefSerie(null);
+        }
+
+        return $this;
+    }
+
     public function removeCategory(SerieCategory $serieCategory): static
     {
         if ($this->categories->removeElement($serieCategory)) {
@@ -401,16 +427,6 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
-    public function removeRecommendation(Recommendation $recommendation): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->recommendations->removeElement($recommendation) && $recommendation->getRefserie() === $this) {
-            $recommendation->setRefserie(null);
-        }
-
-        return $this;
-    }
-
     public function removeSeason(Season $season): static
     {
         // set the owning side to null (unless already changed)
@@ -433,7 +449,6 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     {
         $this->backdrop = $backdrop;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $backdrop) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
@@ -534,7 +549,6 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     {
         $this->poster = $poster;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $poster) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

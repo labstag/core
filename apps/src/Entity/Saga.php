@@ -17,7 +17,7 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: SagaRepository::class)]
 #[Vich\Uploadable]
@@ -31,7 +31,7 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $backdrop = null;
 
-    #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'backdrop')]
+    #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'backdrop')]
     protected ?File $backdropFile = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -49,7 +49,7 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected ?string $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'saga', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'saga', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     protected ?Meta $meta = null;
 
@@ -66,7 +66,15 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'saga', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'saga',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
@@ -78,7 +86,7 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'poster')]
     protected ?File $posterFile = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'], unique: false)]
+    #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]
     #[Gedmo\SlugHandler(class: SagaSlugHandler::class)]
     #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
     protected ?string $slug = null;
@@ -89,17 +97,10 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(length: 255, nullable: true)]
     protected ?string $tmdb = null;
 
-    /**
-     * @var Collection<int, Recommendation>
-     */
-    #[ORM\OneToMany(targetEntity: Recommendation::class, mappedBy: 'refsaga')]
-    private Collection $recommendations;
-
     public function __construct()
     {
         $this->movies          = new ArrayCollection();
         $this->paragraphs      = new ArrayCollection();
-        $this->recommendations = new ArrayCollection();
     }
 
     #[Override]
@@ -123,16 +124,6 @@ class Saga implements Stringable, EntityWithParagraphsInterface
         if (!$this->paragraphs->contains($paragraph)) {
             $this->paragraphs->add($paragraph);
             $paragraph->setSaga($this);
-        }
-
-        return $this;
-    }
-
-    public function addRecommendation(Recommendation $recommendation): static
-    {
-        if (!$this->recommendations->contains($recommendation)) {
-            $this->recommendations->add($recommendation);
-            $recommendation->setRefsaga($this);
         }
 
         return $this;
@@ -189,14 +180,6 @@ class Saga implements Stringable, EntityWithParagraphsInterface
         return $this->posterFile;
     }
 
-    /**
-     * @return Collection<int, Recommendation>
-     */
-    public function getRecommendations(): Collection
-    {
-        return $this->recommendations;
-    }
-
     public function getSlug(): ?string
     {
         return $this->slug;
@@ -239,21 +222,10 @@ class Saga implements Stringable, EntityWithParagraphsInterface
         return $this;
     }
 
-    public function removeRecommendation(Recommendation $recommendation): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->recommendations->removeElement($recommendation) && $recommendation->getRefsaga() === $this) {
-            $recommendation->setRefsaga(null);
-        }
-
-        return $this;
-    }
-
     public function setBackdrop(?string $backdrop): void
     {
         $this->backdrop = $backdrop;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $backdrop) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
@@ -295,7 +267,6 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     {
         $this->poster = $poster;
 
-        // Si l'image est supprimée (poster devient null), on force la mise à jour
         if (null === $poster) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

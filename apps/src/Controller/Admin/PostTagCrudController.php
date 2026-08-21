@@ -4,11 +4,12 @@ namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Labstag\Entity\PostTag;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class PostTagCrudController extends TagCrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
@@ -23,7 +24,7 @@ class PostTagCrudController extends TagCrudControllerAbstract
         yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return PostTag::class;

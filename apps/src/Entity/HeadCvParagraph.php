@@ -6,7 +6,7 @@ use DateTime;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity]
 #[Vich\Uploadable]
@@ -41,7 +41,6 @@ class HeadCvParagraph extends Paragraph
     {
         $this->pdf = $pdf;
 
-        // Si le PDF est supprimé (pdf devient null), on force la mise à jour
         if (null === $pdf) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

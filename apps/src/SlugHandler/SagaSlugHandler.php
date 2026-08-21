@@ -17,7 +17,7 @@ class SagaSlugHandler implements SlugHandlerInterface
     {
     }
 
-    public function handlesUrlization()
+    public function handlesUrlization(): bool
     {
         return false;
     }
@@ -50,7 +50,7 @@ class SagaSlugHandler implements SlugHandlerInterface
         );
 
         if ($existingMovies) {
-            $slug = $originalSlug . '-saga';
+            $slug = $originalSlug.'-saga';
         }
     }
 
