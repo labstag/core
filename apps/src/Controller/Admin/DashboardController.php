@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -72,10 +73,11 @@ class DashboardController extends AbstractDashboardController
         $tags       = $this->menuItemFactory->createTagMenuItems();
         // Dashboard home
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
-        yield MenuItem::linkToCrud(
-            new TranslatableMessage('Notifications'),
-            'fas fa-bell',
-            NotificationCrudController::getEntityFqcn()
+        $translatableMessage = new TranslatableMessage('Notifications'); 
+        yield MenuItem::linkTo(
+            NotificationCrudController::class,
+            $translatableMessage->getMessage(),
+            'fas fa-bell'
         );
 
         // Shared taxonomy items (categories / tags) used in several content sub-menus
@@ -247,10 +249,22 @@ class DashboardController extends AbstractDashboardController
     private function buildContentMenus(array $categories, array $tags): iterable
     {
         // Definition: identifier, label, icon, controller, categories?, tags?, extra children
+        $translatableStoryMessage = new TranslatableMessage('Story');
+        $translatableChapterMessage = new TranslatableMessage('Chapter');
+        $translatableMovieMessage = new TranslatableMessage('Movie');
+        $translatableSagasMessage = new TranslatableMessage('Sagas');
+        $translatableSerieMessage = new TranslatableMessage('Serie');
+        $translatableSeasonMessage = new TranslatableMessage('Season');
+        $translatableEpisodeMessage = new TranslatableMessage('Episode'); 
+        $translatableGameMessage = new TranslatableMessage('Game');
+        $translatablePlatformMessage = new TranslatableMessage('Platform');
+        $translatableFranchiseMessage = new TranslatableMessage('Franchise');
+        $translatablePageMessage = new TranslatableMessage('Page');
+        $translatablePostMessage = new TranslatableMessage('Post');
         $definitions = [
             [
                 'story',
-                new TranslatableMessage('Story'),
+                $translatableStoryMessage->getMessage(),
                 'fas fa-landmark',
                 StoryCrudController::class,
                 $categories,
@@ -260,7 +274,7 @@ class DashboardController extends AbstractDashboardController
             ],
             [
                 'chapter',
-                new TranslatableMessage('Chapter'),
+                $translatableChapterMessage->getMessage(),
                 'fas fa-landmark',
                 ChapterCrudController::class,
                 null,
@@ -270,65 +284,65 @@ class DashboardController extends AbstractDashboardController
             ],
             [
                 'movie',
-                new TranslatableMessage('Movie'),
+                $translatableMovieMessage->getMessage(),
                 'fas fa-film',
                 MovieCrudController::class,
                 $categories,
                 null,
                 [
-                    MenuItem::linkToCrud(
-                        new TranslatableMessage('Sagas'),
-                        'fas fa-video',
-                        SagaCrudController::getEntityFqcn()
+                    MenuItem::linkTo(
+                        SagaCrudController::class,
+                        $translatableSagasMessage->getMessage(),
+                        'fas fa-video'
                     ),
                 ],
                 true,
             ],
             [
                 'serie',
-                new TranslatableMessage('Serie'),
+                $translatableSerieMessage->getMessage(),
                 'fas fa-film',
                 SerieCrudController::class,
                 $categories,
                 null,
                 [
-                    MenuItem::linkToCrud(
-                        new TranslatableMessage('Season'),
-                        'fas fa-video',
-                        SeasonCrudController::getEntityFqcn()
+                    MenuItem::linkTo(
+                        SeasonCrudController::class,
+                        $translatableSeasonMessage->getMessage(),
+                        'fas fa-video'
                     ),
-                    MenuItem::linkToCrud(
-                        new TranslatableMessage('Episode'),
-                        'fas fa-video',
-                        EpisodeCrudController::getEntityFqcn()
+                    MenuItem::linkTo(
+                        EpisodeCrudController::class,
+                        $translatableEpisodeMessage->getMessage(),
+                        'fas fa-video'
                     ),
                 ],
                 true,
             ],
             [
                 'game',
-                new TranslatableMessage('Game'),
+                $translatableGameMessage->getMessage(),
                 'fas fa-gamepad',
                 GameCrudController::class,
                 $categories,
                 null,
                 [
-                    MenuItem::linkToCrud(
-                        new TranslatableMessage('Platform'),
-                        'fas fa-desktop',
-                        PlatformCrudController::getEntityFqcn()
+                    MenuItem::linkTo(
+                        PlatformCrudController::class,
+                        $translatablePlatformMessage->getMessage(),
+                        'fas fa-desktop'
                     ),
-                    MenuItem::linkToCrud(
-                        new TranslatableMessage('Franchise'),
-                        'fas fa-th-large',
-                        FranchiseCrudController::getEntityFqcn()
+                    MenuItem::linkTo(
+                        FranchiseCrudController::class,
+                        $translatableFranchiseMessage->getMessage(),
+                        'fas fa-th-large'
                     ),
                 ],
                 true,
             ],
             [
                 'page',
-                new TranslatableMessage('Page'),
+                $translatablePageMessage->getMessage(),
                 'fas fa-columns',
                 PageCrudController::class,
                 $categories,
@@ -338,7 +352,7 @@ class DashboardController extends AbstractDashboardController
             ],
             [
                 'post',
-                new TranslatableMessage('Post'),
+                $translatablePostMessage->getMessage(),
                 'fas fa-newspaper',
                 PostCrudController::class,
                 $categories,
@@ -374,87 +388,87 @@ class DashboardController extends AbstractDashboardController
             [
                 new TranslatableMessage('Person'),
                 'fas fa-users',
-                PersonCrudController::getEntityFqcn(),
+                PersonCrudController::class,
             ],
             [
                 new TranslatableMessage('Company'),
                 'fas fa-building',
-                CompanyCrudController::getEntityFqcn(),
+                CompanyCrudController::class,
             ],
             [
                 new TranslatableMessage('Edito'),
                 'fas fa-info',
-                EditoCrudController::getEntityFqcn(),
+                EditoCrudController::class,
             ],
             [
                 new TranslatableMessage('Memo'),
                 'fas fa-memory',
-                MemoCrudController::getEntityFqcn(),
+                MemoCrudController::class,
             ],
             [
                 new TranslatableMessage('Media'),
                 'fas fa-photo-video',
-                MediaCrudController::getEntityFqcn(),
+                MediaCrudController::class,
             ],
             [
                 new TranslatableMessage('Meta'),
                 'fa fa-file-alt',
-                MetaCrudController::getEntityFqcn(),
+                MetaCrudController::class,
             ],
             [
                 new TranslatableMessage('Paragraph'),
                 'fa fa-paragraph',
-                ParagraphCrudController::getEntityFqcn(),
+                ParagraphCrudController::class,
             ],
             [
                 new TranslatableMessage('Block'),
                 'fa fa-cubes',
-                BlockCrudController::getEntityFqcn(),
+                BlockCrudController::class,
             ],
             [
                 new TranslatableMessage('Geocode'),
                 'fas fa-map-signs',
-                GeoCodeCrudController::getEntityFqcn(),
+                GeoCodeCrudController::class,
             ],
             [
                 new TranslatableMessage('Star'),
                 'fas fa-star',
-                StarCrudController::getEntityFqcn(),
+                StarCrudController::class,
             ],
             [
                 new TranslatableMessage('User'),
                 'fa fa-user',
-                UserCrudController::getEntityFqcn(),
+                UserCrudController::class,
             ],
             [
                 new TranslatableMessage('Group'),
                 'fa fa-users',
-                GroupCrudController::getEntityFqcn(),
+                GroupCrudController::class,
             ],
             [
                 new TranslatableMessage('Ban IP'),
                 'fas fa-ban',
-                BanIpCrudController::getEntityFqcn(),
+                BanIpCrudController::class,
             ],
             [
                 new TranslatableMessage('Redirection'),
                 'fas fa-directions',
-                RedirectionCrudController::getEntityFqcn(),
+                RedirectionCrudController::class,
             ],
             [
                 new TranslatableMessage('Http error Logs'),
                 'fas fa-clipboard-list',
-                HttpErrorLogsCrudController::getEntityFqcn(),
+                HttpErrorLogsCrudController::class,
             ],
             [
                 new TranslatableMessage('Submission'),
                 'fas fa-clipboard-list',
-                SubmissionCrudController::getEntityFqcn(),
+                SubmissionCrudController::class,
             ],
         ];
 
         foreach ($items as [$label, $icon, $fqcn]) {
-            yield MenuItem::linkToCrud($label, $icon, $fqcn);
+            yield MenuItem::linkTo($fqcn, $label->getMessage(), $icon);
         }
 
         yield MenuItem::linkToRoute(

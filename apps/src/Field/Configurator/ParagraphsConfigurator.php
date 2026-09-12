@@ -33,7 +33,7 @@ final class ParagraphsConfigurator implements FieldConfiguratorInterface
             $fieldDto->setLabel(false);
         }
 
-        $crudControllerRegistry = $adminContext->getCrudControllers();
+        $crudControllerRegistry = $adminContext->getAdminControllers();
         $instance               = $entityDto->getInstance();
         if (is_null($instance)) {
             return;

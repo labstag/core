@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -32,6 +33,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class SerieCrudController extends CrudControllerAbstract
 {
+    #[AdminRoute]
     public function addByApi(Request $request): JsonResponse
     {
         $tmdbId       = $request->query->get('id');
@@ -101,6 +103,7 @@ class SerieCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function apiSerie(Request $request): Response
     {
         $page               = $request->query->get('page', 1);
@@ -272,6 +275,7 @@ class SerieCrudController extends CrudControllerAbstract
         return Serie::class;
     }
 
+    #[AdminRoute]
     public function imdb(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -284,6 +288,7 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.imdb.com/title/'.$serie->getImdb().'/');
     }
 
+    #[AdminRoute]
     public function importFileSerie(Request $request): JsonResponse
     {
         $files   = $request->files->all();
@@ -311,6 +316,7 @@ class SerieCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function jsonSerie(Request $request): JsonResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -321,6 +327,7 @@ class SerieCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
+    #[AdminRoute]
     public function showModalImportSerie(Request $request): Response
     {
         $form    = $this->createForm(SerieImportType::class);
@@ -335,6 +342,7 @@ class SerieCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function showModalSerie(Request $request): Response
     {
         $form    = $this->createForm(SerieType::class);
@@ -349,6 +357,7 @@ class SerieCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function tmdb(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -358,6 +367,7 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.themoviedb.org/tv/'.$serie->getTmdb());
     }
 
+    #[AdminRoute]
     public function updateAllSerie(): RedirectResponse
     {
         $this->messageBus->dispatch(new SerieAllMessage());
@@ -365,6 +375,7 @@ class SerieCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_serie_index');
     }
 
+    #[AdminRoute]
     public function updateSerie(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');

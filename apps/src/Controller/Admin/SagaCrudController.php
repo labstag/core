@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -90,6 +91,7 @@ class SagaCrudController extends CrudControllerAbstract
         return Saga::class;
     }
 
+    #[AdminRoute]
     public function jsonSaga(Request $request): JsonResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -144,6 +146,7 @@ class SagaCrudController extends CrudControllerAbstract
         return $associationField;
     }
 
+    #[AdminRoute]
     public function tmdb(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -153,6 +156,7 @@ class SagaCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.themoviedb.org/collection/'.$saga->getTmdb());
     }
 
+    #[AdminRoute]
     public function updateAllSaga(): RedirectResponse
     {
         $this->messageBus->dispatch(new SagaAllMessage());
@@ -160,6 +164,7 @@ class SagaCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_saga_index');
     }
 
+    #[AdminRoute]
     public function updateSaga(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');

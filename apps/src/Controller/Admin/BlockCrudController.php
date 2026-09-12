@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -247,6 +248,7 @@ class BlockCrudController extends CrudControllerAbstract
         return Block::class;
     }
 
+    #[AdminRoute]
     public function newBlock(): Response
     {
         $blocks = $this->blockService->getAll(null);
@@ -260,6 +262,7 @@ class BlockCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function positionBlock(Request $request): RedirectResponse|Response
     {
         $repositoryAbstract              = $this->getRepository();
@@ -296,7 +299,8 @@ class BlockCrudController extends CrudControllerAbstract
             $repositoryAbstract->flush();
             $this->addFlash('success', new TranslatableMessage('Position updated'));
 
-            $url = $generator->setController(static::class)->setAction(Action::INDEX)->generateUrl();
+            $url = $generator->setController(static::class);
+            $url = $url->setAction(Action::INDEX)->generateUrl();
 
             return $this->redirect($url);
         }
@@ -307,6 +311,7 @@ class BlockCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function showModalBlock(): Response
     {
         $blocks = $this->blockService->getAll(null);

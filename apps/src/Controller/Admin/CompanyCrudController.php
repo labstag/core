@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -83,6 +84,7 @@ class CompanyCrudController extends CrudControllerAbstract
         return Company::class;
     }
 
+    #[AdminRoute]
     public function jsonCompany(Request $request): JsonResponse
     {
         $entityId                          = $request->query->get('entityId');
@@ -93,6 +95,7 @@ class CompanyCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
+    #[AdminRoute]
     public function updateAllCompany(): RedirectResponse
     {
         $this->messageBus->dispatch(new CompanyAllMessage());
@@ -100,6 +103,7 @@ class CompanyCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_company_index');
     }
 
+    #[AdminRoute]
     public function updateCompany(Request $request): RedirectResponse
     {
         $entityId                          = $request->query->get('entityId');

@@ -16,6 +16,8 @@ class ActionsFactory
 
     protected ?Actions $actions = null;
 
+    protected bool $enableAction = false;
+
     protected array $actionsAdd     = [];
 
     protected array $actionsDefault = [];
@@ -122,7 +124,6 @@ class ActionsFactory
     public function setActionLinkPublic(): void
     {
         $find   = false;
-
         $reflectionClass = new ReflectionClass($this->entity);
         if ($reflectionClass->isAbstract()) {
             return;
@@ -260,6 +261,11 @@ class ActionsFactory
 
     private function addActions(): void
     {
+        if ($this->enableAction != false) {
+            return;
+        }
+
+        $this->enableAction = true;
         foreach ($this->actionsAdd as $page => $actionsToAdd) {
             foreach ($actionsToAdd as $actionToAdd) {
                 $this->actions->add($page, $actionToAdd);

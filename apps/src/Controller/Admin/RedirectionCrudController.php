@@ -4,6 +4,7 @@ namespace Labstag\Controller\Admin;
 
 use DateTime;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -126,6 +127,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         return Redirection::class;
     }
 
+    #[AdminRoute]
     public function import(Request $request): RedirectResponse|Response
     {
         $form = $this->createForm(
@@ -158,6 +160,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function testSource(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -167,6 +170,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         return $this->redirect($redirection->getSource());
     }
 
+    #[AdminRoute]
     protected function redirectToIndex(): RedirectResponse
     {
         $generator = $this->container->get(AdminUrlGenerator::class);

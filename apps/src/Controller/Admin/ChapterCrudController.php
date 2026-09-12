@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -93,6 +94,7 @@ class ChapterCrudController extends CrudControllerAbstract
         return Chapter::class;
     }
 
+    #[AdminRoute]
     public function updateChapter(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');
