@@ -53,7 +53,7 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(
             ParagraphParentField::OPTION_CRUD_CONTROLLER
         ) ?? $adminContext->getAdminControllers()
-            ->findCrudFqcnByEntityFqcn($targetEntityFqcn);
+            ->findCrudControllerByEntity($targetEntityFqcn);
         $fieldDto->setCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER, $targetCrudControllerFqcn);
         $fieldDto = $this->setFormTypeOption($fieldDto);
 

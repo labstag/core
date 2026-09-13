@@ -53,7 +53,7 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(
             MetaParentField::OPTION_CRUD_CONTROLLER
         ) ?? $adminContext->getAdminControllers()
-            ->findCrudFqcnByEntityFqcn($targetEntityFqcn);
+            ->findCrudControllerByEntity($targetEntityFqcn);
         $fieldDto->setCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER, $targetCrudControllerFqcn);
 
         if (MetaParentField::WIDGET_AUTOCOMPLETE === $fieldDto->getCustomOption(MetaParentField::OPTION_WIDGET)) {
