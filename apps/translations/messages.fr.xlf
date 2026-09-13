@@ -2377,6 +2377,14 @@
         <source>Date of death : %date%</source>
         <target>Date de décès : %date%</target>
       </trans-unit>
+      <trans-unit id="c2Wiocp" resname="list">
+        <source>list</source>
+        <target>Liste</target>
+      </trans-unit>
+      <trans-unit id="pvKqo9e" resname="No artists match your search.">
+        <source>No artists match your search.</source>
+        <target>Aucun artiste ne correspond à votre recherche.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
