@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -164,6 +165,7 @@ class SeasonCrudController extends CrudControllerAbstract
         return Season::class;
     }
 
+    #[AdminRoute]
     public function jsonSeason(Request $request): JsonResponse
     {
         $entityId                         = $request->query->get('entityId');
@@ -174,6 +176,7 @@ class SeasonCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
+    #[AdminRoute]
     public function tmdb(Request $request): RedirectResponse
     {
         $entityId                         = $request->query->get('entityId');
@@ -185,6 +188,7 @@ class SeasonCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function updateAllSeason(): RedirectResponse
     {
         $this->messageBus->dispatch(new SeasonAllMessage());
@@ -192,6 +196,7 @@ class SeasonCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_season_index');
     }
 
+    #[AdminRoute]
     public function updateSeason(Request $request): RedirectResponse
     {
         $entityId                         = $request->query->get('entityId');

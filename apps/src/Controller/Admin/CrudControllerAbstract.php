@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -139,6 +140,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return $queryBuilder;
     }
 
+    #[AdminRoute]
     public function linkPublic(AdminContext $adminContext): RedirectResponse
     {
         $request              = $adminContext->getRequest();
@@ -150,6 +152,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return $this->redirectToRoute('front', $params);
     }
 
+    #[AdminRoute]
     public function linkw3CValidator(AdminContext $adminContext): RedirectResponse
     {
         $request                         = $adminContext->getRequest();

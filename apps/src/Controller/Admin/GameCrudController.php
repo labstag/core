@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -28,6 +29,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class GameCrudController extends CrudControllerAbstract
 {
+    #[AdminRoute]
     public function addAnotherPlatform(Request $request): JsonResponse
     {
         $entityId           = $request->query->get('entityId');
@@ -86,6 +88,7 @@ class GameCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function addByApi(Request $request): JsonResponse
     {
         $id       = $request->query->get('id');
@@ -106,6 +109,7 @@ class GameCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function addToAnotherPlatform(Request $request): Response
     {
         $entityId               = $request->query->get('entityId');
@@ -126,6 +130,7 @@ class GameCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function apiGame(Request $request): Response
     {
         $all     = $request->request->all();
@@ -244,6 +249,7 @@ class GameCrudController extends CrudControllerAbstract
         return Game::class;
     }
 
+    #[AdminRoute]
     public function igdb(Request $request): Response
     {
         $entityId                        = $request->query->get('entityId');
@@ -257,6 +263,7 @@ class GameCrudController extends CrudControllerAbstract
         return $this->redirect($url);
     }
 
+    #[AdminRoute]
     public function importFileGame(Request $request): JsonResponse
     {
         $files   = $request->files->all();
@@ -288,6 +295,7 @@ class GameCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function jsonMovie(Request $request): JsonResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -330,6 +338,7 @@ class GameCrudController extends CrudControllerAbstract
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
+    #[AdminRoute]
     public function showModalGame(Request $request): Response
     {
         $form    = $this->createForm(GameType::class);
@@ -344,6 +353,7 @@ class GameCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function showModalImportGame(Request $request): Response
     {
         $form    = $this->createForm(GameImportType::class);
@@ -358,6 +368,7 @@ class GameCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function updateAllGame(): RedirectResponse
     {
         $this->messageBus->dispatch(new GameAllMessage());
@@ -365,6 +376,7 @@ class GameCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_game_index');
     }
 
+    #[AdminRoute]
     public function updateGame(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');

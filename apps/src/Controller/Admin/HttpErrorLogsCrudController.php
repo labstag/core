@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use DeviceDetector\DeviceDetector;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -20,6 +21,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class HttpErrorLogsCrudController extends CrudControllerAbstract
 {
+    #[AdminRoute]
     public function banIp(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');

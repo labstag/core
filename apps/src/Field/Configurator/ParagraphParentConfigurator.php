@@ -52,8 +52,8 @@ final class ParagraphParentConfigurator implements FieldConfiguratorInterface
         // the target CRUD controller can be NULL; in that case, field value doesn't link to the related entity
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(
             ParagraphParentField::OPTION_CRUD_CONTROLLER
-        ) ?? $adminContext->getCrudControllers()
-            ->findCrudFqcnByEntityFqcn($targetEntityFqcn);
+        ) ?? $adminContext->getAdminControllers()
+            ->findCrudControllerByEntity($targetEntityFqcn);
         $fieldDto->setCustomOption(ParagraphParentField::OPTION_CRUD_CONTROLLER, $targetCrudControllerFqcn);
         $fieldDto = $this->setFormTypeOption($fieldDto);
 

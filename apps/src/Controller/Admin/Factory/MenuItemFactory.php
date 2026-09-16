@@ -74,15 +74,17 @@ final class MenuItemFactory
         array $additionalItems = [],
     ): SubMenuItem
     {
+        $translatableMessage = new TranslatableMessage('list');
         $items = [
-            MenuItem::linkToCrud(new TranslatableMessage('List'), 'fa fa-list', $controllerClass::getEntityFqcn()),
+            MenuItem::linkTo($controllerClass, $translatableMessage->getMessage(), 'fa fa-list'),
         ];
 
         if (!$disableAdd) {
-            $menuItem = MenuItem::linkToCrud(
-                new TranslatableMessage('New'),
-                'fas fa-plus',
-                $controllerClass::getEntityFqcn()
+            $translatableMessage = new TranslatableMessage('New');
+            $menuItem = MenuItem::linkTo(
+                $controllerClass,
+                $translatableMessage->getMessage(),
+                'fas fa-plus'
             );
             $menuItem->setAction(Action::NEW);
             $items[] = $menuItem;
@@ -138,8 +140,7 @@ final class MenuItemFactory
     {
         $menuItems = [];
         foreach ($controllers as $key => $data) {
-            $menuItem = MenuItem::linkToCrud($translatableMessage, $icon, $data['crud']);
-            $menuItem->setController($data['controller']);
+            $menuItem = MenuItem::linkTo($data['controller'], $translatableMessage->getMessage(), $icon, $data['crud']);
             $menuItems[$key] = $menuItem;
         }
 

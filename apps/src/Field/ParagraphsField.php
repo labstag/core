@@ -11,6 +11,7 @@ use Labstag\Form\Type\ParagraphType;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Component\Uid\Ulid;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 final class ParagraphsField implements FieldInterface
 {
@@ -44,7 +45,7 @@ final class ParagraphsField implements FieldInterface
      * @param string|TranslatableMessage|false|null $label
      */
     #[Override]
-    public static function new($label = false, ?string $icon = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         $field = new self();
         $field->setFieldFqcn(self::class);
@@ -56,7 +57,7 @@ final class ParagraphsField implements FieldInterface
             'required' => false,
         ]);
         $field->setTemplatePath('admin/field/paragraphs.html.twig');
-        $field->setCustomOption(self::OPTION_ICON, $icon);
+        $field->setCustomOption(self::OPTION_ICON, $label);
         $field->setCustomOption(self::OPTION_COLLAPSIBLE, false);
         $field->setCustomOption(self::OPTION_COLLAPSED, false);
 
