@@ -52,8 +52,8 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         // the target CRUD controller can be NULL; in that case, field value doesn't link to the related entity
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(
             MetaParentField::OPTION_CRUD_CONTROLLER
-        ) ?? $adminContext->getCrudControllers()
-            ->findCrudFqcnByEntityFqcn($targetEntityFqcn);
+        ) ?? $adminContext->getAdminControllers()
+            ->findCrudControllerByEntity($targetEntityFqcn);
         $fieldDto->setCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER, $targetCrudControllerFqcn);
 
         if (MetaParentField::WIDGET_AUTOCOMPLETE === $fieldDto->getCustomOption(MetaParentField::OPTION_WIDGET)) {

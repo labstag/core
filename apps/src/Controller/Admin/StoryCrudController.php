@@ -4,6 +4,7 @@ namespace Labstag\Controller\Admin;
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -138,6 +139,7 @@ class StoryCrudController extends CrudControllerAbstract
         return Story::class;
     }
 
+    #[AdminRoute]
     public function moveChapter(Request $request): RedirectResponse|Response
     {
         $entityId   = $request->query->get('entityId');
@@ -158,7 +160,8 @@ class StoryCrudController extends CrudControllerAbstract
             $this->getRepository(Chapter::class)->flush();
             $this->addFlash('success', new TranslatableMessage('Position updated'));
 
-            $url = $generator->setController(static::class)->setAction(Action::INDEX)->generateUrl();
+            $url = $generator->setController(static::class);
+            $url = $url->setAction(Action::INDEX)->generateUrl();
 
             return $this->redirect($url);
         }
@@ -171,6 +174,7 @@ class StoryCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function updateAllStory(): RedirectResponse
     {
         $this->messageBus->dispatch(new StoryAllMessage());
@@ -178,6 +182,7 @@ class StoryCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_story_index');
     }
 
+    #[AdminRoute]
     public function updateStory(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');

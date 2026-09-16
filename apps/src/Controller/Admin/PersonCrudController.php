@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -129,6 +130,7 @@ class PersonCrudController extends CrudControllerAbstract
         return Person::class;
     }
 
+    #[AdminRoute]
     public function jsonPerson(Request $request): JsonResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -139,6 +141,7 @@ class PersonCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
+    #[AdminRoute]
     public function tmdb(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -148,6 +151,7 @@ class PersonCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.themoviedb.org/person/'.$movie->getTmdb());
     }
 
+    #[AdminRoute]
     public function updateAllPerson(): RedirectResponse
     {
         $this->messageBus->dispatch(new PersonAllMessage());
@@ -155,6 +159,7 @@ class PersonCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_person_index');
     }
 
+    #[AdminRoute]
     public function updatePerson(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');

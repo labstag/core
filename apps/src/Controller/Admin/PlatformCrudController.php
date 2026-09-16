@@ -16,9 +16,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 
 class PlatformCrudController extends CrudControllerAbstract
 {
+    #[AdminRoute]
     public function addByApi(Request $request): JsonResponse
     {
         $id      = $request->query->get('id');
@@ -37,6 +39,7 @@ class PlatformCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function apiPlatform(Request $request): Response
     {
         $page               = $request->query->get('page', 1);
@@ -123,6 +126,7 @@ class PlatformCrudController extends CrudControllerAbstract
         return Platform::class;
     }
 
+    #[AdminRoute]
     public function showModalPlatform(Request $request): Response
     {
         $form    = $this->createForm(PlatformType::class);

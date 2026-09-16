@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -32,6 +33,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class MovieCrudController extends CrudControllerAbstract
 {
+    #[AdminRoute]
     public function addByApi(Request $request): JsonResponse
     {
         $tmdbId       = $request->query->get('id');
@@ -101,6 +103,7 @@ class MovieCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function apiMovie(Request $request): Response
     {
         $page               = $request->query->get('page', 1);
@@ -278,6 +281,7 @@ class MovieCrudController extends CrudControllerAbstract
         return Movie::class;
     }
 
+    #[AdminRoute]
     public function imdb(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -287,6 +291,7 @@ class MovieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.imdb.com/title/'.$movie->getImdb().'/');
     }
 
+    #[AdminRoute]
     public function importFileMovie(Request $request): JsonResponse
     {
         $files   = $request->files->all();
@@ -314,6 +319,7 @@ class MovieCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function jsonMovie(Request $request): JsonResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -324,6 +330,7 @@ class MovieCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
+    #[AdminRoute]
     public function showModalImportMovie(Request $request): Response
     {
         $form    = $this->createForm(MovieImportType::class);
@@ -338,6 +345,7 @@ class MovieCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function showModalMovie(Request $request): Response
     {
         $form    = $this->createForm(MovieType::class);
@@ -352,6 +360,7 @@ class MovieCrudController extends CrudControllerAbstract
         );
     }
 
+    #[AdminRoute]
     public function tmdb(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -361,6 +370,7 @@ class MovieCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.themoviedb.org/movie/'.$movie->getTmdb());
     }
 
+    #[AdminRoute]
     public function updateAllMovie(): RedirectResponse
     {
         $this->messageBus->dispatch(new MovieAllMessage());
@@ -368,6 +378,7 @@ class MovieCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_movie_index');
     }
 
+    #[AdminRoute]
     public function updateMovie(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');
