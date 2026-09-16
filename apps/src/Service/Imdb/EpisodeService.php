@@ -3,6 +3,7 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
@@ -15,6 +16,7 @@ final class EpisodeService
         private FileService $fileService,
         private EpisodeRepository $episodeRepository,
         private TheMovieDbApi $theMovieDbApi,
+        private EntityManagerInterface $entityManager,
         private PersonService $personService,
     )
     {
@@ -27,6 +29,7 @@ final class EpisodeService
 
     public function getEpisode(Season $season, array $data): Episode
     {
+        $this->entityManager->getFilters()->disable('softdeleteable');
         $episode = $this->episodeRepository->findOneBy(
             [
                 'refseason' => $season,
@@ -35,6 +38,10 @@ final class EpisodeService
         );
 
         if ($episode instanceof Episode) {
+            if ($episode->getDeletedAt() != null) {
+                $episode->setDeletedAt(null);
+            }
+
             return $episode;
         }
 
