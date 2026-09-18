@@ -2,17 +2,35 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Controller\Admin\Abstract\CategoryCrudControllerLib;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use Labstag\Entity\PostCategory;
+use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class PostCategoryCrudController extends CategoryCrudControllerLib
+class PostCategoryCrudController extends CategoryCrudControllerAbstract
 {
-    protected function getChildRelationshipProperty(): string
+    #[Override]
+    public function configureFields(string $pageName): iterable
     {
-        return 'posts';
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->titleField(),
+            ]
+        );
+        $associationField = AssociationField::new('posts', new TranslatableMessage('Posts'));
+        $associationField->formatValue(fn ($entity): int => count($entity));
+        $associationField->hideOnForm();
+
+        $this->crudFieldFactory->addFieldsToTab('principal', [$associationField]);
+
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    protected function getEntityType(): string
+    public static function getEntityFqcn(): string
     {
-        return 'post';
+        return PostCategory::class;
     }
 }

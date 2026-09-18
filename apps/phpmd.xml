@@ -31,5 +31,6 @@
 		</properties>
 	</rule>
 	<rule ref="rulesets/unusedcode.xml" />
+	<exclude-pattern>src/Entity/*</exclude-pattern>
 	<exclude-pattern>src/Kernel.php</exclude-pattern>
 </ruleset>

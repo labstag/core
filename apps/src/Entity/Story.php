@@ -17,36 +17,26 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: StoryRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
 #[ORM\Index(name: 'IDX_STORY_SLUG', columns: ['slug'])]
-class Story implements Stringable
+class Story implements Stringable, EntityWithParagraphsInterface
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
     use WorkflowTrait;
 
-    #[ORM\Column(
-        type: Types::BOOLEAN,
-        options: ['default' => 1]
-    )]
-    protected ?bool $enable = null;
-
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
-    protected ?string $slug = null;
-
-    #[ORM\Column(length: 255)]
-    protected ?string $title = null;
-
     /**
-     * @var Collection<int, Category>
+     * @var Collection<int, StoryCategory>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
-    private Collection $categories;
+    #[ORM\ManyToMany(targetEntity: StoryCategory::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    protected Collection $categories;
 
     /**
      * @var Collection<int, Chapter>
@@ -54,60 +44,84 @@ class Story implements Stringable
     #[ORM\OneToMany(
         targetEntity: Chapter::class,
         mappedBy: 'refstory',
-        orphanRemoval: true,
         cascade: [
             'persist',
             'remove',
-        ]
+        ],
+        orphanRemoval: true
     )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
-    private Collection $chapters;
+    protected Collection $chapters;
+
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    protected ?bool $enable = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'story', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'story', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Meta $meta = null;
+    #[ORM\OneToOne(inversedBy: 'story', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'story', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'story',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
-    private Collection $paragraphs;
+    protected Collection $paragraphs;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $pdf = null;
+    protected ?string $pdf = null;
 
     #[Vich\UploadableField(mapping: 'story', fileNameProperty: 'pdf')]
-    private ?File $pdfFile = null;
+    protected ?File $pdfFile = null;
 
-    #[ORM\ManyToOne(inversedBy: 'stories', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'stories')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?User $refuser = null;
+    protected ?User $refuser = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $resume = null;
+    protected ?string $resume = null;
+
+    #[Gedmo\Slug(fields: ['title'], updatable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
+    protected ?string $slug = null;
 
     /**
-     * @var Collection<int, Tag>
+     * @var Collection<int, StoryTag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
-    private Collection $tags;
+    #[ORM\ManyToMany(targetEntity: StoryTag::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    protected Collection $tags;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
 
     public function __construct()
     {
@@ -123,11 +137,11 @@ class Story implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addCategory(Category $category): static
+    public function addCategory(StoryCategory $storyCategory): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addStory($this);
+        if (!$this->categories->contains($storyCategory)) {
+            $this->categories->add($storyCategory);
+            $storyCategory->addStory($this);
         }
 
         return $this;
@@ -153,18 +167,18 @@ class Story implements Stringable
         return $this;
     }
 
-    public function addTag(Tag $tag): static
+    public function addTag(StoryTag $storyTag): static
     {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addStory($this);
+        if (!$this->tags->contains($storyTag)) {
+            $this->tags->add($storyTag);
+            $storyTag->addStory($this);
         }
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Category>
+     * @return Collection<int, StoryCategory>
      */
     public function getCategories(): Collection
     {
@@ -233,7 +247,7 @@ class Story implements Stringable
     }
 
     /**
-     * @return Collection<int, Tag>
+     * @return Collection<int, StoryTag>
      */
     public function getTags(): Collection
     {
@@ -250,10 +264,10 @@ class Story implements Stringable
         return $this->enable;
     }
 
-    public function removeCategory(Category $category): static
+    public function removeCategory(StoryCategory $storyCategory): static
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removeStory($this);
+        if ($this->categories->removeElement($storyCategory)) {
+            $storyCategory->removeStory($this);
         }
 
         return $this;
@@ -262,7 +276,8 @@ class Story implements Stringable
     public function removeChapter(Chapter $chapter): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->chapters->removeElement($chapter) && $chapter->getRefstory() === $this) {
+        if ($this->chapters->removeElement($chapter) && $chapter->getRefstory() === $this
+        ) {
             $chapter->setRefstory(null);
         }
 
@@ -272,17 +287,18 @@ class Story implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this) {
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getStory() === $this
+        ) {
             $paragraph->setStory(null);
         }
 
         return $this;
     }
 
-    public function removeTag(Tag $tag): static
+    public function removeTag(StoryTag $storyTag): static
     {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removeStory($this);
+        if ($this->tags->removeElement($storyTag)) {
+            $storyTag->removeStory($this);
         }
 
         return $this;

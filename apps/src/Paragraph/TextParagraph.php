@@ -4,13 +4,21 @@ namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
+use Labstag\Entity\Block;
+use Labstag\Entity\Chapter;
+use Labstag\Entity\Edito;
+use Labstag\Entity\Game;
+use Labstag\Entity\Memo;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Post;
+use Labstag\Entity\Story;
+use Labstag\Entity\TextParagraph as EntityTextParagraph;
 use Labstag\Field\WysiwygField;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class TextParagraph extends ParagraphLib
+class TextParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -28,6 +36,11 @@ class TextParagraph extends ParagraphLib
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityTextParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -35,15 +48,16 @@ class TextParagraph extends ParagraphLib
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Text'));
+        $translatableMessage = new TranslatableMessage('Text');
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
 
         yield $wysiwygField;
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'Texte';
+        return new TranslatableMessage('Text');
     }
 
     #[Override]
@@ -52,12 +66,27 @@ class TextParagraph extends ParagraphLib
         return 'text';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return $this->useInAll();
+        if (is_null($object)) {
+            return true;
+        }
+
+        $inArray = in_array(
+            $object::class,
+            [
+                Block::class,
+                Chapter::class,
+                Edito::class,
+                Game::class,
+                Memo::class,
+                Page::class,
+                Post::class,
+                Story::class,
+            ]
+        );
+
+        return $inArray || $object instanceof Block;
     }
 }

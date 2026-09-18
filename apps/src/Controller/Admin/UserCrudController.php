@@ -8,30 +8,29 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\User;
+use Override;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class UserCrudController extends AbstractCrudControllerLib
+class UserCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setEditDetail($actions);
-        $this->configureActionsTrash($actions);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -44,16 +43,14 @@ class UserCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('username', new TranslatableMessage('Username'));
-        yield EmailField::new('email', new TranslatableMessage('Email'));
-        yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $choiceField = ChoiceField::new('roles', new TranslatableMessage('Roles'));
         $choiceField->allowMultipleChoices();
         $choiceField->setChoices($this->userService->getRoles());
-        yield $choiceField;
+
         $textField = TextField::new('password', new TranslatableMessage('Password'));
         $textField->setFormType(RepeatedType::class);
         $textField->setFormTypeOptions(
@@ -72,47 +69,63 @@ class UserCrudController extends AbstractCrudControllerLib
         );
         $textField->setRequired(false);
         $textField->onlyOnForms();
-        yield $textField;
+
+        $associationField = AssociationField::new('groups', new TranslatableMessage('Groups'));
+        $associationField->setFormTypeOption('by_reference', false);
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                TextField::new('username', new TranslatableMessage('Username')),
+                EmailField::new('email', new TranslatableMessage('Email')),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
+                $choiceField,
+                $textField,
+                $associationField,
+            ]
+        );
         if (Crud::PAGE_NEW === $pageName) {
-            $field = $this->crudFieldFactory->booleanField(
+            $generatePasswordField = $this->crudFieldFactory->booleanField(
                 'generatepassword',
-                (string) new TranslatableMessage('generate Password')
+                new TranslatableMessage('generate Password')
             );
-            $field->setFormTypeOptions(
+            $generatePasswordField->setFormTypeOptions(
                 ['mapped' => false]
             );
-
-            yield $field;
+            $this->crudFieldFactory->addFieldsToTab('principal', [$generatePasswordField]);
         }
 
         $languageField = ChoiceField::new('language', new TranslatableMessage('Language'));
         $langue        = $this->userService->getLanguagesForChoices();
         $languageField->setChoices($langue);
-        yield $languageField;
-        yield $this->crudFieldFactory->imageField('avatar', $pageName, self::getEntityFqcn());
-        yield CollectionField::new('stories', new TranslatableMessage('Histories'))->onlyOnDetail();
-        yield CollectionField::new('editos', new TranslatableMessage('Editos'))->onlyOnDetail()->formatValue(
-            fn ($entity): int => count($entity)
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $languageField,
+                $this->crudFieldFactory->imageField('avatar', $pageName, self::getEntityFqcn()),
+            ]
         );
 
         $tab = [
-            'editos' => new TranslatableMessage('Editos'),
-            'memos'  => new TranslatableMessage('Memos'),
-            'pages'  => new TranslatableMessage('Pages'),
-            'posts'  => new TranslatableMessage('Posts'),
+            'stories' => new TranslatableMessage('Stories'),
+            'editos'  => new TranslatableMessage('Editos'),
+            'memos'   => new TranslatableMessage('memos'),
+            'pages'   => new TranslatableMessage('pages'),
+            'posts'   => new TranslatableMessage('posts'),
         ];
+        $fields = [];
         foreach ($tab as $key => $label) {
-            $collectionField = CollectionField::new($key, $label);
+            $collectionField = AssociationField::new($key, $label);
             $collectionField->onlyOnDetail();
-            $collectionField->formatValue(fn ($value): int => count($value));
-            yield $collectionField;
+            $collectionField->formatValue(fn ($value): int => is_null($value) ? 0 : count($value));
+            $fields[] = $collectionField;
         }
 
-        yield $this->crudFieldFactory->workflowField();
-        yield $this->crudFieldFactory->stateField();
+        $this->crudFieldFactory->addFieldsToTab('principal', $fields);
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
@@ -123,7 +136,7 @@ class UserCrudController extends AbstractCrudControllerLib
     /**
      * @return FormBuilderInterface<mixed>
      */
-    #[\Override]
+    #[Override]
     public function createEditFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
@@ -135,10 +148,10 @@ class UserCrudController extends AbstractCrudControllerLib
         return $this->addPasswordEventListener($formBuilder);
     }
 
-    #[\Override]
+    #[Override]
     public function createEntity(string $entityFqcn): User
     {
-        $user = new $entityFqcn();
+        $user = parent::createEntity($entityFqcn);
         $this->workflowService->init($user);
         $langue = $this->userService->getLanguagesForChoices();
         $key    = array_key_first($langue);
@@ -150,7 +163,7 @@ class UserCrudController extends AbstractCrudControllerLib
     /**
      * @return FormBuilderInterface<mixed>
      */
-    #[\Override]
+    #[Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,

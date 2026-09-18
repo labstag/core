@@ -1,0 +1,14 @@
+{% set instance = entity.instance %}
+{% if ea().crud.currentAction == 'detail' %}
+  <ul>
+    {% for episode in instance.episodes %}
+        <li>
+          <a href="{{ admin_url('detail', episode) }}">
+            #{{ episode.number }}
+          </a>: {{ episode.title }}
+        </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  {{ instance.episodes|length }}
+{% endif %}

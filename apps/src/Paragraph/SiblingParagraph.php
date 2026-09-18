@@ -6,12 +6,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\SiblingParagraph as EntitySiblingParagraph;
 use Labstag\Field\WysiwygField;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class SiblingParagraph extends ParagraphLib
+class SiblingParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -46,6 +46,11 @@ class SiblingParagraph extends ParagraphLib
         );
     }
 
+    public function getClass(): string
+    {
+        return EntitySiblingParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -53,14 +58,15 @@ class SiblingParagraph extends ParagraphLib
     public function getFields(Paragraph $paragraph, string $pageName): mixed
     {
         unset($paragraph, $pageName);
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Description'));
+        $translatableMessage = new TranslatableMessage('Description');
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
         yield $wysiwygField;
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'Page enfante';
+        return new TranslatableMessage('Sibling pages');
     }
 
     #[Override]
@@ -69,12 +75,13 @@ class SiblingParagraph extends ParagraphLib
         return 'sibling';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return [Page::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        return Page::class == $object::class;
     }
 }

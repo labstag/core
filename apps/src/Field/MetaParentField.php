@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FieldTrait;
 use Override;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Contracts\Translation\TranslatableInterface;
 
 final class MetaParentField implements FieldInterface
 {
@@ -49,7 +50,7 @@ final class MetaParentField implements FieldInterface
     }
 
     #[Override]
-    public static function new(string $propertyName, ?string $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         $field = (new self());
         $field->setProperty($propertyName);

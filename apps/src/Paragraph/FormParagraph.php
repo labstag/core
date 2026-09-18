@@ -6,15 +6,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Generator;
+use Labstag\Entity\FormParagraph as EntityFormParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\WysiwygField;
-use Labstag\FrontForm\Abstract\FrontFormLib;
-use Labstag\Paragraph\Abstract\ParagraphLib;
+use Labstag\FrontForm\FrontFormAbstract;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class FormParagraph extends ParagraphLib
+class FormParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -22,6 +22,12 @@ class FormParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityFormParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         $formCode = $paragraph->getForm();
         $save     = $paragraph->isSave();
         if (is_null($formCode)) {
@@ -31,24 +37,20 @@ class FormParagraph extends ParagraphLib
         }
 
         $formClass = $this->formService->get($formCode);
-        if (!$formClass instanceof FrontFormLib) {
+        if (!$formClass instanceof FrontFormAbstract) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
-        $form = $this->createForm($formClass->getForm());
+        $form   = $this->createForm($formClass->getForm());
+        $params = $this->formService->setParamsTwig($form, $formCode, $paragraph, $data, $disable, $save);
+        $this->setData($paragraph, $params);
+    }
 
-        $execute = $this->formService->execute($form, $formCode, $disable, $save);
-        $this->setData(
-            $paragraph,
-            [
-                'execute'   => $execute,
-                'form'      => $form,
-                'paragraph' => $paragraph,
-                'data'      => $data,
-            ]
-        );
+    public function getClass(): string
+    {
+        return EntityFormParagraph::class;
     }
 
     /**
@@ -63,14 +65,15 @@ class FormParagraph extends ParagraphLib
         $choiceField->setChoices($this->formService->all());
         yield $choiceField;
         yield BooleanField::new('save', new TranslatableMessage('Save data in database'));
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Confirm message'));
+        $translatableMessage = new TranslatableMessage('Confirm message');
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
         yield $wysiwygField;
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'Formulaire';
+        return new TranslatableMessage('Formulaire');
     }
 
     #[Override]
@@ -80,23 +83,28 @@ class FormParagraph extends ParagraphLib
     }
 
     #[Override]
+    public function supports(?object $object): bool
+    {
+        if (is_null($object)) {
+            return true;
+        }
+
+        return Page::class == $object::class;
+    }
+
+    #[Override]
     public function templates(Paragraph $paragraph, string $type): array
     {
-        $templates = $this->getTemplateContent($type, $this->getType() . '/' . $paragraph->getForm());
+        if (!$paragraph instanceof EntityFormParagraph) {
+            return [];
+        }
+
+        $templates = $this->getTemplateContent($type, $this->getType().'/'.$paragraph->getForm());
 
         if ($templates['view'] != end($templates['files'])) {
             return $templates;
         }
 
         return $this->getTemplateContent($type, $this->getType());
-    }
-
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function useIn(): array
-    {
-        return [Page::class];
     }
 }

@@ -5,13 +5,16 @@ namespace Labstag\Service;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Labstag\Block\BlockAbstract;
 use Labstag\Controller\Admin\BlockCrudController;
 use Labstag\Entity\Block;
+use Labstag\Repository\BlockRepository;
 use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class BlockService
 {
@@ -20,13 +23,15 @@ final class BlockService
 
     public function __construct(
         /**
-         * @var iterable<\Labstag\Block\Abstract\BlockLib>
+         * @var iterable<BlockAbstract>
          */
         #[AutowireIterator('labstag.blocks')]
         private readonly iterable $blocks,
         private AdminUrlGenerator $adminUrlGenerator,
         private Security $security,
         private AuthorizationCheckerInterface $authorizationChecker,
+        private BlockRepository $blockRepository,
+        private TranslatorInterface $translator,
     )
     {
     }
@@ -35,7 +40,7 @@ final class BlockService
     {
         $content = null;
         foreach ($this->blocks as $row) {
-            if ($block->getType() != $row->getType()) {
+            if ($block::class != $row->getClass()) {
                 continue;
             }
 
@@ -79,15 +84,55 @@ final class BlockService
     {
         $blocks = [];
         foreach ($this->blocks as $block) {
-            $inUse = $block->useIn();
-            $type  = $block->getType();
-            $name  = $block->getName();
-            if ((in_array($entity, $inUse) && $block->isEnable()) || is_null($entity)) {
+            $type    = $block->getType();
+            $message = $block->getName();
+            $name    = $this->translator->trans($message->getMessage(), $message->getParameters());
+            if ($block->isEnable() || is_null($entity)) {
                 $blocks[$name] = $type;
             }
         }
 
         return $blocks;
+    }
+
+    public function getBlock(?string $idBlock): ?object
+    {
+        $block  = $this->blockRepository->find($idBlock);
+        if (!$block instanceof Block) {
+            return null;
+        }
+
+        foreach ($this->blocks as $row) {
+            if ($block::class != $row->getClass()) {
+                continue;
+            }
+
+            return $row;
+        }
+
+        return null;
+    }
+
+    public function getByCode(?string $code): ?object
+    {
+        foreach ($this->blocks as $block) {
+            if ($block->getType() == $code) {
+                return $block;
+            }
+        }
+
+        return null;
+    }
+
+    public function getClasseByCode(?string $code): ?string
+    {
+        foreach ($this->blocks as $block) {
+            if ($block->getType() == $code) {
+                return $block->getClass();
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -130,10 +175,9 @@ final class BlockService
             return [];
         }
 
-        $type   = $block->getType();
         $fields = [];
         foreach ($this->blocks as $row) {
-            if ($row->getType() == $type) {
+            if ($row->getClass() == $block::class) {
                 $fields = iterator_to_array($row->getFields($block, $pageName));
 
                 break;
@@ -141,6 +185,25 @@ final class BlockService
         }
 
         return $fields;
+    }
+
+    public function getName(?Block $block): string
+    {
+        if (!$block instanceof Block) {
+            return '';
+        }
+
+        $name = '';
+        foreach ($this->blocks as $row) {
+            if ($row->getClass() == $block::class) {
+                $message = $row->getName();
+                $name    = $this->translator->trans($message->getMessage(), $message->getParameters());
+
+                break;
+            }
+        }
+
+        return $name;
     }
 
     /**
@@ -153,6 +216,26 @@ final class BlockService
             'footer' => 'footer',
             'main'   => 'main',
         ];
+    }
+
+    public function getType(?Block $block): string
+    {
+        $type = '';
+        if (!($block instanceof Block)) {
+            return $type;
+        }
+
+        foreach ($this->blocks as $row) {
+            if ($block::class != $row->getClass()) {
+                continue;
+            }
+
+            $type = $row->getType();
+
+            break;
+        }
+
+        return $type;
     }
 
     public function getUrlAdmin(Block $block): ?AdminUrlGeneratorInterface
@@ -170,7 +253,7 @@ final class BlockService
     public function update(Block $block): void
     {
         foreach ($this->blocks as $row) {
-            if ($block->getType() != $row->getType()) {
+            if ($block::class != $row->getClass()) {
                 continue;
             }
 
@@ -187,14 +270,14 @@ final class BlockService
             return true;
         }
 
-        return array_any($roles, fn ($role): bool => $this->isGranted($role));
+        return array_any($roles, $this->isGranted(...));
     }
 
     private function getFooter(Block $block): mixed
     {
         $footer = null;
         foreach ($this->blocks as $row) {
-            if ($block->getType() != $row->getType()) {
+            if ($block::class != $row->getClass()) {
                 continue;
             }
 
@@ -210,7 +293,7 @@ final class BlockService
     {
         $header = null;
         foreach ($this->blocks as $row) {
-            if ($block->getType() != $row->getType()) {
+            if ($block::class != $row->getClass()) {
                 continue;
             }
 
@@ -237,7 +320,7 @@ final class BlockService
         }
 
         foreach ($this->blocks as $row) {
-            if ($block->getType() != $row->getType()) {
+            if ($block::class != $row->getClass()) {
                 continue;
             }
 
@@ -260,7 +343,7 @@ final class BlockService
     {
         $template = null;
         foreach ($this->blocks as $row) {
-            if ($block->getType() != $row->getType()) {
+            if ($block::class != $row->getClass()) {
                 continue;
             }
 

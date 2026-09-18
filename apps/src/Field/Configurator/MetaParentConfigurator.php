@@ -5,7 +5,6 @@
 namespace Labstag\Field\Configurator;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
@@ -22,8 +21,6 @@ use Labstag\Field\MetaParentField;
 use Labstag\Service\MetaService;
 use Override;
 use RuntimeException;
-use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Traversable;
 
@@ -49,20 +46,14 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         $fieldDto->setProperty($object->name);
         $fieldDto->getDoctrineMetadata()
             ->set('targetEntity', ClassUtils::getClass($object->value));
-        if (!$entityDto->isAssociation($object->name)) {
-            throw new RuntimeException(sprintf(
-                'The "%s" field is not a Doctrine association, so it cannot be used as an association field.',
-                $object->name
-            ));
-        }
 
         $targetEntityFqcn = $fieldDto->getDoctrineMetadata()
             ->get('targetEntity');
         // the target CRUD controller can be NULL; in that case, field value doesn't link to the related entity
         $targetCrudControllerFqcn = $fieldDto->getCustomOption(
             MetaParentField::OPTION_CRUD_CONTROLLER
-        ) ?? $adminContext->getCrudControllers()
-            ->findCrudFqcnByEntityFqcn($targetEntityFqcn);
+        ) ?? $adminContext->getAdminControllers()
+            ->findCrudControllerByEntity($targetEntityFqcn);
         $fieldDto->setCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER, $targetCrudControllerFqcn);
 
         if (MetaParentField::WIDGET_AUTOCOMPLETE === $fieldDto->getCustomOption(MetaParentField::OPTION_WIDGET)) {
@@ -145,62 +136,15 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
         string &$propertyName,
     ): void {
         if (1 >= count($propertyNameParts)) {
-            if ($entityDto->isToOneAssociation($propertyName)) {
+            if ($entityDto->getClassMetadata()->isSingleValuedAssociation($propertyName)) {
                 $this->configureToOneAssociation($fieldDto);
             }
 
-            if ($entityDto->isToManyAssociation($propertyName)) {
+            if ($entityDto->getClassMetadata()->isSingleValuedAssociation($propertyName)) {
                 $this->configureToManyAssociation($fieldDto);
             }
 
             return;
-        }
-
-        // prepare starting class for association
-        $targetEntityFqcn = $entityDto->getPropertyMetadata($propertyNameParts[0]);
-        $targetEntityFqcn = $targetEntityFqcn->get('targetEntity');
-        array_shift($propertyNameParts);
-        $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
-
-        foreach ($propertyNameParts as $propertyNamePart) {
-            if (!$metadata->hasAssociation($propertyNamePart)) {
-                throw new RuntimeException(sprintf(
-                    'There is no association for the class "%s" with name "%s"',
-                    $targetEntityFqcn,
-                    $propertyNamePart
-                ));
-            }
-
-            // overwrite next class from association
-            $targetEntityFqcn = $metadata->getAssociationTargetClass($propertyNamePart);
-
-            // read next association metadata
-            $metadata = $this->entityFactory->getEntityMetadata($targetEntityFqcn);
-        }
-
-        $propertyAccessor         = new PropertyAccessor();
-        $targetCrudControllerFqcn = $fieldDto->getCustomOption(MetaParentField::OPTION_CRUD_CONTROLLER);
-
-        $fieldDto->setFormTypeOptionIfNotSet('class', $targetEntityFqcn);
-
-        try {
-            $relatedEntityId = $propertyAccessor->getValue(
-                $entityDto->getInstance(),
-                $propertyName . '.' . $metadata->getIdentifierFieldNames()[0]
-            );
-            $relatedEntityDto = $this->entityFactory->create($targetEntityFqcn, $relatedEntityId);
-
-            $fieldDto->setCustomOption(
-                MetaParentField::OPTION_RELATED_URL,
-                $this->generateLinkToAssociatedEntity($targetCrudControllerFqcn, $relatedEntityDto)
-            );
-            $fieldDto->setFormattedValue($this->formatAsString($relatedEntityDto->getInstance()));
-        } catch (UnexpectedTypeException) {
-            throw new RuntimeException(sprintf(
-                'The property "%s" is not accessible in the entity "%s"',
-                $propertyName,
-                $entityDto->getFqcn()
-            ));
         }
     }
 

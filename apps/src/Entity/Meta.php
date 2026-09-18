@@ -19,32 +19,50 @@ class Meta implements Stringable
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Chapter $chapter = null;
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected ?Chapter $chapter = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $description = null;
+    protected ?string $description = null;
+
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected ?Game $game = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $keywords = null;
+    protected ?string $keywords = null;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Page $page = null;
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected ?Movie $movie = null;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Post $post = null;
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected ?Page $page = null;
 
-    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'])]
-    private ?Story $story = null;
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected ?Person $person = null;
+
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected ?Post $post = null;
+
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected ?Saga $saga = null;
+
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected ?Season $season = null;
+
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected ?Serie $serie = null;
+
+    #[ORM\OneToOne(mappedBy: 'meta', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected ?Story $story = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[Override]
     public function __toString(): string
@@ -62,6 +80,11 @@ class Meta implements Stringable
         return $this->description;
     }
 
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
     public function getId(): ?string
     {
         return $this->id;
@@ -72,14 +95,39 @@ class Meta implements Stringable
         return $this->keywords;
     }
 
+    public function getMovie(): ?Movie
+    {
+        return $this->movie;
+    }
+
     public function getPage(): ?Page
     {
         return $this->page;
     }
 
+    public function getPerson(): ?Person
+    {
+        return $this->person;
+    }
+
     public function getPost(): ?Post
     {
         return $this->post;
+    }
+
+    public function getSaga(): ?Saga
+    {
+        return $this->saga;
+    }
+
+    public function getSeason(): ?Season
+    {
+        return $this->season;
+    }
+
+    public function getSerie(): ?Serie
+    {
+        return $this->serie;
     }
 
     public function getStory(): ?Story
@@ -111,9 +159,33 @@ class Meta implements Stringable
         return $this;
     }
 
+    public function setGame(Game $game): static
+    {
+        // set the owning side of the relation if necessary
+        if ($game->getMeta() !== $this) {
+            $game->setMeta($this);
+        }
+
+        $this->game = $game;
+
+        return $this;
+    }
+
     public function setKeywords(?string $keywords): static
     {
         $this->keywords = $keywords;
+
+        return $this;
+    }
+
+    public function setMovie(Movie $movie): static
+    {
+        // set the owning side of the relation if necessary
+        if ($movie->getMeta() !== $this) {
+            $movie->setMeta($this);
+        }
+
+        $this->movie = $movie;
 
         return $this;
     }
@@ -130,6 +202,18 @@ class Meta implements Stringable
         return $this;
     }
 
+    public function setPerson(Person $person): static
+    {
+        // set the owning side of the relation if necessary
+        if ($person->getMeta() !== $this) {
+            $person->setMeta($this);
+        }
+
+        $this->person = $person;
+
+        return $this;
+    }
+
     public function setPost(Post $post): static
     {
         // set the owning side of the relation if necessary
@@ -138,6 +222,42 @@ class Meta implements Stringable
         }
 
         $this->post = $post;
+
+        return $this;
+    }
+
+    public function setSaga(Saga $saga): static
+    {
+        // set the owning side of the relation if necessary
+        if ($saga->getMeta() !== $this) {
+            $saga->setMeta($this);
+        }
+
+        $this->saga = $saga;
+
+        return $this;
+    }
+
+    public function setSeason(Season $season): static
+    {
+        // set the owning side of the relation if necessary
+        if ($season->getMeta() !== $this) {
+            $season->setMeta($this);
+        }
+
+        $this->season = $season;
+
+        return $this;
+    }
+
+    public function setSerie(Serie $serie): static
+    {
+        // set the owning side of the relation if necessary
+        if ($serie->getMeta() !== $this) {
+            $serie->setMeta($this);
+        }
+
+        $this->serie = $serie;
 
         return $this;
     }

@@ -9,6 +9,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldConfiguratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use Gedmo\Tool\ClassUtils;
+use Labstag\Entity\Block;
+use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphsField;
 use Labstag\Service\ParagraphService;
 use Override;
@@ -31,17 +33,24 @@ final class ParagraphsConfigurator implements FieldConfiguratorInterface
             $fieldDto->setLabel(false);
         }
 
-        $crudControllerRegistry = $adminContext->getCrudControllers();
-
-        $instance = $entityDto->getInstance();
+        $crudControllerRegistry = $adminContext->getAdminControllers();
+        $instance               = $entityDto->getInstance();
         if (is_null($instance)) {
             return;
         }
 
         $classInstance = ClassUtils::getClass($instance);
-        $controller    = $crudControllerRegistry->findCrudFqcnByEntityFqcn($classInstance);
+        if ($instance instanceof Block) {
+            $classInstance = Block::class;
+        }
+
+        if ($instance instanceof Paragraph) {
+            $classInstance = Paragraph::class;
+        }
+
+        $controller    = $crudControllerRegistry->findCrudControllerByEntity($classInstance);
         $fieldDto->setCustomOption('controller', $controller);
-        $paragraphs = $this->paragraphService->getAll($classInstance);
+        $paragraphs = $this->paragraphService->getAll($instance);
         $fieldDto->setCustomOption('paragraphs', $paragraphs);
 
         $breakpointName = $fieldDto->getCustomOption(ParagraphsField::OPTION_ROW_BREAKPOINT);
@@ -54,7 +63,7 @@ final class ParagraphsConfigurator implements FieldConfiguratorInterface
 
         $fieldDto->setFormTypeOption(
             'row_attr.class',
-            $fieldDto->getFormTypeOption('row_attr.class') . ' ' . $cssClasses
+            $fieldDto->getFormTypeOption('row_attr.class').' '.$cssClasses
         );
     }
 

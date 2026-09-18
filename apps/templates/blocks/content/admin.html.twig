@@ -7,8 +7,13 @@
             </a>
         </li>
         <li>
-            <a href="{{ url }}" target="_blank">
+            <a href="{{ admin_url('edit', entity) }}" target="_blank">
                 {{ 'Edit'|trans }}
+            </a>    
+        </li>
+        <li>
+            <a href="{{ admin_url('detail', entity) }}" target="_blank">
+                {{ 'Detail'|trans }}
             </a>    
         </li>
         <li>

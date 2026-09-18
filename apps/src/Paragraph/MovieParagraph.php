@@ -5,14 +5,16 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
 use Labstag\Entity\Movie;
+use Labstag\Entity\MovieParagraph as EntityMovieParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Enum\PageEnum;
 use Labstag\Form\Front\MovieType;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class MovieParagraph extends ParagraphLib
+class MovieParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -20,26 +22,23 @@ class MovieParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityMovieParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
-        /** @var MovieRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
+        /** @var MovieRepository $entityRepository */
+        $entityRepository = $this->getRepository(Movie::class);
 
         $request = $this->requestStack->getCurrentRequest();
         $query   = $this->setQuery($request->query->all());
 
-        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator($query), $paragraph->getNbr());
+        $pagination = $this->getPaginator($entityRepository->getQueryPaginator($query), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
-            $paragraph,
-            $this->render(
-                $templates['view'],
-                ['pagination' => $pagination]
-            )
-        );
-
-        $templates = $this->templates($paragraph, 'footer');
-        $this->setFooter(
             $paragraph,
             $this->render(
                 $templates['view'],
@@ -60,6 +59,11 @@ class MovieParagraph extends ParagraphLib
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityMovieParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -71,9 +75,9 @@ class MovieParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'Movie';
+        return new TranslatableMessage('Movie');
     }
 
     #[Override]
@@ -82,13 +86,23 @@ class MovieParagraph extends ParagraphLib
         return 'movie';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return [Page::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Page && $object->getType() == PageEnum::MOVIES->value;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 
     /**

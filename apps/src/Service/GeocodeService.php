@@ -2,8 +2,6 @@
 
 namespace Labstag\Service;
 
-use Labstag\Entity\GeoCode;
-use Labstag\Repository\GeoCodeRepository;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use ZipArchive;
 
@@ -13,41 +11,8 @@ final class GeocodeService
 
     public function __construct(
         private HttpClientInterface $httpClient,
-        private GeoCodeRepository $geoCodeRepository,
     )
     {
-    }
-
-    /**
-     * @param mixed[] $row
-     */
-    public function add(array $row): GeoCode
-    {
-        $entity = $this->geoCodeRepository->findOneBy(
-            [
-                'countryCode' => $row[0],
-                'postalCode'  => $row[1],
-                'placeName'   => $row[2],
-            ]
-        );
-        if (!($entity instanceof GeoCode)) {
-            $entity = new GeoCode();
-            $entity->setCountryCode($row[0]);
-            $entity->setPostalCode($row[1]);
-            $entity->setPlaceName($row[2]);
-        }
-
-        $entity->setStateName($row[3]);
-        $entity->setStateCode($row[4]);
-        $entity->setProvinceName($row[5]);
-        $entity->setProvinceCode($row[6]);
-        $entity->setCommunityName($row[7]);
-        $entity->setCommunityCode($row[8]);
-        $entity->setLatitude($row[9]);
-        $entity->setLongitude($row[10]);
-        $entity->setAccuracy((int) $row[11]);
-
-        return $entity;
     }
 
     /**
@@ -56,7 +21,7 @@ final class GeocodeService
     public function csv(string $country): array
     {
         $country    = strtoupper($country);
-        $file       = 'http://download.geonames.org/export/zip/' . $country . '.zip';
+        $file       = 'http://download.geonames.org/export/zip/'.$country.'.zip';
         $response   = $this->httpClient->request('GET', $file);
         $statusCode = $response->getStatusCode();
         if (self::HTTP_OK !== $statusCode) {
@@ -73,7 +38,7 @@ final class GeocodeService
             return [];
         }
 
-        $content = (string) $zipArchive->getFromName($country . '.txt');
+        $content = (string) $zipArchive->getFromName($country.'.txt');
         $csv     = str_getcsv($content, "\n", escape: '\\');
         $zipArchive->close();
 

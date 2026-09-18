@@ -3,11 +3,11 @@
 namespace Labstag\Twig\Runtime;
 
 use DOMDocument;
-use Essence\Essence;
-use Essence\Media;
+use Labstag\Service\BlockService;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\MetaService;
+use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\SlugService;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -28,6 +28,8 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         protected SiteService $siteService,
         protected ParameterBagInterface $parameterBag,
         protected FileService $fileService,
+        protected BlockService $blockService,
+        protected ParagraphService $paragraphService,
         protected Environment $twigEnvironment,
     )
     {
@@ -72,10 +74,12 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         $image    = $this->metaService->getImageForMetatags($entity);
         $config   = $this->configurationService->getConfiguration();
         $favicon  = $this->siteService->getFileFavicon();
+        $jsonLd   = $this->metaService->getJsonLd($entity);
 
         return $this->twigEnvironment->render(
             'metatags.html.twig',
             [
+                'jsonLd'   => $jsonLd,
                 'url'      => $config->getUrl(),
                 'favicon'  => $favicon,
                 'image'    => $image,
@@ -90,53 +94,46 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
      */
     public function oembed(string $url): array
     {
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
-        if (!$media instanceof Media) {
-            return [];
+        $media = $this->fileService->getMediaByUrl($url);
+        if (is_null($media)) {
+            return ['oembed' => ''];
         }
 
-        $html   = $media->has('html') ? $media->get('html') : '';
-        $oembed = $this->getOEmbedUrl($html);
+        $json   = $media->jsonSerialize();
+        $oembed = $this->getOEmbedUrl($json['html'] ?? '');
         if (is_null($oembed)) {
-            return [];
+            return ['oembed' => ''];
         }
+
+        $json = $media->jsonSerialize();
 
         return [
-            'provider' => $media->has('providerName') ? strtolower((string) $media->get('providerName')) : '',
+            'title'    => $json['title'] ?? '',
+            'provider' => $json['providerName'] ?? '',
             'oembed'   => $this->parseUrlAndAddAutoplay($oembed),
         ];
     }
 
     public function path(object $entity): string
     {
-        $slug = $this->slugService->forEntity($entity);
+        $params = $this->slugService->forEntity($entity);
 
-        return $this->router->generate(
-            'front',
-            ['slug' => $slug]
-        );
+        return $this->router->generate('front', $params);
     }
 
     public function tarteaucitron(): string
     {
-        $config = $this->configurationService->getConfiguration();
-        if (in_array(trim((string) $config->getTacServices()), ['', '0'], true)) {
+        $tac = $this->configurationService->getTacConfig();
+        if ('' === $tac) {
             return '';
         }
+
+        $config = $this->configurationService->getConfiguration();
 
         return $this->twigEnvironment->render(
             'tarteaucitron.html.twig',
             [
-                'config'   => $config,
+                'tac'      => $tac,
                 'services' => $config->getTacServices(),
             ]
         );
@@ -155,10 +152,10 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
             return (string) $siteTitle;
         }
 
-        $contentTitle = $this->siteService->setTitle($data['entity']);
+        $contentTitle = $this->siteService->getTitleMeta($data['entity']);
         $page         = $request->attributes->getInt('page', 1);
         if (1 != $page) {
-            $contentTitle .= ' - Page ' . $page;
+            $contentTitle .= ' - Page '.$page;
         }
 
         return str_replace(['%content_title%', '%site_name%'], [$contentTitle, $siteTitle], $format);

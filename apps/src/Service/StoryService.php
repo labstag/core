@@ -4,9 +4,10 @@ namespace Labstag\Service;
 
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
+use Labstag\Entity\TextParagraph;
 use Mpdf\Mpdf;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class StoryService
@@ -19,6 +20,7 @@ final class StoryService
 
     public function __construct(
         private CacheService $cacheService,
+        private FileService $fileService,
         private TranslatorInterface $translator,
     )
     {
@@ -43,13 +45,13 @@ final class StoryService
         return $this->stories;
     }
 
-    public function setPdf(Story $story): bool
+    public function update(Story $story): bool
     {
-        $tempPath = $this->getTemporaryFolder() . '/' . $story->getSlug() . '.pdf';
+        $tempPath = $this->getTemporaryFolder().'/'.$story->getSlug().'.pdf';
 
         $mpdf = new Mpdf(
             [
-                'tempDir' => $this->getTemporaryFolder() . '/tmp',
+                'tempDir' => $this->getTemporaryFolder().'/tmp',
             ]
         );
         $mpdf->SetAuthor($story->getRefuser()->getUsername());
@@ -60,9 +62,13 @@ final class StoryService
             return false;
         }
 
+        $translatableMessage = new TranslatableMessage('Table of Contents');
         $mpdf->TOCpagebreakByArray(
             [
-                'toc-preHTML' => '<h1>Table des matières</h1>',
+                'toc-preHTML' => '<h1>'.$this->translator->trans(
+                    $translatableMessage->getMessage(),
+                    $translatableMessage->getParameters()
+                ).'</h1>',
                 'links'       => true,
             ]
         );
@@ -72,14 +78,8 @@ final class StoryService
         }
 
         $mpdf->Output($tempPath, 'F');
-        $uploadedFile = new UploadedFile(
-            path: $tempPath,
-            originalName: basename($tempPath),
-            mimeType: mime_content_type($tempPath),
-            test: true
-        );
 
-        $story->setPdfFile($uploadedFile);
+        $this->fileService->setUploadedFile($tempPath, $story, 'pdfFile');
         $this->stories[] = $story->getTitle();
 
         return true;
@@ -90,8 +90,8 @@ final class StoryService
         $mpdf->WriteHTML(
             '
             <div style="text-align:center;">
-                <h1>' . $story->getTitle() . '</h1>
-                <h3>Auteur : ' . $story->getRefuser()->getUsername() . '</h3>
+                <h1>'.$story->getTitle().'</h1>
+                <h3>Auteur : '.$story->getRefuser()->getUsername().'</h3>
             </div>
         '
         );
@@ -105,8 +105,8 @@ final class StoryService
     private function getChapters(Story $story): array
     {
         return $this->cacheService->get(
-            'story_chapters_' . $story->getId(),
-            function () use ($story) {
+            'story_chapters_'.$story->getId(),
+            function () use ($story): array {
                 $chapters = [];
                 $data     = $story->getChapters();
                 foreach ($data as $row) {
@@ -139,9 +139,9 @@ final class StoryService
         $mpdf->TOC_Entry($chapter->getTitle(), 0);
         $position = 0;
         foreach ($paragraphs as $paragraph) {
-            if ('text' == $paragraph->getType()) {
+            if ($paragraph instanceof TextParagraph) {
                 if (0 === $position) {
-                    $mpdf->WriteHTML('<h2>' . $chapter->getTitle() . '</h2>');
+                    $mpdf->WriteHTML('<h2>'.$chapter->getTitle().'</h2>');
                 }
 
                 $mpdf->WriteHTML($paragraph->getContent());

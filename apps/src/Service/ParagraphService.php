@@ -2,20 +2,20 @@
 
 namespace Labstag\Service;
 
-use DateTime;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
-use Gedmo\Tool\ClassUtils;
 use Labstag\Controller\Admin\ParagraphCrudController;
+use Labstag\Entity\EntityWithParagraphsInterface;
 use Labstag\Entity\Paragraph;
-use Labstag\Interface\ParagraphInterface;
+use Labstag\Repository\ParagraphRepository;
 use ReflectionClass;
 use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ParagraphService
 {
@@ -23,34 +23,62 @@ final class ParagraphService
     private array $init = [];
 
     public function __construct(
-        /**
-         * @var iterable<\Labstag\Paragraph\Abstract\ParagraphLib>
-         */
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
         private AdminUrlGenerator $adminUrlGenerator,
+        private ParagraphRepository $paragraphRepository,
+        private TranslatorInterface $translator,
         private Security $security,
     )
     {
     }
 
-    public function addParagraph(object $entity, string $type): ?Paragraph
+    public function addInPosition(object $entity, Paragraph $paragraph, int $position): void
     {
-        $paragraph = null;
-        $all       = $this->getAll($entity::class);
-        $position  = count($entity->getParagraphs());
-        foreach ($all as $row) {
-            if ($row != $type) {
-                continue;
-            }
-
-            $paragraph = new Paragraph();
-            $paragraph->setType($type);
-            $paragraph->setPosition($position);
-            $entity->addParagraph($paragraph);
-
-            break;
+        $paragraphs = $entity->getParagraphs()->toArray();
+        array_splice($paragraphs, $position, 0, [$paragraph]);
+        foreach ($paragraphs as $key => $row) {
+            $row->setPosition($key);
         }
+
+        // clear the Doctrine Collection instead of calling a non-existent clearParagraphs()
+        $collection = $entity->getParagraphs();
+        if (method_exists($collection, 'clear')) {
+            $collection->clear();
+        } elseif (method_exists($entity, 'removeParagraph')) {
+            // fallback: try to remove items via removeParagraph if available
+            foreach ($collection as $p) {
+                $entity->removeParagraph($p);
+            }
+        }
+
+        foreach ($paragraphs as $row) {
+            $entity->addParagraph($row);
+        }
+    }
+
+    public function addParagraph(object $entity, string $type, ?int $position = null): ?Paragraph
+    {
+        $find = false;
+        foreach ($this->paragraphs as $row) {
+            if ($row->supports($entity) && $row->getType() == $type) {
+                $find = true;
+                break;
+            }
+        }
+
+        if (!$find || !isset($row)) {
+            return null;
+        }
+
+        $paragraphClass = $row->getClass();
+        $paragraph      = new $paragraphClass();
+
+        $this->addInPosition(
+            $entity,
+            $paragraph,
+            is_null($position) ? count($entity->getParagraphs()) : $position
+        );
 
         return $paragraph;
     }
@@ -60,7 +88,7 @@ final class ParagraphService
         $content = null;
 
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 
@@ -96,21 +124,31 @@ final class ParagraphService
     /**
      * @return mixed[]
      */
-    public function getAll(?string $entity): array
+    public function getAll(?object $entity): array
     {
         $paragraphs = [];
         foreach ($this->paragraphs as $paragraph) {
-            $inUse = $paragraph->useIn();
-            $type  = $paragraph->getType();
-            $name  = $paragraph->getName();
-            if ((in_array($entity, $inUse) && $paragraph->isEnable()) || is_null($entity)) {
-                $paragraphs[$name] = $type;
+            $message = $paragraph->getName();
+            $name    = $this->translator->trans($message->getMessage(), $message->getParameters());
+            if ($paragraph->supports($entity)) {
+                $paragraphs[$name] = $paragraph->getType();
             }
         }
 
         ksort($paragraphs);
 
         return $paragraphs;
+    }
+
+    public function getByCode(?string $code): ?object
+    {
+        foreach ($this->paragraphs as $paragraph) {
+            if ($paragraph->getType() == $code) {
+                return $paragraph;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -121,7 +159,7 @@ final class ParagraphService
         $classes = [];
 
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 
@@ -169,9 +207,9 @@ final class ParagraphService
             return null;
         }
 
-        $object        = new stdClass();
-        $object->name  = null;
-        $object->value = null;
+        $object           = new stdClass();
+        $object->name     = null;
+        $object->value    = null;
 
         $reflectionClass  = new ReflectionClass($paragraph);
         $propertyAccessor = PropertyAccess::createPropertyAccessor();
@@ -182,17 +220,7 @@ final class ParagraphService
                 continue;
             }
 
-            if ($value instanceof DateTime) {
-                continue;
-            }
-
-            $class = ClassUtils::getClass($value);
-            if (!str_contains($class, 'Labstag\Entity')) {
-                continue;
-            }
-
-            $entity = new $class();
-            if ($entity instanceof ParagraphInterface) {
+            if (!$this->isClass($paragraph, $value)) {
                 continue;
             }
 
@@ -211,10 +239,9 @@ final class ParagraphService
             return [];
         }
 
-        $type   = $paragraph->getType();
         $fields = [];
         foreach ($this->paragraphs as $row) {
-            if ($row->getType() == $type) {
+            if ($row->getClass() == $paragraph::class) {
                 $fields = $row->getFields($paragraph, $pageName);
 
                 break;
@@ -245,18 +272,57 @@ final class ParagraphService
         return [];
     }
 
-    public function getNameByCode(string $code): string
+    public function getName(?Paragraph $paragraph): string
     {
+        if (!$paragraph instanceof Paragraph) {
+            return '';
+        }
+
         $name = '';
-        foreach ($this->paragraphs as $paragraph) {
-            if ($paragraph->getType() == $code) {
-                $name = $paragraph->getName();
+        foreach ($this->paragraphs as $row) {
+            if ($row->getClass() == $paragraph::class) {
+                $message = $row->getName();
+                $name    = $this->translator->trans($message->getMessage(), $message->getParameters());
 
                 break;
             }
         }
 
         return $name;
+    }
+
+    public function getParagraph(?string $idParagraph): ?object
+    {
+        $paragraph  = $this->paragraphRepository->find($idParagraph);
+        if (!$paragraph instanceof Paragraph) {
+            return null;
+        }
+
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph::class != $row->getClass()) {
+                continue;
+            }
+
+            return $row;
+        }
+
+        return null;
+    }
+
+    public function getType(Paragraph $paragraph): string
+    {
+        $type = '';
+        foreach ($this->paragraphs as $row) {
+            if ($paragraph::class != $row->getClass()) {
+                continue;
+            }
+
+            $type = $row->getType();
+
+            break;
+        }
+
+        return $type;
     }
 
     public function getUrlAdmin(Paragraph $paragraph): ?AdminUrlGeneratorInterface
@@ -274,7 +340,7 @@ final class ParagraphService
     public function update(Paragraph $paragraph): void
     {
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 
@@ -289,7 +355,7 @@ final class ParagraphService
         $footer = null;
 
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 
@@ -306,7 +372,7 @@ final class ParagraphService
         $header = null;
 
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 
@@ -316,6 +382,21 @@ final class ParagraphService
         }
 
         return $header;
+    }
+
+    private function isClass(Paragraph $paragraph, object $value): bool
+    {
+        $reflectionClass = new ReflectionClass($value);
+        if (!$reflectionClass->implementsInterface(
+            EntityWithParagraphsInterface::class
+        ) || !$reflectionClass->hasMethod('getParagraphs')
+        ) {
+            return false;
+        }
+
+        $paragraphs = $value->getParagraphs();
+
+        return (bool) $paragraphs->contains($paragraph);
     }
 
     /**
@@ -328,7 +409,7 @@ final class ParagraphService
         }
 
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 
@@ -351,7 +432,7 @@ final class ParagraphService
     {
         $template = null;
         foreach ($this->paragraphs as $row) {
-            if ($paragraph->getType() != $row->getType()) {
+            if ($paragraph::class != $row->getClass()) {
                 continue;
             }
 

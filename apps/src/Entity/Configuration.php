@@ -10,7 +10,7 @@ use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\ConfigurationRepository;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: ConfigurationRepository::class)]
 #[Vich\Uploadable]
@@ -18,251 +18,375 @@ class Configuration
 {
     use TimestampableTrait;
 
+    #[ORM\Column(name: 'chapter_placeholder', length: 255, nullable: true)]
+    protected ?string $chapterPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'chapterPlaceholder')]
+    protected ?File $chapterPlaceholderFile = null;
+
     #[ORM\Column(length: 255)]
-    private ?string $copyright = null;
+    protected ?string $copyright = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $disableEmptyAgent = false;
+    protected bool $disableEmptyAgent = false;
+
+    #[ORM\Column(name: 'edito_placeholder', length: 255, nullable: true)]
+    protected ?string $editoPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'editoPlaceholder')]
+    protected ?File $editoPlaceholderFile = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $email = null;
+    protected ?string $email = null;
+
+    #[ORM\Column(name: 'episode_placeholder', length: 255, nullable: true)]
+    protected ?string $episodePlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'episodePlaceholder')]
+    protected ?File $episodePlaceholderFile = null;
+
+    #[ORM\Column(name: 'game_placeholder', length: 255, nullable: true)]
+    protected ?string $gamePlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'gamePlaceholder')]
+    protected ?File $gamePlaceholderFile = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
+
+    #[ORM\Column(name: 'language_tmdb', length: 255, nullable: true)]
+    protected ?string $languageTmdb = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $logo = null;
+    protected ?string $logo = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'logo')]
-    private ?File $logoFile = null;
+    protected ?File $logoFile = null;
+
+    #[ORM\Column(name: 'memo_placeholder', length: 255, nullable: true)]
+    protected ?string $memoPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'memoPlaceholder')]
+    protected ?File $memoPlaceholderFile = null;
+
+    #[ORM\Column(name: 'movie_placeholder', length: 255, nullable: true)]
+    protected ?string $moviePlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'moviePlaceholder')]
+    protected ?File $moviePlaceholderFile = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    protected ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $noreply = null;
+    protected ?string $noreply = null;
+
+    #[ORM\Column(name: 'page_placeholder', length: 255, nullable: true)]
+    protected ?string $pagePlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'pagePlaceholder')]
+    protected ?File $pagePlaceholderFile = null;
+
+    #[ORM\Column(name: 'person_placeholder', length: 255, nullable: true)]
+    protected ?string $personPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'personPlaceholder')]
+    protected ?File $personPlaceholderFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $placeholder = null;
+    protected ?string $placeholder = null;
 
     #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'placeholder')]
-    private ?File $placeholderFile = null;
+    protected ?File $placeholderFile = null;
+
+    #[ORM\Column(name: 'post_placeholder', length: 255, nullable: true)]
+    protected ?string $postPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'postPlaceholder')]
+    protected ?File $postPlaceholderFile = null;
+
+    #[ORM\Column(name: 'region_tmdb', length: 255, nullable: true)]
+    protected ?string $regionTmdb = null;
+
+    #[ORM\Column(name: 'saga_placeholder', length: 255, nullable: true)]
+    protected ?string $sagaPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'sagaPlaceholder')]
+    protected ?File $sagaPlaceholderFile = null;
+
+    #[ORM\Column(name: 'season_placeholder', length: 255, nullable: true)]
+    protected ?string $seasonPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'seasonPlaceholder')]
+    protected ?File $seasonPlaceholderFile = null;
+
+    #[ORM\Column(name: 'serie_placeholder', length: 255, nullable: true)]
+    protected ?string $seriePlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'seriePlaceholder')]
+    protected ?File $seriePlaceholderFile = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $sitemapPosts = true;
+    protected bool $sitemapPosts = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $sitemapStory = true;
+    protected bool $sitemapStory = true;
+
+    #[ORM\Column(name: 'star_placeholder', length: 255, nullable: true)]
+    protected ?string $starPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'starPlaceholder')]
+    protected ?File $starPlaceholderFile = null;
+
+    #[ORM\Column(name: 'story_placeholder', length: 255, nullable: true)]
+    protected ?string $storyPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'storyPlaceholder')]
+    protected ?File $storyPlaceholderFile = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tabIconSrc = null;
+    protected ?string $tabIconSrc = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacAcceptAllCta = true;
+    protected bool $tacAcceptAllCta = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacAdblocker = false;
+    protected bool $tacAdblocker = false;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacAlwaysNeedConsent = false;
+    protected bool $tacAlwaysNeedConsent = false;
 
     #[ORM\Column(
         length: 255,
         nullable: true,
         options: ['default' => 'top']
     )]
-    private ?string $tacBodyPosition = 'top';
+    protected ?string $tacBodyPosition = 'top';
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacClosePopup = true;
+    protected bool $tacClosePopup = true;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tacCookieDomain = null;
+    protected ?string $tacCookieDomain = null;
 
     #[ORM\Column(
         length: 255,
         nullable: true,
         options: ['default' => 'rgpd']
     )]
-    private ?string $tacCookieName = 'rgpd';
+    protected ?string $tacCookieName = 'rgpd';
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacCookieslist = false;
+    protected bool $tacCookieslist = false;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tacCustomCloserId = null;
+    protected ?string $tacCustomCloserId = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacDenyAllCta = true;
+    protected bool $tacDenyAllCta = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacGoogleConsentMode = true;
+    protected bool $tacGoogleConsentMode = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacGroupServices = true;
+    protected bool $tacGroupServices = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacHandleBrowserDNTRequest = false;
+    protected bool $tacHandleBrowserDNTRequest = false;
 
     #[ORM\Column(
         length: 255,
         nullable: true,
         options: ['default' => '#rgpd']
     )]
-    private ?string $tacHashtag = '#rgpd';
+    protected ?string $tacHashtag = '#rgpd';
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacHighPrivacy = true;
+    protected bool $tacHighPrivacy = true;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tacIconPosition = null;
+    protected ?string $tacIconPosition = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacMandatory = true;
+    protected bool $tacMandatory = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacMandatoryCta = false;
+    protected bool $tacMandatoryCta = false;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacMoreInfoLink = true;
+    protected bool $tacMoreInfoLink = true;
 
     #[ORM\Column(
         length: 255,
         nullable: true,
         options: ['default' => 'middle']
     )]
-    private ?string $tacOrientation = 'middle';
+    protected ?string $tacOrientation = 'middle';
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacPartnersList = true;
+    protected bool $tacPartnersList = true;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tacPrivacyUrl = null;
+    protected ?string $tacPrivacyUrl = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tacReadmoreLink = null;
+    protected ?string $tacReadmoreLink = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacRemoveCredit = false;
+    protected bool $tacRemoveCredit = false;
 
     #[ORM\Column(
         length: 255,
         nullable: true,
         options: ['default' => 'wait']
     )]
-    private ?string $tacServiceDefaultState = 'wait';
+    protected ?string $tacServiceDefaultState = 'wait';
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tacServices = null;
+    protected ?string $tacServices = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacShowAlertSmall = true;
+    protected bool $tacShowAlertSmall = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacShowDetailsOnClick = true;
+    protected bool $tacShowDetailsOnClick = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $tacShowIcon = true;
+    protected bool $tacShowIcon = true;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacUseExternalCss = false;
+    protected bool $tacUseExternalCss = false;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $tacUseExternalJs = false;
+    protected bool $tacUseExternalJs = false;
 
     #[ORM\Column(length: 255)]
-    private ?string $titleFormat = null;
+    protected ?string $titleFormat = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $url = null;
+    protected ?string $url = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $userLink = false;
+    protected bool $userLink = false;
+
+    #[ORM\Column(name: 'user_placeholder', length: 255, nullable: true)]
+    protected ?string $userPlaceholder = null;
+
+    #[Vich\UploadableField(mapping: 'configuration', fileNameProperty: 'userPlaceholder')]
+    protected ?File $userPlaceholderFile = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 0]
     )]
-    private bool $userShow = false;
+    protected bool $userShow = false;
+
+    #[ORM\ManyToOne(inversedBy: 'configurations')]
+    private ?User $defaultuser = null;
+
+    public function getChapterPlaceholder(): ?string
+    {
+        return $this->chapterPlaceholder;
+    }
+
+    public function getChapterPlaceholderFile(): ?File
+    {
+        return $this->chapterPlaceholderFile;
+    }
 
     public function getCopyright(): ?string
     {
         return $this->copyright;
+    }
+
+    public function getDefaultuser(): ?User
+    {
+        return $this->defaultuser;
+    }
+
+    public function getEditoPlaceholder(): ?string
+    {
+        return $this->editoPlaceholder;
+    }
+
+    public function getEditoPlaceholderFile(): ?File
+    {
+        return $this->editoPlaceholderFile;
     }
 
     public function getEmail(): ?string
@@ -270,9 +394,34 @@ class Configuration
         return $this->email;
     }
 
+    public function getEpisodePlaceholder(): ?string
+    {
+        return $this->episodePlaceholder;
+    }
+
+    public function getEpisodePlaceholderFile(): ?File
+    {
+        return $this->episodePlaceholderFile;
+    }
+
+    public function getGamePlaceholder(): ?string
+    {
+        return $this->gamePlaceholder;
+    }
+
+    public function getGamePlaceholderFile(): ?File
+    {
+        return $this->gamePlaceholderFile;
+    }
+
     public function getId(): ?string
     {
         return $this->id;
+    }
+
+    public function getLanguageTmdb(): ?string
+    {
+        return $this->languageTmdb;
     }
 
     public function getLogo(): ?string
@@ -285,6 +434,26 @@ class Configuration
         return $this->logoFile;
     }
 
+    public function getMemoPlaceholder(): ?string
+    {
+        return $this->memoPlaceholder;
+    }
+
+    public function getMemoPlaceholderFile(): ?File
+    {
+        return $this->memoPlaceholderFile;
+    }
+
+    public function getMoviePlaceholder(): ?string
+    {
+        return $this->moviePlaceholder;
+    }
+
+    public function getMoviePlaceholderFile(): ?File
+    {
+        return $this->moviePlaceholderFile;
+    }
+
     public function getName(): ?string
     {
         return $this->name;
@@ -295,6 +464,26 @@ class Configuration
         return $this->noreply;
     }
 
+    public function getPagePlaceholder(): ?string
+    {
+        return $this->pagePlaceholder;
+    }
+
+    public function getPagePlaceholderFile(): ?File
+    {
+        return $this->pagePlaceholderFile;
+    }
+
+    public function getPersonPlaceholder(): ?string
+    {
+        return $this->personPlaceholder;
+    }
+
+    public function getPersonPlaceholderFile(): ?File
+    {
+        return $this->personPlaceholderFile;
+    }
+
     public function getPlaceholder(): ?string
     {
         return $this->placeholder;
@@ -303,6 +492,71 @@ class Configuration
     public function getPlaceholderFile(): ?File
     {
         return $this->placeholderFile;
+    }
+
+    public function getPostPlaceholder(): ?string
+    {
+        return $this->postPlaceholder;
+    }
+
+    public function getPostPlaceholderFile(): ?File
+    {
+        return $this->postPlaceholderFile;
+    }
+
+    public function getRegionTmdb(): ?string
+    {
+        return $this->regionTmdb;
+    }
+
+    public function getSagaPlaceholder(): ?string
+    {
+        return $this->sagaPlaceholder;
+    }
+
+    public function getSagaPlaceholderFile(): ?File
+    {
+        return $this->sagaPlaceholderFile;
+    }
+
+    public function getSeasonPlaceholder(): ?string
+    {
+        return $this->seasonPlaceholder;
+    }
+
+    public function getSeasonPlaceholderFile(): ?File
+    {
+        return $this->seasonPlaceholderFile;
+    }
+
+    public function getSeriePlaceholder(): ?string
+    {
+        return $this->seriePlaceholder;
+    }
+
+    public function getSeriePlaceholderFile(): ?File
+    {
+        return $this->seriePlaceholderFile;
+    }
+
+    public function getStarPlaceholder(): ?string
+    {
+        return $this->starPlaceholder;
+    }
+
+    public function getStarPlaceholderFile(): ?File
+    {
+        return $this->starPlaceholderFile;
+    }
+
+    public function getStoryPlaceholder(): ?string
+    {
+        return $this->storyPlaceholder;
+    }
+
+    public function getStoryPlaceholderFile(): ?File
+    {
+        return $this->storyPlaceholderFile;
     }
 
     public function getTabIconSrc(): string
@@ -338,11 +592,6 @@ class Configuration
     public function getTacCustomCloserId(): string
     {
         return (string) $this->tacCustomCloserId;
-    }
-
-    public function getTacGroupServices(): bool
-    {
-        return $this->tacGroupServices;
     }
 
     public function getTacHashtag(): string
@@ -410,6 +659,16 @@ class Configuration
         return $this->url;
     }
 
+    public function getUserPlaceholder(): ?string
+    {
+        return $this->userPlaceholder;
+    }
+
+    public function getUserPlaceholderFile(): ?File
+    {
+        return $this->userPlaceholderFile;
+    }
+
     public function isDisableEmptyAgent(): bool
     {
         return $this->disableEmptyAgent;
@@ -458,6 +717,11 @@ class Configuration
     public function isTacGoogleConsentMode(): bool
     {
         return $this->tacGoogleConsentMode;
+    }
+
+    public function isTacGroupServices(): bool
+    {
+        return $this->tacGroupServices;
     }
 
     public function isTacHandleBrowserDNTRequest(): bool
@@ -530,9 +794,32 @@ class Configuration
         return $this->userShow;
     }
 
+    public function setChapterPlaceholder(?string $chapterPlaceholder): void
+    {
+        $this->chapterPlaceholder = $chapterPlaceholder;
+    }
+
+    public function setChapterPlaceholderFile(?File $chapterPlaceholderFile = null): void
+    {
+        $this->chapterPlaceholderFile = $chapterPlaceholderFile;
+
+        if ($chapterPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
     public function setCopyright(string $copyright): static
     {
         $this->copyright = $copyright;
+
+        return $this;
+    }
+
+    public function setDefaultuser(?User $user): static
+    {
+        $this->defaultuser = $user;
 
         return $this;
     }
@@ -544,9 +831,64 @@ class Configuration
         return $this;
     }
 
+    public function setEditoPlaceholder(?string $editoPlaceholder): void
+    {
+        $this->editoPlaceholder = $editoPlaceholder;
+    }
+
+    public function setEditoPlaceholderFile(?File $editoPlaceholderFile = null): void
+    {
+        $this->editoPlaceholderFile = $editoPlaceholderFile;
+
+        if ($editoPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function setEpisodePlaceholder(?string $episodePlaceholder): void
+    {
+        $this->episodePlaceholder = $episodePlaceholder;
+    }
+
+    public function setEpisodePlaceholderFile(?File $episodePlaceholderFile = null): void
+    {
+        $this->episodePlaceholderFile = $episodePlaceholderFile;
+
+        if ($episodePlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setGamePlaceholder(?string $gamePlaceholder): void
+    {
+        $this->gamePlaceholder = $gamePlaceholder;
+    }
+
+    public function setGamePlaceholderFile(?File $gamePlaceholderFile = null): void
+    {
+        $this->gamePlaceholderFile = $gamePlaceholderFile;
+
+        if ($gamePlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setLanguageTmdb(?string $languageTmdb): static
+    {
+        $this->languageTmdb = $languageTmdb;
 
         return $this;
     }
@@ -567,6 +909,38 @@ class Configuration
         }
     }
 
+    public function setMemoPlaceholder(?string $memoPlaceholder): void
+    {
+        $this->memoPlaceholder = $memoPlaceholder;
+    }
+
+    public function setMemoPlaceholderFile(?File $memoPlaceholderFile = null): void
+    {
+        $this->memoPlaceholderFile = $memoPlaceholderFile;
+
+        if ($memoPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setMoviePlaceholder(?string $moviePlaceholder): void
+    {
+        $this->moviePlaceholder = $moviePlaceholder;
+    }
+
+    public function setMoviePlaceholderFile(?File $moviePlaceholderFile = null): void
+    {
+        $this->moviePlaceholderFile = $moviePlaceholderFile;
+
+        if ($moviePlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -579,6 +953,38 @@ class Configuration
         $this->noreply = $noreply;
 
         return $this;
+    }
+
+    public function setPagePlaceholder(?string $pagePlaceholder): void
+    {
+        $this->pagePlaceholder = $pagePlaceholder;
+    }
+
+    public function setPagePlaceholderFile(?File $pagePlaceholderFile = null): void
+    {
+        $this->pagePlaceholderFile = $pagePlaceholderFile;
+
+        if ($pagePlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setPersonPlaceholder(?string $personPlaceholder): void
+    {
+        $this->personPlaceholder = $personPlaceholder;
+    }
+
+    public function setPersonPlaceholderFile(?File $personPlaceholderFile = null): void
+    {
+        $this->personPlaceholderFile = $personPlaceholderFile;
+
+        if ($personPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setPlaceholder(?string $placeholder): void
@@ -597,6 +1003,77 @@ class Configuration
         }
     }
 
+    public function setPostPlaceholder(?string $postPlaceholder): void
+    {
+        $this->postPlaceholder = $postPlaceholder;
+    }
+
+    public function setPostPlaceholderFile(?File $postPlaceholderFile = null): void
+    {
+        $this->postPlaceholderFile = $postPlaceholderFile;
+
+        if ($postPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setRegionTmdb(?string $regionTmdb): static
+    {
+        $this->regionTmdb = $regionTmdb;
+
+        return $this;
+    }
+
+    public function setSagaPlaceholder(?string $sagaPlaceholder): void
+    {
+        $this->sagaPlaceholder = $sagaPlaceholder;
+    }
+
+    public function setSagaPlaceholderFile(?File $sagaPlaceholderFile = null): void
+    {
+        $this->sagaPlaceholderFile = $sagaPlaceholderFile;
+
+        if ($sagaPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setSeasonPlaceholder(?string $seasonPlaceholder): void
+    {
+        $this->seasonPlaceholder = $seasonPlaceholder;
+    }
+
+    public function setSeasonPlaceholderFile(?File $seasonPlaceholderFile = null): void
+    {
+        $this->seasonPlaceholderFile = $seasonPlaceholderFile;
+
+        if ($seasonPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setSeriePlaceholder(?string $seriePlaceholder): void
+    {
+        $this->seriePlaceholder = $seriePlaceholder;
+    }
+
+    public function setSeriePlaceholderFile(?File $seriePlaceholderFile = null): void
+    {
+        $this->seriePlaceholderFile = $seriePlaceholderFile;
+
+        if ($seriePlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
     public function setSitemapPosts(bool $sitemapPosts): static
     {
         $this->sitemapPosts = $sitemapPosts;
@@ -609,6 +1086,38 @@ class Configuration
         $this->sitemapStory = $sitemapStory;
 
         return $this;
+    }
+
+    public function setStarPlaceholder(?string $starPlaceholder): void
+    {
+        $this->starPlaceholder = $starPlaceholder;
+    }
+
+    public function setStarPlaceholderFile(?File $starPlaceholderFile = null): void
+    {
+        $this->starPlaceholderFile = $starPlaceholderFile;
+
+        if ($starPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setStoryPlaceholder(?string $storyPlaceholder): void
+    {
+        $this->storyPlaceholder = $storyPlaceholder;
+    }
+
+    public function setStoryPlaceholderFile(?File $storyPlaceholderFile = null): void
+    {
+        $this->storyPlaceholderFile = $storyPlaceholderFile;
+
+        if ($storyPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setTabIconSrc(?string $tabIconSrc): static
@@ -854,6 +1363,22 @@ class Configuration
         $this->userLink = $userLink;
 
         return $this;
+    }
+
+    public function setUserPlaceholder(?string $userPlaceholder): void
+    {
+        $this->userPlaceholder = $userPlaceholder;
+    }
+
+    public function setUserPlaceholderFile(?File $userPlaceholderFile = null): void
+    {
+        $this->userPlaceholderFile = $userPlaceholderFile;
+
+        if ($userPlaceholderFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setUserShow(bool $userShow): static

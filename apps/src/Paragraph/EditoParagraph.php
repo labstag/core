@@ -6,13 +6,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Edito;
+use Labstag\Entity\EditoParagraph as EntityEditoParagraph;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\EditoRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class EditoParagraph extends ParagraphLib
+class EditoParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -20,9 +21,9 @@ class EditoParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        /** @var EditoRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Edito::class);
-        $edito                      = $serviceEntityRepositoryLib->findLast();
+        /** @var EditoRepository $entityRepository */
+        $entityRepository                = $this->getRepository(Edito::class);
+        $edito                           = $entityRepository->findLast();
         if (!$edito instanceof Edito) {
             $this->setShow($paragraph, false);
 
@@ -44,6 +45,11 @@ class EditoParagraph extends ParagraphLib
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityEditoParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -55,9 +61,9 @@ class EditoParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'Edito';
+        return new TranslatableMessage('Edito');
     }
 
     #[Override]
@@ -66,12 +72,13 @@ class EditoParagraph extends ParagraphLib
         return 'edito';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return $this->useInAll();
+        if (is_null($object)) {
+            return true;
+        }
+
+        return $object instanceof Page;
     }
 }

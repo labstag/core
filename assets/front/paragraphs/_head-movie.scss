@@ -1,0 +1,52 @@
+@use "../placeholders" as *;
+@use "../mixins";
+@use "../variables";
+@use "../icons";
+
+.paragraph_head-movie {
+  .first {
+    @extend %head;
+    height: 300px;
+
+    .background {}
+
+    .wrapper {}
+
+    .title {}
+
+    .author {}
+
+    .date {}
+
+    .duration {
+      &::before {
+        @extend .iconbefore;
+        @extend .icon-runtime;
+      }
+    }
+  }
+
+  .trailer {
+    width: 50%;
+    margin: auto;
+  }
+  .video {
+    margin-top: 11px;
+    margin-bottom: 11px;
+    @extend %video;
+  }
+
+  .actings {
+    width: 80%;
+    margin: auto;
+    ul {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+
+      @include mixins.respond-to(md) {
+        grid-template-columns: repeat(8, 1fr);
+      }
+    }
+  }
+}

@@ -4,42 +4,40 @@ namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Submission;
-use Labstag\FrontForm\Abstract\FrontFormLib;
+use Labstag\FrontForm\FrontFormAbstract;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class SubmissionCrudController extends AbstractCrudControllerLib
+class SubmissionCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
-        $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
-        $actions->add(Crud::PAGE_INDEX, Action::DETAIL);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setReadOnly(true);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        yield $this->crudFieldFactory->idField();
-        yield TextField::new('type', new TranslatableMessage('Type'));
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [TextField::new('type', new TranslatableMessage('Type'))]
+        );
         if (Action::DETAIL === $pageName) {
-            $fields = $this->addFieldsSubmission($currentEntity);
-            foreach ($fields as $field) {
-                yield $field;
-            }
+            $this->crudFieldFactory->addFieldsToTab('principal', $this->addFieldsSubmission($currentEntity));
         }
 
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     public static function getEntityFqcn(): string
@@ -54,7 +52,7 @@ class SubmissionCrudController extends AbstractCrudControllerLib
     {
         $data = $submission->getData();
         $form = $this->formService->get($submission->getType());
-        if (!$form instanceof FrontFormLib) {
+        if (!$form instanceof FrontFormAbstract) {
             return [];
         }
 

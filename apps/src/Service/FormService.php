@@ -2,7 +2,7 @@
 
 namespace Labstag\Service;
 
-use Labstag\FrontForm\Abstract\FrontFormLib;
+use Labstag\FrontForm\FrontFormAbstract;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Form\FormInterface;
 
@@ -10,7 +10,7 @@ final class FormService
 {
     public function __construct(
         /**
-         * @var iterable<FrontFormLib>
+         * @var iterable<FrontFormAbstract>
          */
         #[AutowireIterator('labstag.frontforms')]
         private readonly iterable $forms,
@@ -35,20 +35,7 @@ final class FormService
         return $data;
     }
 
-    /**
-     * @param FormInterface<mixed> $form
-     */
-    public function execute(FormInterface $form, string $code, bool $disable = false, bool $save = true): bool
-    {
-        $frontform = $this->get($code);
-        if (!$frontform instanceof FrontFormLib) {
-            return false;
-        }
-
-        return $frontform->execute($form, $disable, $save);
-    }
-
-    public function get(string $code): ?FrontFormLib
+    public function get(string $code): ?FrontFormAbstract
     {
         $form = null;
         foreach ($this->forms as $row) {
@@ -62,5 +49,22 @@ final class FormService
         }
 
         return $form;
+    }
+
+    public function setParamsTwig(
+        FormInterface $form,
+        string|bool $formCode,
+        $paragraph,
+        $data,
+        bool $disable = false,
+        bool $save = true,
+    ): array
+    {
+        $frontform = $this->get($formCode);
+        if (!$frontform instanceof FrontFormAbstract) {
+            return [];
+        }
+
+        return $frontform->setParamsTwig($form, $paragraph, $data, $disable, $save);
     }
 }

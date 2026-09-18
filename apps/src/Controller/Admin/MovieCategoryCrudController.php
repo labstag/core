@@ -2,17 +2,32 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Controller\Admin\Abstract\CategoryCrudControllerLib;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use Labstag\Entity\MovieCategory;
+use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class MovieCategoryCrudController extends CategoryCrudControllerLib
+class MovieCategoryCrudController extends CategoryCrudControllerAbstract
 {
-    protected function getChildRelationshipProperty(): string
+    #[Override]
+    public function configureFields(string $pageName): iterable
     {
-        return 'movies';
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
+        $titleField = $this->crudFieldFactory->titleField();
+        $titleField->setFormattedValue(
+            fn ($entity) => $entity->getTitle() ?? (new TranslatableMessage('Label not found'))
+        );
+        $this->crudFieldFactory->addFieldsToTab('principal', [$this->crudFieldFactory->slugField(), $titleField]);
+        $associationField = AssociationField::new('movies', new TranslatableMessage('Movies'));
+        $associationField->formatValue(fn ($entity): int => count($entity));
+        $associationField->hideOnForm();
+
+        $this->crudFieldFactory->addFieldsToTab('principal', [$associationField]);
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    protected function getEntityType(): string
+    public static function getEntityFqcn(): string
     {
-        return 'movie';
+        return MovieCategory::class;
     }
 }

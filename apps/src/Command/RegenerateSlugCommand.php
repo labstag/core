@@ -1,0 +1,85 @@
+<?php
+
+namespace Labstag\Command;
+
+use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Entity\Category;
+use Labstag\Entity\Game;
+use Labstag\Entity\Media;
+use Labstag\Entity\Movie;
+use Labstag\Entity\Post;
+use Labstag\Entity\Saga;
+use Labstag\Entity\Serie;
+use Labstag\Entity\Story;
+use Labstag\Entity\Tag;
+use ReflectionClass;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Style\SymfonyStyle;
+
+#[AsCommand(name: 'labstag:regenerate:slug', description: 'Regenerate all entity slugs')]
+class RegenerateSlugCommand
+{
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+    )
+    {
+    }
+
+    public function __invoke(SymfonyStyle $symfonyStyle): int
+    {
+        $entities = [
+            Category::class,
+            Game::class,
+            Media::class,
+            Movie::class,
+            Post::class,
+            Saga::class,
+            Serie::class,
+            Story::class,
+            Tag::class,
+        ];
+
+        foreach ($entities as $entity) {
+            $symfonyStyle->section('Regenerating slugs for '.$entity);
+
+            $repository = $this->entityManager->getRepository($entity);
+            $items      = $repository->findAll();
+
+            $reflectionClass = new ReflectionClass($entity);
+
+            $count = 0;
+            foreach ($items as $item) {
+                $title = $item->getTitle();
+                $item->setTitle($title.' ');
+                $this->entityManager->persist($item);
+
+                ++$count;
+            }
+
+            $this->entityManager->flush();
+
+            $count = 0;
+            foreach ($items as $item) {
+                $title = $item->getTitle();
+                $item->setTitle(trim((string) $title));
+                $this->entityManager->persist($item);
+
+                ++$count;
+            }
+
+            $this->entityManager->flush();
+
+            if (0 < $count) {
+                $symfonyStyle->success(sprintf('✅ %d slugs regenerated for %s', $count, $entity));
+                continue;
+            }
+
+            $symfonyStyle->info('ℹ️  No slugs to regenerate for '.$entity);
+        }
+
+        $symfonyStyle->success('🎉 All slugs have been successfully regenerated!');
+
+        return Command::SUCCESS;
+    }
+}

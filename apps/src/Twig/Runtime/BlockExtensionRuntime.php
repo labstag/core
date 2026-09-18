@@ -33,12 +33,17 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
             return $data;
         }
 
-        $data['data-context_url']  = $urlAdmin;
-        $data['data-context_text'] = $this->translator->trans(
-            new TranslatableMessage('Update block (%type%)'),
+        $data['data-context_url']              = $urlAdmin;
+        $translatableMessage                   = new TranslatableMessage(
+            'Update block (%name%) #%type%',
             [
-                '%type%' => $block->getType(),
+                '%name%' => $this->blockService->getName($block),
+                '%type%' => $this->blockService->getType($block),
             ]
+        );
+        $data['data-context_text'] = $this->translator->trans(
+            $translatableMessage->getMessage(),
+            $translatableMessage->getParameters()
         );
 
         return $data;
@@ -62,11 +67,30 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
         return $content->getContent();
     }
 
+    public function name(object $object): string
+    {
+        if (!$object instanceof Block) {
+            return '';
+        }
+
+        return $this->blockService->getName($object);
+    }
+
+    public function type(object $object): string
+    {
+        if (!$object instanceof Block) {
+            return '';
+        }
+
+        return $this->blockService->getType($object);
+    }
+
     private function getClass(Block $block): string
     {
-        $tab = [
+        $type = $this->blockService->getType($block);
+        $tab  = [
             'block',
-            'block_' . $block->getType(),
+            'block_'.$type,
         ];
 
         $classes = explode(' ', (string) $block->getClasses());
@@ -78,6 +102,8 @@ class BlockExtensionRuntime implements RuntimeExtensionInterface
 
     private function getId(Block $block): string
     {
-        return 'block_' . $block->getType() . '-' . $block->getId();
+        $type = $this->blockService->getType($block);
+
+        return 'block_'.$type.'-'.$block->getId();
     }
 }

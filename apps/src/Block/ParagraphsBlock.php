@@ -2,17 +2,21 @@
 
 namespace Labstag\Block;
 
-use Labstag\Block\Abstract\AbstractParagraphBlock;
+use Labstag\Entity\ParagraphsBlock as EntityParagraphsBlock;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class ParagraphsBlock extends AbstractParagraphBlock
+class ParagraphsBlock extends ParagraphBlockAbstract
 {
-    // Utilise l'implémentation par défaut d'AbstractParagraphBlock
+    public function getClass(): string
+    {
+        return EntityParagraphsBlock::class;
+    }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'Paragraphs';
+        return new TranslatableMessage('Paragraphs');
     }
 
     #[Override]

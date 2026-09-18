@@ -4,20 +4,19 @@ namespace Labstag\Command;
 
 use Exception;
 use Labstag\Entity\GeoCode;
-use Labstag\Repository\GeoCodeRepository;
+use Labstag\Message\GeocodeMessage;
 use Labstag\Service\GeocodeService;
+use Labstag\Service\MessageDispatcherService;
 use NumberFormatter;
-use Override;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(name: 'labstag:geocode-install', description: 'Retrieve geocodes')]
-class GeocodeInstallCommand extends Command
+class GeocodeInstallCommand
 {
 
     private int $add = 0;
@@ -26,36 +25,14 @@ class GeocodeInstallCommand extends Command
 
     public function __construct(
         private readonly GeocodeService $geocodeService,
-        private readonly GeoCodeRepository $geoCodeRepository,
+        protected MessageDispatcherService $messageBus,
     )
     {
-        parent::__construct();
     }
 
-    protected function addOrUpdate(GeoCode $geoCode): void
+    public function __invoke(SymfonyStyle $symfonyStyle, OutputInterface $output, #[Argument] string $country): int
     {
-        if (is_null($geoCode->getId())) {
-            ++$this->add;
-
-            return;
-        }
-
-        ++$this->update;
-    }
-
-    #[Override]
-    protected function configure(): void
-    {
-        $this->addArgument('country', InputArgument::REQUIRED, 'country code');
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $symfonyStyle = new SymfonyStyle($input, $output);
         $symfonyStyle->title('Retrieving postal codes');
-
-        $country = $input->getArgument('country');
         if (!is_string($country)) {
             throw new Exception('Argument country invalide');
         }
@@ -77,18 +54,10 @@ class GeocodeInstallCommand extends Command
         $progressBar = new ProgressBar($output, count($table));
         $progressBar->start();
 
-        $counter = 0;
         foreach ($table as $row) {
-            $entity = $this->geocodeService->add($row);
-            $this->addOrUpdate($entity);
-
-            $this->geoCodeRepository->persist($entity);
-            ++$counter;
-            $this->geoCodeRepository->flush($counter);
+            $this->messageBus->dispatch(new GeocodeMessage($row));
             $progressBar->advance();
         }
-
-        $this->geoCodeRepository->flush();
 
         $progressBar->finish();
         $symfonyStyle->newLine();
@@ -104,5 +73,16 @@ class GeocodeInstallCommand extends Command
         );
 
         return Command::SUCCESS;
+    }
+
+    protected function addOrUpdate(GeoCode $geoCode): void
+    {
+        if (is_null($geoCode->getId())) {
+            ++$this->add;
+
+            return;
+        }
+
+        ++$this->update;
     }
 }

@@ -5,12 +5,11 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Edito;
 use Labstag\Entity\User;
 use Override;
 
-class EditoFixtures extends FixtureLib implements DependentFixtureInterface
+class EditoFixtures extends FixtureAbstract implements DependentFixtureInterface
 {
     /**
      * @var int
@@ -48,7 +47,7 @@ class EditoFixtures extends FixtureLib implements DependentFixtureInterface
         $edito->setTitle($generator->unique()->colorName());
         $this->addParagraphText($edito);
         $this->setImage($edito, 'imgFile');
-        $this->addReference('edito_' . md5(uniqid()), $edito);
+        $this->addReference('edito_'.md5(uniqid()), $edito);
         $objectManager->persist($edito);
     }
 }

@@ -5,18 +5,16 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
-use Labstag\Entity\Tag;
 use Override;
 
-class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
+class ChapterFixtures extends FixtureAbstract implements DependentFixtureInterface
 {
     /**
      * @var int
      */
-    protected const NUMBER_CHAPTER = 50;
+    protected const NUMBER_CHAPTER = 20;
 
     /**
      * @var mixed[]
@@ -44,7 +42,6 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
     public function load(ObjectManager $objectManager): void
     {
         $this->stories = $this->getIdentitiesByClass(Story::class);
-        $this->tags    = $this->getIdentitiesByClass(Tag::class, 'chapter');
         $this->loadForeach(self::NUMBER_CHAPTER, 'addChapter', $objectManager);
         $objectManager->flush();
     }
@@ -66,10 +63,14 @@ class ChapterFixtures extends FixtureLib implements DependentFixtureInterface
         $chapter->setCreatedAt($generator->unique()->dateTimeBetween($dateStory, '+ 1 month'));
         $chapter->setRefstory($story);
         $chapter->setTitle($generator->unique()->colorName());
-        $this->addParagraphText($chapter);
+
+        $minmax = random_int(1, 10);
+        for ($i = 0; $i < $minmax; ++$i) {
+            $this->addParagraphText($chapter);
+        }
+
         $this->setImage($chapter, 'imgFile');
-        $this->addTagToEntity($chapter);
-        $this->addReference('chapter_' . md5(uniqid()), $chapter);
+        $this->addReference('chapter_'.md5(uniqid()), $chapter);
         $this->position[$storyId][] = $chapter;
         $objectManager->persist($chapter);
     }

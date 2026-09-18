@@ -4,12 +4,13 @@ namespace Labstag\Paragraph;
 
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\ChapterLastNextParagraph as EntityChapterLastNextParagraph;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\ChapterRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class ChapterLastNextParagraph extends ParagraphLib
+class ChapterLastNextParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -27,10 +28,10 @@ class ChapterLastNextParagraph extends ParagraphLib
         $chapter = $data['entity'];
         $story   = $chapter->getRefStory();
 
-        /** @var ChapterRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Chapter::class);
+        /** @var ChapterRepository $entityRepository */
+        $entityRepository = $this->getRepository(Chapter::class);
 
-        $chapters = $serviceEntityRepositoryLib->getAllActivateByStory($story);
+        $chapters = $entityRepository->getAllActivateByStory($story);
 
         $this->setData(
             $paragraph,
@@ -44,10 +45,15 @@ class ChapterLastNextParagraph extends ParagraphLib
         );
     }
 
-    #[Override]
-    public function getName(): string
+    public function getClass(): string
     {
-        return 'Chapitre last next';
+        return EntityChapterLastNextParagraph::class;
+    }
+
+    #[Override]
+    public function getName(): TranslatableMessage
+    {
+        return new TranslatableMessage('Chapitre last next');
     }
 
     #[Override]
@@ -56,12 +62,13 @@ class ChapterLastNextParagraph extends ParagraphLib
         return 'chapter-lastnext';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return [Block::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        return $object instanceof Block;
     }
 }

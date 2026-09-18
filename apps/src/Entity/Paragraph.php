@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use DateTime;
-use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -13,96 +11,129 @@ use Labstag\Repository\ParagraphRepository;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
-use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+#[ORM\Table(name: 'paragraph')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\Entity(repositoryClass: ParagraphRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
-#[Vich\Uploadable]
-class Paragraph implements Stringable
+#[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
+#[ORM\DiscriminatorMap(
+    [
+        'chapter-lastnext' => ChapterLastNextParagraph::class,
+        'chapter-list'     => ChapterListParagraph::class,
+        'edito'            => EditoParagraph::class,
+        'episode-list'     => EpisodeListParagraph::class,
+        'error'            => ErrorParagraph::class,
+        'experiences'      => ExperiencesParagraph::class,
+        'form'             => FormParagraph::class,
+        'game'             => GameParagraph::class,
+        'head-chapter'     => HeadChapterParagraph::class,
+        'head-cv'          => HeadCvParagraph::class,
+        'head-game'        => HeadGameParagraph::class,
+        'head-movie'       => HeadMovieParagraph::class,
+        'head-person'      => HeadPersonParagraph::class,
+        'head-post'        => HeadPostParagraph::class,
+        'head-saga'        => HeadSagaParagraph::class,
+        'head-season'      => HeadSeasonParagraph::class,
+        'head-serie'       => HeadSerieParagraph::class,
+        'head-story'       => HeadStoryParagraph::class,
+        'head'             => HeadParagraph::class,
+        'hero'             => HeroParagraph::class,
+        'html'             => HtmlParagraph::class,
+        'img'              => ImageParagraph::class,
+        'last-news'        => LastNewsParagraph::class,
+        'last-story'       => LastStoryParagraph::class,
+        'map'              => MapParagraph::class,
+        'movie-info'       => MovieInfoParagraph::class,
+        'movie-slider'     => MovieSliderParagraph::class,
+        'movie'            => MovieParagraph::class,
+        'news-list'        => NewsListParagraph::class,
+        'person'           => PersonParagraph::class,
+        'saga-list'        => SagaListParagraph::class,
+        'saga'             => SagaParagraph::class,
+        'season-list'      => SeasonListParagraph::class,
+        'serie'            => SerieParagraph::class,
+        'sibling'          => SiblingParagraph::class,
+        'sitemap'          => SitemapParagraph::class,
+        'skills'           => SkillsParagraph::class,
+        'star'             => StarParagraph::class,
+        'story-list'       => StoryListParagraph::class,
+        'text-img'         => TextImgParagraph::class,
+        'text-media'       => TextMediaParagraph::class,
+        'text'             => TextParagraph::class,
+        'trainingcourses'  => TrainingCoursesParagraph::class,
+        'video'            => VideoParagraph::class,
+    ]
+)]
+abstract class Paragraph implements Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Block $block = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Block $block = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Chapter $chapter = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Chapter $chapter = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $classes = null;
+    protected ?string $classes = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $content = null;
-
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Edito $edito = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Edito $edito = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private bool $enable = true;
+    protected bool $enable = true;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $fond = null;
+    protected ?string $fond = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $form = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Game $game = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Memo $memo = null;
 
-    #[Vich\UploadableField(mapping: 'paragraph', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Movie $movie = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?bool $leftposition = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Page $page = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Memo $memo = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?int $nbr = null;
-
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Page $page = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Person $person = null;
 
     #[ORM\Column]
-    private ?int $position = null;
+    protected ?int $position = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Post $post = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Post $post = null;
 
-    #[ORM\Column(
-        type: Types::BOOLEAN,
-        options: ['default' => 1]
-    )]
-    private bool $save = true;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Saga $saga = null;
 
-    #[ORM\ManyToOne(inversedBy: 'paragraphs', cascade: ['persist', 'detach'])]
-    private ?Story $story = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Season $season = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $title = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Serie $serie = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $type = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $url = null;
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'paragraphs')]
+    protected ?Story $story = null;
 
     #[Override]
     public function __toString(): string
     {
-        return (string) $this->getType();
+        return (string) $this->getId();
     }
 
     public function getBlock(): ?Block
@@ -120,11 +151,6 @@ class Paragraph implements Stringable
         return $this->classes;
     }
 
-    public function getContent(): ?string
-    {
-        return $this->content;
-    }
-
     public function getEdito(): ?Edito
     {
         return $this->edito;
@@ -135,9 +161,9 @@ class Paragraph implements Stringable
         return $this->fond;
     }
 
-    public function getForm(): ?string
+    public function getGame(): ?Game
     {
-        return $this->form;
+        return $this->game;
     }
 
     public function getId(): ?string
@@ -145,29 +171,24 @@ class Paragraph implements Stringable
         return $this->id;
     }
 
-    public function getImg(): ?string
-    {
-        return $this->img;
-    }
-
-    public function getImgFile(): ?File
-    {
-        return $this->imgFile;
-    }
-
     public function getMemo(): ?Memo
     {
         return $this->memo;
     }
 
-    public function getNbr(): ?int
+    public function getMovie(): ?Page
     {
-        return $this->nbr;
+        return $this->movie;
     }
 
     public function getPage(): ?Page
     {
         return $this->page;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
     }
 
     public function getPosition(): ?int
@@ -180,39 +201,29 @@ class Paragraph implements Stringable
         return $this->post;
     }
 
+    public function getSaga(): ?Serie
+    {
+        return $this->saga;
+    }
+
+    public function getSeason(): ?Season
+    {
+        return $this->season;
+    }
+
+    public function getSerie(): ?Serie
+    {
+        return $this->serie;
+    }
+
     public function getStory(): ?Story
     {
         return $this->story;
     }
 
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
-
     public function isEnable(): ?bool
     {
         return $this->enable;
-    }
-
-    public function isLeftposition(): ?bool
-    {
-        return $this->leftposition;
-    }
-
-    public function isSave(): ?bool
-    {
-        return $this->save;
     }
 
     public function setBlock(?Block $block): static
@@ -232,13 +243,6 @@ class Paragraph implements Stringable
     public function setClasses(?string $classes): static
     {
         $this->classes = $classes;
-
-        return $this;
-    }
-
-    public function setContent(?string $content): static
-    {
-        $this->content = $content;
 
         return $this;
     }
@@ -264,37 +268,9 @@ class Paragraph implements Stringable
         return $this;
     }
 
-    public function setForm(?string $form): static
+    public function setGame(?Game $game): static
     {
-        $this->form = $form;
-
-        return $this;
-    }
-
-    public function setImg(?string $img): void
-    {
-        $this->img = $img;
-
-        // Si l'image est supprimée (img devient null), on force la mise à jour
-        if (null === $img) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
-    }
-
-    public function setImgFile(?File $imgFile = null): void
-    {
-        $this->imgFile = $imgFile;
-
-        if ($imgFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
-    }
-
-    public function setLeftposition(?bool $leftposition): static
-    {
-        $this->leftposition = $leftposition;
+        $this->game = $game;
 
         return $this;
     }
@@ -306,9 +282,9 @@ class Paragraph implements Stringable
         return $this;
     }
 
-    public function setNbr(?int $nbr): static
+    public function setMovie(?Movie $movie): static
     {
-        $this->nbr = $nbr;
+        $this->movie = $movie;
 
         return $this;
     }
@@ -316,6 +292,13 @@ class Paragraph implements Stringable
     public function setPage(?Page $page): static
     {
         $this->page = $page;
+
+        return $this;
+    }
+
+    public function setPerson(?Person $person): static
+    {
+        $this->person = $person;
 
         return $this;
     }
@@ -334,9 +317,23 @@ class Paragraph implements Stringable
         return $this;
     }
 
-    public function setSave(bool $save): static
+    public function setSaga(?Saga $saga): static
     {
-        $this->save = $save;
+        $this->saga = $saga;
+
+        return $this;
+    }
+
+    public function setSeason(?Season $season): static
+    {
+        $this->season = $season;
+
+        return $this;
+    }
+
+    public function setSerie(?Serie $serie): static
+    {
+        $this->serie = $serie;
 
         return $this;
     }
@@ -344,27 +341,6 @@ class Paragraph implements Stringable
     public function setStory(?Story $story): static
     {
         $this->story = $story;
-
-        return $this;
-    }
-
-    public function setTitle(?string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    public function setType(string $type): static
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    public function setUrl(?string $url): static
-    {
-        $this->url = $url;
 
         return $this;
     }

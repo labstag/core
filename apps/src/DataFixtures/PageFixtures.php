@@ -5,15 +5,24 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\DataFixtures\Abstract\FixtureLib;
-use Labstag\Entity\Category;
+use Labstag\Entity\FormParagraph;
+use Labstag\Entity\LastNewsParagraph;
+use Labstag\Entity\LastStoryParagraph;
+use Labstag\Entity\MovieParagraph;
+use Labstag\Entity\MovieSliderParagraph;
+use Labstag\Entity\NewsListParagraph;
 use Labstag\Entity\Page;
-use Labstag\Entity\Tag;
+use Labstag\Entity\PageCategory;
+use Labstag\Entity\PageTag;
+use Labstag\Entity\SerieParagraph;
+use Labstag\Entity\StarParagraph;
+use Labstag\Entity\StoryListParagraph;
 use Labstag\Entity\User;
+use Labstag\Entity\VideoParagraph;
 use Labstag\Enum\PageEnum;
 use Override;
 
-class PageFixtures extends FixtureLib implements DependentFixtureInterface
+class PageFixtures extends FixtureAbstract implements DependentFixtureInterface
 {
     /**
      * @return string[]
@@ -51,8 +60,8 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
     {
         $generator        = $this->setFaker();
         $data             = $this->data();
-        $this->tags       = $this->getIdentitiesByClass(Tag::class, 'page');
-        $this->categories = $this->getIdentitiesByClass(Category::class, 'page');
+        $this->tags       = $this->getIdentitiesByClass(PageTag::class);
+        $this->categories = $this->getIdentitiesByClass(PageCategory::class);
         foreach ($data as $entity) {
             $this->setPage($objectManager, $generator, $entity);
         }
@@ -60,84 +69,233 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         $objectManager->flush();
     }
 
+    public function setGame(Page $page): Page
+    {
+        $sagas = new Page();
+        $sagas->setPage($page);
+        $sagas->setTitle('Ma ludothèque');
+        $sagas->setType(PageEnum::GAMES->value);
+
+        $this->addParagraphText($sagas);
+        $this->paragraphService->addParagraph($sagas, 'game');
+
+        return $sagas;
+    }
+
+    public function setSaga(Page $page): Page
+    {
+        $sagas = new Page();
+        $sagas->setPage($page);
+        $sagas->setTitle('Mes sagas favorites');
+        $sagas->setType(PageEnum::PAGE->value);
+
+        $this->addParagraphText($sagas);
+        $this->paragraphService->addParagraph($sagas, 'saga');
+
+        return $sagas;
+    }
+
     /**
      * @return mixed[]
      */
     private function data(): array
     {
-        $home = new Page();
-        $home->setTitle('Accueil');
-        $home->setType(PageEnum::HOME->value);
-        $this->setParagraphsHome($home);
-
-        $movies = new Page();
-        $movies->setPage($home);
-        $movies->setTitle('Mes derniers films vus');
-        $movies->setType(PageEnum::MOVIES->value);
-        $this->setParagraphsMovie($movies);
-
-        $stories = new Page();
-        $stories->setPage($home);
-        $stories->setTitle('Histoires');
-        $stories->setType(PageEnum::STORIES->value);
-        $this->setParagraphsStory($stories);
-
-        $post = new Page();
-        $post->setPage($home);
-        $post->setTitle('Posts');
-        $post->setType(PageEnum::POSTS->value);
-        $this->setParagraphsPost($post);
-
-        $star = new Page();
-        $star->setPage($home);
-        $star->setTitle('Mes étoiles github');
-        $star->setType(PageEnum::PAGE->value);
-        $this->setParagraphsStar($star);
-
-        $info = new Page();
-        $info->setPage($home);
-        $info->setTitle('Informations');
-        $info->setType(PageEnum::PAGE->value);
-        $this->setParagraphsInfo($info);
-
-        $contact = new Page();
-        $contact->setPage($info);
-        $contact->setTitle('Contact');
-        $contact->setType(PageEnum::PAGE->value);
-        $this->setParagraphsContact($contact);
-
-        $sitemap = new Page();
-        $sitemap->setPage($info);
-        $sitemap->setTitle('Plan du site');
-        $sitemap->setType(PageEnum::PAGE->value);
-        $this->setParagraphsSitemap($sitemap);
-
-        $mentions = new Page();
-        $mentions->setPage($home);
-        $mentions->setTitle('Mentions légales');
-        $mentions->setType(PageEnum::PAGE->value);
-        $this->addParagraphHead($mentions);
-        $this->addParagraphText($mentions);
-
-        $donneespersonnelles = new Page();
-        $donneespersonnelles->setPage($home);
-        $donneespersonnelles->setTitle('Données personnelles');
-        $donneespersonnelles->setType(PageEnum::PAGE->value);
-        $this->addParagraphHead($donneespersonnelles);
-        $this->addParagraphText($donneespersonnelles);
+        $page                = $this->setHome();
+        $errors              = $this->setError();
+        $movies              = $this->setMovies($page);
+        $game                = $this->setGame($page);
+        $sagas               = $this->setSaga($movies);
+        $cvpage              = $this->setCv($page);
+        $series              = $this->setSeries($page);
+        $stories             = $this->setStories($page);
+        $post                = $this->setPost($page);
+        $star                = $this->setStar($page);
+        $info                = $this->setInformations($page);
+        $changepassword      = $this->setChangePassword($page);
+        $login               = $this->setLogin($page);
+        $lostpassword        = $this->setLostPassword($page);
+        $contact             = $this->setContact($info);
+        $sitemap             = $this->setSitemap($info);
+        $mentions            = $this->setMentions($page);
+        $donneespersonnelles = $this->setDonneesPersonelles($page);
 
         return [
-            $home,
+            $page,
+            $errors,
+            $game,
+            $changepassword,
+            $lostpassword,
+            $login,
+            $series,
             $movies,
             $stories,
             $post,
+            $sagas,
             $star,
             $info,
             $contact,
             $sitemap,
             $mentions,
+            $cvpage,
             $donneespersonnelles,
         ];
+    }
+
+    private function setChangePassword(Page $page): Page
+    {
+        $changepassword = new Page();
+        $changepassword->setHide(true);
+        $changepassword->setPage($page);
+        $changepassword->setTitle('Changer de mot de passe');
+        $changepassword->setType(PageEnum::CHANGEPASSWORD->value);
+        $this->addParagraphText($changepassword);
+        $paragraph = $this->paragraphService->addParagraph($changepassword, 'form');
+        if ($paragraph instanceof FormParagraph) {
+            $paragraph->setSave(false);
+            $paragraph->setContent('Formulaire envoyé');
+            $paragraph->setForm('change-password');
+        }
+
+        return $changepassword;
+    }
+
+    private function setContact(Page $page): Page
+    {
+        $contact = new Page();
+        $contact->setPage($page);
+        $contact->setTitle('Contact');
+        $contact->setType(PageEnum::PAGE->value);
+        $this->addParagraphText($contact);
+        $paragraph = $this->paragraphService->addParagraph($contact, 'form');
+        if ($paragraph instanceof FormParagraph) {
+            $paragraph->setSave(true);
+            $paragraph->setContent('Formulaire envoyé');
+            $paragraph->setForm('contact');
+        }
+
+        return $contact;
+    }
+
+    private function setCv(Page $page): Page
+    {
+        $cvpage = new Page();
+        $cvpage->setPage($page);
+        $cvpage->setTitle('Mon parcours pro');
+        $cvpage->setType(PageEnum::CV->value);
+
+        $this->paragraphService->addParagraph($cvpage, 'presentation-cv');
+        $this->paragraphService->addParagraph($cvpage, 'competences');
+        $this->paragraphService->addParagraph($cvpage, 'experiences');
+        $this->paragraphService->addParagraph($cvpage, 'formations');
+
+        return $cvpage;
+    }
+
+    private function setDonneesPersonelles(Page $page): Page
+    {
+        $donneespersonnelles = new Page();
+        $donneespersonnelles->setPage($page);
+        $donneespersonnelles->setTitle('Données personnelles');
+        $donneespersonnelles->setType(PageEnum::PAGE->value);
+
+        $this->addParagraphText($donneespersonnelles);
+
+        return $donneespersonnelles;
+    }
+
+    private function setError(): Page
+    {
+        $page = new Page();
+        $page->setHide(true);
+        $page->setTitle('Page non trouvée');
+        $page->setType(PageEnum::ERRORS->value);
+
+        return $page;
+    }
+
+    private function setHome(): Page
+    {
+        $page = new Page();
+        $page->setTitle('Accueil');
+        $page->setType(PageEnum::HOME->value);
+        $this->setParagraphsHome($page);
+
+        return $page;
+    }
+
+    private function setInformations(Page $page): Page
+    {
+        $info = new Page();
+        $info->setPage($page);
+        $info->setTitle('Informations');
+        $info->setType(PageEnum::PAGE->value);
+        $this->addParagraphText($info);
+        $this->paragraphService->addParagraph($info, 'sibling');
+
+        return $info;
+    }
+
+    private function setLogin(Page $page): Page
+    {
+        $login = new Page();
+        $login->setHide(true);
+        $login->setPage($page);
+        $login->setTitle('Connexion');
+        $login->setType(PageEnum::LOGIN->value);
+        $this->addParagraphText($login);
+        $paragraph = $this->paragraphService->addParagraph($login, 'form');
+        if ($paragraph instanceof FormParagraph) {
+            $paragraph->setSave(true);
+            $paragraph->setContent('Formulaire envoyé');
+            $paragraph->setForm('login');
+        }
+
+        return $login;
+    }
+
+    private function setLostPassword(Page $page): Page
+    {
+        $lostpassword = new Page();
+        $lostpassword->setHide(true);
+        $lostpassword->setPage($page);
+        $lostpassword->setTitle('Mot de passe oublié');
+        $lostpassword->setType(PageEnum::LOSTPASSWORD->value);
+        $this->addParagraphText($lostpassword);
+        $paragraph = $this->paragraphService->addParagraph($lostpassword, 'form');
+        if ($paragraph instanceof FormParagraph) {
+            $paragraph->setSave(true);
+            $paragraph->setContent('Formulaire envoyé');
+            $paragraph->setForm('lost-password');
+        }
+
+        return $lostpassword;
+    }
+
+    private function setMentions(Page $page): Page
+    {
+        $mentions = new Page();
+        $mentions->setPage($page);
+        $mentions->setTitle('Mentions légales');
+        $mentions->setType(PageEnum::PAGE->value);
+
+        $this->addParagraphText($mentions);
+
+        return $mentions;
+    }
+
+    private function setMovies(Page $page): Page
+    {
+        $movies = new Page();
+        $movies->setPage($page);
+        $movies->setTitle('Mes derniers films vus');
+        $movies->setType(PageEnum::MOVIES->value);
+        $this->addParagraphText($movies);
+        $paragraph = $this->paragraphService->addParagraph($movies, 'movie');
+        if ($paragraph instanceof MovieParagraph) {
+            $paragraph->setNbr(18);
+        }
+
+        return $movies;
     }
 
     private function setPage(ObjectManager $objectManager, Generator $generator, Page $page): void
@@ -152,85 +310,40 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
 
         $page->setCreatedAt($date);
         $this->setImage($page, 'imgFile');
-        $this->addTagToEntity($page);
-        $this->addCategoryToEntity($page);
+        $this->addTagToEntity($page, PageTag::class);
+        $this->addCategoryToEntity($page, PageCategory::class);
 
-        $this->addReference('page_' . md5(uniqid()), $page);
+        $this->addReference('page_'.md5(uniqid()), $page);
         $objectManager->persist($page);
-    }
-
-    private function setParagraphsContact(Page $page): void
-    {
-        $this->addParagraphHead($page);
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'form');
-        if (is_null($paragraph)) {
-            return;
-        }
-
-        $paragraph->setSave(true);
-        $paragraph->setContent('Formulaire envoyé');
-        $paragraph->setForm('contact');
     }
 
     private function setParagraphsHome(Page $page): void
     {
-        $this->setParagraphsHomeHero($page);
-        $this->setParagraphsHomeEdito($page);
-        $this->addParagraphText($page);
-        $this->setParagraphsHomeLastNews($page);
-        $this->setParagraphsHomeLastStory($page);
-        $this->setParagraphsHomeVideo($page);
-        $this->setParagraphsHomeMovieSlider($page);
-    }
-
-    private function setParagraphsHomeEdito(Page $page): void
-    {
-        $paragraph = $this->paragraphService->addParagraph($page, 'edito');
-        if (is_null($paragraph)) {
-            return;
-        }
-
-        $paragraph->setTitle('edito');
-    }
-
-    private function setParagraphsHomeHero(Page $page): void
-    {
         $this->paragraphService->addParagraph($page, 'hero');
-    }
+        $paragraph = $this->paragraphService->addParagraph($page, 'edito');
+        if ($paragraph instanceof VideoParagraph) {
+            $paragraph->setTitle('edito');
+        }
 
-    private function setParagraphsHomeLastNews(Page $page): void
-    {
+        $this->addParagraphText($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'last-news');
-        if (is_null($paragraph)) {
-            return;
+        if ($paragraph instanceof LastNewsParagraph) {
+            $paragraph->setTitle('Dernières news');
+            $paragraph->setNbr(4);
         }
 
-        $paragraph->setTitle('Dernières news');
-        $paragraph->setType('last-news');
-        $paragraph->setNbr(4);
-    }
-
-    private function setParagraphsHomeLastStory(Page $page): void
-    {
         $paragraph = $this->paragraphService->addParagraph($page, 'last-story');
-        if (is_null($paragraph)) {
-            return;
+        if ($paragraph instanceof LastStoryParagraph) {
+            $paragraph->setTitle('Dernière histoires');
+            $paragraph->setNbr(4);
         }
 
-        $paragraph->setTitle('Dernière histoires');
-        $paragraph->setNbr(4);
-    }
-
-    private function setParagraphsHomeMovieSlider(Page $page): void
-    {
+        $this->setParagraphsHomeVideo($page);
         $paragraph = $this->paragraphService->addParagraph($page, 'movie-slider');
-        if (is_null($paragraph)) {
-            return;
+        if ($paragraph instanceof MovieSliderParagraph) {
+            $paragraph->setTitle('Mes derniers films vus');
+            $paragraph->setNbr(12);
         }
-
-        $paragraph->setTitle('Mes derniers films vus');
-        $paragraph->setNbr(12);
     }
 
     private function setParagraphsHomeVideo(Page $page): void
@@ -241,80 +354,84 @@ class PageFixtures extends FixtureLib implements DependentFixtureInterface
         }
 
         $paragraph = $this->paragraphService->addParagraph($page, 'video');
-        if (is_null($paragraph)) {
+        if (is_null($paragraph) || !$paragraph instanceof VideoParagraph) {
             return;
         }
 
         $paragraph->setTitle('Vidéo');
-        $paragraph->setType('video');
         $this->setImage($paragraph, 'imgFile');
         $paragraph->setUrl($generator->youtubeUri());
     }
 
-    private function setParagraphsInfo(Page $page): void
+    private function setPost(Page $page): Page
     {
-        $this->addParagraphHead($page);
-        $this->addParagraphText($page);
-        $this->paragraphService->addParagraph($page, 'sibling');
-    }
-
-    private function setParagraphsMovie(Page $page): void
-    {
-        $this->addParagraphHead($page);
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'movie');
-        if (is_null($paragraph)) {
-            return;
+        $post = new Page();
+        $post->setPage($page);
+        $post->setTitle('Posts');
+        $post->setType(PageEnum::POSTS->value);
+        $this->addParagraphText($post);
+        $paragraph = $this->paragraphService->addParagraph($post, 'news-list');
+        if ($paragraph instanceof NewsListParagraph) {
+            $paragraph->setNbr(18);
         }
 
-        $paragraph->setNbr(18);
+        return $post;
     }
 
-    private function setParagraphsPost(Page $page): void
+    private function setSeries(Page $page): Page
     {
-        $this->addParagraphHead($page);
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'news-list');
-        if (is_null($paragraph)) {
-            return;
+        $series = new Page();
+        $series->setPage($page);
+        $series->setTitle('Mes séries favorites');
+        $series->setType(PageEnum::SERIES->value);
+        $this->addParagraphText($series);
+        $paragraph = $this->paragraphService->addParagraph($series, 'serie');
+        if ($paragraph instanceof SerieParagraph) {
+            $paragraph->setNbr(18);
         }
 
-        $paragraph->setNbr(18);
+        return $series;
     }
 
-    private function setParagraphsSitemap(Page $page): void
+    private function setSitemap(Page $page): Page
     {
-        $this->addParagraphHead($page);
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'sitemap');
-        if (is_null($paragraph)) {
-            return;
-        }
+        $sitemap = new Page();
+        $sitemap->setPage($page);
+        $sitemap->setTitle('Plan du site');
+        $sitemap->setType(PageEnum::PAGE->value);
+        $this->addParagraphText($sitemap);
+        $this->paragraphService->addParagraph($sitemap, 'sitemap');
 
-        $paragraph->setTitle('Sitemap');
+        return $sitemap;
     }
 
-    private function setParagraphsStar(Page $page): void
+    private function setStar(Page $page): Page
     {
-        $this->addParagraphHead($page);
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'star');
-        if (is_null($paragraph)) {
-            return;
+        $star = new Page();
+        $star->setPage($page);
+        $star->setTitle('Mes étoiles github');
+        $star->setType(PageEnum::PAGE->value);
+        $this->addParagraphText($star);
+        $paragraph = $this->paragraphService->addParagraph($star, 'star');
+        if ($paragraph instanceof StarParagraph) {
+            $paragraph->setNbr(18);
         }
 
-        $paragraph->setNbr(18);
+        return $star;
     }
 
-    private function setParagraphsStory(Page $page): void
+    private function setStories(Page $page): Page
     {
-        $this->addParagraphHead($page);
-        $this->addParagraphText($page);
-        $paragraph = $this->paragraphService->addParagraph($page, 'story-list');
-        if (is_null($paragraph)) {
-            return;
+        $stories = new Page();
+        $stories->setPage($page);
+        $stories->setTitle('Histoires');
+        $stories->setType(PageEnum::STORIES->value);
+        $this->addParagraphText($stories);
+        $paragraph = $this->paragraphService->addParagraph($stories, 'story-list');
+        if ($paragraph instanceof StoryListParagraph) {
+            $paragraph->setNbr(18);
         }
 
-        $paragraph->setNbr(18);
+        return $stories;
     }
 }

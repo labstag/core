@@ -1,7 +1,7 @@
 version: 3
 
-# Taskfile principal - Tâches globales et inclusions
-# Charge automatiquement les variables depuis le fichier .env s'il existe
+# Main Taskfile - Global tasks and inclusions
+# Automatically loads variables from .env file if it exists
 dotenv: [ '.env' ]
 
 includes:
@@ -14,7 +14,7 @@ includes:
   lint: ./taskfiles/lint/Taskfile.yml
 
 vars:
-  # Variables avec valeurs par défaut depuis .env ou valeurs de fallback
+  # Variables with default values from .env or fallback values
   PROJECT_NAME: '{{.PROJECT_NAME | default "labstag"}}'
   ENVIRONMENT: '{{.ENVIRONMENT | default "development"}}'
   STACK_NAME: '{{.STACK | default "labstag"}}'
@@ -26,32 +26,32 @@ vars:
 
 tasks:
   default:
-    desc: "Affiche l'aide et les tâches disponibles"
+    desc: "Display help and available tasks"
     silent: true
     cmds:
-    - echo "🛠️  Collection de Taskfiles pour le développement"
+    - echo "🛠️  Collection of Taskfiles for development"
     - echo ""
-    - echo "Tâches globales disponibles :"
+    - echo "Available global tasks:"
     - task --list
     - echo ""
 
   info:
-    desc: "Affiche les informations du projet avec les variables d'environnement"
+    desc: "Display project information with environment variables"
     silent: true
     cmds:
     - |
       export PROJECT_VERSION=$(jq -r .version package.json)
-      echo "🛠️  {{.PROJECT_NAME}} v$PROJECT_VERSION - Collection de Taskfiles"
-      echo "Environnement: {{.ENVIRONMENT}}"
+      echo "🛠️  {{.PROJECT_NAME}} v$PROJECT_VERSION - Collection of Taskfiles"
+      echo "Environment: {{.ENVIRONMENT}}"
 
   help:
-    desc: "Affiche l'aide détaillée"
+    desc: "Display detailed help"
     aliases: [ h ]
     cmds:
     - task: default
 
   labstag:fix-permissions:
-    desc: "Corrige les permissions des fichiers Labstag (utilisation manuelle si nécessaire)"
+    desc: "Fix Labstag file permissions (manual use if necessary)"
     silent: true
     cmds:
     - chmod -R 755 ./apps
@@ -59,30 +59,30 @@ tasks:
     - chmod -R 777 ./apps/public/uploads
 
   labstag:getapacheconf:
-    desc: "Récupère la configuration Apache depuis l'image Docker"
+    desc: "Retrieve Apache configuration from Docker image"
     silent: true
     cmds:
     - rm -rf ./conf/apache2 || true
     - mkdir -p ./conf/apache2
-    - task docker:create CONTAINER_NAME=labstag-php IMAGE_NAME=$(awk '/www:/ {f=1} f && /image:/ {print $2; exit}' {{.DOCKERCOMPOSEFILE}})
+    - task docker:create CONTAINER_NAME=labstagphp IMAGE_NAME=$(awk '/www:/ {f=1} f && /image:/ {print $2; exit}' {{.DOCKERCOMPOSEFILE}})
     - task: docker:getfile
       vars:
-        CONTAINER_NAME: "labstag-php"
+        CONTAINER_NAME: "labstagphp"
         FILE_PATH: "/etc/apache2/sites-available/000-default.conf"
         DEST_PATH: "./conf/apache2/000-default.conf"
     - task: docker:getfile
       vars:
-        CONTAINER_NAME: "labstag-php"
+        CONTAINER_NAME: "labstagphp"
         FILE_PATH: "/etc/apache2/apache2.conf"
         DEST_PATH: "./conf/apache2/apache2.conf"
-    - docker rm -f labstag-php
+    - docker rm -f labstagphp
     - task: apache:updateconfig
       vars:
         SERVERNAME: "{{.SERVERNAME}}"
         APACHE_DOCUMENT_ROOT: "/var/www/public"
 
   labstag:copysql:
-    desc: "Copie le fichier SQL de dump dans le dossier labstag"
+    desc: "Copy SQL dump file to labstag folder"
     silent: true
     cmds:
     - task: utils:file:copy
@@ -92,7 +92,7 @@ tasks:
         FORCE: true
 
   labstag:getpull-image:
-    desc: "Télécharge les images Docker définies dans le docker-compose.yml"
+    desc: "Download Docker images defined in docker-compose.yml"
     silent: true
     cmds:
     - task: docker:images:pull
@@ -100,22 +100,23 @@ tasks:
         COMPOSE_FILE: "{{.DOCKERCOMPOSEFILE}}"
 
   labstag:deploy:
-    desc: "Déploie les stacks Docker définies dans les fichiers docker-compose"
+    desc: "Deploy Docker stacks defined in docker-compose files"
     silent: true
     cmds:
+    - docker build -f Dockerfile.messenger -t labstag/messenger:latest .
     - task: docker:stack:deploy
       vars:
         COMPOSE_FILE: "{{.DOCKERCOMPOSEFILE}}"
         STACK_NAME: "{{.STACK_NAME}}"
 
   labstag:install-first:
-    desc: "Installation initiale de Composer et des dépendances"
-    silent: true
+    desc: "Initial installation of Composer and dependencies"
+    silent: false
     cmds:
     - docker run --rm -v $(pwd)/apps:/var/www -w /var/www $(awk '/www:/ {f=1} f && /image:/ {print $2; exit}' {{.DOCKERCOMPOSEFILE}}) symfony composer install
 
   labstag:waiting:
-    desc: "Attend que les services soient opérationnels"
+    desc: "Wait for services to be operational"
     silent: true
     cmds:
     - task: docker:stack:check:containers:ready
@@ -124,7 +125,7 @@ tasks:
         STACK_NAME: "{{.STACK_NAME}}"
 
   labstag:ls:
-    desc: "Liste les stacks et services Docker"
+    desc: "List Docker stacks and services"
     silent: true
     cmds:
     - task: docker:stack:services
@@ -132,7 +133,7 @@ tasks:
         STACK_NAME: "{{.STACK_NAME}}"
 
   labstag:exec:
-    desc: "Exécute une commande dans un conteneur en cours d'exécution"
+    desc: "Execute a command in a running container"
     cmds:
     - task: labstag:set-env-ids
     - task: labstag:copysql
@@ -143,35 +144,39 @@ tasks:
     - task: labstag:ls
 
   labstag:download-phar:
-    desc: "Télécharger les différents fichiers phar"
+    desc: "Download various phar files"
     cmds:
     - task: download:php:tools
       vars:
         TOOLS_DIR: ./../apps
 
   labstag:bash:
-    desc: "Ouvre un shell bash dans le conteneur www"
+    desc: "Open a bash shell in the www container"
+    preconditions:
+    - sh: docker service ls | grep -q {{.STACK_NAME}}_www
+      msg: "Docker service {{.STACK_NAME}}_www is not started. Run 'task labstag:deploy' first"
     cmds:
     - task: docker:stack:shell
       vars:
-        STACK_NAME: "labstag"
         SERVICE_NAME: "www"
 
   labstag:cmd-exec:
-    desc: "Affiche les informations Symfony"
+    desc: "Execute a command in the Docker container"
     silent: true
     vars:
       INTERACTIVE: '{{.INTERACTIVE | default "true"}}'
+    preconditions:
+    - sh: docker service ls | grep -q {{.STACK_NAME}}_www
+      msg: "Docker service {{.STACK_NAME}}_www is not started. Run 'task labstag:deploy' first"
     cmds:
     - task: docker:stack:exec
       vars:
-        STACK_NAME: "labstag"
         SERVICE_NAME: "www"
         COMMAND: "{{.COMMAND}}"
         INTERACTIVE: "{{.INTERACTIVE}}"
 
   symfony:about:
-    desc: "Affiche les informations Symfony"
+    desc: "Show Symfony information"
     silent: true
     cmds:
     - task: symfony:console
@@ -179,11 +184,15 @@ tasks:
         CMD: "about"
 
   symfony:console:
-    desc: "Exécute une commande Symfony"
+    desc: "Execute a Symfony command"
+    internal: true
     silent: true
+    preconditions:
+    - sh: docker service ls | grep -q {{.STACK_NAME}}_www
+      msg: "Docker service {{.STACK_NAME}}_www is not started. Run 'task labstag:deploy' first"
     vars:
       CMD: '{{.CMD | default ""}}'
-      # Désactiver l'interactivité en environnement CI/CD
+      # Disable interactivity in CI/CD environment
       INTERACTIVE: '{{if or (eq (env "DOCKER_INTERACTIVE") "false") (eq (env "CI") "true") (eq (env "GITHUB_ACTIONS") "true")}}false{{else}}true{{end}}'
     cmds:
     - task: labstag:cmd-exec
@@ -191,7 +200,7 @@ tasks:
         COMMAND: "symfony console {{.CMD}}"
 
   labstag:assets:
-    desc: "Installe les assets Symfony"
+    desc: "Install Symfony assets"
     silent: true
     cmds:
     - task: symfony:console
@@ -199,7 +208,7 @@ tasks:
         CMD: "assets:install public --symlink --relative"
 
   labstag:cache-clear:
-    desc: "Vide le cache Symfony"
+    desc: "Clear Symfony cache"
     silent: true
     cmds:
     - task: symfony:console
@@ -207,7 +216,7 @@ tasks:
         CMD: "cache:clear"
 
   composer:exec:
-    desc: "Exécute une commande Composer"
+    desc: "Execute a Composer command"
     silent: true
     vars:
       CMD: '{{.CMD | default ""}}'
@@ -217,7 +226,7 @@ tasks:
         COMMAND: "symfony composer {{.CMD}}"
 
   composer:fund:
-    desc: "Affiche les liens de financement des dépendances Composer"
+    desc: "Show funding links of Composer dependencies"
     silent: true
     cmds:
     - task: composer:exec
@@ -225,7 +234,7 @@ tasks:
         CMD: "fund"
 
   composer:install:
-    desc: "Installe les dépendances Composer"
+    desc: "Install Composer dependencies"
     silent: true
     cmds:
     - task: composer:exec
@@ -233,7 +242,7 @@ tasks:
         CMD: "install"
 
   composer:outdated:
-    desc: "Affiche les dépendances obsolètes"
+    desc: "Show outdated dependencies"
     silent: true
     cmds:
     - task: composer:exec
@@ -241,7 +250,7 @@ tasks:
         CMD: "outdated"
 
   composer:suggests:
-    desc: "Affiche les suggestions des dépendances Composer"
+    desc: "Show Composer dependency suggestions"
     silent: true
     cmds:
     - task: composer:exec
@@ -249,7 +258,7 @@ tasks:
         CMD: "suggests"
 
   composer:update:
-    desc: "Met à jour les dépendances Composer"
+    desc: "Update Composer dependencies"
     silent: true
     cmds:
     - task: composer:exec
@@ -257,7 +266,7 @@ tasks:
         CMD: "update"
 
   doctrine:fixtures:
-    desc: "Charge les fixtures Doctrine"
+    desc: "Load Doctrine fixtures"
     silent: true
     cmds:
     - task: symfony:console
@@ -265,7 +274,7 @@ tasks:
         CMD: "doctrine:fixtures:load --no-interaction"
 
   doctrine:migrate:
-    desc: "Exécute les migrations Doctrine"
+    desc: "Execute Doctrine migrations"
     silent: true
     cmds:
     - task: symfony:console
@@ -273,7 +282,7 @@ tasks:
         CMD: "doctrine:migrations:migrate -n"
 
   doctrine:schema:update:
-    desc: "Met à jour le schéma de la base de données"
+    desc: "Update database schema"
     silent: true
     cmds:
     - task: symfony:console
@@ -281,7 +290,7 @@ tasks:
         CMD: "doctrine:schema:update --dump-sql --force"
 
   doctrine:schema:validate:
-    desc: "Valide le schéma de la base de données"
+    desc: "Validate database schema"
     silent: true
     cmds:
     - task: symfony:console
@@ -289,7 +298,7 @@ tasks:
         CMD: "doctrine:schema:validate"
 
   composer:validate:
-    desc: "Valide le fichier composer.json"
+    desc: "Validate composer.json file"
     silent: true
     cmds:
     - task: composer:exec
@@ -297,7 +306,7 @@ tasks:
         CMD: "validate"
 
   composer:install:dev:
-    desc: "Installe les dépendances Composer pour le développement"
+    desc: "Install Composer dependencies for development"
     silent: true
     cmds:
     - task: composer:exec
@@ -305,7 +314,7 @@ tasks:
         CMD: "install --no-progress --prefer-dist --optimize-autoloader"
 
   composer:install:prod:
-    desc: "Installe les dépendances Composer pour la production"
+    desc: "Install Composer dependencies for production"
     silent: true
     cmds:
     - task: composer:exec
@@ -313,7 +322,7 @@ tasks:
         CMD: "install --no-progress --prefer-dist --optimize-autoloader --no-dev"
 
   ecs-check:
-    desc: "Vérifie le code avec PHP CS Fixer"
+    desc: "Check code with PHP CS Fixer"
     silent: true
     cmds:
     - task: composer:exec
@@ -321,23 +330,15 @@ tasks:
         CMD: "run ecs-check"
 
   ecs-fix:
-    desc: "Corrige le code avec PHP CS Fixer"
+    desc: "Fix code with PHP CS Fixer"
     silent: true
     cmds:
     - task: composer:exec
       vars:
         CMD: "run ecs-fix"
 
-  labstag:delete-oldfiles:
-    desc: "Supprime les anciens fichiers temporaires"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:delete-oldfiles"
-
   labstag:geocode-install:
-    desc: "Installe les données de géocodage"
+    desc: "Install geocoding data"
     silent: true
     vars:
       COUNTRY: '{{.COUNTRY | default ""}}'
@@ -347,7 +348,7 @@ tasks:
         CMD: "labstag:geocode-install {{.COUNTRY}}"
 
   lint:container:
-    desc: "Vérifie la syntaxe des fichiers de configuration de services"
+    desc: "Check service configuration file syntax"
     silent: true
     cmds:
     - task: symfony:console
@@ -355,7 +356,7 @@ tasks:
         CMD: "lint:container"
 
   lint:php-cs-fixer:
-    desc: "Vérifie le code avec PHP CS Fixer"
+    desc: "Check code with PHP CS Fixer"
     silent: true
     cmds:
     - task: labstag:cmd-exec
@@ -363,7 +364,7 @@ tasks:
         COMMAND: "php -d memory_limit=-1 bin/php-cs-fixer fix src"
 
   lint:php-cs-fixer:dry:
-    desc: "Vérifie le code avec PHP CS Fixer en mode dry-run"
+    desc: "Check code with PHP CS Fixer in dry-run mode"
     silent: true
     cmds:
     - task: labstag:cmd-exec
@@ -371,7 +372,7 @@ tasks:
         COMMAND: "php -d memory_limit=-1 bin/php-cs-fixer fix src --dry-run -v --diff"
 
   lint:phpcbf:
-    desc: "Corrige le code avec PHP Code Beautifier and Fixer"
+    desc: "Fix code with PHP Code Beautifier and Fixer"
     silent: true
     cmds:
     - task: labstag:cmd-exec
@@ -379,7 +380,7 @@ tasks:
         COMMAND: "php -d memory_limit=-1 bin/phpcbf -d memory_limit=-1 --report=diff -p --extensions=php --standard=phpcs.xml"
 
   lint:phpcs:
-    desc: "Vérifie le code avec PHP CodeSniffer"
+    desc: "Check code with PHP CodeSniffer"
     silent: true
     cmds:
     - task: labstag:cmd-exec
@@ -387,7 +388,7 @@ tasks:
         COMMAND: "php -d memory_limit=-1 bin/phpcs --report=full --extensions=php src --standard=phpcs.xml"
 
   lint:phpcs:error:
-    desc: "Vérifie le code avec PHP CodeSniffer et affiche uniquement les erreurs"
+    desc: "Check code with PHP CodeSniffer and show only errors"
     silent: true
     cmds:
     - task: labstag:cmd-exec
@@ -395,7 +396,7 @@ tasks:
         COMMAND: "php -d memory_limit=-1 bin/phpcs  --report=full --extensions=php --warning-severity=0 --standard=phpcs.xml"
 
   lint:phpcs:warning:
-    desc: "Vérifie le code avec PHP CodeSniffer et affiche uniquement les avertissements"
+    desc: "Check code with PHP CodeSniffer and show only warnings"
     silent: true
     cmds:
     - task: labstag:cmd-exec
@@ -403,7 +404,7 @@ tasks:
         COMMAND: "php -d memory_limit=-1 bin/phpcs --report=full --extensions=php --error-severity=0 --standard=phpcs.xml"
 
   lint:phpdoc:
-    desc: "Vérifie les annotations PHPDoc avec phpDocumentor"
+    desc: "Check PHPDoc annotations with phpDocumentor"
     silent: true
     cmds:
     - task: labstag:cmd-exec
@@ -411,32 +412,15 @@ tasks:
         COMMAND: "php -d memory_limit=-1 phpDocumentor.phar -d src -t public/docs"
 
   lint:phploc:
-    desc: "Analyse la complexité du code avec phploc"
+    desc: "Analyze code complexity with phploc"
     silent: true
     cmds:
     - task: labstag:cmd-exec
       vars:
         COMMAND: "php -d memory_limit=-1 phploc.phar src"
 
-  lint:phpmd:
-    desc: "Vérifie le code avec PHP Mess Detector"
-    silent: true
-    cmds:
-    - task: labstag:cmd-exec
-      vars:
-        COMMAND: "php -d memory_limit=-1 -d error_reporting=24575 bin/phpmd config,features,public,src,tests ansi phpmd.xml"
-
-  lint:phpmnd:
-    desc: "Détecte les noms magiques avec PHPMND"
-    silent: true
-    cmds:
-    - task: composer:exec
-      vars:
-        CMD: "run phpmnd"
-
   phpstan:
-    desc: "Analyse le code avec PHPStan"
-    internal: true
+    desc: "Analyze code with PHPStan"
     silent: true
     vars:
       LEVEL: '{{.LEVEL | default "0"}}'
@@ -445,144 +429,24 @@ tasks:
       vars:
         COMMAND: "bin/phpstan analyse -l {{.LEVEL}}"
 
-  phpstan:0:
-    desc: "Analyse le code avec PHPStan au niveau 0"
-    silent: true
-    cmds:
-    - task: phpstan
-      vars:
-        LEVEL: "0"
-
-  phpstan:1:
-    desc: "Analyse le code avec PHPStan au niveau 1"
-    silent: true
-    cmds:
-    - task: phpstan
-      vars:
-        LEVEL: "1"
-
-  phpstan:2:
-    desc: "Analyse le code avec PHPStan au niveau 2"
-    silent: true
-    cmds:
-    - task: phpstan
-      vars:
-        LEVEL: "2"
-
-  phpstan:3:
-    desc: "Analyse le code avec PHPStan au niveau 3"
-    silent: true
-    cmds:
-    - task: phpstan
-      vars:
-        LEVEL: "3"
-
-  phpstan:4:
-    desc: "Analyse le code avec PHPStan au niveau 4"
-    silent: true
-    cmds:
-    - task: phpstan
-      vars:
-        LEVEL: "4"
-
-  phpstan:5:
-    desc: "Analyse le code avec PHPStan au niveau 5"
-    silent: true
-    cmds:
-    - task: phpstan
-      vars:
-        LEVEL: "5"
-
-  phpstan:6:
-    desc: "Analyse le code avec PHPStan au niveau 6"
-    silent: true
-    cmds:
-    - task: phpstan
-      vars:
-        LEVEL: "6"
-
-  phpstan:7:
-    desc: "Analyse le code avec PHPStan au niveau 7"
-    silent: true
-    cmds:
-    - task: phpstan
-      vars:
-        LEVEL: "7"
-
-  phpstan:8:
-    desc: "Analyse le code avec PHPStan au niveau 8"
-    silent: true
-    cmds:
-    - task: phpstan
-      vars:
-        LEVEL: "8"
-
-  phpstan:9:
-    desc: "Analyse le code avec PHPStan au niveau 9"
-    silent: true
-    cmds:
-    - task: phpstan
-      vars:
-        LEVEL: "9"
-
-  phpstan:10:
-    desc: "Analyse le code avec PHPStan au niveau 10"
-    silent: true
-    cmds:
-    - task: phpstan
-      vars:
-        LEVEL: "10"
-
   lint:twig:
-    desc: "Vérifie les templates Twig"
+    desc: "Check Twig templates"
     silent: true
     cmds:
     - task: symfony:console
       vars:
         CMD: "lint:twig templates"
 
-  labstag:movies:add:
-    desc: "Ajoute des films de démonstration"
+  messenger:stats:
+    desc: "Show Messenger statistics"
     silent: true
     cmds:
     - task: symfony:console
       vars:
-        CMD: "labstag:movies:add"
-
-  labstag:movies:update:
-    desc: "Met à jour les films de démonstration"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:movies:update"
-
-  labstag:series:add:
-    desc: "Ajoute des séries de démonstration"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:series:add"
-
-  labstag:series:update:
-    desc: "Met à jour les séries de démonstration"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "labstag:series:update"
-
-  messenger:consume:
-    desc: "Démarre le consommateur de messages Messenger"
-    silent: true
-    cmds:
-    - task: symfony:console
-      vars:
-        CMD: "messenger:consume async -vv"
+        CMD: "messenger:stats"
 
   rector:
-    desc: "Refactorise le code avec Rector"
+    desc: "Refactor code with Rector"
     silent: true
     cmds:
     - task: composer:exec
@@ -590,21 +454,21 @@ tasks:
         CMD: "run rector"
 
   rector:dry:
-    desc: "Refactorise le code avec Rector en mode dry-run"
+    desc: "Refactor code with Rector in dry-run mode"
     silent: true
     cmds:
     - task: composer:exec
       vars:
-        CMD: "run rector --dry-run"
+        CMD: "run rector-dry"
 
   star:get:
-    desc: "Télécharge des données de stars"
+    desc: "Download star data"
     silent: true
     cmds:
     - gh api --paginate /user/starred --jq '.' | jq -s > apps/private/stars.json
 
   star:add:
-    desc: "Ajoute des données de stars"
+    desc: "Add star data"
     silent: true
     cmds:
     - task: symfony:console
@@ -612,22 +476,14 @@ tasks:
         CMD: "labstag:star-add"
 
   star:
-    desc: "Télécharge et met à jour les données de stars"
+    desc: "Download and update star data"
     silent: true
     cmds:
     - task: star:get
     - task: star:add
 
-  test:behat:
-    desc: "Exécute les tests Behat"
-    silent: true
-    cmds:
-    - task: labstag:cmd-exec
-      vars:
-        CMD: "php -d memory_limit=-1 behat.phar --config behat.yaml"
-
   test:phpunit:
-    desc: "Exécute les tests PHPUnit"
+    desc: "Run PHPUnit tests"
     silent: true
     cmds:
     - task: composer:exec
@@ -635,7 +491,7 @@ tasks:
         CMD: "run simple-phpunit"
 
   test:phpunit:unit-integration:
-    desc: "Exécute les tests unitaires et d'intégration PHPUnit"
+    desc: "Run PHPUnit unit and integration tests"
     silent: true
     cmds:
     - task: composer:exec
@@ -643,7 +499,7 @@ tasks:
         CMD: "run simple-phpunit-unit-integration"
 
   translation:
-    desc: "Gère les traductions avec Symfony"
+    desc: "Manage translations with Symfony"
     silent: true
     vars:
       LOCALE: '{{.LOCALE | default "fr"}}'
@@ -653,7 +509,8 @@ tasks:
         CMD: "translation:extract --force {{.LOCALE}}"
 
   workflow:dump:
-    desc: "Génère le workflow des entités au format PNG via fichier DOT temporaire"
+    desc: "Generate entity workflow in PNG format via temporary DOT file"
+    internal: true
     silent: true
     vars:
       ENTITY: '{{.ENTITY | default "chapter"}}'
@@ -668,102 +525,78 @@ tasks:
         COMMAND: "sh -c 'dot -Tpng {{.DOT_FILE}} -o {{.FILE}}'"
     - task: labstag:cmd-exec
       vars:
-        COMMAND: "rm {{.DOT_FILE}} && echo 'Fichier temporaire DOT supprimé'"
-
-  workflow:dump:chapter:
-    desc: "Affiche le workflow des chapitres"
-    silent: true
-    cmds:
-    - task: workflow:dump
-      vars:
-        ENTITY: "chapter"
-
-  workflow:dump:edito:
-    desc: "Affiche le workflow des éditos"
-    silent: true
-    cmds:
-    - task: workflow:dump
-      vars:
-        ENTITY: "edito"
-
-  workflow:dump:story:
-    desc: "Affiche le workflow des histoires"
-    silent: true
-    cmds:
-    - task: workflow:dump
-      vars:
-        ENTITY: "story"
-
-  workflow:dump:memo:
-    desc: "Affiche le workflow des mémos"
-    silent: true
-    cmds:
-    - task: workflow:dump
-      vars:
-        ENTITY: "memo"
-
-  workflow:dump:post:
-    desc: "Affiche le workflow des posts"
-    silent: true
-    cmds:
-    - task: workflow:dump
-      vars:
-        ENTITY: "post"
-
-  workflow:dump:page:
-    desc: "Affiche le workflow des pages"
-    silent: true
-    cmds:
-    - task: workflow:dump
-      vars:
-        ENTITY: "page"
-
-  workflow:dump:user:
-    desc: "Affiche le workflow des utilisateurs"
-    silent: true
-    cmds:
-    - task: workflow:dump
-      vars:
-        ENTITY: "user"
+        COMMAND: "rm {{.DOT_FILE}} && echo 'Temporary DOT file deleted'"
 
   workflow:dump:all:
-    desc: "Affiche les workflows de toutes les entités"
+    desc: "Show workflows for all entities"
     silent: true
+    vars:
+      ENTITIES: "chapter,edito,story,memo,post,page,user"
     cmds:
-    - echo "🚀 Génération de tous les workflows..."
+    - echo "🚀 Generating all workflows..."
     - echo ""
-    - task: workflow:dump:chapter
-    - task: workflow:dump:edito
-    - task: workflow:dump:story
-    - task: workflow:dump:memo
-    - task: workflow:dump:post
-    - task: workflow:dump:page
-    - task: workflow:dump:user
+    - for: { var: ENTITIES, split: ',' }
+      task: workflow:dump
+      vars:
+        ENTITY: "{{.ITEM}}"
     - echo ""
-    - echo "🎉 Génération terminée !"
+    - echo "🎉 Generation completed!"
     ignore_error: true
 
   lint:all:
-    desc: "Exécute tous les linters disponibles"
+    desc: "Run all available linters"
+    silent: true
+    vars:
+      SKIP_DOCKER: '{{.SKIP_DOCKER | default "false"}}'
     cmds:
     - task: lint:yml
       vars:
-        IGNORE_DIR: "taskfiles,apps/vendor"
+        IGNORE_DIR: "lampy,taskfiles,apps/vendor"
     - task: lint:md
       vars:
-        IGNORE_DIR: "taskfiles"
+        IGNORE_DIR: "lampy,taskfiles"
     - task: lint:action
-    - task: lint:docker
+    - |
+      if [ "{{.SKIP_DOCKER}}" = "true" ]; then
+        echo "⏭  Skip lint:docker"
+      else
+        task lint:docker DOCKERCOMPOSEFILE="{{.DOCKERCOMPOSEFILE}}"
+      fi
     - task: cmd:validate_outdated
-    - npm run eslint:fix
-    - npm run lint:stylelint:fix
+    - npm run eslint
+    - npm run lint:stylelint
     - task: lint:twig
     - task: lint:container
     - task: lint:phpaudit
 
+  quality:all:
+    desc: "Run all quality checks: linters + tests + static analysis"
+    cmds:
+    - echo "🔍 Complete quality checks in progress..."
+    - task: lint:all
+    - task: test:all
+    - task: phpstan
+      vars:
+        LEVEL: "5"
+    - echo "✅ Quality checks completed!"
+
+  quality:ci:
+    desc: "Quality checks for continuous integration"
+    cmds:
+    - echo "🔄 CI quality checks in progress..."
+    - task: lint:phpaudit
+    - task: test:quick
+    - task: phpstan
+      vars:
+        LEVEL: "8"
+    - echo "✅ CI quality checks completed!"
+
   fix:all:
+    desc: "Automatically fix code issues"
     silent: true
     cmds:
+    - npm run eslint:fix
+    - npm run lint:stylelint:fix
     - task: ecs-fix
     - task: lint:phpcbf
     - task: lint:phpcs
@@ -771,38 +604,37 @@ tasks:
     ignore_error: true
 
   lint:phpaudit:
-    desc: "Analyse le code avec PHP Audit"
+    desc: "Analyze code with PHP Audit"
     silent: true
     cmds:
     - task: lint:phpcs:error
-    - task: lint:phpmd
-    - task: lint:phpmnd
-    - task: phpstan:0
+    - task: phpstan
+      vars:
+        LEVEL: "0"
 
   cmd:validate_outdated:
-    desc: "Valide les dépendances obsolètes"
+    desc: "Validate outdated dependencies"
     silent: true
     cmds:
     - task: composer:validate
     - task: composer:outdated
 
   cmd:install:all:
-    desc: "Installe toutes les dépendances et exécute les migrations"
+    desc: "Install all dependencies and run migrations"
     silent: true
     cmds:
     - task: doctrine:migrate
     - task: labstag:assets
     - npm run encore:dev
-    - task: lint:all
 
   cmd:install:bdd:
-    desc: "Installe la base de données avec les fixtures"
+    desc: "Install database with fixtures"
     silent: true
     cmds:
     - task: doctrine:fixtures
 
   cmd:install:dev:
-    desc: "Installe l'environnement de développement complet"
+    desc: "Install complete development environment"
     silent: true
     cmds:
     - task: download:phar
@@ -810,7 +642,7 @@ tasks:
     - task: cmd:install:bdd
 
   cmd:install:prod:
-    desc: "Installe l'environnement de production complet"
+    desc: "Install complete production environment"
     silent: true
     cmds:
     - task: cmd:install:all
@@ -818,17 +650,14 @@ tasks:
     - npm run encore:build
 
   data:
-    desc: "Installe les données de démonstration"
+    desc: "Install demonstration data"
     silent: true
     cmds:
     - task: doctrine:fixtures
-    - task: labstag:delete-oldfiles
     - task: star:add
-    - task: labstag:movies:add
-    - task: labstag:series:add
 
   labstag:set-env-ids:
-    desc: "Met à jour les UID/GID dans le fichier .env"
+    desc: "Update UID/GID in .env file"
     silent: true
     cmds:
     - |
@@ -843,4 +672,158 @@ tasks:
       else
         sed -i "s/GID=.*/GID=$(id -g)/" .env
       fi
+
+  # =====================================
+  # TÂCHES DE TESTS (DOCKER ONLY)
+  # =====================================
+
+  test:setup:
+    desc: "Prepare test environment in container"
+    silent: true
+    cmds:
+    - echo "🔧 Preparing test environment..."
+    - echo "ℹ️  Using SQLite file database for tests"
+    - task: labstag:cmd-exec
+      vars:
+        COMMAND: "rm -f var/test.db"
+        INTERACTIVE: "false"
+    - task: symfony:console
+      vars:
+        CMD: "doctrine:schema:update --env=test --force"
+    - task: symfony:console
+      vars:
+        CMD: "doctrine:fixtures:load --env=test --no-interaction"
+    - echo "✅ Test environment ready"
+
+  test:unit:
+    desc: "Run unit tests"
+    silent: true
+    cmds:
+    - echo "🧪 Running unit tests..."
+    - task: labstag:cmd-exec
+      vars:
+        COMMAND: "php bin/phpunit --testsuite=unit --colors=always"
+        INTERACTIVE: "false"
+    - echo "✅ Unit tests completed"
+
+  test:integration:
+    desc: "Run integration tests"
+    silent: true
+    cmds:
+    - echo "🔗 Running integration tests..."
+    - task: labstag:cmd-exec
+      vars:
+        COMMAND: "php bin/phpunit --testsuite=integration --colors=always"
+        INTERACTIVE: "false"
+    - echo "✅ Integration tests completed"
+
+  test:functional:
+    desc: "Run functional tests"
+    silent: true
+    cmds:
+    - echo "🌐 Running functional tests..."
+    - task: labstag:cmd-exec
+      vars:
+        COMMAND: "php bin/phpunit --testsuite=functional --colors=always"
+        INTERACTIVE: "false"
+    - echo "✅ Functional tests completed"
+
+  test:performance:
+    desc: "Run performance tests"
+    silent: true
+    cmds:
+    - echo "⚡ Running performance tests..."
+    - task: labstag:cmd-exec
+      vars:
+        COMMAND: "php bin/phpunit --testsuite=performance --colors=always"
+        INTERACTIVE: "false"
+    - echo "✅ Performance tests completed"
+
+  test:coverage:
+    desc: "Generate code coverage report"
+    silent: true
+    cmds:
+    - echo "📊 Generating coverage report..."
+    - task: labstag:cmd-exec
+      vars:
+        COMMAND: "php bin/phpunit --coverage-html var/coverage --colors=always"
+        INTERACTIVE: "false"
+    - echo "✅ Coverage report generated in var/coverage/"
+
+  test:all:
+    desc: "Run all tests (unit, integration, functional, performance)"
+    silent: true
+    cmds:
+    - echo "🚀 Running all tests..."
+    - task: test:setup
+    - task: labstag:cmd-exec
+      vars:
+        COMMAND: "php bin/phpunit --colors=always"
+        INTERACTIVE: "false"
+    - task: test:cleanup
+    - echo "✅ All tests completed successfully"
+
+  test:cleanup:
+    desc: "Clean up test environment"
+    silent: true
+    cmds:
+    - echo "🧹 Cleaning up test environment..."
+    - task: labstag:cmd-exec
+      vars:
+        COMMAND: "rm -f var/test.db"
+        INTERACTIVE: "false"
+    - echo "✅ Test environment cleaned"
+
+  test:quick:
+    desc: "Run only unit tests (fast)"
+    silent: true
+    cmds:
+    - echo "⚡ Quick tests (unit only)..."
+    - task: labstag:cmd-exec
+      vars:
+        COMMAND: "php bin/phpunit --testsuite=unit --colors=always --stop-on-failure"
+        INTERACTIVE: "false"
+    - echo "✅ Quick tests completed"
+
+  test:watch:
+    desc: "Run tests in watch mode (file monitoring)"
+    silent: true
+    preconditions:
+    - sh: command -v inotifywait
+      msg: "inotify-tools is not installed. Install it with 'sudo apt install inotify-tools'"
+    cmds:
+    - echo "👀 Test watch mode activated (Ctrl+C to stop)..."
+    - |
+      while true; do
+        inotifywait -r -e modify apps/src/ apps/tests/ --exclude=".*\.git.*|.*\.cache.*|.*var.*" -q
+        echo "🔄 File modified, rerunning tests..."
+        task labstag:cmd-exec COMMAND="php bin/phpunit --testsuite=unit --colors=always --stop-on-failure" INTERACTIVE=false
+      done
+
+  test:debug:
+    desc: "Run tests with detailed debugging information"
+    silent: true
+    cmds:
+    - echo "🐛 Running tests in debug mode..."
+    - task: labstag:cmd-exec
+      vars:
+        COMMAND: "php bin/phpunit --debug --colors=always"
+        INTERACTIVE: "false"
+
+  test:validate:
+    desc: "Validate test configuration"
+    silent: true
+    cmds:
+    - echo "✅ Validating test configuration..."
+    - task: labstag:cmd-exec
+      vars:
+        COMMAND: "php bin/phpunit --list-tests"
+        INTERACTIVE: "false"
+    - task: symfony:console
+      vars:
+        CMD: "lint:container --env=test"
+    - task: symfony:console
+      vars:
+        CMD: "doctrine:schema:validate --env=test"
+    - echo "✅ Test configuration is valid"
 

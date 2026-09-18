@@ -3,14 +3,19 @@
 namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Exception;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\Game;
+use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Post;
+use Labstag\Entity\Saga;
+use Labstag\Entity\Season;
+use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
-use Labstag\Repository\ChapterRepository;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class SitemapService
 {
@@ -23,6 +28,7 @@ final class SitemapService
     public function __construct(
         private ConfigurationService $configurationService,
         private SlugService $slugService,
+        private UrlGeneratorInterface $urlGenerator,
         private EntityManagerInterface $entityManager,
     )
     {
@@ -44,7 +50,18 @@ final class SitemapService
             $tabs = array_merge($tabs, $this->getDataStory());
         }
 
-        ksort($tabs);
+        if ($all) {
+            $tabs = array_merge($tabs, $this->getDataSerie());
+        }
+
+        if ($all) {
+            $tabs = array_merge($tabs, $this->getDataMovie());
+        }
+
+        if ($all) {
+            $tabs = array_merge($tabs, $this->getDataGame());
+        }
+
         $this->parent = [];
 
         return $this->setTabsByParent($tabs, '/');
@@ -55,27 +72,12 @@ final class SitemapService
      */
     private function formatData(object $entity): array
     {
-        $url = $this->slugService->forEntity($entity);
+        $params = $this->slugService->forEntity($entity);
+        $url    = $this->urlGenerator->generate('front', $params);
 
         return [
-            '/' . $url => ['entity' => $entity],
+            '/'.$url => ['entity' => $entity],
         ];
-    }
-
-    /**
-     * @return mixed[]
-     */
-    private function getDataChaptersByStory(object $story): array
-    {
-        if (!$story instanceof Story) {
-            return [];
-        }
-
-        /** @var ChapterRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Chapter::class);
-        $data                       = $serviceEntityRepositoryLib->getAllActivateByStory($story);
-
-        return $this->setTabs($data);
     }
 
     /**
@@ -83,14 +85,43 @@ final class SitemapService
      */
     private function getDataFromRepository(string $entityClass): array
     {
-        $serviceEntityRepositoryLib = $this->getRepository($entityClass);
-        if (!method_exists($serviceEntityRepositoryLib, 'getAllActivate')) {
+        $entityRepository = $this->getRepository($entityClass);
+        if (!method_exists($entityRepository, 'getAllActivate')) {
             return [];
         }
 
-        $data = $serviceEntityRepositoryLib->getAllActivate();
+        return $entityRepository->getAllActivate();
+    }
 
-        return $this->setTabs($data);
+    /**
+     * @return mixed[]
+     */
+    private function getDataGame(): array
+    {
+        $listing = $this->slugService->getPageByType(PageEnum::GAMES->value);
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
+
+        $games = $this->getDataFromRepository(Game::class);
+
+        return array_merge($this->setTabs($games));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getDataMovie(): array
+    {
+        $listing = $this->slugService->getPageByType(PageEnum::MOVIES->value);
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
+
+        $movies           = $this->getDataFromRepository(Movie::class);
+        $sagas            = $this->getDataFromRepository(Saga::class);
+
+        return array_merge($this->setTabs($movies), $this->setTabs($sagas));
     }
 
     /**
@@ -98,7 +129,9 @@ final class SitemapService
      */
     private function getDataPages(): array
     {
-        return $this->getDataFromRepository(Page::class);
+        $pages = $this->getDataFromRepository(Page::class);
+
+        return $this->setTabs($pages);
     }
 
     /**
@@ -111,7 +144,34 @@ final class SitemapService
             return [];
         }
 
-        return $this->getDataFromRepository(Post::class);
+        $posts = $this->getDataFromRepository(Post::class);
+
+        return $this->setTabs($posts);
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getDataSerie(): array
+    {
+        $listing = $this->slugService->getPageByType(PageEnum::SERIES->value);
+        if (!is_object($listing) || !$listing->isEnable()) {
+            return [];
+        }
+
+        $series           = $this->getDataFromRepository(Serie::class);
+        $entityRepository = $this->entityManager->getRepository(Season::class);
+        $seasons          = [];
+        foreach ($series as &$serie) {
+            $seasonsSerie = $entityRepository->getAllActivateBySerie($serie);
+            if (0 === count($seasonsSerie)) {
+                unset($serie);
+            }
+
+            $seasons = array_merge($seasons, $seasonsSerie);
+        }
+
+        return array_merge($this->setTabs($series), $this->setTabs($seasons));
     }
 
     /**
@@ -124,16 +184,28 @@ final class SitemapService
             return [];
         }
 
-        return $this->getDataFromRepository(Story::class);
+        $stories          = $this->getDataFromRepository(Story::class);
+        $entityRepository = $this->entityManager->getRepository(Chapter::class);
+        $chapters         = [];
+        foreach ($stories as &$story) {
+            $chaptersStory = $entityRepository->getAllActivateByStory($story);
+            if (0 === count($chaptersStory)) {
+                unset($story);
+            }
+
+            $chapters = array_merge($chapters, $chaptersStory);
+        }
+
+        return array_merge($this->setTabs($stories), $this->setTabs($chapters));
     }
 
     /**
-     * @return ServiceEntityRepositoryLib<object>
+     * @return EntityRepository<object>
      */
-    private function getRepository(string $entity): ServiceEntityRepositoryLib
+    private function getRepository(string $entity): EntityRepository
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+        if (is_null($entityRepository)) {
             throw new Exception('Repository not found');
         }
 
@@ -149,7 +221,7 @@ final class SitemapService
     {
         $tabs = [];
         foreach ($data as $row) {
-            $tabs = array_merge($tabs, $this->formatData($row), $this->getDataChaptersByStory($row));
+            $tabs = array_merge($tabs, $this->formatData($row));
         }
 
         return $tabs;
@@ -170,7 +242,7 @@ final class SitemapService
             )
             ) {
                 $this->parent[$url] = true;
-                $data['parent']     = $this->setTabsByParent($urls, $url);
+                $data['parent']     = $this->setTabsByParent($urls, $url.'/');
                 $tabs[$url]         = $data;
             }
         }

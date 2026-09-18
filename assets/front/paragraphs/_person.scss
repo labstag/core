@@ -1,0 +1,20 @@
+@use "../mixins";
+@use "../variables";
+
+@use "sass:color";
+
+.paragraph_person {
+  .wrapper {}
+
+  .title {}
+
+  ul {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+
+    @include mixins.respond-to(md) {
+      grid-template-columns: repeat(8, 1fr);
+    }
+  }
+}

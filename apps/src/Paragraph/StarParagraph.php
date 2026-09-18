@@ -7,11 +7,12 @@ use Generator;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Star;
-use Labstag\Paragraph\Abstract\ParagraphLib;
+use Labstag\Entity\StarParagraph as EntityStarParagraph;
 use Labstag\Repository\StarRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class StarParagraph extends ParagraphLib
+class StarParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -19,18 +20,24 @@ class StarParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        unset($disable);
-        /** @var StarRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Star::class);
+        if (!$paragraph instanceof EntityStarParagraph) {
+            $this->setShow($paragraph, false);
 
-        $total = $serviceEntityRepositoryLib->findTotalEnable();
+            return;
+        }
+
+        unset($disable);
+        /** @var StarRepository $entityRepository */
+        $entityRepository = $this->getRepository(Star::class);
+
+        $total = $entityRepository->findTotalEnable();
         if (0 == $total) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
-        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
+        $pagination = $this->getPaginator($entityRepository->getQueryPaginator(), $paragraph->getNbr());
 
         $templates = $this->templates($paragraph, 'header');
         $this->setHeader(
@@ -51,6 +58,11 @@ class StarParagraph extends ParagraphLib
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityStarParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -62,9 +74,9 @@ class StarParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'Star';
+        return new TranslatableMessage('Star');
     }
 
     #[Override]
@@ -73,12 +85,22 @@ class StarParagraph extends ParagraphLib
         return 'star';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return [Page::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Page;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 }

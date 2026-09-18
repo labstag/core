@@ -13,6 +13,26 @@ flysystem:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/assets'
+    person.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/person'
+    game.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/game'
+    company.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/company'
+    platform.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/platform'
+    media.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/media'
     configuration.storage:
       adapter: 'local'
       options:
@@ -33,6 +53,10 @@ flysystem:
       adapter: 'local'
       options:
         directory: '%kernel.project_dir%/public/uploads/serie'
+    episode.storage:
+      adapter: 'local'
+      options:
+        directory: '%kernel.project_dir%/public/uploads/episode'
     saga.storage:
       adapter: 'local'
       options:

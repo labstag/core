@@ -1,0 +1,51 @@
+<?php
+
+namespace Labstag\MessageHandler;
+
+use Labstag\Entity\Serie;
+use Labstag\Message\AddSerieMessage;
+use Labstag\Message\SerieMessage;
+use Labstag\Repository\SerieRepository;
+use Labstag\Service\MessageDispatcherService;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+
+#[AsMessageHandler]
+final class AddSerieMessageHandler
+{
+    public function __construct(
+        private MessageDispatcherService $messageDispatcherService,
+        private SerieRepository $serieRepository,
+    )
+    {
+    }
+
+    public function __invoke(AddSerieMessage $addSerieMessage): void
+    {
+        $data = $addSerieMessage->getData();
+
+        $imdb  = (string) $data['Imdb'];
+        $serie = $this->serieRepository->findOneBy(
+            ['imdb' => $imdb]
+        );
+        if ($serie instanceof Serie) {
+            $serie->setFile(true);
+            $this->serieRepository->save($serie);
+
+            return;
+        }
+
+        $serie = new Serie();
+        $serie->setEnable(true);
+        $serie->setAdult(false);
+        $serie->setImdb($imdb);
+
+        $tmdb       = (string) $data['tmdbId'];
+        $title      = trim((string) $data['Title']);
+        $serie->setTmdb($tmdb);
+        $serie->setTitle($title);
+        $serie->setFile(true);
+
+        $this->serieRepository->save($serie);
+        $this->messageDispatcherService->dispatch(new SerieMessage($serie->getId()));
+    }
+}

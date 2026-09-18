@@ -1,0 +1,24 @@
+<div class="background spoiler" data-bg="{{ site_asset(episode, 'img') }}"></div>
+<div class="wrapper">
+    <h3 class="title">
+        #{{ episode.number }} {{ episode.title }}
+    </h3>
+    {% if episode.airDate is not null %}
+        <div>
+            {{ "Air date : %air_date%"|trans({'%air_date%': episode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
+        </div>
+    {% endif %}
+    {% if episode.runtime is not null %}
+        <div class="duration">
+            {{ time_runtime(episode.runtime) }}
+        </div>
+    {% endif %}
+    <div class="overview html-content">
+        {{ episode.overview|raw }}
+    </div>
+    <div class="links">
+        <a href="https://www.themoviedb.org/tv/{{ episode.refseason.refserie.tmdb }}/season/{{ episode.refseason.number }}/episode/{{ episode.number }}" target="_blank" title="{{ 'TMDB page for the serie'|trans|e('html_attr') }}">
+            {{ 'TMDB page for the episode'|trans }}
+        </a>
+    </div>
+</div>

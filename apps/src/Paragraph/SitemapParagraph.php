@@ -4,10 +4,11 @@ namespace Labstag\Paragraph;
 
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
+use Labstag\Entity\SitemapParagraph as EntitySitemapParagraph;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class SitemapParagraph extends ParagraphLib
+class SitemapParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -27,10 +28,15 @@ class SitemapParagraph extends ParagraphLib
         );
     }
 
-    #[Override]
-    public function getName(): string
+    public function getClass(): string
     {
-        return 'Sitemap';
+        return EntitySitemapParagraph::class;
+    }
+
+    #[Override]
+    public function getName(): TranslatableMessage
+    {
+        return new TranslatableMessage('Sitemap');
     }
 
     #[Override]
@@ -39,12 +45,22 @@ class SitemapParagraph extends ParagraphLib
         return 'sitemap';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return [Page::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Page;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 }

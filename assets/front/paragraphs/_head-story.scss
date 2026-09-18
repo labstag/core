@@ -1,32 +1,31 @@
 @use "../placeholders" as *;
-.paragraph_head-story{
+@use "../icons";
+
+.paragraph_head-story {
   @extend %head;
-  .content{
-    
-  }
-  .background{
 
-  }
-  .wrapper{
+  .content {}
 
-  }
-  .title{
-    
-  }
-  .author{
+  .background {}
 
-  }
-  .chapters{
+  .wrapper {}
 
-  }
-  .date{
+  .title {}
 
-  }
-  .pdf{
-    a{
-      i{
-        
+  .author {}
+
+  .chapters {}
+
+  .date {}
+
+  .pdf {
+    a {
+      &::before {
+        @extend .iconbefore;
+        @extend .icon-pdf;
       }
+
+      i {}
     }
   }
 }

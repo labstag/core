@@ -1,0 +1,18 @@
+<div class="modal-header">
+	<h5 class="modal-title">{{ 'Choose the type of Platform to create'|trans }}</h5>
+	<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body">
+	<ul>
+		{% for name, label in blocks %}
+			<li>
+				<a href="{{ ea_url().setController(controller).setAction('new').set('type', label) }}">
+					{{ name }}
+				</a>
+			</li>
+		{% endfor %}
+	</ul>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Close'|trans }}</button>
+</div>

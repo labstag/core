@@ -1,0 +1,55 @@
+{% use "elements.html.twig" %}
+{% set serie = season.refserie %}
+{% set episodes = season.episodes %}
+{% set firstEpisode = episodes|first %}
+{% set lastEpisode = episodes|last %}
+{% set runtime = 0 %}
+{% for episode in episodes %}
+    {% set runtime = runtime + episode.runtime %}
+{% endfor %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
+	<div class="first">
+        <div class="background" style="--image-url: url('{{ site_asset(season, 'backdrop') }}')"></div>
+        <div class="content">
+                <div class="wrapper">
+                    <h3 class="title">
+                        {{ serie.title }} - {{ season.title }}
+                    </h3>
+                    {% if serie.categories|length > 0 %}
+                        <div class="categories">
+                            {% for category in serie.categories %}
+                                <span class="category-{{ category.slug }}">
+                                    <a href="{{ site_path(category) }}">
+                                        {{ category.title }}
+                                    </a>
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if firstEpisode.airDate is defined and firstEpisode.airDate != '' %}
+                        <div class="dates">
+                            {{ "From %start% to %end%"|trans({'%start%': firstEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full'), '%end%' : lastEpisode.airDate|format_date(locale: 'fr_FR', dateFormat: 'full')}) }}
+                        </div>
+                    {% endif %}
+                    {% if runtime != 0 %}
+                        <div class="duration">
+                            {{ time_runtime(runtime) }}
+                        </div>
+                    {% endif %}
+                    <div class="links">
+                        <a href="https://www.imdb.com/title/{{ season.refserie.imdb }}/episodes/?season={{ season.number }}" target="_blank" title="{{ 'IMDB page for the serie'|trans|e('html_attr') }}">
+                            {{ 'IMDB page for the season'|trans }}
+                        </a>
+                        <a href="https://www.themoviedb.org/tv/{{ season.refserie.tmdb }}/season/{{ season.number }}" target="_blank" title="{{ 'TMDB page for the serie'|trans|e('html_attr') }}">
+                            {{ 'TMDB page for the season'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <div class="resume">
+        <div class="wrapper html-content">
+            {{ season.overview|raw }}
+        </div>
+    </div>
+</section>

@@ -2,13 +2,13 @@
 
 namespace Labstag\Paragraph;
 
-use Labstag\Entity\Memo;
+use Labstag\Entity\HeadParagraph as EntityHeadParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class HeadParagraph extends ParagraphLib
+class HeadParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -26,10 +26,15 @@ class HeadParagraph extends ParagraphLib
         );
     }
 
-    #[Override]
-    public function getName(): string
+    public function getClass(): string
     {
-        return 'Head';
+        return EntityHeadParagraph::class;
+    }
+
+    #[Override]
+    public function getName(): TranslatableMessage
+    {
+        return new TranslatableMessage('Head');
     }
 
     #[Override]
@@ -38,15 +43,13 @@ class HeadParagraph extends ParagraphLib
         return 'head';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return [
-            Memo::class,
-            Page::class,
-        ];
+        if (is_null($object)) {
+            return true;
+        }
+
+        return Page::class == $object::class;
     }
 }

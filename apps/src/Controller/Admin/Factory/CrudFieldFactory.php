@@ -2,8 +2,12 @@
 
 namespace Labstag\Controller\Admin\Factory;
 
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\ObjectManager;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
@@ -15,36 +19,100 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use Labstag\Entity\EntityWithParagraphsInterface;
+use Labstag\Entity\User;
 use Labstag\Field\ParagraphsField;
-use Labstag\Repository\CategoryRepository;
-use Labstag\Repository\TagRepository;
+use Labstag\Field\UploadFileField;
+use Labstag\Field\UploadImageField;
 use Labstag\Service\FileService;
+use Labstag\Service\WorkflowService;
+use ReflectionClass;
+use RuntimeException;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Translation\TranslatableMessage;
-use Symfony\Component\Validator\Constraints\File;
-use Vich\UploaderBundle\Form\Type\VichImageType;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Centralized factory for fields (EasyAdmin Fields) to reduce
- * duplication in AbstractCrudControllerLib.
+ * duplication in CrudControllerAbstract.
  */
 final class CrudFieldFactory
 {
+
+    private ?AdminContext $adminContext = null;
+
+    private array $tabfields = [];
+
     public function __construct(
+        #[AutowireIterator('labstag.datas')]
+        private iterable $datas,
+        #[AutowireIterator('labstag.shortcodes')]
+        private iterable $shortcodes,
         private FileService $fileService,
+        private Security $security,
+        private ManagerRegistry $managerRegistry,
+        private WorkflowService $workflowService,
+        private TranslatorInterface $translator,
     )
     {
     }
 
-    public function addFilterCategories(Filters $filters, string $type): void
+    public function addFieldIDShortcode(): iterable
     {
-        $filters->add(
-            EntityFilter::new('categories', new TranslatableMessage('Categories'))->setFormTypeOption(
-                'value_type_options.query_builder',
-                static fn (CategoryRepository $categoryRepository): QueryBuilder => $categoryRepository->createQueryBuilder(
-                    'c'
-                )->andWhere('c.type = :type')->setParameter('type', $type)
-            )
-        );
+        $fqcn = $this->getFqcn();
+        foreach ($this->datas as $data) {
+            $shortcodes = $data->getShortCodes();
+            if (!$data->supportsShortcode($fqcn)) {
+                continue;
+            }
+
+            if (0 === count($shortcodes)) {
+                continue;
+            }
+
+            yield from $this->shortcodeField($shortcodes);
+
+            return;
+        }
+    }
+
+    public function addFieldsToTab(string $tabName, $fields): void
+    {
+        if (!isset($this->tabfields[$tabName])) {
+            throw new RuntimeException(
+                sprintf(
+                    'Tab "%s" not found in CrudFieldFactory. Please add it first using addTab().',
+                    $tabName
+                )
+            );
+        }
+
+        foreach ($fields as $field) {
+            $this->tabfields[$tabName]['fields'][] = $field;
+        }
+    }
+
+    public function addFilterCategories(Filters $filters): void
+    {
+        $entityFilter = EntityFilter::new('categories', new TranslatableMessage('Categories'));
+        $filters->add($entityFilter);
+    }
+
+    /**
+     * Add categories filter only if the given entity actually has a Doctrine association named 'categories'.
+     */
+    public function addFilterCategoriesFor(Filters $filters, string $entityFqcn): void
+    {
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+        if (!$metadata instanceof ClassMetadata || !$metadata->hasAssociation('categories')) {
+            return;
+        }
+
+        $this->addFilterCategories($filters);
     }
 
     public function addFilterEnable(Filters $filters): void
@@ -52,54 +120,52 @@ final class CrudFieldFactory
         $filters->add(BooleanFilter::new('enable', new TranslatableMessage('Enable')));
     }
 
-    public function addFilterRefUser(Filters $filters): void
+    /**
+     * Add refuser filter only if the given entity actually has a Doctrine association named 'refuser'.
+     */
+    public function addFilterRefUserFor(Filters $filters, string $entityFqcn): void
     {
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+        if (!$metadata instanceof ClassMetadata || !$metadata->hasAssociation('refuser')) {
+            return;
+        }
+
         $filters->add(EntityFilter::new('refuser', new TranslatableMessage('User')));
     }
 
-    public function addFilterTags(Filters $filters, string $type): void
-    {
-        $filters->add(
-            EntityFilter::new('tags', new TranslatableMessage('Tags'))->setFormTypeOption(
-                'value_type_options.query_builder',
-                static fn (TagRepository $tagRepository): QueryBuilder => $tagRepository->createQueryBuilder('t')->andWhere('t.type = :type')->setParameter('type', $type)
-            )
-        );
-    }
-
     /**
-     * Helper bundle returning the standard identity fields for most content entities.
-     * Order is important for UI coherence.
-     *
-     * @return array<int, IdField|TextField|SlugField|BooleanField|ImageField|AssociationField>
+     * Add categories filter only if the given entity actually has a Doctrine association named 'categories'.
      */
-    public function baseIdentitySet(
-        string $pageName,
-        string $entityFqcn,
-        bool $withSlug = true,
-        bool $withImage = true,
-        bool $withEnable = true,
-    ): array
+    public function addFilterTagsFor(Filters $filters, string $entityFqcn): void
     {
-        $fields   = [];
-        $fields[] = $this->idField();
-        if ($withSlug) {
-            $fields[] = $this->slugField();
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+        if (!$metadata instanceof ClassMetadata || !$metadata->hasAssociation('tags')) {
+            return;
         }
 
-        if ($withEnable) {
-            $fields[] = $this->booleanField('enable', (string) new TranslatableMessage('Enable'));
-        }
-
-        $fields[] = $this->titleField();
-        if ($withImage) {
-            $fields[] = $this->imageField('img', $pageName, $entityFqcn);
-        }
-
-        return $fields;
+        $entityFilter = EntityFilter::new('tags', new TranslatableMessage('Tags'));
+        $filters->add($entityFilter);
     }
 
-    public function booleanField(string $propertyName, string $label, bool $asSwitch = true): BooleanField
+    public function addTab($tabName, FormField $formField): void
+    {
+        if (isset($this->tabfields[$tabName])) {
+            return;
+        }
+
+        $this->tabfields[$tabName] = [
+            'tab'    => $formField,
+            'fields' => [],
+        ];
+    }
+
+    public function booleanField(string $propertyName, $label, bool $asSwitch = true): BooleanField
     {
         $booleanField = BooleanField::new($propertyName, $label);
         if ($asSwitch) {
@@ -109,54 +175,146 @@ final class CrudFieldFactory
         return $booleanField;
     }
 
-    public function categoriesField(string $type): AssociationField
+    public function categoriesField(): AssociationField
     {
-        return AssociationField::new('categories', new TranslatableMessage('Categories'))->autocomplete()->setTemplatePath('admin/field/categories.html.twig')->setFormTypeOption('by_reference', false)->setQueryBuilder(
-            function (QueryBuilder $queryBuilder) use ($type): void {
-                $queryBuilder->andWhere('entity.type = :type')->setParameter('type', $type);
+        $associationField = AssociationField::new('categories', new TranslatableMessage('Categories'));
+        $associationField->setTemplatePath('admin/field/categories.html.twig');
+
+        return $associationField;
+    }
+
+    /**
+     * Page-aware variant to avoid AssociationConfigurator errors on index/detail pages.
+     * - On index/detail: always return a read-only CollectionField (count/list via template).
+     * - On edit/new: only return an AssociationField if Doctrine metadata confirms the association,
+     *   otherwise hide the field on forms (no-op for safety).
+     */
+    public function categoriesFieldForPage(string $entityFqcn, string $pageName): AssociationField
+    {
+        $associationField = $this->categoriesField();
+        // Always safe on listing/detail pages: no AssociationField to configure
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
+        ) {
+            $associationField->onlyOnDetail();
+
+            return $associationField;
+        }
+
+        // For edit/new pages, check the real Doctrine association
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+
+        if ($metadata instanceof ClassMetadata && $metadata->hasAssociation('categories')) {
+            $associationField->autocomplete();
+            $associationField->setFormTypeOption('by_reference', false);
+
+            return $associationField;
+        }
+
+        // No association: ensure nothing is rendered on the form
+        $associationField->hideOnForm();
+
+        return $associationField;
+    }
+
+    public function companiesField(): AssociationField
+    {
+        $associationField = AssociationField::new('companies', new TranslatableMessage('Companies'));
+        $associationField->setTemplatePath('admin/field/companies.html.twig');
+
+        return $associationField;
+    }
+
+    public function companiesFieldForPage(string $entityFqcn, string $pageName): AssociationField
+    {
+        $associationField = $this->companiesField();
+        // Always safe on listing/detail pages: no AssociationField to configure
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
+        ) {
+            $associationField->onlyOnDetail();
+
+            return $associationField;
+        }
+
+        // For edit/new pages, check the real Doctrine association
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+
+        if ($metadata instanceof ClassMetadata && $metadata->hasAssociation('companies')) {
+            $associationField->autocomplete();
+            $associationField->setFormTypeOption('by_reference', false);
+
+            return $associationField;
+        }
+
+        // No association: ensure nothing is rendered on the form
+        $associationField->hideOnForm();
+
+        return $associationField;
+    }
+
+    public function correctionFieldsTab(array $tabfields, string $pageName): array
+    {
+        $corrected = [];
+        foreach ($tabfields as $key => $tabfield) {
+            $tabfield['fields'] = array_filter(
+                $tabfield['fields'],
+                fn ($field): bool => $this->isFieldVisibleOnPage($field, $pageName)
+            );
+            if ([] === $tabfield['fields']) {
+                continue;
             }
-        );
+
+            $corrected[$key] = $tabfield;
+        }
+
+        return $corrected;
     }
 
-    public function createdAtField(): DateTimeField
+    public function fileField(
+        string $type,
+        string $pageName,
+        string $entityFqcn,
+        ?string $label = null,
+    ): TextField|UploadFileField
     {
-        return DateTimeField::new('createdAt', new TranslatableMessage('Created At'))->hideWhenCreating();
+        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
+            $translatableMessage = new TranslatableMessage('File');
+
+            return UploadFileField::new($type.'File', $label ?? $translatableMessage->getMessage());
+        }
+
+        $this->fileService->getBasePath($entityFqcn, $type.'File');
+
+        return TextField::new($type, $label ?? new TranslatableMessage('File'));
     }
 
-    /**
-     * Date tab helper (tab + createdAt + updatedAt).
-     *
-     * @return array<int, mixed>
-     */
-    public function dateSet(): array
+    public function getConfigureFields(string $pageName): iterable
     {
-        return [
-            FormField::addTab(new TranslatableMessage('Date')),
-            $this->createdAtField(),
-            $this->updatedAtField(),
-        ];
-    }
+        $this->setTabParagraphs($pageName);
+        $this->setTabSEO();
+        $this->setTabWorkflow();
+        $this->setTabUser();
+        $tabfields = $this->correctionFieldsTab($this->tabfields, $pageName);
+        foreach ($tabfields as $tabfield) {
+            if (1 !== count($this->tabfields)) {
+                yield $tabfield['tab'];
+            }
 
-    /**
-     * Full common content set (identity + taxonomy + optional paragraphs + meta + ref user).
-     * Simplifies controllers migrating away from legacy wrappers.
-     *
-     * @return array<int, mixed>
-     */
-    public function fullContentSet(string $type, string $pageName, string $entityFqcn, bool $isSuperAdmin): array
-    {
-        return array_merge(
-            $this->baseIdentitySet($pageName, $entityFqcn),
-            $this->taxonomySet($type),
-            $this->paragraphFields($pageName),
-            $this->metaFields(),
-            $this->refUserFields($isSuperAdmin)
-        );
+            yield from $tabfield['fields'];
+        }
     }
 
     public function idField(): IdField
     {
-        return IdField::new('id', new TranslatableMessage('ID'))->onlyOnDetail();
+        $idField = IdField::new('id', new TranslatableMessage('ID'));
+        $idField->onlyOnDetail();
+
+        return $idField;
     }
 
     public function imageField(
@@ -164,115 +322,106 @@ final class CrudFieldFactory
         string $pageName,
         string $entityFqcn,
         ?string $label = null,
-    ): ImageField|TextField
+    ): ImageField|UploadImageField
     {
-        if ('edit' === $pageName || 'new' === $pageName) {
-            $deleteLabel      = new TranslatableMessage('Delete image');
-            $downloadLabel    = new TranslatableMessage('Download');
-            $mimeTypesMessage = new TranslatableMessage('Please upload a valid image (JPEG, PNG, GIF, WebP).');
-            $maxSizeMessage   = new TranslatableMessage(
-                'The file is too large. Its size should not exceed {{ limit }}.'
-            );
+        if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
+            $translatableMessage  = new TranslatableMessage('Image');
+            $uploadImageField     = UploadImageField::new($type.'File', $label ?? $translatableMessage->getMessage());
+            $uploadImageField->setTranslator($this->translator);
 
-            $imageField = TextField::new($type . 'File', $label ?? new TranslatableMessage('Image'))->setFormType(
-                VichImageType::class
-            );
-            $imageField->setFormTypeOptions(
-                [
-                    'required'       => false,
-                    'allow_delete'   => true,
-                    'delete_label'   => $deleteLabel->__toString(),
-                    'download_label' => $downloadLabel->__toString(),
-                    'download_uri'   => true,
-                    'image_uri'      => true,
-                    'asset_helper'   => true,
-                    'constraints'    => [
-                        new File(
-                            [
-                                'maxSize'          => ini_get('upload_max_filesize'),
-                                'mimeTypes'        => [
-                                    'image/jpeg',
-                                    'image/png',
-                                    'image/gif',
-                                    'image/webp',
-                                ],
-                                'mimeTypesMessage' => $mimeTypesMessage->__toString(),
-                                'maxSizeMessage'   => $maxSizeMessage->__toString(),
-                            ]
-                        ),
-                    ],
-                ]
-            );
-
-            return $imageField;
+            return $uploadImageField;
         }
 
-        $basePath = $this->fileService->getBasePath($entityFqcn, $type . 'File');
+        $basePath = $this->fileService->getBasePath($entityFqcn, $type.'File');
 
-        return ImageField::new($type, $label ?? new TranslatableMessage('Image'))->setBasePath($basePath);
+        $imageField = ImageField::new($type, $label ?? new TranslatableMessage('Image'));
+        $imageField->setBasePath($basePath);
+
+        return $imageField;
     }
 
-    /**
-     * @return array<int, FormField|TextField>
-     */
-    public function metaFields(): array
+    public function setTabConfig(): void
     {
-        return [
-            FormField::addTab(new TranslatableMessage('SEO')),
-            TextField::new('meta.title', new TranslatableMessage('Title'))->hideOnIndex(),
-            TextField::new('meta.keywords', new TranslatableMessage('Keywords'))->hideOnIndex(),
-            TextField::new('meta.description', new TranslatableMessage('Description'))->hideOnIndex(),
-        ];
+        $this->addTab('config', FormField::addTab(new TranslatableMessage('Config')));
     }
 
     /**
-     * @return array<int, FormField|ParagraphsField>
+     * Date tab helper (tab + createdAt + updatedAt).
+     *
+     * @return array<int, mixed>
      */
-    public function paragraphFields(string $pageName): array
+    public function setTabDate(string $pageName): void
     {
         if ('new' === $pageName) {
-            return [];
+            return;
         }
 
-        if ('edit' !== $pageName) {
-            return [ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'))];
-        }
+        $this->addTab('date', FormField::addTab(new TranslatableMessage('Date')));
+        $dateTimeField = DateTimeField::new('createdAt', new TranslatableMessage('Created At'));
+        $dateTimeField->hideWhenCreating();
 
-        return [
-            FormField::addTab(new TranslatableMessage('Paragraphs'))->hideWhenCreating(),
-            ParagraphsField::new('paragraphs', new TranslatableMessage('Paragraphs'))->hideWhenCreating(),
-        ];
+        $updatedAtField = DateTimeField::new('updatedAt', new TranslatableMessage('updated At'));
+        $updatedAtField->hideWhenCreating();
+        $updatedAtField->hideOnIndex();
+        $this->addFieldsToTab('date', [$dateTimeField, $updatedAtField]);
     }
 
-    /**
-     * @return array<int, FormField|AssociationField>
-     */
-    public function refUserFields(bool $isSuperAdmin): array
+    public function setTabOther(): void
     {
-        if (!$isSuperAdmin) {
-            return [];
-        }
-
-        $associationField = AssociationField::new('refuser', new TranslatableMessage('User'))->autocomplete()->setSortProperty('username');
-
-        return [
-            FormField::addTab(new TranslatableMessage('User')),
-            $associationField,
-        ];
+        $this->addTab('other', FormField::addTab(new TranslatableMessage('Other')));
     }
 
-    public function slugField(): SlugField
+    public function setTabPrincipal(AdminContext $adminContext): void
     {
-        return SlugField::new('slug', new TranslatableMessage('Slug'))->hideOnIndex()->setFormTypeOptions(
+        $this->adminContext = $adminContext;
+        $this->addTab('principal', FormField::addTab(new TranslatableMessage('Principal')));
+
+        $this->addFieldsToTab('principal', $this->addFieldIDShortcode());
+        $this->addFieldsToTab('principal', [$this->idField()]);
+    }
+
+    public function shortcodeField(array $shortcodes): iterable
+    {
+        foreach ($this->shortcodes as $shortcode) {
+            if (!in_array($shortcode::class, $shortcodes)) {
+                continue;
+            }
+
+            $textField = TextField::new('id', new TranslatableMessage('Shortcode'));
+            $textField->formatValue(fn ($identity): string => $shortcode->generate($identity));
+            $textField->onlyOnDetail();
+
+            yield $textField;
+        }
+
+        return [];
+    }
+
+    public function slugField($readOnly = false, ?string $target = 'title'): SlugField
+    {
+        $slugField = SlugField::new('slug', new TranslatableMessage('Slug'));
+        $slugField->hideOnIndex();
+        $slugField->setFormTypeOptions(
             ['required' => false]
-        )->setTargetFieldName('title')->setUnlockConfirmationMessage('Attention, si vous changez le titre, le slug sera modifié');
+        );
+        $slugField->setTargetFieldName($target);
+        $slugField->setUnlockConfirmationMessage(
+            new TranslatableMessage('Are you sure you want to edit the slug manually?')
+        );
+        if ($readOnly) {
+            $slugField->hideOnForm();
+        }
+
+        return $slugField;
     }
 
-    public function stateField(): TextField
+    public function stateField(): CollectionField
     {
-        return TextField::new('states', new TranslatableMessage('States'))->setTemplatePath(
-            'admin/field/states.html.twig'
-        )->onlyOnIndex();
+        $collectionField = CollectionField::new('states', new TranslatableMessage('States'));
+        $collectionField->setTemplatePath('admin/field/states.html.twig');
+        $collectionField->onlyOnIndex();
+
+        return $collectionField;
     }
 
     /**
@@ -292,15 +441,47 @@ final class CrudFieldFactory
         return $fields;
     }
 
-    public function tagsField(string $type): AssociationField
+    public function tagsField(): AssociationField
     {
-        return AssociationField::new('tags', new TranslatableMessage('Tags'))->autocomplete()->setTemplatePath(
-            'admin/field/tags.html.twig'
-        )->setFormTypeOption('by_reference', false)->setQueryBuilder(
-            function (QueryBuilder $queryBuilder) use ($type): void {
-                $queryBuilder->andWhere('entity.type = :type')->setParameter('type', $type);
-            }
-        );
+        $associationField = AssociationField::new('tags', new TranslatableMessage('Tags'));
+        $associationField->setTemplatePath('admin/field/tags.html.twig');
+
+        return $associationField;
+    }
+
+    /**
+     * Page-aware variant to avoid AssociationConfigurator errors on index/detail pages.
+     * - On index/detail: always return a read-only CollectionField (count/list via template).
+     * - On edit/new: only return an AssociationField if Doctrine metadata confirms the association,
+     *   otherwise hide the field on forms (no-op for safety).
+     */
+    public function tagsFieldForPage(string $entityFqcn, string $pageName): AssociationField
+    {
+        $associationField = $this->tagsField();
+        // Always safe on listing/detail pages: no AssociationField to configure
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
+        ) {
+            $associationField->onlyOnDetail();
+
+            return $associationField;
+        }
+
+        // For edit/new pages, check the real Doctrine association
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+
+        if ($metadata instanceof ClassMetadata && $metadata->hasAssociation('tags')) {
+            $associationField->autocomplete();
+            $associationField->setFormTypeOption('by_reference', false);
+
+            return $associationField;
+        }
+
+        $associationField->hideOnForm();
+
+        return $associationField;
     }
 
     /**
@@ -308,11 +489,11 @@ final class CrudFieldFactory
      *
      * @return array<int, AssociationField>
      */
-    public function taxonomySet(string $type): array
+    public function taxonomySet(string $entityFqcn, string $pageName): array
     {
         return [
-            $this->tagsField($type),
-            $this->categoriesField($type),
+            $this->tagsFieldForPage($entityFqcn, $pageName),
+            $this->categoriesFieldForPage($entityFqcn, $pageName),
         ];
     }
 
@@ -323,20 +504,157 @@ final class CrudFieldFactory
 
     public function totalChildField(string $type): CollectionField
     {
-        return CollectionField::new($type, new TranslatableMessage('Childs'))->hideOnForm()->formatValue(
-            fn ($value): int => is_countable($value) ? count($value) : 0
-        );
+        $collectionField = CollectionField::new($type, new TranslatableMessage('Childs'));
+        $collectionField->hideOnForm();
+        $collectionField->formatValue(fn ($value): int => is_countable($value) ? count($value) : 0);
+
+        return $collectionField;
     }
 
-    public function updatedAtField(): DateTimeField
+    public function workflowField(): CollectionField
     {
-        return DateTimeField::new('updatedAt', new TranslatableMessage('updated At'))->hideWhenCreating()->hideOnIndex();
+        $collectionField = CollectionField::new('workflow', new TranslatableMessage('Workflow'));
+        $collectionField->setTemplatePath('admin/field/workflow.html.twig');
+        $collectionField->onlyOnIndex();
+
+        return $collectionField;
     }
 
-    public function workflowField(): TextField
+    private function getFqcn(): ?string
     {
-        return TextField::new('workflow', new TranslatableMessage('Workflow'))->setTemplatePath(
-            'admin/field/workflow.html.twig'
-        )->onlyOnIndex();
+        $entityDto = $this->adminContext->getEntity();
+        if (is_null($entityDto)) {
+            return null;
+        }
+
+        return $entityDto->getFqcn();
+    }
+
+    private function getInstance()
+    {
+        $entityDto = $this->adminContext->getEntity();
+        if (is_null($entityDto)) {
+            return null;
+        }
+
+        return $entityDto->getInstance();
+    }
+
+    private function isFieldVisibleOnPage($field, string $pageName): bool
+    {
+        $dto = $field->getAsDto();
+
+        return match ($pageName) {
+            Crud::PAGE_INDEX  => $dto->isDisplayedOn(Crud::PAGE_INDEX),
+            Crud::PAGE_DETAIL => $dto->isDisplayedOn(Crud::PAGE_DETAIL),
+            Crud::PAGE_EDIT   => $dto->isDisplayedOn(Crud::PAGE_EDIT),
+            Crud::PAGE_NEW    => $dto->isDisplayedOn(Crud::PAGE_NEW),
+            default           => true,
+        };
+    }
+
+    private function isSuperAdmin(): bool
+    {
+        $user = $this->security->getUser();
+        if (!is_object($user)) {
+            return false;
+        }
+
+        return in_array('ROLE_SUPER_ADMIN', $user->getRoles(), true);
+    }
+
+    /**
+     * @return array<int, FormField|ParagraphsField>
+     */
+    private function setTabParagraphs(string $pageName): void
+    {
+        $instance = $this->getInstance();
+        if (Crud::PAGE_NEW === $pageName || null == $instance) {
+            return;
+        }
+
+        $reflectionClass = new ReflectionClass($instance);
+        if (!$reflectionClass->implementsInterface(EntityWithParagraphsInterface::class)) {
+            return;
+        }
+
+        $key = 'paragraphs';
+        $this->addTab($key, FormField::addTab(new TranslatableMessage('Paragraphs')));
+        $translatableMessage   = new TranslatableMessage('Paragraphs');
+        $paragraphsField       = ParagraphsField::new('paragraphs', $translatableMessage->getMessage());
+        $paragraphsField->hideWhenCreating();
+        $paragraphsField->hideOnIndex();
+        $this->addFieldsToTab($key, [$paragraphsField]);
+    }
+
+    /**
+     * @return array<int, FormField|TextField>
+     */
+    private function setTabSEO(): void
+    {
+        $instance = $this->getInstance();
+        if (is_null($instance)) {
+            return;
+        }
+
+        $reflectionClass = new ReflectionClass($instance);
+        if (!$reflectionClass->hasMethod('getMeta')) {
+            return;
+        }
+
+        $this->addTab('seo', FormField::addTab(new TranslatableMessage('SEO')));
+        $textField = TextField::new('meta.title', new TranslatableMessage('Title'));
+        $textField->hideOnIndex();
+
+        $keywords = TextField::new('meta.keywords', new TranslatableMessage('Keywords'));
+        $keywords->hideOnIndex();
+
+        $description = TextField::new('meta.description', new TranslatableMessage('Description'));
+        $description->hideOnIndex();
+        $this->addFieldsToTab('seo', [$textField, $keywords, $description]);
+    }
+
+    /**
+     * @return array<int, FormField|AssociationField>
+     */
+    private function setTabUser(): void
+    {
+        if (!$this->isSuperAdmin()) {
+            return;
+        }
+
+        $fqcn            = $this->getFqcn();
+        $reflectionClass = new ReflectionClass($fqcn);
+        if ($reflectionClass->isAbstract() || !$reflectionClass->hasMethod('getRefuser')) {
+            return;
+        }
+
+        $users            = $this->managerRegistry->getRepository(User::class)->findAll();
+        if (1 === count($users)) {
+            return;
+        }
+
+        $this->addTab('user', FormField::addTab(new TranslatableMessage('User')));
+        $associationField = AssociationField::new('refuser', new TranslatableMessage('User'));
+        $associationField->setSortProperty('username');
+        $this->addFieldsToTab('user', [$associationField]);
+    }
+
+    private function setTabWorkflow(): void
+    {
+        $fqcn            = $this->getFqcn();
+        $reflectionClass = new ReflectionClass($fqcn);
+        if ($reflectionClass->isAbstract()) {
+            return;
+        }
+
+        $entity = new $fqcn();
+        if (!$this->workflowService->has($entity)) {
+            return;
+        }
+
+        $this->addTab('workflows', FormField::addTab(new TranslatableMessage('Workflow')));
+
+        $this->addFieldsToTab('workflows', [$this->workflowField(), $this->stateField()]);
     }
 }

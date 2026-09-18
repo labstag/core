@@ -2,41 +2,86 @@
 
 namespace Labstag\Controller\Admin;
 
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\ObjectManager;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Chapter;
-use Labstag\Entity\Meta;
 use Labstag\Entity\Story;
-use Labstag\Field\FileField;
 use Labstag\Field\WysiwygField;
-use Labstag\Service\StoryService;
+use Labstag\Message\StoryAllMessage;
+use Labstag\Message\StoryMessage;
+use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class StoryCrudController extends AbstractCrudControllerLib
+class StoryCrudController extends CrudControllerAbstract
 {
-    #[\Override]
-    public function configureActions(Actions $actions): Actions
+    public function chaptersField(): AssociationField
     {
-        $this->setActionPublic($actions, 'admin_story_w3c', 'admin_story_public');
-        $this->setEditDetail($actions);
-        $this->configureActionsTrash($actions);
-        $this->setActionMoveChapter($actions);
-        $this->setActionNewChapter($actions);
-        $this->configureActionsUpdatePdf($actions);
+        $associationField = AssociationField::new('chapters', new TranslatableMessage('Chapters'));
+        $associationField->setTemplatePath('admin/field/chapters.html.twig');
 
-        return $actions;
+        return $associationField;
     }
 
-    #[\Override]
+    /**
+     * Page-aware variant to avoid AssociationConfigurator errors on index/detail pages.
+     * - On index/detail: always return a read-only CollectionField (count/list via template).
+     * - On edit/new: only return an AssociationField if Doctrine metadata confirms the association,
+     *   otherwise hide the field on forms (no-op for safety).
+     */
+    public function chaptersFieldForPage(string $entityFqcn, string $pageName): AssociationField|CollectionField
+    {
+        $associationField = $this->chaptersField();
+        // Always safe on listing/detail pages: no AssociationField to configure
+        if (in_array($pageName, [Crud::PAGE_INDEX, Crud::PAGE_DETAIL], true)
+        ) {
+            $associationField->hideOnForm();
+
+            return $associationField;
+        }
+
+        // For edit/new pages, check the real Doctrine association
+        $entityManager       = $this->managerRegistry->getManagerForClass($entityFqcn);
+        $metadata            = $entityManager instanceof ObjectManager ? $entityManager->getClassMetadata(
+            $entityFqcn
+        ) : null;
+
+        if ($metadata instanceof ClassMetadata && $metadata->hasAssociation('chapters')) {
+            $associationField->autocomplete();
+            $associationField->setFormTypeOption('by_reference', false);
+
+            return $associationField;
+        }
+
+        // No association: ensure nothing is rendered on the form
+        $associationField->hideOnForm();
+
+        return $associationField;
+    }
+
+    #[Override]
+    public function configureActions(Actions $actions): Actions
+    {
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->setActionMoveChapter();
+        $this->setActionNewChapter();
+        $this->setUpdateAction();
+        $this->actionsFactory->setActionUpdateAll('updateAllStory');
+
+        return $this->actionsFactory->show();
+    }
+
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -49,62 +94,44 @@ class StoryCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        // Principal tab + standard full content set
-        yield $this->addTabPrincipal();
-        $isSuperAdmin = $this->isSuperAdmin();
-        foreach ($this->crudFieldFactory->fullContentSet(
-            'story',
-            $pageName,
-            self::getEntityFqcn(),
-            $isSuperAdmin
-        ) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
+        $translatableMessage = new TranslatableMessage('resume');
+        $wysiwygField        = WysiwygField::new('resume', $translatableMessage->getMessage());
+        $wysiwygField->hideOnIndex();
 
-        // Extra specific field not part of the generic bundle
-        yield FileField::new('pdf', new TranslatableMessage('pdf'));
-        $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
-        $collectionField->onlyOnIndex();
-        $collectionField->formatValue(fn ($value): int => count($value));
-        yield $collectionField;
-        $collectionField = CollectionField::new('chapters', new TranslatableMessage('Chapters'));
-        $collectionField->setTemplatePath('admin/field/chapters.html.twig');
-        $collectionField->onlyOnDetail();
-        yield $collectionField;
-        yield WysiwygField::new('resume', new TranslatableMessage('resume'))->hideOnIndex();
-        // Workflow + state
-        yield $this->crudFieldFactory->workflowField();
-        yield $this->crudFieldFactory->stateField();
-        // Dates
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                $this->chaptersFieldForPage(self::getEntityFqcn(), $pageName),
+                $wysiwygField,
+            ]
+        );
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            $this->crudFieldFactory->taxonomySet(self::getEntityFqcn(), $pageName)
+        );
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
         $this->crudFieldFactory->addFilterEnable($filters);
-        $this->crudFieldFactory->addFilterTags($filters, 'story');
-        $this->crudFieldFactory->addFilterCategories($filters, 'story');
+        $this->crudFieldFactory->addFilterTagsFor($filters, self::getEntityFqcn());
+        $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
 
         return $filters;
-    }
-
-    #[\Override]
-    public function createEntity(string $entityFqcn): Story
-    {
-        $story = new $entityFqcn();
-        $this->workflowService->init($story);
-        $story->setRefuser($this->getUser());
-        $meta = new Meta();
-        $story->setMeta($meta);
-
-        return $story;
     }
 
     public static function getEntityFqcn(): string
@@ -112,39 +139,29 @@ class StoryCrudController extends AbstractCrudControllerLib
         return Story::class;
     }
 
-    #[Route('/admin/story/{entity}/public', name: 'admin_story_public')]
-    public function linkPublic(string $entity): RedirectResponse
+    #[AdminRoute]
+    public function moveChapter(Request $request): RedirectResponse|Response
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $story                      = $serviceEntityRepositoryLib->find($entity);
-
-        return $this->publicLink($story);
-    }
-
-    public function moveChapter(AdminContext $adminContext): RedirectResponse|Response
-    {
-        $request    = $adminContext->getRequest();
-        $repository = $this->getRepository();
         $entityId   = $request->query->get('entityId');
-        $story      = $repository->find($entityId);
+        $story      = $this->getRepository(Story::class)->find($entityId);
         $generator  = $this->container->get(AdminUrlGenerator::class);
         if ($request->isMethod('POST')) {
-            $repository = $this->getRepository(Chapter::class);
             $chapters   = $request->get('chapter');
             foreach ($chapters as $id => $position) {
-                $chapter = $repository->find($id);
+                $chapter = $this->getRepository(Chapter::class)->find($id);
                 if (!$chapter instanceof Chapter) {
                     continue;
                 }
 
                 $chapter->setPosition($position);
-                $repository->persist($chapter);
+                $this->getRepository(Chapter::class)->persist($chapter);
             }
 
-            $repository->flush();
+            $this->getRepository(Chapter::class)->flush();
             $this->addFlash('success', new TranslatableMessage('Position updated'));
 
-            $url = $generator->setController(static::class)->setAction(Action::INDEX)->generateUrl();
+            $url = $generator->setController(static::class);
+            $url = $url->setAction(Action::INDEX)->generateUrl();
 
             return $this->redirect($url);
         }
@@ -157,66 +174,52 @@ class StoryCrudController extends AbstractCrudControllerLib
         );
     }
 
-    #[Route('/admin/updatepdf', name: 'admin_story_updatepdf')]
-    public function updatepdf(StoryService $storyService): RedirectResponse
+    #[AdminRoute]
+    public function updateAllStory(): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $stories                    = $serviceEntityRepositoryLib->findAll();
-
-        $counter = 0;
-        $update  = 0;
-        foreach ($stories as $story) {
-            $status = $storyService->setPdf($story);
-            $update = $status ? ++$update : $update;
-            ++$counter;
-
-            $serviceEntityRepositoryLib->persist($story);
-            $serviceEntityRepositoryLib->flush($counter);
-        }
-
-        $this->addFlash('success', $storyService->generateFlashBag());
-        $serviceEntityRepositoryLib->flush();
+        $this->messageBus->dispatch(new StoryAllMessage());
 
         return $this->redirectToRoute('admin_story_index');
     }
 
-    #[Route('/admin/story/{entity}/w3c', name: 'admin_story_w3c')]
-    public function w3c(string $entity): RedirectResponse
+    #[AdminRoute]
+    public function updateStory(Request $request): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $story                      = $serviceEntityRepositoryLib->find($entity);
+        $entityId                        = $request->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $story                           = $repositoryAbstract->find($entityId);
+        $this->messageBus->dispatch(new StoryMessage($story->getId()));
+        if ($request->headers->has('referer')) {
+            $url = $request->headers->get('referer');
+            if (is_string($url) && '' !== $url) {
+                return $this->redirect($url);
+            }
+        }
 
-        return $this->linkw3CValidator($story);
+        return $this->redirectToRoute('admin_story_index');
     }
 
-    private function configureActionsUpdatePdf(Actions $actions): void
+    private function setActionMoveChapter(): void
     {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $action  = $request->query->get('action', null);
-        if ('trash' == $action) {
+        if (!$this->actionsFactory->isTrash()) {
             return;
         }
 
-        $action = Action::new('updatepdf', new TranslatableMessage('Update PDF'), 'fas fa-wrench');
-        $action->linkToUrl(fn (): string => $this->generateUrl('admin_story_updatepdf'));
-        $action->createAsGlobalAction();
-
-        $actions->add(Crud::PAGE_INDEX, $action);
-    }
-
-    private function setActionMoveChapter(Actions $actions): void
-    {
         $action = Action::new('moveChapter', new TranslatableMessage('Move a chapter'));
         $action->linkToCrudAction('moveChapter');
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function setActionNewChapter(Actions $actions): void
+    private function setActionNewChapter(): void
     {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
         $action = Action::new('newChapter', new TranslatableMessage('New chapter'));
         $action->linkToUrl(
             fn (Story $story): string => $this->generateUrl(
@@ -228,8 +231,23 @@ class StoryCrudController extends AbstractCrudControllerLib
         );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+    }
+
+    private function setUpdateAction(): void
+    {
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('updateStory', new TranslatableMessage('Update'));
+        $action->linkToCrudAction('updateStory');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 }

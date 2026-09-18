@@ -18,40 +18,40 @@ class HttpErrorLogs
     use TimestampableTrait;
 
     #[ORM\Column(length: 255)]
-    private ?string $agent = null;
+    protected ?string $agent = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $domain = null;
+    protected ?string $domain = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $httpCode = null;
+    protected ?string $httpCode = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $internetProtocol = null;
+    protected ?string $internetProtocol = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $referer = null;
+    protected ?string $referer = null;
 
     #[ORM\ManyToOne(inversedBy: 'httpErrorLogs')]
-    private ?User $refuser = null;
+    protected ?User $refuser = null;
 
     /**
      * @var array<string, mixed>
      */
     #[ORM\Column(type: Types::JSON)]
-    private array $requestData = [];
+    protected array $requestData = [];
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $requestMethod = null;
+    protected ?string $requestMethod = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $url = null;
+    protected ?string $url = null;
 
     public function getAgent(): ?string
     {

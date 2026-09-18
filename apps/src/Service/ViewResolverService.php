@@ -2,9 +2,11 @@
 
 namespace Labstag\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Meta;
 use Labstag\Repository\BlockRepository;
 use ReflectionClass;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Twig\Environment;
 
 final class ViewResolverService
@@ -16,6 +18,9 @@ final class ViewResolverService
     private array $requestCache = [];
 
     public function __construct(
+        #[AutowireIterator('labstag.datas')]
+        private iterable $datas,
+        private EntityManagerInterface $entityManager,
         private ConfigurationService $configurationService,
         private BlockService $blockService,
         private BlockRepository $blockRepository,
@@ -29,17 +34,22 @@ final class ViewResolverService
      */
     public function getDataByEntity(object $entity, bool $disable = false): array
     {
-        $cacheKey = 'data:' . spl_object_hash($entity) . ':' . ($disable ? '1' : '0');
+        $cacheKey = 'data:'.spl_object_hash($entity).':'.($disable ? '1' : '0');
         if (isset($this->requestCache[$cacheKey])) {
             return $this->requestCache[$cacheKey];
         }
 
-        $data = [
+        new ReflectionClass($entity);
+        $data            = [
             'entity'     => $entity,
             'paragraphs' => $entity->getParagraphs()->getValues(),
-            'img'        => $entity->getImg(),
-            'tags'       => $entity->getTags(),
         ];
+
+        $data['img'] = $this->getDefaultImageEntity($entity);
+
+        if (method_exists($entity, 'getTags')) {
+            $data['tags'] = $entity->getTags();
+        }
 
         if (method_exists($entity, 'getCategories')) {
             $data['categories'] = $entity->getCategories();
@@ -53,13 +63,29 @@ final class ViewResolverService
         $blocks   = array_merge($header, $main, $footer);
         $contents = $this->blockService->getContents($blocks);
 
+        $blocks = [
+            'header' => $header,
+            'main'   => $main,
+            'footer' => $footer,
+        ];
+        foreach ($blocks as $key => $value) {
+            if (0 !== count($value)) {
+                continue;
+            }
+
+            unset($blocks[$key]);
+        }
+
+        $meta = $entity->getMeta();
+        if (!$meta instanceof Meta) {
+            $meta = new Meta();
+            $entity->setMeta($meta);
+            $this->entityManager->getRepository($entity::class)->save($entity);
+        }
+
         return $this->requestCache[$cacheKey] = [
-            'meta'   => $this->getMetaByEntity($entity->getMeta()),
-            'blocks' => [
-                'header' => $header,
-                'main'   => $main,
-                'footer' => $footer,
-            ],
+            'meta'   => $this->getMetaByEntity($meta),
+            'blocks' => $blocks,
             'header' => $contents->header,
             'footer' => $contents->footer,
             'config' => $this->configurationService->getConfiguration(),
@@ -88,7 +114,8 @@ final class ViewResolverService
      */
     private function getBlocks(array $data, bool $disable): array
     {
-        $queryBuilder = $this->blockRepository->findAllOrderedByRegion();
+        $queryBuilder = $this->blockRepository->createQueryBuilder('b');
+        $this->blockRepository->findAllOrderedByRegion($queryBuilder);
         $query        = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'block-position');
 
@@ -114,6 +141,18 @@ final class ViewResolverService
         ];
     }
 
+    private function getDefaultImageEntity(object $entity)
+    {
+        $image = '';
+        foreach ($this->datas as $data) {
+            if ($data->supportsData($entity)) {
+                $image = $data->getDefaultImage($entity);
+            }
+        }
+
+        return $image;
+    }
+
     private function getMetaByEntity(Meta $meta): Meta
     {
         return $meta;
@@ -121,7 +160,7 @@ final class ViewResolverService
 
     private function getViewByEntity(object $entity): string
     {
-        $cacheKey = 'view:' . spl_object_hash($entity);
+        $cacheKey = 'view:'.spl_object_hash($entity);
         if (isset($this->requestCache[$cacheKey])) {
             return $this->requestCache[$cacheKey];
         }
@@ -129,15 +168,14 @@ final class ViewResolverService
         $reflectionClass = new ReflectionClass($entity);
         $entityName      = ucfirst($reflectionClass->getShortName());
 
-        return $this->requestCache[$cacheKey] = $this->getViewByEntityName($entity, $entityName);
+        return $this->requestCache[$cacheKey] = $this->getViewByEntityName($entityName);
     }
 
-    private function getViewByEntityName(object $entity, string $entityName): string
+    private function getViewByEntityName(string $entityName): string
     {
-        unset($entity);
         $loader = $this->twigEnvironment->getLoader();
         $files  = [
-            'views/' . $entityName . '.html.twig',
+            'views/'.$entityName.'.html.twig',
             'views/default.html.twig',
         ];
 

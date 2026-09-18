@@ -4,12 +4,11 @@ namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Page;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<Page>
+ * @extends RepositoryAbstract<Page>
  */
-class PageRepository extends ServiceEntityRepositoryLib
+class PageRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
@@ -20,7 +19,9 @@ class PageRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->createQueryBuilder('p');
         $queryBuilder->where('p.enable = :enable');
+        $queryBuilder->andWhere('p.hide = :hide');
         $queryBuilder->setParameter('enable', true);
+        $queryBuilder->setParameter('hide', false);
         $queryBuilder->orderBy('p.createdAt', 'DESC');
 
         $query = $queryBuilder->getQuery();
@@ -36,7 +37,7 @@ class PageRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('slug', $slug);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'page-slug_' . md5($slug));
+        $query->enableResultCache(3600, 'page-slug_'.md5($slug));
 
         return $query->getOneOrNullResult();
     }
@@ -48,7 +49,7 @@ class PageRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('type', $type);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'page-type_' . md5($type));
+        $query->enableResultCache(3600, 'page-type_'.md5($type));
 
         return $query->getOneOrNullResult();
     }

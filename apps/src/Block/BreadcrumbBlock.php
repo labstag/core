@@ -2,16 +2,19 @@
 
 namespace Labstag\Block;
 
-use Labstag\Block\Abstract\BlockLib;
+use Exception;
 use Labstag\Block\Traits\CacheableTrait;
 use Labstag\Entity\Block;
+use Labstag\Entity\BreadcrumbBlock as EntityBreadcrumbBlock;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
 use Override;
+use Spatie\SchemaOrg\Schema;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class BreadcrumbBlock extends BlockLib
+class BreadcrumbBlock extends BlockAbstract
 {
     use CacheableTrait;
 
@@ -22,7 +25,9 @@ class BreadcrumbBlock extends BlockLib
             return null;
         }
 
-        return $this->render($view, $this->getData($block));
+        $data = $this->getData($block);
+
+        return $this->render($view, $data);
     }
 
     /**
@@ -32,7 +37,8 @@ class BreadcrumbBlock extends BlockLib
     public function generate(Block $block, array $data, bool $disable): void
     {
         unset($disable);
-        if ($data['entity'] instanceof Page && PageEnum::HOME->value == $data['entity']->getType()) {
+        $entity = $data['entity'];
+        if ($entity instanceof Page && PageEnum::HOME->value == $entity->getType()) {
             $this->setShow($block, false);
 
             return;
@@ -42,16 +48,17 @@ class BreadcrumbBlock extends BlockLib
         $slug    = $request->attributes->get('slug');
         $urls    = $this->setBreadcrumb($slug);
         $params  = $this->getParamsAttributes($request);
-
         if ([] === $urls) {
             $this->setShow($block, false);
 
             return;
         }
 
+        $jsonLd = $this->getJsonLd($urls);
         $this->setData(
             $block,
             [
+                'jsonLd' => $jsonLd,
                 'params' => $params,
                 'urls'   => $urls,
                 'block'  => $block,
@@ -60,10 +67,46 @@ class BreadcrumbBlock extends BlockLib
         );
     }
 
-    #[Override]
-    public function getName(): string
+    public function getClass(): string
     {
-        return 'Breadcrumb';
+        return EntityBreadcrumbBlock::class;
+    }
+
+    public function getJsonLd($urls)
+    {
+        try {
+            $breadcrumbList  = Schema::breadcrumbList();
+            $breadcrumbs     = [];
+            foreach ($urls as $position => $data) {
+                $item = Schema::listItem();
+                $item->position($position + 1);
+                $item->name($data['title']);
+                $item->item(
+                    $this->router->generate(
+                        'front',
+                        [
+                            'slug' => $data['url'],
+                        ],
+                        0
+                    )
+                );
+                $breadcrumbs[] = $item;
+            }
+
+            $breadcrumbList->itemListElement($breadcrumbs);
+
+            $jsonLd = $breadcrumbList->jsonSerialize();
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+
+        return json_encode($jsonLd);
+    }
+
+    #[Override]
+    public function getName(): TranslatableMessage
+    {
+        return new TranslatableMessage('Breadcrumb');
     }
 
     #[Override]
@@ -98,38 +141,34 @@ class BreadcrumbBlock extends BlockLib
     /**
      * @return mixed[]
      */
-    private function setBreadcrumb(string $slug): array
+    private function setBreadcrumb(?string $slug): array
     {
-        $cacheKey = 'breadcrumb_' . md5($slug);
-
-        return $this->getCached(
-            $cacheKey,
-            function () use ($slug) {
-                $urls        = [];
-                $currentSlug = $slug;
-
-                while ('' !== $currentSlug) {
-                    $entity = $this->slugService->getEntityBySlug($currentSlug);
-                    if (is_object($entity)) {
-                        $urls[] = [
-                            'title' => $entity->getTitle(),
-                            'url'   => $currentSlug,
-                        ];
-                    }
-
-                    if ('0' === $currentSlug) {
-                        break;
-                    }
-
-                    $currentSlug = (0 < substr_count($currentSlug, '/')) ? substr(
-                        $currentSlug,
-                        0,
-                        strrpos($currentSlug, '/')
-                    ) : '';
+        $currentSlug = $slug;
+        $urls        = [];
+        while ('' != $currentSlug) {
+            foreach ($this->datas as $data) {
+                if ($data->match($currentSlug)) {
+                    $entity = $data->getEntity($currentSlug);
+                    $urls[] = [
+                        'title' => $data->getTitle($entity),
+                        'url'   => $currentSlug,
+                    ];
+                    break;
                 }
-
-                return array_reverse($urls);
             }
-        );
+
+            $currentSlug = (0 < substr_count($currentSlug, '/')) ? substr(
+                $currentSlug,
+                0,
+                strrpos($currentSlug, '/')
+            ) : '';
+        }
+
+        $urls[] = [
+            'title' => $this->translator->trans('Home'),
+            'url'   => '',
+        ];
+
+        return array_reverse($urls);
     }
 }

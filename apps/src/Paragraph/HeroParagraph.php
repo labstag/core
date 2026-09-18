@@ -2,12 +2,14 @@
 
 namespace Labstag\Paragraph;
 
+use Labstag\Entity\HeroParagraph as EntityHeroParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
+use Labstag\Enum\PageEnum;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class HeroParagraph extends ParagraphLib
+class HeroParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -25,10 +27,15 @@ class HeroParagraph extends ParagraphLib
         );
     }
 
-    #[Override]
-    public function getName(): string
+    public function getClass(): string
     {
-        return 'Hero';
+        return EntityHeroParagraph::class;
+    }
+
+    #[Override]
+    public function getName(): TranslatableMessage
+    {
+        return new TranslatableMessage('Hero');
     }
 
     #[Override]
@@ -37,12 +44,22 @@ class HeroParagraph extends ParagraphLib
         return 'hero';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return [Page::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Page && $object->getType() == PageEnum::HOME->value;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 }

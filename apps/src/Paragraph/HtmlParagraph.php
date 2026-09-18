@@ -5,13 +5,18 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
+use Labstag\Entity\Block;
+use Labstag\Entity\Edito;
+use Labstag\Entity\HtmlParagraph as EntityHtmlParagraph;
+use Labstag\Entity\Memo;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Post;
 use Labstag\Field\WysiwygField;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class HtmlParagraph extends ParagraphLib
+class HtmlParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -29,6 +34,11 @@ class HtmlParagraph extends ParagraphLib
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityHtmlParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -38,14 +48,15 @@ class HtmlParagraph extends ParagraphLib
         unset($paragraph, $pageName);
 
         yield TextField::new('title', new TranslatableMessage('Title'));
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Content'));
+        $translatableMessage = new TranslatableMessage('Content');
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
         yield $wysiwygField;
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'HTML';
+        return new TranslatableMessage('HTML');
     }
 
     #[Override]
@@ -54,12 +65,15 @@ class HtmlParagraph extends ParagraphLib
         return 'html';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return $this->useInAll();
+        if (is_null($object)) {
+            return true;
+        }
+
+        $inArray = in_array($object::class, [Block::class, Edito::class, Memo::class, Page::class, Post::class]);
+
+        return $inArray || $object instanceof Block;
     }
 }

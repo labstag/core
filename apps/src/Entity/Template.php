@@ -18,22 +18,22 @@ class Template
     use TimestampableTrait;
 
     #[ORM\Column(length: 255)]
-    private ?string $code = null;
+    protected ?string $code = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $html = null;
+    protected ?string $html = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $text = null;
+    protected ?string $text = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     public function getCode(): ?string
     {

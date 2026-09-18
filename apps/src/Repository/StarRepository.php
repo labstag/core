@@ -6,12 +6,11 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Star;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<Star>
+ * @extends RepositoryAbstract<Star>
  */
-class StarRepository extends ServiceEntityRepositoryLib
+class StarRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
@@ -22,11 +21,11 @@ class StarRepository extends ServiceEntityRepositoryLib
     {
         $queryBuilder = $this->createQueryBuilder('s');
 
-        $queryBuilder = $queryBuilder->select('s.' . $type . ', count(s.id) as count');
-        $queryBuilder->groupBy('s.' . $type);
+        $queryBuilder = $queryBuilder->select('s.'.$type.', count(s.id) as count');
+        $queryBuilder->groupBy('s.'.$type);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'star-' . md5($type));
+        $query->enableResultCache(3600, 'star-'.md5($type));
 
         return $query->getResult();
     }

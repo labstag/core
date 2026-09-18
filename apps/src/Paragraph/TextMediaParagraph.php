@@ -5,17 +5,20 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
-use Essence\Essence;
 use Essence\Media;
 use Generator;
+use Labstag\Entity\Block;
+use Labstag\Entity\Edito;
+use Labstag\Entity\Memo;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Post;
+use Labstag\Entity\TextMediaParagraph as EntityTextMediaParagraph;
 use Labstag\Field\WysiwygField;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class TextMediaParagraph extends ParagraphLib
+class TextMediaParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -23,32 +26,17 @@ class TextMediaParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        $media = $this->fileService->getMediaByUrl($paragraph->getUrl());
+
         unset($disable);
-        $url = $paragraph->getUrl();
-        if (is_null($url) || '' === $url || '0' === $url) {
-            $this->setShow($paragraph, false);
-
-            return;
-        }
-
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
         if (!$media instanceof Media) {
             $this->setShow($paragraph, false);
 
             return;
         }
 
-        $html   = $media->has('html') ? $media->get('html') : '';
-        $oembed = $this->getOEmbedUrl($html);
+        $json   = $media->jsonSerialize();
+        $oembed = $this->getOEmbedUrl($json['html'] ?? '');
         if (is_null($oembed)) {
             $this->setShow($paragraph, false);
 
@@ -58,8 +46,8 @@ class TextMediaParagraph extends ParagraphLib
         $this->setData(
             $paragraph,
             [
-                'title'     => $media->has('title') ? $media->get('title') : '',
-                'provider'  => $media->has('providerName') ? strtolower((string) $media->get('providerName')) : '',
+                'title'     => $json['title'] ?? '',
+                'provider'  => $json['providerName'] ?? '',
                 'oembed'    => $this->parseUrlAndAddAutoplay($oembed),
                 'paragraph' => $paragraph,
                 'data'      => $data,
@@ -67,11 +55,16 @@ class TextMediaParagraph extends ParagraphLib
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityTextMediaParagraph::class;
+    }
+
     #[Override]
     public function getClasses(Paragraph $paragraph): array
     {
         $tab = parent::getClasses($paragraph);
-        if ($paragraph->isLeftposition()) {
+        if ($paragraph instanceof EntityTextMediaParagraph && $paragraph->isLeftposition()) {
             $tab[] = 'text-media-left';
         }
 
@@ -82,22 +75,22 @@ class TextMediaParagraph extends ParagraphLib
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): mixed
+    public function getFields(Paragraph $paragraph, string $pageName): Generator
     {
-        unset($paragraph);
-        yield $this->addFieldImageUpload('img', $pageName);
+        yield $this->addFieldImageUpload('img', $pageName, $paragraph);
 
         yield BooleanField::new('leftposition', new TranslatableMessage('Media on the left'));
         yield UrlField::new('url', new TranslatableMessage('Url'));
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Text'));
+        $translatableMessage = new TranslatableMessage('Text');
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
 
         yield $wysiwygField;
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'Texte media';
+        return new TranslatableMessage('Text media');
     }
 
     #[Override]
@@ -107,54 +100,35 @@ class TextMediaParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function update(Paragraph $paragraph): void
+    public function supports(?object $object): bool
     {
-        if (!is_null($paragraph->getImg())) {
-            return;
+        if (is_null($object)) {
+            return true;
         }
 
-        $url = $paragraph->getUrl();
-        if (is_null($url) || '' === $url || '0' === $url) {
-            return;
-        }
+        $inArray = in_array($object::class, [Block::class, Edito::class, Memo::class, Page::class, Post::class]);
 
-        $essence = new Essence();
-
-        // Load any url:
-        $media = $essence->extract(
-            $url,
-            [
-                'maxwidth'  => 800,
-                'maxheight' => 600,
-            ]
-        );
-
-        if (!$media->has('thumbnailUrl')) {
-            return;
-        }
-
-        $thumbnailUrl = $media->get('thumbnailUrl');
-        $tempPath     = tempnam(sys_get_temp_dir(), 'poster_');
-
-        // Télécharger l'image et l'écrire dans le fichier temporaire
-        file_put_contents($tempPath, file_get_contents($thumbnailUrl));
-
-        $uploadedFile = new UploadedFile(
-            path: $tempPath,
-            originalName: basename($tempPath),
-            mimeType: mime_content_type($tempPath),
-            test: true
-        );
-
-        $paragraph->setImgFile($uploadedFile);
+        return $inArray || $object instanceof Block;
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function update(Paragraph $paragraph): void
     {
-        return $this->useInAll();
+        if (!$paragraph instanceof EntityTextMediaParagraph) {
+            return;
+        }
+
+        if (!is_null($paragraph->getImg()) && is_null($paragraph->getImgFile())) {
+            return;
+        }
+
+        $media = $this->fileService->getMediaByUrl($paragraph->getUrl());
+        if (is_null($media)) {
+            return;
+        }
+
+        $json = $media->jsonSerialize();
+
+        $this->fileService->setUploadedFile($json['thumbnail_url'] ?? '', $paragraph, 'imgFile');
     }
 }

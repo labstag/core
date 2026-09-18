@@ -2,15 +2,27 @@
 
 namespace Labstag\Replace;
 
-use Labstag\Replace\Abstract\ReplaceLib;
+use Labstag\Entity\Page;
+use Labstag\Enum\PageEnum;
 
-class LinkLoginReplace extends ReplaceLib
+class LinkLoginReplace extends ReplaceAbstract
 {
     public function exec(): string
     {
-        $configuration = $this->configurationService->getConfiguration();
+        $configuration    = $this->configurationService->getConfiguration();
+        $entityRepository = $this->entityManager->getRepository(Page::class);
+        $login            = $entityRepository->findOneBy(
+            [
+                'type' => PageEnum::LOGIN->value,
+            ]
+        );
+        if (!$login instanceof Page) {
+            return '#disableurl';
+        }
 
-        return $configuration->getUrl() . $this->router->generate('app_login', []);
+        $params = $this->slugService->forEntity($login);
+
+        return $configuration->getUrl().$this->router->generate('front', $params);
     }
 
     public function getCode(): string

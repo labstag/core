@@ -1,4 +1,4 @@
 {% use "elements.html.twig" %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
-    <div class="wrapper">{{ 'Paragraphs not configured'|trans }} ({{ paragraph.type }})</div>
+    <div class="wrapper">{{ 'Paragraphs not configured'|trans }} ({{ paragraph_type(paragraph) }})</div>
 </section>

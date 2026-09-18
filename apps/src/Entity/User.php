@@ -19,7 +19,7 @@ use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -37,91 +37,112 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     protected const DATAUNSERIALIZE = 3;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $avatar = null;
+    protected ?string $avatar = null;
 
     #[Vich\UploadableField(mapping: 'avatar', fileNameProperty: 'avatar')]
-    private ?File $avatarFile = null;
+    protected ?File $avatarFile = null;
 
     /**
      * @var Collection<int, Edito>
      */
     #[ORM\OneToMany(targetEntity: Edito::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
-    private Collection $editos;
+    protected Collection $editos;
 
     #[ORM\Column(length: 180, unique: true)]
-    private ?string $email = null;
+    protected ?string $email = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private ?bool $enable = null;
+    protected ?bool $enable = null;
 
     /**
      * @var Collection<int, HttpErrorLogs>
      */
     #[ORM\OneToMany(targetEntity: HttpErrorLogs::class, mappedBy: 'refuser')]
-    private Collection $httpErrorLogs;
+    protected Collection $httpErrorLogs;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(
         length: 2,
         options: ['default' => 'fr']
     )]
-    private ?string $language = null;
+    protected ?string $language = null;
 
     /**
      * @var Collection<int, Memo>
      */
     #[ORM\OneToMany(targetEntity: Memo::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
-    private Collection $memos;
+    protected Collection $memos;
 
     /**
      * @var Collection<int, Page>
      */
     #[ORM\OneToMany(targetEntity: Page::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
-    private Collection $pages;
+    protected Collection $pages;
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
-    private ?string $password = null;
+    protected ?string $password = null;
 
     /**
      * @var Collection<int, Post>
      */
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
-    private Collection $posts;
+    protected Collection $posts;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    private array $roles = ['ROLE_USER'];
+    protected array $roles = ['ROLE_USER'];
 
     /**
      * @var Collection<int, Story>
      */
     #[ORM\OneToMany(targetEntity: Story::class, mappedBy: 'refuser', cascade: ['persist', 'detach'])]
-    private Collection $stories;
+    protected Collection $stories;
 
     #[ORM\Column(length: 255, unique: true)]
-    private ?string $username = null;
+    protected ?string $username = null;
+
+    /**
+     * @var Collection<int, Configuration>
+     */
+    #[ORM\OneToMany(targetEntity: Configuration::class, mappedBy: 'defaultuser')]
+    private Collection $configurations;
+
+    /**
+     * @var Collection<int, Group>
+     */
+    #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'users')]
+    private Collection $groups;
+
+    /**
+     * @var Collection<int, Notification>
+     */
+    #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'refuser')]
+    private Collection $notifications;
 
     public function __construct()
     {
-        $this->stories       = new ArrayCollection();
-        $this->editos        = new ArrayCollection();
-        $this->memos         = new ArrayCollection();
-        $this->pages         = new ArrayCollection();
-        $this->posts         = new ArrayCollection();
-        $this->httpErrorLogs = new ArrayCollection();
+        $this->stories        = new ArrayCollection();
+        $this->editos         = new ArrayCollection();
+        $this->memos          = new ArrayCollection();
+        $this->pages          = new ArrayCollection();
+        $this->posts          = new ArrayCollection();
+        $this->httpErrorLogs  = new ArrayCollection();
+        $this->groups         = new ArrayCollection();
+        $this->configurations = new ArrayCollection();
+        $this->notifications  = new ArrayCollection();
     }
 
     /**
@@ -159,11 +180,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         }
     }
 
+    public function addConfiguration(Configuration $configuration): static
+    {
+        if (!$this->configurations->contains($configuration)) {
+            $this->configurations->add($configuration);
+            $configuration->setDefaultuser($this);
+        }
+
+        return $this;
+    }
+
     public function addEdito(Edito $edito): static
     {
         if (!$this->editos->contains($edito)) {
             $this->editos->add($edito);
             $edito->setRefuser($this);
+        }
+
+        return $this;
+    }
+
+    public function addGroup(Group $group): static
+    {
+        if (!$this->groups->contains($group)) {
+            $this->groups->add($group);
+            $group->addUser($this);
         }
 
         return $this;
@@ -184,6 +225,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         if (!$this->memos->contains($memo)) {
             $this->memos->add($memo);
             $memo->setRefuser($this);
+        }
+
+        return $this;
+    }
+
+    public function addNotification(Notification $notification): static
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setRefuser($this);
         }
 
         return $this;
@@ -219,16 +270,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
-    #[Override]
-    public function eraseCredentials(): void
-    {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
-    }
-
     public function getAvatar(): ?string
     {
         return $this->avatar;
@@ -237,6 +278,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function getAvatarFile(): ?File
     {
         return $this->avatarFile;
+    }
+
+    /**
+     * @return Collection<int, Configuration>
+     */
+    public function getConfigurations(): Collection
+    {
+        return $this->configurations;
     }
 
     /**
@@ -253,11 +302,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     }
 
     /**
-     * @return Collection<int, Story>
+     * @return Collection<int, Group>
      */
-    public function getHistories(): Collection
+    public function getGroups(): Collection
     {
-        return $this->stories;
+        return $this->groups;
     }
 
     /**
@@ -284,6 +333,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function getMemos(): Collection
     {
         return $this->memos;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
     }
 
     /**
@@ -327,6 +384,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     }
 
     /**
+     * @return Collection<int, Story>
+     */
+    public function getStories(): Collection
+    {
+        return $this->stories;
+    }
+
+    /**
      * A visual identifier that represents this user.
      *
      * @see UserInterface
@@ -347,11 +412,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
         return $this->enable;
     }
 
+    public function removeConfiguration(Configuration $configuration): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->configurations->removeElement($configuration) && $configuration->getDefaultuser() === $this) {
+            $configuration->setDefaultuser(null);
+        }
+
+        return $this;
+    }
+
     public function removeEdito(Edito $edito): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->editos->removeElement($edito) && $edito->getRefuser() === $this) {
+        if ($this->editos->removeElement($edito) && $edito->getRefuser() === $this
+        ) {
             $edito->setRefuser(null);
+        }
+
+        return $this;
+    }
+
+    public function removeGroup(Group $group): static
+    {
+        if ($this->groups->removeElement($group)) {
+            $group->removeUser($this);
         }
 
         return $this;
@@ -360,7 +445,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removeHttpErrorLog(HttpErrorLogs $httpErrorLogs): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->httpErrorLogs->removeElement($httpErrorLogs) && $httpErrorLogs->getRefUser() === $this) {
+        if ($this->httpErrorLogs->removeElement($httpErrorLogs) && $httpErrorLogs->getRefUser() === $this
+        ) {
             $httpErrorLogs->setRefUser(null);
         }
 
@@ -370,8 +456,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removeMemo(Memo $memo): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->memos->removeElement($memo) && $memo->getRefuser() === $this) {
+        if ($this->memos->removeElement($memo) && $memo->getRefuser() === $this
+        ) {
             $memo->setRefuser(null);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->notifications->removeElement($notification) && $notification->getRefuser() === $this) {
+            $notification->setRefuser(null);
         }
 
         return $this;
@@ -380,7 +477,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removePage(Page $page): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->pages->removeElement($page) && $page->getRefuser() === $this) {
+        if ($this->pages->removeElement($page) && $page->getRefuser() === $this
+        ) {
             $page->setRefuser(null);
         }
 
@@ -390,7 +488,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removePost(Post $post): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->posts->removeElement($post) && $post->getRefuser() === $this) {
+        if ($this->posts->removeElement($post) && $post->getRefuser() === $this
+        ) {
             $post->setRefuser(null);
         }
 
@@ -400,7 +499,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     public function removeStory(Story $story): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->stories->removeElement($story) && $story->getRefuser() === $this) {
+        if ($this->stories->removeElement($story) && $story->getRefuser() === $this
+        ) {
             $story->setRefuser(null);
         }
 
@@ -411,7 +511,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Stringa
     {
         $this->avatar = $avatar;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
         if (null === $avatar) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

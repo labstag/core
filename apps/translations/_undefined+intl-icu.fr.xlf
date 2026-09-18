@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="fr" target-language="fr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="1gMekvi" resname="paginator.label">
+        <source>paginator.label</source>
+        <target>Étiquette du pagineur</target>
+      </trans-unit>
+      <trans-unit id="29d8Vn4" resname="paginator.first">
+        <source>paginator.first</source>
+        <target>Premier</target>
+      </trans-unit>
+      <trans-unit id="Xiqdpoq" resname="paginator.more_pages">
+        <source>paginator.more_pages</source>
+        <target>Plus de pages</target>
+      </trans-unit>
+      <trans-unit id="lNsI3aT" resname="paginator.last">
+        <source>paginator.last</source>
+        <target>Dernier</target>
+      </trans-unit>
+      <trans-unit id="ZsypGha" resname="paginator.results">
+        <source>paginator.results</source>
+        <target>Résultats</target>
+      </trans-unit>
+      <trans-unit id="ANpWHHW" resname="paginator.previous">
+        <source>paginator.previous</source>
+        <target>Précédent</target>
+      </trans-unit>
+      <trans-unit id="SaZbUiU" resname="paginator.next">
+        <source>paginator.next</source>
+        <target>Suivant</target>
+      </trans-unit>
+      <trans-unit id="EgM1sAf" resname="download">
+        <source>download</source>
+        <target>Télécharger</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

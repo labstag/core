@@ -1,5 +1,5 @@
-<a href="javascript:void(0);" data-a11y-dialog-show="movie-modal-{{ movie.id }}">
-    <div class="background spoiler" data-bg="{{ site_asset(movie, 'img') }}">
+<a href="{{ site_path(movie) }}">
+    <div class="background spoiler" data-bg="{{ site_asset(movie, 'poster') }}">
         {% if movie.releaseDate != '' %}
             <span class="year">
                 {{ movie.releaseDate|date('Y') }}
@@ -7,18 +7,8 @@
         {% endif %}
     </div>
     <div class="wrapper">
-        {% if movie.categories|length > 0 %}
-            <div class="categories">
-                {% for categorie in movie.categories %}
-                    <span class="categorie-{{ categorie.slug }}">{{ categorie.title }}</span>
-                {% endfor %}
-            </div>
-        {% endif %}
-        <h3 class="title">
+        <h2 class="title">
             {{ movie.title }}
-        </h3>
-        <div class="citation">
-            {{ movie.citation|raw }}
-        </div>
+        </h2>
     </div>
 </a>

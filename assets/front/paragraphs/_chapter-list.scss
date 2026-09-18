@@ -2,26 +2,27 @@
 @use "../variables";
 
 @use "sass:color";
-.paragraph_chapter-list{
-  .wrapper{
 
-  }
-  .title{
+.paragraph_chapter-list {
+  .wrapper {}
 
-  }
-  ul{
+  .title {}
+
+  ul {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
+
     @include mixins.respond-to(md) {
       grid-template-columns: 1fr 1fr 1fr;
     }
   }
-  li{
-    &.teaser-chapter{
+
+  li {
+    &.teaser-chapter {
       background-color: color.scale(variables.$colorbg, $lightness: 15%);
-      &:nth-child(even)
-      {
+
+      &:nth-child(even) {
         background-color: color.scale(variables.$colorbg, $lightness: 10%);
       }
     }

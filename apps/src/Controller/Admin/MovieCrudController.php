@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -14,45 +15,131 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Movie;
 use Labstag\Field\WysiwygField;
-use Labstag\Repository\MovieRepository;
+use Labstag\Filter\CountriesFilter;
+use Labstag\Form\Admin\MovieImportType;
+use Labstag\Form\Admin\MovieType;
+use Labstag\Message\ImportMessage;
+use Labstag\Message\MovieAllMessage;
+use Labstag\Message\MovieMessage;
+use Override;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Countries;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class MovieCrudController extends AbstractCrudControllerLib
+class MovieCrudController extends CrudControllerAbstract
 {
-    #[\Override]
-    public function configureActions(Actions $actions): Actions
+    #[AdminRoute]
+    public function addByApi(Request $request): JsonResponse
     {
-        $actions->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
+        $tmdbId       = $request->query->get('id');
+        $movie        = $this->getRepository(Movie::class)->findOneBy(
+            ['tmdb' => $tmdbId]
+        );
+        if ($movie instanceof Movie) {
+            $message = new TranslatableMessage('Movie already exists');
 
-        $action = $this->setLinkImdbAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+            return new JsonResponse(
+                [
+                    'status'  => 'warning',
+                    'id'      => $tmdbId,
+                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
+                ]
+            );
+        }
 
-        $action = $this->setLinkTmdbAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $locale = $this->configurationService->getLocaleTmdb();
+        $tmdb   = $this->theMovieDbApi->movies()->getDetails($tmdbId, $locale);
+        if (is_null($tmdb)) {
+            $message = new TranslatableMessage(
+                'The movie with the TMDB id %id% does not exist',
+                ['%id%' => $tmdbId]
+            );
 
-        $action = $this->setUpdateAction();
-        $actions->add(Crud::PAGE_DETAIL, $action);
-        $actions->add(Crud::PAGE_EDIT, $action);
-        $actions->add(Crud::PAGE_INDEX, $action);
-        $this->setEditDetail($actions);
-        $this->configureActionsTrash($actions);
-        $this->configureActionsUpdateImage();
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'id'      => $tmdbId,
+                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
+                ]
+            );
+        }
 
-        return $actions;
+        $other  = $this->theMovieDbApi->movies()->getMovieExternalIds($tmdbId);
+        if (!isset($other['imdb_id'])) {
+            $message = new TranslatableMessage('No Imdb id for this movie');
+
+            return new JsonResponse(
+                [
+                    'status'  => 'warning',
+                    'id'      => $tmdbId,
+                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
+                ]
+            );
+        }
+
+        $movie = new Movie();
+        $movie->setEnable(true);
+        $movie->setAdult(false);
+        $movie->setFile(false);
+        $movie->setTmdb($tmdbId);
+        $movie->setImdb($other['imdb_id']);
+        $movie->setTitle($tmdb['title']);
+
+        $this->getRepository(Movie::class)->save($movie);
+        $this->messageBus->dispatch(new MovieMessage($movie->getId()));
+        $message = new TranslatableMessage('Movie is being added');
+
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'id'      => $tmdbId,
+                'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
+            ]
+        );
     }
 
-    #[\Override]
+    #[AdminRoute]
+    public function apiMovie(Request $request): Response
+    {
+        $page               = $request->query->get('page', 1);
+        $all                = $request->request->all();
+        $data               = [
+            'imdb'  => $all['movie']['imdb'] ?? '',
+            'title' => $all['movie']['title'] ?? '',
+        ];
+        $movies = $this->movieService->getMovieApi($data, $page);
+
+        return $this->render(
+            'admin/api/movie/list.html.twig',
+            [
+                'page'       => $page,
+                'controller' => self::class,
+                'movies'     => $movies,
+            ]
+        );
+    }
+
+    #[Override]
+    public function configureActions(Actions $actions): Actions
+    {
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
+        $this->actionsFactory->setLinkImdbAction();
+        $this->actionsFactory->setLinkTmdbAction();
+        $this->setUpdateAction();
+        $this->actionsFactory->setActionUpdateAll('updateAllMovie');
+        $this->addActionNewMovie();
+        $this->addActionImportMovie();
+
+        return $this->actionsFactory->show();
+    }
+
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -65,63 +152,126 @@ class MovieCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: false
-        ) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
 
-        yield TextField::new('imdb', new TranslatableMessage('Imdb'))->hideOnIndex();
-        yield TextField::new('tmdb', new TranslatableMessage('Tmdb'))->hideOnIndex();
-        yield TextField::new('certification', new TranslatableMessage('Certification'))->hideOnIndex();
-        yield DateField::new('releaseDate', new TranslatableMessage('Release date'));
+        $textField = TextField::new('imdb', new TranslatableMessage('Imdb'));
+        $textField->hideOnIndex();
+
+        $tmdbField = TextField::new('tmdb', new TranslatableMessage('Tmdb'));
+        $tmdbField->hideOnIndex();
+
+        $certificationField = TextField::new('certification', new TranslatableMessage('Certification'));
+        $certificationField->hideOnIndex();
+
         $choiceField = ChoiceField::new('countries', new TranslatableMessage('Countries'));
         $choiceField->setChoices(array_flip(Countries::getNames()));
         $choiceField->allowMultipleChoices();
         $choiceField->renderExpanded(false);
-        yield $choiceField;
-        yield from [
-            IntegerField::new('duration', new TranslatableMessage('Duration')),
-            $this->addFieldSaga(),
-            NumberField::new('evaluation', new TranslatableMessage('Evaluation')),
-            IntegerField::new('votes', new TranslatableMessage('Votes')),
-            TextField::new('trailer', new TranslatableMessage('Trailer'))->hideOnIndex(),
-            WysiwygField::new('citation', new TranslatableMessage('Citation'))->hideOnIndex(),
-            WysiwygField::new('description', new TranslatableMessage('Description'))->hideOnIndex(),
-            $this->crudFieldFactory->categoriesField('movie'),
-            // image field déjà incluse dans baseIdentitySet
-            $this->crudFieldFactory->booleanField('file', (string) new TranslatableMessage('File'))->hideOnIndex(),
-            $this->crudFieldFactory->booleanField('adult', (string) new TranslatableMessage('Adult')),
-        ];
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
-            yield $field;
-        }
+
+        $integerField = IntegerField::new('duration', new TranslatableMessage('Duration'));
+        $integerField->setTemplatePath('admin/field/runtime-movie.html.twig');
+
+        $trailerField = TextField::new('trailer', new TranslatableMessage('Trailer'));
+        $trailerField->hideOnIndex();
+
+        $wysiwgTranslation = new TranslatableMessage('Citation');
+        $wysiwygField      = WysiwygField::new('citation', $wysiwgTranslation->getMessage());
+        $wysiwygField->hideOnIndex();
+
+        $descriptionTranslation = new TranslatableMessage('Description');
+        $descriptionField       = WysiwygField::new('description', $descriptionTranslation->getMessage());
+        $descriptionField->hideOnIndex();
+
+        $booleanField = $this->crudFieldFactory->booleanField('file', new TranslatableMessage('File'));
+        $booleanField->hideOnIndex();
+
+        $posterTranslation   = new TranslatableMessage('Poster');
+        $backdropTranslation = new TranslatableMessage('Backdrop');
+
+        $associationField = AssociationField::new('castings', new TranslatableMessage('Casting'));
+        $associationField->setTemplatePath('admin/field/castings.html.twig');
+        $associationField->onlyOnDetail();
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField(
+                    'poster',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    $posterTranslation->getMessage()
+                ),
+                $this->crudFieldFactory->imageField(
+                    'backdrop',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    $backdropTranslation->getMessage()
+                ),
+                $textField,
+                $tmdbField,
+                $certificationField,
+                DateField::new('releaseDate', new TranslatableMessage('Release date')),
+                $choiceField,
+                $integerField,
+                $this->addFieldSaga(),
+                NumberField::new('evaluation', new TranslatableMessage('Evaluation'))->hideOnIndex(),
+                IntegerField::new('votes', new TranslatableMessage('Votes'))->hideOnIndex(),
+                $trailerField,
+                $wysiwygField,
+                $descriptionField,
+                $this->crudFieldFactory->categoriesFieldForPage(self::getEntityFqcn(), $pageName),
+                $this->crudFieldFactory->companiesFieldForPage(self::getEntityFqcn(), $pageName),
+                // image field déjà incluse dans baseIdentitySet
+                $booleanField,
+                $associationField,
+                $this->crudFieldFactory->booleanField('adult', new TranslatableMessage('Adult')),
+            ]
+        );
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
-        $movieRepository = $this->getMovieRepository();
-        $certifications  = $movieRepository->getCertifications();
-
+        $repositoryAbstract = $this->getRepository();
+        $certifications     = $repositoryAbstract->getCertifications();
         $filters->add('releaseDate');
-        $filters->add('countries');
-        if (count($certifications) > 0) {
-            $filters->add(
-                ChoiceFilter::new('certification', new TranslatableMessage('Certification'))->setChoices($certifications)
+        $countries = $repositoryAbstract->getCountries();
+        if ([] != $countries) {
+            $translatableMessage  = new TranslatableMessage('Countries');
+            $countriesFilter      = CountriesFilter::new('countries', $translatableMessage->getMessage());
+            $countriesFilter->setChoices(
+                array_merge(
+                    ['' => ''],
+                    $countries
+                )
             );
+            $filters->add($countriesFilter);
         }
 
-        $this->crudFieldFactory->addFilterTags($filters, 'movie');
-        $this->crudFieldFactory->addFilterCategories($filters, 'movie');
+        if ([] !== $certifications) {
+            $certificationFilter = ChoiceFilter::new('certification', new TranslatableMessage('Certification'));
+            $certificationFilter->setChoices(
+                array_merge(
+                    ['' => ''],
+                    $certifications
+                )
+            );
+            $filters->add($certificationFilter);
+        }
+
+        $this->crudFieldFactory->addFilterCategoriesFor($filters, self::getEntityFqcn());
         $this->addFilterSaga($filters);
+        $this->addFilterCompanies($filters);
 
         return $filters;
     }
@@ -131,31 +281,110 @@ class MovieCrudController extends AbstractCrudControllerLib
         return Movie::class;
     }
 
-    #[Route('/admin/movie/{entity}/imdb', name: 'admin_movie_imdb')]
-    public function imdb(string $entity): RedirectResponse
+    #[AdminRoute]
+    public function imdb(Request $request): RedirectResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $movie                      = $serviceEntityRepositoryLib->find($entity);
+        $entityId                        = $request->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $movie                           = $repositoryAbstract->find($entityId);
 
-        return $this->redirect('https://www.imdb.com/title/' . $movie->getImdb() . '/');
+        return $this->redirect('https://www.imdb.com/title/'.$movie->getImdb().'/');
     }
 
-    #[Route('/admin/movie/{entity}/tmdb', name: 'admin_movie_tmdb')]
-    public function tmdb(string $entity): RedirectResponse
+    #[AdminRoute]
+    public function importFileMovie(Request $request): JsonResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $movie                      = $serviceEntityRepositoryLib->find($entity);
+        $files   = $request->files->all();
+        $file    = $files['movie_import']['file'] ?? null;
+        if (null === $file) {
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'message' => 'No file uploaded',
+                ]
+            );
+        }
 
-        return $this->redirect('https://www.themoviedb.org/movie/' . $movie->getTmdb());
+        $content   = file_get_contents($file->getPathname());
+        $extension = $file->getClientOriginalExtension();
+        $filename  = uniqid('import_', true).'.'.$extension;
+        $this->fileService->saveFileInAdapter('private', $filename, $content);
+        $this->messageBus->dispatch(new ImportMessage($filename, 'movie', []));
+
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'message' => 'Import started',
+            ]
+        );
     }
 
-    #[Route('/admin/movie/{entity}/update', name: 'admin_movie_update')]
-    public function update(string $entity, Request $request): RedirectResponse
+    #[AdminRoute]
+    public function jsonMovie(Request $request): JsonResponse
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        $movie                      = $serviceEntityRepositoryLib->find($entity);
-        $this->movieService->update($movie);
-        $serviceEntityRepositoryLib->save($movie);
+        $entityId                        = $request->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $movie                           = $repositoryAbstract->find($entityId);
+        $details                         = $this->theMovieDbApi->getDetailsMovie($movie);
+
+        return new JsonResponse($details);
+    }
+
+    #[AdminRoute]
+    public function showModalImportMovie(Request $request): Response
+    {
+        $form    = $this->createForm(MovieImportType::class);
+        $form->handleRequest($request);
+
+        return $this->render(
+            'admin/movie/import.html.twig',
+            [
+                'controller' => self::class,
+                'form'       => $form->createView(),
+            ]
+        );
+    }
+
+    #[AdminRoute]
+    public function showModalMovie(Request $request): Response
+    {
+        $form    = $this->createForm(MovieType::class);
+        $form->handleRequest($request);
+
+        return $this->render(
+            'admin/movie/new.html.twig',
+            [
+                'controller' => self::class,
+                'form'       => $form->createView(),
+            ]
+        );
+    }
+
+    #[AdminRoute]
+    public function tmdb(Request $request): RedirectResponse
+    {
+        $entityId                        = $request->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $movie                           = $repositoryAbstract->find($entityId);
+
+        return $this->redirect('https://www.themoviedb.org/movie/'.$movie->getTmdb());
+    }
+
+    #[AdminRoute]
+    public function updateAllMovie(): RedirectResponse
+    {
+        $this->messageBus->dispatch(new MovieAllMessage());
+
+        return $this->redirectToRoute('admin_movie_index');
+    }
+
+    #[AdminRoute]
+    public function updateMovie(Request $request): RedirectResponse
+    {
+        $entityId                        = $request->query->get('entityId');
+        $repositoryAbstract              = $this->getRepository();
+        $movie                           = $repositoryAbstract->find($entityId);
+        $this->messageBus->dispatch(new MovieMessage($movie->getId()));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {
@@ -175,79 +404,73 @@ class MovieCrudController extends AbstractCrudControllerLib
         return $associationField;
     }
 
+    protected function addFilterCompanies(Filters $filters): void
+    {
+        $entityFilter = EntityFilter::new('companies', new TranslatableMessage('Companies'));
+        $filters->add($entityFilter);
+    }
+
     protected function addFilterSaga(Filters $filters): void
     {
         $entityFilter = EntityFilter::new('saga', new TranslatableMessage('Sagas'));
         $filters->add($entityFilter);
     }
 
-    private function configureActionsUpdateImage(): void
+    private function addActionImportMovie(): void
     {
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $request->query->get('action', null);
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('showModalImportMovie', new TranslatableMessage('Import'), 'fas fa-file-import');
+        $action->linkToCrudAction('showModalImportMovie');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    /**
-     * Get the MovieRepository with proper typing for PHPStan.
-     */
-    private function getMovieRepository(): MovieRepository
+    private function addActionNewMovie(): void
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        assert($serviceEntityRepositoryLib instanceof MovieRepository);
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
 
-        return $serviceEntityRepositoryLib;
+        $action = Action::new('showModalMovie', new TranslatableMessage('New movie'), 'fas fa-plus-circle');
+        $action->linkToCrudAction('showModalMovie');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 
-    private function setLinkImdbAction(): Action
+    private function setUpdateAction(): void
     {
-        $action = Action::new('imdb', new TranslatableMessage('IMDB Page'));
+        if (!$this->actionsFactory->isTrash()) {
+            return;
+        }
+
+        $action = Action::new('updateMovie', new TranslatableMessage('Update'), 'fas fa-sync-alt');
+        $action->linkToCrudAction('updateMovie');
+        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
+
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+
+        $action = Action::new('jsonMovie', new TranslatableMessage('Json'), 'fas fa-server');
+        $action->linkToCrudAction('jsonMovie');
         $action->setHtmlAttributes(
             ['target' => '_blank']
         );
-        $action->linkToUrl(
-            fn (Movie $movie): string => $this->generateUrl(
-                'admin_movie_imdb',
-                [
-                    'entity' => $movie->getId(),
-                ]
-            )
-        );
         $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
 
-        return $action;
-    }
-
-    private function setLinkTmdbAction(): Action
-    {
-        $action = Action::new('tmdb', new TranslatableMessage('TMDB Page'));
-        $action->setHtmlAttributes(
-            ['target' => '_blank']
-        );
-        $action->linkToUrl(
-            fn (Movie $movie): string => $this->generateUrl(
-                'admin_movie_tmdb',
-                [
-                    'entity' => $movie->getId(),
-                ]
-            )
-        );
-
-        return $action;
-    }
-
-    private function setUpdateAction(): Action
-    {
-        $action = Action::new('update', new TranslatableMessage('Update'));
-        $action->linkToUrl(
-            fn (Movie $movie): string => $this->generateUrl(
-                'admin_movie_update',
-                [
-                    'entity' => $movie->getId(),
-                ]
-            )
-        );
-        $action->displayIf(static fn ($entity): bool => is_null($entity->getDeletedAt()));
-
-        return $action;
+        $this->actionsFactory->add(Crud::PAGE_DETAIL, $action);
+        $this->actionsFactory->add(Crud::PAGE_EDIT, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
     }
 }

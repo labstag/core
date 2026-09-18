@@ -6,24 +6,23 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
-use Labstag\Email\Abstract\EmailLib;
+use Labstag\Email\EmailAbstract;
 use Labstag\Entity\Template;
 use Labstag\Field\WysiwygField;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class TemplateCrudController extends AbstractCrudControllerLib
+class TemplateCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setEditDetail($actions);
-        $this->configureActionsTrash($actions);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -36,38 +35,36 @@ class TemplateCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        // Template n'a ni slug ni enable ni image : withSlug: false, withImage: false, withEnable: false
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: false,
-            withImage: false,
-            withEnable: false
-        ) as $field) {
-            yield $field;
+        $textField = TextField::new('code', new TranslatableMessage('Code'));
+        if (Crud::PAGE_NEW !== $pageName) {
+            $textField->setDisabled(true);
         }
 
-        $textField = TextField::new('code', new TranslatableMessage('Code'));
-        $textField->setDisabled(true);
+        $translatableMessage = new TranslatableMessage('HTML');
+        $wysiwygField        = WysiwygField::new('html', $translatableMessage->getMessage());
+        $wysiwygField->onlyOnForms();
 
-        yield $textField;
-        $wysiwygField  = WysiwygField::new('html', new TranslatableMessage('HTML'))->onlyOnForms();
-        $textareaField = TextareaField::new('text', new TranslatableMessage('Texte brut'))->onlyOnForms();
+        $textareaField = TextareaField::new('text', new TranslatableMessage('Texte brut'));
+        $textareaField->onlyOnForms();
+
+        $this->crudFieldFactory->addFieldsToTab('principal', [$textField, $this->crudFieldFactory->titleField()]);
 
         if (!is_null($currentEntity)) {
             $template = $this->emailService->get($currentEntity->getCode());
-            if ($template instanceof EmailLib) {
+            if ($template instanceof EmailAbstract) {
                 $wysiwygField->setHelp($template->getHelp());
                 $textareaField->setHelp($template->getHelp());
             }
         }
 
-        yield $wysiwygField;
-        yield $textareaField;
+        $this->crudFieldFactory->addFieldsToTab('principal', [$wysiwygField, $textareaField]);
+
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     public static function getEntityFqcn(): string
