@@ -1,0 +1,52 @@
+{% use "elements.html.twig" %}
+<section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
+    <div class="wrapper">
+        {% if paragraph.title|length != 0 %}
+            <h3 class="title">
+                {{ paragraph.title }}
+            </h3>
+        {% endif %}
+        <div class="episode-list">
+            {% if pagination|length == 0 %}
+                <div class="notfound">
+                    <span class="text">{{ 'No episodes found.'|trans }}</span>
+                </div>
+            {% else %}
+                <ul>
+                    {% for row in pagination %}
+                        <li class="teaser-episode" id="episode-{{ row.number }}">
+                            {% include "teasers/episode.html.twig"  with {'episode': row} %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+        <div class="season-navigation">
+            <ul>
+                {% if prev %}
+                    <li>
+                        <a href="{{ site_path(prev) }}" class="btn">
+                            {{ prev.title }}
+                        </a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="{{ site_path(data.entity.refserie) }}" class="btn">
+                        {{ 'Return to serie'|trans }}
+                    </a>
+                </li>
+                {% if next %}
+                    <li>
+                        <a href="{{ site_path(next) }}" class="btn">
+            
+                            {{ next.title }}
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</section>

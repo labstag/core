@@ -1,0 +1,72 @@
+{% block content_title 'Permission Management'|trans %}
+{% block page_title 'Permission Management'|trans %}
+{% block page_actions %}
+{% endblock %}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+{% block head_javascript %}
+  {{ parent() }}
+  <script src="{{ asset('field-boolean.js', ea().assets.defaultAssetPackageName) }}"></script>
+{% endblock %}
+{% block main %}
+  <table class="table datagrid table-permissions{% if data|length == 0 %} datagrid-empty{% endif %}">
+    {% if data|length != 0 %}
+      <thead>
+        <tr>
+          <th>Permission</th>
+          {% for group in groups %}
+            <th>{{ group.title }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+    {% endif %}
+    {% for group, permissions in data %}
+      <tbody>
+        <tr>
+          <th colspan="{{ groups|length + 1 }}">{{ group|capitalize }}</th>
+        </tr>
+        {% for permission in permissions %}
+          <tr>
+            <td>{{ permission.title }}</td>
+            {% for group in groups %}
+              <td>
+                <div class="form-check form-switch">
+                  <input
+                    type="checkbox"
+                    class="form-check-input permission-toggle"
+                    id="{{ random(1000000) }}"
+                    {% if group.permissions|filter(p => p.id == permission.id)|length > 0 %}
+                      checked=""
+                    {% endif %}
+                    data-toggle-url="{{ path('admin', {'routeName': 'admin_permission', 'permissionId': permission.id, 'groupId': group.id}) }}"
+                    autocomplete="off"
+                  >
+                </div> 
+              </td>
+            {% endfor %}
+          </tr>
+
+        {% endfor %}
+      </tbody>
+    {% else %}
+      <tbody>
+          {% for i in 1..6 %}
+              <tr class="empty-row">
+                  <td><span></span></td>
+                  <td><span></span></td>
+                  <td><span></span></td>
+                  <td><span></span></td>
+                  <td><span></span></td>
+              </tr>
+
+              {% if 3 == loop.index %}
+                  <tr class="no-results">
+                      <td colspan="100">
+                          {{ t('datagrid.no_results', ea().i18n.translationParameters, 'EasyAdminBundle')|trans }}
+                      </td>
+                  </tr>
+              {% endif %}
+          {% endfor %}
+      </tbody>
+    {% endfor %}
+  </table>
+{% endblock %}

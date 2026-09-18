@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -12,24 +11,23 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Star;
 use Labstag\Repository\StarRepository;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class StarCrudController extends AbstractCrudControllerLib
+class StarCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->configureActionsBtn($actions);
-        $actions->remove(Crud::PAGE_INDEX, Action::EDIT);
-        $actions->remove(Crud::PAGE_DETAIL, Action::EDIT);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setShowDetail(false);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -42,28 +40,39 @@ class StarCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        foreach ($this->crudFieldFactory->baseIdentitySet($pageName, self::getEntityFqcn(), false) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
+        $textField = TextField::new('repository', new TranslatableMessage('Repository'));
+        $textField->hideOnIndex();
 
-        yield TextField::new('language', new TranslatableMessage('Language'));
-        yield TextField::new('repository', new TranslatableMessage('Repository'))->hideOnIndex();
-        yield UrlField::new('url', new TranslatableMessage('Url'));
-        yield TextEditorField::new('description', new TranslatableMessage('Description'))->hideOnIndex();
-        yield TextField::new('license', new TranslatableMessage('License'));
-        yield IntegerField::new('stargazers', new TranslatableMessage('Stargazers'));
-        yield IntegerField::new('watchers', new TranslatableMessage('Watchers'));
-        yield IntegerField::new('forks', new TranslatableMessage('Forks'));
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
-            yield $field;
-        }
+        $textEditorField = TextEditorField::new('description', new TranslatableMessage('Description'));
+        $textEditorField->hideOnIndex();
+
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
+                $this->crudFieldFactory->titleField(),
+                $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+                TextField::new('language', new TranslatableMessage('Language')),
+                $textField,
+                UrlField::new('url', new TranslatableMessage('Url')),
+                $textEditorField,
+                TextField::new('license', new TranslatableMessage('License')),
+                IntegerField::new('stargazers', new TranslatableMessage('Stargazers')),
+                IntegerField::new('watchers', new TranslatableMessage('Watchers')),
+                IntegerField::new('forks', new TranslatableMessage('Forks')),
+            ]
+        );
+
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $licences = $this->getallData('license');
@@ -95,12 +104,12 @@ class StarCrudController extends AbstractCrudControllerLib
      */
     private function getAllData(string $type): array
     {
-        $serviceEntityRepositoryLib = $this->getRepository();
-        if (!$serviceEntityRepositoryLib instanceof StarRepository) {
+        $repositoryAbstract = $this->getRepository();
+        if (!$repositoryAbstract instanceof StarRepository) {
             return [];
         }
 
-        $all = $serviceEntityRepositoryLib->findAllData($type);
+        $all = $repositoryAbstract->findAllData($type);
 
         $data = [];
         foreach ($all as $row) {

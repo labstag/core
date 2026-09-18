@@ -15,8 +15,11 @@ final class WysiwygConfigurator implements FieldConfiguratorInterface
     public function configure(FieldDto $fieldDto, EntityDto $entityDto, AdminContext $adminContext): void
     {
         unset($adminContext, $entityDto);
-        $fieldDto->setFormTypeOptionIfNotSet('attr.rows', $fieldDto->getCustomOption(WysiwygField::OPTION_NUM_OF_ROWS));
-        $fieldDto->setFormTypeOption('attr.class', $fieldDto->getFormTypeOption('attr.class') . ' wysiwyg');
+        $fieldDto->setFormTypeOptionIfNotSet(
+            'attr.rows',
+            $fieldDto->getCustomOption(WysiwygField::OPTION_NUM_OF_ROWS)
+        );
+        $fieldDto->setFormTypeOption('attr.class', $fieldDto->getFormTypeOption('attr.class').' wysiwyg');
     }
 
     #[Override]

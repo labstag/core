@@ -12,95 +12,150 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\MovieRepository;
+use Labstag\SlugHandler\MovieSlugHandler;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Movie implements Stringable
+#[ORM\Index(name: 'IDX_MOVIE_SLUG', columns: ['slug'])]
+class Movie implements Stringable, EntityWithParagraphsInterface
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
     #[ORM\Column]
-    private ?bool $adult = null;
+    protected ?bool $adult = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $backdrop = null;
+
+    #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'backdrop')]
+    protected ?File $backdropFile = null;
 
     /**
-     * @var Collection<int, Category>
+     * @var Collection<int, MovieCategory>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
-    private Collection $categories;
+    #[ORM\ManyToMany(targetEntity: MovieCategory::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    protected Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $certification = null;
+    protected ?string $certification = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $citation = null;
+    protected ?string $citation = null;
 
     /**
      * @var string[]|null
      */
     #[ORM\Column(nullable: true)]
-    private ?array $countries = null;
+    protected ?array $countries = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    protected ?string $description = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $duration = null;
+    protected ?int $duration = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private ?bool $enable = null;
+    protected ?bool $enable = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $evaluation = null;
+    protected ?float $evaluation = null;
 
     #[ORM\Column]
-    private ?bool $file = null;
+    protected ?bool $file = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    private ?string $imdb = null;
+    protected ?string $imdb = null;
+
+    #[ORM\OneToOne(inversedBy: 'movie', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?Meta $meta = null;
+
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'movie',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    protected Collection $paragraphs;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $poster = null;
 
-    #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    #[Vich\UploadableField(mapping: 'movie', fileNameProperty: 'poster')]
+    protected ?File $posterFile = null;
 
     #[ORM\Column(name: 'release_date', type: Types::DATE_MUTABLE, nullable: true)]
-    private ?DateTime $releaseDate = null;
+    protected ?DateTime $releaseDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'movies')]
-    private ?Saga $saga = null;
+    protected ?Saga $saga = null;
+
+    #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]
+    #[Gedmo\SlugHandler(class: MovieSlugHandler::class)]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tmdb = null;
+    protected ?string $tmdb = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $trailer = null;
+    protected ?string $trailer = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $votes = null;
+    protected ?int $votes = null;
+
+    /**
+     * @var Collection<int, Casting>
+     */
+    #[ORM\OneToMany(targetEntity: Casting::class, mappedBy: 'refMovie')]
+    private Collection $castings;
+
+    /**
+     * @var Collection<int, Company>
+     */
+    #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'movies')]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    private Collection $companies;
 
     public function __construct()
     {
-        $this->categories = new ArrayCollection();
+        $this->categories      = new ArrayCollection();
+        $this->paragraphs      = new ArrayCollection();
+        $this->companies       = new ArrayCollection();
+        $this->castings        = new ArrayCollection();
     }
 
     #[Override]
@@ -109,18 +164,66 @@ class Movie implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addCategory(Category $category): static
+    public function addCasting(Casting $casting): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addMovie($this);
+        if (!$this->castings->contains($casting)) {
+            $this->castings->add($casting);
+            $casting->setRefMovie($this);
         }
 
         return $this;
     }
 
+    public function addCategory(MovieCategory $movieCategory): static
+    {
+        if (!$this->categories->contains($movieCategory)) {
+            $this->categories->add($movieCategory);
+            $movieCategory->addMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function addCompany(Company $company): static
+    {
+        if (!$this->companies->contains($company)) {
+            $this->companies->add($company);
+            $company->addMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function getBackdrop(): ?string
+    {
+        return $this->backdrop;
+    }
+
+    public function getBackdropFile(): ?File
+    {
+        return $this->backdropFile;
+    }
+
     /**
-     * @return Collection<int, Category>
+     * @return Collection<int, Casting>
+     */
+    public function getCastings(): Collection
+    {
+        return $this->castings;
+    }
+
+    /**
+     * @return Collection<int, MovieCategory>
      */
     public function getCategories(): Collection
     {
@@ -135,6 +238,14 @@ class Movie implements Stringable
     public function getCitation(): ?string
     {
         return $this->citation;
+    }
+
+    /**
+     * @return Collection<int, Company>
+     */
+    public function getCompanies(): Collection
+    {
+        return $this->companies;
     }
 
     /**
@@ -170,14 +281,27 @@ class Movie implements Stringable
         return $this->imdb;
     }
 
-    public function getImg(): ?string
+    public function getMeta(): ?Meta
     {
-        return $this->img;
+        return $this->meta;
     }
 
-    public function getImgFile(): ?File
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
     {
-        return $this->imgFile;
+        return $this->paragraphs;
+    }
+
+    public function getPoster(): ?string
+    {
+        return $this->poster;
+    }
+
+    public function getPosterFile(): ?File
+    {
+        return $this->posterFile;
     }
 
     public function getReleaseDate(): ?DateTime
@@ -188,6 +312,11 @@ class Movie implements Stringable
     public function getSaga(): ?Saga
     {
         return $this->saga;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
     }
 
     public function getTitle(): ?string
@@ -225,10 +354,40 @@ class Movie implements Stringable
         return $this->file;
     }
 
-    public function removeCategory(Category $category): static
+    public function removeCasting(Casting $casting): static
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removeMovie($this);
+        // set the owning side to null (unless already changed)
+        if ($this->castings->removeElement($casting) && $casting->getRefMovie() === $this) {
+            $casting->setRefMovie(null);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(MovieCategory $movieCategory): static
+    {
+        if ($this->categories->removeElement($movieCategory)) {
+            $movieCategory->removeMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompany(Company $company): static
+    {
+        if ($this->companies->removeElement($company)) {
+            $company->removeMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this
+        ) {
+            $paragraph->setMovie(null);
         }
 
         return $this;
@@ -239,6 +398,26 @@ class Movie implements Stringable
         $this->adult = $adult;
 
         return $this;
+    }
+
+    public function setBackdrop(?string $backdrop): void
+    {
+        $this->backdrop = $backdrop;
+
+        if (null === $backdrop) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setBackdropFile(?File $backdropFile = null): void
+    {
+        $this->backdropFile = $backdropFile;
+
+        if ($backdropFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setCertification(?string $certification): static
@@ -307,21 +486,27 @@ class Movie implements Stringable
         return $this;
     }
 
-    public function setImg(?string $img): void
+    public function setMeta(Meta $meta): static
     {
-        $this->img = $img;
+        $this->meta = $meta;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
-        if (null === $img) {
+        return $this;
+    }
+
+    public function setPoster(?string $poster): void
+    {
+        $this->poster = $poster;
+
+        if (null === $poster) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 
-    public function setImgFile(?File $imgFile = null): void
+    public function setPosterFile(?File $posterFile = null): void
     {
-        $this->imgFile = $imgFile;
+        $this->posterFile = $posterFile;
 
-        if ($imgFile instanceof File) {
+        if ($posterFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
@@ -338,6 +523,13 @@ class Movie implements Stringable
     public function setSaga(?Saga $saga): static
     {
         $this->saga = $saga;
+
+        return $this;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

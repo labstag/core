@@ -1,0 +1,48 @@
+{% set seasons = 0 %}
+{% set runtime = 0 %}
+{% for season in serie.seasons %}
+    {% if season.episodes|length > 0 and season.episodes[0].airDate <= date() %}
+        {% set seasons = seasons + 1 %}
+    {% endif %}
+    {% for episode in season.episodes %}
+        {% set runtime = runtime + episode.runtime %}
+    {% endfor %}
+{% endfor %}
+{% if serie.isinProduction %}
+    {% set title_icon = 'play' %}
+    {% set title_icon_title = 'In production'|trans %}
+{% else %}
+    {% set title_icon = 'stop' %}
+    {% set title_icon_title = 'Not in production'|trans %}
+{% endif %}
+{% if serie.isinProduction %}
+    {% set title_icon = 'play' %}
+    {% set title_icon_title = 'In production'|trans %}
+{% else %}
+    {% set title_icon = 'stop' %}
+    {% set title_icon_title = 'Not in production'|trans %}
+{% endif %}
+<a href="{{ site_path(serie) }}">
+    <div class="background spoiler" data-bg="{{ site_asset(serie, 'poster') }}">
+        {% if serie.releaseDate != '' %}
+            <span class="year">
+                {{ serie.releaseDate|date('Y') }}
+            </span>
+        {% endif %}
+        <span class="seasons">
+            {% if seasons == 0 %}
+                {{ 'No season'|trans }}
+            {% elseif seasons == 1 %}
+                {{ '1 season'|trans }}
+            {% else %}
+                {{ '%count% seasons'|trans({'%count%': seasons}) }}
+            {% endif %}
+        </span>
+    </div>
+    <div class="wrapper">
+        <h2 class="title {{ title_icon }}" title="{{ title_icon_title|e('html_attr') }}">{{ serie.title }}</h2>
+        <div class="duration">
+            {{ time_runtime(runtime) }}
+        </div>
+    </div>
+</a>

@@ -4,12 +4,11 @@ namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\HttpErrorLogs;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<HttpErrorLogs>
+ * @extends RepositoryAbstract<HttpErrorLogs>
  */
-class HttpErrorLogsRepository extends ServiceEntityRepositoryLib
+class HttpErrorLogsRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
@@ -30,7 +29,7 @@ class HttpErrorLogsRepository extends ServiceEntityRepositoryLib
         $queryBuilder->orderBy('nbr', 'DESC');
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'http-error-logs-ip-nbr-' . $nbr);
+        $query->enableResultCache(3600, 'http-error-logs-ip-nbr-'.$nbr);
 
         return $query->getResult();
     }

@@ -2,11 +2,17 @@
 
 namespace Labstag\Paragraph;
 
+use Labstag\Entity\Block;
+use Labstag\Entity\Edito;
+use Labstag\Entity\MapParagraph as EntityMapParagraph;
+use Labstag\Entity\Memo;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
+use Labstag\Entity\Post;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class MapParagraph extends ParagraphLib
+class MapParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -24,10 +30,15 @@ class MapParagraph extends ParagraphLib
         );
     }
 
-    #[Override]
-    public function getName(): string
+    public function getClass(): string
     {
-        return 'Map';
+        return EntityMapParagraph::class;
+    }
+
+    #[Override]
+    public function getName(): TranslatableMessage
+    {
+        return new TranslatableMessage('Map');
     }
 
     #[Override]
@@ -36,12 +47,15 @@ class MapParagraph extends ParagraphLib
         return 'map';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return $this->useInAll();
+        if (is_null($object)) {
+            return true;
+        }
+
+        $inArray = in_array($object::class, [Block::class, Edito::class, Memo::class, Page::class, Post::class]);
+
+        return $inArray || $object instanceof Block;
     }
 }

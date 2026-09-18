@@ -3,19 +3,23 @@
 namespace Labstag\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use Exception;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
+use Labstag\Api\IgdbApi;
+use Labstag\Entity\Group;
+use Labstag\Entity\Permission;
+use Labstag\Message\ClearCacheMessage;
+use Labstag\Message\DeleteOldFileMessage;
+use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\FileService;
+use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
+use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -27,6 +31,8 @@ class BackController extends AbstractController
         protected FileService $fileService,
         protected WorkflowService $workflowService,
         protected SiteService $siteService,
+        protected IgdbApi $igdbApi,
+        private readonly MessageDispatcherService $messageDispatcherService,
     )
     {
     }
@@ -46,28 +52,10 @@ class BackController extends AbstractController
         name: 'admin_cacheclear',
         defaults: ['_locale' => 'fr']
     )]
-    public function cacheclear(KernelInterface $kernel, Request $request): Response
+    public function cacheclear(Request $request): Response
     {
-        $total = $this->fileService->deletedFileByEntities();
-        if (0 !== $total) {
-            $this->addFlash(
-                'success',
-                new TranslatableMessage(
-                    '%total% file(s) deleted',
-                    ['%total%' => $total]
-                )
-            );
-        }
-
-        // execution de la commande en console
-        $application = new Application($kernel);
-        $application->setAutoExit(false);
-
-        $arrayInput = new ArrayInput(['cache:clear']);
-
-        $bufferedOutput = new BufferedOutput();
-        $application->run($arrayInput, $bufferedOutput);
-
+        $this->messageDispatcherService->dispatch(new ClearCacheMessage());
+        $this->messageDispatcherService->dispatch(new DeleteOldFileMessage());
         $this->addFlash('success', new TranslatableMessage('Cache cleared'));
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
@@ -98,8 +86,8 @@ class BackController extends AbstractController
         }
 
         $routeName = $request->query->get('routeName');
-        $entity    = $request->attributes->get('entity', null);
-        $uuid      = $request->attributes->get('uuid', null);
+        $entity    = $request->attributes->get('entity');
+        $uuid      = $request->attributes->get('uuid');
         match ($routeName) {
             'admin_restore' => $this->adminRestore($entity, $uuid),
             'admin_empty'   => $this->adminEmpty($entity),
@@ -107,6 +95,67 @@ class BackController extends AbstractController
         };
 
         return $this->redirect($referer);
+    }
+
+    #[Route(
+        '/admin/{_locale}/permission',
+        name: 'admin_permission',
+        defaults: ['_locale' => 'fr']
+    )]
+    public function permission(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            $groupId      = $request->query->get('groupId');
+            $permissionId = $request->query->get('permissionId');
+
+            $group      = $this->getRepository(Group::class)->find($groupId);
+            $permission = $this->getRepository(Permission::class)->find($permissionId);
+
+            if (!$group || !$permission) {
+                return $this->json(
+                    [
+                        'success' => false,
+                        'message' => 'Group or Permission not found',
+                    ],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+
+            $permissions = $group->getPermissions();
+            match ($permissions->contains($permission)) {
+                true  => $group->removePermission($permission),
+                false => $group->addPermission($permission),
+            };
+
+            $this->getRepository(Group::class)->save($group);
+
+            return $this->json(
+                ['success' => true]
+            );
+        }
+
+        $permissions = $this->getRepository(Permission::class)->findBy(
+            [],
+            ['title' => 'ASC']
+        );
+        $groups = $this->getRepository(Group::class)->findAll();
+        $data   = [];
+        foreach ($permissions as $permission) {
+            [
+                $group,
+                $code,
+            ]                    = explode('_', (string) $permission->getTitle(), 2);
+            $data[$group][$code] = $permission;
+        }
+
+        return $this->render(
+            'admin/permission.html.twig',
+            [
+                'assets' => Asset::fromEasyAdminAssetPackage('field-boolean.js'),
+                'data'   => $data,
+                'groups' => $groups,
+            ]
+        );
     }
 
     #[Route(
@@ -121,30 +170,38 @@ class BackController extends AbstractController
             return $this->redirectToRoute('admin');
         }
 
-        $entity     = $request->query->get('entity', null);
-        $transition = $request->query->get('transition', null);
-        $uid        = $request->query->get('uid', null);
+        $entity     = $request->query->get('entity');
+        $transition = $request->query->get('transition');
+        $uid        = $request->query->get('uid');
 
         $this->workflowService->change($entity, $transition, $uid);
 
         return $this->redirect($referer);
     }
 
-    protected function adminEmpty(string $entity): void
+    protected function adminEmpty(string $object): void
     {
-        $serviceEntityRepositoryLib = $this->getRepository($entity);
-        $all                        = $serviceEntityRepositoryLib->findDeleted();
-        foreach ($all as $row) {
-            $serviceEntityRepositoryLib->remove($row);
+        $reflectionClass    = new ReflectionClass($object);
+        $parentClass        = $reflectionClass->getParentClass();
+        $repositoryAbstract = $this->getRepository($object);
+        $class              = null;
+        if ($parentClass instanceof ReflectionClass) {
+            $repositoryAbstract = $this->getRepository($parentClass->getName());
+            $class              = $object;
         }
 
-        $serviceEntityRepositoryLib->flush();
+        $all = $repositoryAbstract->findDeleted($class);
+        foreach ($all as $row) {
+            $repositoryAbstract->remove($row);
+        }
+
+        $repositoryAbstract->flush();
     }
 
     protected function adminRestore(string $entity, mixed $uuid): void
     {
-        $serviceEntityRepositoryLib = $this->getRepository($entity);
-        $data                       = $serviceEntityRepositoryLib->find($uuid);
+        $repositoryAbstract              = $this->getRepository($entity);
+        $data                            = $repositoryAbstract->find($uuid);
         if (is_null($data)) {
             throw new Exception(new TranslatableMessage('Data not found'));
         }
@@ -155,18 +212,23 @@ class BackController extends AbstractController
 
         if ($data->isDeleted()) {
             $data->setDeletedAt(null);
+            if (method_exists($data, 'getMeta')) {
+                $meta = $data->getMeta();
+                $this->adminRestore($meta::class, $meta->getId());
+            }
+
             $this->entityManager->persist($data);
             $this->entityManager->flush();
         }
     }
 
     /**
-     * @return ServiceEntityRepositoryLib<object>
+     * @return RepositoryAbstract<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryLib
+    protected function getRepository(string $entity): object
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+        if (is_null($entityRepository)) {
             throw new Exception('Repository not found');
         }
 

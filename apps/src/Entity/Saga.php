@@ -9,55 +9,98 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\SagaRepository;
+use Labstag\SlugHandler\SagaSlugHandler;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: SagaRepository::class)]
 #[Vich\Uploadable]
+#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[ORM\Index(name: 'IDX_SAGA_SLUG', columns: ['slug'])]
-class Saga implements Stringable
+class Saga implements Stringable, EntityWithParagraphsInterface
 {
+    use SoftDeleteableEntity;
     use TimestampableTrait;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $backdrop = null;
+
+    #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'backdrop')]
+    protected ?File $backdropFile = null;
+
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    protected ?string $description = null;
+
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    protected ?bool $enable = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
-
-    #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    #[ORM\OneToOne(inversedBy: 'saga', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Movie>
      */
     #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: 'saga')]
-    private Collection $movies;
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    #[ORM\OrderBy(
+        ['releaseDate' => 'ASC']
+    )]
+    protected Collection $movies;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
-    private ?string $slug = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'saga',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    protected Collection $paragraphs;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tmdb = null;
+    protected ?string $poster = null;
+
+    #[Vich\UploadableField(mapping: 'saga', fileNameProperty: 'poster')]
+    protected ?File $posterFile = null;
+
+    #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]
+    #[Gedmo\SlugHandler(class: SagaSlugHandler::class)]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
+    protected ?string $slug = null;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $tmdb = null;
 
     public function __construct()
     {
-        $this->movies = new ArrayCollection();
+        $this->movies          = new ArrayCollection();
+        $this->paragraphs      = new ArrayCollection();
     }
 
     #[Override]
@@ -76,6 +119,26 @@ class Saga implements Stringable
         return $this;
     }
 
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setSaga($this);
+        }
+
+        return $this;
+    }
+
+    public function getBackdrop(): ?string
+    {
+        return $this->backdrop;
+    }
+
+    public function getBackdropFile(): ?File
+    {
+        return $this->backdropFile;
+    }
+
     public function getDescription(): ?string
     {
         return $this->description;
@@ -86,14 +149,9 @@ class Saga implements Stringable
         return $this->id;
     }
 
-    public function getImg(): ?string
+    public function getMeta(): ?Meta
     {
-        return $this->img;
-    }
-
-    public function getImgFile(): ?File
-    {
-        return $this->imgFile;
+        return $this->meta;
     }
 
     /**
@@ -102,6 +160,24 @@ class Saga implements Stringable
     public function getMovies(): Collection
     {
         return $this->movies;
+    }
+
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
+    public function getPoster(): ?string
+    {
+        return $this->poster;
+    }
+
+    public function getPosterFile(): ?File
+    {
+        return $this->posterFile;
     }
 
     public function getSlug(): ?string
@@ -119,14 +195,51 @@ class Saga implements Stringable
         return $this->tmdb;
     }
 
+    public function isEnable(): ?bool
+    {
+        return $this->enable;
+    }
+
     public function removeMovie(Movie $movie): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->movies->removeElement($movie) && $movie->getSaga() === $this) {
+        if ($this->movies->removeElement($movie) && $movie->getSaga() === $this
+        ) {
             $movie->setSaga(null);
         }
 
         return $this;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getSaga() === $this
+        ) {
+            $paragraph->setStory(null);
+        }
+
+        return $this;
+    }
+
+    public function setBackdrop(?string $backdrop): void
+    {
+        $this->backdrop = $backdrop;
+
+        if (null === $backdrop) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setBackdropFile(?File $backdropFile = null): void
+    {
+        $this->backdropFile = $backdropFile;
+
+        if ($backdropFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setDescription(?string $description): static
@@ -136,21 +249,34 @@ class Saga implements Stringable
         return $this;
     }
 
-    public function setImg(?string $img): void
+    public function setEnable(bool $enable): static
     {
-        $this->img = $img;
+        $this->enable = $enable;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
-        if (null === $img) {
+        return $this;
+    }
+
+    public function setMeta(Meta $meta): static
+    {
+        $this->meta = $meta;
+
+        return $this;
+    }
+
+    public function setPoster(?string $poster): void
+    {
+        $this->poster = $poster;
+
+        if (null === $poster) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }
     }
 
-    public function setImgFile(?File $imgFile = null): void
+    public function setPosterFile(?File $posterFile = null): void
     {
-        $this->imgFile = $imgFile;
+        $this->posterFile = $posterFile;
 
-        if ($imgFile instanceof File) {
+        if ($posterFile instanceof File) {
             // It is required that at least one field changes if you are using doctrine
             // otherwise the event listeners won't be called and the file is lost
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());

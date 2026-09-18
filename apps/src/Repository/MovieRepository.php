@@ -6,13 +6,13 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Movie;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
+use Labstag\Entity\Saga;
 use Symfony\Component\Intl\Countries;
 
 /**
- * @extends ServiceEntityRepositoryLib<Movie>
+ * @extends RepositoryAbstract<Movie>
  */
-class MovieRepository extends ServiceEntityRepositoryLib
+class MovieRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
@@ -89,7 +89,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'movies-last-' . $nbr);
+        $query->enableResultCache(3600, 'movies-last-'.$nbr);
 
         return $query->getResult();
     }
@@ -109,6 +109,64 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $query->enableResultCache(3600, 'movies-not-in-imdb-list');
 
         return $query->getResult();
+    }
+
+    public function getAllActivate(): mixed
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->where('m.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        $queryBuilder->orderBy('m.createdAt', 'DESC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-activate');
+
+        return $query->getResult();
+    }
+
+    public function getAllActivateBySaga(Saga $saga): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->where('m.enable = :enable');
+        $queryBuilder->setParameter('enable', true);
+        $queryBuilder->andWhere('m.saga = :saga');
+        $queryBuilder->setParameter('saga', $saga);
+        $queryBuilder->orderBy('m.releaseDate', 'ASC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-activate-by-saga-'.$saga->getId());
+
+        return $query->getResult();
+    }
+
+    public function getAllJsonFields(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->select('m.json');
+
+        $rows = $queryBuilder->getQuery()->getScalarResult();
+
+        return array_column($rows, 'json');
+    }
+
+    public function getAllJsonTmdb(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->select('m.tmdb');
+
+        $rows = $queryBuilder->getQuery()->getScalarResult();
+
+        return array_column($rows, 'tmdb');
+    }
+
+    public function getAllTmdb(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->select('m.tmdb');
+
+        $result = $queryBuilder->getQuery()->getArrayResult();
+
+        return array_column($result, 'tmdb');
     }
 
     public function getCertifications(): array
@@ -133,6 +191,32 @@ class MovieRepository extends ServiceEntityRepositoryLib
         return $certifications;
     }
 
+    public function getCountries(): array
+    {
+        $queryBuilder = $this->createQueryBuilder('m');
+        $queryBuilder->select('DISTINCT m.countries');
+        $queryBuilder->orderBy('m.countries', 'ASC');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'movies-unique-countries');
+
+        $data           = $query->getSingleColumnResult();
+        $countries      = [];
+        foreach ($data as $value) {
+            if (!is_null($value) && '' !== $value) {
+                $decoded = json_decode((string) $value);
+                foreach ($decoded as $country) {
+                    $name             = Countries::getName($country);
+                    $countries[$name] = $country;
+                }
+            }
+        }
+
+        ksort($countries);
+
+        return $countries;
+    }
+
     /**
      * @param array<string, mixed> $query
      */
@@ -149,7 +233,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $this->getQueryBuilderCategories($queryBuilder, $query);
         $this->getQueryBuilderYear($queryBuilder, $query);
 
-        return $queryBuilder->orderBy('m.' . $query['order'], $query['orderby']);
+        return $queryBuilder->orderBy('m.'.$query['order'], $query['orderby']);
     }
 
     /**
@@ -162,7 +246,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         $queryBuilder = $this->getQueryBuilder($query);
         $query        = $queryBuilder->getQuery();
         $dql          = $query->getDQL();
-        $query->enableResultCache(3600, 'movies-query-paginator-' . md5((string) $dql));
+        $query->enableResultCache(3600, 'movies-query-paginator-'.md5((string) $dql));
 
         return $query;
     }
@@ -216,7 +300,7 @@ class MovieRepository extends ServiceEntityRepositoryLib
         }
 
         $queryBuilder->andWhere('m.title LIKE :title');
-        $queryBuilder->setParameter('title', '%' . $query['title'] . '%');
+        $queryBuilder->setParameter('title', '%'.$query['title'].'%');
     }
 
     /**

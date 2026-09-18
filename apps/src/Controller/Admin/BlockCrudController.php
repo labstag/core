@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -14,57 +15,86 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Block;
+use Labstag\Filter\DiscriminatorTypeFilter;
 use Labstag\Repository\BlockRepository;
+use LogicException;
+use Override;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class BlockCrudController extends AbstractCrudControllerLib
+class BlockCrudController extends CrudControllerAbstract
 {
-    /**
-     * @return mixed[]
-     */
-    public function addFieldParagraphsForBlock(?Block $block, string $pageName): array
-    {
-        if ('edit' === $pageName && $block instanceof Block) {
-            if (in_array($block->getType(), ['paragraphs', 'content'])) {
-                return $this->crudFieldFactory->paragraphFields($pageName);
-            }
-
-            return [];
-        }
-
-        return $this->crudFieldFactory->paragraphFields($pageName);
-    }
-
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
+
         $action = Action::new('positionBlock', new TranslatableMessage('Change Position'), 'fas fa-arrows-alt');
-        $action->displayAsLink();
+        $action->renderAsLink();
         $action->linkToCrudAction('positionBlock');
         $action->createAsGlobalAction();
 
-        $actions->add(Crud::PAGE_INDEX, $action);
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-        return $actions;
+        $action = Action::new('showModalBlock', new TranslatableMessage('New block'));
+        $action->linkToCrudAction('showModalBlock');
+        $action->setHtmlAttributes(
+            ['data-action' => 'show-modal']
+        );
+        $action->createAsGlobalAction();
+
+        $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
+
+        return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setEntityLabelInSingular(new TranslatableMessage('Block'));
+        $crud->setEntityLabelInSingular(
+            function ($block, ?string $pageName): TranslatableMessage {
+                unset($pageName);
+                if (is_null($block)) {
+                    $request = $this->requestStack->getCurrentRequest();
+
+                    $type = $request->query->get('type');
+                    if (is_null($type)) {
+                        return new TranslatableMessage('Block');
+                    }
+
+                    $classe = $this->blockService->getByCode($type);
+                    if (!is_object($classe)) {
+                        return new TranslatableMessage('Block');
+                    }
+
+                    $name = $classe->getName();
+
+                    return new TranslatableMessage(
+                        'Block %name%',
+                        ['%name%' => $name]
+                    );
+                }
+
+                $name = $this->blockService->getName($block);
+
+                return new TranslatableMessage(
+                    'Block %name%',
+                    ['%name%' => $name]
+                );
+            }
+        );
         $crud->setEntityLabelInPlural(new TranslatableMessage('Blocks'));
         $crud->setDefaultSort(
             ['title' => 'ASC']
@@ -73,68 +103,107 @@ class BlockCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        yield $this->addTabPrincipal();
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: false,
-            withImage: false
-        ) as $field) {
-            yield $field;
-        }
 
-        yield ChoiceField::new('region', new TranslatableMessage('Region'))->setChoices(
-            $this->blockService->getRegions()
-        );
-        $numberField = NumberField::new('position', new TranslatableMessage('Position'))->hideOnForm();
-        yield $numberField;
-        $allTypes = array_flip($this->blockService->getAll(null));
-        yield $this->getChoiceType($pageName, $allTypes);
-        $fields = array_merge(
-            $this->addFieldParagraphsForBlock($currentEntity, $pageName),
-            $this->blockService->getFields($currentEntity, $pageName)
-        );
-        foreach ($fields as $field) {
-            yield $field;
-        }
+        $regionField = ChoiceField::new('region', new TranslatableMessage('Region'));
+        $regionField->setChoices($this->blockService->getRegions());
 
-        yield FormField::addTab(new TranslatableMessage('Config'));
+        $numberField = NumberField::new('position', new TranslatableMessage('Position'));
+        $numberField->hideOnForm();
+
+        $fields      = [
+            $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
+            $this->crudFieldFactory->titleField(),
+            $regionField,
+            $numberField,
+        ];
+
+        $this->crudFieldFactory->addFieldsToTab('principal', $fields);
+
+        $this->crudFieldFactory->setTabOther();
+        $this->crudFieldFactory->addFieldsToTab('other', $this->blockService->getFields($currentEntity, $pageName));
+
+        $this->crudFieldFactory->setTabConfig();
+
         $choiceField = ChoiceField::new('roles', new TranslatableMessage('Roles'));
         $choiceField->hideOnIndex();
         $choiceField->allowMultipleChoices();
         $choiceField->setChoices($this->userService->getRoles());
-        yield $choiceField;
+
         $textareaField = TextareaField::new('pages', new TranslatableMessage('Pages'));
         $textareaField->setHelp(new TranslatableMessage('Separate pages with commas'));
         $textareaField->hideOnIndex();
-        yield $textareaField;
+
         $requestPathField = ChoiceField::new('request_path', new TranslatableMessage('Request Path'));
         $requestPathField->renderExpanded();
         $requestPathField->hideOnIndex();
         $requestPathField->setRequired(true);
+
+        $message1 = new TranslatableMessage('Show for listed pages');
+        $message2 = new TranslatableMessage('Hide for listed pages');
         $requestPathField->setChoices(
             [
-                (string) new TranslatableMessage('Show for listed pages') => '0',
-                (string) new TranslatableMessage('Hide for listed pages') => '1',
+                $this->translator->trans($message1->getMessage(), $message1->getParameters()) => '0',
+                $this->translator->trans($message2->getMessage(), $message2->getParameters()) => '1',
             ]
         );
-        yield $requestPathField;
-        yield TextField::new('classes', new TranslatableMessage('classes'))->hideOnIndex();
+        $this->crudFieldFactory->addFieldsToTab(
+            'config',
+            [
+                $choiceField,
+                $textareaField,
+                $requestPathField,
+                TextField::new('classes', new TranslatableMessage('classes'))->hideOnIndex(),
+            ]
+        );
+
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         $this->crudFieldFactory->addFilterEnable($filters);
+        $types = $this->blockService->getAll(null);
+        if ([] == $types) {
+            return $filters;
+        }
+
+        $translatableMessage         = new TranslatableMessage('Type');
+        $discriminatorTypeFilter     = DiscriminatorTypeFilter::new('type', $translatableMessage->getMessage());
+        $discriminatorTypeFilter->setBlockService($this->blockService);
+        $discriminatorTypeFilter->setChoices(
+            array_merge(
+                ['' => ''],
+                $types
+            )
+        );
+
+        $filters->add($discriminatorTypeFilter);
 
         return $filters;
     }
 
-    #[\Override]
+    #[Override]
+    public function createEntity(string $entityFqcn): object
+    {
+        unset($entityFqcn);
+        $request = $this->requestStack->getCurrentRequest();
+
+        $type   = $request->query->get('type');
+        $classe = $this->blockService->getClasseByCode($type);
+        if (is_null($type)) {
+            throw new LogicException('Impossible de créer un Block sans type.');
+        }
+
+        return new $classe();
+    }
+
+    #[Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
@@ -142,19 +211,27 @@ class BlockCrudController extends AbstractCrudControllerLib
         FilterCollection $filterCollection,
     ): QueryBuilder
     {
-        unset($searchDto, $entityDto, $fieldCollection, $filterCollection);
-        $serviceEntityRepositoryLib = $this->getRepository();
-        if (!$serviceEntityRepositoryLib instanceof BlockRepository) {
-            throw new Exception('findAllOrderedByRegion not found');
+        // Use the parent query builder so EasyAdmin can apply search and filters (including DiscriminatorTypeFilter)
+        $queryBuilder = parent::createIndexQueryBuilder(
+            $searchDto,
+            $entityDto,
+            $fieldCollection,
+            $filterCollection
+        );
+
+        $repositoryAbstract = $this->getRepository();
+        $methods            = get_class_methods($repositoryAbstract);
+        if (in_array('findAllOrderedByRegion', $methods)) {
+            $repositoryAbstract->findAllOrderedByRegion($queryBuilder);
         }
 
-        return $serviceEntityRepositoryLib->findAllOrderedByRegion();
+        return $queryBuilder;
     }
 
     /**
      * @return FormBuilderInterface<mixed>
      */
-    #[\Override]
+    #[Override]
     public function createNewFormBuilder(
         EntityDto $entityDto,
         KeyValueStore $keyValueStore,
@@ -171,21 +248,35 @@ class BlockCrudController extends AbstractCrudControllerLib
         return Block::class;
     }
 
-    public function positionBlock(AdminContext $adminContext): RedirectResponse|Response
+    #[AdminRoute]
+    public function newBlock(): Response
     {
-        $request                    = $adminContext->getRequest();
-        $serviceEntityRepositoryLib = $this->getRepository();
-        if (!$serviceEntityRepositoryLib instanceof BlockRepository) {
+        $blocks = $this->blockService->getAll(null);
+
+        return $this->render(
+            'admin/block/new.html.twig',
+            [
+                'controller' => static::class,
+                'blocks'     => $blocks,
+            ]
+        );
+    }
+
+    #[AdminRoute]
+    public function positionBlock(Request $request): RedirectResponse|Response
+    {
+        $repositoryAbstract              = $this->getRepository();
+        if (!$repositoryAbstract instanceof BlockRepository) {
             throw new Exception('findAllOrderedByRegion not found');
         }
 
-        $queryBuilder = $serviceEntityRepositoryLib->findAllOrderedByRegion();
+        $queryBuilder = $repositoryAbstract->createQueryBuilder('b');
+        $repositoryAbstract->findAllOrderedByRegion($queryBuilder);
         $query        = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'block-position');
 
         $blocks    = $query->getResult();
         $generator = $this->container->get(AdminUrlGenerator::class);
-
         if ($request->isMethod('POST')) {
             $allTypes = $this->blockService->getRegions();
             foreach ($allTypes as $allType) {
@@ -195,20 +286,21 @@ class BlockCrudController extends AbstractCrudControllerLib
                 }
 
                 foreach ($data as $id => $position) {
-                    $entity = $serviceEntityRepositoryLib->find($id);
+                    $entity = $repositoryAbstract->find($id);
                     if (!$entity instanceof Block) {
                         continue;
                     }
 
                     $entity->setPosition($position);
-                    $serviceEntityRepositoryLib->persist($entity);
+                    $repositoryAbstract->persist($entity);
                 }
             }
 
-            $serviceEntityRepositoryLib->flush();
+            $repositoryAbstract->flush();
             $this->addFlash('success', new TranslatableMessage('Position updated'));
 
-            $url = $generator->setController(static::class)->setAction(Action::INDEX)->generateUrl();
+            $url = $generator->setController(static::class);
+            $url = $url->setAction(Action::INDEX)->generateUrl();
 
             return $this->redirect($url);
         }
@@ -219,23 +311,18 @@ class BlockCrudController extends AbstractCrudControllerLib
         );
     }
 
-    /**
-     * @param mixed[] $allTypes
-     */
-    private function getChoiceType(string $pageName, array $allTypes): ChoiceField|TextField
+    #[AdminRoute]
+    public function showModalBlock(): Response
     {
-        if ('new' === $pageName) {
-            $field = ChoiceField::new('type', new TranslatableMessage('Type'));
-            $field->setChoices(array_flip($allTypes));
+        $blocks = $this->blockService->getAll(null);
 
-            return $field;
-        }
-
-        $field = TextField::new('type', new TranslatableMessage('Type'));
-        $field->formatValue(static fn ($value) => $allTypes[$value] ?? null);
-        $field->setDisabled(true);
-
-        return $field;
+        return $this->render(
+            'admin/block/new.html.twig',
+            [
+                'controller' => static::class,
+                'blocks'     => $blocks,
+            ]
+        );
     }
 
     private function setPosition(): callable
@@ -247,14 +334,14 @@ class BlockCrudController extends AbstractCrudControllerLib
                 return;
             }
 
-            $data                       = $event->getData();
-            $serviceEntityRepositoryLib = $this->getRepository();
-            $region                     = $form->get('region')->getData();
-            if (is_null($region) || !$serviceEntityRepositoryLib instanceof BlockRepository) {
+            $data                            = $event->getData();
+            $repositoryAbstract              = $this->getRepository();
+            $region                          = $form->get('region')->getData();
+            if (is_null($region) || !$repositoryAbstract instanceof BlockRepository) {
                 return;
             }
 
-            $maxPosition = $serviceEntityRepositoryLib->getMaxPositionByRegion($region);
+            $maxPosition = $repositoryAbstract->getMaxPositionByRegion($region);
             if (is_null($maxPosition)) {
                 $maxPosition = 0;
             }

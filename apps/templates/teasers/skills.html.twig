@@ -1,0 +1,12 @@
+<div class="wrapper">
+    <h3 class="title">
+        {{ item.title }}
+    </h3>
+    <div class="list-skills">
+        {% for skill in item.skills %}
+            <span class="icon-{{ skill.icon }}">
+                {{ skill.title }}
+            </span>
+        {% endfor %}
+    </div>
+</div>

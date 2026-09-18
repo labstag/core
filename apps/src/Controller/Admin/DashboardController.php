@@ -3,6 +3,7 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -13,14 +14,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Controller\Admin\Factory\MenuItemFactory;
+use Labstag\Entity\Configuration;
+use Labstag\Entity\Memo;
 use Labstag\Entity\User;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 use Labstag\Repository\ConfigurationRepository;
+use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
+use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
+use Override;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -30,6 +35,7 @@ class DashboardController extends AbstractDashboardController
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
+        protected ParagraphService $paragraphService,
         protected ConfigurationService $configurationService,
         protected ConfigurationRepository $configurationRepository,
         protected UserService $userService,
@@ -41,13 +47,13 @@ class DashboardController extends AbstractDashboardController
     {
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(): Crud
     {
         return Crud::new()->setFormThemes(['admin/form.html.twig', '@EasyAdmin/crud/form_theme.html.twig']);
     }
 
-    #[\Override]
+    #[Override]
     public function configureDashboard(): Dashboard
     {
         $data      = $this->configurationService->getConfiguration();
@@ -60,13 +66,19 @@ class DashboardController extends AbstractDashboardController
         return $dashboard;
     }
 
-    #[\Override]
+    #[Override]
     public function configureMenuItems(): iterable
     {
         $categories = $this->menuItemFactory->createCategoryMenuItems();
         $tags       = $this->menuItemFactory->createTagMenuItems();
         // Dashboard home
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
+        $translatableMessage = new TranslatableMessage('Notifications'); 
+        yield MenuItem::linkTo(
+            NotificationCrudController::class,
+            $translatableMessage->getMessage(),
+            'fas fa-bell'
+        );
 
         // Shared taxonomy items (categories / tags) used in several content sub-menus
         $fieldsTAbs = [
@@ -95,7 +107,7 @@ class DashboardController extends AbstractDashboardController
         yield from $this->buildUtilityMenus();
     }
 
-    #[\Override]
+    #[Override]
     public function configureUserMenu(UserInterface $user): UserMenu
     {
         $userMenu = parent::configureUserMenu($user);
@@ -123,7 +135,7 @@ class DashboardController extends AbstractDashboardController
         $avatar = $user->getAvatar();
         if ('' != $avatar) {
             $basePath = $this->fileService->getBasePath($user, 'avatarFile');
-            $userMenu->setAvatarUrl($basePath . '/' . $avatar);
+            $userMenu->setAvatarUrl($basePath.'/'.$avatar);
 
             return $userMenu;
         }
@@ -133,27 +145,45 @@ class DashboardController extends AbstractDashboardController
         return $userMenu;
     }
 
-    #[\Override]
+    #[Override]
     public function index(): Response
     {
-        return $this->render('admin/dashboard.html.twig', []);
+        $repositoryAbstract = $this->getRepository(Memo::class);
+        $memos              = $repositoryAbstract->findBy(
+            ['enable' => true]
+        );
+
+        $paragraphs = [];
+        foreach ($memos as $memo) {
+            $idMemo     = $memo->getId();
+            $paragraphs = $memo->getParagraphs()->getValues();
+            $paragraphs[$idMemo] = $this->paragraphService->generate($paragraphs, [], false);
+        }
+
+        return $this->render(
+            'admin/dashboard.html.twig',
+            [
+                'paragraphs' => $paragraphs,
+                'memos'      => $memos,
+            ]
+        );
     }
 
     protected function adminEmpty(string $entity): void
     {
-        $serviceEntityRepositoryLib = $this->getRepository($entity);
-        $all                        = $serviceEntityRepositoryLib->findDeleted();
+        $repositoryAbstract              = $this->getRepository($entity);
+        $all                             = $repositoryAbstract->findDeleted();
         foreach ($all as $row) {
-            $serviceEntityRepositoryLib->remove($row);
+            $repositoryAbstract->remove($row);
         }
 
-        $serviceEntityRepositoryLib->flush();
+        $repositoryAbstract->flush();
     }
 
     protected function adminRestore(string $entity, mixed $uuid): void
     {
-        $serviceEntityRepositoryLib = $this->getRepository($entity);
-        $data                       = $serviceEntityRepositoryLib->find($uuid);
+        $repositoryAbstract              = $this->getRepository($entity);
+        $data                            = $repositoryAbstract->find($uuid);
         if (is_null($data)) {
             throw new Exception(new TranslatableMessage('Data not found'));
         }
@@ -170,12 +200,12 @@ class DashboardController extends AbstractDashboardController
     }
 
     /**
-     * @return ServiceEntityRepositoryLib<object>
+     * @return RepositoryAbstract<object>
      */
-    protected function getRepository(string $entity): ServiceEntityRepositoryLib
+    protected function getRepository(string $entity): object
     {
         $entityRepository = $this->entityManager->getRepository($entity);
-        if (!$entityRepository instanceof ServiceEntityRepositoryLib) {
+        if (is_null($entityRepository)) {
             throw new Exception('Repository not found');
         }
 
@@ -191,7 +221,7 @@ class DashboardController extends AbstractDashboardController
      */
     private function buildConfigurationMenuItem(): ?object
     {
-        $configurations = $this->configurationRepository->findAll();
+        $configurations = $this->getRepository(Configuration::class)->findAll();
         $configuration  = $configurations[0] ?? null;
         if (!$configuration) {
             return null;
@@ -202,7 +232,10 @@ class DashboardController extends AbstractDashboardController
         $generator->setController(ConfigurationCrudController::class);
         $generator->setEntityId($configuration->getId());
 
-        return MenuItem::linkToUrl(new TranslatableMessage('Options'), 'fas fa-cog', $generator->generateUrl());
+        $linkToUrl = MenuItem::linkToUrl(new TranslatableMessage('Options'), 'fas fa-cog', $generator->generateUrl());
+        $linkToUrl->setPermission('ROLE_SUPER_ADMIN');
+
+        return $linkToUrl;
     }
 
     /**
@@ -216,81 +249,126 @@ class DashboardController extends AbstractDashboardController
     private function buildContentMenus(array $categories, array $tags): iterable
     {
         // Definition: identifier, label, icon, controller, categories?, tags?, extra children
+        $translatableStoryMessage = new TranslatableMessage('Story');
+        $translatableChapterMessage = new TranslatableMessage('Chapter');
+        $translatableMovieMessage = new TranslatableMessage('Movie');
+        $translatableSagasMessage = new TranslatableMessage('Sagas');
+        $translatableSerieMessage = new TranslatableMessage('Serie');
+        $translatableSeasonMessage = new TranslatableMessage('Season');
+        $translatableEpisodeMessage = new TranslatableMessage('Episode'); 
+        $translatableGameMessage = new TranslatableMessage('Game');
+        $translatablePlatformMessage = new TranslatableMessage('Platform');
+        $translatableFranchiseMessage = new TranslatableMessage('Franchise');
+        $translatablePageMessage = new TranslatableMessage('Page');
+        $translatablePostMessage = new TranslatableMessage('Post');
         $definitions = [
             [
                 'story',
-                new TranslatableMessage('Story'),
+                $translatableStoryMessage->getMessage(),
                 'fas fa-landmark',
                 StoryCrudController::class,
                 $categories,
                 $tags,
                 [],
+                false,
             ],
             [
                 'chapter',
-                new TranslatableMessage('Chapter'),
+                $translatableChapterMessage->getMessage(),
                 'fas fa-landmark',
                 ChapterCrudController::class,
                 null,
-                $tags,
+                null,
                 [],
+                false,
             ],
             [
                 'movie',
-                new TranslatableMessage('Movie'),
+                $translatableMovieMessage->getMessage(),
                 'fas fa-film',
                 MovieCrudController::class,
                 $categories,
                 null,
                 [
-                    MenuItem::linkToCrud(
-                        new TranslatableMessage('Sagas'),
-                        'fas fa-video',
-                        SagaCrudController::getEntityFqcn()
+                    MenuItem::linkTo(
+                        SagaCrudController::class,
+                        $translatableSagasMessage->getMessage(),
+                        'fas fa-video'
                     ),
                 ],
+                true,
             ],
             [
                 'serie',
-                new TranslatableMessage('Serie'),
+                $translatableSerieMessage->getMessage(),
                 'fas fa-film',
                 SerieCrudController::class,
                 $categories,
                 null,
                 [
-                    MenuItem::linkToCrud(
-                        new TranslatableMessage('Season'),
-                        'fas fa-video',
-                        SeasonCrudController::getEntityFqcn()
+                    MenuItem::linkTo(
+                        SeasonCrudController::class,
+                        $translatableSeasonMessage->getMessage(),
+                        'fas fa-video'
+                    ),
+                    MenuItem::linkTo(
+                        EpisodeCrudController::class,
+                        $translatableEpisodeMessage->getMessage(),
+                        'fas fa-video'
                     ),
                 ],
+                true,
+            ],
+            [
+                'game',
+                $translatableGameMessage->getMessage(),
+                'fas fa-gamepad',
+                GameCrudController::class,
+                $categories,
+                null,
+                [
+                    MenuItem::linkTo(
+                        PlatformCrudController::class,
+                        $translatablePlatformMessage->getMessage(),
+                        'fas fa-desktop'
+                    ),
+                    MenuItem::linkTo(
+                        FranchiseCrudController::class,
+                        $translatableFranchiseMessage->getMessage(),
+                        'fas fa-th-large'
+                    ),
+                ],
+                true,
             ],
             [
                 'page',
-                new TranslatableMessage('Page'),
+                $translatablePageMessage->getMessage(),
                 'fas fa-columns',
                 PageCrudController::class,
                 $categories,
                 $tags,
                 [],
+                false,
             ],
             [
                 'post',
-                new TranslatableMessage('Post'),
+                $translatablePostMessage->getMessage(),
                 'fas fa-newspaper',
                 PostCrudController::class,
                 $categories,
                 $tags,
                 [],
+                false,
             ],
         ];
 
-        foreach ($definitions as [$code, $label, $icon, $controller, $cats, $tgs, $children]) {
+        foreach ($definitions as [$code, $label, $icon, $controller, $cats, $tgs, $children, $disableAdd]) {
             yield $this->menuItemFactory->createContentSubMenu(
                 $code,
                 $label,
                 $icon,
                 $controller,
+                $disableAdd,
                 $cats,
                 $tgs,
                 $children
@@ -308,70 +386,96 @@ class DashboardController extends AbstractDashboardController
     {
         $items = [
             [
+                new TranslatableMessage('Person'),
+                'fas fa-users',
+                PersonCrudController::class,
+            ],
+            [
+                new TranslatableMessage('Company'),
+                'fas fa-building',
+                CompanyCrudController::class,
+            ],
+            [
                 new TranslatableMessage('Edito'),
                 'fas fa-info',
-                EditoCrudController::getEntityFqcn(),
+                EditoCrudController::class,
             ],
             [
                 new TranslatableMessage('Memo'),
                 'fas fa-memory',
-                MemoCrudController::getEntityFqcn(),
+                MemoCrudController::class,
+            ],
+            [
+                new TranslatableMessage('Media'),
+                'fas fa-photo-video',
+                MediaCrudController::class,
             ],
             [
                 new TranslatableMessage('Meta'),
                 'fa fa-file-alt',
-                MetaCrudController::getEntityFqcn(),
+                MetaCrudController::class,
             ],
             [
                 new TranslatableMessage('Paragraph'),
                 'fa fa-paragraph',
-                ParagraphCrudController::getEntityFqcn(),
+                ParagraphCrudController::class,
             ],
             [
                 new TranslatableMessage('Block'),
                 'fa fa-cubes',
-                BlockCrudController::getEntityFqcn(),
+                BlockCrudController::class,
             ],
             [
                 new TranslatableMessage('Geocode'),
                 'fas fa-map-signs',
-                GeoCodeCrudController::getEntityFqcn(),
+                GeoCodeCrudController::class,
             ],
             [
                 new TranslatableMessage('Star'),
                 'fas fa-star',
-                StarCrudController::getEntityFqcn(),
+                StarCrudController::class,
             ],
             [
                 new TranslatableMessage('User'),
                 'fa fa-user',
-                UserCrudController::getEntityFqcn(),
+                UserCrudController::class,
+            ],
+            [
+                new TranslatableMessage('Group'),
+                'fa fa-users',
+                GroupCrudController::class,
             ],
             [
                 new TranslatableMessage('Ban IP'),
                 'fas fa-ban',
-                BanIpCrudController::getEntityFqcn(),
+                BanIpCrudController::class,
             ],
             [
                 new TranslatableMessage('Redirection'),
                 'fas fa-directions',
-                RedirectionCrudController::getEntityFqcn(),
+                RedirectionCrudController::class,
             ],
             [
                 new TranslatableMessage('Http error Logs'),
                 'fas fa-clipboard-list',
-                HttpErrorLogsCrudController::getEntityFqcn(),
+                HttpErrorLogsCrudController::class,
             ],
             [
                 new TranslatableMessage('Submission'),
                 'fas fa-clipboard-list',
-                SubmissionCrudController::getEntityFqcn(),
+                SubmissionCrudController::class,
             ],
         ];
 
         foreach ($items as [$label, $icon, $fqcn]) {
-            yield MenuItem::linkToCrud($label, $icon, $fqcn);
+            yield MenuItem::linkTo($fqcn, $label->getMessage(), $icon);
         }
+
+        yield MenuItem::linkToRoute(
+            new TranslatableMessage('Permissions'),
+            'fa fa-user-shield',
+            'admin_permission'
+        );
     }
 
     /**

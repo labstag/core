@@ -13,65 +13,143 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Configuration;
 use Labstag\Field\WysiwygField;
+use Override;
+use Symfony\Component\Intl\Locales;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class ConfigurationCrudController extends AbstractCrudControllerLib
+class ConfigurationCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
-        $actions->remove(Crud::PAGE_INDEX, Action::DELETE);
-        $actions->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setShowDetail(false);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::DELETE);
+        $this->actionsFactory->remove(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        yield from [
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
+        $copyrightTranslation = new TranslatableMessage('Copyright');
+        $fields               = [
             TextField::new('titleFormat', new TranslatableMessage('Title format')),
             TextField::new('name', new TranslatableMessage('Site name')),
             EmailField::new('email', new TranslatableMessage('Email')),
             UrlField::new('url', new TranslatableMessage('Url')),
             EmailField::new('noreply', new TranslatableMessage('Email no-reply')),
-            WysiwygField::new('Copyright', new TranslatableMessage('Copyright')),
+            WysiwygField::new('Copyright', $copyrightTranslation->getMessage()),
             BooleanField::new('userShow', new TranslatableMessage('Show user')),
             BooleanField::new('userLink', new TranslatableMessage('Link user')),
         ];
-        yield FormField::addTab(new TranslatableMessage('Security'));
-        yield BooleanField::new('disableEmptyAgent', new TranslatableMessage('Disable empty agent'));
-        yield FormField::addTab(new TranslatableMessage('Sitemap'));
-        yield BooleanField::new('sitemapPosts', new TranslatableMessage('Show posts'));
-        yield BooleanField::new('sitemapStory', new TranslatableMessage('Show story'));
-        yield FormField::addTab(new TranslatableMessage('Medias'));
-        yield $this->crudFieldFactory->imageField(
-            'logo',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Logo')
-        );
-        yield $this->crudFieldFactory->imageField(
-            'placeholder',
-            $pageName,
-            self::getEntityFqcn(),
-            (string) new TranslatableMessage('Placeholder')
-        );
-        yield FormField::addTab(new TranslatableMessage('TAC'));
-        $fields = array_merge([], $this->addTacFields());
-        foreach ($fields as $field) {
-            yield $field;
+        $this->crudFieldFactory->addFieldsToTab('principal', $fields);
+
+        $this->crudFieldFactory->addTab('tmdb', FormField::addTab(new TranslatableMessage('Tmdb')));
+
+        $choiceField = ChoiceField::new('languageTmdb', new TranslatableMessage('Language Tmdb'));
+        $locales     = Locales::getNames();
+        $languages   = [];
+        foreach ($locales as $key => $value) {
+            if (0 === substr_count((string) $key, '_')) {
+                continue;
+            }
+
+            $locale            = str_replace('_', '-', $key);
+            $languages[$value] = $locale;
         }
+
+        $choiceField->setChoices($languages);
+        $textField = TextField::new('regionTmdb', new TranslatableMessage('Region'));
+        $this->crudFieldFactory->addFieldsToTab('tmdb', [$choiceField, $textField]);
+
+        $this->crudFieldFactory->addTab('security', FormField::addTab(new TranslatableMessage('Security')));
+
+        $booleanField = BooleanField::new('disableEmptyAgent', new TranslatableMessage('Disable empty agent'));
+        $this->crudFieldFactory->addFieldsToTab('security', [$booleanField]);
+
+        $this->crudFieldFactory->addTab('sitemap', FormField::addTab(new TranslatableMessage('Sitemap')));
+        $this->crudFieldFactory->addFieldsToTab(
+            'sitemap',
+            [
+                BooleanField::new('sitemapPosts', new TranslatableMessage('Show posts')),
+                BooleanField::new('sitemapStory', new TranslatableMessage('Show story')),
+            ]
+        );
+
+        $this->crudFieldFactory->addTab('medias', FormField::addTab(new TranslatableMessage('Medias')));
+
+        $logoTranslation        = new TranslatableMessage('Logo');
+        $placeHolderTranslation = new TranslatableMessage('Placeholder');
+        $this->crudFieldFactory->addFieldsToTab(
+            'medias',
+            [
+                $this->crudFieldFactory->imageField(
+                    'logo',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    $logoTranslation->getMessage()
+                ),
+                $this->crudFieldFactory->imageField(
+                    'placeholder',
+                    $pageName,
+                    self::getEntityFqcn(),
+                    $placeHolderTranslation->getMessage()
+                ),
+            ]
+        );
+
+        $this->crudFieldFactory->addTab('tac', FormField::addTab(new TranslatableMessage('TAC')));
+        $this->crudFieldFactory->addFieldsToTab('tac', $this->addTacFields());
+
+        $this->crudFieldFactory->addTab('placeholders', FormField::addTab(new TranslatableMessage('Placeholders')));
+        $this->crudFieldFactory->addFieldsToTab('placeholders', $this->addConfigureFieldsPlaceHolders($pageName));
+
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     public static function getEntityFqcn(): string
     {
         return Configuration::class;
+    }
+
+    private function addConfigureFieldsPlaceHolders(string $pageName): array
+    {
+        $placeholders = [
+            'chapter' => new TranslatableMessage('Chapter'),
+            'edito'   => new TranslatableMessage('Edito'),
+            'episode' => new TranslatableMessage('Episode'),
+            'memo'    => new TranslatableMessage('Memo'),
+            'movie'   => new TranslatableMessage('Movie'),
+            'game'    => new TranslatableMessage('Game'),
+            'page'    => new TranslatableMessage('Page'),
+            'post'    => new TranslatableMessage('Post'),
+            'saga'    => new TranslatableMessage('Saga'),
+            'season'  => new TranslatableMessage('Season'),
+            'serie'   => new TranslatableMessage('Serie'),
+            'star'    => new TranslatableMessage('Star'),
+            'story'   => new TranslatableMessage('Story'),
+            'user'    => new TranslatableMessage('User'),
+            'person'  => new TranslatableMessage('Person'),
+        ];
+
+        $fields = [];
+        foreach ($placeholders as $key => $label) {
+            $fields[] = FormField::addColumn(6);
+            $fields[] = $this->crudFieldFactory->imageField(
+                $key.'Placeholder',
+                $pageName,
+                self::getEntityFqcn(),
+                $label->getMessage()
+            );
+        }
+
+        return $fields;
     }
 
     /**
@@ -101,26 +179,26 @@ class ConfigurationCrudController extends AbstractCrudControllerLib
         $iconPositionField->setChoices($iconPosition);
 
         $booleanLabels = [
-            'tacGroupServices'           => (string) new TranslatableMessage('Group Services'),
-            'tacShowDetailsOnClick'      => (string) new TranslatableMessage('Show Details On Click'),
-            'tacShowAlertSmall'          => (string) new TranslatableMessage('Show Alert Small'),
-            'tacCookieslist'             => (string) new TranslatableMessage('Cookies List'),
-            'tacClosePopup'              => (string) new TranslatableMessage('Close popup'),
-            'tacShowIcon'                => (string) new TranslatableMessage('Show Icon'),
-            'tacAdblocker'               => (string) new TranslatableMessage('Adblocker'),
-            'tacDenyAllCta'              => (string) new TranslatableMessage('Deny All CTA'),
-            'tacAcceptAllCta'            => (string) new TranslatableMessage('Accept All CTA'),
-            'tacHighPrivacy'             => (string) new TranslatableMessage('High Privacy'),
-            'tacAlwaysNeedConsent'       => (string) new TranslatableMessage('Always Need Consent'),
-            'tacHandleBrowserDNTRequest' => (string) new TranslatableMessage('Handle Browser DNT Request'),
-            'tacRemoveCredit'            => (string) new TranslatableMessage('Remove Credit'),
-            'tacMoreInfoLink'            => (string) new TranslatableMessage('More Info Link'),
-            'tacUseExternalCss'          => (string) new TranslatableMessage('User External CSS'),
-            'tacUseExternalJs'           => (string) new TranslatableMessage('Use External Js'),
-            'tacMandatory'               => (string) new TranslatableMessage('Mandatory'),
-            'tacMandatoryCta'            => (string) new TranslatableMessage('Mandatory CTA'),
-            'tacGoogleConsentMode'       => (string) new TranslatableMessage('Google Censent Mode'),
-            'tacPartnersList'            => (string) new TranslatableMessage('Partners List'),
+            'tacGroupServices'           => new TranslatableMessage('Group Services'),
+            'tacShowDetailsOnClick'      => new TranslatableMessage('Show Details On Click'),
+            'tacShowAlertSmall'          => new TranslatableMessage('Show Alert Small'),
+            'tacCookieslist'             => new TranslatableMessage('Cookies List'),
+            'tacClosePopup'              => new TranslatableMessage('Close popup'),
+            'tacShowIcon'                => new TranslatableMessage('Show Icon'),
+            'tacAdblocker'               => new TranslatableMessage('Adblocker'),
+            'tacDenyAllCta'              => new TranslatableMessage('Deny All CTA'),
+            'tacAcceptAllCta'            => new TranslatableMessage('Accept All CTA'),
+            'tacHighPrivacy'             => new TranslatableMessage('High Privacy'),
+            'tacAlwaysNeedConsent'       => new TranslatableMessage('Always Need Consent'),
+            'tacHandleBrowserDNTRequest' => new TranslatableMessage('Handle Browser DNT Request'),
+            'tacRemoveCredit'            => new TranslatableMessage('Remove Credit'),
+            'tacMoreInfoLink'            => new TranslatableMessage('More Info Link'),
+            'tacUseExternalCss'          => new TranslatableMessage('User External CSS'),
+            'tacUseExternalJs'           => new TranslatableMessage('Use External Js'),
+            'tacMandatory'               => new TranslatableMessage('Mandatory'),
+            'tacMandatoryCta'            => new TranslatableMessage('Mandatory CTA'),
+            'tacGoogleConsentMode'       => new TranslatableMessage('Google Censent Mode'),
+            'tacPartnersList'            => new TranslatableMessage('Partners List'),
         ];
 
         return [

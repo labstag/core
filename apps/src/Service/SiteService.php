@@ -2,10 +2,9 @@
 
 namespace Labstag\Service;
 
-use Labstag\Entity\Chapter;
-use Labstag\Entity\Configuration;
 use Labstag\Entity\Page;
 use Labstag\Enum\PageEnum;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -13,32 +12,39 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class SiteService
 {
     public function __construct(
-        private ConfigurationService $configurationService,
+        #[AutowireIterator('labstag.datas')]
+        private iterable $datas,
         private FileService $fileService,
+        private ConfigurationService $configurationService,
         private TokenStorageInterface $tokenStorage,
     )
     {
     }
 
-    public function asset(mixed $entity, string $field, bool $placeholder = true): string
+    public function asset(mixed $entity, string $field, bool $placeholder = true, bool $absolute = false): string
     {
-        $file = $this->fileService->asset($entity, $field);
+        $configuration = $this->configurationService->getConfiguration();
+        $data          = $this->getAsset($entity);
+        if (is_null($entity) || is_null($data)) {
+            return ($placeholder) ? 'https://picsum.photos/1200/1200?md5='.bin2hex(random_bytes(16)) : '';
+        }
+
+        $file = $data->asset($entity, $field);
 
         if ('' !== $file) {
-            return $file;
+            return $absolute ? $configuration->getUrl().$file : $file;
         }
 
         if (!$placeholder) {
             return '';
         }
 
-        if (!$entity instanceof Configuration) {
-            $config = $this->configurationService->getConfiguration();
-
-            return $this->asset($config, 'placeholder');
+        $dataPlaceholder = $data->placeholder();
+        if ('' !== $dataPlaceholder) {
+            return $absolute ? $configuration->getUrl().$dataPlaceholder : $dataPlaceholder;
         }
 
-        return 'https://picsum.photos/1200/1200?md5=' . md5((string) $entity->getId());
+        return 'https://picsum.photos/1200/1200?md5='.md5((string) $entity->getId());
     }
 
     /**
@@ -49,6 +55,17 @@ final class SiteService
         $favicon = $this->getFavicon('favicon.ico');
 
         return is_null($favicon) ? $this->getFavicon('favicon') : $favicon;
+    }
+
+    public function getTitleMeta(object $entity): ?string
+    {
+        foreach ($this->datas as $data) {
+            if ($data->supportsData($entity)) {
+                return $data->getTitleMeta($entity);
+            }
+        }
+
+        return '';
     }
 
     public function isEnable(object $entity): bool
@@ -65,17 +82,21 @@ final class SiteService
         return isset($data['entity']) && $data['entity'] instanceof Page && PageEnum::HOME->value == $data['entity']->getType();
     }
 
-    public function setTitle(object $entity): ?string
+    private function getAsset(mixed $entity): ?object
     {
-        if ($entity instanceof Chapter) {
-            return $this->setTitle($entity->getRefStory()) . ' - ' . $entity->getTitle();
+        if (is_null($entity)) {
+            return null;
         }
 
-        if (method_exists($entity, 'getTitle')) {
-            return $entity->getTitle();
+        foreach ($this->datas as $data) {
+            if (!$data->supportsAsset($entity)) {
+                continue;
+            }
+
+            return $data;
         }
 
-        return '';
+        return null;
     }
 
     /**

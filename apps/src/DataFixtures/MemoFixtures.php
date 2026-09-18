@@ -5,12 +5,11 @@ namespace Labstag\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
 use Override;
 
-class MemoFixtures extends FixtureLib implements DependentFixtureInterface
+class MemoFixtures extends FixtureAbstract implements DependentFixtureInterface
 {
     /**
      * @var int
@@ -46,10 +45,11 @@ class MemoFixtures extends FixtureLib implements DependentFixtureInterface
         $memo->setEnable($this->enable === $index);
         $memo->setRefuser($this->getReference(array_rand($this->users), User::class));
         $memo->setTitle($generator->unique()->colorName());
-        $this->addParagraphHead($memo);
+
+        $this->paragraphService->addParagraph($memo, 'head');
         $this->addParagraphText($memo);
         $this->setImage($memo, 'imgFile');
-        $this->addReference('memo_' . md5(uniqid()), $memo);
+        $this->addReference('memo_'.md5(uniqid()), $memo);
         $objectManager->persist($memo);
     }
 }

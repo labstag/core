@@ -50,17 +50,13 @@ final class SecurityService
         }
 
         $pathinfo = $request->getPathInfo();
-        $slug     = '/' . $request->attributes->get('slug');
+        $slug     = '/'.$request->attributes->get('slug');
         if ($slug !== $pathinfo) {
             $pathinfo = $slug;
         }
 
         $redirections = $this->getRedirections(false);
-        if ([] === $redirections) {
-            return null;
-        }
-
-        $redirect = $this->testRedirect($pathinfo, $redirections);
+        $redirect     = $this->testRedirect($pathinfo, $redirections);
         if (is_null($redirect)) {
             $redirections = $this->getRedirections(true);
             $redirect     = $this->testRedirectRegex($pathinfo, $redirections);
@@ -104,12 +100,8 @@ final class SecurityService
 
         foreach ($headers as $header) {
             if (!empty($server->get($header))) {
-                $ipList = explode(',', (string) $server->get($header));
-                // Si plusieurs IPs sont présentes (cas d'un proxy chainé)
+                $ipList           = explode(',', (string) $server->get($header));
                 $internetProtocol = trim(end($ipList));
-                // On prend la dernière IP de la liste (client réel)
-
-                // Valider que c'est une IP valide (IPv4 ou IPv6)
                 if (filter_var(
                     $internetProtocol,
                     FILTER_VALIDATE_IP,
@@ -133,7 +125,7 @@ final class SecurityService
 
         $server        = $request->server;
         $httpErrorLogs = new HttpErrorLogs();
-        $domain        = $server->get('REQUEST_SCHEME') . '://' . $server->get('SERVER_NAME');
+        $domain        = $server->get('REQUEST_SCHEME').'://'.$server->get('SERVER_NAME');
         $url           = $server->get('REQUEST_URI');
         if ($this->isDisableUrl($url)) {
             return;
@@ -203,7 +195,7 @@ final class SecurityService
         $file    = $this->fileService->getFileInAdapter('private', 'disable.txt');
         $disable = explode("\n", file_get_contents($file));
 
-        return array_any($disable, fn ($type): bool => str_contains($url, $type));
+        return array_any($disable, fn ($type): bool => str_contains($url, (string) $type));
     }
 
     private function isForbiddenUrl(string $url): bool
@@ -213,7 +205,10 @@ final class SecurityService
 
         return array_any(
             $forbidden,
-            fn ($type): bool => str_contains($url, $type) || str_contains(strtolower($url), strtolower($type))
+            fn ($type): bool => str_contains($url, (string) $type) || str_contains(
+                strtolower($url),
+                strtolower((string) $type)
+            )
         );
     }
 
@@ -236,14 +231,6 @@ final class SecurityService
         return null;
     }
 
-    private function setRedirectResponse(Redirection $redirection): RedirectResponse
-    {
-        $redirection->incrementLastCount();
-        $this->redirectionRepository->save($redirection);
-
-        return new RedirectResponse($redirection->getDestination(), $redirection->getActionCode());
-    }
-
     /**
      * @param Redirection[] $redirections
      */
@@ -252,9 +239,10 @@ final class SecurityService
         $redirect = null;
         foreach ($redirections as $redirection) {
             if ($redirection->getSource() == $pathinfo) {
-                $redirect = $this->setRedirectResponse($redirection);
+                $redirection->incrementLastCount();
+                $this->redirectionRepository->save($redirection);
 
-                break;
+                return new RedirectResponse($redirection->getDestination(), $redirection->getActionCode());
             }
         }
 
@@ -268,10 +256,27 @@ final class SecurityService
     {
         $redirect = null;
         foreach ($redirections as $redirection) {
-            if (preg_match($redirection->getSource(), $pathinfo)) {
-                $redirect = $this->setRedirectResponse($redirection);
+            if (preg_match($redirection->getSource(), $pathinfo, $matches)) {
+                $redirection->incrementLastCount();
+                $this->redirectionRepository->save($redirection);
+                $destination = $redirection->getDestination();
+                if ((str_starts_with((string) $destination, 'http://') || str_starts_with(
+                    (string) $destination,
+                    'https://'
+                )) && str_starts_with($pathinfo, '/')
+                ) {
+                    $pathinfo = substr($pathinfo, 1);
+                }
 
-                break;
+                $newUrl = preg_replace($redirection->getSource(), (string) $destination, $pathinfo);
+                if (str_starts_with((string) $newUrl, '/')) {
+                    $request = $this->requestStack->getCurrentRequest();
+                    if (!is_null($request)) {
+                        $newUrl = $request->getSchemeAndHttpHost().$newUrl;
+                    }
+                }
+
+                return new RedirectResponse($newUrl, $redirection->getActionCode());
             }
         }
 

@@ -1,39 +1,46 @@
 @use "../mixins";
 
 .paragraph_sitemap {
-  .wrapper{
-    
-  }
+  .wrapper {}
+
   ul {
     font-family: Arial, sans-serif;
     line-height: 1.6;
     list-style: none;
     padding: 0;
     margin: 0;
-    > li {
+
+    >li {
       margin: 10px 0;
-      > a {
+
+      >a {
         font-weight: bold;
         text-decoration: none;
         color: #0073e6;
+
         &:hover {
           text-decoration: underline;
         }
       }
     }
+
     ul {
       margin: 5px 0 0 20px;
       padding: 0;
+
       li {
         margin: 5px 0;
+
         a {
           text-decoration: none;
           color: #555;
+
           &:hover {
             text-decoration: underline;
             color: #000;
           }
         }
+
         &::before {
           content: "• ";
           color: #0073e6;
@@ -42,12 +49,14 @@
       }
     }
   }
+
   @include mixins.respond-to(md) {
     ul {
-        margin-left: 10px;
+      margin-left: 10px;
     }
+
     a {
-        font-size: 14px;
+      font-size: 14px;
     }
   }
 }

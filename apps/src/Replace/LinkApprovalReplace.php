@@ -2,9 +2,7 @@
 
 namespace Labstag\Replace;
 
-use Labstag\Replace\Abstract\ReplaceLib;
-
-class LinkApprovalReplace extends ReplaceLib
+class LinkApprovalReplace extends ReplaceAbstract
 {
     public function exec(): string
     {
@@ -14,8 +12,12 @@ class LinkApprovalReplace extends ReplaceLib
 
         $configuration = $this->configurationService->getConfiguration();
         $entity        = $this->data['user'];
+        $id            = $entity->getId();
+        if (is_null($id)) {
+            return '#linkdisabled';
+        }
 
-        return $configuration->getUrl() . $this->router->generate(
+        return $configuration->getUrl().$this->router->generate(
             'admin_workflow',
             [
                 '_locale'    => 'fr',

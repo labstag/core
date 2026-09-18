@@ -2,17 +2,21 @@
 
 namespace Labstag\Block;
 
-use Labstag\Block\Abstract\AbstractSimpleBlock;
+use Labstag\Entity\FlashbagBlock as EntityFlashbagBlock;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class FlashbagBlock extends AbstractSimpleBlock
+class FlashbagBlock extends SimpleBlockAbstract
 {
-    // Utilise l'implémentation par défaut d'AbstractSimpleBlock
+    public function getClass(): string
+    {
+        return EntityFlashbagBlock::class;
+    }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'Flashbag';
+        return new TranslatableMessage('Flashbag');
     }
 
     #[Override]

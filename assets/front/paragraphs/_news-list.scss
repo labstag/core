@@ -3,26 +3,26 @@
 
 @use "sass:color";
 
-.paragraph_news-list{
-  .wrapper{
+.paragraph_news-list {
+  .wrapper {}
 
-  }
-  .title{
+  .title {}
 
-  }
-  ul{
+  ul {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
+
     @include mixins.respond-to(md) {
       grid-template-columns: 1fr 1fr 1fr;
     }
   }
-  li{
-    &.teaser-post{
+
+  li {
+    &.teaser-post {
       background-color: color.scale(variables.$colorbg, $lightness: 10%);
-      &:nth-child(even)
-      {
+
+      &:nth-child(even) {
         background-color: color.scale(variables.$colorbg, $lightness: 15%);
       }
     }
@@ -31,7 +31,6 @@
       padding: 1rem;
     }
   }
-  .navigation {
-    
-  }
+
+  .navigation {}
 }

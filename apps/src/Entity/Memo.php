@@ -17,12 +17,12 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: MemoRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Memo implements Stringable
+class Memo implements Stringable, EntityWithParagraphsInterface
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
@@ -34,33 +34,41 @@ class Memo implements Stringable
     )]
     protected ?bool $enable = null;
 
-    #[ORM\Column(length: 255)]
-    protected ?string $title = null;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'memo', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'memo', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'memo',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
-    private Collection $paragraphs;
+    protected Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'memos', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'memos')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?User $refuser = null;
+    protected ?User $refuser = null;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
 
     public function __construct()
     {
@@ -124,7 +132,8 @@ class Memo implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getMemo() === $this) {
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getMemo() === $this
+        ) {
             $paragraph->setMemo(null);
         }
 
@@ -142,7 +151,6 @@ class Memo implements Stringable
     {
         $this->img = $img;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
         if (null === $img) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

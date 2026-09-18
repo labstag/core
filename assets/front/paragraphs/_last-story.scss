@@ -1,14 +1,15 @@
 @use "../mixins";
 @use "../placeholders" as *;
 
-.paragraph_last-story{
-  .wrapper:nth-child(1){
+.paragraph_last-story {
+  .wrapper:nth-child(1) {
     display: grid;
     grid-template-areas:
-        "title"
-        "list"
-        "link";
+      "title"
+      "list"
+      "link";
     grid-template-columns: 1fr;
+
     @include mixins.respond-to(md) {
       grid-template-columns: 4fr 1fr;
       grid-template-areas:
@@ -17,38 +18,44 @@
       gap: 16px;
     }
   }
-  h2{
+
+  h2 {
     grid-area: title;
   }
-  .link{
+
+  .link {
     grid-area: link;
     align-self: start;
     text-align: center;
     padding: 1rem;
-    a{
+
+    a {
       @extend %btn;
     }
   }
-  .list{
+
+  .list {
     grid-area: list;
   }
-  ul{
+
+  ul {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
+
     @include mixins.respond-to(md) {
       grid-template-columns: 1fr 1fr;
-      
-      li:nth-child(odd){
+
+      li:nth-child(odd) {
         margin-top: 40px;
         align-self: start;
       }
+
       li:nth-child(even) {
         align-self: center;
       }
     }
   }
-  li{
-    
-  }
+
+  li {}
 }

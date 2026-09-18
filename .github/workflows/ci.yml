@@ -9,6 +9,7 @@ jobs:
   lint:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
+    needs: lint
     env:
       DOCKER_INTERACTIVE: false
     steps:
@@ -36,7 +37,7 @@ jobs:
         with:
           submodules: recursive
           repository: koromerzhin/lampy
-          ref: '4.3'
+          ref: '4.4.0'
           path: lampy
 
       - name: Setup cache
@@ -52,16 +53,10 @@ jobs:
                 npm install
             fi
       
-      - name: Build assets
-        run: npm run encore:build
-        env:
-          NODE_ENV: production
-      
       - name: Setup environment files
         run: |
-          cp apps/.env.test apps/.env
+          cp apps/.env.example apps/.env
           cp .env.example .env
-          echo "APP_ENV=test" >> apps/.env
       
       - name: Setup database and infrastructure
         run: |
@@ -72,13 +67,9 @@ jobs:
         run: |
           task labstag:set-env-ids
           task labstag:getpull-image
-          task labstag:getapacheconf
           task labstag:install-first
           task labstag:deploy
           task labstag:waiting
-      
-      - name: lint all
-        run: task lint:all
 
   launch:
     runs-on: ubuntu-24.04
@@ -110,7 +101,7 @@ jobs:
         with:
           submodules: recursive
           repository: koromerzhin/lampy
-          ref: '4.3'
+          ref: '4.4.0'
           path: lampy
 
       - name: Setup cache
@@ -133,9 +124,8 @@ jobs:
       
       - name: Setup environment files
         run: |
-          cp apps/.env.test apps/.env
+          cp apps/.env.example apps/.env
           cp .env.example .env
-          echo "APP_ENV=test" >> apps/.env
       
       - name: Setup database and infrastructure
         run: |
@@ -146,7 +136,6 @@ jobs:
         run: |
           task labstag:set-env-ids
           task labstag:getpull-image
-          task labstag:getapacheconf
           task labstag:install-first
           task labstag:deploy
           task labstag:waiting
@@ -170,9 +159,6 @@ jobs:
           task doctrine:schema:update
           task doctrine:schema:validate
           task doctrine:fixtures
-      
-      - name: Cleanup and test preparation
-        run: task labstag:delete-oldfiles
       
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6

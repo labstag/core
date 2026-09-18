@@ -5,33 +5,33 @@ namespace Labstag\Repository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Block;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<Block>
+ * @extends RepositoryAbstract<Block>
  */
-class BlockRepository extends ServiceEntityRepositoryLib
+class BlockRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
         parent::__construct($managerRegistry, Block::class);
     }
 
-    public function findAllOrderedByRegion(): QueryBuilder
+    public function findAllOrderedByRegion(?QueryBuilder $queryBuilder): void
     {
-        $queryBuilder = $this->createQueryBuilder('b');
-        $queryBuilder->orderBy(
-            "CASE 
-                WHEN b.region = 'header' THEN 1
-                WHEN b.region = 'main' THEN 2
-                WHEN b.region = 'footer' THEN 3
-                ELSE 4
-            END",
-            'ASC'
-        );
-        $queryBuilder->addOrderBy('b.position', 'ASC');
+        if (!$queryBuilder instanceof QueryBuilder) {
+            $queryBuilder = $this->createQueryBuilder('b');
+        }
 
-        return $queryBuilder;
+        $alias = $queryBuilder->getRootAliases()[0] ?? 'entity';
+        $queryBuilder->resetDQLPart('orderBy');
+        $caseExpr = 'CASE '
+            .'WHEN '.$alias.".region = 'header' THEN 1 "
+            .'WHEN '.$alias.".region = 'main' THEN 2 "
+            .'WHEN '.$alias.".region = 'footer' THEN 3 "
+            .'ELSE 4 '
+            .'END';
+        $queryBuilder->orderBy($caseExpr, 'ASC');
+        $queryBuilder->addOrderBy($alias.'.position', 'ASC');
     }
 
     public function getMaxPositionByRegion(string $region): ?int
@@ -42,7 +42,7 @@ class BlockRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('region', $region);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'block-maxposition-' . md5($region));
+        $query->enableResultCache(3600, 'block-maxposition-'.md5($region));
 
         $data = $query->getOneOrNullResult();
 

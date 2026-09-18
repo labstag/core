@@ -1,0 +1,30 @@
+@use "../mixins";
+@use "../variables";
+
+@use "sass:color";
+
+.paragraph_season-list {
+  .wrapper {}
+
+  .title {}
+
+  ul {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  li {
+    &.teaser-season {
+      background-color: color.scale(variables.$colorbg, $lightness: 15%);
+
+      &:nth-child(even) {
+        background-color: color.scale(variables.$colorbg, $lightness: 10%);
+      }
+    }
+
+    .wrapper {
+      padding: 1rem;
+    }
+  }
+}

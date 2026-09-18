@@ -5,22 +5,23 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\BanIp;
 use Labstag\Field\WysiwygField;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class BanIpCrudController extends AbstractCrudControllerLib
+class BanIpCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->configureActionsTrash($actions);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->setReadOnly(true);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -33,19 +34,20 @@ class BanIpCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        unset($pageName);
-        // Ensure all fields are inside a tab (EasyAdmin requires this once any tab is used elsewhere in the app)
-        yield $this->addTabPrincipal();
-        yield $this->crudFieldFactory->idField();
-        yield $this->crudFieldFactory->booleanField('enable', (string) new TranslatableMessage('Enable'));
-        yield TextField::new('InternetProtocol', new TranslatableMessage('IP'));
-        yield WysiwygField::new('reason', new TranslatableMessage('Raison'));
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
+        $translatableMessage = new TranslatableMessage('Reason');
+        $fields              = [
+            $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
+            TextField::new('InternetProtocol', new TranslatableMessage('IP')),
+            WysiwygField::new('reason', $translatableMessage->getMessage()),
+        ];
+        $this->crudFieldFactory->addFieldsToTab('principal', $fields);
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     public static function getEntityFqcn(): string

@@ -4,14 +4,13 @@ namespace Labstag\FrontForm;
 
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Email\Abstract\EmailLib;
+use Labstag\Email\EmailAbstract;
 use Labstag\Form\Front\ContactType;
-use Labstag\FrontForm\Abstract\FrontFormLib;
 use Override;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class ContactFrontForm extends FrontFormLib
+class ContactFrontForm extends FrontFormAbstract
 {
     /**
      * @param FormInterface<mixed> $form
@@ -30,12 +29,12 @@ class ContactFrontForm extends FrontFormLib
                 'form' => $form->all(),
             ]
         );
-        if (!$email instanceof EmailLib) {
+        if (!$email instanceof EmailAbstract) {
             return false;
         }
 
         $email->init();
-        $this->mailer->send($email);
+        $this->emailService->send($email);
 
         return true;
     }
@@ -51,11 +50,22 @@ class ContactFrontForm extends FrontFormLib
      * @return iterable<mixed>
      */
     #[Override]
-    public function getFields(array $data): iterable
+    public function getFields(array $data): array
     {
-        yield TextField::new('firstname', new TranslatableMessage('First name'))->setValue($data['firstname']);
-        yield TextField::new('lastname', new TranslatableMessage('Last name'))->setValue($data['lastname']);
-        yield TextareaField::new('content', new TranslatableMessage('Content'))->setValue($data['content']);
+        $textField = TextField::new('firstname', new TranslatableMessage('First name'));
+        $textField->setValue($data['firstname']);
+
+        $lastName = TextField::new('lastname', new TranslatableMessage('Last name'));
+        $lastName->setValue($data['lastname']);
+
+        $textareaField = TextareaField::new('content', new TranslatableMessage('Content'));
+        $textareaField->setValue($data['content']);
+
+        return [
+            $textField,
+            $lastName,
+            $textareaField,
+        ];
     }
 
     public function getForm(): string
@@ -65,6 +75,6 @@ class ContactFrontForm extends FrontFormLib
 
     public function getName(): string
     {
-        return 'Formulaire contact';
+        return new TranslatableMessage('Form contact');
     }
 }

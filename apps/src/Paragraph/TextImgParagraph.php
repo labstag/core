@@ -5,13 +5,18 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use Generator;
+use Labstag\Entity\Block;
+use Labstag\Entity\Edito;
+use Labstag\Entity\Memo;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Post;
+use Labstag\Entity\TextImgParagraph as EntityTextImgParagraph;
 use Labstag\Field\WysiwygField;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class TextImgParagraph extends ParagraphLib
+class TextImgParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -29,11 +34,16 @@ class TextImgParagraph extends ParagraphLib
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityTextImgParagraph::class;
+    }
+
     #[Override]
     public function getClasses(Paragraph $paragraph): array
     {
         $tab = parent::getClasses($paragraph);
-        if ($paragraph->isLeftposition()) {
+        if ($paragraph instanceof EntityTextImgParagraph && $paragraph->isLeftposition()) {
             $tab[] = 'text-img-left';
         }
 
@@ -44,20 +54,20 @@ class TextImgParagraph extends ParagraphLib
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): mixed
+    public function getFields(Paragraph $paragraph, string $pageName): Generator
     {
-        unset($paragraph);
-        yield $this->addFieldImageUpload('img', $pageName);
+        yield $this->addFieldImageUpload('img', $pageName, $paragraph);
         yield BooleanField::new('leftposition', new TranslatableMessage('Image on the left'));
-        $wysiwygField = WysiwygField::new('content', 'Texte');
+        $translatableMessage = new TranslatableMessage('Text');
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
 
         yield $wysiwygField;
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'Texte image';
+        return new TranslatableMessage('Text Image');
     }
 
     #[Override]
@@ -66,12 +76,15 @@ class TextImgParagraph extends ParagraphLib
         return 'text-img';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return $this->useInAll();
+        if (is_null($object)) {
+            return true;
+        }
+
+        $inArray = in_array($object::class, [Block::class, Edito::class, Memo::class, Page::class, Post::class]);
+
+        return $inArray || $object instanceof Block;
     }
 }

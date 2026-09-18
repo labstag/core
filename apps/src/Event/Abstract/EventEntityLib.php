@@ -6,21 +6,26 @@ use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\BanIp;
 use Labstag\Entity\Block;
 use Labstag\Entity\Chapter;
+use Labstag\Entity\HttpErrorLogs;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Entity\Post;
 use Labstag\Entity\Redirection;
+use Labstag\Entity\Saga;
+use Labstag\Entity\Serie;
 use Labstag\Entity\Story;
 use Labstag\Enum\PageEnum;
-use Labstag\Repository\HttpErrorLogsRepository;
-use Labstag\Repository\PageRepository;
+use Labstag\Message\MovieMessage;
+use Labstag\Message\SagaMessage;
+use Labstag\Message\SerieMessage;
+use Labstag\Message\StoryMessage;
 use Labstag\Service\BlockService;
-use Labstag\Service\MovieService;
+use Labstag\Service\Imdb\MovieService;
+use Labstag\Service\MessageDispatcherService;
 use Labstag\Service\ParagraphService;
-use Labstag\Service\StoryService;
 use Labstag\Service\WorkflowService;
+use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Workflow\Registry;
 
@@ -29,27 +34,37 @@ abstract class EventEntityLib
     public function __construct(
         #[Autowire(service: 'workflow.registry')]
         private Registry $workflowRegistry,
+        protected MessageDispatcherService $messageBus,
         protected WorkflowService $workflowService,
         protected EntityManagerInterface $entityManager,
         protected ParagraphService $paragraphService,
-        protected BlockService $blockService,
-        protected StoryService $storyService,
         protected MovieService $movieService,
-        protected PageRepository $pageRepository,
-        protected HttpErrorLogsRepository $httpErrorLogsRepository,
+        protected BlockService $blockService,
     )
     {
     }
 
+    protected function addParagraph(object $instance, string $type, ?int $position = null): void
+    {
+        $classType  = $this->paragraphService->getByCode($type);
+        if (is_null($classType)) {
+            return;
+        }
+
+        $paragraphs = $instance->getParagraphs();
+        foreach ($paragraphs as $paragraph) {
+            if ($classType->getClass() == $paragraph::class) {
+                return;
+            }
+        }
+
+        $this->paragraphService->addParagraph($instance, $type, $position);
+    }
+
     protected function initEntityMeta(object $instance): void
     {
-        $tab = [
-            Page::class,
-            Chapter::class,
-            Post::class,
-        ];
-
-        if (!in_array($instance::class, $tab)) {
+        $reflectionClass = new ReflectionClass($instance);
+        if (!$reflectionClass->hasMethod('getMeta')) {
             return;
         }
 
@@ -75,13 +90,37 @@ abstract class EventEntityLib
         $workflow->apply($object, 'submit');
     }
 
+    protected function postPersistMethods(object $object, EntityManagerInterface $entityManager)
+    {
+        $this->updateEntityStory($object);
+        $this->updateEntityChapter($object);
+        $this->updateEntityMovie($object);
+        $this->updateEntitySerie($object);
+        $this->updateEntitySaga($object);
+        $this->updateEntityPage($object);
+
+        $entityManager->flush();
+    }
+
+    protected function prePersistMethods(object $object, EntityManagerInterface $entityManager)
+    {
+        $this->initworkflow($object);
+        $this->updateEntityBanIp($object, $entityManager);
+        $this->updateEntityBlock($object);
+        $this->updateEntityRedirection($object);
+        $this->updateEntityParagraph($object);
+        $this->initEntityMeta($object);
+        $this->updateEntityPage($object);
+    }
+
     protected function updateEntityBanIp(object $instance, EntityManagerInterface $entityManager): void
     {
         if (!$instance instanceof BanIp) {
             return;
         }
 
-        $httpsLogs = $this->httpErrorLogsRepository->findBy(
+        $entityRepository = $this->entityManager->getRepository(HttpErrorLogs::class);
+        $httpsLogs        = $entityRepository->findBy(
             [
                 'internetProtocol' => $instance->getInternetProtocol(),
             ]
@@ -106,16 +145,7 @@ abstract class EventEntityLib
             return;
         }
 
-        if (0 < $instance->getPosition()) {
-            return;
-        }
-
-        $story    = $instance->getRefstory();
-        $chapters = $story->getChapters();
-        $instance->setPosition(count($chapters) + 1);
-
-        $this->storyService->setPdf($instance->getRefstory());
-        $this->storyService->generateFlashBag();
+        $this->messageBus->dispatch(new StoryMessage($instance->getRefstory()->getId()));
     }
 
     protected function updateEntityMovie(object $instance): void
@@ -124,7 +154,7 @@ abstract class EventEntityLib
             return;
         }
 
-        $this->movieService->update($instance);
+        $this->messageBus->dispatch(new MovieMessage($instance->getId()));
     }
 
     protected function updateEntityPage(object $instance): void
@@ -133,25 +163,18 @@ abstract class EventEntityLib
             return;
         }
 
-        if (PageEnum::HOME->value != $instance->getType()) {
-            return;
-        }
-
-        $oldHome = $this->pageRepository->getOneByType(PageEnum::HOME->value);
         if (PageEnum::HOME->value == $instance->getType()) {
-            $instance->setSlug('');
-        }
+            $instance->setPage(null);
 
-        if ($oldHome instanceof Page && $oldHome->getId() === $instance->getId()) {
             return;
         }
 
-        if ($oldHome instanceof Page) {
-            $oldHome->setType(PageEnum::PAGE->value);
-            $this->pageRepository->save($oldHome);
+        if (in_array($instance->getType(), [PageEnum::HOME->value, PageEnum::ERRORS->value])) {
+            return;
         }
 
-        $instance->setSlug('');
+        $code = (PageEnum::CV->value == $instance->getType()) ? 'head-cv' : 'head';
+        $this->addParagraph($instance, $code, 0);
     }
 
     protected function updateEntityParagraph(object $instance): void
@@ -172,13 +195,30 @@ abstract class EventEntityLib
         $instance->incrementLastCount();
     }
 
+    protected function updateEntitySaga(object $instance): void
+    {
+        if (!$instance instanceof Saga) {
+            return;
+        }
+
+        $this->messageBus->dispatch(new SagaMessage($instance->getId()));
+    }
+
+    protected function updateEntitySerie(object $instance): void
+    {
+        if (!$instance instanceof Serie) {
+            return;
+        }
+
+        $this->messageBus->dispatch(new SerieMessage($instance->getId()));
+    }
+
     protected function updateEntityStory(object $instance): void
     {
         if (!$instance instanceof Story) {
             return;
         }
 
-        $this->storyService->setPdf($instance);
-        $this->storyService->generateFlashBag();
+        $this->messageBus->dispatch(new StoryMessage($instance->getId()));
     }
 }

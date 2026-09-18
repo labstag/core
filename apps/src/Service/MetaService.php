@@ -3,18 +3,24 @@
 namespace Labstag\Service;
 
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Meta;
 use ReflectionClass;
 use stdClass;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Twig\Environment;
 
 final class MetaService
 {
     public function __construct(
+        #[AutowireIterator('labstag.datas')]
+        private iterable $datas,
         private Environment $twigEnvironment,
+        private EntityManagerInterface $entityManager,
         private ViewResolverService $viewResolverService,
         private FileService $fileService,
+        private SiteService $siteService,
     )
     {
     }
@@ -55,22 +61,67 @@ final class MetaService
      */
     public function getImageForMetatags(object $entity): ?array
     {
-        $file = $this->fileService->asset($entity, 'img');
+        $file = $this->siteService->asset($entity, 'img');
         if ('' === $file) {
             return null;
         }
 
+        if (0 < substr_count($file, 'https://')) {
+            return [
+                'src'    => $file,
+                'width'  => null,
+                'height' => null,
+                'type'   => null,
+            ];
+        }
+
         $file = str_replace('/uploads/', '', $file);
         $file = $this->fileService->getFileInAdapter('public', $file);
+        if (is_null($file)) {
+            return null;
+        }
+
+        if (0 < substr_count($file, 'https://')) {
+            return [
+                'src'    => $file,
+                'width'  => null,
+                'height' => null,
+                'type'   => null,
+            ];
+        }
 
         return $this->fileService->getInfoImage($file);
+    }
+
+    public function getJsonLd(object $entity): string
+    {
+        $jsonLd = [];
+        foreach ($this->datas as $data) {
+            if ($data->supportsJsonLd($entity)) {
+                $jsonLd = $data->getJsonLd($entity);
+                break;
+            }
+        }
+
+        if (is_object($jsonLd)) {
+            $jsonLd = $jsonLd->jsonSerialize();
+        }
+
+        if (0 === count($jsonLd)) {
+            return '';
+        }
+
+        return json_encode($jsonLd);
     }
 
     public function getMetatags(object $entity): Meta
     {
         $meta = $entity->getMeta();
         if (!$meta instanceof Meta) {
-            $meta = new Meta();
+            $repository = $this->entityManager->getRepository($entity::class);
+            $meta       = new Meta();
+            $entity->setMeta($meta);
+            $repository->save($entity);
         }
 
         if (!is_null($meta->getDescription()) && '' !== $meta->getDescription()) {

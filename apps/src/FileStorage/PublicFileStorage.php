@@ -2,12 +2,11 @@
 
 namespace Labstag\FileStorage;
 
-use Labstag\FileStorage\Abstract\FileStorageLib;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class PublicFileStorage extends FileStorageLib
+class PublicFileStorage extends FileStorageAbstract implements FileStorageInterface
 {
     public function __construct(
         #[Autowire(service: 'flysystem.adapter.public.storage')]

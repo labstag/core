@@ -2,9 +2,7 @@
 
 namespace Labstag\Replace;
 
-use Labstag\Replace\Abstract\ReplaceLib;
-
-class UsernameReplace extends ReplaceLib
+class UsernameReplace extends ReplaceAbstract
 {
     public function exec(): string
     {

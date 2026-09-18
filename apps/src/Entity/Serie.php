@@ -16,95 +16,162 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: SerieRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-class Serie implements Stringable
+#[ORM\Index(name: 'IDX_SERIE_SLUG', columns: ['slug'])]
+class Serie implements Stringable, EntityWithParagraphsInterface
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
 
     #[ORM\Column]
-    private ?bool $adult = null;
+    protected ?bool $adult = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $backdrop = null;
+
+    #[Vich\UploadableField(mapping: 'serie', fileNameProperty: 'backdrop')]
+    protected ?File $backdropFile = null;
 
     /**
-     * @var Collection<int, Category>
+     * @var Collection<int, SerieCategory>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'series', cascade: ['persist', 'detach'])]
-    private Collection $categories;
+    #[ORM\ManyToMany(targetEntity: SerieCategory::class, mappedBy: 'series', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    protected Collection $categories;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $certification = null;
+    protected ?string $certification = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $citation = null;
+    protected ?string $citation = null;
 
     /**
      * @var string[]|null
      */
     #[ORM\Column(nullable: true)]
-    private ?array $countries = null;
+    protected ?array $countries = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    protected ?string $description = null;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
         options: ['default' => 1]
     )]
-    private ?bool $enable = null;
+    protected ?bool $enable = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $evaluation = null;
+    protected ?float $evaluation = null;
 
     #[ORM\Column]
-    private ?bool $file = null;
+    protected ?bool $file = null;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
-
-    #[ORM\Column(length: 255, unique: true)]
-    private ?string $imdb = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $imdb = null;
 
-    #[Vich\UploadableField(mapping: 'serie', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    #[ORM\Column(nullable: true)]
+    protected ?bool $inProduction = null;
 
     #[ORM\Column(name: 'lastrelease_date', type: Types::DATE_MUTABLE, nullable: true)]
-    private ?DateTime $lastreleaseDate = null;
+    protected ?DateTime $lastreleaseDate = null;
+
+    #[ORM\OneToOne(inversedBy: 'serie', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?Meta $meta = null;
+
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'serie',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    protected Collection $paragraphs;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $poster = null;
+
+    #[Vich\UploadableField(mapping: 'serie', fileNameProperty: 'poster')]
+    protected ?File $posterFile = null;
 
     #[ORM\Column(name: 'release_date', type: Types::DATE_MUTABLE, nullable: true)]
-    private ?DateTime $releaseDate = null;
+    protected ?DateTime $releaseDate = null;
 
     /**
      * @var Collection<int, Season>
      */
-    #[ORM\OneToMany(targetEntity: Season::class, mappedBy: 'refserie')]
-    private Collection $seasons;
+    #[ORM\OneToMany(
+        targetEntity: Season::class,
+        mappedBy: 'refserie',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(
+        ['number' => 'ASC']
+    )]
+    protected Collection $seasons;
+
+    #[Gedmo\Slug(fields: ['title'], updatable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
+    protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $tmdb = null;
+    protected ?string $tmdb = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $trailer = null;
+    protected ?string $trailer = null;
 
     #[ORM\Column(nullable: true)]
-    private ?int $votes = null;
+    protected ?int $votes = null;
+
+    /**
+     * @var Collection<int, Casting>
+     */
+    #[ORM\OneToMany(targetEntity: Casting::class, mappedBy: 'refSerie')]
+    private Collection $castings;
+
+    /**
+     * @var Collection<int, Company>
+     */
+    #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'series')]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    private Collection $companies;
 
     public function __construct()
     {
-        $this->categories = new ArrayCollection();
-        $this->seasons    = new ArrayCollection();
+        $this->categories      = new ArrayCollection();
+        $this->seasons         = new ArrayCollection();
+        $this->paragraphs      = new ArrayCollection();
+        $this->companies       = new ArrayCollection();
+        $this->castings        = new ArrayCollection();
     }
 
     #[Override]
@@ -113,11 +180,41 @@ class Serie implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addCategory(Category $category): static
+    public function addCasting(Casting $casting): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addSerie($this);
+        if (!$this->castings->contains($casting)) {
+            $this->castings->add($casting);
+            $casting->setRefSerie($this);
+        }
+
+        return $this;
+    }
+
+    public function addCategory(SerieCategory $serieCategory): static
+    {
+        if (!$this->categories->contains($serieCategory)) {
+            $this->categories->add($serieCategory);
+            $serieCategory->addSerie($this);
+        }
+
+        return $this;
+    }
+
+    public function addCompany(Company $company): static
+    {
+        if (!$this->companies->contains($company)) {
+            $this->companies->add($company);
+            $company->addSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function addParagraph(Paragraph $paragraph): static
+    {
+        if (!$this->paragraphs->contains($paragraph)) {
+            $this->paragraphs->add($paragraph);
+            $paragraph->setSerie($this);
         }
 
         return $this;
@@ -133,8 +230,26 @@ class Serie implements Stringable
         return $this;
     }
 
+    public function getBackdrop(): ?string
+    {
+        return $this->backdrop;
+    }
+
+    public function getBackdropFile(): ?File
+    {
+        return $this->backdropFile;
+    }
+
     /**
-     * @return Collection<int, Category>
+     * @return Collection<int, Casting>
+     */
+    public function getCastings(): Collection
+    {
+        return $this->castings;
+    }
+
+    /**
+     * @return Collection<int, SerieCategory>
      */
     public function getCategories(): Collection
     {
@@ -149,6 +264,14 @@ class Serie implements Stringable
     public function getCitation(): ?string
     {
         return $this->citation;
+    }
+
+    /**
+     * @return Collection<int, Company>
+     */
+    public function getCompanies(): Collection
+    {
+        return $this->companies;
     }
 
     /**
@@ -179,19 +302,32 @@ class Serie implements Stringable
         return $this->imdb;
     }
 
-    public function getImg(): ?string
-    {
-        return $this->img;
-    }
-
-    public function getImgFile(): ?File
-    {
-        return $this->imgFile;
-    }
-
     public function getLastreleaseDate(): ?DateTime
     {
         return $this->lastreleaseDate;
+    }
+
+    public function getMeta(): ?Meta
+    {
+        return $this->meta;
+    }
+
+    /**
+     * @return Collection<int, Paragraph>
+     */
+    public function getParagraphs(): Collection
+    {
+        return $this->paragraphs;
+    }
+
+    public function getPoster(): ?string
+    {
+        return $this->poster;
+    }
+
+    public function getPosterFile(): ?File
+    {
+        return $this->posterFile;
     }
 
     public function getReleaseDate(): ?DateTime
@@ -205,6 +341,11 @@ class Serie implements Stringable
     public function getSeasons(): Collection
     {
         return $this->seasons;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
     }
 
     public function getTitle(): ?string
@@ -242,10 +383,45 @@ class Serie implements Stringable
         return $this->file;
     }
 
-    public function removeCategory(Category $category): static
+    public function isInProduction(): ?bool
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removeSerie($this);
+        return $this->inProduction;
+    }
+
+    public function removeCasting(Casting $casting): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->castings->removeElement($casting) && $casting->getRefSerie() === $this) {
+            $casting->setRefSerie(null);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(SerieCategory $serieCategory): static
+    {
+        if ($this->categories->removeElement($serieCategory)) {
+            $serieCategory->removeSerie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompany(Company $company): static
+    {
+        if ($this->companies->removeElement($company)) {
+            $company->removeSeries($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParagraph(Paragraph $paragraph): static
+    {
+        // set the owning side to null (unless already changed)
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getSerie() === $this
+        ) {
+            $paragraph->setStory(null);
         }
 
         return $this;
@@ -254,7 +430,8 @@ class Serie implements Stringable
     public function removeSeason(Season $season): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->seasons->removeElement($season) && $season->getRefserie() === $this) {
+        if ($this->seasons->removeElement($season) && $season->getRefserie() === $this
+        ) {
             $season->setRefserie(null);
         }
 
@@ -266,6 +443,26 @@ class Serie implements Stringable
         $this->adult = $adult;
 
         return $this;
+    }
+
+    public function setBackdrop(?string $backdrop): void
+    {
+        $this->backdrop = $backdrop;
+
+        if (null === $backdrop) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setBackdropFile(?File $backdropFile = null): void
+    {
+        $this->backdropFile = $backdropFile;
+
+        if ($backdropFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
     }
 
     public function setCertification(?string $certification): static
@@ -327,25 +524,11 @@ class Serie implements Stringable
         return $this;
     }
 
-    public function setImg(?string $img): void
+    public function setInProduction(?bool $inProduction): static
     {
-        $this->img = $img;
+        $this->inProduction = $inProduction;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
-        if (null === $img) {
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
-    }
-
-    public function setImgFile(?File $imgFile = null): void
-    {
-        $this->imgFile = $imgFile;
-
-        if ($imgFile instanceof File) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
-        }
+        return $this;
     }
 
     public function setLastreleaseDate(?DateTime $lastreleaseDate): static
@@ -355,9 +538,43 @@ class Serie implements Stringable
         return $this;
     }
 
+    public function setMeta(Meta $meta): static
+    {
+        $this->meta = $meta;
+
+        return $this;
+    }
+
+    public function setPoster(?string $poster): void
+    {
+        $this->poster = $poster;
+
+        if (null === $poster) {
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
+    public function setPosterFile(?File $posterFile = null): void
+    {
+        $this->posterFile = $posterFile;
+
+        if ($posterFile instanceof File) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
+        }
+    }
+
     public function setReleaseDate(?DateTime $releaseDate): static
     {
         $this->releaseDate = $releaseDate;
+
+        return $this;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

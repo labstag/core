@@ -9,9 +9,9 @@
                 {% endfor %}
             </div>
         {% endif %}
-        <h3 class="title">
+        <h2 class="title">
             {{ story.title }}
-        </h3>
+        </h2>
         {% if configuration.usershow %}
             <div class="author">
                 {{ 'Author : %author%'|trans({ '%author%': story.refuser.username }) }}
@@ -23,7 +23,8 @@
         <div class="chapters">
             {{ 'Number of chapters : %count%'|trans({ '%count%': chapters|length }) }}
         </div>
-        <div class="resume">
+        <div class="resume html-content">
             {{ story.resume|raw }}
         </div>
+    </div>
 </a>

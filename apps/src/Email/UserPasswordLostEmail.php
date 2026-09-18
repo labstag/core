@@ -2,27 +2,14 @@
 
 namespace Labstag\Email;
 
-use Labstag\Email\Abstract\EmailLib;
-use Labstag\Replace\LinkChangePasswordReplace;
 use Override;
 
-class UserPasswordLostEmail extends EmailLib
+class UserPasswordLostEmail extends EmailAbstract
 {
     #[Override]
     public function getName(): string
     {
         return 'Password Losted';
-    }
-
-    /**
-     * @return mixed[]
-     */
-    #[Override]
-    public function getReplaces(): array
-    {
-        $codes = parent::getReplaces();
-
-        return array_merge($codes, [LinkChangePasswordReplace::class]);
     }
 
     #[Override]

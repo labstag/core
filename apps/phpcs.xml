@@ -209,9 +209,9 @@
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/>
 
     <file>config/</file>
-    <file>features/</file>
     <file>public/</file>
     <file>src/</file>
     <file>tests/</file>
+    <exclude-pattern>config/reference.php</exclude-pattern>
 
 </ruleset>

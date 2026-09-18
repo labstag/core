@@ -1,7 +1,9 @@
 @use "../placeholders" as *;
-.teaser-chapter{
+
+.teaser-chapter {
   @extend %teaser;
-  .background{
+
+  .background {
     height: 162px;
   }
 }

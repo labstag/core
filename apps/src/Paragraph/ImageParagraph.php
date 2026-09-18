@@ -4,11 +4,17 @@ namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
+use Labstag\Entity\Block;
+use Labstag\Entity\Edito;
+use Labstag\Entity\ImageParagraph as EntityImageParagraph;
+use Labstag\Entity\Memo;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
-use Labstag\Paragraph\Abstract\ParagraphLib;
+use Labstag\Entity\Post;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class ImageParagraph extends ParagraphLib
+class ImageParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -26,20 +32,24 @@ class ImageParagraph extends ParagraphLib
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityImageParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
     #[Override]
-    public function getFields(Paragraph $paragraph, string $pageName): mixed
+    public function getFields(Paragraph $paragraph, string $pageName): Generator
     {
-        unset($paragraph);
-        yield $this->addFieldImageUpload('img', $pageName);
+        yield $this->addFieldImageUpload('img', $pageName, $paragraph);
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'Image';
+        return new TranslatableMessage('Image');
     }
 
     #[Override]
@@ -48,12 +58,15 @@ class ImageParagraph extends ParagraphLib
         return 'img';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return $this->useInAll();
+        if (is_null($object)) {
+            return true;
+        }
+
+        $inArray = in_array($object::class, [Block::class, Edito::class, Memo::class, Page::class, Post::class]);
+
+        return $inArray || $object instanceof Block;
     }
 }

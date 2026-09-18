@@ -1,17 +1,17 @@
 {% extends '@EasyAdmin/crud/form_theme.html.twig' %}
 {% block paragraph_row %}
-  {% set instance = ea_crud_form.ea_entity.instance %}
+  {% set instance = ea().entity.instance %}
   {% set urlOrder = ea_url().setController('Labstag\\Controller\\Admin\\ParagraphCrudController').setAction('order') %}
-  {% set controller = ea_crud_form.ea_field.customOptions.get('controller') %}
+  {% set controller = form.vars.ea_vars.field.customOptions.get('controller') %}
   {% include "admin/modal/paragraph.html.twig" %}
   <div
     class="paragraph-data"
-    data-url-add="{{ ea_url().setController(controller).setAction('addParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
-    data-url-delete="{{ ea_url().setController(controller).setAction('deleteParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
-    data-url-update="{{ ea_url().setController(controller).setAction('updateParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
-    data-url-list="{{ ea_url().setController(controller).setAction('listParagraph').setEntityId(ea_crud_form.ea_entity.primaryKeyValue) }}"
+    data-url-add="{{ ea_url().setController(controller).setAction('addParagraph').setEntityId(ea().entity.primaryKeyValue) }}"
+    data-url-delete="{{ ea_url().setController(controller).setAction('deleteParagraph').setEntityId(ea().entity.primaryKeyValue) }}"
+    data-url-update="{{ ea_url().setController(controller).setAction('updateParagraph').setEntityId(ea().entity.primaryKeyValue) }}"
+    data-url-list="{{ ea_url().setController(controller).setAction('listParagraph').setEntityId(ea().entity.primaryKeyValue) }}"
   >
-    {% set list = ea_crud_form.ea_field.customOptions.get('paragraphs') %}
+    {% set list = form.vars.ea_vars.field.customOptions.get('paragraphs') %}
     <div class="row">
         <div class="col-md-3">
             <label class="form-control-label" for="paragraph-select">{{ 'Add paragraph'|trans }}</label>

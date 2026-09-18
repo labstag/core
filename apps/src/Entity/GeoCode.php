@@ -19,47 +19,47 @@ class GeoCode implements Stringable
     use SoftDeleteableEntity;
 
     #[ORM\Column(type: Types::INTEGER)]
-    private int $accuracy;
+    protected int $accuracy;
 
     #[ORM\Column(type: Types::STRING, length: 20)]
-    private string $communityCode;
+    protected string $communityCode;
 
     #[ORM\Column(type: Types::STRING, length: 100)]
-    private string $communityName;
+    protected string $communityName;
 
     #[ORM\Column(type: Types::STRING, length: 2)]
     #[Assert\Country]
-    private string $countryCode;
+    protected string $countryCode;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    private string $latitude;
+    protected string $latitude;
 
     #[ORM\Column(type: Types::STRING, length: 255)]
-    private string $longitude;
+    protected string $longitude;
 
     #[ORM\Column(type: Types::STRING, length: 180)]
-    private string $placeName;
+    protected string $placeName;
 
     #[ORM\Column(type: Types::STRING, length: 20)]
-    private string $postalCode;
+    protected string $postalCode;
 
     #[ORM\Column(type: Types::STRING, length: 20)]
-    private string $provinceCode;
+    protected string $provinceCode;
 
     #[ORM\Column(type: Types::STRING, length: 100)]
-    private string $provinceName;
+    protected string $provinceName;
 
     #[ORM\Column(type: Types::STRING, length: 20)]
-    private string $stateCode;
+    protected string $stateCode;
 
     #[ORM\Column(type: Types::STRING, length: 100)]
-    private string $stateName;
+    protected string $stateName;
 
     #[Override]
     public function __toString(): string

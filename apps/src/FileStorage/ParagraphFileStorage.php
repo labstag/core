@@ -2,13 +2,17 @@
 
 namespace Labstag\FileStorage;
 
-use Labstag\Entity\Paragraph;
-use Labstag\FileStorage\Abstract\FileStorageLib;
+use Labstag\Entity\HeadCvParagraph;
+use Labstag\Entity\ImageParagraph;
+use Labstag\Entity\TextImgParagraph;
+use Labstag\Entity\TextMediaParagraph;
+use Labstag\Entity\VideoParagraph;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Override;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class ParagraphFileStorage extends FileStorageLib
+class ParagraphFileStorage extends FileStorageAbstract implements FileStorageInterface
 {
     public function __construct(
         #[Autowire(service: 'flysystem.adapter.paragraph.storage')]
@@ -21,8 +25,15 @@ class ParagraphFileStorage extends FileStorageLib
         $this->setType('paragraph');
     }
 
-    public function getEntity(): ?string
+    #[Override]
+    public function getEntity(): array
     {
-        return Paragraph::class;
+        return [
+            ImageParagraph::class,
+            HeadCvParagraph::class,
+            TextImgParagraph::class,
+            TextMediaParagraph::class,
+            VideoParagraph::class,
+        ];
     }
 }

@@ -1,6 +1,7 @@
 /node_modules
 /apps/vendor
 /apps/bin/
+/apps/supervisord.*
 /apps/.symfony5
 /apps/.composer
 /apps/.pdepend
@@ -20,5 +21,4 @@ docker-compose-*.yml
 /apps/public/uploads/*
 !/apps/public/uploads/.gitkeep
 .phpcs-cache
-/conf/apache2
 /cypress/screenshots

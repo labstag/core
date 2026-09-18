@@ -10,9 +10,9 @@ export class Form {
           const params = new URLSearchParams();
 
           for (const [key, value] of formData.entries()) {
-              if (value.trim() !== "") {
-                  params.append(key, value);
-              }
+            if (value.trim() !== "") {
+              params.append(key, value);
+            }
           }
 
           if (params.toString() == '') {

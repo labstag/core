@@ -4,14 +4,16 @@ namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
+use Labstag\Entity\NewsListParagraph as EntityNewsListParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
-use Labstag\Paragraph\Abstract\ParagraphLib;
+use Labstag\Enum\PageEnum;
 use Labstag\Repository\PostRepository;
 use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class NewsListParagraph extends ParagraphLib
+class NewsListParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -19,11 +21,21 @@ class NewsListParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
-        unset($disable);
-        /** @var PostRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Post::class);
+        if (!$paragraph instanceof EntityNewsListParagraph) {
+            $this->setShow($paragraph, false);
 
-        $pagination = $this->getPaginator($serviceEntityRepositoryLib->getQueryPaginator(), $paragraph->getNbr());
+            return;
+        }
+
+        unset($disable);
+        /** @var PostRepository $entityRepository */
+        $entityRepository                = $this->getRepository(Post::class);
+        $categorySlug                    = $this->getCategorySlug();
+        $tagSlug                         = $this->getTagSlug();
+        $pagination                      = $this->getPaginator(
+            $entityRepository->getQueryPaginator($categorySlug, $tagSlug),
+            $paragraph->getNbr()
+        );
         $this->setData(
             $paragraph,
             [
@@ -43,6 +55,11 @@ class NewsListParagraph extends ParagraphLib
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityNewsListParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -54,9 +71,9 @@ class NewsListParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'News list';
+        return new TranslatableMessage('News list');
     }
 
     #[Override]
@@ -65,12 +82,22 @@ class NewsListParagraph extends ParagraphLib
         return 'news-list';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return [Page::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Page && $object->getType() == PageEnum::POSTS->value;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 }

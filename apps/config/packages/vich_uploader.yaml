@@ -2,6 +2,37 @@ vich_uploader:
   db_driver: orm
   storage: flysystem
   mappings:
+    company:
+      uri_prefix: /uploads/company
+      upload_destination: company.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: title
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    person:
+      uri_prefix: /uploads/person
+      upload_destination: person.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    media:
+      uri_prefix: /uploads/media
+      upload_destination: media.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: slug
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
     avatar:
       uri_prefix: /uploads/avatar
       upload_destination: avatar.storage
@@ -31,14 +62,44 @@ vich_uploader:
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
+    episode:
+      uri_prefix: /uploads/episode
+      upload_destination: episode.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: tmdb
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    game:
+      uri_prefix: /uploads/game
+      upload_destination: game.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: title
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
+    platform:
+      uri_prefix: /uploads/platform
+      upload_destination: platform.storage
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options:
+          property: title
+          transliterate: true
+      inject_on_load: false
+      delete_on_update: true
+      delete_on_remove: true
     serie:
       uri_prefix: /uploads/serie
       upload_destination: serie.storage
       namer:
-        service: Vich\UploaderBundle\Naming\PropertyNamer
-        options:
-          property: imdb
-          transliterate: true
+        service: Vich\UploaderBundle\Naming\OrignameNamer
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
@@ -46,10 +107,7 @@ vich_uploader:
       uri_prefix: /uploads/season
       upload_destination: season.storage
       namer:
-        service: Vich\UploaderBundle\Naming\PropertyNamer
-        options:
-          property: tmdb
-          transliterate: true
+        service: Vich\UploaderBundle\Naming\SmartUniqueNamer
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
@@ -57,10 +115,7 @@ vich_uploader:
       uri_prefix: /uploads/movie
       upload_destination: movie.storage
       namer:
-        service: Vich\UploaderBundle\Naming\PropertyNamer
-        options:
-          property: imdb
-          transliterate: true
+        service: Vich\UploaderBundle\Naming\SmartUniqueNamer
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true
@@ -68,10 +123,7 @@ vich_uploader:
       uri_prefix: /uploads/saga
       upload_destination: saga.storage
       namer:
-        service: Vich\UploaderBundle\Naming\PropertyNamer
-        options:
-          property: tmdb
-          transliterate: true
+        service: Vich\UploaderBundle\Naming\SmartUniqueNamer
       inject_on_load: false
       delete_on_update: true
       delete_on_remove: true

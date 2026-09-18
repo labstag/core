@@ -9,103 +9,123 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Gedmo\Sluggable\Handler\TreeSlugHandler;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Entity\Traits\WorkflowTrait;
 use Labstag\Repository\PageRepository;
+use Labstag\SlugHandler\PageSlugHandler;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: PageRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
 #[ORM\Index(name: 'IDX_PAGE_SLUG', columns: ['slug'])]
-class Page implements Stringable
+class Page implements Stringable, EntityWithParagraphsInterface
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
     use WorkflowTrait;
 
-    #[ORM\Column(
-        type: Types::BOOLEAN,
-        options: ['default' => 1]
-    )]
-    protected ?bool $enable = null;
-
-    #[Gedmo\Slug(fields: ['title'])]
-    #[Gedmo\SlugHandler(
-        class: TreeSlugHandler::class,
-        options: [
-            'parentRelationField' => 'page',
-            'separator'           => '/',
-        ]
-    )]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
-    protected ?string $slug = null;
-
-    #[ORM\Column(length: 255)]
-    protected ?string $title = null;
-
     /**
-     * @var Collection<int, Category>
+     * @var Collection<int, PageCategory>
      */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
-    private Collection $categories;
+    #[ORM\ManyToMany(targetEntity: PageCategory::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    protected Collection $categories;
 
     /**
      * @var Collection<int, Page>
      */
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'page', cascade: ['persist', 'detach'])]
-    private Collection $children;
+    protected Collection $children;
+
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 1]
+    )]
+    protected ?bool $enable = true;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'page', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'page', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Meta $meta = null;
+    #[ORM\OneToOne(inversedBy: 'page', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?Meta $meta = null;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(targetEntity: self::class, cascade: ['persist', 'detach'], inversedBy: 'children')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?self $page = null;
+    protected ?self $page = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'page', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'page',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
-    private Collection $paragraphs;
+    protected Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'pages', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'pages')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?User $refuser = null;
+    protected ?User $refuser = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $resume = null;
+    protected ?string $resume = null;
+
+    #[Gedmo\Slug(fields: ['title'])]
+    #[Gedmo\SlugHandler(
+        class: PageSlugHandler::class,
+        options: [
+            'parentRelationField' => 'page',
+            'separator'           => '/',
+        ]
+    )]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
+    protected ?string $slug = null;
 
     /**
-     * @var Collection<int, Tag>
+     * @var Collection<int, PageTag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
-    private Collection $tags;
+    #[ORM\ManyToMany(targetEntity: PageTag::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    protected Collection $tags;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $type = null;
+    protected ?string $type = null;
+
+    #[ORM\Column(
+        type: Types::BOOLEAN,
+        options: ['default' => 0]
+    )]
+    private ?bool $hide = false;
 
     public function __construct()
     {
@@ -121,11 +141,11 @@ class Page implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addCategory(Category $category): static
+    public function addCategory(PageCategory $pageCategory): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addPage($this);
+        if (!$this->categories->contains($pageCategory)) {
+            $this->categories->add($pageCategory);
+            $pageCategory->addPage($this);
         }
 
         return $this;
@@ -151,18 +171,18 @@ class Page implements Stringable
         return $this;
     }
 
-    public function addTag(Tag $tag): static
+    public function addTag(PageTag $pageTag): static
     {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addPage($this);
+        if (!$this->tags->contains($pageTag)) {
+            $this->tags->add($pageTag);
+            $pageTag->addPage($this);
         }
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Category>
+     * @return Collection<int, PageCategory>
      */
     public function getCategories(): Collection
     {
@@ -226,7 +246,7 @@ class Page implements Stringable
     }
 
     /**
-     * @return Collection<int, Tag>
+     * @return Collection<int, PageTag>
      */
     public function getTags(): Collection
     {
@@ -248,10 +268,15 @@ class Page implements Stringable
         return $this->enable;
     }
 
-    public function removeCategory(Category $category): static
+    public function isHide(): ?bool
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removePage($this);
+        return $this->hide;
+    }
+
+    public function removeCategory(PageCategory $pageCategory): static
+    {
+        if ($this->categories->removeElement($pageCategory)) {
+            $pageCategory->removePage($this);
         }
 
         return $this;
@@ -260,7 +285,8 @@ class Page implements Stringable
     public function removeChild(self $child): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->children->removeElement($child) && $child->getPage() === $this) {
+        if ($this->children->removeElement($child) && $child->getPage() === $this
+        ) {
             $child->setPage(null);
         }
 
@@ -270,17 +296,18 @@ class Page implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this) {
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPage() === $this
+        ) {
             $paragraph->setPage(null);
         }
 
         return $this;
     }
 
-    public function removeTag(Tag $tag): static
+    public function removeTag(PageTag $pageTag): static
     {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removePage($this);
+        if ($this->tags->removeElement($pageTag)) {
+            $pageTag->removePage($this);
         }
 
         return $this;
@@ -293,11 +320,17 @@ class Page implements Stringable
         return $this;
     }
 
+    public function setHide(bool $hide): static
+    {
+        $this->hide = $hide;
+
+        return $this;
+    }
+
     public function setImg(?string $img): void
     {
         $this->img = $img;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
         if (null === $img) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

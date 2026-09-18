@@ -6,16 +6,14 @@ use Labstag\Entity\Template;
 use Labstag\Repository\TemplateRepository;
 use Labstag\Service\EmailService;
 use NumberFormatter;
-use Override;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(name: 'labstag:email:template-add', description: '')]
-class EmailTemplateAddCommand extends Command
+class EmailTemplateAddCommand
 {
 
     private int $add = 0;
@@ -27,25 +25,10 @@ class EmailTemplateAddCommand extends Command
         protected TemplateRepository $templateRepository,
     )
     {
-        parent::__construct();
     }
 
-    protected function addOrUpdate(?Template $template): void
+    public function __invoke(SymfonyStyle $symfonyStyle, OutputInterface $output): int
     {
-        if (is_null($template->getId())) {
-            ++$this->add;
-
-            return;
-        }
-
-        ++$this->update;
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $symfonyStyle = new SymfonyStyle($input, $output);
-
         $templates   = $this->emailService->all();
         $counter     = 0;
         $progressBar = new ProgressBar($output, is_countable($templates) ? count($templates) : 0);
@@ -80,5 +63,16 @@ class EmailTemplateAddCommand extends Command
         $symfonyStyle->success(sprintf('Added: %d', $numberFormatter->format($this->add)));
 
         return Command::SUCCESS;
+    }
+
+    protected function addOrUpdate(?Template $template): void
+    {
+        if (is_null($template->getId())) {
+            ++$this->add;
+
+            return;
+        }
+
+        ++$this->update;
     }
 }

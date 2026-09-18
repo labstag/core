@@ -13,17 +13,17 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Entity\Traits\WorkflowTrait;
 use Labstag\Repository\ChapterRepository;
+use Labstag\SlugHandler\ChapterSlugHandler;
 use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: ChapterRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
-#[ORM\Index(name: 'IDX_CHAPTER_SLUG', columns: ['slug'])]
-class Chapter implements Stringable
+class Chapter implements Stringable, EntityWithParagraphsInterface
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
@@ -35,59 +35,61 @@ class Chapter implements Stringable
     )]
     protected ?bool $enable = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\Column(type: Types::GUID, unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    protected ?string $id = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    protected ?string $img = null;
+
+    #[Vich\UploadableField(mapping: 'chapter', fileNameProperty: 'img')]
+    protected ?File $imgFile = null;
+
+    #[ORM\OneToOne(inversedBy: 'chapter', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?Meta $meta = null;
+
+    /**
+     * @var Collection<int, Paragraph>
+     */
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'chapter',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(
+        ['position' => 'ASC']
+    )]
+    protected Collection $paragraphs;
+
+    #[ORM\Column(
+        options: ['default' => 1]
+    )]
+    protected int $position = 1;
+
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'chapters')]
+    #[ORM\JoinColumn(nullable: false)]
+    protected ?Story $refstory = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    protected ?string $resume = null;
+
+    #[Gedmo\Slug(fields: ['title'], updatable: true, unique: false)]
+    #[Gedmo\SlugHandler(class: ChapterSlugHandler::class)]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     protected ?string $slug = null;
 
     #[ORM\Column(length: 255)]
     protected ?string $title = null;
 
-    #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\Column(type: Types::GUID, unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
-
-    #[Vich\UploadableField(mapping: 'chapter', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
-
-    #[ORM\OneToOne(inversedBy: 'chapter', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Meta $meta = null;
-
-    /**
-     * @var Collection<int, Paragraph>
-     */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'chapter', cascade: ['persist', 'remove'])]
-    #[ORM\OrderBy(
-        ['position' => 'ASC']
-    )]
-    private Collection $paragraphs;
-
-    #[ORM\Column(
-        options: ['default' => 1]
-    )]
-    private int $position = 1;
-
-    #[ORM\ManyToOne(inversedBy: 'chapters', cascade: ['persist', 'detach'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Story $refstory = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $resume = null;
-
-    /**
-     * @var Collection<int, Tag>
-     */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'chapters', cascade: ['persist', 'detach'])]
-    private Collection $tags;
-
     public function __construct()
     {
-        $this->tags       = new ArrayCollection();
         $this->paragraphs = new ArrayCollection();
     }
 
@@ -102,16 +104,6 @@ class Chapter implements Stringable
         if (!$this->paragraphs->contains($paragraph)) {
             $this->paragraphs->add($paragraph);
             $paragraph->setChapter($this);
-        }
-
-        return $this;
-    }
-
-    public function addTag(Tag $tag): static
-    {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addChapter($this);
         }
 
         return $this;
@@ -165,14 +157,6 @@ class Chapter implements Stringable
         return $this->slug;
     }
 
-    /**
-     * @return Collection<int, Tag>
-     */
-    public function getTags(): Collection
-    {
-        return $this->tags;
-    }
-
     public function getTitle(): ?string
     {
         return $this->title;
@@ -186,17 +170,9 @@ class Chapter implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getChapter() === $this) {
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getChapter() === $this
+        ) {
             $paragraph->setChapter(null);
-        }
-
-        return $this;
-    }
-
-    public function removeTag(Tag $tag): static
-    {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removeChapter($this);
         }
 
         return $this;
@@ -213,7 +189,6 @@ class Chapter implements Stringable
     {
         $this->img = $img;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
         if (null === $img) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

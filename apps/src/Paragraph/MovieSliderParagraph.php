@@ -6,14 +6,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
 use Labstag\Entity\Movie;
+use Labstag\Entity\MovieSliderParagraph as EntityMovieSliderParagraph;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Enum\PageEnum;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\MovieRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class MovieSliderParagraph extends ParagraphLib
+class MovieSliderParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -21,6 +22,12 @@ class MovieSliderParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityMovieSliderParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::MOVIES->value);
         if (!is_object($listing) || !$listing->isEnable()) {
@@ -29,11 +36,11 @@ class MovieSliderParagraph extends ParagraphLib
             return;
         }
 
-        /** @var MovieRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Movie::class);
-        $nbr                        = $paragraph->getNbr();
-        $title                      = $paragraph->getTitle();
-        $movies                     = $serviceEntityRepositoryLib->findLastByNbr($nbr);
+        /** @var MovieRepository $entityRepository */
+        $entityRepository                = $this->getRepository(Movie::class);
+        $nbr                             = $paragraph->getNbr();
+        $title                           = $paragraph->getTitle();
+        $movies                          = $entityRepository->findLastByNbr($nbr);
         if (0 === count($movies)) {
             $this->setShow($paragraph, false);
 
@@ -52,6 +59,11 @@ class MovieSliderParagraph extends ParagraphLib
         );
     }
 
+    public function getClass(): string
+    {
+        return EntityMovieSliderParagraph::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -65,9 +77,9 @@ class MovieSliderParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'movie slider';
+        return new TranslatableMessage('movie slider');
     }
 
     #[Override]
@@ -76,12 +88,22 @@ class MovieSliderParagraph extends ParagraphLib
         return 'movie-slider';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return $this->useInAll();
+        if (is_null($object)) {
+            return true;
+        }
+
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Page && $object->getType() == PageEnum::HOME->value;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 }

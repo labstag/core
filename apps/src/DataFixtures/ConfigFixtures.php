@@ -4,11 +4,11 @@ namespace Labstag\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Labstag\DataFixtures\Abstract\FixtureLib;
 use Labstag\Entity\Configuration;
+use Labstag\Entity\User;
 use Override;
 
-class ConfigFixtures extends FixtureLib implements DependentFixtureInterface
+class ConfigFixtures extends FixtureAbstract implements DependentFixtureInterface
 {
     /**
      * @return string[]
@@ -16,13 +16,17 @@ class ConfigFixtures extends FixtureLib implements DependentFixtureInterface
     #[Override]
     public function getDependencies(): array
     {
-        return [TemplateFixtures::class];
+        return [
+            UserFixtures::class,
+            TemplateFixtures::class,
+        ];
     }
 
     #[Override]
     public function load(ObjectManager $objectManager): void
     {
         $configuration = new Configuration();
+        $configuration->setDefaultUser($this->getReference('user_superadmin', User::class));
         $configuration->setTitleFormat('%content_title% | %site_name%');
         $configuration->setName('Labstag');
         $configuration->setCopyright('Copyright since 1999');
@@ -31,9 +35,26 @@ class ConfigFixtures extends FixtureLib implements DependentFixtureInterface
         $configuration->setNoreply('no-reply@labstag.traefik.me');
         $configuration->setUserShow(false);
         $configuration->setUserLink(false);
+        $configuration->setLanguageTmdb('fr-FR');
+        $configuration->setRegionTmdb('FR');
         $configuration->setDisableEmptyAgent(false);
         $this->setImage($configuration, 'logoFile');
         $this->setImage($configuration, 'placeholderFile');
+        $this->setImage($configuration, 'chapterPlaceholderFile');
+        $this->setImage($configuration, 'editoPlaceholderFile');
+        $this->setImage($configuration, 'episodePlaceholderFile');
+        $this->setImage($configuration, 'gamePlaceholderFile');
+        $this->setImage($configuration, 'memoPlaceholderFile');
+        $this->setImage($configuration, 'moviePlaceholderFile');
+        $this->setImage($configuration, 'pagePlaceholderFile');
+        $this->setImage($configuration, 'personPlaceholderFile');
+        $this->setImage($configuration, 'postPlaceholderFile');
+        $this->setImage($configuration, 'sagaPlaceholderFile');
+        $this->setImage($configuration, 'seasonPlaceholderFile');
+        $this->setImage($configuration, 'seriePlaceholderFile');
+        $this->setImage($configuration, 'starPlaceholderFile');
+        $this->setImage($configuration, 'storyPlaceholderFile');
+        $this->setImage($configuration, 'userPlaceholderFile');
 
         $objectManager->persist($configuration);
 

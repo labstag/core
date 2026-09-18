@@ -20,11 +20,16 @@ services:
     - '../src/DependencyInjection/'
     - '../src/Entity/'
     - '../src/Kernel.php'
-  Labstag\Service\MovieService:
+  Labstag\Api\TheMovieDbApi:
     arguments:
-      $tmdbapiKey: '%env(TMDB_API_KEY)%'
-  Labstag\Service\SerieService:
+      $tmdbBearerToken: '%env(TMDB_API_KEY)%'
+  Labstag\Api\IgdbApi:
     arguments:
-      $tmdbapiKey: '%env(TMDB_API_KEY)%'
+      $igdbClientId: '%env(IGDB_CLIENT)%'
+      $igdbClientSecret: '%env(IGDB_SECRET)%'
+  Labstag\Api\LibreTranslationApi:
+    arguments:
+      $translationApiUrl: '%env(TRANSLATION_API_URL)%'
+      $translationApiKey: '%env(TRANSLATION_API_KEY)%'
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones

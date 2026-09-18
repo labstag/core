@@ -5,22 +5,21 @@ namespace Labstag\Controller\Admin;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Edito;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class EditoCrudController extends AbstractCrudControllerLib
+class EditoCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->setEditDetail($actions);
-        $this->configureActionsTrash($actions);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -33,52 +32,29 @@ class EditoCrudController extends AbstractCrudControllerLib
         return $crud;
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        $isSuperAdmin = $this->isSuperAdmin();
-        // Edito n'a pas de slug : withSlug: false
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: false
-        ) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
+        $fields   = [
+            $this->crudFieldFactory->booleanField('enable', new TranslatableMessage('Enable')),
+            $this->crudFieldFactory->titleField(),
+            $this->crudFieldFactory->imageField('img', $pageName, self::getEntityFqcn()),
+        ];
+        $this->crudFieldFactory->addFieldsToTab('principal', $fields);
 
-        foreach ($this->crudFieldFactory->paragraphFields($pageName) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabDate($pageName);
 
-        foreach ($this->crudFieldFactory->refUserFields($isSuperAdmin) as $field) {
-            yield $field;
-        }
-
-        yield $this->crudFieldFactory->workflowField();
-        yield $this->crudFieldFactory->stateField();
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
-            yield $field;
-        }
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    #[\Override]
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
-        $this->crudFieldFactory->addFilterRefUser($filters);
+        $this->crudFieldFactory->addFilterRefUserFor($filters, self::getEntityFqcn());
         $this->crudFieldFactory->addFilterEnable($filters);
 
         return $filters;
-    }
-
-    #[\Override]
-    public function createEntity(string $entityFqcn): Edito
-    {
-        $edito = new $entityFqcn();
-        $this->workflowService->init($edito);
-        $edito->setRefuser($this->getUser());
-
-        return $edito;
     }
 
     public static function getEntityFqcn(): string

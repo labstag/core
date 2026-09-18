@@ -7,12 +7,11 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Post;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<Post>
+ * @extends RepositoryAbstract<Post>
  */
-class PostRepository extends ServiceEntityRepositoryLib
+class PostRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
@@ -21,10 +20,14 @@ class PostRepository extends ServiceEntityRepositoryLib
 
     public function findLastByNbr(int $nbr): mixed
     {
-        $queryBuilder = $this->getOptimizedBaseQB();
+        $queryBuilder = $this->getQueryBuilder();
         $queryBuilder->setMaxResults($nbr);
 
-        return $this->cacheQuery($queryBuilder->getQuery(), 'last-' . $nbr)->getResult();
+        $query = $queryBuilder->getQuery();
+
+        $query->enableResultCache(600, 'post-last-'.$nbr);
+
+        return $query->getResult();
     }
 
     public function findTotalEnable(): mixed
@@ -36,14 +39,20 @@ class PostRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->setParameter('now', new DateTime('now'));
 
-        return $this->cacheQuery($queryBuilder->getQuery(), 'total-enable', 900)->getSingleScalarResult();
+        $query = $queryBuilder->getQuery();
+
+        $query->enableResultCache(900, 'post-total-enable');
+
+        return $query->getSingleScalarResult();
     }
 
     public function getAllActivate(): mixed
     {
-        $queryBuilder = $this->getOptimizedBaseQB();
+        $queryBuilder = $this->getQueryBuilder();
+        $query        = $queryBuilder->getQuery();
+        $query->enableResultCache(600, 'post-activate');
 
-        return $this->cacheQuery($queryBuilder->getQuery(), 'activate', 600)->getResult();
+        return $query->getResult();
     }
 
     public function getQueryBuilder(): QueryBuilder
@@ -60,42 +69,24 @@ class PostRepository extends ServiceEntityRepositoryLib
     /**
      * @return Query<mixed, mixed>
      */
-    public function getQueryPaginator(): Query
-    {
-        $queryBuilder = $this->getOptimizedBaseQB();
-
-        return $this->cacheQuery($queryBuilder->getQuery(), 'query-paginator', 300);
-    }
-
-    /**
-     * @param Query<mixed, mixed> $query
-     *
-     * @return Query<mixed, mixed>
-     */
-    private function cacheQuery(Query $query, string $suffix, int $ttl = 600): Query
-    {
-        // TTL réduit pour contenu récent ; ajustable selon stratégie
-        $query->enableResultCache($ttl, 'post-' . $suffix);
-
-        return $query;
-    }
-
-    /**
-     * Base optimisée : pré-chargement des relations nécessaires pour éviter N+1.
-     */
-    private function getOptimizedBaseQB(): QueryBuilder
+    public function getQueryPaginator(?string $categorySlug, ?string $tagSlug): Query
     {
         $queryBuilder = $this->getQueryBuilder();
-        // Relations hypothétiques : tags, categories, meta (ajuster selon mapping réel)
-        $queryBuilder->leftJoin('p.tags', 't')->addSelect('t');
-        if ($this->getEntityManager()->getClassMetadata(Post::class)->hasAssociation('categories')) {
+        if ($categorySlug) {
             $queryBuilder->leftJoin('p.categories', 'c')->addSelect('c');
+            $queryBuilder->andWhere('c.slug = :categorySlug');
+            $queryBuilder->setParameter('categorySlug', $categorySlug);
         }
 
-        if ($this->getEntityManager()->getClassMetadata(Post::class)->hasAssociation('meta')) {
-            $queryBuilder->leftJoin('p.meta', 'm')->addSelect('m');
+        if ($tagSlug) {
+            $queryBuilder->leftJoin('p.tags', 't')->addSelect('t');
+            $queryBuilder->andWhere('t.slug = :tagSlug');
+            $queryBuilder->setParameter('tagSlug', $tagSlug);
         }
 
-        return $queryBuilder;
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(300, 'post-query-paginator-'.$categorySlug.'-'.$tagSlug);
+
+        return $query;
     }
 }

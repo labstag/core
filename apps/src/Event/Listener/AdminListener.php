@@ -39,9 +39,9 @@ final class AdminListener
     private function isDelete(RequestEvent $requestEvent): bool
     {
         $request    = $requestEvent->getRequest();
-        $crudAction = $request->query->get('crudAction', null);
-        $action     = $request->query->get('action', null);
-        $referer    = $request->headers->get('referer', null);
+        $crudAction = $request->query->get('crudAction');
+        $action     = $request->query->get('action');
+        $referer    = $request->headers->get('referer');
         if ('trash' == $action) {
             return true;
         }

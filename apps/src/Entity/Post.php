@@ -17,17 +17,26 @@ use Override;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[Vich\Uploadable]
 #[ORM\Index(name: 'IDX_POST_SLUG', columns: ['slug'])]
-class Post implements Stringable
+class Post implements Stringable, EntityWithParagraphsInterface
 {
     use SoftDeleteableEntity;
     use TimestampableTrait;
     use WorkflowTrait;
+
+    /**
+     * @var Collection<int, PostCategory>
+     */
+    #[ORM\ManyToMany(targetEntity: PostCategory::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    protected Collection $categories;
 
     #[ORM\Column(
         type: Types::BOOLEAN,
@@ -35,56 +44,61 @@ class Post implements Stringable
     )]
     protected ?bool $enable = null;
 
-    #[Gedmo\Slug(updatable: true, fields: ['title'])]
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true, unique: true)]
-    protected ?string $slug = null;
-
-    #[ORM\Column(length: 255)]
-    protected ?string $title = null;
-
-    /**
-     * @var Collection<int, Category>
-     */
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
-    private Collection $categories;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\Column(type: Types::GUID, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?string $id = null;
+    protected ?string $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $img = null;
+    protected ?string $img = null;
 
     #[Vich\UploadableField(mapping: 'post', fileNameProperty: 'img')]
-    private ?File $imgFile = null;
+    protected ?File $imgFile = null;
 
-    #[ORM\OneToOne(inversedBy: 'post', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Meta $meta = null;
+    #[ORM\OneToOne(inversedBy: 'post', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?Meta $meta = null;
 
     /**
      * @var Collection<int, Paragraph>
      */
-    #[ORM\OneToMany(targetEntity: Paragraph::class, mappedBy: 'post', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        targetEntity: Paragraph::class,
+        mappedBy: 'post',
+        cascade: [
+            'persist',
+            'remove',
+        ],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(
         ['position' => 'ASC']
     )]
-    private Collection $paragraphs;
+    protected Collection $paragraphs;
 
-    #[ORM\ManyToOne(inversedBy: 'posts', cascade: ['persist', 'detach'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'detach'], inversedBy: 'posts')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?User $refuser = null;
+    protected ?User $refuser = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $resume = null;
+    protected ?string $resume = null;
+
+    #[Gedmo\Slug(fields: ['title'], updatable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true, nullable: true)]
+    protected ?string $slug = null;
 
     /**
-     * @var Collection<int, Tag>
+     * @var Collection<int, PostTag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
-    private Collection $tags;
+    #[ORM\ManyToMany(targetEntity: PostTag::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
+    #[ORM\OrderBy(
+        ['title' => 'ASC']
+    )]
+    protected Collection $tags;
+
+    #[ORM\Column(length: 255)]
+    protected ?string $title = null;
 
     public function __construct()
     {
@@ -99,11 +113,11 @@ class Post implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addCategory(Category $category): static
+    public function addCategory(PostCategory $postCategory): static
     {
-        if (!$this->categories->contains($category)) {
-            $this->categories->add($category);
-            $category->addPost($this);
+        if (!$this->categories->contains($postCategory)) {
+            $this->categories->add($postCategory);
+            $postCategory->addPost($this);
         }
 
         return $this;
@@ -119,18 +133,18 @@ class Post implements Stringable
         return $this;
     }
 
-    public function addTag(Tag $tag): static
+    public function addTag(PostTag $postTag): static
     {
-        if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
-            $tag->addPost($this);
+        if (!$this->tags->contains($postTag)) {
+            $this->tags->add($postTag);
+            $postTag->addPost($this);
         }
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Category>
+     * @return Collection<int, PostCategory>
      */
     public function getCategories(): Collection
     {
@@ -181,7 +195,7 @@ class Post implements Stringable
     }
 
     /**
-     * @return Collection<int, Tag>
+     * @return Collection<int, PostTag>
      */
     public function getTags(): Collection
     {
@@ -198,10 +212,10 @@ class Post implements Stringable
         return $this->enable;
     }
 
-    public function removeCategory(Category $category): static
+    public function removeCategory(PostCategory $postCategory): static
     {
-        if ($this->categories->removeElement($category)) {
-            $category->removePost($this);
+        if ($this->categories->removeElement($postCategory)) {
+            $postCategory->removePost($this);
         }
 
         return $this;
@@ -210,17 +224,18 @@ class Post implements Stringable
     public function removeParagraph(Paragraph $paragraph): static
     {
         // set the owning side to null (unless already changed)
-        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPost() === $this) {
+        if ($this->paragraphs->removeElement($paragraph) && $paragraph->getPost() === $this
+        ) {
             $paragraph->setPost(null);
         }
 
         return $this;
     }
 
-    public function removeTag(Tag $tag): static
+    public function removeTag(PostTag $postTag): static
     {
-        if ($this->tags->removeElement($tag)) {
-            $tag->removePost($this);
+        if ($this->tags->removeElement($postTag)) {
+            $postTag->removePost($this);
         }
 
         return $this;
@@ -237,7 +252,6 @@ class Post implements Stringable
     {
         $this->img = $img;
 
-        // Si l'image est supprimée (img devient null), on force la mise à jour
         if (null === $img) {
             $this->updatedAt = DateTime::createFromImmutable(new DateTimeImmutable());
         }

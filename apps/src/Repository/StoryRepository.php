@@ -6,12 +6,11 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Story;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<Story>
+ * @extends RepositoryAbstract<Story>
  */
-class StoryRepository extends ServiceEntityRepositoryLib
+class StoryRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
@@ -24,7 +23,7 @@ class StoryRepository extends ServiceEntityRepositoryLib
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'stories-last-' . $nbr);
+        $query->enableResultCache(3600, 'stories-last-'.$nbr);
 
         return $query->getResult();
     }

@@ -4,14 +4,19 @@ namespace Labstag\Block;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use Generator;
-use Labstag\Block\Abstract\AbstractSimpleBlock;
 use Labstag\Entity\Block;
+use Labstag\Entity\HtmlBlock as EntityHtmlBlock;
 use Labstag\Field\WysiwygField;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class HtmlBlock extends AbstractSimpleBlock
+class HtmlBlock extends SimpleBlockAbstract
 {
+    public function getClass(): string
+    {
+        return EntityHtmlBlock::class;
+    }
+
     /**
      * @return Generator<FieldInterface>
      */
@@ -19,15 +24,16 @@ class HtmlBlock extends AbstractSimpleBlock
     public function getFields(Block $block, string $pageName): mixed
     {
         unset($block, $pageName);
-        $wysiwygField = WysiwygField::new('content', new TranslatableMessage('Content'));
+        $translatableMessage = new TranslatableMessage('Content');
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
 
         yield $wysiwygField;
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'HTML';
+        return new TranslatableMessage('HTML');
     }
 
     #[Override]

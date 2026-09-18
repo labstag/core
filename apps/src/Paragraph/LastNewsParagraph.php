@@ -5,16 +5,16 @@ namespace Labstag\Paragraph;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Generator;
+use Labstag\Entity\LastNewsParagraph as EntityLastNewsParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\Post;
 use Labstag\Enum\PageEnum;
-use Labstag\Paragraph\Abstract\ParagraphLib;
 use Labstag\Repository\PostRepository;
 use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class LastNewsParagraph extends ParagraphLib
+class LastNewsParagraph extends ParagraphAbstract implements ParagraphInterface
 {
     /**
      * @param mixed[] $data
@@ -22,11 +22,17 @@ class LastNewsParagraph extends ParagraphLib
     #[Override]
     public function generate(Paragraph $paragraph, array $data, bool $disable): void
     {
+        if (!$paragraph instanceof EntityLastNewsParagraph) {
+            $this->setShow($paragraph, false);
+
+            return;
+        }
+
         unset($disable);
         $listing = $this->slugService->getPageByType(PageEnum::POSTS->value);
-        /** @var PostRepository $serviceEntityRepositoryLib */
-        $serviceEntityRepositoryLib = $this->getRepository(Post::class);
-        $total                      = $serviceEntityRepositoryLib->findTotalEnable();
+        /** @var PostRepository $entityRepository */
+        $entityRepository                = $this->getRepository(Post::class);
+        $total                           = $entityRepository->findTotalEnable();
         if (!is_object($listing) || !$listing->isEnable() || 0 == $total) {
             $this->setShow($paragraph, false);
 
@@ -34,8 +40,9 @@ class LastNewsParagraph extends ParagraphLib
         }
 
         $nbr   = $paragraph->getNbr();
-        $news  = $serviceEntityRepositoryLib->findLastByNbr($nbr);
-        $total = $serviceEntityRepositoryLib->findTotalEnable();
+        $news  = $entityRepository->findLastByNbr($nbr);
+        $total = $entityRepository->findTotalEnable();
+
         $this->setData(
             $paragraph,
             [
@@ -46,6 +53,11 @@ class LastNewsParagraph extends ParagraphLib
                 'data'      => $data,
             ]
         );
+    }
+
+    public function getClass(): string
+    {
+        return EntityLastNewsParagraph::class;
     }
 
     /**
@@ -61,9 +73,9 @@ class LastNewsParagraph extends ParagraphLib
     }
 
     #[Override]
-    public function getName(): string
+    public function getName(): TranslatableMessage
     {
-        return 'Last news';
+        return new TranslatableMessage('Last news');
     }
 
     #[Override]
@@ -72,12 +84,22 @@ class LastNewsParagraph extends ParagraphLib
         return 'last-news';
     }
 
-    /**
-     * @return mixed[]
-     */
     #[Override]
-    public function useIn(): array
+    public function supports(?object $object): bool
     {
-        return [Page::class];
+        if (is_null($object)) {
+            return true;
+        }
+
+        $entityRepository                = $this->getRepository($this->getClass());
+        $paragraph                       = $entityRepository->findOneBy([]);
+
+        if (!$paragraph instanceof Paragraph) {
+            return $object instanceof Page && $object->getType() == PageEnum::HOME->value;
+        }
+
+        $parent = $this->paragraphService->getEntityParent($paragraph);
+
+        return $parent->value->getId() == $object->getId();
     }
 }

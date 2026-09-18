@@ -1,6 +1,6 @@
 {% use "elements.html.twig" %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
     <div class="wrapper">
-        {% include  "paragraphs/scripts/sitemap.html.twig"  with {'key': '/', 'sitemap': sitemap} %}
+        {% include "paragraphs/scripts/sitemap.html.twig"  with {'key': '/', 'sitemap': sitemap} %}
     </div>
 </section>

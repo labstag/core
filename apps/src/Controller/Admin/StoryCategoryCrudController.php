@@ -2,17 +2,35 @@
 
 namespace Labstag\Controller\Admin;
 
-use Labstag\Controller\Admin\Abstract\CategoryCrudControllerLib;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use Labstag\Entity\StoryCategory;
+use Override;
+use Symfony\Component\Translation\TranslatableMessage;
 
-class StoryCategoryCrudController extends CategoryCrudControllerLib
+class StoryCategoryCrudController extends CategoryCrudControllerAbstract
 {
-    protected function getChildRelationshipProperty(): string
+    #[Override]
+    public function configureFields(string $pageName): iterable
     {
-        return 'stories';
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->slugField(),
+                $this->crudFieldFactory->titleField(),
+            ]
+        );
+        $associationField = AssociationField::new('stories', new TranslatableMessage('Stories'));
+        $associationField->formatValue(fn ($entity): int => count($entity));
+        $associationField->hideOnForm();
+
+        $this->crudFieldFactory->addFieldsToTab('principal', [$associationField]);
+
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
-    protected function getEntityType(): string
+    public static function getEntityFqcn(): string
     {
-        return 'story';
+        return StoryCategory::class;
     }
 }

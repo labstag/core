@@ -61,6 +61,14 @@
         <source>paginator.results</source>
         <target><![CDATA[{0} Aucun résultat|{1} <strong>1</strong> résultat|]1,Inf] <strong>%count%</strong> résultats]]></target>
       </trans-unit>
+      <trans-unit id="1gMekvi" resname="paginator.label">
+        <source>paginator.label</source>
+        <target>Pagination</target>
+      </trans-unit>
+      <trans-unit id="Xiqdpoq" resname="paginator.more_pages">
+        <source>paginator.more_pages</source>
+        <target>Plus de pages</target>
+      </trans-unit>
       <trans-unit id="sS6ch7." resname="label.true">
         <source>label.true</source>
         <target>Oui</target>
@@ -153,6 +161,10 @@
         <source>action.close</source>
         <target>Fermer</target>
       </trans-unit>
+      <trans-unit id="0B.IcA0" resname="action.download">
+        <source>action.download</source>
+        <target>Télécharger</target>
+      </trans-unit>
       <trans-unit id="QZwjCUi" resname="action.create">
         <source>action.create</source>
         <target>Créer</target>
@@ -173,6 +185,10 @@
         <source>action.save_and_continue</source>
         <target>Sauvegarder et continuer</target>
       </trans-unit>
+      <trans-unit id="sWw5MDD" resname="action.toggle_dropdown">
+        <source>action.toggle_dropdown</source>
+        <target>Basculer le menu déroulant</target>
+      </trans-unit>
       <trans-unit id="IvOrJqD" resname="batch_action_modal.title">
         <source>batch_action_modal.title</source>
         <target>Vous allez appliquer l'action "%action_name%" à %num_items% élément(s).</target>
@@ -192,6 +208,14 @@
       <trans-unit id="O8SUipq" resname="delete_modal.content">
         <source>delete_modal.content</source>
         <target>Cette action est irréversible.</target>
+      </trans-unit>
+      <trans-unit id="4fQr56W" resname="action_confirmation_modal.title">
+        <source>action_confirmation_modal.title</source>
+        <target>Êtes-vous sûr de vouloir %action_name% ?</target>
+      </trans-unit>
+      <trans-unit id="aq8bq8Z" resname="action_confirmation_modal.action">
+        <source>action_confirmation_modal.action</source>
+        <target>Confirmer</target>
       </trans-unit>
       <trans-unit id="VH1tHkH" resname="filter.title">
         <source>filter.title</source>
@@ -236,6 +260,10 @@
       <trans-unit id="g4gIdL3" resname="filter.label.contains">
         <source>filter.label.contains</source>
         <target>contient</target>
+      </trans-unit>
+      <trans-unit id="jg7iuXA" resname="filter.label.contains_all">
+        <source>filter.label.contains_all</source>
+        <target>contient tous</target>
       </trans-unit>
       <trans-unit id="wlQF6T2" resname="filter.label.not_contains">
         <source>filter.label.not_contains</source>
@@ -368,6 +396,34 @@
       <trans-unit id="9p498i9" resname="exception.insufficient_entity_permission">
         <source>exception.insufficient_entity_permission</source>
         <target>Vous n'êtes pas autorisé à accéder à cet élément.</target>
+      </trans-unit>
+      <trans-unit id="8RbaU.G" resname="exception.general">
+        <source>exception.general</source>
+        <target>Une erreur est survenue lors du traitement de votre requête.</target>
+      </trans-unit>
+      <trans-unit id="q2ZwEnG" resname="exception.general_403">
+        <source>exception.general_403</source>
+        <target>Vous n'avez pas la permission d'effectuer cette action.</target>
+      </trans-unit>
+      <trans-unit id="MFdqQlV" resname="exception.general_404">
+        <source>exception.general_404</source>
+        <target>La page demandée n'a pas été trouvée.</target>
+      </trans-unit>
+      <trans-unit id="zQHmOZU" resname="exception.general_500">
+        <source>exception.general_500</source>
+        <target>Une erreur interne est survenue lors du traitement de votre requête.</target>
+      </trans-unit>
+      <trans-unit id="do.uYpY" resname="file_upload.add_file">
+        <source>file_upload.add_file</source>
+        <target>Ajouter un fichier</target>
+      </trans-unit>
+      <trans-unit id="2vMvd0L" resname="file_upload.add_files">
+        <source>file_upload.add_files</source>
+        <target>Ajouter des fichiers</target>
+      </trans-unit>
+      <trans-unit id="TF4Tlgu" resname="file_upload.clear_all">
+        <source>file_upload.clear_all</source>
+        <target>Tout effacer</target>
       </trans-unit>
       <trans-unit id="dc37768" resname="autocomplete.no-results-found">
         <source>autocomplete.no-results-found</source>

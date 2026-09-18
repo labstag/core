@@ -4,12 +4,11 @@ namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Template;
-use Labstag\Repository\Abstract\ServiceEntityRepositoryLib;
 
 /**
- * @extends ServiceEntityRepositoryLib<Template>
+ * @extends RepositoryAbstract<Template>
  */
-class TemplateRepository extends ServiceEntityRepositoryLib
+class TemplateRepository extends RepositoryAbstract
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {

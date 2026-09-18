@@ -2,9 +2,7 @@
 
 namespace Labstag\Replace;
 
-use Labstag\Replace\Abstract\ReplaceLib;
-
-class UserRolesReplace extends ReplaceLib
+class UserRolesReplace extends ReplaceAbstract
 {
     public function exec(): string
     {

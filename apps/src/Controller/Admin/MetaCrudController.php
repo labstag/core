@@ -6,42 +6,40 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Labstag\Controller\Admin\Abstract\AbstractCrudControllerLib;
 use Labstag\Entity\Meta;
 use Labstag\Field\MetaParentField;
+use Override;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class MetaCrudController extends AbstractCrudControllerLib
+class MetaCrudController extends CrudControllerAbstract
 {
-    #[\Override]
+    #[Override]
     public function configureActions(Actions $actions): Actions
     {
-        $this->configureActionsTrash($actions);
-        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
+        $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
+        $this->actionsFactory->remove(Crud::PAGE_INDEX, Action::NEW);
 
-        return $actions;
+        return $this->actionsFactory->show();
     }
 
-    #[\Override]
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
-        yield $this->addTabPrincipal();
-        foreach ($this->crudFieldFactory->baseIdentitySet(
-            $pageName,
-            self::getEntityFqcn(),
-            withSlug: false,
-            withImage: false,
-            withEnable: false
-        ) as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabPrincipal($this->getContext());
+        $translatableMessage = new TranslatableMessage('Parent');
+        $this->crudFieldFactory->addFieldsToTab(
+            'principal',
+            [
+                $this->crudFieldFactory->titleField(),
+                TextField::new('keywords', new TranslatableMessage('Keywords')),
+                TextField::new('description', new TranslatableMessage('Description')),
+                MetaParentField::new('parent', $translatableMessage->getMessage()),
+            ]
+        );
 
-        yield TextField::new('keywords', new TranslatableMessage('Keywords'));
-        yield TextField::new('description', new TranslatableMessage('Description'));
-        yield MetaParentField::new('parent', new TranslatableMessage('Parent'));
-        foreach ($this->crudFieldFactory->dateSet() as $field) {
-            yield $field;
-        }
+        $this->crudFieldFactory->setTabDate($pageName);
+
+        yield from $this->crudFieldFactory->getConfigureFields($pageName);
     }
 
     public static function getEntityFqcn(): string
