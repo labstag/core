@@ -1,4 +1,4 @@
-FROM koromerzhin/php:8.4.13-apache-symfony
+FROM koromerzhin/php:8.4.26-apache-symfony
 
 USER root
 
