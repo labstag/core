@@ -1,5 +1,15 @@
 version: 2
 updates:
+  # 0️⃣ Sous-module taskfiles (suit les tags semver en priorité)
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "submodule"
+    open-pull-requests-limit: 10
+
   # 1️⃣ Dépendances Node.js (npm)
   - package-ecosystem: "npm"
     directory: "/" # Racine du projet
