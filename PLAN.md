@@ -36,3 +36,13 @@ Priorités proposées (à valider).
 - Appliquer Git Flow (fait documenté).
 - Aucun merge sans autorisation explicite (fait documenté).
 - Protéger les branches `main`/`develop` sur GitHub.
+
+## 8. Docker / déploiement
+- Image `koromerzhin/labstag` créée (Dockerfile + .dockerignore).
+- Image messenger `koromerzhin/labstag:*-messenger` avec Supervisor.
+- Commandes Taskfile pour build/push avec version.
+- README mis à jour avec exemple d'utilisation.
+
+## 9. Administration
+- Vue "Corbeille" sur le dashboard (comptage + liens).
+- Correction des `#[AdminRoute]` avec chemins explicites.
