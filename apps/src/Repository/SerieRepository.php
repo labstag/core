@@ -24,18 +24,24 @@ class SerieRepository extends RepositoryAbstract
     public function delete(object $entity): void
     {
         if ($entity instanceof Serie) {
-            $seasons = $this->getEntityManager()->getRepository(Season::class)->findBy(
-                ['refserie' => $entity]
-            );
+            $filters = $this->getEntityManager()->getFilters();
+            $wasEnabled = $filters->has('softdeleteable') && $filters->isEnabled('softdeleteable');
+            if ($wasEnabled) {
+                $filters->disable('softdeleteable');
+            }
+
+            $seasons = $this->getEntityManager()->getRepository(Season::class)->findBy(['refserie' => $entity]);
             foreach ($seasons as $season) {
                 $this->getEntityManager()->getRepository(Season::class)->delete($season);
             }
 
-            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
-                ['refSerie' => $entity]
-            );
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(['refSerie' => $entity]);
             foreach ($castings as $casting) {
                 $this->getEntityManager()->remove($casting);
+            }
+
+            if ($wasEnabled && $filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
+                $filters->enable('softdeleteable');
             }
         }
 
