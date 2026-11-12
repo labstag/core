@@ -234,7 +234,12 @@ class MovieRepository extends RepositoryAbstract
         $this->getQueryBuilderCategories($queryBuilder, $query);
         $this->getQueryBuilderYear($queryBuilder, $query);
 
-        $direction = 'DESC' === strtoupper((string) ($query['orderby'] ?? 'DESC')) ? SortDirection::Descending : SortDirection::Ascending;
+        $orderby = $query['orderby'] ?? 'DESC';
+        if ($orderby instanceof SortDirection) {
+            $direction = $orderby;
+        } else {
+            $direction = 'DESC' === strtoupper((string) $orderby) ? SortDirection::Descending : SortDirection::Ascending;
+        }
 
         return $queryBuilder->orderBy('m.' . $query['order'], $direction);
     }
