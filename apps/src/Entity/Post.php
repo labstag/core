@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use SortDirection;
+
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -34,7 +36,7 @@ class Post implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: PostCategory::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => 'ASC']
+        ['title' => SortDirection::Ascending]
     )]
     protected Collection $categories;
 
@@ -73,7 +75,7 @@ class Post implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => 'ASC']
+        ['position' => SortDirection::Ascending]
     )]
     protected Collection $paragraphs;
 
@@ -93,7 +95,7 @@ class Post implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: PostTag::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => 'ASC']
+        ['title' => SortDirection::Ascending]
     )]
     protected Collection $tags;
 

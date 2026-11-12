@@ -15,7 +15,7 @@ services:
       MAILER_DSN: "smtp://mailtest:1025"
       MESSENGER_TRANSPORT_DSN: "doctrine://default"
       LOCK_DNS: semaphore
-      DATABASE_URL: "mysqli://labstag:H8mvFuL8GldgEs6w@mariadb:3306/labstag_bdd"
+      DATABASE_URL: "mysqli://labstag:H8mvFuL8GldgEs6w@mariadb:3306/labstag_bdd?serverVersion=10.11.2-MariaDB"
       HOME: "/var/www"
     volumes:
       - ${PWD}/apps/.env:/var/www/.env:ro
@@ -32,7 +32,7 @@ services:
       MAILER_DSN: "smtp://mailtest:1025"
       MESSENGER_TRANSPORT_DSN: "doctrine://default"
       LOCK_DNS: semaphore
-      DATABASE_URL: "mysqli://labstag:H8mvFuL8GldgEs6w@mariadb:3306/labstag_bdd"
+      DATABASE_URL: "mysqli://labstag:H8mvFuL8GldgEs6w@mariadb:3306/labstag_bdd?serverVersion=10.11.2-MariaDB"
       HOME: "/var/www"
     volumes:
       - ${PWD}/apps/.env:/var/www/.env:ro

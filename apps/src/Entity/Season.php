@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use SortDirection;
+
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -54,7 +56,7 @@ class Season implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['number' => 'ASC']
+        ['number' => SortDirection::Ascending]
     )]
     protected Collection $episodes;
 
@@ -87,7 +89,7 @@ class Season implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => 'ASC']
+        ['position' => SortDirection::Ascending]
     )]
     protected Collection $paragraphs;
 

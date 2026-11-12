@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use SortDirection;
+
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -60,7 +62,7 @@ class Game implements EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => 'ASC']
+        ['position' => SortDirection::Ascending]
     )]
     protected Collection $paragraphs;
 
@@ -76,7 +78,7 @@ class Game implements EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: GameCategory::class, inversedBy: 'games')]
     #[ORM\OrderBy(
-        ['title' => 'ASC']
+        ['title' => SortDirection::Ascending]
     )]
     private Collection $categories;
 
@@ -85,7 +87,7 @@ class Game implements EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: Franchise::class, inversedBy: 'games')]
     #[ORM\OrderBy(
-        ['title' => 'ASC']
+        ['title' => SortDirection::Ascending]
     )]
     private Collection $franchises;
 
@@ -97,7 +99,7 @@ class Game implements EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: Platform::class, inversedBy: 'games')]
     #[ORM\OrderBy(
-        ['title' => 'ASC']
+        ['title' => SortDirection::Ascending]
     )]
     private Collection $platforms;
 

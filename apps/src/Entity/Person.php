@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use SortDirection;
+
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -54,7 +56,7 @@ class Person
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => 'ASC']
+        ['position' => SortDirection::Ascending]
     )]
     protected Collection $paragraphs;
 

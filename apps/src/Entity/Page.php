@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use SortDirection;
+
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -35,7 +37,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: PageCategory::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => 'ASC']
+        ['title' => SortDirection::Ascending]
     )]
     protected Collection $categories;
 
@@ -84,7 +86,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => 'ASC']
+        ['position' => SortDirection::Ascending]
     )]
     protected Collection $paragraphs;
 
@@ -111,7 +113,7 @@ class Page implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: PageTag::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => 'ASC']
+        ['title' => SortDirection::Ascending]
     )]
     protected Collection $tags;
 

@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use SortDirection;
+
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -41,7 +43,7 @@ class Serie implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: SerieCategory::class, mappedBy: 'series', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => 'ASC']
+        ['title' => SortDirection::Ascending]
     )]
     protected Collection $categories;
 
@@ -104,7 +106,7 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => 'ASC']
+        ['position' => SortDirection::Ascending]
     )]
     protected Collection $paragraphs;
 
@@ -130,7 +132,7 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['number' => 'ASC']
+        ['number' => SortDirection::Ascending]
     )]
     protected Collection $seasons;
 
@@ -161,7 +163,7 @@ class Serie implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'series')]
     #[ORM\OrderBy(
-        ['title' => 'ASC']
+        ['title' => SortDirection::Ascending]
     )]
     private Collection $companies;
 

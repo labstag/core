@@ -2,6 +2,8 @@
 
 namespace Labstag\Entity;
 
+use SortDirection;
+
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -42,7 +44,7 @@ class Movie implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: MovieCategory::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => 'ASC']
+        ['title' => SortDirection::Ascending]
     )]
     protected Collection $categories;
 
@@ -102,7 +104,7 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => 'ASC']
+        ['position' => SortDirection::Ascending]
     )]
     protected Collection $paragraphs;
 
@@ -146,7 +148,7 @@ class Movie implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'movies')]
     #[ORM\OrderBy(
-        ['title' => 'ASC']
+        ['title' => SortDirection::Ascending]
     )]
     private Collection $companies;
 

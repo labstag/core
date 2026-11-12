@@ -39,6 +39,15 @@ class SeasonRepository extends RepositoryAbstract
         return $query->getResult();
     }
 
+    public function getdeleteTrashBySerie(Serie $serie): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->where('s.refserie = :refserie');
+        $queryBuilder->andWhere('s.deletedAt IS NOT NULL');
+        $queryBuilder->setParameter('refserie', $serie);
+        return $queryBuilder->getQuery()->getResult();
+    }
+
     public function getOneBySerieAndPosition(Serie $serie, int $position): ?Season
     {
         $data = new ArrayCollection();

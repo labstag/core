@@ -392,7 +392,6 @@ final class SerieService
             $this->entityManager->remove($paragraph);
         }
 
-        $repository->save($serie);
         $this->entityManager->flush();
         if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
             $filters->enable('softdeleteable');

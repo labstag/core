@@ -18,7 +18,7 @@ services:
       DATABASE_BDD: labstag_bdd
       DATABASE_USER: labstag
       DATABASE_PASSWORD: password
-      DATABASE_URL: "mysqli://labstag:password@mariadb:3306/labstag_bdd"
+      DATABASE_URL: "mysqli://labstag:password@mariadb:3306/labstag_bdd?serverVersion=10.11.2-MariaDB"
       HOME: "/var/www"
     volumes:
       - ${PWD}/apps:/var/www/:rw
@@ -44,7 +44,7 @@ services:
       DATABASE_BDD: labstag_bdd
       DATABASE_USER: labstag
       DATABASE_PASSWORD: password
-      DATABASE_URL: "mysqli://labstag:password@mariadb:3306/labstag_bdd"
+      DATABASE_URL: "mysqli://labstag:password@mariadb:3306/labstag_bdd?serverVersion=10.11.2-MariaDB"
       HOME: "/var/www"
     volumes:
       - ${PWD}/apps:/var/www/:rw
