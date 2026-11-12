@@ -3,11 +3,13 @@
 namespace Labstag\Service\Imdb;
 
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Entity\SerieCategory;
 use Labstag\Message\SeasonMessage;
+use Labstag\Repository\SeasonRepository;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\CategoryService;
 use Labstag\Service\ConfigurationService;
@@ -31,6 +33,7 @@ final class SerieService
     public function __construct(
         private MessageDispatcherService $messageDispatcherService,
         private ConfigurationService $configurationService,
+        private EntityManagerInterface $entityManager,
         private FileService $fileService,
         private CompanyService $companyService,
         private SeasonService $seasonService,
@@ -367,7 +370,33 @@ final class SerieService
             $this->messageDispatcherService->dispatch(new SeasonMessage($season->getId()));
         }
 
+        $this->cleanupTrashSerie($serie);
+
         return true;
+    }
+
+    private function cleanupTrashSerie(Serie $serie): void
+    {
+        $repository = $this->entityManager->getRepository(Season::class);
+        if (!$repository instanceof SeasonRepository) {
+            return;
+        }
+
+        $filters = $this->entityManager->getFilters();
+        if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
+            $filters->disable('softdeleteable');
+        }
+        
+        $paragraphs = $repository->getdeleteTrashBySerie($serie);
+        foreach ($paragraphs as $paragraph) {
+            $this->entityManager->remove($paragraph);
+        }
+
+        $repository->save($serie);
+        $this->entityManager->flush();
+        if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
+            $filters->enable('softdeleteable');
+        }
     }
 
     /**

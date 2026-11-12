@@ -5,9 +5,11 @@ namespace Labstag\Service\Imdb;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
+use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Labstag\Message\EpisodeMessage;
+use Labstag\Repository\EpisodeRepository;
 use Labstag\Repository\SeasonRepository;
 use Labstag\Service\FileService;
 use Labstag\Service\MessageDispatcherService;
@@ -33,38 +35,49 @@ final class SeasonService
             $filters->disable('softdeleteable');
         }
 
-        $season = $this->seasonRepository->findOneBy(
+        $seasons = $this->seasonRepository->findBy(
             [
                 'refserie' => $serie,
                 'number'   => $data['season_number'],
             ]
         );
 
-        if ($season instanceof Season) {
+        if (count($seasons) == 0) {
             if (0 == $data['episode_count']) {
-                $this->seasonRepository->delete($season);
-
                 return null;
+            }
+
+            $season = new Season();
+            $season->setEnable(true);
+            $season->setRefserie($serie);
+            $season->setNumber($data['season_number']);
+            $season->setTitle($data['name']);
+
+            return $season;
+        }
+
+        if (0 == $data['episode_count']) {
+            foreach ($seasons as $season) {
+                $this->seasonRepository->delete($season);
+            }
+
+            return null;
+        }
+
+        $selectSeason = null;
+        foreach ($seasons as $position => $season) {
+            if ($position != 0) {
+                $this->seasonRepository->delete($season);
             }
 
             if ($season->getDeletedAt() != null) {
                 $season->setDeletedAt();
             }
 
-            return $season;
+            $selectSeason = $season;
         }
 
-        if (0 == $data['episode_count']) {
-            return null;
-        }
-
-        $season = new Season();
-        $season->setEnable(true);
-        $season->setRefserie($serie);
-        $season->setNumber($data['season_number']);
-        $season->setTitle($data['name']);
-
-        return $season;
+        return $selectSeason;
     }
 
     public function getSeasons(Serie $serie): array
@@ -158,7 +171,32 @@ final class SeasonService
             $this->messageDispatcherService->dispatch(new EpisodeMessage($episode->getId()));
         }
 
+        $this->cleanupTrashEpisodes($season);
+
         return true;
+    }
+
+    private function cleanupTrashEpisodes(Season $season): void
+    {
+        $repository = $this->entityManager->getRepository(Episode::class);
+        if (!$repository instanceof EpisodeRepository) {
+            return;
+        }
+
+        $filters = $this->entityManager->getFilters();
+        if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
+            $filters->disable('softdeleteable');
+        }
+        
+        $paragraphs = $repository->getdeleteTrashBySeason($season);
+        foreach ($paragraphs as $paragraph) {
+            $this->entityManager->remove($paragraph);
+        }
+
+        $this->entityManager->flush();
+        if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
+            $filters->enable('softdeleteable');
+        }
     }
 
     private function updateImageBackdrop(Season $season): bool
