@@ -3,8 +3,8 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
-use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Doctrine\Persistence\ObjectManager;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -155,7 +155,7 @@ class SagaCrudController extends CrudControllerAbstract
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
 
-        return $this->redirect('https://www.themoviedb.org/collection/'.$saga->getTmdb());
+        return $this->redirect('https://www.themoviedb.org/collection/' . $saga->getTmdb());
     }
 
     #[AdminRoute(path: '/update-all-saga')]

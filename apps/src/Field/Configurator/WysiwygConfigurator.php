@@ -21,7 +21,7 @@ final class WysiwygConfigurator implements FieldConfiguratorInterface
             'attr.rows',
             $fieldDto->getCustomOption(WysiwygField::OPTION_NUM_OF_ROWS)
         );
-        $fieldDto->setFormTypeOption('attr.class', $fieldDto->getFormTypeOption('attr.class').' wysiwyg');
+        $fieldDto->setFormTypeOption('attr.class', $fieldDto->getFormTypeOption('attr.class') . ' wysiwyg');
     }
 
     #[Override]

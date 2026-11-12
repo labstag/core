@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use SortDirection;
-
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,6 +14,7 @@ use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\SagaRepository;
 use Labstag\SlugHandler\SagaSlugHandler;
 use Override;
+use SortDirection;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
@@ -61,7 +60,9 @@ class Saga implements Stringable, EntityWithParagraphsInterface
     #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: 'saga')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     #[ORM\OrderBy(
-        ['releaseDate' => SortDirection::Ascending]
+        [
+            'releaseDate' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $movies;
 
@@ -78,7 +79,9 @@ class Saga implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => SortDirection::Ascending]
+        [
+            'position' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $paragraphs;
 

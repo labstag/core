@@ -13,7 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Controller\Admin\Factory\MenuItemFactory;
-use ReflectionClass;
 use Labstag\Entity\Configuration;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
@@ -26,6 +25,7 @@ use Labstag\Service\SiteService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -135,7 +135,7 @@ class DashboardController extends AbstractDashboardController
         $avatar = $user->getAvatar();
         if ('' != $avatar) {
             $basePath = $this->fileService->getBasePath($user, 'avatarFile');
-            $userMenu->setAvatarUrl($basePath.'/'.$avatar);
+            $userMenu->setAvatarUrl($basePath . '/' . $avatar);
 
             return $userMenu;
         }
@@ -155,8 +155,8 @@ class DashboardController extends AbstractDashboardController
 
         $paragraphs = [];
         foreach ($memos as $memo) {
-            $idMemo     = $memo->getId();
-            $paragraphs = $memo->getParagraphs()->getValues();
+            $idMemo              = $memo->getId();
+            $paragraphs          = $memo->getParagraphs()->getValues();
             $paragraphs[$idMemo] = $this->paragraphService->generate($paragraphs, [], false);
         }
 
@@ -252,19 +252,19 @@ class DashboardController extends AbstractDashboardController
     private function buildContentMenus(array $categories, array $tags): iterable
     {
         // Definition: identifier, label, icon, controller, categories?, tags?, extra children
-        $translatableStoryMessage = new TranslatableMessage('Story');
-        $translatableChapterMessage = new TranslatableMessage('Chapter');
-        $translatableMovieMessage = new TranslatableMessage('Movie');
-        $translatableSagasMessage = new TranslatableMessage('Sagas');
-        $translatableSerieMessage = new TranslatableMessage('Serie');
-        $translatableSeasonMessage = new TranslatableMessage('Season');
-        $translatableEpisodeMessage = new TranslatableMessage('Episode');
-        $translatableGameMessage = new TranslatableMessage('Game');
-        $translatablePlatformMessage = new TranslatableMessage('Platform');
+        $translatableStoryMessage     = new TranslatableMessage('Story');
+        $translatableChapterMessage   = new TranslatableMessage('Chapter');
+        $translatableMovieMessage     = new TranslatableMessage('Movie');
+        $translatableSagasMessage     = new TranslatableMessage('Sagas');
+        $translatableSerieMessage     = new TranslatableMessage('Serie');
+        $translatableSeasonMessage    = new TranslatableMessage('Season');
+        $translatableEpisodeMessage   = new TranslatableMessage('Episode');
+        $translatableGameMessage      = new TranslatableMessage('Game');
+        $translatablePlatformMessage  = new TranslatableMessage('Platform');
         $translatableFranchiseMessage = new TranslatableMessage('Franchise');
-        $translatablePageMessage = new TranslatableMessage('Page');
-        $translatablePostMessage = new TranslatableMessage('Post');
-        $definitions = [
+        $translatablePageMessage      = new TranslatableMessage('Page');
+        $translatablePostMessage      = new TranslatableMessage('Post');
+        $definitions                  = [
             [
                 'story',
                 $translatableStoryMessage->getMessage(),
@@ -533,10 +533,10 @@ class DashboardController extends AbstractDashboardController
             'Post'       => PostCrudController::class,
         ];
 
-        $trash = [];
+        $trash   = [];
         $filters = $this->entityManager->getFilters();
         foreach ($controllers as $label => $controller) {
-            $fqcn = $controller::getEntityFqcn();
+            $fqcn            = $controller::getEntityFqcn();
             $reflectionClass = new ReflectionClass($fqcn);
             if (!$reflectionClass->hasMethod('getDeletedAt')) {
                 continue;
@@ -558,7 +558,7 @@ class DashboardController extends AbstractDashboardController
             }
 
             $urlGenerator = $this->container->get(AdminUrlGenerator::class);
-            $url = $urlGenerator->setController($controller)->setAction('index')->set('action', 'trash')->generateUrl();
+            $url          = $urlGenerator->setController($controller)->setAction('index')->set('action', 'trash')->generateUrl();
 
             $trash[] = [
                 'label' => new TranslatableMessage($label),

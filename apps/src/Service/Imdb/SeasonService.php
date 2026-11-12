@@ -5,6 +5,7 @@ namespace Labstag\Service\Imdb;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
+use Labstag\Entity\Casting;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
@@ -42,7 +43,7 @@ final class SeasonService
             ]
         );
 
-        if (count($seasons) == 0) {
+        if (0 === count($seasons)) {
             if (0 == $data['episode_count']) {
                 return null;
             }
@@ -66,11 +67,11 @@ final class SeasonService
 
         $selectSeason = null;
         foreach ($seasons as $position => $season) {
-            if ($position != 0) {
+            if (0 != $position) {
                 $this->seasonRepository->delete($season);
             }
 
-            if ($season->getDeletedAt() != null) {
+            if (null != $season->getDeletedAt()) {
                 $season->setDeletedAt();
             }
 
@@ -132,6 +133,36 @@ final class SeasonService
         return in_array(true, $statuses, true);
     }
 
+    private function cleanupTrashEpisodes(Season $season): void
+    {
+        $repository = $this->entityManager->getRepository(Episode::class);
+        if (!$repository instanceof EpisodeRepository) {
+            return;
+        }
+
+        $filters = $this->entityManager->getFilters();
+        if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
+            $filters->disable('softdeleteable');
+        }
+
+        $episodes = $repository->getdeleteTrashBySeason($season);
+        foreach ($episodes as $episode) {
+            $castings = $this->entityManager->getRepository(Casting::class)->findBy(
+                ['refEpisode' => $episode]
+            );
+            foreach ($castings as $casting) {
+                $this->entityManager->remove($casting);
+            }
+
+            $this->entityManager->remove($episode);
+        }
+
+        $this->entityManager->flush();
+        if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
+            $filters->enable('softdeleteable');
+        }
+    }
+
     private function updateCredits(Season $season, array $details): bool
     {
         foreach ($season->getCastings() as $casting) {
@@ -174,29 +205,6 @@ final class SeasonService
         $this->cleanupTrashEpisodes($season);
 
         return true;
-    }
-
-    private function cleanupTrashEpisodes(Season $season): void
-    {
-        $repository = $this->entityManager->getRepository(Episode::class);
-        if (!$repository instanceof EpisodeRepository) {
-            return;
-        }
-
-        $filters = $this->entityManager->getFilters();
-        if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
-            $filters->disable('softdeleteable');
-        }
-        
-        $paragraphs = $repository->getdeleteTrashBySeason($season);
-        foreach ($paragraphs as $paragraph) {
-            $this->entityManager->remove($paragraph);
-        }
-
-        $this->entityManager->flush();
-        if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
-            $filters->enable('softdeleteable');
-        }
     }
 
     private function updateImageBackdrop(Season $season): bool

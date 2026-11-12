@@ -75,13 +75,13 @@ final class MenuItemFactory
     ): SubMenuItem
     {
         $translatableMessage = new TranslatableMessage('list');
-        $items = [
+        $items               = [
             MenuItem::linkTo($controllerClass, $translatableMessage->getMessage(), 'fa fa-list'),
         ];
 
         if (!$disableAdd) {
             $translatableMessage = new TranslatableMessage('New');
-            $menuItem = MenuItem::linkTo(
+            $menuItem            = MenuItem::linkTo(
                 $controllerClass,
                 $translatableMessage->getMessage(),
                 'fas fa-plus'
@@ -140,7 +140,7 @@ final class MenuItemFactory
     {
         $menuItems = [];
         foreach ($controllers as $key => $data) {
-            $menuItem = MenuItem::linkTo($data['controller'], $translatableMessage->getMessage(), $icon);
+            $menuItem        = MenuItem::linkTo($data['controller'], $translatableMessage->getMessage(), $icon);
             $menuItems[$key] = $menuItem;
         }
 

@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use SortDirection;
-
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,6 +14,7 @@ use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Entity\Traits\WorkflowTrait;
 use Labstag\Repository\StoryRepository;
 use Override;
+use SortDirection;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
@@ -36,7 +35,9 @@ class Story implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: StoryCategory::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $categories;
 
@@ -53,7 +54,9 @@ class Story implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => SortDirection::Ascending]
+        [
+            'position' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $chapters;
 
@@ -92,7 +95,9 @@ class Story implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => SortDirection::Ascending]
+        [
+            'position' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $paragraphs;
 
@@ -118,7 +123,9 @@ class Story implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: StoryTag::class, mappedBy: 'stories', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $tags;
 

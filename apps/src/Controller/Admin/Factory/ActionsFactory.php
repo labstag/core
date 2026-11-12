@@ -16,13 +16,13 @@ class ActionsFactory
 
     protected ?Actions $actions = null;
 
-    protected bool $enableAction = false;
-
     protected array $actionsAdd     = [];
 
     protected array $actionsDefault = [];
 
     protected ?string $controller = null;
+
+    protected bool $enableAction = false;
 
     protected ?string $entity = null;
 
@@ -123,7 +123,7 @@ class ActionsFactory
 
     public function setActionLinkPublic(): void
     {
-        $find   = false;
+        $find            = false;
         $reflectionClass = new ReflectionClass($this->entity);
         if ($reflectionClass->isAbstract()) {
             return;

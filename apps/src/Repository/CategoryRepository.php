@@ -2,10 +2,9 @@
 
 namespace Labstag\Repository;
 
-use SortDirection;
-
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Category;
+use SortDirection;
 
 /**
  * @extends RepositoryAbstract<Category>

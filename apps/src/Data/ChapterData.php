@@ -24,7 +24,7 @@ class ChapterData extends StoryData implements DataInterface
     public function generateSlug(object $entity): array
     {
         $slug = parent::generateSlug($entity->getRefstory());
-        $slug['slug'] .= '/'.$entity->getSlug();
+        $slug['slug'] .= '/' . $entity->getSlug();
 
         return $slug;
     }
@@ -65,7 +65,7 @@ class ChapterData extends StoryData implements DataInterface
     #[Override]
     public function getTitleMeta(object $entity): string
     {
-        return parent::getTitleMeta($entity->getRefstory()).' - '.$this->getTitle($entity);
+        return parent::getTitleMeta($entity->getRefstory()) . ' - ' . $this->getTitle($entity);
     }
 
     #[Override]

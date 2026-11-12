@@ -2,8 +2,8 @@
 
 namespace Labstag\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -150,7 +150,7 @@ class PersonCrudController extends CrudControllerAbstract
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
 
-        return $this->redirect('https://www.themoviedb.org/person/'.$movie->getTmdb());
+        return $this->redirect('https://www.themoviedb.org/person/' . $movie->getTmdb());
     }
 
     #[AdminRoute(path: '/update-all-person')]

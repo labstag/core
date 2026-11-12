@@ -41,7 +41,7 @@ final class EpisodeService
             ]
         );
 
-        if (count($episodes) == 0) {
+        if (0 === count($episodes)) {
             $episode = new Episode();
             $episode->setEnable(true);
             $episode->setRefseason($season);
@@ -50,9 +50,10 @@ final class EpisodeService
 
             return $episode;
         }
+
         $selectEpisode = null;
         foreach ($episodes as $position => $episode) {
-            if ($position != 0) {
+            if (0 != $position) {
                 $this->episodeRepository->delete($episode);
             }
 

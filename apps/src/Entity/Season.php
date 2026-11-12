@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use SortDirection;
-
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,6 +13,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\SeasonRepository;
 use Labstag\SlugHandler\SeasonSlugHandler;
+use SortDirection;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
@@ -56,7 +55,9 @@ class Season implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['number' => SortDirection::Ascending]
+        [
+            'number' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $episodes;
 
@@ -89,7 +90,9 @@ class Season implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => SortDirection::Ascending]
+        [
+            'position' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $paragraphs;
 

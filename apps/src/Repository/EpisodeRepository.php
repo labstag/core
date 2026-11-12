@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Labstag\Repository;
 
-use SortDirection;
-
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
+use Labstag\Entity\Casting;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
+use SortDirection;
 
 /**
  * @extends RepositoryAbstract<Episode>
@@ -22,6 +22,29 @@ class EpisodeRepository extends RepositoryAbstract
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Episode::class);
+    }
+
+    public function delete(object $entity): void
+    {
+        if ($entity instanceof Episode) {
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                ['refEpisode' => $entity]
+            );
+            foreach ($castings as $casting) {
+                $this->getEntityManager()->remove($casting);
+            }
+        }
+
+        parent::delete($entity);
+    }
+
+    public function getdeleteTrashBySeason(Season $season): array
+    {
+        $queryBuilder = $this->createQueryBuilder('e');
+        $queryBuilder->where('e.refseason = :refseason');
+        $queryBuilder->andWhere('e.deletedAt IS NOT NULL');
+        $queryBuilder->setParameter('refseason', $season);
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**
@@ -43,18 +66,8 @@ class EpisodeRepository extends RepositoryAbstract
 
         $query        = $queryBuilder->getQuery();
         $dql          = $query->getDQL();
-        $query->enableResultCache(3600, 'movies-query-paginator-'.md5((string) $dql));
+        $query->enableResultCache(3600, 'movies-query-paginator-' . md5((string) $dql));
 
         return $query;
-    }
-
-    public function getdeleteTrashBySeason(Season $season): array
-    {
-        $queryBuilder = $this->createQueryBuilder('e');
-        $queryBuilder->where('e.refseason = :refseason');
-        $queryBuilder->andWhere('e.deletedAt IS NOT NULL');
-        $queryBuilder->setParameter('refseason', $season);
-        $episodes = $queryBuilder->getQuery()->getResult();
-        return $episodes;
     }
 }

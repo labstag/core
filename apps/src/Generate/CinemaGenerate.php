@@ -10,11 +10,11 @@ use Labstag\Entity\HeadParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Entity\TextImgParagraph;
-use Labstag\Repository\ParagraphRepository;
 use Labstag\Entity\TextParagraph;
 use Labstag\Entity\User;
 use Labstag\Entity\VideoParagraph;
 use Labstag\Enum\PageEnum;
+use Labstag\Repository\ParagraphRepository;
 use Labstag\Service\ConfigurationService;
 use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
@@ -113,7 +113,7 @@ class CinemaGenerate
         if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
             $filters->disable('softdeleteable');
         }
-        
+
         $paragraphs = $repository->getdeleteTrashByPage($page);
         foreach ($paragraphs as $paragraph) {
             $this->entityManager->remove($paragraph);
@@ -178,7 +178,7 @@ class CinemaGenerate
         }
 
         $paragraph->setLeftposition(($key % 2) === 0);
-        $html = $this->pageMovieInfoTemplate->getTemplate()->getHtml();
+        $html  = $this->pageMovieInfoTemplate->getTemplate()->getHtml();
         $casts = $cast['cast'] ?? [];
         $html  = str_replace(
             [
@@ -193,7 +193,7 @@ class CinemaGenerate
                 $releaseDate->format('d/m/Y'),
                 (string) $movieData['overview'],
                 implode(', ', array_map(fn (array $actor) => $actor['name'], array_slice($casts, 0, 5))),
-                'https://www.themoviedb.org/movie/'.$movieData['id'],
+                'https://www.themoviedb.org/movie/' . $movieData['id'],
             ],
             $html
         );
@@ -220,7 +220,7 @@ class CinemaGenerate
     {
         $videos   = $this->theMovieDbApi->getVideosMovie($movieData['id']);
         $backdrop = $this->theMovieDbApi->images()->getBackdropUrl($movieData['backdrop_path'] ?? '');
-        $trailer = $this->videoService->getTrailer($videos);
+        $trailer  = $this->videoService->getTrailer($videos);
         if (is_null($trailer)) {
             return;
         }

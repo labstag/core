@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use SortDirection;
-
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,6 +13,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\SerieRepository;
 use Override;
+use SortDirection;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
@@ -43,7 +42,9 @@ class Serie implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: SerieCategory::class, mappedBy: 'series', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $categories;
 
@@ -106,7 +107,9 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => SortDirection::Ascending]
+        [
+            'position' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $paragraphs;
 
@@ -132,7 +135,9 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['number' => SortDirection::Ascending]
+        [
+            'number' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $seasons;
 
@@ -163,7 +168,9 @@ class Serie implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'series')]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     private Collection $companies;
 

@@ -19,7 +19,6 @@ use Gedmo\Sluggable\SluggableListener;
 use Gedmo\Tool\Wrapper\AbstractWrapper;
 use Labstag\Enum\PageEnum;
 use Symfony\Component\String\Slugger\AsciiSlugger;
-
 use function Symfony\Component\String\u;
 
 /**
@@ -85,7 +84,7 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
         unset($slug);
         $this->objectManager       = $sluggableAdapter->getObjectManager();
         $this->isInsert            = $this->objectManager->getUnitOfWork()->isScheduledForInsert($object);
-        $options = $config['handlers'][static::class];
+        $options                   = $config['handlers'][static::class];
 
         $this->usedPathSeparator = $options['separator'] ?? self::SEPARATOR;
         $this->prefix            = $options['prefix'] ?? '';
@@ -114,7 +113,7 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
         $classMetadata                    = $wrapper->getMetadata();
         $target                           = $wrapper->getPropertyValue($config['slug']);
         $config['pathSeparator']          = $this->usedPathSeparator;
-        $sluggableAdapter->replaceRelative($object, $config, $target.$config['pathSeparator'], $slug);
+        $sluggableAdapter->replaceRelative($object, $config, $target . $config['pathSeparator'], $slug);
         $uow = $this->objectManager->getUnitOfWork();
         // update in memory objects
         foreach ($uow->getIdentityMap() as $className => $objects) {
@@ -155,14 +154,14 @@ class PageSlugHandler implements SlugHandlerWithUniqueCallbackInterface
     public function transliterate(string $text, $separator, $object): string
     {
         unset($separator, $object);
-        $slug = $text.$this->suffix;
+        $slug = $text . $this->suffix;
 
         if (0 !== strlen($this->parentSlug)) {
-            return $this->parentSlug.$this->usedPathSeparator.$slug;
+            return $this->parentSlug . $this->usedPathSeparator . $slug;
         }
 
         // if no parentSlug, apply our prefix
-        return $this->prefix.$slug;
+        return $this->prefix . $slug;
     }
 
     /**

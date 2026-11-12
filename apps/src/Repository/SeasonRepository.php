@@ -2,14 +2,15 @@
 
 namespace Labstag\Repository;
 
-use SortDirection;
-
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
+use Labstag\Entity\Casting;
+use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
+use SortDirection;
 
 /**
  * @extends RepositoryAbstract<Season>
@@ -19,6 +20,34 @@ class SeasonRepository extends RepositoryAbstract
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Season::class);
+    }
+
+    public function delete(object $entity): void
+    {
+        if ($entity instanceof Season) {
+            $episodes = $this->getEntityManager()->getRepository(Episode::class)->findBy(
+                ['refseason' => $entity]
+            );
+            foreach ($episodes as $episode) {
+                $episodeCastings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                    ['refEpisode' => $episode]
+                );
+                foreach ($episodeCastings as $casting) {
+                    $this->getEntityManager()->remove($casting);
+                }
+
+                $this->getEntityManager()->remove($episode);
+            }
+
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                ['refSeason' => $entity]
+            );
+            foreach ($castings as $casting) {
+                $this->getEntityManager()->remove($casting);
+            }
+        }
+
+        parent::delete($entity);
     }
 
     public function getAllActivateBySerie(Serie $serie): mixed
@@ -36,7 +65,7 @@ class SeasonRepository extends RepositoryAbstract
         $queryBuilder->orderBy('s.number', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'seasons-activate-serie-'.$serie->getId());
+        $query->enableResultCache(3600, 'seasons-activate-serie-' . $serie->getId());
 
         return $query->getResult();
     }
@@ -66,7 +95,7 @@ class SeasonRepository extends RepositoryAbstract
         $queryBuilder->setParameters($data);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'season-serie-'.$serie->getId().'-position-'.$position);
+        $query->enableResultCache(3600, 'season-serie-' . $serie->getId() . '-position-' . $position);
 
         return $query->getOneOrNullResult();
     }

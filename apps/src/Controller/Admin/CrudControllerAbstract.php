@@ -2,9 +2,10 @@
 
 namespace Labstag\Controller\Admin;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Doctrine\Persistence\ManagerRegistry;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -19,8 +20,13 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Controller\Admin\Factory\ActionsFactory;
 use Labstag\Controller\Admin\Factory\CrudFieldFactory;
 use Labstag\Controller\Admin\Traits\ParagraphAdminTrait;
+use Labstag\Entity\Casting;
+use Labstag\Entity\Episode;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Paragraph;
+use Labstag\Entity\Person;
+use Labstag\Entity\Season;
+use Labstag\Entity\Serie;
 use Labstag\Repository\ParagraphRepository;
 use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\BlockService;
@@ -140,6 +146,49 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return $queryBuilder;
     }
 
+    #[Override]
+    public function deleteEntity(EntityManagerInterface $entityManager, object $entityInstance): void
+    {
+        if ($entityInstance instanceof Person || $entityInstance instanceof Season || $entityInstance instanceof Episode || $entityInstance instanceof Serie) {
+            if ($entityInstance instanceof Person) {
+                $criteria = ['refPerson' => $entityInstance];
+            } elseif ($entityInstance instanceof Season) {
+                $criteria = ['refSeason' => $entityInstance];
+            } elseif ($entityInstance instanceof Episode) {
+                $criteria = ['refEpisode' => $entityInstance];
+            } else {
+                $criteria = ['refSerie' => $entityInstance];
+            }
+
+            $castings = $entityManager->getRepository(Casting::class)->findBy($criteria);
+
+            foreach ($castings as $casting) {
+                $entityManager->remove($casting);
+            }
+
+            if ($entityInstance instanceof Serie) {
+                $seasons = $entityManager->getRepository(Season::class)->findBy(
+                    ['refserie' => $entityInstance]
+                );
+                foreach ($seasons as $season) {
+                    $entityManager->getRepository(Season::class)->delete($season);
+                }
+            }
+
+            if ($entityInstance instanceof Season) {
+                $episodes = $entityManager->getRepository(Episode::class)->findBy(
+                    ['refseason' => $entityInstance]
+                );
+                foreach ($episodes as $episode) {
+                    $entityManager->getRepository(Episode::class)->delete($episode);
+                }
+            }
+        }
+
+        $entityManager->remove($entityInstance);
+        $entityManager->flush();
+    }
+
     #[AdminRoute(path: '/link-public')]
 
     public function linkPublic(AdminContext $adminContext): RedirectResponse
@@ -166,7 +215,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         $params                            = $this->slugService->forEntity($entity);
 
         return $this->redirect(
-            'https://validator.w3.org/nu/?doc='.$this->generateUrl(
+            'https://validator.w3.org/nu/?doc=' . $this->generateUrl(
                 'front',
                 $params,
                 UrlGeneratorInterface::ABSOLUTE_URL

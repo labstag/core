@@ -40,7 +40,7 @@ class TemplateCrudController extends CrudControllerAbstract
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
         $currentEntity = $this->getContext()->getEntity()->getInstance();
-        $textField = TextField::new('code', new TranslatableMessage('Code'));
+        $textField     = TextField::new('code', new TranslatableMessage('Code'));
         if (Crud::PAGE_NEW !== $pageName) {
             $textField->setDisabled(true);
         }

@@ -24,7 +24,7 @@ class ParagraphRepository extends RepositoryAbstract
         $queryBuilder->setMaxResults(1);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'paragraph-'.$class);
+        $query->enableResultCache(3600, 'paragraph-' . $class);
 
         return $query->getOneOrNullResult();
     }
@@ -35,7 +35,6 @@ class ParagraphRepository extends RepositoryAbstract
         $queryBuilder->where('p.page = :page');
         $queryBuilder->andWhere('p.deletedAt IS NOT NULL');
         $queryBuilder->setParameter('page', $page);
-        $paragraphs = $queryBuilder->getQuery()->getResult();
-        return $paragraphs;
+        return $queryBuilder->getQuery()->getResult();
     }
 }

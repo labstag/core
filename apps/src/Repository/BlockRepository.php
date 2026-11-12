@@ -2,11 +2,10 @@
 
 namespace Labstag\Repository;
 
-use SortDirection;
-
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Block;
+use SortDirection;
 
 /**
  * @extends RepositoryAbstract<Block>
@@ -27,13 +26,13 @@ class BlockRepository extends RepositoryAbstract
         $alias = $queryBuilder->getRootAliases()[0] ?? 'entity';
         $queryBuilder->resetDQLPart('orderBy');
         $caseExpr = 'CASE '
-            .'WHEN '.$alias.".region = 'header' THEN 1 "
-            .'WHEN '.$alias.".region = 'main' THEN 2 "
-            .'WHEN '.$alias.".region = 'footer' THEN 3 "
-            .'ELSE 4 '
-            .'END';
+            . 'WHEN ' . $alias . ".region = 'header' THEN 1 "
+            . 'WHEN ' . $alias . ".region = 'main' THEN 2 "
+            . 'WHEN ' . $alias . ".region = 'footer' THEN 3 "
+            . 'ELSE 4 '
+            . 'END';
         $queryBuilder->orderBy($caseExpr, SortDirection::Ascending);
-        $queryBuilder->addOrderBy($alias.'.position', SortDirection::Ascending);
+        $queryBuilder->addOrderBy($alias . '.position', SortDirection::Ascending);
     }
 
     public function getMaxPositionByRegion(string $region): ?int
@@ -44,7 +43,7 @@ class BlockRepository extends RepositoryAbstract
         $queryBuilder->setParameter('region', $region);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'block-maxposition-'.md5($region));
+        $query->enableResultCache(3600, 'block-maxposition-' . md5($region));
 
         $data = $query->getOneOrNullResult();
 

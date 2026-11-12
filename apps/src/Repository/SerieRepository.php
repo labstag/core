@@ -2,12 +2,13 @@
 
 namespace Labstag\Repository;
 
-use SortDirection;
-
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Labstag\Entity\Casting;
+use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
+use SortDirection;
 use Symfony\Component\Intl\Countries;
 
 /**
@@ -18,6 +19,27 @@ class SerieRepository extends RepositoryAbstract
     public function __construct(ManagerRegistry $managerRegistry)
     {
         parent::__construct($managerRegistry, Serie::class);
+    }
+
+    public function delete(object $entity): void
+    {
+        if ($entity instanceof Serie) {
+            $seasons = $this->getEntityManager()->getRepository(Season::class)->findBy(
+                ['refserie' => $entity]
+            );
+            foreach ($seasons as $season) {
+                $this->getEntityManager()->getRepository(Season::class)->delete($season);
+            }
+
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                ['refSerie' => $entity]
+            );
+            foreach ($castings as $casting) {
+                $this->getEntityManager()->remove($casting);
+            }
+        }
+
+        parent::delete($entity);
     }
 
     /**
@@ -186,7 +208,7 @@ class SerieRepository extends RepositoryAbstract
 
         $query        = $queryBuilder->getQuery();
         $dql          = $query->getDQL();
-        $query->enableResultCache(3600, 'series-query-paginator-'.md5((string) $dql));
+        $query->enableResultCache(3600, 'series-query-paginator-' . md5((string) $dql));
 
         return $query;
     }

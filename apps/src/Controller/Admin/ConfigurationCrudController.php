@@ -142,7 +142,7 @@ class ConfigurationCrudController extends CrudControllerAbstract
         foreach ($placeholders as $key => $label) {
             $fields[] = FormField::addColumn(6);
             $fields[] = $this->crudFieldFactory->imageField(
-                $key.'Placeholder',
+                $key . 'Placeholder',
                 $pageName,
                 self::getEntityFqcn(),
                 $label->getMessage()

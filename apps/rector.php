@@ -37,7 +37,6 @@ $configure->withPreparedSets(
     codingStyle: true,
     typeDeclarations: true,
     privatization: true,
-    naming: true,
     instanceOf: true,
     earlyReturn: true,
     carbon: false,

@@ -31,7 +31,6 @@ final class FileService
         private LoggerInterface $logger,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $parameterBag,
-
         private PropertyMappingFactory $propertyMappingFactory,
     )
     {
@@ -50,7 +49,7 @@ final class FileService
             $basePath = $this->getBasePath($entity, $mapping->getFilePropertyName());
             $content  = $propertyAccessor->getValue($entity, $mapping->getFileNamePropertyName());
             if ('' != $content) {
-                $file = $basePath.'/'.$content;
+                $file = $basePath . '/' . $content;
             }
         }
 
@@ -165,7 +164,7 @@ final class FileService
     {
         $basePath = $this->getBasePath($entity, $type);
 
-        return $this->parameterBag->get('kernel.project_dir').'/public'.$basePath;
+        return $this->parameterBag->get('kernel.project_dir') . '/public' . $basePath;
     }
 
     public function getimportCsvFile(string $path, string $delimiter = ','): array
@@ -213,7 +212,7 @@ final class FileService
             $mimetype = 'image/jpeg';
         }
 
-        $public = str_replace($this->parameterBag->get('kernel.project_dir').'/public', '', $file);
+        $public = str_replace($this->parameterBag->get('kernel.project_dir') . '/public', '', $file);
 
         return [
             'src'    => $file,
@@ -278,10 +277,10 @@ final class FileService
         }
 
         if (0 === $unitIndex) {
-            return (int) $bytes.' '.$units[$unitIndex];
+            return (int) $bytes . ' ' . $units[$unitIndex];
         }
 
-        return number_format($bytes, 2).' '.$units[$unitIndex];
+        return number_format($bytes, 2) . ' ' . $units[$unitIndex];
     }
 
     public function saveFileInAdapter(string $type, string $fileName, $content): null
@@ -336,8 +335,8 @@ final class FileService
                 $tempPath = tempnam(sys_get_temp_dir(), 'download_');
                 $content  = file_get_contents($filePath);
                 if (false === $content) {
-                    $this->logger->error('Failed to download file from URL: '.$filePath);
-                    throw new Exception('Failed to download file from URL: '.$filePath);
+                    $this->logger->error('Failed to download file from URL: ' . $filePath);
+                    throw new Exception('Failed to download file from URL: ' . $filePath);
                 }
 
                 file_put_contents($tempPath, $content);
@@ -356,9 +355,9 @@ final class FileService
             $propertyAccessor = PropertyAccess::createPropertyAccessor();
             $propertyAccessor->setValue($entity, $type, $uploadedFile);
         } catch (Exception $exception) {
-            $this->logger->error('Error setting uploaded file: '.$exception->getMessage());
+            $this->logger->error('Error setting uploaded file: ' . $exception->getMessage());
             throw new Exception(
-                'Error setting uploaded file: '.$exception->getMessage(),
+                'Error setting uploaded file: ' . $exception->getMessage(),
                 $exception->getCode(),
                 $exception
             );
