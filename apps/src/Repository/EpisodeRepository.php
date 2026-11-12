@@ -27,16 +27,20 @@ class EpisodeRepository extends RepositoryAbstract
     public function delete(object $entity): void
     {
         if ($entity instanceof Episode) {
-            $filters = $this->getEntityManager()->getFilters();
+            $filters    = $this->getEntityManager()->getFilters();
             $wasEnabled = $filters->has('softdeleteable') && $filters->isEnabled('softdeleteable');
             if ($wasEnabled) {
                 $filters->disable('softdeleteable');
             }
 
-            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(['refEpisode' => $entity]);
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                ['refEpisode' => $entity]
+            );
             foreach ($castings as $casting) {
                 $this->getEntityManager()->remove($casting);
             }
+
+            $this->getEntityManager()->flush();
 
             if ($wasEnabled && $filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
                 $filters->enable('softdeleteable');
@@ -77,5 +81,21 @@ class EpisodeRepository extends RepositoryAbstract
         $query->enableResultCache(3600, 'movies-query-paginator-' . md5((string) $dql));
 
         return $query;
+    }
+
+    public function remove(object $entity): void
+    {
+        if ($entity instanceof Episode) {
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                ['refEpisode' => $entity]
+            );
+            foreach ($castings as $casting) {
+                $this->getEntityManager()->remove($casting);
+            }
+
+            $this->getEntityManager()->flush();
+        }
+
+        parent::remove($entity);
     }
 }

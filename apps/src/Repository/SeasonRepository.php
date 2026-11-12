@@ -2,12 +2,12 @@
 
 namespace Labstag\Repository;
 
+use Labstag\Entity\Episode;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Casting;
-use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use SortDirection;
@@ -25,25 +25,35 @@ class SeasonRepository extends RepositoryAbstract
     public function delete(object $entity): void
     {
         if ($entity instanceof Season) {
-            $filters = $this->getEntityManager()->getFilters();
+            $filters    = $this->getEntityManager()->getFilters();
             $wasEnabled = $filters->has('softdeleteable') && $filters->isEnabled('softdeleteable');
             if ($wasEnabled) {
                 $filters->disable('softdeleteable');
             }
 
-            $episodes = $this->getEntityManager()->getRepository(\Labstag\Entity\Episode::class)->findBy(['refseason' => $entity]);
+            $episodes = $this->getEntityManager()->getRepository(Episode::class)->findBy(
+                ['refseason' => $entity]
+            );
             foreach ($episodes as $episode) {
-                $episodeCastings = $this->getEntityManager()->getRepository(Casting::class)->findBy(['refEpisode' => $episode]);
+                $episodeCastings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                    ['refEpisode' => $episode]
+                );
                 foreach ($episodeCastings as $casting) {
                     $this->getEntityManager()->remove($casting);
                 }
+
+                $this->getEntityManager()->flush();
                 $this->getEntityManager()->remove($episode);
             }
 
-            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(['refSeason' => $entity]);
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                ['refSeason' => $entity]
+            );
             foreach ($castings as $casting) {
                 $this->getEntityManager()->remove($casting);
             }
+
+            $this->getEntityManager()->flush();
 
             if ($wasEnabled && $filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
                 $filters->enable('softdeleteable');
@@ -101,5 +111,28 @@ class SeasonRepository extends RepositoryAbstract
         $query->enableResultCache(3600, 'season-serie-' . $serie->getId() . '-position-' . $position);
 
         return $query->getOneOrNullResult();
+    }
+
+    public function remove(object $entity): void
+    {
+        if ($entity instanceof Season) {
+            $episodes = $this->getEntityManager()->getRepository(Labstag\Entity\Episode::class)->findBy(
+                ['refseason' => $entity]
+            );
+            foreach ($episodes as $episode) {
+                $this->getEntityManager()->getRepository(Labstag\Entity\Episode::class)->remove($episode);
+            }
+
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                ['refSeason' => $entity]
+            );
+            foreach ($castings as $casting) {
+                $this->getEntityManager()->remove($casting);
+            }
+
+            $this->getEntityManager()->flush();
+        }
+
+        parent::remove($entity);
     }
 }

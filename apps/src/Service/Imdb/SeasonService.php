@@ -154,6 +154,7 @@ final class SeasonService
                 $this->entityManager->remove($casting);
             }
 
+            $this->entityManager->flush();
             $this->entityManager->remove($episode);
         }
 

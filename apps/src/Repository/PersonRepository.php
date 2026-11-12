@@ -21,7 +21,9 @@ class PersonRepository extends RepositoryAbstract
     public function delete(object $entity): void
     {
         if ($entity instanceof Person) {
-            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(['refPerson' => $entity]);
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                ['refPerson' => $entity]
+            );
             foreach ($castings as $casting) {
                 $this->getEntityManager()->remove($casting);
             }
@@ -67,5 +69,21 @@ class PersonRepository extends RepositoryAbstract
         $query->enableResultCache(3600, 'sagas-query-paginator-' . md5((string) $dql));
 
         return $query;
+    }
+
+    public function remove(object $entity): void
+    {
+        if ($entity instanceof Person) {
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                ['refPerson' => $entity]
+            );
+            foreach ($castings as $casting) {
+                $this->getEntityManager()->remove($casting);
+            }
+
+            $this->getEntityManager()->flush();
+        }
+
+        parent::remove($entity);
     }
 }
