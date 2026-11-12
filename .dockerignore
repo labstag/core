@@ -1,0 +1,8 @@
+apps/supervisord.log*
+apps/var/cache
+apps/var/log
+apps/.phpunit.cache
+node_modules
+lampy
+taskfiles
+.git

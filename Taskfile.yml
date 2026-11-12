@@ -827,3 +827,37 @@ tasks:
         CMD: "doctrine:schema:validate --env=test"
     - echo "✅ Test configuration is valid"
 
+  labstag:docker:image:build:
+    desc: "Build Docker image koromerzhin/labstag (VERSION=x.y.z, default latest)"
+    vars:
+      VERSION: '{{.VERSION | default "latest"}}'
+    cmds:
+    - docker build -t koromerzhin/labstag:{{.VERSION}} .
+    - |
+      if [ "{{.VERSION}}" != "latest" ]; then
+        docker tag koromerzhin/labstag:{{.VERSION}} koromerzhin/labstag:latest
+      fi
+
+  labstag:docker:image:push:
+    desc: "Push Docker image koromerzhin/labstag (VERSION=x.y.z, default latest)"
+    vars:
+      VERSION: '{{.VERSION | default "latest"}}'
+    cmds:
+    - docker push koromerzhin/labstag:{{.VERSION}}
+    - |
+      if [ "{{.VERSION}}" != "latest" ]; then
+        docker push koromerzhin/labstag:latest
+      fi
+
+  labstag:docker:image:
+    desc: "Build and push Docker image koromerzhin/labstag (VERSION=x.y.z, default latest)"
+    vars:
+      VERSION: '{{.VERSION | default "latest"}}'
+    cmds:
+    - task: labstag:docker:image:build
+      vars:
+        VERSION: "{{.VERSION}}"
+    - task: labstag:docker:image:push
+      vars:
+        VERSION: "{{.VERSION}}"
+
