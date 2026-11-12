@@ -830,7 +830,8 @@ tasks:
   labstag:docker:image:build:
     desc: "Build Docker image koromerzhin/labstag (VERSION=x.y.z, default latest)"
     vars:
-      VERSION: '{{.VERSION | default "latest"}}'
+      VERSION:
+        sh: 'echo "${VERSION:-$(jq -r .version package.json)}"'
     cmds:
     - docker build -f Dockerfile -t koromerzhin/labstag:{{.VERSION}} .
     - |
@@ -841,7 +842,8 @@ tasks:
   labstag:docker:image:push:
     desc: "Push Docker image koromerzhin/labstag (VERSION=x.y.z, default latest)"
     vars:
-      VERSION: '{{.VERSION | default "latest"}}'
+      VERSION:
+        sh: 'echo "${VERSION:-$(jq -r .version package.json)}"'
     cmds:
     - docker push koromerzhin/labstag:{{.VERSION}}
     - |
@@ -852,7 +854,8 @@ tasks:
   labstag:docker:image:
     desc: "Build and push both Docker images (VERSION=x.y.z, default latest)"
     vars:
-      VERSION: '{{.VERSION | default "latest"}}'
+      VERSION:
+        sh: 'echo "${VERSION:-$(jq -r .version package.json)}"'
     cmds:
     - task: labstag:docker:image:build
       vars:
@@ -870,7 +873,8 @@ tasks:
   labstag:docker:image:messenger:build:
     desc: "Build Docker image koromerzhin/labstag messenger (VERSION=x.y.z, default latest)"
     vars:
-      VERSION: '{{.VERSION | default "latest"}}'
+      VERSION:
+        sh: 'echo "${VERSION:-$(jq -r .version package.json)}"'
     cmds:
     - docker build -f Dockerfile.messenger -t koromerzhin/labstag:{{.VERSION}}-messenger .
     - |
@@ -881,7 +885,8 @@ tasks:
   labstag:docker:image:messenger:push:
     desc: "Push Docker image koromerzhin/labstag messenger (VERSION=x.y.z, default latest)"
     vars:
-      VERSION: '{{.VERSION | default "latest"}}'
+      VERSION:
+        sh: 'echo "${VERSION:-$(jq -r .version package.json)}"'
     cmds:
     - docker push koromerzhin/labstag:{{.VERSION}}-messenger
     - |
