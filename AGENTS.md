@@ -75,6 +75,11 @@ Lint / quality:
 - Workflow-enabled entities: chapter, edito, story, memo, post, page, user.
 - Frontend source is at repo root `assets/`, not under `apps/`.
 
+## Git
+
+- Always use Git Flow (feature/develop/release/hotfix branches); never commit directly to `main`.
+- Never merge or push a merge without explicit user authorization.
+
 ## Gotchas
 
 - `task labstag:exec` and tests require the external `lampy` stack and `taskfiles` submodule.
