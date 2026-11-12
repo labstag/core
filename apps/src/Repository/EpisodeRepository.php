@@ -45,4 +45,14 @@ class EpisodeRepository extends RepositoryAbstract
 
         return $query;
     }
+
+    public function getdeleteTrashBySeason(Season $season): array
+    {
+        $queryBuilder = $this->createQueryBuilder('e');
+        $queryBuilder->where('e.refseason = :refseason');
+        $queryBuilder->andWhere('e.deletedAt IS NOT NULL');
+        $queryBuilder->setParameter('refseason', $season);
+        $episodes = $queryBuilder->getQuery()->getResult();
+        return $episodes;
+    }
 }

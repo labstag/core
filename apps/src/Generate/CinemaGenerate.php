@@ -124,7 +124,6 @@ class CinemaGenerate
         if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
             $filters->enable('softdeleteable');
         }
-
     }
 
     private function getMovies(DateTime $gte, DateTime $lte, Configuration $configuration): array

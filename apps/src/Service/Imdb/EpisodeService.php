@@ -34,28 +34,42 @@ final class EpisodeService
             $filters->disable('softdeleteable');
         }
 
-        $episode = $this->episodeRepository->findOneBy(
+        $episodes = $this->episodeRepository->findBy(
             [
                 'refseason' => $season,
                 'number'    => $data['episode_number'],
             ]
         );
 
-        if ($episode instanceof Episode) {
-            if ($episode->getDeletedAt() != null) {
-                $episode->setDeletedAt();
+        if (count($episodes) == 0) {
+            $episode = new Episode();
+            $episode->setEnable(true);
+            $episode->setRefseason($season);
+            $episode->setTitle($data['name']);
+            $episode->setNumber($data['episode_number']);
+
+        }
+
+        $selectEpisode = null;
+        foreach ($episodes as $position => $episode) {
+            if ($position != 0) {
+                $this->episodeRepository->delete($episode);
             }
+
+            $selectEpisode = $episode;
+        }
+
+        if (is_null($selectEpisode)) {
+            $episode = new Episode();
+            $episode->setEnable(true);
+            $episode->setRefseason($season);
+            $episode->setTitle($data['name']);
+            $episode->setNumber($data['episode_number']);
 
             return $episode;
         }
 
-        $episode = new Episode();
-        $episode->setEnable(true);
-        $episode->setRefseason($season);
-        $episode->setTitle($data['name']);
-        $episode->setNumber($data['episode_number']);
-
-        return $episode;
+        return $selectEpisode;
     }
 
     public function getEpisodes(Season $season): array
