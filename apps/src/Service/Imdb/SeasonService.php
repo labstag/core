@@ -32,6 +32,7 @@ final class SeasonService
         if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
             $filters->disable('softdeleteable');
         }
+
         $season = $this->seasonRepository->findOneBy(
             [
                 'refserie' => $serie,

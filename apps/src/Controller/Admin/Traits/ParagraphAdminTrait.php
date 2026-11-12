@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 trait ParagraphAdminTrait
 {
     // Public paragraph management endpoints (add/delete/list/update)
-    #[AdminRoute]
+    #[AdminRoute(path: '/add-paragraph')]
     public function addParagraph(
         AdminContext $adminContext,
         AdminUrlGenerator $urlGenerator,
@@ -45,7 +45,8 @@ trait ParagraphAdminTrait
         return $this->redirect($urlGenerator->generateUrl());
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/delete-paragraph')]
+
     public function deleteParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator): RedirectResponse
     {
         $request  = $adminContext->getRequest();
@@ -66,7 +67,8 @@ trait ParagraphAdminTrait
         return $this->redirect($urlGenerator->generateUrl());
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/list-paragraph')]
+
     public function listParagraph(AdminContext $adminContext): Response
     {
         $entityId   = $adminContext->getRequest()->query->get('entityId');
@@ -79,7 +81,8 @@ trait ParagraphAdminTrait
         );
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-paragraph')]
+
     public function updateParagraph(AdminContext $adminContext, AdminUrlGenerator $urlGenerator): RedirectResponse
     {
         $request    = $adminContext->getRequest();

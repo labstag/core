@@ -248,7 +248,8 @@ class BlockCrudController extends CrudControllerAbstract
         return Block::class;
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/new-block')]
+
     public function newBlock(): Response
     {
         $blocks = $this->blockService->getAll(null);
@@ -262,7 +263,8 @@ class BlockCrudController extends CrudControllerAbstract
         );
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/position-block')]
+
     public function positionBlock(Request $request): RedirectResponse|Response
     {
         $repositoryAbstract              = $this->getRepository();
@@ -311,7 +313,8 @@ class BlockCrudController extends CrudControllerAbstract
         );
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/show-modal-block')]
+
     public function showModalBlock(): Response
     {
         $blocks = $this->blockService->getAll(null);

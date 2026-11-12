@@ -83,6 +83,7 @@ class BackController extends AbstractController
         if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
             $filters->disable('softdeleteable');
         }
+
         $referer = $request->headers->get('referer');
         if (is_null($referer) || '' === $referer || '0' === $referer) {
             return $this->redirectToRoute('admin');

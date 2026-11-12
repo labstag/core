@@ -152,7 +152,7 @@ class TmdbMoviesApi extends AbstractTmdbApi
 
         return $this->getCached(
             $cacheKey,
-            function (ItemInterface $item) use ($movieId, $query) {
+            function (ItemInterface $item) use ($movieId, $query): ?array {
                 $url  = self::BASE_URL.'/movie/'.$movieId.$query;
                 $data = $this->makeRequest($url);
 
@@ -234,7 +234,7 @@ class TmdbMoviesApi extends AbstractTmdbApi
 
         return $this->getCached(
             $cacheKey,
-            function (ItemInterface $item) use ($collectionId, $query) {
+            function (ItemInterface $item) use ($collectionId, $query): ?array {
                 $url  = self::BASE_URL.'/collection/'.$collectionId.$query;
                 $data = $this->makeRequest($url);
 
@@ -340,7 +340,7 @@ class TmdbMoviesApi extends AbstractTmdbApi
 
         return $this->getCached(
             $cacheKey,
-            function (ItemInterface $item) use ($movieId) {
+            function (ItemInterface $item) use ($movieId): ?array {
                 $url  = self::BASE_URL.'/movie/'.$movieId.'/release_dates';
                 $data = $this->makeRequest($url);
 

@@ -130,7 +130,8 @@ class PersonCrudController extends CrudControllerAbstract
         return Person::class;
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/json-person')]
+
     public function jsonPerson(Request $request): JsonResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -141,7 +142,8 @@ class PersonCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/tmdb')]
+
     public function tmdb(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -151,7 +153,8 @@ class PersonCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.themoviedb.org/person/'.$movie->getTmdb());
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-all-person')]
+
     public function updateAllPerson(): RedirectResponse
     {
         $this->messageBus->dispatch(new PersonAllMessage());
@@ -159,7 +162,8 @@ class PersonCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_person_index');
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-person')]
+
     public function updatePerson(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');

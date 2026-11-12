@@ -33,6 +33,7 @@ final class EpisodeService
         if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
             $filters->disable('softdeleteable');
         }
+
         $episode = $this->episodeRepository->findOneBy(
             [
                 'refseason' => $season,

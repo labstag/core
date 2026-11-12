@@ -140,7 +140,8 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return $queryBuilder;
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/link-public')]
+
     public function linkPublic(AdminContext $adminContext): RedirectResponse
     {
         $request              = $adminContext->getRequest();
@@ -152,7 +153,8 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         return $this->redirectToRoute('front', $params);
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/linkw3-c-validator')]
+
     public function linkw3CValidator(AdminContext $adminContext): RedirectResponse
     {
         $request                         = $adminContext->getRequest();

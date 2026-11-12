@@ -554,7 +554,7 @@ tasks:
     - task: lint:md
       vars:
         IGNORE_DIR: "lampy,taskfiles"
-        CONFIG: "taskfiles/.markdownlint.json"
+        CONFIG: ".markdownlint.json"
     - task: lint:action
     - |
       if [ "{{.SKIP_DOCKER}}" = "true" ]; then
