@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -49,7 +51,7 @@ class StarRepository extends RepositoryAbstract
         $queryBuilder->where('s.enable = :enable');
         $queryBuilder->setParameter('enable', true);
 
-        return $queryBuilder->orderBy('s.title', 'ASC');
+        return $queryBuilder->orderBy('s.title', SortDirection::Ascending);
     }
 
     /**

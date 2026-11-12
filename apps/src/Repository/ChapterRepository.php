@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
@@ -30,7 +32,7 @@ class ChapterRepository extends RepositoryAbstract
         $queryBuilder->where('c.enable = :enable');
         $queryBuilder->andWhere('c.refstory = :refstory');
         $queryBuilder->setParameters($data);
-        $queryBuilder->orderBy('c.position', 'ASC');
+        $queryBuilder->orderBy('c.position', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'chapter-activate-story-'.$story->getId());

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Edito;
 
@@ -22,7 +24,7 @@ class EditoRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('e');
         $queryBuilder->where('e.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('e.createdAt', 'DESC');
+        $queryBuilder->orderBy('e.createdAt', SortDirection::Descending);
         $queryBuilder->setMaxResults(1);
 
         $query = $queryBuilder->getQuery();

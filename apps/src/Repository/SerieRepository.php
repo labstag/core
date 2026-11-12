@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -27,7 +29,7 @@ class SerieRepository extends RepositoryAbstract
         $queryBuilder->select('DISTINCT s.countries');
         $queryBuilder->where('s.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('s.countries', 'ASC');
+        $queryBuilder->orderBy('s.countries', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'series-unique-countries');
@@ -60,7 +62,7 @@ class SerieRepository extends RepositoryAbstract
         $queryBuilder->select('DISTINCT YEAR(s.releaseDate)');
         $queryBuilder->where('s.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('s.releaseDate', 'ASC');
+        $queryBuilder->orderBy('s.releaseDate', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'series-unique-releaseDate');
@@ -72,7 +74,7 @@ class SerieRepository extends RepositoryAbstract
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->where('s.inProduction != 0 OR s.inProduction IS NULL');
-        $queryBuilder->orderBy('s.title', 'ASC');
+        $queryBuilder->orderBy('s.title', SortDirection::Ascending);
 
         $query        = $queryBuilder->getQuery();
 
@@ -139,7 +141,7 @@ class SerieRepository extends RepositoryAbstract
     {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->select('DISTINCT s.countries');
-        $queryBuilder->orderBy('s.countries', 'ASC');
+        $queryBuilder->orderBy('s.countries', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'series-unique-countries');
@@ -168,7 +170,7 @@ class SerieRepository extends RepositoryAbstract
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->leftJoin('s.categories', 'c')->addSelect('c');
 
-        return $queryBuilder->orderBy('s.title', 'ASC');
+        return $queryBuilder->orderBy('s.title', SortDirection::Ascending);
     }
 
     /**

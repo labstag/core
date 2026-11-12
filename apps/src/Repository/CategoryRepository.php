@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Category;
 
@@ -21,7 +23,7 @@ class CategoryRepository extends RepositoryAbstract
     public function findAllByTypeMovie(): array
     {
         $queryBuilder = $this->createQueryBuilder('c');
-        $queryBuilder->orderBy('c.title', 'ASC');
+        $queryBuilder->orderBy('c.title', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
         // Ne pas mettre de cache
@@ -37,7 +39,7 @@ class CategoryRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('c');
         $queryBuilder->resetDQLPart('from');
         $queryBuilder->from($class, 'c');
-        $queryBuilder->orderBy('c.title', 'ASC');
+        $queryBuilder->orderBy('c.title', SortDirection::Ascending);
         $queryBuilder->leftJoin('c.movies', 'm')->addSelect('m');
         $queryBuilder->andWhere('m.enable = true');
         $query = $queryBuilder->getQuery();

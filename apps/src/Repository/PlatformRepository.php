@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Game;
 use Labstag\Entity\Platform;
@@ -31,7 +33,7 @@ class PlatformRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('p');
         $queryBuilder->where(':game NOT MEMBER OF p.games');
         $queryBuilder->setParameter('game', $game);
-        $queryBuilder->orderBy('p.title', 'ASC');
+        $queryBuilder->orderBy('p.title', SortDirection::Ascending);
 
         return $queryBuilder->getQuery()->getResult();
     }

@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -28,7 +30,7 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder->select('DISTINCT m.countries');
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('m.countries', 'ASC');
+        $queryBuilder->orderBy('m.countries', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'movies-unique-countries');
@@ -61,7 +63,7 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder->select('DISTINCT YEAR(m.releaseDate)');
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('m.releaseDate', 'ASC');
+        $queryBuilder->orderBy('m.releaseDate', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'movies-unique-releaseDate');
@@ -83,7 +85,7 @@ class MovieRepository extends RepositoryAbstract
     {
         $query = [
             'order'   => 'createdAt',
-            'orderby' => 'DESC',
+            'orderby' => SortDirection::Descending,
         ];
         $queryBuilder = $this->getQueryBuilder($query);
         $queryBuilder->setMaxResults($nbr);
@@ -116,7 +118,7 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('m.createdAt', 'DESC');
+        $queryBuilder->orderBy('m.createdAt', SortDirection::Descending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'movies-activate');
@@ -131,7 +133,7 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->andWhere('m.saga = :saga');
         $queryBuilder->setParameter('saga', $saga);
-        $queryBuilder->orderBy('m.releaseDate', 'ASC');
+        $queryBuilder->orderBy('m.releaseDate', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'movies-activate-by-saga-'.$saga->getId());
@@ -175,7 +177,7 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder->select('DISTINCT m.certification');
         $queryBuilder->where('m.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('m.certification', 'ASC');
+        $queryBuilder->orderBy('m.certification', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'movies-unique-certifications');
@@ -195,7 +197,7 @@ class MovieRepository extends RepositoryAbstract
     {
         $queryBuilder = $this->createQueryBuilder('m');
         $queryBuilder->select('DISTINCT m.countries');
-        $queryBuilder->orderBy('m.countries', 'ASC');
+        $queryBuilder->orderBy('m.countries', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'movies-unique-countries');
