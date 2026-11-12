@@ -72,7 +72,7 @@ class BreadcrumbBlock extends BlockAbstract
         return EntityBreadcrumbBlock::class;
     }
 
-    public function getJsonLd($urls)
+    public function getJsonLd($urls): string|false
     {
         try {
             $breadcrumbList  = Schema::breadcrumbList();
@@ -128,7 +128,7 @@ class BreadcrumbBlock extends BlockAbstract
 
         $query = $request->query->all();
         foreach ($query as $key => $value) {
-            if (!in_array($key, ['title', 'categories', 'sagas', 'year', 'order', 'orderby'])) {
+            if (!in_array($key, ['title', 'categories', 'sagas', 'year', 'order', 'orderby'], true)) {
                 continue;
             }
 

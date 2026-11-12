@@ -73,11 +73,9 @@ abstract class AbstractWebTestCase extends WebTestCase
         }
     }
 
-    #[Override]
     protected function tearDown(): void
     {
         parent::tearDown();
-
         // Clean database if available
         if (self::$client instanceof KernelBrowser) {
             $entityManager = self::getContainer()->get('doctrine')->getManager();

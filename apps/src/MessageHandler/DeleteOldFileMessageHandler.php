@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\MessageHandler;
 
 use Labstag\Message\DeleteOldFileMessage;

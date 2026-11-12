@@ -29,7 +29,10 @@ final class EpisodeService
 
     public function getEpisode(Season $season, array $data): Episode
     {
-        $this->entityManager->getFilters()->disable('softdeleteable');
+        $filters = $this->entityManager->getFilters();
+        if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
+            $filters->disable('softdeleteable');
+        }
         $episode = $this->episodeRepository->findOneBy(
             [
                 'refseason' => $season,
@@ -39,7 +42,7 @@ final class EpisodeService
 
         if ($episode instanceof Episode) {
             if ($episode->getDeletedAt() != null) {
-                $episode->setDeletedAt(null);
+                $episode->setDeletedAt();
             }
 
             return $episode;

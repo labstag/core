@@ -195,7 +195,7 @@ final class SecurityService
         $file    = $this->fileService->getFileInAdapter('private', 'disable.txt');
         $disable = explode("\n", file_get_contents($file));
 
-        return array_any($disable, fn ($type): bool => str_contains($url, (string) $type));
+        return array_any($disable, fn ($type): bool => str_contains($url, $type));
     }
 
     private function isForbiddenUrl(string $url): bool
@@ -205,9 +205,9 @@ final class SecurityService
 
         return array_any(
             $forbidden,
-            fn ($type): bool => str_contains($url, (string) $type) || str_contains(
+            fn ($type): bool => str_contains($url, $type) || str_contains(
                 strtolower($url),
-                strtolower((string) $type)
+                strtolower($type)
             )
         );
     }

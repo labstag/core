@@ -3,6 +3,7 @@
 /apps/bin/
 /apps/supervisord.*
 /apps/.symfony5
+/apps/.config
 /apps/.composer
 /apps/.pdepend
 /apps/.bash_history

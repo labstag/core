@@ -79,7 +79,10 @@ class BackController extends AbstractController
     )]
     public function emptyOrRestore(Request $request): Response
     {
-        $this->entityManager->getFilters()->disable('softdeleteable');
+        $filters = $this->entityManager->getFilters();
+        if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
+            $filters->disable('softdeleteable');
+        }
         $referer = $request->headers->get('referer');
         if (is_null($referer) || '' === $referer || '0' === $referer) {
             return $this->redirectToRoute('admin');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Api\Tmdb;
 
 use Symfony\Contracts\Cache\ItemInterface;

@@ -226,9 +226,7 @@ final class GameService extends AbstractIgdb
             $body  = $this->igdbApi->setBody(fields: $fields, where: $where, limit: $limit, offset: $offset);
 
             $games = $this->igdbApi->setUrl('games', $body);
-            if (is_null($games)) {
-                $games = [];
-            }
+            $games ??= [];
 
             return array_filter($games, fn (array $game): bool => isset($game['first_release_date']));
         }
@@ -242,9 +240,7 @@ final class GameService extends AbstractIgdb
         );
 
         $games = $this->igdbApi->setUrl('games', $body);
-        if (is_null($games)) {
-            $games = [];
-        }
+        $games ??= [];
 
         return array_filter($games, fn (array $game): bool => isset($game['first_release_date']));
     }

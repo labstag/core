@@ -2,6 +2,7 @@
 
 namespace Labstag\Controller\Admin\Factory;
 
+use Symfony\Contracts\Translation\TranslatableInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
@@ -165,7 +166,7 @@ final class CrudFieldFactory
         ];
     }
 
-    public function booleanField(string $propertyName, $label, bool $asSwitch = true): BooleanField
+    public function booleanField(string $propertyName, TranslatableInterface|string|bool|null $label, bool $asSwitch = true): BooleanField
     {
         $booleanField = BooleanField::new($propertyName, $label);
         if ($asSwitch) {
@@ -530,7 +531,7 @@ final class CrudFieldFactory
         return $entityDto->getFqcn();
     }
 
-    private function getInstance()
+    private function getInstance(): ?object
     {
         $entityDto = $this->adminContext->getEntity();
         if (is_null($entityDto)) {

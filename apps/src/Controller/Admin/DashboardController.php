@@ -3,7 +3,6 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -73,7 +72,7 @@ class DashboardController extends AbstractDashboardController
         $tags       = $this->menuItemFactory->createTagMenuItems();
         // Dashboard home
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
-        $translatableMessage = new TranslatableMessage('Notifications'); 
+        $translatableMessage = new TranslatableMessage('Notifications');
         yield MenuItem::linkTo(
             NotificationCrudController::class,
             $translatableMessage->getMessage(),
@@ -255,7 +254,7 @@ class DashboardController extends AbstractDashboardController
         $translatableSagasMessage = new TranslatableMessage('Sagas');
         $translatableSerieMessage = new TranslatableMessage('Serie');
         $translatableSeasonMessage = new TranslatableMessage('Season');
-        $translatableEpisodeMessage = new TranslatableMessage('Episode'); 
+        $translatableEpisodeMessage = new TranslatableMessage('Episode');
         $translatableGameMessage = new TranslatableMessage('Game');
         $translatablePlatformMessage = new TranslatableMessage('Platform');
         $translatableFranchiseMessage = new TranslatableMessage('Franchise');

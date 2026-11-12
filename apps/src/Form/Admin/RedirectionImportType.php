@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Form\Admin;
 
 use Symfony\Component\Form\AbstractType;

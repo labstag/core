@@ -6,7 +6,7 @@ networks:
 
 services:
   messenger:
-    image: labstag/messenger:latest
+    image: koromerzhin/php-apache:8.5.12-symfony-messenger
     command: ["/usr/local/bin/start-messenger.sh"]
     user: "${UID:-1000}:${GID:-1000}"
     environment:
@@ -33,7 +33,7 @@ services:
     networks:
       - serverlampy
   www:
-    image: koromerzhin/php:8.4.27-apache-symfony
+    image: koromerzhin/php-apache:8.5.12-symfony
     user: "${UID:-1000}:${GID:-1000}"
     environment:
       TZ: Europe/Paris

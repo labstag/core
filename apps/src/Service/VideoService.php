@@ -35,7 +35,7 @@ class VideoService
         return $video;
     }
 
-    private function setVideo(array $data)
+    private function setVideo(array $data): ?string
     {
         $type  = strtolower((string) $data['site']);
         $video = match ($type) {

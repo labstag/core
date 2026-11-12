@@ -34,10 +34,7 @@ class CountriesFilter implements FilterInterface
         $queryBuilder->setParameter($parameterName, '"'.$value.'"');
     }
 
-    /**
-     * @param TranslatableInterface|string|false|null $label
-     */
-    public static function new(string $propertyName, $label = null): self
+    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
         $countriesField = (new self());
         $countriesField->setFilterFqcn(self::class);
@@ -72,7 +69,7 @@ class CountriesFilter implements FilterInterface
     public function setTranslatableChoices(array $choiceGenerator): self
     {
         $this->dto->setFormTypeOption('value_type_options.choices', array_keys($choiceGenerator));
-        $this->dto->setFormTypeOption('value_type_options.choice_label', fn ($value) => $choiceGenerator[$value]);
+        $this->dto->setFormTypeOption('value_type_options.choice_label', fn ($value): string|TranslatableInterface => $choiceGenerator[$value]);
 
         return $this;
     }

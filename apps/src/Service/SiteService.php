@@ -54,7 +54,7 @@ final class SiteService
     {
         $favicon = $this->getFavicon('favicon.ico');
 
-        return is_null($favicon) ? $this->getFavicon('favicon') : $favicon;
+        return $favicon ?? $this->getFavicon('favicon');
     }
 
     public function getTitleMeta(object $entity): ?string
@@ -70,7 +70,7 @@ final class SiteService
 
     public function isEnable(object $entity): bool
     {
-        return !(!$entity->isEnable() && !$this->getUser() instanceof UserInterface);
+        return $entity->isEnable() || $this->getUser() instanceof UserInterface;
         // TODO : Prévoir de vérifier les droits de l'utilisateur
     }
 

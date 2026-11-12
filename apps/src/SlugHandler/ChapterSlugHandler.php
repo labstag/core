@@ -2,6 +2,7 @@
 
 namespace Labstag\SlugHandler;
 
+use Symfony\Component\String\AbstractUnicodeString;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Gedmo\Sluggable\Handler\SlugHandlerInterface;
 use Gedmo\Sluggable\Mapping\Event\SluggableAdapter;
@@ -64,7 +65,7 @@ class ChapterSlugHandler implements SlugHandlerInterface
         unset($sluggableAdapter, $config, $object, $slug);
     }
 
-    public function setSlugForObject($objectRepository, $object)
+    public function setSlugForObject($objectRepository, $object): string|AbstractUnicodeString
     {
         $asciiSlugger        = new AsciiSlugger();
         $unicodeString       = $asciiSlugger->slug((string) $object->getTitle())->lower();

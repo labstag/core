@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
@@ -65,7 +67,7 @@ class ImageParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        $inArray = in_array($object::class, [Block::class, Edito::class, Memo::class, Page::class, Post::class]);
+        $inArray = in_array($object::class, [Block::class, Edito::class, Memo::class, Page::class, Post::class], true);
 
         return $inArray || $object instanceof Block;
     }

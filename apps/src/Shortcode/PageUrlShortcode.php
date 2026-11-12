@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Shortcode;
 
 use Labstag\Entity\Page;

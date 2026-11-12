@@ -40,7 +40,6 @@ $configure->withPreparedSets(
     naming: true,
     instanceOf: true,
     earlyReturn: true,
-    strictBooleans: false,
     carbon: false,
     rectorPreset: false,
     phpunitCodeQuality: true,

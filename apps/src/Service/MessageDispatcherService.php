@@ -73,9 +73,7 @@ final class MessageDispatcherService
     public function markAsDispatched(string $messageKey): void
     {
         $className = $this->extractClassName($messageKey);
-        if (!isset($this->dispatchedMessages[$className])) {
-            $this->dispatchedMessages[$className] = [];
-        }
+        $this->dispatchedMessages[$className] ??= [];
 
         $this->dispatchedMessages[$className][$messageKey] = true;
     }

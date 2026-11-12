@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Event\Listener;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,7 +25,7 @@ final class AdminListener
             $filterCollection->enable('deletedfile');
         }
 
-        if ($this->isDelete($requestEvent)) {
+        if ($this->isDelete($requestEvent) && $filterCollection->has('softdeleteable') && $filterCollection->isEnabled('softdeleteable')) {
             $filterCollection->disable('softdeleteable');
         }
     }

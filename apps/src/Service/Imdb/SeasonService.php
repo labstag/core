@@ -28,7 +28,10 @@ final class SeasonService
 
     public function getSeason(Serie $serie, array $data): ?Season
     {
-        $this->entityManager->getFilters()->disable('softdeleteable');
+        $filters = $this->entityManager->getFilters();
+        if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
+            $filters->disable('softdeleteable');
+        }
         $season = $this->seasonRepository->findOneBy(
             [
                 'refserie' => $serie,
@@ -44,7 +47,7 @@ final class SeasonService
             }
 
             if ($season->getDeletedAt() != null) {
-                $season->setDeletedAt(null);
+                $season->setDeletedAt();
             }
 
             return $season;

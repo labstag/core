@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Block;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;

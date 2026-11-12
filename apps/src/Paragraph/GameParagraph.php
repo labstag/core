@@ -109,17 +109,13 @@ class GameParagraph extends ParagraphAbstract implements ParagraphInterface
             unset($query['order']);
         }
 
-        if (!isset($query['order'])) {
-            $query['order'] = 'title';
-        }
+        $query['order'] ??= 'title';
 
         if (isset($query['orderby']) && !in_array($query['orderby'], ['ASC', 'DESC'])) {
             unset($query['orderby']);
         }
 
-        if (!isset($query['orderby'])) {
-            $query['orderby'] = 'ASC';
-        }
+        $query['orderby'] ??= 'ASC';
 
         return $query;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
@@ -84,7 +86,8 @@ class TextParagraph extends ParagraphAbstract implements ParagraphInterface
                 Page::class,
                 Post::class,
                 Story::class,
-            ]
+            ],
+            true
         );
 
         return $inArray || $object instanceof Block;

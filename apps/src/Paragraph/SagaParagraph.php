@@ -92,13 +92,9 @@ class SagaParagraph extends ParagraphAbstract implements ParagraphInterface
      */
     private function setQuery(array $query): array
     {
-        if (!isset($query['order'])) {
-            $query['order'] = 'title';
-        }
+        $query['order'] ??= 'title';
 
-        if (!isset($query['orderby'])) {
-            $query['orderby'] = 'ASC';
-        }
+        $query['orderby'] ??= 'ASC';
 
         return $query;
     }

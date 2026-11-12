@@ -34,7 +34,7 @@ class DiscriminatorTypeFilter implements FilterInterface
             return;
         }
 
-        $service = (is_null($this->paragraphService)) ? $this->blockService : $this->paragraphService;
+        $service = $this->paragraphService ?? $this->blockService;
 
         if (!is_array($value)) {
             $paragraph = $service->getByCode($value);

@@ -342,9 +342,7 @@ class BlockCrudController extends CrudControllerAbstract
             }
 
             $maxPosition = $repositoryAbstract->getMaxPositionByRegion($region);
-            if (is_null($maxPosition)) {
-                $maxPosition = 0;
-            }
+            $maxPosition ??= 0;
 
             ++$maxPosition;
             $data->setPosition($maxPosition);

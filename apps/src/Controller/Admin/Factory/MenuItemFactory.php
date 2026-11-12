@@ -140,7 +140,7 @@ final class MenuItemFactory
     {
         $menuItems = [];
         foreach ($controllers as $key => $data) {
-            $menuItem = MenuItem::linkTo($data['controller'], $translatableMessage->getMessage(), $icon, $data['crud']);
+            $menuItem = MenuItem::linkTo($data['controller'], $translatableMessage->getMessage(), $icon);
             $menuItems[$key] = $menuItem;
         }
 

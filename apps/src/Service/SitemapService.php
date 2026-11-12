@@ -52,13 +52,7 @@ final class SitemapService
 
         if ($all) {
             $tabs = array_merge($tabs, $this->getDataSerie());
-        }
-
-        if ($all) {
             $tabs = array_merge($tabs, $this->getDataMovie());
-        }
-
-        if ($all) {
             $tabs = array_merge($tabs, $this->getDataGame());
         }
 

@@ -77,7 +77,7 @@ final class ParagraphService
         $this->addInPosition(
             $entity,
             $paragraph,
-            is_null($position) ? count($entity->getParagraphs()) : $position
+            $position ?? count($entity->getParagraphs())
         );
 
         return $paragraph;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Event\Workflow;
 
 use Symfony\Component\Workflow\Attribute\AsTransitionListener;

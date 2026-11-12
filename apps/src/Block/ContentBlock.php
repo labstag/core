@@ -69,7 +69,7 @@ class ContentBlock extends BlockAbstract
         ];
 
         // Configure aside - implemented the TODO
-        if (!($data['entity'] instanceof Page && PageEnum::HOME->value == $data['entity']->getType())) {
+        if (!$data['entity'] instanceof Page || PageEnum::HOME->value != $data['entity']->getType()) {
             $this->getAside($data);
             // Note: getAside currently always returns null, so this block is effectively unused
             // TODO: Implement actual aside content logic when needed

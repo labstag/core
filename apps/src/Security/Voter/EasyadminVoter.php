@@ -37,7 +37,8 @@ final class EasyadminVoter extends Voter
                 Permission::EA_VIEW_MENU_ITEM,
                 Permission::EA_VIEW_FIELD,
                 Permission::EA_EXIT_IMPERSONATION,
-            ]
+            ],
+            true
         );
     }
 

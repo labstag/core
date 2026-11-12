@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Form\Paragraph;
 
 use Labstag\Form\Paragraph\Collection\SkillsType as CollectionSkillsType;

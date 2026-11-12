@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Paragraph;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -101,6 +103,6 @@ class MovieInfoParagraph extends ParagraphAbstract implements ParagraphInterface
             return true;
         }
 
-        return in_array($object::class, [Edito::class, Memo::class, Page::class, Post::class]);
+        return in_array($object::class, [Edito::class, Memo::class, Page::class, Post::class], true);
     }
 }

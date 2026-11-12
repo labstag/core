@@ -8,7 +8,6 @@ use Labstag\Entity\Post;
 use Labstag\Entity\User;
 use Labstag\Service\EtagCacheService;
 use Labstag\Tests\AbstractTestCase;
-use Override;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -265,7 +264,6 @@ final class CachePerformanceTest extends AbstractTestCase
         $this->assertLessThan(10 * 1024 * 1024, $memoryIncrease, 'Memory increase should be less than 10MB');
     }
 
-    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -273,7 +271,6 @@ final class CachePerformanceTest extends AbstractTestCase
         $this->stopwatch        = new Stopwatch();
     }
 
-    #[Override]
     protected function tearDown(): void
     {
         // Clean cache after each test

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Twig\Extension;
 
 use Labstag\Twig\Runtime\DebugExtensionRuntime;

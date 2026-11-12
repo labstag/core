@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Form\Block;
 
 use Labstag\Form\Block\Collection\LinkType as CollectionLinkType;

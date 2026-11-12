@@ -261,7 +261,7 @@ class ActionsFactory
 
     private function addActions(): void
     {
-        if ($this->enableAction != false) {
+        if ($this->enableAction) {
             return;
         }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Labstag\Event\Subscriber;
 
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;

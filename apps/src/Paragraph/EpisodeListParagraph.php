@@ -111,13 +111,9 @@ class EpisodeListParagraph extends ParagraphAbstract implements ParagraphInterfa
      */
     private function setQuery(array $query): array
     {
-        if (!isset($query['order'])) {
-            $query['order'] = 'number';
-        }
+        $query['order'] ??= 'number';
 
-        if (!isset($query['orderby'])) {
-            $query['orderby'] = 'ASC';
-        }
+        $query['orderby'] ??= 'ASC';
 
         return $query;
     }

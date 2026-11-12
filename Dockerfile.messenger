@@ -1,9 +1,0 @@
-FROM koromerzhin/php:8.4.27-apache-symfony
-
-USER root
-
-RUN apt-get update \
- && apt-get install -y supervisor \
- && rm -rf /var/lib/apt/lists/*
-
-USER www-data

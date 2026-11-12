@@ -33,9 +33,7 @@ trait CacheableTrait
      */
     protected function getCached(string $key, callable $callback): mixed
     {
-        if (!isset($this->cache[$key])) {
-            $this->cache[$key] = $callback();
-        }
+        $this->cache[$key] ??= $callback();
 
         return $this->cache[$key];
     }

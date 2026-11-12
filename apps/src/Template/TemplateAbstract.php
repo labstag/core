@@ -63,9 +63,6 @@ abstract class TemplateAbstract
         return $template;
     }
 
-    /**
-     * @return mixed[]
-     */
     protected function getTemplateContent(string $code, string $type): string
     {
         if (isset($this->templates[$code][$type])) {
