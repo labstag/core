@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Labstag\Repository;
 
-use SortDirection;
-
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Story;
+use SortDirection;
 
 /**
  * @extends RepositoryAbstract<Story>
@@ -27,7 +26,7 @@ class StoryRepository extends RepositoryAbstract
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'stories-last-'.$nbr);
+        $query->enableResultCache(3600, 'stories-last-' . $nbr);
 
         return $query->getResult();
     }

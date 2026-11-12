@@ -34,7 +34,7 @@ final class ParagraphsConfigurator implements FieldConfiguratorInterface
         }
 
         $adminControllerRegistry = $adminContext->getAdminControllers();
-        $instance               = $entityDto->getInstance();
+        $instance                = $entityDto->getInstance();
         if (is_null($instance)) {
             return;
         }
@@ -63,7 +63,7 @@ final class ParagraphsConfigurator implements FieldConfiguratorInterface
 
         $fieldDto->setFormTypeOption(
             'row_attr.class',
-            $fieldDto->getFormTypeOption('row_attr.class').' '.$cssClasses
+            $fieldDto->getFormTypeOption('row_attr.class') . ' ' . $cssClasses
         );
     }
 

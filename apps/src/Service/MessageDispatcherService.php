@@ -112,7 +112,7 @@ final class MessageDispatcherService
 
         ksort($properties);
 
-        return $className.'::'.md5(serialize($properties));
+        return $className . '::' . md5(serialize($properties));
     }
 
     /**

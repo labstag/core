@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use SortDirection;
-
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -14,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\GameRepository;
+use SortDirection;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
@@ -62,7 +61,9 @@ class Game implements EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => SortDirection::Ascending]
+        [
+            'position' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $paragraphs;
 
@@ -78,7 +79,9 @@ class Game implements EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: GameCategory::class, inversedBy: 'games')]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     private Collection $categories;
 
@@ -87,7 +90,9 @@ class Game implements EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: Franchise::class, inversedBy: 'games')]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     private Collection $franchises;
 
@@ -99,7 +104,9 @@ class Game implements EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: Platform::class, inversedBy: 'games')]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     private Collection $platforms;
 

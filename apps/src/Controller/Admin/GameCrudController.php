@@ -2,8 +2,8 @@
 
 namespace Labstag\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -288,7 +288,7 @@ class GameCrudController extends CrudControllerAbstract
 
         $content   = file_get_contents($file->getPathname());
         $extension = $file->getClientOriginalExtension();
-        $filename  = uniqid('import_', true).'.'.$extension;
+        $filename  = uniqid('import_', true) . '.' . $extension;
         $this->fileService->saveFileInAdapter('private', $filename, $content);
         $this->messageBus->dispatch(new ImportMessage($filename, 'game', $data));
 

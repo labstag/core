@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use SortDirection;
-
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,6 +14,7 @@ use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Repository\MovieRepository;
 use Labstag\SlugHandler\MovieSlugHandler;
 use Override;
+use SortDirection;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
@@ -44,7 +43,9 @@ class Movie implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: MovieCategory::class, mappedBy: 'movies', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $categories;
 
@@ -104,7 +105,9 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => SortDirection::Ascending]
+        [
+            'position' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $paragraphs;
 
@@ -148,7 +151,9 @@ class Movie implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: Company::class, mappedBy: 'movies')]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     private Collection $companies;
 

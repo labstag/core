@@ -23,7 +23,6 @@ $configure->withPaths([
 $configure->withPreparedSets(
     psr12: true,
     common: false,
-    symplify: true,
     laravel: false,
     arrays: true,
     comments: true,
@@ -31,8 +30,6 @@ $configure->withPreparedSets(
     spaces: true,
     namespaces: true,
     controlStructures: true,
-    phpunit: true,
-    strict: false,
     cleanCode: true
 );
 
@@ -43,9 +40,7 @@ $configure->withSkip([
     GlobalNamespaceImportFixer::class,
 ]);
 
-$configure->withPhpCsFixerSets(
-    symfony: true
-);
+// PhpCsFixer Symfony set removed (deprecated method); rely on prepared sets above.
 
 $configure->withConfiguredRule(
     YodaStyleFixer::class,

@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use SortDirection;
-
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,6 +15,7 @@ use Labstag\Entity\Traits\WorkflowTrait;
 use Labstag\Repository\PageRepository;
 use Labstag\SlugHandler\PageSlugHandler;
 use Override;
+use SortDirection;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
@@ -37,7 +36,9 @@ class Page implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: PageCategory::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $categories;
 
@@ -86,7 +87,9 @@ class Page implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => SortDirection::Ascending]
+        [
+            'position' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $paragraphs;
 
@@ -113,7 +116,9 @@ class Page implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: PageTag::class, mappedBy: 'pages', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $tags;
 

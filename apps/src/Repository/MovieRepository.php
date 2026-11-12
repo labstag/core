@@ -2,13 +2,12 @@
 
 namespace Labstag\Repository;
 
-use SortDirection;
-
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Saga;
+use SortDirection;
 use Symfony\Component\Intl\Countries;
 
 /**
@@ -91,7 +90,7 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder->setMaxResults($nbr);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'movies-last-'.$nbr);
+        $query->enableResultCache(3600, 'movies-last-' . $nbr);
 
         return $query->getResult();
     }
@@ -136,7 +135,7 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder->orderBy('m.releaseDate', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'movies-activate-by-saga-'.$saga->getId());
+        $query->enableResultCache(3600, 'movies-activate-by-saga-' . $saga->getId());
 
         return $query->getResult();
     }
@@ -235,11 +234,9 @@ class MovieRepository extends RepositoryAbstract
         $this->getQueryBuilderCategories($queryBuilder, $query);
         $this->getQueryBuilderYear($queryBuilder, $query);
 
-        $direction = 'DESC' === strtoupper((string) ($query['orderby'] ?? 'DESC'))
-            ? SortDirection::Descending
-            : SortDirection::Ascending;
+        $direction = 'DESC' === strtoupper((string) ($query['orderby'] ?? 'DESC')) ? SortDirection::Descending : SortDirection::Ascending;
 
-        return $queryBuilder->orderBy('m.'.$query['order'], $direction);
+        return $queryBuilder->orderBy('m.' . $query['order'], $direction);
     }
 
     /**
@@ -252,7 +249,7 @@ class MovieRepository extends RepositoryAbstract
         $queryBuilder = $this->getQueryBuilder($query);
         $query        = $queryBuilder->getQuery();
         $dql          = $query->getDQL();
-        $query->enableResultCache(3600, 'movies-query-paginator-'.md5((string) $dql));
+        $query->enableResultCache(3600, 'movies-query-paginator-' . md5((string) $dql));
 
         return $query;
     }
@@ -306,7 +303,7 @@ class MovieRepository extends RepositoryAbstract
         }
 
         $queryBuilder->andWhere('m.title LIKE :title');
-        $queryBuilder->setParameter('title', '%'.$query['title'].'%');
+        $queryBuilder->setParameter('title', '%' . $query['title'] . '%');
     }
 
     /**
@@ -314,7 +311,7 @@ class MovieRepository extends RepositoryAbstract
      */
     private function getQueryBuilderYear(QueryBuilder $queryBuilder, array $query): void
     {
-        if (!isset($query['year']) || !is_numeric($query['year']) || 0 == (int) $query['year']) {
+        if (!isset($query['year']) || !is_numeric($query['year']) || 0 === (int) $query['year']) {
             return;
         }
 

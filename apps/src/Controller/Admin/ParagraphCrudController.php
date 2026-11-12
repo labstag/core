@@ -69,7 +69,7 @@ class ParagraphCrudController extends CrudControllerAbstract
     public function configureFields(string $pageName): iterable
     {
         $this->crudFieldFactory->setTabPrincipal($this->getContext());
-        $currentEntity = $this->getContext()->getEntity()->getInstance();
+        $currentEntity       = $this->getContext()->getEntity()->getInstance();
         $translatableMessage = new TranslatableMessage('Parent');
         $this->crudFieldFactory->addFieldsToTab(
             'principal',

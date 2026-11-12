@@ -158,6 +158,29 @@ final class SerieService
         return in_array(true, $statuses, true);
     }
 
+    private function cleanupTrashSerie(Serie $serie): void
+    {
+        $repository = $this->entityManager->getRepository(Season::class);
+        if (!$repository instanceof SeasonRepository) {
+            return;
+        }
+
+        $filters = $this->entityManager->getFilters();
+        if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
+            $filters->disable('softdeleteable');
+        }
+
+        $paragraphs = $repository->getdeleteTrashBySerie($serie);
+        foreach ($paragraphs as $paragraph) {
+            $this->entityManager->remove($paragraph);
+        }
+
+        $this->entityManager->flush();
+        if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
+            $filters->enable('softdeleteable');
+        }
+    }
+
     /**
      * @param array<string, mixed> $details
      */
@@ -373,29 +396,6 @@ final class SerieService
         $this->cleanupTrashSerie($serie);
 
         return true;
-    }
-
-    private function cleanupTrashSerie(Serie $serie): void
-    {
-        $repository = $this->entityManager->getRepository(Season::class);
-        if (!$repository instanceof SeasonRepository) {
-            return;
-        }
-
-        $filters = $this->entityManager->getFilters();
-        if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
-            $filters->disable('softdeleteable');
-        }
-        
-        $paragraphs = $repository->getdeleteTrashBySerie($serie);
-        foreach ($paragraphs as $paragraph) {
-            $this->entityManager->remove($paragraph);
-        }
-
-        $this->entityManager->flush();
-        if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
-            $filters->enable('softdeleteable');
-        }
     }
 
     /**

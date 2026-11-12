@@ -34,13 +34,12 @@ abstract class AbstractTmdbApi
     {
         $filtered = array_filter($params, fn ($value): bool => null !== $value && '' !== $value);
 
-        return [] === $filtered ? '' : '?'.http_build_query($filtered);
+        return [] === $filtered ? '' : '?' . http_build_query($filtered);
     }
 
     /**
      * Generic cache wrapper for API requests.
      *
-     * @param string   $cacheKey     Cache key
      * @param callable $callback     Function to execute if cache miss
      * @param int      $cacheTimeout Cache timeout in seconds
      *
@@ -67,7 +66,7 @@ abstract class AbstractTmdbApi
             $url,
             [
                 'headers' => [
-                    'Authorization' => 'Bearer '.$this->tmdbBearerToken,
+                    'Authorization' => 'Bearer ' . $this->tmdbBearerToken,
                     'accept'        => 'application/json',
                 ],
             ]

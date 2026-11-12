@@ -5,6 +5,7 @@ namespace Labstag\Repository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Labstag\Entity\Casting;
 use Labstag\Entity\Person;
 
 /**
@@ -15,6 +16,20 @@ class PersonRepository extends RepositoryAbstract
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Person::class);
+    }
+
+    public function delete(object $entity): void
+    {
+        if ($entity instanceof Person) {
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                ['refPerson' => $entity]
+            );
+            foreach ($castings as $casting) {
+                $this->getEntityManager()->remove($casting);
+            }
+        }
+
+        parent::delete($entity);
     }
 
     /**
@@ -38,7 +53,7 @@ class PersonRepository extends RepositoryAbstract
         $queryBuilder->orWhere('e.id IS NOT NULL AND sea2.id IS NOT NULL AND s3.id IS NOT NULL');
         $queryBuilder->setParameter('enable', true);
 
-        return $queryBuilder->orderBy('p.'.$query['order'], $query['orderby']);
+        return $queryBuilder->orderBy('p.' . $query['order'], $query['orderby']);
     }
 
     /**
@@ -51,7 +66,7 @@ class PersonRepository extends RepositoryAbstract
         $queryBuilder = $this->getQueryBuilder($query);
         $query        = $queryBuilder->getQuery();
         $dql          = $query->getDQL();
-        $query->enableResultCache(3600, 'sagas-query-paginator-'.md5((string) $dql));
+        $query->enableResultCache(3600, 'sagas-query-paginator-' . md5((string) $dql));
 
         return $query;
     }

@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Labstag\Repository;
 
-use SortDirection;
-
 use DateTime;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Post;
+use SortDirection;
 
 /**
  * @extends RepositoryAbstract<Post>
@@ -29,7 +28,7 @@ class PostRepository extends RepositoryAbstract
 
         $query = $queryBuilder->getQuery();
 
-        $query->enableResultCache(600, 'post-last-'.$nbr);
+        $query->enableResultCache(600, 'post-last-' . $nbr);
 
         return $query->getResult();
     }
@@ -89,7 +88,7 @@ class PostRepository extends RepositoryAbstract
         }
 
         $query = $queryBuilder->getQuery();
-        $query->enableResultCache(300, 'post-query-paginator-'.$categorySlug.'-'.$tagSlug);
+        $query->enableResultCache(300, 'post-query-paginator-' . $categorySlug . '-' . $tagSlug);
 
         return $query;
     }

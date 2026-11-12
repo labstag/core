@@ -2,12 +2,12 @@
 
 namespace Labstag\SlugHandler;
 
-use Symfony\Component\String\AbstractUnicodeString;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Gedmo\Sluggable\Handler\SlugHandlerInterface;
 use Gedmo\Sluggable\Mapping\Event\SluggableAdapter;
 use Gedmo\Sluggable\SluggableListener;
 use Labstag\Entity\Chapter;
+use Symfony\Component\String\AbstractUnicodeString;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class ChapterSlugHandler implements SlugHandlerInterface
@@ -69,9 +69,9 @@ class ChapterSlugHandler implements SlugHandlerInterface
     {
         $asciiSlugger        = new AsciiSlugger();
         $unicodeString       = $asciiSlugger->slug((string) $object->getTitle())->lower();
-        $slug      = $unicodeString;
-        $find      = false;
-        $number    = 1;
+        $slug                = $unicodeString;
+        $find                = false;
+        $number              = 1;
         while (false === $find) {
             $testChapter = $objectRepository->findOneBy(
                 [
@@ -89,7 +89,7 @@ class ChapterSlugHandler implements SlugHandlerInterface
                 break;
             }
 
-            $slug = $unicodeString.'-'.$number;
+            $slug = $unicodeString . '-' . $number;
             ++$number;
         }
 

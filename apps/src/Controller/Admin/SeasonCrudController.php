@@ -3,8 +3,8 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
-use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Doctrine\Persistence\ObjectManager;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -186,7 +186,7 @@ class SeasonCrudController extends CrudControllerAbstract
         $season                           = $repositoryAbstract->find($entityId);
 
         return $this->redirect(
-            'https://www.themoviedb.org/tv/'.$season->getRefserie()->getTmdb().'/season/'.$season->getNumber()
+            'https://www.themoviedb.org/tv/' . $season->getRefserie()->getTmdb() . '/season/' . $season->getNumber()
         );
     }
 

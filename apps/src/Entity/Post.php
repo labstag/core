@@ -2,8 +2,6 @@
 
 namespace Labstag\Entity;
 
-use SortDirection;
-
 use DateTime;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,6 +14,7 @@ use Labstag\Entity\Traits\TimestampableTrait;
 use Labstag\Entity\Traits\WorkflowTrait;
 use Labstag\Repository\PostRepository;
 use Override;
+use SortDirection;
 use Stringable;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Component\HttpFoundation\File\File;
@@ -36,7 +35,9 @@ class Post implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: PostCategory::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $categories;
 
@@ -75,7 +76,9 @@ class Post implements Stringable, EntityWithParagraphsInterface
         orphanRemoval: true
     )]
     #[ORM\OrderBy(
-        ['position' => SortDirection::Ascending]
+        [
+            'position' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $paragraphs;
 
@@ -95,7 +98,9 @@ class Post implements Stringable, EntityWithParagraphsInterface
      */
     #[ORM\ManyToMany(targetEntity: PostTag::class, mappedBy: 'posts', cascade: ['persist', 'detach'])]
     #[ORM\OrderBy(
-        ['title' => SortDirection::Ascending]
+        [
+            'title' => SortDirection::Ascending,
+        ]
     )]
     protected Collection $tags;
 

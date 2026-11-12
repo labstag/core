@@ -2,11 +2,10 @@
 
 namespace Labstag\Repository;
 
-use SortDirection;
-
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Game;
 use Labstag\Entity\Platform;
+use SortDirection;
 
 /**
  * @extends ServiceRepositoryAbstractEntityRepository<Platform>

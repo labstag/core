@@ -51,7 +51,7 @@ final class DeduplicationMiddleware implements MiddlewareInterface
 
         ksort($properties);
 
-        return $className.'::'.md5(serialize($properties));
+        return $className . '::' . md5(serialize($properties));
     }
 
     private function serializeValue(mixed $value): mixed

@@ -24,8 +24,8 @@ final class AddGameMessageHandler
         $platformId = $addGameMessage->getPlatform();
         match ($type) {
             'platform' => $this->igdbService->platforms()->addByApi($id),
-            'game' => $this->igdbService->games()->addByApi($id, $platformId),
-            default => null,
+            'game'     => $this->igdbService->games()->addByApi($id, $platformId),
+            default    => null,
         };
     }
 }

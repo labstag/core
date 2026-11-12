@@ -26,7 +26,7 @@ class SeasonData extends SerieData implements DataInterface
     public function generateSlug(object $entity): array
     {
         $slug = parent::generateSlug($entity->getRefserie());
-        $slug['slug'] .= '/'.$entity->getSlug();
+        $slug['slug'] .= '/' . $entity->getSlug();
 
         return $slug;
     }
@@ -82,7 +82,7 @@ class SeasonData extends SerieData implements DataInterface
     #[Override]
     public function getTitleMeta(object $entity): string
     {
-        return parent::getTitle($entity->getRefserie()).' - '.$this->getTitle($entity);
+        return parent::getTitle($entity->getRefserie()) . ' - ' . $this->getTitle($entity);
     }
 
     #[Override]

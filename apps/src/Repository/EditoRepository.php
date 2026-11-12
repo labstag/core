@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Labstag\Repository;
 
-use SortDirection;
-
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Edito;
+use SortDirection;
 
 /**
  * @extends RepositoryAbstract<Edito>

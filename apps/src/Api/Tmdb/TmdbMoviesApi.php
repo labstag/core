@@ -39,12 +39,12 @@ class TmdbMoviesApi extends AbstractTmdbApi
         );
 
         $query    = http_build_query($params);
-        $cacheKey = 'tmdb_movies_'.md5($query);
+        $cacheKey = 'tmdb_movies_' . md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($query): ?array {
-                $url  = self::BASE_URL.'/discover/movie?'.$query;
+                $url  = self::BASE_URL . '/discover/movie?' . $query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || 0 === count($data['results'])) {
@@ -90,7 +90,6 @@ class TmdbMoviesApi extends AbstractTmdbApi
     /**
      * Get movie credits (cast and crew).
      *
-     * @param string      $movieId  Movie ID
      * @param string|null $language Language (e.g., 'en-US', 'fr-FR')
      *
      * @return array<string, mixed>|null
@@ -108,12 +107,12 @@ class TmdbMoviesApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_movie_credits_'.$movieId.'_'.md5($query);
+        $cacheKey = 'tmdb_movie_credits_' . $movieId . '_' . md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($movieId, $query): ?array {
-                $url  = self::BASE_URL.'/movie/'.$movieId.'/credits'.$query;
+                $url  = self::BASE_URL . '/movie/' . $movieId . '/credits' . $query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || (empty($data['cast']) && empty($data['crew']))) {
@@ -134,7 +133,6 @@ class TmdbMoviesApi extends AbstractTmdbApi
     /**
      * Get movie details by ID.
      *
-     * @param string      $movieId          Movie ID
      * @param string|null $language         Language (e.g., 'en-US', 'fr-FR')
      * @param string|null $appendToResponse Comma-separated list of sub-requests (credits,images,videos,etc.)
      *
@@ -148,12 +146,12 @@ class TmdbMoviesApi extends AbstractTmdbApi
         ];
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_movie_details_'.$movieId.'_'.md5($query);
+        $cacheKey = 'tmdb_movie_details_' . $movieId . '_' . md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($movieId, $query): ?array {
-                $url  = self::BASE_URL.'/movie/'.$movieId.$query;
+                $url  = self::BASE_URL . '/movie/' . $movieId . $query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || empty($data['title'])) {
@@ -174,7 +172,6 @@ class TmdbMoviesApi extends AbstractTmdbApi
     /**
      * Get movie images.
      *
-     * @param string      $movieId              Movie ID
      * @param string|null $includeImageLanguage Comma-separated list of languages (e.g., 'en,fr,null')
      *
      * @return array<string, mixed>|null
@@ -186,12 +183,12 @@ class TmdbMoviesApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_movie_images_'.$movieId.'_'.md5($query);
+        $cacheKey = 'tmdb_movie_images_' . $movieId . '_' . md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($movieId, $query): ?array {
-                $url  = self::BASE_URL.'/movie/'.$movieId.'/images'.$query;
+                $url  = self::BASE_URL . '/movie/' . $movieId . '/images' . $query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || (empty($data['backdrops']) && empty($data['posters']))) {
@@ -212,7 +209,6 @@ class TmdbMoviesApi extends AbstractTmdbApi
     /**
      * Get movie collection details.
      *
-     * @param string      $collectionId Collection ID
      * @param string|null $language     Language (e.g., 'en-US', 'fr-FR')
      *
      * @return array<string, mixed>|null
@@ -230,12 +226,12 @@ class TmdbMoviesApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_collection_'.$collectionId.'_'.md5($query);
+        $cacheKey = 'tmdb_collection_' . $collectionId . '_' . md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($collectionId, $query): ?array {
-                $url  = self::BASE_URL.'/collection/'.$collectionId.$query;
+                $url  = self::BASE_URL . '/collection/' . $collectionId . $query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || empty($data['name'])) {
@@ -254,10 +250,6 @@ class TmdbMoviesApi extends AbstractTmdbApi
     }
 
     /**
-     * Get movie external IDs.
-     *
-     * @param string $movieId Movie ID
-     *
      * @return array<string, mixed>|null
      */
     public function getMovieExternalIds(string $movieId): ?array
@@ -266,12 +258,12 @@ class TmdbMoviesApi extends AbstractTmdbApi
             return null;
         }
 
-        $cacheKey = 'tmdb_movie_external_ids_'.$movieId;
+        $cacheKey = 'tmdb_movie_external_ids_' . $movieId;
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($movieId): ?array {
-                $url  = self::BASE_URL.'/movie/'.$movieId.'/external_ids';
+                $url  = self::BASE_URL . '/movie/' . $movieId . '/external_ids';
                 $data = $this->makeRequest($url);
 
                 if (null === $data) {
@@ -290,9 +282,6 @@ class TmdbMoviesApi extends AbstractTmdbApi
     }
 
     /**
-     * Get movie recommendations.
-     *
-     * @param string               $movieId           Movie ID
      * @param array<string, mixed> $additionalFilters Additional query parameters
      *
      * @return array<string, mixed>|null
@@ -300,12 +289,12 @@ class TmdbMoviesApi extends AbstractTmdbApi
     public function getMovieRecommendations(string $movieId, array $additionalFilters = []): ?array
     {
         $query    = http_build_query($additionalFilters);
-        $cacheKey = 'tmdb_movie_recommendations_'.$movieId.'_'.md5($query);
+        $cacheKey = 'tmdb_movie_recommendations_' . $movieId . '_' . md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($movieId, $query): ?array {
-                $url  = self::BASE_URL.'/movie/'.$movieId.'/recommendations?'.$query;
+                $url  = self::BASE_URL . '/movie/' . $movieId . '/recommendations?' . $query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data) {
@@ -326,8 +315,6 @@ class TmdbMoviesApi extends AbstractTmdbApi
     /**
      * Get movie release dates.
      *
-     * @param string $movieId Movie ID
-     *
      * @return array<string, mixed>|null
      */
     public function getMovieReleasesDates(string $movieId): ?array
@@ -336,12 +323,12 @@ class TmdbMoviesApi extends AbstractTmdbApi
             return null;
         }
 
-        $cacheKey = 'tmdb_movie_release_dates_'.$movieId;
+        $cacheKey = 'tmdb_movie_release_dates_' . $movieId;
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($movieId): ?array {
-                $url  = self::BASE_URL.'/movie/'.$movieId.'/release_dates';
+                $url  = self::BASE_URL . '/movie/' . $movieId . '/release_dates';
                 $data = $this->makeRequest($url);
 
                 if (null === $data || empty($data['results'])) {
@@ -362,7 +349,6 @@ class TmdbMoviesApi extends AbstractTmdbApi
     /**
      * Get similar movies.
      *
-     * @param string               $movieId           Movie ID
      * @param array<string, mixed> $additionalFilters Additional query parameters (language, page)
      *
      * @return array<string, mixed>|null
@@ -370,12 +356,12 @@ class TmdbMoviesApi extends AbstractTmdbApi
     public function getMovieSimilar(string $movieId, array $additionalFilters = []): ?array
     {
         $query    = http_build_query($additionalFilters);
-        $cacheKey = 'tmdb_movie_similar_'.$movieId.'_'.md5($query);
+        $cacheKey = 'tmdb_movie_similar_' . $movieId . '_' . md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($movieId, $query): ?array {
-                $url  = self::BASE_URL.'/movie/'.$movieId.'/similar?'.$query;
+                $url  = self::BASE_URL . '/movie/' . $movieId . '/similar?' . $query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data) {
@@ -413,12 +399,12 @@ class TmdbMoviesApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_popular_movies_'.md5($query);
+        $cacheKey = 'tmdb_popular_movies_' . md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($query): ?array {
-                $url  = self::BASE_URL.'/movie/popular'.$query;
+                $url  = self::BASE_URL . '/movie/popular' . $query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || 0 === count($data['results'])) {
@@ -439,7 +425,6 @@ class TmdbMoviesApi extends AbstractTmdbApi
     /**
      * Get movie videos/trailers.
      *
-     * @param string      $movieId  Movie ID
      * @param string|null $language Language (e.g., 'en-US', 'fr-FR')
      *
      * @return array<string, mixed>|null
@@ -451,12 +436,12 @@ class TmdbMoviesApi extends AbstractTmdbApi
         );
 
         $query    = $this->buildQueryParams($params);
-        $cacheKey = 'tmdb_movie_videos_'.$movieId.'_'.md5($query);
+        $cacheKey = 'tmdb_movie_videos_' . $movieId . '_' . md5($query);
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($movieId, $query): ?array {
-                $url  = self::BASE_URL.'/movie/'.$movieId.'/videos'.$query;
+                $url  = self::BASE_URL . '/movie/' . $movieId . '/videos' . $query;
                 $data = $this->makeRequest($url);
 
                 if (null === $data || 0 === count($data['results'] ?? [])) {
@@ -477,13 +462,11 @@ class TmdbMoviesApi extends AbstractTmdbApi
     /**
      * Search for movies.
      *
-     * @param string      $searchQuery        Search query
      * @param int         $page               Page number
      * @param string|null $language           Language (e.g., 'en-US', 'fr-FR')
      * @param string|null $region             Region (ISO 3166-1 code)
      * @param bool|null   $includeAdult       Include adult content
      * @param int|null    $year               Primary release year
-     * @param int|null    $primaryReleaseYear Primary release year
      *
      * @return array<string, mixed>|null
      */
@@ -520,12 +503,12 @@ class TmdbMoviesApi extends AbstractTmdbApi
             $params['page'] = $page;
         }
 
-        $cacheKey = 'tmdb_search_movies_'.md5(serialize($params));
+        $cacheKey = 'tmdb_search_movies_' . md5(serialize($params));
 
         return $this->getCached(
             $cacheKey,
             function (ItemInterface $item) use ($params): ?array {
-                $url  = self::BASE_URL.'/search/movie?'.http_build_query($params);
+                $url  = self::BASE_URL . '/search/movie?' . http_build_query($params);
                 $data = $this->makeRequest($url);
 
                 if (null === $data || 0 === count($data['results'])) {

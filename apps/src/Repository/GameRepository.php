@@ -2,12 +2,11 @@
 
 namespace Labstag\Repository;
 
-use SortDirection;
-
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Game;
+use SortDirection;
 
 /**
  * @extends RepositoryAbstract<Game>
@@ -52,7 +51,7 @@ class GameRepository extends RepositoryAbstract
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->leftJoin('g.categories', 'c')->addSelect('c');
 
-        return $queryBuilder->orderBy('g.'.$query['order'], $query['orderby']);
+        return $queryBuilder->orderBy('g.' . $query['order'], $query['orderby']);
     }
 
     /**
@@ -70,7 +69,7 @@ class GameRepository extends RepositoryAbstract
 
         $query        = $queryBuilder->getQuery();
         $dql          = $query->getDQL();
-        $query->enableResultCache(3600, 'movies-query-paginator-'.md5((string) $dql));
+        $query->enableResultCache(3600, 'movies-query-paginator-' . md5((string) $dql));
 
         return $query;
     }
