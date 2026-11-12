@@ -24,18 +24,22 @@ class SerieRepository extends RepositoryAbstract
     public function delete(object $entity): void
     {
         if ($entity instanceof Serie) {
-            $filters = $this->getEntityManager()->getFilters();
+            $filters    = $this->getEntityManager()->getFilters();
             $wasEnabled = $filters->has('softdeleteable') && $filters->isEnabled('softdeleteable');
             if ($wasEnabled) {
                 $filters->disable('softdeleteable');
             }
 
-            $seasons = $this->getEntityManager()->getRepository(Season::class)->findBy(['refserie' => $entity]);
+            $seasons = $this->getEntityManager()->getRepository(Season::class)->findBy(
+                ['refserie' => $entity]
+            );
             foreach ($seasons as $season) {
                 $this->getEntityManager()->getRepository(Season::class)->delete($season);
             }
 
-            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(['refSerie' => $entity]);
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                ['refSerie' => $entity]
+            );
             foreach ($castings as $casting) {
                 $this->getEntityManager()->remove($casting);
             }
@@ -217,5 +221,28 @@ class SerieRepository extends RepositoryAbstract
         $query->enableResultCache(3600, 'series-query-paginator-' . md5((string) $dql));
 
         return $query;
+    }
+
+    public function remove(object $entity): void
+    {
+        if ($entity instanceof Serie) {
+            $seasons = $this->getEntityManager()->getRepository(Season::class)->findBy(
+                ['refserie' => $entity]
+            );
+            foreach ($seasons as $season) {
+                $this->getEntityManager()->getRepository(Season::class)->remove($season);
+            }
+
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
+                ['refSerie' => $entity]
+            );
+            foreach ($castings as $casting) {
+                $this->getEntityManager()->remove($casting);
+            }
+
+            $this->getEntityManager()->flush();
+        }
+
+        parent::remove($entity);
     }
 }
