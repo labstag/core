@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Controller\Admin\Factory\MenuItemFactory;
+use ReflectionClass;
 use Labstag\Entity\Configuration;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
@@ -159,11 +160,14 @@ class DashboardController extends AbstractDashboardController
             $paragraphs[$idMemo] = $this->paragraphService->generate($paragraphs, [], false);
         }
 
+        $trash = $this->getTrashItems();
+
         return $this->render(
             'admin/dashboard.html.twig',
             [
                 'paragraphs' => $paragraphs,
                 'memos'      => $memos,
+                'trash'      => $trash,
             ]
         );
     }
@@ -495,5 +499,77 @@ class DashboardController extends AbstractDashboardController
             'fas fa-laptop-house',
             $this->generateUrl('front')
         )->setLinkTarget('_blank');
+    }
+
+    /**
+     * Menu listing all soft-deletable entities' trash views.
+     */
+    /**
+     * @return array<int, array{label: string, count: int, url: string}>
+     */
+    private function getTrashItems(): array
+    {
+        $controllers = [
+            'Person' => PersonCrudController::class,
+            'Company' => CompanyCrudController::class,
+            'Edito' => EditoCrudController::class,
+            'Memo' => MemoCrudController::class,
+            'Media' => MediaCrudController::class,
+            'Meta' => MetaCrudController::class,
+            'Paragraphs' => ParagraphCrudController::class,
+            'Block' => BlockCrudController::class,
+            'Star' => StarCrudController::class,
+            'User' => UserCrudController::class,
+            'Story' => StoryCrudController::class,
+            'Chapter' => ChapterCrudController::class,
+            'Movie' => MovieCrudController::class,
+            'Serie' => SerieCrudController::class,
+            'Season' => SeasonCrudController::class,
+            'Episode' => EpisodeCrudController::class,
+            'Game' => GameCrudController::class,
+            'Platform' => PlatformCrudController::class,
+            'Franchise' => FranchiseCrudController::class,
+            'Page' => PageCrudController::class,
+            'Post' => PostCrudController::class,
+        ];
+
+        $trash = [];
+        $filters = $this->entityManager->getFilters();
+        foreach ($controllers as $label => $controller) {
+            $fqcn = $controller::getEntityFqcn();
+            $reflectionClass = new ReflectionClass($fqcn);
+            if (!$reflectionClass->hasMethod('getDeletedAt')) {
+                continue;
+            }
+
+            $repository = $this->getRepository($fqcn);
+            if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
+                $filters->disable('softdeleteable');
+            }
+            $deleted = $repository->findDeleted();
+            if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
+                $filters->enable('softdeleteable');
+            }
+
+            $count = is_array($deleted) ? count($deleted) : 0;
+            if (0 === $count) {
+                continue;
+            }
+
+            $urlGenerator = $this->container->get(AdminUrlGenerator::class);
+            $url = $urlGenerator
+                ->setController($controller)
+                ->setAction('index')
+                ->set('action', 'trash')
+                ->generateUrl();
+
+            $trash[] = [
+                'label' => new TranslatableMessage($label),
+                'count' => $count,
+                'url'   => $url,
+            ];
+        }
+
+        return $trash;
     }
 }

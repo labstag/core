@@ -2385,6 +2385,18 @@
         <source>No artists match your search.</source>
         <target>Aucun artiste ne correspond à votre recherche.</target>
       </trans-unit>
+      <trans-unit id="trash_entity" resname="Entity">
+        <source>Entity</source>
+        <target>Entité</target>
+      </trans-unit>
+      <trans-unit id="trash_items" resname="Items in trash">
+        <source>Items in trash</source>
+        <target>Éléments dans la corbeille</target>
+      </trans-unit>
+      <trans-unit id="trash_view" resname="View">
+        <source>View</source>
+        <target>Voir</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
