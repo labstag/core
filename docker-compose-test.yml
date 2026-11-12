@@ -20,6 +20,7 @@ services:
     volumes:
       - ${PWD}/apps/.env:/var/www/.env:ro
       - ${PWD}/apps/public:/var/www/public
+      - ${PWD}/apps/private:/var/www/private
     networks:
       - serverhackariens
 
@@ -37,6 +38,7 @@ services:
     volumes:
       - ${PWD}/apps/.env:/var/www/.env:ro
       - ${PWD}/apps/public:/var/www/public
+      - ${PWD}/apps/private:/var/www/private
       - ${PWD}/conf/php.ini-development://usr/local/etc/php/conf.d/php.ini
       - ${PWD}/conf/apache2/000-default.conf:/etc/apache2/sites-available/000-default.conf:ro
       - ${PWD}/conf/apache2/apache2.conf:/etc/apache2/apache2.conf:ro
