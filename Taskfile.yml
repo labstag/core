@@ -889,3 +889,14 @@ tasks:
         docker push koromerzhin/labstag:latest-messenger
       fi
 
+  labstag:messenger:remove:
+    desc: "Remove the labstag messenger service"
+    cmds:
+    - docker service rm {{.STACK_NAME}}_messenger || true
+
+  labstag:messenger:restart:
+    desc: "Remove and restart the labstag messenger service"
+    cmds:
+    - task: labstag:messenger:remove
+    - task: labstag:deploy
+
