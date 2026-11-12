@@ -238,6 +238,27 @@ final class MetaParentConfigurator implements FieldConfiguratorInterface
             return '';
         }
 
-        return (string) $entityInstance;
+        if (is_scalar($entityInstance)) {
+            return (string) $entityInstance;
+        }
+
+        if (method_exists($entityInstance, '__toString')) {
+            return (string) $entityInstance;
+        }
+
+        foreach (['getName', 'getTitle', 'getLabel', 'getUsername'] as $method) {
+            if (method_exists($entityInstance, $method)) {
+                $value = $entityInstance->{$method}();
+                if (is_scalar($value)) {
+                    return (string) $value;
+                }
+            }
+        }
+
+        if (method_exists($entityInstance, 'getId')) {
+            return (string) $entityInstance->getId();
+        }
+
+        return '';
     }
 }
