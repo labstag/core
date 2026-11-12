@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Page;
 
@@ -22,7 +24,7 @@ class PageRepository extends RepositoryAbstract
         $queryBuilder->andWhere('p.hide = :hide');
         $queryBuilder->setParameter('enable', true);
         $queryBuilder->setParameter('hide', false);
-        $queryBuilder->orderBy('p.createdAt', 'DESC');
+        $queryBuilder->orderBy('p.createdAt', SortDirection::Descending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'page-activate');

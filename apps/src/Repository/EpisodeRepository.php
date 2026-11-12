@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query;
@@ -37,7 +39,7 @@ class EpisodeRepository extends RepositoryAbstract
         $queryBuilder->andWhere('e.refseason = :refseason');
         $queryBuilder->andWhere('(e.airDate <= :now OR e.airDate IS NULL)');
         $queryBuilder->setParameters($data);
-        $queryBuilder->orderBy('e.number', 'ASC');
+        $queryBuilder->orderBy('e.number', SortDirection::Ascending);
 
         $query        = $queryBuilder->getQuery();
         $dql          = $query->getDQL();

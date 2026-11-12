@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Block;
@@ -30,8 +32,8 @@ class BlockRepository extends RepositoryAbstract
             .'WHEN '.$alias.".region = 'footer' THEN 3 "
             .'ELSE 4 '
             .'END';
-        $queryBuilder->orderBy($caseExpr, 'ASC');
-        $queryBuilder->addOrderBy($alias.'.position', 'ASC');
+        $queryBuilder->orderBy($caseExpr, SortDirection::Ascending);
+        $queryBuilder->addOrderBy($alias.'.position', SortDirection::Ascending);
     }
 
     public function getMaxPositionByRegion(string $region): ?int

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use DateTime;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -65,7 +67,7 @@ class PostRepository extends RepositoryAbstract
         $queryBuilder->andWhere('p.createdAt <= :now');
         $queryBuilder->setParameter('now', new DateTime('now'));
 
-        return $queryBuilder->orderBy('p.createdAt', 'DESC');
+        return $queryBuilder->orderBy('p.createdAt', SortDirection::Descending);
     }
 
     /**

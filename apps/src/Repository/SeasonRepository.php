@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
@@ -31,7 +33,7 @@ class SeasonRepository extends RepositoryAbstract
         $queryBuilder->andWhere('s.refserie = :refserie');
         $queryBuilder->andWhere('(s.airDate <= :now OR s.airDate IS NULL)');
         $queryBuilder->setParameters($data);
-        $queryBuilder->orderBy('s.number', 'ASC');
+        $queryBuilder->orderBy('s.number', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'seasons-activate-serie-'.$serie->getId());

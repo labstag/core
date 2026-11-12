@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\HttpErrorLogs;
 
@@ -26,7 +28,7 @@ class HttpErrorLogsRepository extends RepositoryAbstract
         $queryBuilder->having('nbr >= :nbr');
         $queryBuilder->setParameter('nbr', $nbr);
         $queryBuilder->andWhere('hel.refuser IS NULL');
-        $queryBuilder->orderBy('nbr', 'DESC');
+        $queryBuilder->orderBy('nbr', SortDirection::Descending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'http-error-logs-ip-nbr-'.$nbr);

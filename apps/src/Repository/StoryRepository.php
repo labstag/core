@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -71,6 +73,6 @@ class StoryRepository extends RepositoryAbstract
         $queryBuilder->andWhere('c.enable = :enable');
         $queryBuilder->setParameter('enable', true);
 
-        return $queryBuilder->orderBy('s.createdAt', 'DESC');
+        return $queryBuilder->orderBy('s.createdAt', SortDirection::Descending);
     }
 }

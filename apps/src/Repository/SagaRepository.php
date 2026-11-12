@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,7 +25,7 @@ class SagaRepository extends RepositoryAbstract
     public function findAllByTypeMovieEnable(): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->orderBy('s.title', 'ASC');
+        $queryBuilder->orderBy('s.title', SortDirection::Ascending);
         $queryBuilder->leftJoin('s.movies', 'm')->addSelect('m');
         $queryBuilder->andWhere('m.enable = true');
 
@@ -41,7 +43,7 @@ class SagaRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->leftJoin('s.movies', 'm')->addSelect('m');
         $queryBuilder->andWhere('m.id IS NULL');
-        $queryBuilder->orderBy('s.title', 'ASC');
+        $queryBuilder->orderBy('s.title', SortDirection::Ascending);
 
         $query = $queryBuilder->getQuery();
 
@@ -53,7 +55,7 @@ class SagaRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->where('s.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('s.createdAt', 'DESC');
+        $queryBuilder->orderBy('s.createdAt', SortDirection::Descending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'sagas-activate');
@@ -103,7 +105,7 @@ class SagaRepository extends RepositoryAbstract
     public function showPublic(): array
     {
         $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->orderBy('s.title', 'ASC');
+        $queryBuilder->orderBy('s.title', SortDirection::Ascending);
         $queryBuilder->andWhere('s.enable = true');
 
         $query = $queryBuilder->getQuery();

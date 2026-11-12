@@ -2,6 +2,8 @@
 
 namespace Labstag\Repository;
 
+use SortDirection;
+
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,7 +24,7 @@ class GameRepository extends RepositoryAbstract
         $queryBuilder = $this->createQueryBuilder('g');
         $queryBuilder->where('g.enable = :enable');
         $queryBuilder->setParameter('enable', true);
-        $queryBuilder->orderBy('g.createdAt', 'DESC');
+        $queryBuilder->orderBy('g.createdAt', SortDirection::Descending);
 
         $query = $queryBuilder->getQuery();
         $query->enableResultCache(3600, 'games-activate');
