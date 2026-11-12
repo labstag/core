@@ -8,7 +8,9 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Configuration;
 use Labstag\Entity\HeadParagraph;
 use Labstag\Entity\Page;
+use Labstag\Entity\Paragraph;
 use Labstag\Entity\TextImgParagraph;
+use Labstag\Repository\ParagraphRepository;
 use Labstag\Entity\TextParagraph;
 use Labstag\Entity\User;
 use Labstag\Entity\VideoParagraph;
@@ -67,6 +69,7 @@ class CinemaGenerate
         $page->setResume($this->pageCinemaResumeTemplate->getTemplate()->getHtml());
         $this->setParagraphs($page, $configuration);
         $entityRepository->save($page);
+        $this->cleanupTrashParagraphs($page);
     }
 
     public function setParagraphs(Page $page, Configuration $configuration): void
@@ -97,6 +100,31 @@ class CinemaGenerate
 
         $movies = $this->getMovies($gte, $lte, $configuration);
         $this->setMovies($page, $movies, $configuration->getLanguageTmdb());
+    }
+
+    private function cleanupTrashParagraphs(Page $page): void
+    {
+        $repository = $this->entityManager->getRepository(Paragraph::class);
+        if (!$repository instanceof ParagraphRepository) {
+            return;
+        }
+
+        $filters = $this->entityManager->getFilters();
+        if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
+            $filters->disable('softdeleteable');
+        }
+        
+        $paragraphs = $repository->getdeleteTrashByPage($page);
+        foreach ($paragraphs as $paragraph) {
+            $this->entityManager->remove($paragraph);
+        }
+
+        $repository->save($page);
+        $this->entityManager->flush();
+        if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
+            $filters->enable('softdeleteable');
+        }
+
     }
 
     private function getMovies(DateTime $gte, DateTime $lte, Configuration $configuration): array
