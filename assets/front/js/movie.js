@@ -13,5 +13,23 @@ export class Movie {
         }
       });
     });
+
+    // Rebuild the URL without empty/0 values on submit
+    document.querySelectorAll('form').forEach((form) => {
+      if (!form.querySelector('[name="year"]')) {
+        return;
+      }
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const params = new URLSearchParams();
+        form.querySelectorAll('select, input').forEach((field) => {
+          if (field.name && field.value !== '' && field.value !== '0' && field.type !== 'submit' && field.type !== 'reset') {
+            params.append(field.name, field.value);
+          }
+        });
+        const url = form.action + (params.toString() ? '?' + params.toString() : '');
+        window.location.href = url;
+      });
+    });
   }
 }

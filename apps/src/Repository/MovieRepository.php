@@ -235,7 +235,11 @@ class MovieRepository extends RepositoryAbstract
         $this->getQueryBuilderCategories($queryBuilder, $query);
         $this->getQueryBuilderYear($queryBuilder, $query);
 
-        return $queryBuilder->orderBy('m.'.$query['order'], $query['orderby']);
+        $direction = 'DESC' === strtoupper((string) ($query['orderby'] ?? 'DESC'))
+            ? SortDirection::Descending
+            : SortDirection::Ascending;
+
+        return $queryBuilder->orderBy('m.'.$query['order'], $direction);
     }
 
     /**
@@ -310,7 +314,7 @@ class MovieRepository extends RepositoryAbstract
      */
     private function getQueryBuilderYear(QueryBuilder $queryBuilder, array $query): void
     {
-        if (!isset($query['year']) || !is_numeric($query['year'])) {
+        if (!isset($query['year']) || !is_numeric($query['year']) || 0 == (int) $query['year']) {
             return;
         }
 
