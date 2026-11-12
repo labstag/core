@@ -27,11 +27,19 @@ class EpisodeRepository extends RepositoryAbstract
     public function delete(object $entity): void
     {
         if ($entity instanceof Episode) {
-            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
-                ['refEpisode' => $entity]
-            );
+            $filters = $this->getEntityManager()->getFilters();
+            $wasEnabled = $filters->has('softdeleteable') && $filters->isEnabled('softdeleteable');
+            if ($wasEnabled) {
+                $filters->disable('softdeleteable');
+            }
+
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(['refEpisode' => $entity]);
             foreach ($castings as $casting) {
                 $this->getEntityManager()->remove($casting);
+            }
+
+            if ($wasEnabled && $filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
+                $filters->enable('softdeleteable');
             }
         }
 

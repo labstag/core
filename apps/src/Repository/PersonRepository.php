@@ -21,9 +21,7 @@ class PersonRepository extends RepositoryAbstract
     public function delete(object $entity): void
     {
         if ($entity instanceof Person) {
-            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
-                ['refPerson' => $entity]
-            );
+            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(['refPerson' => $entity]);
             foreach ($castings as $casting) {
                 $this->getEntityManager()->remove($casting);
             }
