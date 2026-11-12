@@ -21,7 +21,7 @@ use Symfony\Component\Translation\TranslatableMessage;
 
 class HttpErrorLogsCrudController extends CrudControllerAbstract
 {
-    #[AdminRoute]
+    #[AdminRoute(path: '/ban-ip')]
     public function banIp(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');

@@ -84,7 +84,8 @@ class CompanyCrudController extends CrudControllerAbstract
         return Company::class;
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/json-company')]
+
     public function jsonCompany(Request $request): JsonResponse
     {
         $entityId                          = $request->query->get('entityId');
@@ -95,7 +96,8 @@ class CompanyCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-all-company')]
+
     public function updateAllCompany(): RedirectResponse
     {
         $this->messageBus->dispatch(new CompanyAllMessage());
@@ -103,7 +105,8 @@ class CompanyCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_company_index');
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-company')]
+
     public function updateCompany(Request $request): RedirectResponse
     {
         $entityId                          = $request->query->get('entityId');

@@ -127,7 +127,8 @@ class RedirectionCrudController extends CrudControllerAbstract
         return Redirection::class;
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/import')]
+
     public function import(Request $request): RedirectResponse|Response
     {
         $form = $this->createForm(
@@ -160,7 +161,8 @@ class RedirectionCrudController extends CrudControllerAbstract
         );
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/test-source')]
+
     public function testSource(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -170,7 +172,8 @@ class RedirectionCrudController extends CrudControllerAbstract
         return $this->redirect($redirection->getSource());
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/redirect-to-index')]
+
     protected function redirectToIndex(): RedirectResponse
     {
         $generator = $this->container->get(AdminUrlGenerator::class);
@@ -302,7 +305,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         $head        = $sheetData[0];
         $find        = $this->setFind($head);
         if (self::FIELDCSV !== $find) {
-            $this->addFlash('danger', 'Le fichier n\'est pas correctement formaté');
+            $this->addFlash('danger', "Le fichier n'est pas correctement formaté");
 
             return $data;
         }

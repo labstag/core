@@ -139,7 +139,8 @@ class StoryCrudController extends CrudControllerAbstract
         return Story::class;
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/move-chapter')]
+
     public function moveChapter(Request $request): RedirectResponse|Response
     {
         $entityId   = $request->query->get('entityId');
@@ -174,7 +175,8 @@ class StoryCrudController extends CrudControllerAbstract
         );
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-all-story')]
+
     public function updateAllStory(): RedirectResponse
     {
         $this->messageBus->dispatch(new StoryAllMessage());
@@ -182,7 +184,8 @@ class StoryCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_story_index');
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-story')]
+
     public function updateStory(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');

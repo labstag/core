@@ -20,7 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 
 class PlatformCrudController extends CrudControllerAbstract
 {
-    #[AdminRoute]
+    #[AdminRoute(path: '/add-by-api')]
     public function addByApi(Request $request): JsonResponse
     {
         $id      = $request->query->get('id');
@@ -39,7 +39,8 @@ class PlatformCrudController extends CrudControllerAbstract
         );
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/api-platform')]
+
     public function apiPlatform(Request $request): Response
     {
         $page               = $request->query->get('page', 1);
@@ -126,7 +127,8 @@ class PlatformCrudController extends CrudControllerAbstract
         return Platform::class;
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/show-modal-platform')]
+
     public function showModalPlatform(Request $request): Response
     {
         $form    = $this->createForm(PlatformType::class);

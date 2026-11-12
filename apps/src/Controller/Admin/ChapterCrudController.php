@@ -94,7 +94,8 @@ class ChapterCrudController extends CrudControllerAbstract
         return Chapter::class;
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-chapter')]
+
     public function updateChapter(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');

@@ -26,7 +26,7 @@ class CorrectionBlockLinkCommand
         $blocks           = $this->entityManager->getRepository(LinksBlock::class)->findAll();
         $methods          = get_class_methods(LinksBlock::class);
         if (!in_array('getLinks', $methods)) {
-            $symfonyStyle->error('La méthode getLinks est manquante dans l\'entité LinksBlock');
+            $symfonyStyle->error("La méthode getLinks est manquante dans l'entité LinksBlock");
 
             return Command::FAILURE;
         }

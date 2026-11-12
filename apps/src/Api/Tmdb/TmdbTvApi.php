@@ -130,7 +130,7 @@ class TmdbTvApi extends AbstractTmdbApi
 
         return $this->getCached(
             $cacheKey,
-            function (ItemInterface $item) use ($seriesId, $query) {
+            function (ItemInterface $item) use ($seriesId, $query): ?array {
                 $url  = self::BASE_URL.'/tv/'.$seriesId.$query;
                 $data = $this->makeRequest($url);
 
@@ -224,7 +224,7 @@ class TmdbTvApi extends AbstractTmdbApi
 
         return $this->getCached(
             $cacheKey,
-            function (ItemInterface $item) use ($seriesId, $seasonNumber, $episodeNumber, $query) {
+            function (ItemInterface $item) use ($seriesId, $seasonNumber, $episodeNumber, $query): ?array {
                 $url  = self::BASE_URL.'/tv/'.$seriesId.'/season/'.$seasonNumber.'/episode/'.$episodeNumber.$query;
                 $data = $this->makeRequest($url);
 
@@ -464,7 +464,7 @@ class TmdbTvApi extends AbstractTmdbApi
 
         return $this->getCached(
             $cacheKey,
-            function (ItemInterface $item) use ($seriesId, $seasonNumber, $query) {
+            function (ItemInterface $item) use ($seriesId, $seasonNumber, $query): ?array {
                 $url  = self::BASE_URL.'/tv/'.$seriesId.'/season/'.$seasonNumber.$query;
                 $data = $this->makeRequest($url);
 

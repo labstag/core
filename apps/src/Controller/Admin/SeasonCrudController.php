@@ -165,7 +165,8 @@ class SeasonCrudController extends CrudControllerAbstract
         return Season::class;
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/json-season')]
+
     public function jsonSeason(Request $request): JsonResponse
     {
         $entityId                         = $request->query->get('entityId');
@@ -176,7 +177,8 @@ class SeasonCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/tmdb')]
+
     public function tmdb(Request $request): RedirectResponse
     {
         $entityId                         = $request->query->get('entityId');
@@ -188,7 +190,8 @@ class SeasonCrudController extends CrudControllerAbstract
         );
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-all-season')]
+
     public function updateAllSeason(): RedirectResponse
     {
         $this->messageBus->dispatch(new SeasonAllMessage());
@@ -196,7 +199,8 @@ class SeasonCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_season_index');
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-season')]
+
     public function updateSeason(Request $request): RedirectResponse
     {
         $entityId                         = $request->query->get('entityId');

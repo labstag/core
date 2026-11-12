@@ -510,27 +510,27 @@ class DashboardController extends AbstractDashboardController
     private function getTrashItems(): array
     {
         $controllers = [
-            'Person' => PersonCrudController::class,
-            'Company' => CompanyCrudController::class,
-            'Edito' => EditoCrudController::class,
-            'Memo' => MemoCrudController::class,
-            'Media' => MediaCrudController::class,
-            'Meta' => MetaCrudController::class,
+            'Person'     => PersonCrudController::class,
+            'Company'    => CompanyCrudController::class,
+            'Edito'      => EditoCrudController::class,
+            'Memo'       => MemoCrudController::class,
+            'Media'      => MediaCrudController::class,
+            'Meta'       => MetaCrudController::class,
             'Paragraphs' => ParagraphCrudController::class,
-            'Block' => BlockCrudController::class,
-            'Star' => StarCrudController::class,
-            'User' => UserCrudController::class,
-            'Story' => StoryCrudController::class,
-            'Chapter' => ChapterCrudController::class,
-            'Movie' => MovieCrudController::class,
-            'Serie' => SerieCrudController::class,
-            'Season' => SeasonCrudController::class,
-            'Episode' => EpisodeCrudController::class,
-            'Game' => GameCrudController::class,
-            'Platform' => PlatformCrudController::class,
-            'Franchise' => FranchiseCrudController::class,
-            'Page' => PageCrudController::class,
-            'Post' => PostCrudController::class,
+            'Block'      => BlockCrudController::class,
+            'Star'       => StarCrudController::class,
+            'User'       => UserCrudController::class,
+            'Story'      => StoryCrudController::class,
+            'Chapter'    => ChapterCrudController::class,
+            'Movie'      => MovieCrudController::class,
+            'Serie'      => SerieCrudController::class,
+            'Season'     => SeasonCrudController::class,
+            'Episode'    => EpisodeCrudController::class,
+            'Game'       => GameCrudController::class,
+            'Platform'   => PlatformCrudController::class,
+            'Franchise'  => FranchiseCrudController::class,
+            'Page'       => PageCrudController::class,
+            'Post'       => PostCrudController::class,
         ];
 
         $trash = [];
@@ -546,6 +546,7 @@ class DashboardController extends AbstractDashboardController
             if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
                 $filters->disable('softdeleteable');
             }
+
             $deleted = $repository->findDeleted();
             if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
                 $filters->enable('softdeleteable');
@@ -557,11 +558,7 @@ class DashboardController extends AbstractDashboardController
             }
 
             $urlGenerator = $this->container->get(AdminUrlGenerator::class);
-            $url = $urlGenerator
-                ->setController($controller)
-                ->setAction('index')
-                ->set('action', 'trash')
-                ->generateUrl();
+            $url = $urlGenerator->setController($controller)->setAction('index')->set('action', 'trash')->generateUrl();
 
             $trash[] = [
                 'label' => new TranslatableMessage($label),

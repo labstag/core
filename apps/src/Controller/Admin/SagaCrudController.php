@@ -91,7 +91,8 @@ class SagaCrudController extends CrudControllerAbstract
         return Saga::class;
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/json-saga')]
+
     public function jsonSaga(Request $request): JsonResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -146,7 +147,8 @@ class SagaCrudController extends CrudControllerAbstract
         return $associationField;
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/tmdb')]
+
     public function tmdb(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');
@@ -156,7 +158,8 @@ class SagaCrudController extends CrudControllerAbstract
         return $this->redirect('https://www.themoviedb.org/collection/'.$saga->getTmdb());
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-all-saga')]
+
     public function updateAllSaga(): RedirectResponse
     {
         $this->messageBus->dispatch(new SagaAllMessage());
@@ -164,7 +167,8 @@ class SagaCrudController extends CrudControllerAbstract
         return $this->redirectToRoute('admin_saga_index');
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-saga')]
+
     public function updateSaga(Request $request): RedirectResponse
     {
         $entityId                        = $request->query->get('entityId');

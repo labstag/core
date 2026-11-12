@@ -142,7 +142,8 @@ class EpisodeCrudController extends CrudControllerAbstract
         return Episode::class;
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/json-episode')]
+
     public function jsonEpisode(Request $request): JsonResponse
     {
         $entityId                          = $request->query->get('entityId');
@@ -153,7 +154,8 @@ class EpisodeCrudController extends CrudControllerAbstract
         return new JsonResponse($details);
     }
 
-    #[AdminRoute]
+    #[AdminRoute(path: '/update-episode')]
+
     public function updateEpisode(Request $request): RedirectResponse
     {
         $entityId                          = $request->query->get('entityId');

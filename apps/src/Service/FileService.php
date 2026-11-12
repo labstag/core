@@ -79,6 +79,7 @@ final class FileService
         if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
             $filters->disable('softdeleteable');
         }
+
         foreach ($this->fileStorages as $fileStorage) {
             $deletes  = [];
             $entities = $fileStorage->getEntity();
