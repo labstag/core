@@ -3,6 +3,7 @@
 namespace Labstag\Repository;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 
 /**
@@ -26,5 +27,15 @@ class ParagraphRepository extends RepositoryAbstract
         $query->enableResultCache(3600, 'paragraph-'.$class);
 
         return $query->getOneOrNullResult();
+    }
+
+    public function getdeleteTrashByPage(Page $page): array
+    {
+        $queryBuilder = $this->createQueryBuilder('p');
+        $queryBuilder->where('p.page = :page');
+        $queryBuilder->andWhere('p.deletedAt IS NOT NULL');
+        $queryBuilder->setParameter('page', $page);
+        $paragraphs = $queryBuilder->getQuery()->getResult();
+        return $paragraphs;
     }
 }
