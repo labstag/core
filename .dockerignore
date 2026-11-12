@@ -2,6 +2,11 @@ apps/supervisord.log*
 apps/var/cache
 apps/var/log
 apps/.phpunit.cache
+apps/tests
+apps/private/*.xml
+apps/public/uploads/*
+apps/*.phar
+apps/phpunit.xml.dist
 node_modules
 lampy
 taskfiles

@@ -1,0 +1,53 @@
+networks:
+  proxyhackariens:
+    external: true
+  serverhackariens:
+    external: true
+
+services:
+  messenger:
+    image: koromerzhin/labstag:1.0.0-messenger
+    command: ["/usr/local/bin/start-messenger.sh"]
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      TZ: Europe/Paris
+      APP_SECRET: "CHANGEME"
+      MAILER_DSN: "smtp://mailtest:1025"
+      MESSENGER_TRANSPORT_DSN: "doctrine://default"
+      LOCK_DNS: semaphore
+      DATABASE_URL: "mysqli://labstag:H8mvFuL8GldgEs6w@mariadb:3306/labstag_bdd"
+      HOME: "/var/www"
+    volumes:
+      - ${PWD}/apps/.env:/var/www/.env:ro
+      - ${PWD}/apps/public:/var/www/public
+    networks:
+      - serverhackariens
+
+  www:
+    image: koromerzhin/labstag:1.0.0
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      TZ: Europe/Paris
+      APP_SECRET: "CHANGEME"
+      MAILER_DSN: "smtp://mailtest:1025"
+      MESSENGER_TRANSPORT_DSN: "doctrine://default"
+      LOCK_DNS: semaphore
+      DATABASE_URL: "mysqli://labstag:H8mvFuL8GldgEs6w@mariadb:3306/labstag_bdd"
+      HOME: "/var/www"
+    volumes:
+      - ${PWD}/apps/.env:/var/www/.env:ro
+      - ${PWD}/apps/public:/var/www/public
+      - ${PWD}/conf/php.ini-development://usr/local/etc/php/conf.d/php.ini
+      - ${PWD}/conf/apache2/000-default.conf:/etc/apache2/sites-available/000-default.conf:ro
+      - ${PWD}/conf/apache2/apache2.conf:/etc/apache2/apache2.conf:ro
+    networks:
+      - serverhackariens
+      - proxyhackariens
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.labstag.rule=Host(`labstag.hackariens.fr`)"
+        - "traefik.http.routers.labstag.tls=true"
+        - "traefik.http.routers.labstag.tls.certresolver=myresolver"
+        - "traefik.http.services.labstag.loadbalancer.server.port=80"
+        - "traefik.http.routers.labstag.middlewares=labstagpass@file,hsts@file"

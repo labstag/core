@@ -17,6 +17,7 @@
 *.cache
 docker-compose-*.yml
 !docker-compose-lampy.yml
+!docker-compose-test.yml
 .env
 !/apps/public/uploads/
 /apps/public/uploads/*

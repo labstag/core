@@ -58,6 +58,38 @@ npm run create:apps
 npm run exec
 ```
 
+## Docker image
+
+Image: `koromerzhin/labstag:<version>` (default `latest`).
+
+Run:
+
+```sh
+docker run -d --name labstag \
+  -p 80:80 \
+  -e APP_ENV=prod \
+  -e APP_SECRET=change_me \
+  -e DATABASE_URL="mysql://user:pass@db:3306/labstag" \
+  -v /host/public:/var/www/public \
+  koromerzhin/labstag:latest
+```
+
+Or with Compose:
+
+```yaml
+services:
+  labstag:
+    image: koromerzhin/labstag:latest
+    ports:
+      - "80:80"
+    environment:
+      APP_ENV: prod
+      APP_SECRET: change_me
+      DATABASE_URL: "mysql://user:pass@db:3306/labstag"
+    volumes:
+      - ./public:/var/www/public
+```
+
 ## Author
 
 👤 **Koromerzhin**
