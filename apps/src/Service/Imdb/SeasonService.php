@@ -56,9 +56,17 @@ final class SeasonService
             return $season;
         }
 
+        if (0 == $data['episode_count']) {
+            foreach ($seasons as $season) {
+                $this->seasonRepository->delete($season);
+            }
+
+            return null;
+        }
+
         $selectSeason = null;
         foreach ($seasons as $position => $season) {
-            if (0 == $data['episode_count'] || $position != 0) {
+            if ($position != 0) {
                 $this->seasonRepository->delete($season);
             }
 
@@ -185,7 +193,6 @@ final class SeasonService
             $this->entityManager->remove($paragraph);
         }
 
-        $repository->save($season);
         $this->entityManager->flush();
         if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
             $filters->enable('softdeleteable');

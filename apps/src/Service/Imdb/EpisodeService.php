@@ -48,8 +48,8 @@ final class EpisodeService
             $episode->setTitle($data['name']);
             $episode->setNumber($data['episode_number']);
 
+            return $episode;
         }
-
         $selectEpisode = null;
         foreach ($episodes as $position => $episode) {
             if ($position != 0) {
