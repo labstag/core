@@ -1,6 +1,33 @@
 {# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
 {% extends '@EasyAdmin/page/content.html.twig' %}
 {% block main %}
+    {% if trash is defined and trash|length > 0 %}
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="card-title">{{ 'Trash'|trans }}</h3>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Entity'|trans }}</th>
+                            <th>{{ 'Items in trash'|trans }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in trash %}
+                            <tr>
+                                <td>{{ item.label|trans }}</td>
+                                <td>{{ item.count }}</td>
+                                <td><a href="{{ item.url }}" class="btn btn-sm btn-outline-secondary">{{ 'View'|trans }}</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
     {% for memo in memos %}
         {% include "admin/memo.html.twig" with { 'memo': memo, 'paragraphs': paragraphs } %}
     {% endfor %}

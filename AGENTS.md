@@ -69,6 +69,10 @@ Lint / quality:
 - Functional/performance tests may require the app reachable at `SERVERNAME`.
 - Local system PHP is 8.2, but the app requires `>=8.4`; use the container's PHP (8.5) via `task`.
 
+## Conventions
+
+- All user-facing strings in Twig templates must be translation keys (use `|trans`); add entries to `apps/translations/messages.fr.xlf`.
+
 ## Architecture notes
 
 - Services are autowired from `src/` (`config/services.yaml`), except entities.
