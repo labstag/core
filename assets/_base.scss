@@ -22,8 +22,6 @@ header {
   }
 }
 
-main {}
-
 footer {
   background: color.scale(variables.$colorbg, $lightness: -10%);
 
@@ -111,8 +109,6 @@ a {
   padding: 0.5rem;
 }
 
-.block {}
-
 .paragraph {
   margin-top: 22px;
 
@@ -139,13 +135,13 @@ a {
       content: "";
       position: absolute;
       inset: 0;
-      background: black; // Couleur du spoiler
-      transition: opacity 1s ease-in-out;CouleurduspoilertransitionCouleurduspoilertransitionCouleurduspoilertransition
-      opacity: 1;opacityopacity // Complètement caché au départ
+      background: black; /* Couleur du spoiler */
+      transition: opacity 1s ease-in-out;
+      opacity: 1; /* Complètement caché au départ */
     }
 
     &.loaded::before {
-      opacity: 0; // Révèle progressivement l’image
+      opacity: 0; /* Révèle progressivement l’image */
     }
   }
 }
