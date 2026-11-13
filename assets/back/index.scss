@@ -16,6 +16,11 @@
     z-index: 9999 !important; /* Une valeur très élevée pour être sûr */
 }
 
+.memo .wrapper {
+    display: block !important;
+    grid-template-columns: none !important;
+}
+
 @keyframes blink {
 
   0%,
