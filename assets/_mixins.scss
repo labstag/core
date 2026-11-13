@@ -1,6 +1,6 @@
 @use "variables";
 
-@mixin fa-before($icon, $style: 'solid', $color: null) {ListedecodesUnicodedebase$iconsListedecodesUnicodedebase$icons
+@mixin fa-before($icon, $style: 'solid', $color: null) { /* Liste des codes Unicode de base $icons */
 
 // Récupération du code unicode selon l'icône
 $unicode: map-get($icons, $icon);
@@ -10,11 +10,11 @@ $unicode: map-get($icons, $icon);
   @warn "Icône `#{$icon}` non trouvée dans la map Font Awesome. Ajoute-la dans le mixin.";
   $unicode: '\f128';
 
- // fallback : icône questionfallbackfallbackfallback
+ /* fallback : icône question */
 }
 
-Définitiondustyledepoliceselonletype$familyDéfinitiondustyledepoliceselonletype$familyDéfinitiondustyledepoliceselonletype$family
-$weight: 900;$weight$weight // par défaut solid
+/* Définition du style de police selon le type $family */
+$weight: 900; /* par défaut solid */
 
 @if $style =='regular' {
   $weight: 400;
@@ -25,10 +25,10 @@ $weight: 900;$weight$weight // par défaut solid
   $weight: 400;
 }
 
-// Application des styles
-font-family: $family;Applicationdesstylesfont-familyApplicationdesstylesfont-familyApplicationdesstylesfont-family
-font-weight: $weight;font-weightfont-weight
-content: $unicode;content
+/* Application des styles */
+font-family: $family; /* Application des styles */
+font-weight: $weight;
+content: $unicode;
 speak: none;
 display: inline-block;
 line-height: 1;
