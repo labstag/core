@@ -66,6 +66,8 @@
     "@fortawesome/fontawesome-free": "7.1.*",
     "@maptiler/leaflet-maptilersdk": "4.1.*",
     "a11y-dialog": "8.1.*",
+    "baseline-browser-mapping": "2.11.*",
+    "caniuse-lite": "1.0.*",
     "ckeditor5": "47.2.*",
     "flag-icons": "7.5.*",
     "leaflet": "1.9.*",
