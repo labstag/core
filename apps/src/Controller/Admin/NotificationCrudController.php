@@ -31,8 +31,8 @@ class NotificationCrudController extends CrudControllerAbstract
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setEntityLabelInSingular(new TranslatableMessage('Page'));
-        $crud->setEntityLabelInPlural(new TranslatableMessage('Pages'));
+        $crud->setEntityLabelInSingular(new TranslatableMessage('Notification'));
+        $crud->setEntityLabelInPlural(new TranslatableMessage('Notifications'));
         $crud->setDefaultSort(
             ['createdAt' => 'DESC']
         );

@@ -2397,6 +2397,22 @@
         <source>View</source>
         <target>Voir</target>
       </trans-unit>
+      <trans-unit id="stats_title" resname="Statistics">
+        <source>Statistics</source>
+        <target>Statistiques</target>
+      </trans-unit>
+      <trans-unit id="menu_banip" resname="BanIp">
+        <source>Ban IP</source>
+        <target>Ban IP</target>
+      </trans-unit>
+      <trans-unit id="menu_httperrorlogs" resname="HttpErrorLogs">
+        <source>Http error Logs</source>
+        <target>Logs erreurs HTTP</target>
+      </trans-unit>
+      <trans-unit id="menu_geocode" resname="GeoCode">
+        <source>Geocode</source>
+        <target>Géocode</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

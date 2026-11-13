@@ -20,7 +20,6 @@ use Labstag\Field\WysiwygField;
 use Labstag\Filter\CountriesFilter;
 use Labstag\Form\Admin\SerieImportType;
 use Labstag\Form\Admin\SerieType;
-use Labstag\Message\ImportMessage;
 use Labstag\Service\Admin\SerieActionService;
 use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -224,36 +223,17 @@ class SerieCrudController extends CrudControllerAbstract
             return $this->redirectToRoute('admin_serie_index');
         }
 
-        return $this->redirect('https://www.imdb.com/title/' . $serie->getImdb() . '/');
+        return $this->redirect($this->container->get(SerieActionService::class)->imdbUrl($serie->getImdb()) . '/');
     }
 
     #[AdminRoute(path: '/import-file-serie')]
 
     public function importFileSerie(Request $request): JsonResponse
     {
-        $files   = $request->files->all();
-        $file    = $files['serie_import']['file'] ?? null;
-        if (null === $file) {
-            return new JsonResponse(
-                [
-                    'status'  => 'error',
-                    'message' => 'No file uploaded',
-                ]
-            );
-        }
+        $files = $request->files->all();
+        $file  = $files['serie_import']['file'] ?? null;
 
-        $content   = file_get_contents($file->getPathname());
-        $extension = $file->getClientOriginalExtension();
-        $filename  = uniqid('import_', true) . '.' . $extension;
-        $this->fileService->saveFileInAdapter('private', $filename, $content);
-        $this->messageBus->dispatch(new ImportMessage($filename, 'serie', []));
-
-        return new JsonResponse(
-            [
-                'status'  => 'success',
-                'message' => 'Import started',
-            ]
-        );
+        return $this->container->get(SerieActionService::class)->importFileSerie($file);
     }
 
     #[AdminRoute(path: '/json-serie')]

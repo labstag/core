@@ -16,7 +16,6 @@ use Labstag\Field\WysiwygField;
 use Labstag\Form\Admin\GameImportType;
 use Labstag\Form\Admin\GameOtherPlatformType;
 use Labstag\Form\Admin\GameType;
-use Labstag\Message\ImportMessage;
 use Labstag\Service\Admin\GameActionService;
 use Labstag\Service\Igdb\Game\GameApiService;
 use Override;
@@ -258,33 +257,12 @@ class GameCrudController extends CrudControllerAbstract
 
     public function importFileGame(Request $request): JsonResponse
     {
-        $files   = $request->files->all();
-        $all     = $request->request->all();
-        $file    = $files['game_import']['file'] ?? null;
-        $data    = [
-            'platform' => $all['game_import']['platform'] ?? '',
-        ];
-        if (null === $file) {
-            return new JsonResponse(
-                [
-                    'status'  => 'error',
-                    'message' => 'No file uploaded',
-                ]
-            );
-        }
+        $files    = $request->files->all();
+        $all      = $request->request->all();
+        $file     = $files['game_import']['file'] ?? null;
+        $platform = $all['game_import']['platform'] ?? '';
 
-        $content   = file_get_contents($file->getPathname());
-        $extension = $file->getClientOriginalExtension();
-        $filename  = uniqid('import_', true) . '.' . $extension;
-        $this->fileService->saveFileInAdapter('private', $filename, $content);
-        $this->messageBus->dispatch(new ImportMessage($filename, 'game', $data));
-
-        return new JsonResponse(
-            [
-                'status'  => 'success',
-                'message' => 'Import started',
-            ]
-        );
+        return $this->container->get(GameActionService::class)->importFileGame($file, $platform);
     }
 
     #[AdminRoute(path: '/json-movie')]

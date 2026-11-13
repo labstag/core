@@ -18,11 +18,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\Block;
 use Labstag\Filter\DiscriminatorTypeFilter;
 use Labstag\Repository\BlockRepository;
+use Labstag\Service\Admin\BlockActionService;
 use LogicException;
 use Override;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -252,7 +252,7 @@ class BlockCrudController extends CrudControllerAbstract
 
     public function newBlock(): Response
     {
-        $blocks = $this->blockService->getAll(null);
+        $blocks = $this->container->get(BlockActionService::class)->newBlock();
 
         return $this->render(
             'admin/block/new.html.twig',
@@ -272,39 +272,14 @@ class BlockCrudController extends CrudControllerAbstract
             throw new Exception('findAllOrderedByRegion not found');
         }
 
-        $queryBuilder = $repositoryAbstract->createQueryBuilder('b');
-        $repositoryAbstract->findAllOrderedByRegion($queryBuilder);
-        $query        = $queryBuilder->getQuery();
-        $query->enableResultCache(3600, 'block-position');
-
-        $blocks    = $query->getResult();
-        $generator = $this->container->get(AdminUrlGenerator::class);
+        $blocks = $this->container->get(BlockActionService::class)->getBlocksOrdered();
         if ($request->isMethod('POST')) {
             $allTypes = $this->blockService->getRegions();
-            foreach ($allTypes as $allType) {
-                $data = $request->get($allType);
-                if (is_null($data)) {
-                    continue;
-                }
+            $this->container->get(BlockActionService::class)->processPositionBlock($allTypes, $request->request->all(), $repositoryAbstract);
 
-                foreach ($data as $id => $position) {
-                    $entity = $repositoryAbstract->find($id);
-                    if (!$entity instanceof Block) {
-                        continue;
-                    }
-
-                    $entity->setPosition($position);
-                    $repositoryAbstract->persist($entity);
-                }
-            }
-
-            $repositoryAbstract->flush();
             $this->addFlash('success', new TranslatableMessage('Position updated'));
 
-            $url = $generator->setController(static::class);
-            $url = $url->setAction(Action::INDEX)->generateUrl();
-
-            return $this->redirect($url);
+            return $this->container->get(BlockActionService::class)->redirectToIndex();
         }
 
         return $this->render(
@@ -317,7 +292,7 @@ class BlockCrudController extends CrudControllerAbstract
 
     public function showModalBlock(): Response
     {
-        $blocks = $this->blockService->getAll(null);
+        $blocks = $this->container->get(BlockActionService::class)->newBlock();
 
         return $this->render(
             'admin/block/new.html.twig',

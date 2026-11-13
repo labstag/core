@@ -1,5 +1,11 @@
 # AGENTS.md
 
+## Conditions
+
+- Always use Git Flow (feature/develop/release/hotfix). Never commit or merge to `main` without explicit user authorization.
+- All user-facing strings in Twig templates must be translation keys (`|trans`); add entries to `apps/translations/messages.fr.xlf`.
+- Run lint and tests before any release.
+
 Symfony 8.1 application (`apps/`) plus a Webpack Encore frontend (root `assets/`). PHP code lives in `apps/src` (PSR-4 `Labstag\`); tests in `apps/tests` (PSR-4 `Labstag\Tests\`).
 
 ## Layout

@@ -15,8 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Chapter;
 use Labstag\Entity\Story;
 use Labstag\Field\WysiwygField;
-use Labstag\Message\StoryAllMessage;
-use Labstag\Message\StoryMessage;
+use Labstag\Service\Admin\StoryActionService;
 use Override;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -179,7 +178,7 @@ class StoryCrudController extends CrudControllerAbstract
 
     public function updateAllStory(): RedirectResponse
     {
-        $this->messageBus->dispatch(new StoryAllMessage());
+        $this->container->get(StoryActionService::class)->updateAll();
 
         return $this->redirectToRoute('admin_story_index');
     }
@@ -191,7 +190,7 @@ class StoryCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $story                           = $repositoryAbstract->find($entityId);
-        $this->messageBus->dispatch(new StoryMessage($story->getId()));
+        $this->container->get(StoryActionService::class)->updateStory($story->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

@@ -1,6 +1,23 @@
 {# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
 {% extends '@EasyAdmin/page/content.html.twig' %}
 {% block main %}
+    {% if stats is defined %}
+    <h3 class="mb-2">{{ 'Statistics'|trans }}</h3>
+    <div class="row mb-3">
+        {% for stat in stats %}
+        <div class="col-md-3 col-sm-6 mb-2">
+            <a href="{{ stat.url }}" class="text-decoration-none">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ stat.label }}</h5>
+                        <p class="card-text display-6">{{ stat.count|format_number }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     {% if trash is defined and trash|length > 0 %}
         <div class="card mb-3">
             <div class="card-header">
