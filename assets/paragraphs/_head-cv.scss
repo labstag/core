@@ -1,6 +1,6 @@
 @use "../mixins";
 @use "../placeholders" as *;
-@import '@fontsource/lobster';
+@use '@fontsource/lobster';
 
 .paragraph_head-cv {
   @extend %head;
