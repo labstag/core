@@ -17,8 +17,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Labstag\Entity\Season;
 use Labstag\Field\WysiwygField;
-use Labstag\Message\SeasonAllMessage;
-use Labstag\Message\SeasonMessage;
 use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -194,7 +192,7 @@ class SeasonCrudController extends CrudControllerAbstract
 
     public function updateAllSeason(): RedirectResponse
     {
-        $this->messageBus->dispatch(new SeasonAllMessage());
+        $this->container->get(SeasonActionService::class)->updateAll();
 
         return $this->redirectToRoute('admin_season_index');
     }
@@ -206,7 +204,7 @@ class SeasonCrudController extends CrudControllerAbstract
         $entityId                         = $request->query->get('entityId');
         $repositoryAbstract               = $this->getRepository();
         $season                           = $repositoryAbstract->find($entityId);
-        $this->messageBus->dispatch(new SeasonMessage($season->getId()));
+        $this->container->get(SeasonActionService::class)->updateSeason($season->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

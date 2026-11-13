@@ -4,7 +4,6 @@ namespace Labstag\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -13,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Controller\Admin\Factory\MenuItemFactory;
-use Labstag\Entity\Configuration;
 use Labstag\Entity\Memo;
 use Labstag\Entity\User;
 use Labstag\Repository\ConfigurationRepository;
@@ -27,9 +25,11 @@ use Labstag\Service\TrashStatsService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatableMessage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
@@ -46,6 +46,9 @@ class DashboardController extends AbstractDashboardController
         protected MenuItemFactory $menuItemFactory,
         protected TrashStatsService $trashStatsService,
         protected DashboardMenuService $dashboardMenuService,
+        protected TranslatorInterface $translator,
+        #[AutowireIterator('labstag.admincontroller')]
+        protected iterable $crudControllers,
     )
     {
     }
@@ -76,10 +79,9 @@ class DashboardController extends AbstractDashboardController
         $tags       = $this->menuItemFactory->createTagMenuItems();
         // Dashboard home
         yield MenuItem::linkToDashboard(new TranslatableMessage('Dashboard'), 'fa fa-home');
-        $translatableMessage = new TranslatableMessage('Notifications');
         yield MenuItem::linkTo(
             NotificationCrudController::class,
-            $translatableMessage->getMessage(),
+            new TranslatableMessage(NotificationCrudController::getEntityLabel()),
             'fas fa-bell'
         );
 
@@ -92,16 +94,10 @@ class DashboardController extends AbstractDashboardController
             yield from $fieldTAb;
         }
 
-        // Configuration (single editable entity)
-        $configMenu = $this->buildConfigurationMenuItem();
-        if (null !== $configMenu) {
-            yield $configMenu;
-        }
-
         // Template management (kept separate for clarity)
         yield $this->menuItemFactory->createContentSubMenu(
             'template',
-            new TranslatableMessage('Templates'),
+            new TranslatableMessage(TemplateCrudController::getEntityLabel()),
             'fas fa-code',
             TemplateCrudController::class
         );
@@ -163,33 +159,36 @@ class DashboardController extends AbstractDashboardController
             $paragraphs[$idMemo] = $this->paragraphService->generate($paragraphs, [], false);
         }
 
-        $controllers = [
-            'Person'     => PersonCrudController::class,
-            'Company'    => CompanyCrudController::class,
-            'Edito'      => EditoCrudController::class,
-            'Memo'       => MemoCrudController::class,
-            'Media'      => MediaCrudController::class,
-            'Meta'       => MetaCrudController::class,
-            'Paragraphs' => ParagraphCrudController::class,
-            'Block'      => BlockCrudController::class,
-            'Star'       => StarCrudController::class,
-            'User'       => UserCrudController::class,
-            'Story'      => StoryCrudController::class,
-            'Chapter'    => ChapterCrudController::class,
-            'Movie'      => MovieCrudController::class,
-            'Serie'      => SerieCrudController::class,
-            'Season'     => SeasonCrudController::class,
-            'Episode'    => EpisodeCrudController::class,
-            'Game'       => GameCrudController::class,
-            'Platform'   => PlatformCrudController::class,
-            'Franchise'  => FranchiseCrudController::class,
-            'Page'       => PageCrudController::class,
-            'Post'       => PostCrudController::class,
-        ];
-        $trash = $this->trashStatsService->getTrashItems(
+        $entities = [];
+        foreach ($this->crudControllers as $controller) {
+            $fqcn             = $controller::getEntityFqcn();
+            $label            = $controller::getEntityLabel();
+            $entities[$label] = [
+                $fqcn,
+                $controller::class,
+            ];
+        }
+
+        $urlGenerator = $this->container->get(AdminUrlGenerator::class);
+        $stats        = [];
+        foreach ($entities as $label => [$entityFqcn, $controllerFqcn]) {
+            if (str_contains($label, 'Tag') || str_contains($label, 'Category')) {
+                continue;
+            }
+
+            $stats[] = [
+                'label' => $this->translator->trans($label),
+                'count' => $this->entityManager->getRepository($entityFqcn)->count([]),
+                'url'   => $urlGenerator->setController($controllerFqcn)->setAction('index')->generateUrl(),
+            ];
+        }
+
+        $filteredEntities = array_filter($entities, fn ($label): bool => !str_contains($label, 'Tag') && !str_contains($label, 'Category'), ARRAY_FILTER_USE_KEY);
+        $controllers      = array_combine(array_keys($filteredEntities), array_column($filteredEntities, 1));
+        $trash            = $this->trashStatsService->getTrashItems(
             $controllers,
             $this->entityManager,
-            $this->container->get(AdminUrlGenerator::class)
+            $urlGenerator
         );
 
         return $this->render(
@@ -198,6 +197,7 @@ class DashboardController extends AbstractDashboardController
                 'paragraphs' => $paragraphs,
                 'memos'      => $memos,
                 'trash'      => $trash,
+                'stats'      => $stats,
             ]
         );
     }
@@ -243,32 +243,6 @@ class DashboardController extends AbstractDashboardController
         }
 
         return $entityRepository;
-    }
-
-    /**
-     * Create configuration edit menu item if the configuration entity exists.
-     */
-    /**
-     * Returns the configuration edit menu item when configuration exists.
-     * Using object|null to support EasyAdmin specific UrlMenuItem implementation.
-     */
-    private function buildConfigurationMenuItem(): ?object
-    {
-        $configurations = $this->getRepository(Configuration::class)->findAll();
-        $configuration  = $configurations[0] ?? null;
-        if (!$configuration) {
-            return null;
-        }
-
-        $generator = $this->container->get(AdminUrlGenerator::class);
-        $generator->setAction(Action::EDIT);
-        $generator->setController(ConfigurationCrudController::class);
-        $generator->setEntityId($configuration->getId());
-
-        $linkToUrl = MenuItem::linkToUrl(new TranslatableMessage('Options'), 'fas fa-cog', $generator->generateUrl());
-        $linkToUrl->setPermission('ROLE_SUPER_ADMIN');
-
-        return $linkToUrl;
     }
 
     /**

@@ -10,10 +10,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Exception;
 use Labstag\Entity\Redirection;
 use Labstag\Form\Admin\RedirectionImportType;
+use Labstag\Service\Admin\RedirectionActionService;
 use Override;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -165,22 +165,16 @@ class RedirectionCrudController extends CrudControllerAbstract
 
     public function testSource(Request $request): RedirectResponse
     {
-        $entityId                        = $request->query->get('entityId');
-        $repositoryAbstract              = $this->getRepository();
-        $redirection                     = $repositoryAbstract->find($entityId);
+        $entityId = $request->query->get('entityId');
 
-        return $this->redirect($redirection->getSource());
+        return $this->container->get(RedirectionActionService::class)->testSource($entityId);
     }
 
     #[AdminRoute(path: '/redirect-to-index')]
 
     protected function redirectToIndex(): RedirectResponse
     {
-        $generator = $this->container->get(AdminUrlGenerator::class);
-        $generator->setController(self::class);
-        $generator->setAction(Action::INDEX);
-
-        return $this->redirect($generator->generateUrl());
+        return $this->container->get(RedirectionActionService::class)->redirectToIndex();
     }
 
     /**

@@ -189,6 +189,11 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         $entityManager->flush();
     }
 
+    public static function getEntityLabel(): string
+    {
+        return new ReflectionClass(static::getEntityFqcn())->getShortName();
+    }
+
     #[AdminRoute(path: '/link-public')]
 
     public function linkPublic(AdminContext $adminContext): RedirectResponse

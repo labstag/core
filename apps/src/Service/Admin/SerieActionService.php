@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Labstag\Service\Admin;
 
+use Labstag\Service\FileService;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Labstag\Message\ImportMessage;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
 use Labstag\Message\SerieAllMessage;
@@ -23,6 +26,7 @@ final class SerieActionService
         private ConfigurationService $configurationService,
         private TheMovieDbApi $theMovieDbApi,
         private TranslatorInterface $translator,
+        private FileService $fileService,
     )
     {
     }
@@ -95,6 +99,31 @@ final class SerieActionService
     public function imdbUrl(string $imdbId): string
     {
         return 'https://www.imdb.com/title/' . $imdbId;
+    }
+
+    public function importFileSerie(?UploadedFile $file): JsonResponse
+    {
+        if (!$file instanceof UploadedFile) {
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'message' => 'No file uploaded',
+                ]
+            );
+        }
+
+        $content   = file_get_contents($file->getPathname());
+        $extension = $file->getClientOriginalExtension();
+        $filename  = uniqid('import_', true) . '.' . $extension;
+        $this->fileService->saveFileInAdapter('private', $filename, $content);
+        $this->messageBus->dispatch(new ImportMessage($filename, 'serie', []));
+
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'message' => 'Import started',
+            ]
+        );
     }
 
     public function jsonSerie(Serie $serie): array

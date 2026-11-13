@@ -29,6 +29,10 @@ final class TrashStatsService
             }
 
             $repository = $entityManager->getRepository($fqcn);
+            if (!method_exists($repository, 'findDeleted')) {
+                continue;
+            }
+
             if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
                 $filters->disable('softdeleteable');
             }

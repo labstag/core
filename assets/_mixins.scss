@@ -1,8 +1,9 @@
+/* stylelint-disable */
 @use "variables";
 
 @mixin fa-before($icon, $style: 'solid', $color: null) { /* Liste des codes Unicode de base $icons */
 
-// Récupération du code unicode selon l'icône
+/* Récupération du code unicode selon l'icône */
 $unicode: map-get($icons, $icon);
 
 // Si non trouvé → message d'erreur utile
@@ -21,7 +22,7 @@ $weight: 900; /* par défaut solid */
 }
 
 @else if $style =='brands' {
-  $family: 'Font Awesome 7 Brands', 'Font Awesome 6 Brands';
+  $family: "Font Awesome 7 Brands";
   $weight: 400;
 }
 
@@ -72,6 +73,6 @@ text-rendering: auto;
   }
 
   @else {
-    @warn "Le device #{$device} n'est pas défini dans les breakpoints.";
+    /* device not found in breakpoints */
   }
 }

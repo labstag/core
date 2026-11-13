@@ -2,9 +2,11 @@
 
 namespace Labstag\Controller\Admin;
 
+use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -13,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Configuration;
 use Labstag\Field\WysiwygField;
 use Override;
@@ -116,6 +119,22 @@ class ConfigurationCrudController extends CrudControllerAbstract
     public static function getEntityFqcn(): string
     {
         return Configuration::class;
+    }
+
+    #[Override]
+    public function index(AdminContext $context): Response
+    {
+        $entityManager = $this->container->get('doctrine')->getManager();
+        $repository    = $entityManager->getRepository(Configuration::class);
+        $configuration = $repository->findOneBy([]);
+        if ($configuration instanceof Configuration) {
+            $urlGenerator = $this->container->get(AdminUrlGenerator::class);
+            $url          = $urlGenerator->setController(self::class)->setAction(Action::EDIT)->setEntityId($configuration->getId())->generateUrl();
+
+            return $this->redirect($url);
+        }
+
+        return parent::index($context);
     }
 
     private function addConfigureFieldsPlaceHolders(string $pageName): array

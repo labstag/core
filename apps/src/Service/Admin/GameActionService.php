@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Labstag\Service\Admin;
 
+use Labstag\Service\FileService;
+use Labstag\Service\Igdb\Game\GameApiService;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Labstag\Message\ImportMessage;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Message\AddGameMessage;
@@ -20,6 +24,8 @@ final class GameActionService
         private MessageBusInterface $messageBus,
         private TranslatorInterface $translator,
         private TheMovieDbApi $theMovieDbApi,
+        private FileService $fileService,
+        private GameApiService $gameApiService,
     )
     {
     }
@@ -42,6 +48,42 @@ final class GameActionService
     public function igdbUrl(string $igdbId): string
     {
         return 'https://www.igdb.com/games/' . $igdbId;
+    }
+
+    public function importFileGame(?UploadedFile $file, string $platform): JsonResponse
+    {
+        if (!$file instanceof UploadedFile) {
+            return new JsonResponse(
+                [
+                    'status'  => 'error',
+                    'message' => 'No file uploaded',
+                ]
+            );
+        }
+
+        $content   = file_get_contents($file->getPathname());
+        $extension = $file->getClientOriginalExtension();
+        $filename  = uniqid('import_', true) . '.' . $extension;
+        $this->fileService->saveFileInAdapter('private', $filename, $content);
+        $this->messageBus->dispatch(
+            new ImportMessage(
+                $filename,
+                'game',
+                ['platform' => $platform]
+            )
+        );
+
+        return new JsonResponse(
+            [
+                'status'  => 'success',
+                'message' => 'Import started',
+            ]
+        );
+    }
+
+    public function jsonGame(string $igdbId): ?array
+    {
+        return $this->gameApiService->getApiGameId($igdbId);
     }
 
     public function jsonMovie(Movie $movie): array
