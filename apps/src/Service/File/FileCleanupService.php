@@ -14,7 +14,8 @@ final class FileCleanupService
         #[AutowireIterator('labstag.filestorage')]
         private readonly iterable $fileStorages,
         private EntityManagerInterface $entityManager,
-    ) {
+    )
+    {
     }
 
     public function deleteAll(): void
@@ -81,8 +82,10 @@ final class FileCleanupService
         $fields     = $this->findInFields($repository, ['img', 'image', 'file']);
 
         foreach ($fields as $field) {
-            $results = $repository->findBy([$field => $file]);
-            if (count($results) > 0) {
+            $results = $repository->findBy(
+                [$field => $file]
+            );
+            if (0 < count($results)) {
                 return true;
             }
         }

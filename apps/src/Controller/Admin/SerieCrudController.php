@@ -21,8 +21,7 @@ use Labstag\Filter\CountriesFilter;
 use Labstag\Form\Admin\SerieImportType;
 use Labstag\Form\Admin\SerieType;
 use Labstag\Message\ImportMessage;
-use Labstag\Message\SerieAllMessage;
-use Labstag\Message\SerieMessage;
+use Labstag\Service\Admin\SerieActionService;
 use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -36,71 +35,9 @@ class SerieCrudController extends CrudControllerAbstract
     #[AdminRoute(path: '/add-by-api')]
     public function addByApi(Request $request): JsonResponse
     {
-        $tmdbId       = $request->query->get('id');
-        $serie        = $this->getRepository(Serie::class)->findOneBy(
-            ['tmdb' => $tmdbId]
-        );
-        if ($serie instanceof Serie) {
-            $message = new TranslatableMessage('Serie already exists');
+        $tmdbId = $request->query->get('id');
 
-            return new JsonResponse(
-                [
-                    'status'  => 'warning',
-                    'id'      => $tmdbId,
-                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
-                ]
-            );
-        }
-
-        $locale = $this->configurationService->getLocaleTmdb();
-        $tmdb   = $this->theMovieDbApi->tvserie()->getDetails($tmdbId, $locale);
-        if (is_null($tmdb)) {
-            $message = new TranslatableMessage(
-                'The series with the TMDB id %id% does not exist',
-                ['%id%' => $tmdbId]
-            );
-
-            return new JsonResponse(
-                [
-                    'status'  => 'warning',
-                    'id'      => $tmdbId,
-                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
-                ]
-            );
-        }
-
-        $other  = $this->theMovieDbApi->tvserie()->getTvExternalIds($tmdbId);
-        if (!isset($other['imdb_id'])) {
-            $message = new TranslatableMessage('No Imdb id for this series');
-
-            return new JsonResponse(
-                [
-                    'status'  => 'warning',
-                    'id'      => $tmdbId,
-                    'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
-                ]
-            );
-        }
-
-        $serie = new Serie();
-        $serie->setFile(false);
-        $serie->setEnable(true);
-        $serie->setAdult(false);
-        $serie->setTmdb($tmdbId);
-        $serie->setImdb($other['imdb_id']);
-        $serie->setTitle($tmdb['name']);
-
-        $this->getRepository(Serie::class)->save($serie);
-        $this->messageBus->dispatch(new SerieMessage($serie->getId()));
-        $message = new TranslatableMessage('Serie is being added');
-
-        return new JsonResponse(
-            [
-                'status'  => 'success',
-                'id'      => $tmdbId,
-                'message' => $this->translator->trans($message->getMessage(), $message->getParameters()),
-            ]
-        );
+        return $this->container->get(SerieActionService::class)->addByApi($tmdbId);
     }
 
     #[AdminRoute(path: '/api-serie')]
@@ -326,7 +263,7 @@ class SerieCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
-        $details                         = $this->theMovieDbApi->getDetailsSerie($serie);
+        $details                         = $this->container->get(SerieActionService::class)->jsonSerie($serie);
 
         return new JsonResponse($details);
     }
@@ -378,7 +315,7 @@ class SerieCrudController extends CrudControllerAbstract
 
     public function updateAllSerie(): RedirectResponse
     {
-        $this->messageBus->dispatch(new SerieAllMessage());
+        $this->container->get(SerieActionService::class)->updateAll();
 
         return $this->redirectToRoute('admin_serie_index');
     }
@@ -390,7 +327,7 @@ class SerieCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
-        $this->messageBus->dispatch(new SerieMessage($serie->getId()));
+        $this->container->get(SerieActionService::class)->updateSerie($serie->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

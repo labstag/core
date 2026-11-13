@@ -2,16 +2,8 @@
 
 namespace Labstag\Service\Imdb;
 
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
-use Labstag\Entity\MovieCategory;
-use Labstag\Repository\MovieRepository;
-use Labstag\Service\CategoryService;
-use Labstag\Service\ConfigurationService;
-use Labstag\Service\FileService;
-use Labstag\Service\VideoService;
 use Labstag\Service\Imdb\Movie\ApiService;
 use Labstag\Service\Imdb\Movie\CategoryService as MovieCategoryService;
 use Labstag\Service\Imdb\Movie\CompanyService as MovieCompanyService;
@@ -33,14 +25,8 @@ final class MovieService
     private array $year = [];
 
     public function __construct(
-        private ConfigurationService $configurationService,
-        private FileService $fileService,
-        private PersonService $personService,
         private SagaService $sagaService,
         private EntityManagerInterface $entityManager,
-        private MovieRepository $movieRepository,
-        private VideoService $videoService,
-        private TheMovieDbApi $theMovieDbApi,
         private ApiService $apiService,
         private ImageService $imageService,
         private CreditService $creditService,
@@ -132,7 +118,6 @@ final class MovieService
      * @param array<string, mixed> $details
      */
 
-
     /**
      * @param array<string, mixed> $details
      */
@@ -147,20 +132,5 @@ final class MovieService
         $movie->setSaga($saga);
 
         return true;
-    }
-
-    /**
-     * @param array<string, mixed> $details
-     */
-    private function updateTrailer(Movie $movie, array $details): bool
-    {
-        $find  = false;
-        $video = $this->videoService->getTrailer($details['videos']);
-        if (!is_null($video)) {
-            $movie->setTrailer($video);
-            $find = true;
-        }
-
-        return $find;
     }
 }

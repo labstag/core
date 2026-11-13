@@ -2,12 +2,12 @@
 
 namespace Labstag\Repository;
 
-use Labstag\Entity\Episode;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
 use Labstag\Entity\Casting;
+use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use SortDirection;

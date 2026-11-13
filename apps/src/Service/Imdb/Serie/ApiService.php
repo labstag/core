@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Labstag\Service\Imdb\Serie;
 
+use DateTime;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
 use Labstag\Repository\SerieRepository;
@@ -15,7 +16,8 @@ final class ApiService
         private TheMovieDbApi $theMovieDbApi,
         private ConfigurationService $configurationService,
         private SerieRepository $serieRepository,
-    ) {
+    )
+    {
     }
 
     /**
@@ -66,7 +68,7 @@ final class ApiService
     private function updateResult(array $series, array $tmdbs): array
     {
         foreach ($series as &$serie) {
-            $serie['first_air_date'] = empty($serie['first_air_date']) ? null : new \DateTime($serie['first_air_date']);
+            $serie['first_air_date'] = empty($serie['first_air_date']) ? null : new DateTime($serie['first_air_date']);
             $serie['poster_path']    = $this->theMovieDbApi->images()->getPosterUrl($serie['poster_path'] ?? '', 100);
         }
 

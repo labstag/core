@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Labstag\Service\File;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Essence\Essence;
 use Essence\Media;
 use Exception;
@@ -30,8 +28,8 @@ final class FileUploadService
         private LoggerInterface $logger,
         private FileStorageService $fileStorageService,
         private MessageDispatcherService $messageDispatcherService,
-        private EntityManagerInterface $entityManager,
-    ) {
+    )
+    {
     }
 
     public function asset(mixed $entity, string $field): string
@@ -229,16 +227,6 @@ final class FileUploadService
         }
 
         return $files;
-    }
-
-    private function getRepository(string $entity): EntityRepository
-    {
-        $entityRepository = $this->entityManager->getRepository($entity);
-        if (is_null($entityRepository)) {
-            throw new Exception('Repository not found');
-        }
-
-        return $entityRepository;
     }
 
     private function loadImageFromFile(string $file): GdImage|false

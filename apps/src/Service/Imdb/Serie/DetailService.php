@@ -12,42 +12,8 @@ final class DetailService
 {
     public function __construct(
         private VideoService $videoService,
-    ) {
-    }
-
-    public function updateSerie(Serie $serie, array $details): bool
+    )
     {
-        if (!isset($details['tmdb'])) {
-            return false;
-        }
-
-        $serie->setInProduction((bool) $details['tmdb']['in_production']);
-        $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
-        $serie->setAdult($adult);
-        $serie->setTitle((string) $details['tmdb']['name']);
-
-        $voteAverage = (float) ($details['tmdb']['vote_average'] ?? 0);
-        $voteCount   = (int) ($details['tmdb']['vote_count'] ?? 0);
-
-        $serie->setEvaluation($voteAverage);
-        $serie->setVotes($voteCount);
-
-        $serie->setCountries($details['tmdb']['origin_country']);
-
-        $serie->setTmdb($details['tmdb']['id']);
-
-        return true;
-    }
-
-    public function updateOther(Serie $serie, array $details): bool
-    {
-        if (!isset($details['other']) || is_null($details['other'])) {
-            return false;
-        }
-
-        $serie->setImdb((string) $details['other']['imdb_id']);
-
-        return true;
     }
 
     public function setCertification(Serie $serie, array $details): void
@@ -93,22 +59,53 @@ final class DetailService
         return true;
     }
 
+    public function setLastreleaseDate(Serie $serie, array $details): bool
+    {
+        $lastReleaseDate = (is_null($details['tmdb']['last_air_date']) || empty($details['tmdb']['last_air_date'])) ? null : new DateTime($details['tmdb']['last_air_date']);
+        $serie->setLastreleaseDate($lastReleaseDate);
+
+        return true;
+    }
+
     public function setReleaseDate(Serie $serie, array $details): bool
     {
-        $releaseDate = (is_null($details['tmdb']['first_air_date']) || empty($details['tmdb']['first_air_date']))
-            ? null
-            : new DateTime($details['tmdb']['first_air_date']);
+        $releaseDate = (is_null($details['tmdb']['first_air_date']) || empty($details['tmdb']['first_air_date'])) ? null : new DateTime($details['tmdb']['first_air_date']);
         $serie->setReleaseDate($releaseDate);
 
         return true;
     }
 
-    public function setLastreleaseDate(Serie $serie, array $details): bool
+    public function updateOther(Serie $serie, array $details): bool
     {
-        $lastReleaseDate = (is_null($details['tmdb']['last_air_date']) || empty($details['tmdb']['last_air_date']))
-            ? null
-            : new DateTime($details['tmdb']['last_air_date']);
-        $serie->setLastreleaseDate($lastReleaseDate);
+        if (!isset($details['other']) || is_null($details['other'])) {
+            return false;
+        }
+
+        $serie->setImdb((string) $details['other']['imdb_id']);
+
+        return true;
+    }
+
+    public function updateSerie(Serie $serie, array $details): bool
+    {
+        if (!isset($details['tmdb'])) {
+            return false;
+        }
+
+        $serie->setInProduction((bool) $details['tmdb']['in_production']);
+        $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
+        $serie->setAdult($adult);
+        $serie->setTitle((string) $details['tmdb']['name']);
+
+        $voteAverage = (float) ($details['tmdb']['vote_average'] ?? 0);
+        $voteCount   = (int) ($details['tmdb']['vote_count'] ?? 0);
+
+        $serie->setEvaluation($voteAverage);
+        $serie->setVotes($voteCount);
+
+        $serie->setCountries($details['tmdb']['origin_country']);
+
+        $serie->setTmdb($details['tmdb']['id']);
 
         return true;
     }

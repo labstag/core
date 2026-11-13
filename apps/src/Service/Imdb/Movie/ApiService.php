@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Labstag\Service\Imdb\Movie;
 
+use DateTime;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Repository\MovieRepository;
@@ -15,7 +16,16 @@ final class ApiService
         private TheMovieDbApi $theMovieDbApi,
         private ConfigurationService $configurationService,
         private MovieRepository $movieRepository,
-    ) {
+    )
+    {
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getDetailsMovie(Movie $movie): array
+    {
+        return $this->theMovieDbApi->getDetailsMovie($movie);
     }
 
     /**
@@ -50,14 +60,6 @@ final class ApiService
     }
 
     /**
-     * @return array<string, mixed>
-     */
-    public function getDetailsMovie(Movie $movie): array
-    {
-        return $this->theMovieDbApi->getDetailsMovie($movie);
-    }
-
-    /**
      * @param mixed[] $movies
      * @param mixed[] $tmdbs
      *
@@ -66,7 +68,7 @@ final class ApiService
     private function updateResult(array $movies, array $tmdbs): array
     {
         foreach ($movies as &$movie) {
-            $movie['release_date'] = empty($movie['release_date']) ? null : new \DateTime($movie['release_date']);
+            $movie['release_date'] = empty($movie['release_date']) ? null : new DateTime($movie['release_date']);
             $movie['poster_path']  = $this->theMovieDbApi->images()->getPosterUrl($movie['poster_path'] ?? '', 100);
         }
 
