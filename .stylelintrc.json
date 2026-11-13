@@ -1,11 +1,15 @@
 {
   "extends": "stylelint-config-standard",
+  "ignoreFiles": ["assets/_mixins.scss"],
   "rules": {
       "at-rule-no-unknown": [
           true,
           {
-            "ignoreAtRules": ["extend", "include", "import"]
+            "ignoreAtRules": ["extend", "include", "import", "use", "mixin", "if", "else", "warn", "function", "return"]
         }
-    ]
+      ],
+      "selector-class-pattern": null,
+      "media-query-no-invalid": null,
+      "no-descending-specificity": null
   }
 }

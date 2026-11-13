@@ -16,7 +16,7 @@ use Labstag\Entity\Episode;
 use Labstag\Field\WysiwygField;
 use Labstag\Filter\SeasonEpisodeFilter;
 use Labstag\Filter\SerieEpisodeFilter;
-use Labstag\Message\EpisodeMessage;
+use Labstag\Service\Admin\EpisodeActionService;
 use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -161,7 +161,7 @@ class EpisodeCrudController extends CrudControllerAbstract
         $entityId                          = $request->query->get('entityId');
         $repositoryAbstract                = $this->getRepository();
         $episode                           = $repositoryAbstract->find($entityId);
-        $this->messageBus->dispatch(new EpisodeMessage($episode->getId()));
+        $this->container->get(EpisodeActionService::class)->updateEpisode($episode->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

@@ -16,10 +16,8 @@ use Labstag\Field\WysiwygField;
 use Labstag\Form\Admin\GameImportType;
 use Labstag\Form\Admin\GameOtherPlatformType;
 use Labstag\Form\Admin\GameType;
-use Labstag\Message\AddGameMessage;
-use Labstag\Message\GameAllMessage;
-use Labstag\Message\GameMessage;
-use Labstag\Message\ImportMessage;
+use Labstag\Service\Admin\GameActionService;
+use Labstag\Service\Igdb\Game\GameApiService;
 use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -94,20 +92,8 @@ class GameCrudController extends CrudControllerAbstract
     {
         $id       = $request->query->get('id');
         $platform = $request->query->get('platform', '');
-        $this->messageBus->dispatch(new AddGameMessage($id, 'game', $platform));
 
-        $translatableMessage = new TranslatableMessage('Game is being added');
-
-        return new JsonResponse(
-            [
-                'status'  => 'success',
-                'id'      => $id,
-                'message' => $this->translator->trans(
-                    $translatableMessage->getMessage(),
-                    $translatableMessage->getParameters()
-                ),
-            ]
-        );
+        return $this->container->get(GameActionService::class)->addByApi($id, $platform);
     }
 
     #[AdminRoute(path: '/add-to-another-platform')]
@@ -271,33 +257,12 @@ class GameCrudController extends CrudControllerAbstract
 
     public function importFileGame(Request $request): JsonResponse
     {
-        $files   = $request->files->all();
-        $all     = $request->request->all();
-        $file    = $files['game_import']['file'] ?? null;
-        $data    = [
-            'platform' => $all['game_import']['platform'] ?? '',
-        ];
-        if (null === $file) {
-            return new JsonResponse(
-                [
-                    'status'  => 'error',
-                    'message' => 'No file uploaded',
-                ]
-            );
-        }
+        $files    = $request->files->all();
+        $all      = $request->request->all();
+        $file     = $files['game_import']['file'] ?? null;
+        $platform = $all['game_import']['platform'] ?? '';
 
-        $content   = file_get_contents($file->getPathname());
-        $extension = $file->getClientOriginalExtension();
-        $filename  = uniqid('import_', true) . '.' . $extension;
-        $this->fileService->saveFileInAdapter('private', $filename, $content);
-        $this->messageBus->dispatch(new ImportMessage($filename, 'game', $data));
-
-        return new JsonResponse(
-            [
-                'status'  => 'success',
-                'message' => 'Import started',
-            ]
-        );
+        return $this->container->get(GameActionService::class)->importFileGame($file, $platform);
     }
 
     #[AdminRoute(path: '/json-movie')]
@@ -307,7 +272,7 @@ class GameCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $game                            = $repositoryAbstract->find($entityId);
-        $details                         = $this->gameService->getApiGameId($game->getIgdb());
+        $details                         = $this->container->get(GameApiService::class)->getApiGameId($game->getIgdb());
 
         return new JsonResponse($details);
     }
@@ -380,7 +345,7 @@ class GameCrudController extends CrudControllerAbstract
 
     public function updateAllGame(): RedirectResponse
     {
-        $this->messageBus->dispatch(new GameAllMessage());
+        $this->container->get(GameActionService::class)->updateAll();
 
         return $this->redirectToRoute('admin_game_index');
     }
@@ -392,7 +357,7 @@ class GameCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $game                            = $repositoryAbstract->find($entityId);
-        $this->messageBus->dispatch(new GameMessage($game->getId()));
+        $this->container->get(GameActionService::class)->updateGame($game->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

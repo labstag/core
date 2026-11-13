@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Labstag\Service\Imdb\Movie;
 
+use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Service\FileService;
-use Labstag\Api\TheMovieDbApi;
 
 final class ImageService
 {
     public function __construct(
         private FileService $fileService,
         private TheMovieDbApi $theMovieDbApi,
-    ) {
+    )
+    {
     }
 
     public function updateImageBackdrop(Movie $movie, array $details): bool

@@ -6,14 +6,13 @@ namespace Labstag\Service\Imdb\Movie;
 
 use Labstag\Entity\Movie;
 use Labstag\Service\Imdb\PersonService;
-use Labstag\Service\Imdb\CompanyService;
 
 final class CreditService
 {
     public function __construct(
         private PersonService $personService,
-        private CompanyService $companyService,
-    ) {
+    )
+    {
     }
 
     public function updateCredits(Movie $movie, array $details): bool

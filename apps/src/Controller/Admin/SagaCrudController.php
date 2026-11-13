@@ -13,8 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Saga;
 use Labstag\Field\WysiwygField;
-use Labstag\Message\SagaAllMessage;
-use Labstag\Message\SagaMessage;
+use Labstag\Service\Admin\SagaActionService;
 use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -162,7 +161,7 @@ class SagaCrudController extends CrudControllerAbstract
 
     public function updateAllSaga(): RedirectResponse
     {
-        $this->messageBus->dispatch(new SagaAllMessage());
+        $this->container->get(SagaActionService::class)->updateAll();
 
         return $this->redirectToRoute('admin_saga_index');
     }
@@ -174,7 +173,7 @@ class SagaCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
-        $this->messageBus->dispatch(new SagaMessage($saga->getId()));
+        $this->container->get(SagaActionService::class)->updateSaga($saga->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

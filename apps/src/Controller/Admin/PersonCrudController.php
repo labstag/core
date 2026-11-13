@@ -13,8 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Labstag\Entity\Person;
 use Labstag\Field\WysiwygField;
-use Labstag\Message\PersonAllMessage;
-use Labstag\Message\PersonMessage;
 use Override;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -157,7 +155,7 @@ class PersonCrudController extends CrudControllerAbstract
 
     public function updateAllPerson(): RedirectResponse
     {
-        $this->messageBus->dispatch(new PersonAllMessage());
+        $this->container->get(PersonActionService::class)->updateAll();
 
         return $this->redirectToRoute('admin_person_index');
     }
@@ -169,7 +167,7 @@ class PersonCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $person                          = $repositoryAbstract->find($entityId);
-        $this->messageBus->dispatch(new PersonMessage($person->getId()));
+        $this->container->get(PersonActionService::class)->updatePerson($person->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {
