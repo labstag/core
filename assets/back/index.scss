@@ -6,6 +6,8 @@
 @use 'placeholder';
 @use 'icons';
 
+@use '../paragraphs';
+
 .accordion-item {
   width: 100%;
 }
