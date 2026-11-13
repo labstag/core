@@ -11,7 +11,8 @@ final class CompanyService
 {
     public function __construct(
         private BaseCompanyService $baseCompanyService,
-    ) {
+    )
+    {
     }
 
     public function updateCompany(Movie $movie, array $details): bool

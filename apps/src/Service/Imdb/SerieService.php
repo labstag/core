@@ -2,17 +2,12 @@
 
 namespace Labstag\Service\Imdb;
 
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
-use Labstag\Entity\SerieCategory;
 use Labstag\Message\SeasonMessage;
 use Labstag\Repository\SeasonRepository;
 use Labstag\Repository\SerieRepository;
-use Labstag\Service\CategoryService;
-use Labstag\Service\ConfigurationService;
-use Labstag\Service\FileService;
 use Labstag\Service\Imdb\Serie\ApiService;
 use Labstag\Service\Imdb\Serie\CategoryService as SerieCategoryService;
 use Labstag\Service\Imdb\Serie\CompanyService as SerieCompanyService;
@@ -20,7 +15,6 @@ use Labstag\Service\Imdb\Serie\CreditService;
 use Labstag\Service\Imdb\Serie\DetailService;
 use Labstag\Service\Imdb\Serie\ImageService;
 use Labstag\Service\MessageDispatcherService;
-use Labstag\Service\VideoService;
 
 final class SerieService
 {
@@ -37,12 +31,9 @@ final class SerieService
 
     public function __construct(
         private MessageDispatcherService $messageDispatcherService,
-        private ConfigurationService $configurationService,
         private EntityManagerInterface $entityManager,
-        private FileService $fileService,
         private SeasonService $seasonService,
         private SerieRepository $serieRepository,
-        private VideoService $videoService,
         private ApiService $apiService,
         private ImageService $imageService,
         private DetailService $detailService,

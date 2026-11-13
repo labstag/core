@@ -42,7 +42,7 @@ final class FileImportService
                 $cells[] = $cell->getValue();
             }
 
-            if (empty($headers)) {
+            if ([] === $headers) {
                 $headers = $cells;
                 continue;
             }

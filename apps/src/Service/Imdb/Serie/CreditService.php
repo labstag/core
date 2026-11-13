@@ -11,7 +11,8 @@ final class CreditService
 {
     public function __construct(
         private PersonService $personService,
-    ) {
+    )
+    {
     }
 
     public function updateCredits(Serie $serie, array $details): bool

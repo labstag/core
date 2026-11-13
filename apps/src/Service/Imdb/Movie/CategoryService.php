@@ -12,7 +12,8 @@ final class CategoryService
 {
     public function __construct(
         private BaseCategoryService $baseCategoryService,
-    ) {
+    )
+    {
     }
 
     public function updateCategory(Movie $movie, array $details): bool

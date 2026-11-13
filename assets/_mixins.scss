@@ -1,17 +1,6 @@
 @use "variables";
 
-@mixin fa-before($icon, $style: 'solid', $color: null) {
-  // Liste de codes Unicode de base (exemples courants)
-  $icons: (
-    'briefcase': '\f0b1',
-    'user': '\f007',
-    'check': '\f00c',
-    'times': '\f00d',
-    'circle': '\f111',
-    'graduation-cap': '\f19d',
-    'arrow-right': '\f061',
-    'envelope': '\f0e0',
-  );
+@mixin fa-before($icon, $style: 'solid', $color: null) {ListedecodesUnicodedebase$iconsListedecodesUnicodedebase$icons
 
 // Récupération du code unicode selon l'icône
 $unicode: map-get($icons, $icon);
@@ -19,12 +8,13 @@ $unicode: map-get($icons, $icon);
 // Si non trouvé → message d'erreur utile
 @if $unicode ==null {
   @warn "Icône `#{$icon}` non trouvée dans la map Font Awesome. Ajoute-la dans le mixin.";
-  $unicode: '\f128'; // fallback : icône question
+  $unicode: '\f128';
+
+ // fallback : icône questionfallbackfallbackfallback
 }
 
-// Définition du style de police selon le type (solid, regular, brands)
-$family: 'Font Awesome 7 Free', 'Font Awesome 6 Free';
-$weight: 900; // par défaut solid
+Définitiondustyledepoliceselonletype$familyDéfinitiondustyledepoliceselonletype$familyDéfinitiondustyledepoliceselonletype$family
+$weight: 900;$weight$weight // par défaut solid
 
 @if $style =='regular' {
   $weight: 400;
@@ -36,9 +26,9 @@ $weight: 900; // par défaut solid
 }
 
 // Application des styles
-font-family: $family;
-font-weight: $weight;
-content: $unicode;
+font-family: $family;Applicationdesstylesfont-familyApplicationdesstylesfont-familyApplicationdesstylesfont-family
+font-weight: $weight;font-weightfont-weight
+content: $unicode;content
 speak: none;
 display: inline-block;
 line-height: 1;

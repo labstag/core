@@ -11,7 +11,31 @@ final class DetailService
 {
     public function __construct(
         private VideoService $videoService,
-    ) {
+    )
+    {
+    }
+
+    public function setCertification(Movie $movie, array $details): void
+    {
+        if (!isset($details['release_dates']['results']) || 0 === count($details['release_dates']['results'])) {
+            return;
+        }
+
+        foreach ($details['release_dates']['results'] as $result) {
+            if ('FR' != $result['iso_3166_1']) {
+                continue;
+            }
+
+            foreach ($result['release_dates'] as $release) {
+                if ('' === (string) $release['certification']) {
+                    continue;
+                }
+
+                $movie->setCertification((string) $release['certification']);
+
+                return;
+            }
+        }
     }
 
     public function updateMovie(Movie $movie, array $details): bool
@@ -47,29 +71,6 @@ final class DetailService
         $movie->setImdb((string) $details['other']['imdb_id']);
 
         return true;
-    }
-
-    public function setCertification(Movie $movie, array $details): void
-    {
-        if (!isset($details['release_dates']['results']) || 0 === count($details['release_dates']['results'])) {
-            return;
-        }
-
-        foreach ($details['release_dates']['results'] as $result) {
-            if ('FR' != $result['iso_3166_1']) {
-                continue;
-            }
-
-            foreach ($result['release_dates'] as $release) {
-                if ('' === (string) $release['certification']) {
-                    continue;
-                }
-
-                $movie->setCertification((string) $release['certification']);
-
-                return;
-            }
-        }
     }
 
     public function updateTrailer(Movie $movie, array $details): bool

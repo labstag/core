@@ -19,13 +19,14 @@ use Labstag\Entity\User;
 use Labstag\Repository\ConfigurationRepository;
 use Labstag\Repository\RepositoryAbstract;
 use Labstag\Service\ConfigurationService;
+use Labstag\Service\DashboardMenuService;
 use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\SiteService;
+use Labstag\Service\TrashStatsService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
 use Override;
-use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Translation\TranslatableMessage;
@@ -43,6 +44,8 @@ class DashboardController extends AbstractDashboardController
         protected WorkflowService $workflowService,
         protected SiteService $siteService,
         protected MenuItemFactory $menuItemFactory,
+        protected TrashStatsService $trashStatsService,
+        protected DashboardMenuService $dashboardMenuService,
     )
     {
     }
@@ -82,8 +85,8 @@ class DashboardController extends AbstractDashboardController
 
         // Shared taxonomy items (categories / tags) used in several content sub-menus
         $fieldsTAbs = [
-            $this->buildContentMenus($categories, $tags),
-            $this->buildSimpleCrudMenus(),
+            $this->dashboardMenuService->buildContentMenus($categories, $tags),
+            $this->dashboardMenuService->buildSimpleCrudMenus(),
         ];
         foreach ($fieldsTAbs as $fieldTAb) {
             yield from $fieldTAb;
@@ -104,7 +107,7 @@ class DashboardController extends AbstractDashboardController
         );
 
         // Utility links
-        yield from $this->buildUtilityMenus();
+        yield from $this->dashboardMenuService->buildUtilityMenus();
     }
 
     #[Override]
@@ -160,7 +163,34 @@ class DashboardController extends AbstractDashboardController
             $paragraphs[$idMemo] = $this->paragraphService->generate($paragraphs, [], false);
         }
 
-        $trash = $this->getTrashItems();
+        $controllers = [
+            'Person'     => PersonCrudController::class,
+            'Company'    => CompanyCrudController::class,
+            'Edito'      => EditoCrudController::class,
+            'Memo'       => MemoCrudController::class,
+            'Media'      => MediaCrudController::class,
+            'Meta'       => MetaCrudController::class,
+            'Paragraphs' => ParagraphCrudController::class,
+            'Block'      => BlockCrudController::class,
+            'Star'       => StarCrudController::class,
+            'User'       => UserCrudController::class,
+            'Story'      => StoryCrudController::class,
+            'Chapter'    => ChapterCrudController::class,
+            'Movie'      => MovieCrudController::class,
+            'Serie'      => SerieCrudController::class,
+            'Season'     => SeasonCrudController::class,
+            'Episode'    => EpisodeCrudController::class,
+            'Game'       => GameCrudController::class,
+            'Platform'   => PlatformCrudController::class,
+            'Franchise'  => FranchiseCrudController::class,
+            'Page'       => PageCrudController::class,
+            'Post'       => PostCrudController::class,
+        ];
+        $trash = $this->trashStatsService->getTrashItems(
+            $controllers,
+            $this->entityManager,
+            $this->container->get(AdminUrlGenerator::class)
+        );
 
         return $this->render(
             'admin/dashboard.html.twig',
@@ -249,324 +279,18 @@ class DashboardController extends AbstractDashboardController
      *
      * @return iterable<MenuItem>
      */
-    private function buildContentMenus(array $categories, array $tags): iterable
-    {
-        // Definition: identifier, label, icon, controller, categories?, tags?, extra children
-        $translatableStoryMessage     = new TranslatableMessage('Story');
-        $translatableChapterMessage   = new TranslatableMessage('Chapter');
-        $translatableMovieMessage     = new TranslatableMessage('Movie');
-        $translatableSagasMessage     = new TranslatableMessage('Sagas');
-        $translatableSerieMessage     = new TranslatableMessage('Serie');
-        $translatableSeasonMessage    = new TranslatableMessage('Season');
-        $translatableEpisodeMessage   = new TranslatableMessage('Episode');
-        $translatableGameMessage      = new TranslatableMessage('Game');
-        $translatablePlatformMessage  = new TranslatableMessage('Platform');
-        $translatableFranchiseMessage = new TranslatableMessage('Franchise');
-        $translatablePageMessage      = new TranslatableMessage('Page');
-        $translatablePostMessage      = new TranslatableMessage('Post');
-        $definitions                  = [
-            [
-                'story',
-                $translatableStoryMessage->getMessage(),
-                'fas fa-landmark',
-                StoryCrudController::class,
-                $categories,
-                $tags,
-                [],
-                false,
-            ],
-            [
-                'chapter',
-                $translatableChapterMessage->getMessage(),
-                'fas fa-landmark',
-                ChapterCrudController::class,
-                null,
-                null,
-                [],
-                false,
-            ],
-            [
-                'movie',
-                $translatableMovieMessage->getMessage(),
-                'fas fa-film',
-                MovieCrudController::class,
-                $categories,
-                null,
-                [
-                    MenuItem::linkTo(
-                        SagaCrudController::class,
-                        $translatableSagasMessage->getMessage(),
-                        'fas fa-video'
-                    ),
-                ],
-                true,
-            ],
-            [
-                'serie',
-                $translatableSerieMessage->getMessage(),
-                'fas fa-film',
-                SerieCrudController::class,
-                $categories,
-                null,
-                [
-                    MenuItem::linkTo(
-                        SeasonCrudController::class,
-                        $translatableSeasonMessage->getMessage(),
-                        'fas fa-video'
-                    ),
-                    MenuItem::linkTo(
-                        EpisodeCrudController::class,
-                        $translatableEpisodeMessage->getMessage(),
-                        'fas fa-video'
-                    ),
-                ],
-                true,
-            ],
-            [
-                'game',
-                $translatableGameMessage->getMessage(),
-                'fas fa-gamepad',
-                GameCrudController::class,
-                $categories,
-                null,
-                [
-                    MenuItem::linkTo(
-                        PlatformCrudController::class,
-                        $translatablePlatformMessage->getMessage(),
-                        'fas fa-desktop'
-                    ),
-                    MenuItem::linkTo(
-                        FranchiseCrudController::class,
-                        $translatableFranchiseMessage->getMessage(),
-                        'fas fa-th-large'
-                    ),
-                ],
-                true,
-            ],
-            [
-                'page',
-                $translatablePageMessage->getMessage(),
-                'fas fa-columns',
-                PageCrudController::class,
-                $categories,
-                $tags,
-                [],
-                false,
-            ],
-            [
-                'post',
-                $translatablePostMessage->getMessage(),
-                'fas fa-newspaper',
-                PostCrudController::class,
-                $categories,
-                $tags,
-                [],
-                false,
-            ],
-        ];
-
-        foreach ($definitions as [$code, $label, $icon, $controller, $cats, $tgs, $children, $disableAdd]) {
-            yield $this->menuItemFactory->createContentSubMenu(
-                $code,
-                $label,
-                $icon,
-                $controller,
-                $disableAdd,
-                $cats,
-                $tgs,
-                $children
-            );
-        }
-    }
-
     /**
      * Simple CRUD links sharing the same creation pattern.
      */
     /**
      * @return iterable<MenuItem>
      */
-    private function buildSimpleCrudMenus(): iterable
-    {
-        $items = [
-            [
-                new TranslatableMessage('Person'),
-                'fas fa-users',
-                PersonCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Company'),
-                'fas fa-building',
-                CompanyCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Edito'),
-                'fas fa-info',
-                EditoCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Memo'),
-                'fas fa-memory',
-                MemoCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Media'),
-                'fas fa-photo-video',
-                MediaCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Meta'),
-                'fa fa-file-alt',
-                MetaCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Paragraph'),
-                'fa fa-paragraph',
-                ParagraphCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Block'),
-                'fa fa-cubes',
-                BlockCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Geocode'),
-                'fas fa-map-signs',
-                GeoCodeCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Star'),
-                'fas fa-star',
-                StarCrudController::class,
-            ],
-            [
-                new TranslatableMessage('User'),
-                'fa fa-user',
-                UserCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Group'),
-                'fa fa-users',
-                GroupCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Ban IP'),
-                'fas fa-ban',
-                BanIpCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Redirection'),
-                'fas fa-directions',
-                RedirectionCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Http error Logs'),
-                'fas fa-clipboard-list',
-                HttpErrorLogsCrudController::class,
-            ],
-            [
-                new TranslatableMessage('Submission'),
-                'fas fa-clipboard-list',
-                SubmissionCrudController::class,
-            ],
-        ];
-
-        foreach ($items as [$label, $icon, $fqcn]) {
-            yield MenuItem::linkTo($fqcn, $label->getMessage(), $icon);
-        }
-
-        yield MenuItem::linkToRoute(
-            new TranslatableMessage('Permissions'),
-            'fa fa-user-shield',
-            'admin_permission'
-        );
-    }
-
     /**
      * Utility / maintenance links.
      *
      * @return iterable<MenuItem>
      */
-    private function buildUtilityMenus(): iterable
-    {
-        yield MenuItem::linkToUrl(
-            new TranslatableMessage('Clear Cache'),
-            'fas fa-trash',
-            $this->generateUrl('admin_cacheclear')
-        );
-
-        yield MenuItem::linkToUrl(
-            new TranslatableMessage('View Site'),
-            'fas fa-laptop-house',
-            $this->generateUrl('front')
-        )->setLinkTarget('_blank');
-    }
-
     /**
      * Menu listing all soft-deletable entities' trash views.
      */
-    /**
-     * @return array<int, array{label: string, count: int, url: string}>
-     */
-    private function getTrashItems(): array
-    {
-        $controllers = [
-            'Person'     => PersonCrudController::class,
-            'Company'    => CompanyCrudController::class,
-            'Edito'      => EditoCrudController::class,
-            'Memo'       => MemoCrudController::class,
-            'Media'      => MediaCrudController::class,
-            'Meta'       => MetaCrudController::class,
-            'Paragraphs' => ParagraphCrudController::class,
-            'Block'      => BlockCrudController::class,
-            'Star'       => StarCrudController::class,
-            'User'       => UserCrudController::class,
-            'Story'      => StoryCrudController::class,
-            'Chapter'    => ChapterCrudController::class,
-            'Movie'      => MovieCrudController::class,
-            'Serie'      => SerieCrudController::class,
-            'Season'     => SeasonCrudController::class,
-            'Episode'    => EpisodeCrudController::class,
-            'Game'       => GameCrudController::class,
-            'Platform'   => PlatformCrudController::class,
-            'Franchise'  => FranchiseCrudController::class,
-            'Page'       => PageCrudController::class,
-            'Post'       => PostCrudController::class,
-        ];
-
-        $trash   = [];
-        $filters = $this->entityManager->getFilters();
-        foreach ($controllers as $label => $controller) {
-            $fqcn            = $controller::getEntityFqcn();
-            $reflectionClass = new ReflectionClass($fqcn);
-            if (!$reflectionClass->hasMethod('getDeletedAt')) {
-                continue;
-            }
-
-            $repository = $this->getRepository($fqcn);
-            if ($filters->has('softdeleteable') && $filters->isEnabled('softdeleteable')) {
-                $filters->disable('softdeleteable');
-            }
-
-            $deleted = $repository->findDeleted();
-            if ($filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
-                $filters->enable('softdeleteable');
-            }
-
-            $count = is_array($deleted) ? count($deleted) : 0;
-            if (0 === $count) {
-                continue;
-            }
-
-            $urlGenerator = $this->container->get(AdminUrlGenerator::class);
-            $url          = $urlGenerator->setController($controller)->setAction('index')->set('action', 'trash')->generateUrl();
-
-            $trash[] = [
-                'label' => new TranslatableMessage($label),
-                'count' => $count,
-                'url'   => $url,
-            ];
-        }
-
-        return $trash;
-    }
 }

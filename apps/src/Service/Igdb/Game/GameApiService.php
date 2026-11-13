@@ -1,0 +1,290 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Labstag\Service\Igdb\Game;
+
+use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Api\IgdbApi;
+use Labstag\Entity\Franchise;
+use Labstag\Entity\Game;
+use Labstag\Entity\Platform;
+
+final class GameApiService
+{
+    public function __construct(
+        private IgdbApi $igdbApi,
+        private EntityManagerInterface $entityManager,
+    )
+    {
+    }
+
+    public function addByApi(string $id, $platformId): ?Game
+    {
+        $result = $this->getApiGameId($id);
+        if (is_null($result)) {
+            return null;
+        }
+
+        $game = $this->getGameByRow($result);
+        $this->update($game);
+        $this->entityManager->getRepository(Game::class)->save($game);
+        $platform = $this->entityManager->getRepository(Platform::class)->find($platformId);
+        if ($platform instanceof Platform) {
+            $game->addPlatform($platform);
+        }
+
+        $this->entityManager->getRepository(Game::class)->save($game);
+
+        return $game;
+    }
+
+    public function buildDateFilter(array $data, bool $withSearch): array
+    {
+        $where = [];
+        if (isset($data['platform']) && !empty($data['platform'])) {
+            $where[] = 'platforms = (' . $data['platform']->getIgdb() . ')';
+        }
+
+        if (isset($data['franchise']) && !empty($data['franchise'])) {
+            $where[] = 'franchises.name ~ "' . $data['franchise'] . '"';
+        }
+
+        if (isset($data['type']) && '' != $data['type']) {
+            $where[] = 'game_type = ' . $data['type'];
+        }
+
+        if (isset($data['number']) && !empty($data['number'])) {
+            $where[] = 'id = ' . $data['number'];
+        }
+
+        if (!$withSearch) {
+            $name   = empty($data['title']) ? '' : $data['title'];
+            if (!empty($name)) {
+                $where[] = $this->setWhereName($name);
+            }
+        }
+
+        return $where;
+    }
+
+    public function findBestMatchingGame(array $results, ?string $name): ?array
+    {
+        $nameLower = strtolower((string) $name);
+        foreach ($results as $result) {
+            if ($this->isMainGameType($result) && $this->matchesGameName($result, $name, $nameLower)) {
+                return $result;
+            }
+        }
+
+        foreach ($results as $result) {
+            if ($this->matchesGameName($result, $name, $nameLower)) {
+                return $result;
+            }
+        }
+
+        return null;
+    }
+
+    public function getApiGameId(string $id): ?array
+    {
+        $where  = ['id = ' . $id];
+        $fields = [
+            '*',
+            'cover.*',
+            'genres.*',
+            'franchises.*',
+            'screenshots.*',
+            'artworks.*',
+            'videos.*',
+        ];
+        $body   = $this->igdbApi->setBody(fields: $fields, where: $where, limit: 1);
+
+        $results = $this->igdbApi->setUrl('games', $body);
+        if (is_null($results)) {
+            return null;
+        }
+
+        return $results[0];
+    }
+
+    public function getFranchise(array $data): Franchise
+    {
+        $entityRepository = $this->entityManager->getRepository(Franchise::class);
+        $franchise        = $entityRepository->findOneBy(
+            [
+                'igdb' => $data['id'],
+            ]
+        );
+        if ($franchise instanceof Franchise) {
+            return $franchise;
+        }
+
+        $franchise = new Franchise();
+        $franchise->setTitle($data['name']);
+        $franchise->setIgdb($data['id']);
+
+        $entityRepository->save($franchise);
+
+        return $franchise;
+    }
+
+    public function getGameApi(array $data, int $limit, int $offset): array
+    {
+        $games = $this->getGameApiSearch($data, $limit, $offset, false);
+        if ([] !== $games) {
+            return $games;
+        }
+
+        return $this->getGameApiSearch($data, $limit, $offset, true);
+    }
+
+    public function getGameApiSearch(array $data, int $limit, int $offset, bool $withSearch): array
+    {
+        $games                = [];
+        $where                = $this->buildDateFilter($data, $withSearch);
+        $fields               = [
+            'id',
+            'url',
+            'name',
+            'cover.*',
+            'first_release_date',
+            'game_type.*',
+            'alternative_names.name',
+        ];
+        $name                 = $data['title'] ?? null;
+        if (!$withSearch) {
+            $body  = $this->igdbApi->setBody(fields: $fields, where: $where, limit: $limit, offset: $offset);
+
+            $games = $this->igdbApi->setUrl('games', $body);
+            $games ??= [];
+
+            return array_filter($games, fn (array $game): bool => isset($game['first_release_date']));
+        }
+
+        $body  = $this->igdbApi->setBody(
+            search: $name,
+            fields: $fields,
+            where: $where,
+            limit: $limit,
+            offset: $offset
+        );
+
+        $games = $this->igdbApi->setUrl('games', $body);
+        $games ??= [];
+
+        return array_filter($games, fn (array $game): bool => isset($game['first_release_date']));
+    }
+
+    public function getGameByRow(array $data): Game
+    {
+        $entityRepository = $this->entityManager->getRepository(Game::class);
+        $game             = $entityRepository->findOneBy(
+            [
+                'igdb' => $data['id'],
+            ]
+        );
+        if ($game instanceof Game) {
+            return $game;
+        }
+
+        $game = new Game();
+        $game->setIgdb($data['id']);
+        $game->setTitle($data['name']);
+        $game->setUrl($data['url']);
+        if (isset($data['first_release_date'])) {
+            $datetime = new DateTime();
+            $game->setReleaseDate($datetime->setTimestamp($data['first_release_date']));
+        }
+
+        $entityRepository->save($game);
+
+        return $game;
+    }
+
+    public function getResultApiForDataArray(array $data, ?Platform $platform): ?array
+    {
+        $data = [
+            'title'    => $data['Nom'] ?? $data['name'] ?? null,
+            'platform' => ($platform instanceof Platform) ? $platform : null,
+        ];
+
+        $limit   = 50;
+        $offset  = 0;
+
+        $results = $this->getGameApi($data, $limit, $offset);
+
+        return $this->findBestMatchingGame($results, $data['title']);
+    }
+
+    public function isMainGameType(array $result): bool
+    {
+        return isset($result['game_type']['id']) && 0 === $result['game_type']['id'];
+    }
+
+    public function matchesGameName(array $result, string $name, string $nameLower): bool
+    {
+        $cleanName      = $this->setAnotherName($name);
+        $cleanNameLower = strtolower($cleanName);
+
+        // Helper pour vérifier un nom
+        $checkName = function (string $gameName) use ($name, $nameLower, $cleanName, $cleanNameLower): bool {
+            if ($gameName === $name || strtolower($gameName) === $nameLower) {
+                return true;
+            }
+
+            $cleanGameName = $this->setAnotherName($gameName);
+
+            return $cleanGameName === $cleanName || strtolower($cleanGameName) === $cleanNameLower;
+        };
+
+        // Vérifier le nom principal
+        if ($checkName($result['name'])) {
+            return true;
+        }
+
+        // Vérifier les noms alternatifs
+        $alternativeNames  = $result['alternative_names'] ?? [];
+        $gameLocalizations = $result['game_localizations'] ?? [];
+        $find              = array_any(
+            $alternativeNames,
+            fn ($alternativeName): bool => isset($alternativeName['name']) && $checkName($alternativeName['name'])
+        );
+        if ($find) {
+            return true;
+        }
+
+        return array_any(
+            $gameLocalizations,
+            fn ($gameLocalization): bool => isset($gameLocalization['name']) && $checkName($gameLocalization['name'])
+        );
+    }
+
+    public function setAnotherName($name): string
+    {
+        $name = preg_replace('/[^a-zA-Z0-9\s]/', '', (string) $name);
+        $name = preg_replace('/\s+/', ' ', (string) $name);
+
+        return trim((string) $name);
+    }
+
+    public function setWhereName($name): string
+    {
+        $codes = [
+            'game_localizations.name',
+            'name',
+            'alternative_names.name',
+        ];
+
+        $name = str_replace(':', '', $name);
+        $name = str_replace('  ', ' ', $name);
+
+        $where = [];
+        foreach ($codes as $code) {
+            $where[] = sprintf('%s ~ "%s"', $code, $name);
+        }
+
+        return '(' . implode(' | ', $where) . ')';
+    }
+
+}
