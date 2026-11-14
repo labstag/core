@@ -16,7 +16,6 @@ class EditoCrudController extends CrudControllerAbstract
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
 
-
         return $this->actionsFactory->show();
     }
 

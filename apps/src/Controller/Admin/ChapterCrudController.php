@@ -28,7 +28,6 @@ class ChapterCrudController extends CrudControllerAbstract
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->setUpdateAction();
 
-
         return $this->actionsFactory->show();
     }
 

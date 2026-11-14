@@ -56,7 +56,6 @@ class BlockCrudController extends CrudControllerAbstract
 
         $this->actionsFactory->add(Crud::PAGE_INDEX, $action);
 
-
         return $this->actionsFactory->show();
     }
 

@@ -30,7 +30,6 @@ class PersonCrudController extends CrudControllerAbstract
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll('updateAllPerson');
 
-
         return $this->actionsFactory->show();
     }
 

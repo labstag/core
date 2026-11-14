@@ -18,7 +18,6 @@ class BanIpCrudController extends CrudControllerAbstract
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->actionsFactory->setReadOnly(true);
 
-
         return $this->actionsFactory->show();
     }
 

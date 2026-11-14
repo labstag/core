@@ -49,6 +49,7 @@ class ActionsFactory
         $action = Action::new($name, $label, $icon);
         $action->linkToCrudAction($name);
         $action->addCssClass('btn btn-primary');
+
         $this->actions->addBatchAction($action);
     }
 
