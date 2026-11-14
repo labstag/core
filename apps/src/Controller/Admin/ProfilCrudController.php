@@ -25,9 +25,8 @@ class ProfilCrudController extends UserCrudController
     public function configureActions(Actions $actions): Actions
     {
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
-        $this->actionsFactory->setReadOnly(true);
         $this->actionsFactory->setShowDetail(false);
-        $this->actionsFactory->add(Crud::PAGE_EDIT, Action::EDIT);
+        $this->actionsFactory->remove(Crud::PAGE_EDIT, Action::DELETE);
 
         return $this->actionsFactory->show();
     }

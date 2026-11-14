@@ -58,7 +58,7 @@
         "twig/intl-extra": "3.30.*",
         "twig/markdown-extra": "3.29.*",
         "twig/twig": "3.30.*",
-        "vich/uploader-bundle": "2.10.*"
+        "vich/uploader-bundle": "3.0.*"
     },
     "config": {
         "bin-dir": "bin/",

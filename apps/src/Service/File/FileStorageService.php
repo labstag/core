@@ -6,7 +6,7 @@ namespace Labstag\Service\File;
 
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
+use Vich\UploaderBundle\Mapping\PropertyMappingFactoryInterface;
 
 final class FileStorageService
 {
@@ -14,7 +14,7 @@ final class FileStorageService
         #[AutowireIterator('labstag.filestorage')]
         private readonly iterable $fileStorages,
         private ParameterBagInterface $parameterBag,
-        private PropertyMappingFactory $propertyMappingFactory,
+        private PropertyMappingFactoryInterface $propertyMappingFactory,
     )
     {
     }
