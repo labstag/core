@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Labstag\Service\Admin;
 
-use Labstag\Service\FileService;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Labstag\Message\ImportMessage;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Serie;
+use Labstag\Message\ImportMessage;
 use Labstag\Message\SerieAllMessage;
 use Labstag\Message\SerieMessage;
 use Labstag\Repository\SerieRepository;
 use Labstag\Service\ConfigurationService;
+use Labstag\Service\FileService;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Translation\TranslatableMessage;

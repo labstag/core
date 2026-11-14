@@ -33,7 +33,6 @@ class SeasonCrudController extends CrudControllerAbstract
         $this->actionsFactory->setLinkTmdbAction();
         $this->actionsFactory->setActionUpdateAll('updateAllSeason');
 
-
         return $this->actionsFactory->show();
     }
 

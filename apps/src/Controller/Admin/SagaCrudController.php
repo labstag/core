@@ -30,7 +30,6 @@ class SagaCrudController extends CrudControllerAbstract
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll('updateAllSaga');
 
-
         return $this->actionsFactory->show();
     }
 

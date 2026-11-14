@@ -2,7 +2,6 @@
 
 namespace Labstag\Controller\Admin;
 
-use Symfony\Component\HttpFoundation\Response;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -19,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Entity\Configuration;
 use Labstag\Field\WysiwygField;
 use Override;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Locales;
 use Symfony\Component\Translation\TranslatableMessage;
 

@@ -98,6 +98,39 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     {
     }
 
+    #[AdminRoute(path: '/bulk-publish')]
+    public function bulkPublish(Request $request): RedirectResponse
+    {
+        $ids        = $request->request->all('ids');
+        $repository = $this->getRepository();
+        $entityFqcn = static::getEntityFqcn();
+
+        foreach ($ids as $id) {
+            $entity = $repository->find($id);
+            if (is_object($entity) && $entity instanceof $entityFqcn && method_exists($entity, 'setEnable')) {
+                $entity->setEnable(true);
+                $repository->save($entity);
+            }
+        }
+
+        $this->addFlash('success', new TranslatableMessage('Items published'));
+
+        $referer = $request->headers->get('referer');
+        if (is_string($referer) && '' !== $referer) {
+            return $this->redirect($referer);
+        }
+
+        return $this->redirectToRoute('admin');
+    }
+
+    #[Override]
+    public function configureActions(Actions $actions): Actions
+    {
+        $this->actionsFactory->init($actions, static::getEntityFqcn(), static::class);
+
+        return $this->actionsFactory->show();
+    }
+
     #[Override]
     public function configureCrud(Crud $crud): Crud
     {
@@ -147,14 +180,6 @@ abstract class CrudControllerAbstract extends AbstractCrudController
     }
 
     #[Override]
-    public function configureActions(Actions $actions): Actions
-    {
-        $this->actionsFactory->init($actions, static::getEntityFqcn(), static::class);
-
-        return $this->actionsFactory->show();
-    }
-
-    #[Override]
     public function deleteEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
         if ($entityInstance instanceof Person || $entityInstance instanceof Season || $entityInstance instanceof Episode || $entityInstance instanceof Serie) {
@@ -199,7 +224,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
 
     public static function getEntityLabel(): string
     {
-        return (new \ReflectionClass(static::getEntityFqcn()))->getShortName();
+        return new ReflectionClass(static::getEntityFqcn())->getShortName();
     }
 
     #[AdminRoute(path: '/link-public')]
@@ -241,31 +266,6 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         $actions->add(Crud::PAGE_EDIT, Action::INDEX);
         $actions->add(Crud::PAGE_INDEX, Action::DETAIL);
         $actions->add(Crud::PAGE_NEW, Action::INDEX);
-    }
-
-    #[AdminRoute(path: '/bulk-publish')]
-    public function bulkPublish(Request $request): RedirectResponse
-    {
-        $ids = $request->request->all('ids');
-        $repository = $this->getRepository();
-        $entityFqcn = static::getEntityFqcn();
-
-        foreach ($ids as $id) {
-            $entity = $repository->find($id);
-            if (is_object($entity) && $entity instanceof $entityFqcn && method_exists($entity, 'setEnable')) {
-                $entity->setEnable(true);
-                $repository->save($entity);
-            }
-        }
-
-        $this->addFlash('success', new TranslatableMessage('Items published'));
-
-        $referer = $request->headers->get('referer');
-        if (is_string($referer) && '' !== $referer) {
-            return $this->redirect($referer);
-        }
-
-        return $this->redirectToRoute('admin');
     }
 
     protected function filterTrash(SearchDto $searchDto, QueryBuilder $queryBuilder): QueryBuilder
