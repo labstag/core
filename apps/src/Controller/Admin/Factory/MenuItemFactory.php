@@ -76,7 +76,7 @@ final class MenuItemFactory
     {
         $translatableMessage = new TranslatableMessage('list');
         $items               = [
-            MenuItem::linkTo($controllerClass, $translatableMessage->getMessage(), 'fa fa-list'),
+            MenuItem::linkTo($controllerClass, $translatableMessage, 'fa fa-list'),
         ];
 
         if (!$disableAdd) {

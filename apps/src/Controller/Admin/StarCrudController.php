@@ -24,6 +24,7 @@ class StarCrudController extends CrudControllerAbstract
         $this->actionsFactory->init($actions, self::getEntityFqcn(), static::class);
         $this->actionsFactory->setShowDetail(false);
 
+
         return $this->actionsFactory->show();
     }
 

@@ -50,7 +50,7 @@ final class TrashStatsService
             $url = $urlGenerator->setController($controller)->setAction('index')->set('action', 'trash')->generateUrl();
 
             $trash[] = [
-                'label' => new TranslatableMessage($label),
+                'label' => $label,
                 'count' => $count,
                 'url'   => $url,
             ];

@@ -28,7 +28,7 @@ export class Dashboard {
       const data = JSON.parse(raw);
       if (Date.now() - data.timestamp > CACHE_TTL) return null;
       return data;
-    } catch (e) {
+    } catch {
       return null;
     }
   }
@@ -36,7 +36,7 @@ export class Dashboard {
   saveCache(stats) {
     try {
       localStorage.setItem(CACHE_KEY, JSON.stringify({ stats, timestamp: Date.now() }));
-    } catch (e) {
+    } catch {
       // ignore
     }
   }
