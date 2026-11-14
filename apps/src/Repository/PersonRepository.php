@@ -18,6 +18,16 @@ class PersonRepository extends RepositoryAbstract
         parent::__construct($registry, Person::class);
     }
 
+    public function findToUpdate(\DateTimeImmutable $threshold): array
+    {
+        $queryBuilder = $this->createQueryBuilder('p');
+        $queryBuilder->where('p.deathday IS NULL');
+        $queryBuilder->andWhere('p.updatedAt IS NULL OR p.updatedAt < :threshold');
+        $queryBuilder->setParameter('threshold', $threshold);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
     public function delete(object $entity): void
     {
         if ($entity instanceof Person) {

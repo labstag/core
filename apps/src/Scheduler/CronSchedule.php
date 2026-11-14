@@ -7,6 +7,7 @@ use Labstag\Message\DeleteOldFileMessage;
 use Labstag\Message\NotificationMessage;
 use Labstag\Message\UpdatePersonMessage;
 use Labstag\Message\UpdateSerieMessage;
+use Labstag\Message\UpdatePersonsMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
@@ -29,6 +30,7 @@ final class CronSchedule implements ScheduleProviderInterface
             RecurringMessage::cron('0 */1 * * *', new BanIpMessage()),
             RecurringMessage::cron('0 10 * * *', new UpdateSerieMessage()),
             RecurringMessage::cron('0 11 * * *', new UpdatePersonMessage()),
+            RecurringMessage::cron('0 2 * * *', new UpdatePersonsMessage()),
             RecurringMessage::cron('0 12 * * *', new NotificationMessage()),
             RecurringMessage::cron('0 0 * * 6', new DeleteOldFileMessage()),
             RecurringMessage::cron('0 20 * * *', new MetaAllMessage()),
