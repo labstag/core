@@ -7,6 +7,7 @@ import { Game } from './back/js/game';
 import { Search } from './back/js/search';
 import { Permission } from './back/js/permission';
 import { SortableField } from './back/js/sortablefield';
+import { Dashboard } from './back/js/dashboard';
 import './back/index.scss';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -19,4 +20,5 @@ document.addEventListener('DOMContentLoaded', function () {
   new Search();
   new Permission();
   new SortableField();
+  new Dashboard();
 });
