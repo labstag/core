@@ -49,7 +49,9 @@ class ChapterFixtures extends FixtureAbstract implements DependentFixtureInterfa
     protected function addChapter(Generator $generator, ObjectManager $objectManager): void
     {
         $storyId = array_rand($this->stories);
-        $this->position[$storyId] ??= [];
+        if (!isset($this->position[$storyId])) {
+            $this->position[$storyId] = [];
+        }
 
         $chapter = new Chapter();
         $chapter->setEnable((bool) random_int(0, 1));
@@ -68,7 +70,7 @@ class ChapterFixtures extends FixtureAbstract implements DependentFixtureInterfa
         }
 
         $this->setImage($chapter, 'imgFile');
-        $this->addReference('chapter_' . md5(uniqid()), $chapter);
+        $this->addReference('chapter_'.md5(uniqid()), $chapter);
         $this->position[$storyId][] = $chapter;
         $objectManager->persist($chapter);
     }

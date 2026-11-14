@@ -49,7 +49,7 @@ class MemoFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->paragraphService->addParagraph($memo, 'head');
         $this->addParagraphText($memo);
         $this->setImage($memo, 'imgFile');
-        $this->addReference('memo_' . md5(uniqid()), $memo);
+        $this->addReference('memo_'.md5(uniqid()), $memo);
         $objectManager->persist($memo);
     }
 }

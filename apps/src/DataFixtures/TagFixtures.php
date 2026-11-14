@@ -33,7 +33,7 @@ class TagFixtures extends FixtureAbstract
         foreach ($tab as $code => $class) {
             $tag = new $class();
             $tag->setTitle($generator->unique()->colorName());
-            $this->addReference('tag' . $code . '_' . md5(uniqid()), $tag);
+            $this->addReference('tag'.$code.'_'.md5(uniqid()), $tag);
             $objectManager->persist($tag);
         }
     }

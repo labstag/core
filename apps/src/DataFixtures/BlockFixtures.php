@@ -198,7 +198,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
     {
         $block = $this->blockService->getByCode($code);
         if (is_null($block)) {
-            throw new Exception('Block ' . $code . ' not found');
+            throw new Exception('Block '.$code.' not found');
         }
 
         $blockClass = $block->getClass();
@@ -218,7 +218,7 @@ class BlockFixtures extends FixtureAbstract implements DependentFixtureInterface
 
         $data[] = [
             'title'   => $page->getTitle(),
-            'url'     => '[pageurl:' . $page->getId() . ']',
+            'url'     => '[pageurl:'.$page->getId().']',
             'classes' => null,
             'blank'   => false,
         ];
