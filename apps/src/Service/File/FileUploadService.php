@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
-use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
+use Vich\UploaderBundle\Mapping\PropertyMappingFactoryInterface;
 
 final class FileUploadService
 {
@@ -24,7 +24,7 @@ final class FileUploadService
 
     public function __construct(
         private ParameterBagInterface $parameterBag,
-        private PropertyMappingFactory $propertyMappingFactory,
+        private PropertyMappingFactoryInterface $propertyMappingFactory,
         private LoggerInterface $logger,
         private FileStorageService $fileStorageService,
         private MessageDispatcherService $messageDispatcherService,
