@@ -2385,33 +2385,65 @@
         <source>No artists match your search.</source>
         <target>Aucun artiste ne correspond à votre recherche.</target>
       </trans-unit>
-      <trans-unit id="trash_entity" resname="Entity">
+      <trans-unit id="6yueven" resname="Entity">
         <source>Entity</source>
         <target>Entité</target>
       </trans-unit>
-      <trans-unit id="trash_items" resname="Items in trash">
+      <trans-unit id="pt8qs72" resname="Items in trash">
         <source>Items in trash</source>
         <target>Éléments dans la corbeille</target>
       </trans-unit>
-      <trans-unit id="trash_view" resname="View">
+      <trans-unit id=".EmYZIu" resname="View">
         <source>View</source>
         <target>Voir</target>
       </trans-unit>
-      <trans-unit id="stats_title" resname="Statistics">
+      <trans-unit id="VDu2g6x" resname="Statistics">
         <source>Statistics</source>
         <target>Statistiques</target>
       </trans-unit>
-      <trans-unit id="menu_banip" resname="BanIp">
-        <source>Ban IP</source>
+      <trans-unit id="zsrydNS" resname="BanIp">
+        <source>BanIp</source>
         <target>Ban IP</target>
       </trans-unit>
-      <trans-unit id="menu_httperrorlogs" resname="HttpErrorLogs">
-        <source>Http error Logs</source>
+      <trans-unit id="DaRNDeT" resname="HttpErrorLogs">
+        <source>HttpErrorLogs</source>
         <target>Logs erreurs HTTP</target>
       </trans-unit>
-      <trans-unit id="menu_geocode" resname="GeoCode">
-        <source>Geocode</source>
+      <trans-unit id="SzvI8VY" resname="GeoCode">
+        <source>GeoCode</source>
         <target>Géocode</target>
+      </trans-unit>
+      <trans-unit id="Occ0JdD" resname="Publier">
+        <source>Publier</source>
+        <target>Publier</target>
+      </trans-unit>
+      <trans-unit id="p7g1ES6" resname="Items published">
+        <source>Items published</source>
+        <target>Éléments publiés</target>
+      </trans-unit>
+      <trans-unit id=".1MIgNe" resname="Movies published">
+        <source>Movies published</source>
+        <target>Films publiés</target>
+      </trans-unit>
+      <trans-unit id="4lrDqOQ" resname="Series published">
+        <source>Series published</source>
+        <target>Séries publiées</target>
+      </trans-unit>
+      <trans-unit id="LTg5P8Z" resname="Games published">
+        <source>Games published</source>
+        <target>Jeux publiés</target>
+      </trans-unit>
+      <trans-unit id="j4cKMqx" resname="No file">
+        <source>No file</source>
+        <target>Aucun fichier</target>
+      </trans-unit>
+      <trans-unit id="iBdTjux" resname="Notification">
+        <source>Notification</source>
+        <target>Notification</target>
+      </trans-unit>
+      <trans-unit id="xMNOcMi" resname="Publish">
+        <source>Publish</source>
+        <target>Publier</target>
       </trans-unit>
     </body>
   </file>

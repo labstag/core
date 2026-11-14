@@ -38,6 +38,7 @@ class RedirectionCrudController extends CrudControllerAbstract
         $this->configureActionsImport();
         $this->configureActionsExport();
 
+
         return $this->actionsFactory->show();
     }
 

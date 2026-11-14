@@ -77,6 +77,7 @@ class StoryCrudController extends CrudControllerAbstract
         $this->setUpdateAction();
         $this->actionsFactory->setActionUpdateAll('updateAllStory');
 
+
         return $this->actionsFactory->show();
     }
 

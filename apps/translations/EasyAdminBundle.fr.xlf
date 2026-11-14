@@ -37,6 +37,14 @@
         <source>datagrid.no_results</source>
         <target>Aucun résultat trouvé</target>
       </trans-unit>
+      <trans-unit id="D6jsMTb" resname="datagrid.sort">
+        <source>datagrid.sort</source>
+        <target>Trier</target>
+      </trans-unit>
+      <trans-unit id="4KRzqdi" resname="datagrid.sort_by">
+        <source>datagrid.sort_by</source>
+        <target>Trier par</target>
+      </trans-unit>
       <trans-unit id="29d8Vn4" resname="paginator.first">
         <source>paginator.first</source>
         <target>Premier</target>
@@ -188,6 +196,10 @@
       <trans-unit id="sWw5MDD" resname="action.toggle_dropdown">
         <source>action.toggle_dropdown</source>
         <target>Basculer le menu déroulant</target>
+      </trans-unit>
+      <trans-unit id="JESVBDF" resname="action.show_help">
+        <source>action.show_help</source>
+        <target>Afficher toute l'aide</target>
       </trans-unit>
       <trans-unit id="IvOrJqD" resname="batch_action_modal.title">
         <source>batch_action_modal.title</source>
@@ -360,6 +372,14 @@
       <trans-unit id="E5cimFA" resname="settings.locale">
         <source>settings.locale</source>
         <target>Langue</target>
+      </trans-unit>
+      <trans-unit id="3F_XIxT" resname="layout.collapse">
+        <source>layout.collapse</source>
+        <target>Réduire</target>
+      </trans-unit>
+      <trans-unit id="rJPHEE1" resname="layout.expand">
+        <source>layout.expand</source>
+        <target>Développer</target>
       </trans-unit>
       <trans-unit id="iFP0IOu" resname="login_page.username">
         <source>login_page.username</source>

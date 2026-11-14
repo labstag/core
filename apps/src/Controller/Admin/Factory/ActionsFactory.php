@@ -44,6 +44,14 @@ class ActionsFactory
         $this->actionsAdd[$page][] = $action;
     }
 
+    public function addBatchAction(string $name, TranslatableMessage $label, string $icon): void
+    {
+        $action = Action::new($name, $label, $icon);
+        $action->linkToCrudAction($name);
+        $action->addCssClass('btn btn-primary');
+        $this->actions->addBatchAction($action);
+    }
+
     public function addDetailMode(): void
     {
         if (!$this->showDetail) {
@@ -95,6 +103,11 @@ class ActionsFactory
         $this->getDefaultActions();
         $this->setActionLinkPublic();
         $this->setActionLinkW3CValidator();
+
+        $entityFqcn = $this->entity;
+        if (null !== $entityFqcn && class_exists($entityFqcn) && method_exists($entityFqcn, 'setEnable')) {
+            $this->addBatchAction('bulkPublish', new TranslatableMessage('Publish'), 'fas fa-check');
+        }
     }
 
     public function isTrash(): bool

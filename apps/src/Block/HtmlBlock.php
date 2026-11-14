@@ -27,7 +27,7 @@ class HtmlBlock extends SimpleBlockAbstract
     {
         unset($block, $pageName);
         $translatableMessage = new TranslatableMessage('Content');
-        $wysiwygField        = WysiwygField::new('content', $translatableMessage->getMessage());
+        $wysiwygField        = WysiwygField::new('content', $translatableMessage);
 
         yield $wysiwygField;
     }
