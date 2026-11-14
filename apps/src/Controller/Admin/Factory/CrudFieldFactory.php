@@ -286,7 +286,7 @@ final class CrudFieldFactory
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
             $translatableMessage = new TranslatableMessage('File');
 
-            return UploadFileField::new($type . 'File', $label ?? $translatableMessage->getMessage());
+            return UploadFileField::new($type . 'File', $label ?? $translatableMessage);
         }
 
         $this->fileService->getBasePath($entityFqcn, $type . 'File');
@@ -327,7 +327,7 @@ final class CrudFieldFactory
     {
         if (Crud::PAGE_EDIT === $pageName || Crud::PAGE_NEW === $pageName) {
             $translatableMessage  = new TranslatableMessage('Image');
-            $uploadImageField     = UploadImageField::new($type . 'File', $label ?? $translatableMessage->getMessage());
+            $uploadImageField     = UploadImageField::new($type . 'File', $label ?? $translatableMessage);
             $uploadImageField->setTranslator($this->translator);
 
             return $uploadImageField;

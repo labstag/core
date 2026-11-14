@@ -32,6 +32,7 @@ class EpisodeCrudController extends CrudControllerAbstract
         $this->actionsFactory->setReadOnly(true);
         $this->setUpdateAction();
 
+
         return $this->actionsFactory->show();
     }
 

@@ -58,7 +58,7 @@ class PostFixtures extends FixtureAbstract implements DependentFixtureInterface
         $this->addParagraphText($post);
         $this->addTagToEntity($post, PostTag::class);
         $this->addCategoryToEntity($post, PostCategory::class);
-        $this->addReference('post_' . md5(uniqid()), $post);
+        $this->addReference('post_'.md5(uniqid()), $post);
         $objectManager->persist($post);
     }
 }
