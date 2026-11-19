@@ -2,6 +2,8 @@
 
 namespace Labstag\Filter;
 
+use Symfony\Contracts\Translation\TranslatableInterface;
+
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Filter\FilterInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;

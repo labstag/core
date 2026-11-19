@@ -16,7 +16,6 @@ use Labstag\Service\FileService;
 use Labstag\Service\ParagraphService;
 use Labstag\Service\UserService;
 use Labstag\Service\WorkflowService;
-use Smknstd\FakerPicsumImages\FakerPicsumImagesProvider;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
@@ -127,7 +126,6 @@ abstract class FixtureAbstract extends Fixture
     protected function setFaker(): Generator
     {
         $generator = Factory::create('fr_FR');
-        $generator->addProvider(new FakerPicsumImagesProvider($generator));
         $generator->addProvider(new Youtube($generator));
 
         return $generator;

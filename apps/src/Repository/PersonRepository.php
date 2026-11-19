@@ -40,13 +40,13 @@ class PersonRepository extends RepositoryAbstract
     {
         $threshold = new DateTime(sprintf('-%d days', $days));
 
-        return $this->createQueryBuilder('p')
-            ->select('p.id')
-            ->andWhere('p.deathday IS NULL')
-            ->andWhere('p.updatedAt IS NULL OR p.updatedAt < :threshold')
-            ->setParameter('threshold', $threshold)
-            ->getQuery()
-            ->getSingleColumnResult();
+        $queryBuilder = $this->createQueryBuilder('p');
+        $queryBuilder->select('p.id');
+        $queryBuilder->andWhere('p.deathday IS NULL');
+        $queryBuilder->andWhere('p.updatedAt IS NULL OR p.updatedAt < :threshold');
+        $queryBuilder->setParameter('threshold', $threshold);
+
+        return $queryBuilder->getQuery()->getSingleColumnResult();
     }
 
     /**

@@ -6,6 +6,9 @@ namespace Labstag\Service\Igdb\Game;
 
 use Labstag\Api\LibreTranslationApi;
 use Labstag\Entity\Game;
+use Labstag\Entity\Franchise;
+use Labstag\Api\IgdbApi;
+use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Entity\GameCategory;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;
@@ -16,8 +19,31 @@ final class GameUpdateService
         private FileService $fileService,
         private CategoryService $categoryService,
         private LibreTranslationApi $libreTranslationApi,
+        private IgdbApi $igdbApi,
+        private EntityManagerInterface $entityManager,
     )
     {
+    }
+
+    public function getFranchise(array $data): Franchise
+    {
+        $entityRepository = $this->entityManager->getRepository(Franchise::class);
+        $franchise        = $entityRepository->findOneBy(
+            [
+                'igdb' => $data['id'],
+            ]
+        );
+        if ($franchise instanceof Franchise) {
+            return $franchise;
+        }
+
+        $franchise = new Franchise();
+        $franchise->setTitle($data['name']);
+        $franchise->setIgdb($data['id']);
+
+        $entityRepository->save($franchise);
+
+        return $franchise;
     }
 
     public function updateArtworks(Game $game, array $data): bool
