@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Labstag\Paragraph;
 
-use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Labstag\Entity\Block;
 use Labstag\Entity\ErrorParagraph as EntityErrorParagraph;
 use Labstag\Entity\Page;
 use Labstag\Entity\Paragraph;
 use Labstag\Enum\PageEnum;
 use Override;
+use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Symfony\Component\Translation\TranslatableMessage;
 
 class ErrorParagraph extends ParagraphAbstract implements ParagraphInterface

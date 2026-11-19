@@ -10,6 +10,7 @@ use Labstag\Message\NotificationMessage;
 use Labstag\Message\PageCinemaMessage;
 use Labstag\Message\PersonAllMessage;
 use Labstag\Message\SerieAllMessage;
+use Labstag\Message\UpdatePersonMessage;
 use Labstag\Message\UpdateSerieMessage;
 use Labstag\Service\MessageDispatcherService;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -34,6 +35,7 @@ class ExecuteMessageCommand
             'Notification' => 'Send notifications',
             'Meta'         => 'Clean meta entries',
             'Person'       => 'Update persons',
+            'UpdatePerson' => 'Update stale persons',
             'Movie'        => 'Update movies',
             'Files'        => 'Clean files',
             'All'          => 'Execute all tasks',
@@ -53,6 +55,7 @@ class ExecuteMessageCommand
             ],
             'Meta'         => MetaAllMessage::class,
             'Person'       => PersonAllMessage::class,
+            'UpdatePerson' => UpdatePersonMessage::class,
             'Movie'        => MovieAllMessage::class,
             'Files'        => DeleteOldFileMessage::class,
             'Notification' => NotificationMessage::class,
