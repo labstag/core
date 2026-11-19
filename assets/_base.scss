@@ -175,20 +175,20 @@ a {
       line-height: 1.25;
       border-radius: 0.25rem;
       transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-      color: #007bff;
+      color: #6366f1;
       background-color: #fff;
     }
 
     &:hover {
-      color: #0056b3;
+      color: #4f46e5;
       background-color: #e9ecef;
       border-color: #dee2e6;
     }
 
     &.current {
       color: #fff;
-      background-color: #007bff;
-      border-color: #007bff;
+      background-color: #6366f1;
+      border-color: #6366f1;
     }
   }
 }
