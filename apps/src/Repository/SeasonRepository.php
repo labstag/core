@@ -116,11 +116,11 @@ class SeasonRepository extends RepositoryAbstract
     public function remove(object $entity): void
     {
         if ($entity instanceof Season) {
-            $episodes = $this->getEntityManager()->getRepository(Labstag\Entity\Episode::class)->findBy(
+            $episodes = $this->getEntityManager()->getRepository(\Labstag\Entity\Episode::class)->findBy(
                 ['refseason' => $entity]
             );
             foreach ($episodes as $episode) {
-                $this->getEntityManager()->getRepository(Labstag\Entity\Episode::class)->remove($episode);
+                $this->getEntityManager()->getRepository(\Labstag\Entity\Episode::class)->remove($episode);
             }
 
             $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
