@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Labstag\Service\File;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 final class FileCleanupService
@@ -79,7 +78,7 @@ final class FileCleanupService
     private function findInEntity(string $entityClass, string $file): bool
     {
         $repository = $this->entityManager->getRepository($entityClass);
-        $fields     = $this->findInFields($repository, ['img', 'image', 'file']);
+        $fields     = $this->findInFields($entityClass, ['img', 'image', 'file']);
 
         foreach ($fields as $field) {
             $results = $repository->findBy(
@@ -93,9 +92,9 @@ final class FileCleanupService
         return false;
     }
 
-    private function findInFields(EntityRepository $entityRepository, array $fields): array
+    private function findInFields(string $entityClass, array $fields): array
     {
-        $metadata = $entityRepository->getClassMetadata();
+        $metadata = $this->entityManager->getClassMetadata($entityClass);
         $found    = [];
 
         foreach ($fields as $field) {
