@@ -2,6 +2,7 @@
 
 namespace Labstag\Repository;
 
+use DateTime;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -30,6 +31,16 @@ class PersonRepository extends RepositoryAbstract
         }
 
         parent::delete($entity);
+    }
+
+    /**
+     * @return Person[]
+     */
+    public function findStale(int $days = 30): array
+    {
+        $threshold = new DateTime(sprintf('-%d days', $days));
+
+        return $this->createQueryBuilder('p')->andWhere('p.deathday IS NULL')->andWhere('p.updatedAt IS NULL OR p.updatedAt < :threshold')->setParameter('threshold', $threshold)->getQuery()->getResult();
     }
 
     /**
