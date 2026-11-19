@@ -39,8 +39,13 @@ class PersonRepository extends RepositoryAbstract
     public function findStale(int $days = 30): array
     {
         $threshold = new DateTime(sprintf('-%d days', $days));
+        $queryBuilder = $this->createQueryBuilder('p');
 
-        return $this->createQueryBuilder('p')->andWhere('p.deathday IS NULL')->andWhere('p.updatedAt IS NULL OR p.updatedAt < :threshold')->setParameter('threshold', $threshold)->getQuery()->getResult();
+        $queryBuilder->andWhere('p.deathday IS NULL');
+        $queryBuilder->andWhere('p.updatedAt IS NULL OR p.updatedAt < :threshold');
+        $queryBuilder->setParameter('threshold', $threshold);
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**
