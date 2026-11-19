@@ -23,9 +23,9 @@ final class UpdatePersonMessageHandler
     public function __invoke(UpdatePersonMessage $updatePersonMessage): void
     {
         unset($updatePersonMessage);
-        $persons = $this->personRepository->findStale();
-        foreach ($persons as $person) {
-            $this->messageDispatcherService->dispatch(new PersonMessage($person->getId()));
+        $personIds = $this->personRepository->findStale();
+        foreach ($personIds as $personId) {
+            $this->messageDispatcherService->dispatch(new PersonMessage($personId));
         }
     }
 }

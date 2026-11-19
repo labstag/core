@@ -30,5 +30,6 @@ final class PersonMessageHandler
 
         $this->personService->update($person);
         $this->personRepository->save($person);
+        $this->personRepository->getEntityManager()->clear();
     }
 }
