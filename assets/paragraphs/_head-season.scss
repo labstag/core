@@ -32,4 +32,11 @@
       }
     }
   }
+
+  .second .description {
+    max-width: 75ch;
+    color: variables.$colortext-muted;
+    line-height: 1.7;
+    padding: 1rem;
+  }
 }
