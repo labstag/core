@@ -113,9 +113,13 @@ a {
 }
 
 .paragraph {
-  margin-top: 22px;
+  margin-top: 12px;
 
   @extend %wrapper;
+
+  &:first-child {
+    margin-top: 0;
+  }
 }
 
 .background {
