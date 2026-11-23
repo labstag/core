@@ -96,7 +96,7 @@ final class GameActionService
         $this->messageBus->dispatch(new GameAllMessage());
     }
 
-    public function updateGame(int $gameId): void
+    public function updateGame(string $gameId): void
     {
         $this->messageBus->dispatch(new GameMessage($gameId));
     }

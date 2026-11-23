@@ -193,7 +193,7 @@ class SeasonCrudController extends CrudControllerAbstract
 
     public function updateAllSeason(): RedirectResponse
     {
-        $this->container->get(SeasonActionService::class)->updateAll();
+        $this->seasonActionService->updateAll();
 
         return $this->redirectToRoute('admin_season_index');
     }
@@ -205,7 +205,7 @@ class SeasonCrudController extends CrudControllerAbstract
         $entityId                         = $request->query->get('entityId');
         $repositoryAbstract               = $this->getRepository();
         $season                           = $repositoryAbstract->find($entityId);
-        $this->container->get(SeasonActionService::class)->updateSeason($season->getId());
+        $this->seasonActionService->updateSeason($season->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

@@ -36,7 +36,7 @@ class MovieCrudController extends CrudControllerAbstract
     {
         $tmdbId = $request->query->get('id');
 
-        return $this->container->get(MovieActionService::class)->addByApi($tmdbId);
+        return $this->movieActionService->addByApi($tmdbId);
     }
 
     #[AdminRoute(path: '/api-movie')]
@@ -226,7 +226,7 @@ class MovieCrudController extends CrudControllerAbstract
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
 
-        return $this->redirect($this->container->get(MovieActionService::class)->imdbUrl($movie->getImdb()) . '/');
+        return $this->redirect($this->movieActionService->imdbUrl($movie->getImdb()) . '/');
     }
 
     #[AdminRoute(path: '/import-file-movie')]
@@ -236,7 +236,7 @@ class MovieCrudController extends CrudControllerAbstract
         $files = $request->files->all();
         $file  = $files['movie_import']['file'] ?? null;
 
-        return $this->container->get(MovieActionService::class)->importFileMovie($file);
+        return $this->movieActionService->importFileMovie($file);
     }
 
     #[AdminRoute(path: '/json-movie')]
@@ -246,7 +246,7 @@ class MovieCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
-        $details                         = $this->container->get(MovieActionService::class)->jsonMovie($movie);
+        $details                         = $this->movieActionService->jsonMovie($movie);
 
         return new JsonResponse($details);
     }
@@ -291,14 +291,14 @@ class MovieCrudController extends CrudControllerAbstract
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
 
-        return $this->redirect($this->container->get(MovieActionService::class)->tmdbUrl($movie->getTmdb()));
+        return $this->redirect($this->movieActionService->tmdbUrl($movie->getTmdb()));
     }
 
     #[AdminRoute(path: '/update-all-movie')]
 
     public function updateAllMovie(): RedirectResponse
     {
-        $this->container->get(MovieActionService::class)->updateAll();
+        $this->movieActionService->updateAll();
 
         return $this->redirectToRoute('admin_movie_index');
     }
@@ -310,7 +310,7 @@ class MovieCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $movie                           = $repositoryAbstract->find($entityId);
-        $this->container->get(MovieActionService::class)->updateMovie($movie->getId());
+        $this->movieActionService->updateMovie($movie->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

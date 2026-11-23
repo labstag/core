@@ -34,7 +34,7 @@ final class PlatformService extends AbstractIgdb
         }
 
         $platform = new Platform();
-        $platform->setIgdb($data['id']);
+        $platform->setIgdb((string) $data['id']);
         $platform->setAbbreviation($data['abbreviation'] ?? '');
         $platform->setGeneration($data['generation'] ?? 0);
         $platform->setTitle($data['name']);

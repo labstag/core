@@ -161,7 +161,7 @@ class EpisodeCrudController extends CrudControllerAbstract
         $entityId                          = $request->query->get('entityId');
         $repositoryAbstract                = $this->getRepository();
         $episode                           = $repositoryAbstract->find($entityId);
-        $this->container->get(EpisodeActionService::class)->updateEpisode($episode->getId());
+        $this->episodeActionService->updateEpisode($episode->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

@@ -156,7 +156,7 @@ class PersonCrudController extends CrudControllerAbstract
 
     public function updateAllPerson(): RedirectResponse
     {
-        $this->container->get(PersonActionService::class)->updateAll();
+        $this->personActionService->updateAll();
 
         return $this->redirectToRoute('admin_person_index');
     }
@@ -168,7 +168,7 @@ class PersonCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $person                          = $repositoryAbstract->find($entityId);
-        $this->container->get(PersonActionService::class)->updatePerson($person->getId());
+        $this->personActionService->updatePerson($person->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

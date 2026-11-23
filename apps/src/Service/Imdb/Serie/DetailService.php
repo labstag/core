@@ -105,7 +105,7 @@ final class DetailService
 
         $serie->setCountries($details['tmdb']['origin_country']);
 
-        $serie->setTmdb($details['tmdb']['id']);
+        $serie->setTmdb((string) $details['tmdb']['id']);
 
         return true;
     }

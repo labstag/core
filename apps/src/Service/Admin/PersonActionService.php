@@ -21,7 +21,7 @@ final class PersonActionService
         $this->messageBus->dispatch(new PersonAllMessage());
     }
 
-    public function updatePerson(int $personId): void
+    public function updatePerson(string $personId): void
     {
         $this->messageBus->dispatch(new PersonMessage($personId));
     }

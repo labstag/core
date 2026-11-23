@@ -39,7 +39,7 @@ final class GameUpdateService
 
         $franchise = new Franchise();
         $franchise->setTitle($data['name']);
-        $franchise->setIgdb($data['id']);
+        $franchise->setIgdb((string) $data['id']);
 
         $entityRepository->save($franchise);
 

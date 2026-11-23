@@ -62,7 +62,6 @@
     "webpack-notifier": "1.17.*"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-theme-lark": "47.7.*",
     "@fontsource/lobster": "5.3.*",
     "@fortawesome/fontawesome-free": "7.3.*",
     "@maptiler/leaflet-maptilersdk": "4.1.*",

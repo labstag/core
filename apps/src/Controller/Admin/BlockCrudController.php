@@ -252,7 +252,7 @@ class BlockCrudController extends CrudControllerAbstract
 
     public function newBlock(): Response
     {
-        $blocks = $this->container->get(BlockActionService::class)->newBlock();
+        $blocks = $this->blockActionService->newBlock();
 
         return $this->render(
             'admin/block/new.html.twig',
@@ -272,14 +272,14 @@ class BlockCrudController extends CrudControllerAbstract
             throw new Exception('findAllOrderedByRegion not found');
         }
 
-        $blocks = $this->container->get(BlockActionService::class)->getBlocksOrdered();
+        $blocks = $this->blockActionService->getBlocksOrdered();
         if ($request->isMethod('POST')) {
             $allTypes = $this->blockService->getRegions();
-            $this->container->get(BlockActionService::class)->processPositionBlock($allTypes, $request->request->all(), $repositoryAbstract);
+            $this->blockActionService->processPositionBlock($allTypes, $request->request->all(), $repositoryAbstract);
 
             $this->addFlash('success', new TranslatableMessage('Position updated'));
 
-            return $this->container->get(BlockActionService::class)->redirectToIndex();
+            return $this->blockActionService->redirectToIndex();
         }
 
         return $this->render(
@@ -292,7 +292,7 @@ class BlockCrudController extends CrudControllerAbstract
 
     public function showModalBlock(): Response
     {
-        $blocks = $this->container->get(BlockActionService::class)->newBlock();
+        $blocks = $this->blockActionService->newBlock();
 
         return $this->render(
             'admin/block/new.html.twig',

@@ -36,7 +36,7 @@ class SerieCrudController extends CrudControllerAbstract
     {
         $tmdbId = $request->query->get('id');
 
-        return $this->container->get(SerieActionService::class)->addByApi($tmdbId);
+        return $this->serieActionService->addByApi($tmdbId);
     }
 
     #[AdminRoute(path: '/api-serie')]
@@ -223,7 +223,7 @@ class SerieCrudController extends CrudControllerAbstract
             return $this->redirectToRoute('admin_serie_index');
         }
 
-        return $this->redirect($this->container->get(SerieActionService::class)->imdbUrl($serie->getImdb()) . '/');
+        return $this->redirect($this->serieActionService->imdbUrl($serie->getImdb()) . '/');
     }
 
     #[AdminRoute(path: '/import-file-serie')]
@@ -233,7 +233,7 @@ class SerieCrudController extends CrudControllerAbstract
         $files = $request->files->all();
         $file  = $files['serie_import']['file'] ?? null;
 
-        return $this->container->get(SerieActionService::class)->importFileSerie($file);
+        return $this->serieActionService->importFileSerie($file);
     }
 
     #[AdminRoute(path: '/json-serie')]
@@ -243,7 +243,7 @@ class SerieCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
-        $details                         = $this->container->get(SerieActionService::class)->jsonSerie($serie);
+        $details                         = $this->serieActionService->jsonSerie($serie);
 
         return new JsonResponse($details);
     }
@@ -295,7 +295,7 @@ class SerieCrudController extends CrudControllerAbstract
 
     public function updateAllSerie(): RedirectResponse
     {
-        $this->container->get(SerieActionService::class)->updateAll();
+        $this->serieActionService->updateAll();
 
         return $this->redirectToRoute('admin_serie_index');
     }
@@ -307,7 +307,7 @@ class SerieCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $serie                           = $repositoryAbstract->find($entityId);
-        $this->container->get(SerieActionService::class)->updateSerie($serie->getId());
+        $this->serieActionService->updateSerie($serie->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

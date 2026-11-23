@@ -44,10 +44,9 @@ final class DetailService
             return false;
         }
 
-        $movie->setInProduction((bool) $details['tmdb']['in_production']);
         $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
         $movie->setAdult($adult);
-        $movie->setTitle((string) $details['tmdb']['name']);
+        $movie->setTitle((string) ($details['tmdb']['title'] ?? $details['tmdb']['name'] ?? ''));
 
         $voteAverage = (float) ($details['tmdb']['vote_average'] ?? 0);
         $voteCount   = (int) ($details['tmdb']['vote_count'] ?? 0);
@@ -57,7 +56,7 @@ final class DetailService
 
         $movie->setCountries($details['tmdb']['origin_country']);
 
-        $movie->setTmdb($details['tmdb']['id']);
+        $movie->setTmdb((string) $details['tmdb']['id']);
 
         return true;
     }

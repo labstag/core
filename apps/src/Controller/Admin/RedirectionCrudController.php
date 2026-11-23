@@ -167,14 +167,14 @@ class RedirectionCrudController extends CrudControllerAbstract
     {
         $entityId = $request->query->get('entityId');
 
-        return $this->container->get(RedirectionActionService::class)->testSource($entityId);
+        return $this->redirectionActionService->testSource($entityId);
     }
 
     #[AdminRoute(path: '/redirect-to-index')]
 
     protected function redirectToIndex(): RedirectResponse
     {
-        return $this->container->get(RedirectionActionService::class)->redirectToIndex();
+        return $this->redirectionActionService->redirectToIndex();
     }
 
     /**

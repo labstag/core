@@ -144,7 +144,7 @@ class StoryCrudController extends CrudControllerAbstract
     {
         $entityId   = $request->query->get('entityId');
         $story      = $this->getRepository(Story::class)->find($entityId);
-        $generator  = $this->container->get(AdminUrlGenerator::class);
+        $generator  = $this->adminUrlGenerator;
         if ($request->isMethod('POST')) {
             $chapters   = $request->get('chapter');
             foreach ($chapters as $id => $position) {
@@ -178,7 +178,7 @@ class StoryCrudController extends CrudControllerAbstract
 
     public function updateAllStory(): RedirectResponse
     {
-        $this->container->get(StoryActionService::class)->updateAll();
+        $this->storyActionService->updateAll();
 
         return $this->redirectToRoute('admin_story_index');
     }
@@ -190,7 +190,7 @@ class StoryCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $story                           = $repositoryAbstract->find($entityId);
-        $this->container->get(StoryActionService::class)->updateStory($story->getId());
+        $this->storyActionService->updateStory($story->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

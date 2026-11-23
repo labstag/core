@@ -141,7 +141,7 @@ final class SerieActionService
         $this->messageBus->dispatch(new SerieAllMessage());
     }
 
-    public function updateSerie(int $serieId): void
+    public function updateSerie(string $serieId): void
     {
         $this->messageBus->dispatch(new SerieMessage($serieId));
     }

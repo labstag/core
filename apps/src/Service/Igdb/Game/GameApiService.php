@@ -122,7 +122,7 @@ final class GameApiService
 
         $franchise = new Franchise();
         $franchise->setTitle($data['name']);
-        $franchise->setIgdb($data['id']);
+        $franchise->setIgdb((string) $data['id']);
 
         $entityRepository->save($franchise);
 
@@ -189,7 +189,7 @@ final class GameApiService
         }
 
         $game = new Game();
-        $game->setIgdb($data['id']);
+        $game->setIgdb((string) $data['id']);
         $game->setTitle($data['name']);
         $game->setUrl($data['url']);
         if (isset($data['first_release_date'])) {

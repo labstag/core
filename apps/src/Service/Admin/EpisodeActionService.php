@@ -15,7 +15,7 @@ final class EpisodeActionService
     {
     }
 
-    public function updateEpisode(int $episodeId): void
+    public function updateEpisode(string $episodeId): void
     {
         $this->messageBus->dispatch(new EpisodeMessage($episodeId));
     }

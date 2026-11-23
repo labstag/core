@@ -21,7 +21,7 @@ final class StoryActionService
         $this->messageBus->dispatch(new StoryAllMessage());
     }
 
-    public function updateStory(int $storyId): void
+    public function updateStory(string $storyId): void
     {
         $this->messageBus->dispatch(new StoryMessage($storyId));
     }
