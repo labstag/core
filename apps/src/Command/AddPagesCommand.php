@@ -132,7 +132,7 @@ class AddPagesCommand
             'changepassword' => $page->setTitle('Changer le mot de passe'),
             'login'          => $page->setTitle('Se connecter'),
             'lostpassword'   => $page->setTitle('Mot de passe oublié'),
-            default          => $page->setTitle($case->value),
+            default          => $page->setTitle(ucfirst($case)),
         };
     }
 }
