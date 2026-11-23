@@ -28,6 +28,10 @@
     padding: 1rem;
   }
 
+  .overview {
+    text-align: justify;
+  }
+
   .duration {
     &::before {
       @extend .iconbefore;
