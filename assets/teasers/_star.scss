@@ -1,33 +1,54 @@
 @use "../placeholders" as *;
+@use "../variables";
 
 .teaser-star {
   @extend %teaser;
-  padding: 1rem;
-
-  .description {
-    padding: 20px;
-  }
+  @extend %card;
 
   a {
-    &[target="_blank"] {
-      &::before {
-        background-image: none;
-      }
-    }
+    display: block;
+    color: inherit;
+    text-decoration: none;
   }
 
-  ul {
-    display: block;
-    padding-top: 20px;
-    padding-left: 40px;
+  .background {
+    height: 160px;
+  }
 
-    b {
-      font-weight: bold;
-    }
+  .title {
+    font-size: 1.05rem;
+    margin: 0.5rem 0 0.25rem;
+  }
+
+  .description {
+    color: variables.$colortext-muted;
+    font-size: 0.85rem;
+    padding: 0 1rem 0.5rem;
+  }
+
+  .wrapper {
+    padding: 0.75rem 1rem 1rem;
+  }
+
+  .star-info {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
 
     li {
-      padding-bottom: 10px;
-      background: none;
+      background: #232833;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      color: variables.$colortext-muted;
+
+      b {
+        color: variables.$colortext;
+        font-weight: 600;
+      }
     }
   }
 }
