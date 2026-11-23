@@ -5,17 +5,20 @@
 .teaser-episode {
   @extend %teaser;
   @extend %card;
+  height: 100%;
   display: grid;
   grid-template-areas:
     "img"
     "content";
   grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
 
   @include mixins.respond-to(md) {
     grid-template-areas:
       "img content";
     grid-template-columns: 2fr 3fr;
     gap: 16px;
+    grid-template-rows: 1fr;
   }
 
   .background {
