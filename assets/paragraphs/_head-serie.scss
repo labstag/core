@@ -1,6 +1,6 @@
 @use "../placeholders" as *;
 @use "../icons";
-
+@use "../mixins";
 @use "../variables";
 
 .paragraph_head-serie {
@@ -75,10 +75,20 @@
   }
 
   .description {
-    max-width: 75ch;
-    color: variables.$colortext-muted;
-    line-height: 1.7;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 1rem;
+
+    @include mixins.respond-to(md) {
+      width: 90%;
+    }
+
+    .wrapper.html-content {
+      max-width: 75ch;
+      color: variables.$colortext-muted;
+      line-height: 1.7;
+    }
   }
 
   .trailer {
