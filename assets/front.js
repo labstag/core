@@ -19,6 +19,21 @@ WebFont.load({
 import './front/index.scss';
 document.addEventListener('DOMContentLoaded', function () {
   svg4everybody();
+  // Hamburger nav for header links
+  document.querySelectorAll('.headerlink_principal').forEach(function (block) {
+    var wrapper = block.querySelector('.wrapper');
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'nav-toggle';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Menu');
+    toggle.textContent = '☰';
+    if (wrapper) wrapper.insertBefore(toggle, wrapper.firstChild);
+    toggle.addEventListener('click', function () {
+      var open = block.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
   new Video();
   new ContextMenu();
   new Form();

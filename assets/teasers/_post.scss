@@ -1,10 +1,48 @@
 @use "../placeholders" as *;
 @use "../icons";
+@use "../variables";
 
 .teaser-post {
   @extend %teaser;
+  @extend %card;
+
+  a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .background {
+    height: 180px;
+  }
+
+  .wrapper {
+    padding: 1rem;
+  }
+
+  .tags span {
+    background: #10b981;
+    color: #fff;
+    border-radius: 6px;
+    margin: 2px;
+  }
+
+  .title {
+    font-size: 1.1rem;
+    margin: 0.5rem 0 0.25rem;
+  }
+
+  .resume {
+    color: variables.$colortext-muted;
+    font-size: 0.85rem;
+    max-height: 4.5em;
+    overflow: hidden;
+  }
 
   .date {
+    color: variables.$colortext-muted;
+    font-size: 0.75rem;
+
     &::before {
       @extend .iconbefore;
       @extend .icon-date;
