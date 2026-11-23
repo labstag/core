@@ -1,6 +1,8 @@
 @use "../placeholders" as *;
 @use "../icons";
 
+@use "../variables";
+
 .paragraph_head-post {
   @extend %head;
 
@@ -8,11 +10,46 @@
 
   .background {}
 
-  .wrapper {}
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
 
-  .title {}
+  .title {
+    margin: 0;
+  }
+
+  .tags,
+  .categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    span {
+      background: #232833;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+
+      a {
+        color: variables.$colortext-muted;
+        text-decoration: none;
+
+        &:hover {
+          color: variables.$colortext;
+        }
+      }
+    }
+  }
 
   .date {
+    color: variables.$colortext-muted;
+    font-size: 0.85rem;
+
     &::before {
       @extend .iconbefore;
       @extend .icon-date;
