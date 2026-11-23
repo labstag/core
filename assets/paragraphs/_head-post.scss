@@ -36,11 +36,12 @@
       font-size: 0.8rem;
 
       a {
-        color: variables.$colortext-muted;
+        color: #fff;
+        text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
         text-decoration: none;
 
         &:hover {
-          color: variables.$colortext;
+          text-decoration: none;
         }
       }
     }

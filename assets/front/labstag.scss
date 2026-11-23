@@ -30,8 +30,9 @@
     z-index: 50;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    background: rgba(15, 17, 21, 0.75);
-    border-bottom: 1px solid #232833;
+    background: rgba(15, 17, 21, 0.92);
+    border-bottom: 2px solid #3a4150;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
 
     .wrapper {
         display: flex;
@@ -44,11 +45,12 @@
     .nav-toggle {
         display: none;
         background: none;
-        border: 1px solid #232833;
+        border: 1px solid #3a4150;
         color: #e8e8ea;
         padding: 6px 10px;
         border-radius: 8px;
         cursor: pointer;
+        font-weight: 700;
     }
 
     ul {
@@ -56,7 +58,7 @@
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
-        gap: 0.25rem;
+        gap: 0.4rem;
         padding: 0;
         margin: 0;
     }
@@ -67,22 +69,23 @@
 
     a {
         display: block;
-        font-size: 1rem;
-        font-weight: 600;
-        color: #a0a8b8;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #e8e8ea;
         text-decoration: none;
-        padding: 0.5rem 0.9rem;
+        padding: 0.6rem 1.1rem;
         border-radius: 8px;
         transition: color 0.2s ease, background-color 0.2s ease;
 
         &:hover,
         &:focus-visible {
-            background-color: #161a22;
-            color: #e8e8ea;
+            background-color: #6366f1;
+            color: #ffffff;
         }
 
         &.active {
-            color: #6366f1;
+            color: #ffffff;
+            background-color: #6366f1;
         }
     }
 

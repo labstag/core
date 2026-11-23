@@ -2,6 +2,8 @@
 .html-content {
     width: 100%;
     max-width: 100%;
+    vertical-align: top;
+    align-self: flex-start;
 
     ol,
     ul {
@@ -13,4 +15,5 @@
 .wrapper.html-content {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 1rem;
 }

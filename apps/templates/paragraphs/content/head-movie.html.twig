@@ -114,6 +114,9 @@
         {% endif %}
         {% set castings = casting_cast(movie) %}
         {% set actings = casting_acting(castings) %}
+        {% set withImage = actings|filter(acting => acting.refperson and acting.refperson.profile) %}
+        {% set withoutImage = actings|filter(acting => not (acting.refperson and acting.refperson.profile)) %}
+        {% set actings = withImage|merge(withoutImage) %}
         {% if actings|length > 0 %}
             <div class="actings">
                 <h4 class="subtitle">

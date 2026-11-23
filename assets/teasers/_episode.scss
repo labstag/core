@@ -9,16 +9,20 @@
   display: grid;
   grid-template-areas:
     "img"
-    "content";
+    "content"
+    "overview"
+    "links";
   grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto auto;
 
   @include mixins.respond-to(md) {
     grid-template-areas:
-      "img content";
+      "img content"
+      "overview overview"
+      "links links";
     grid-template-columns: 2fr 3fr;
     gap: 16px;
-    grid-template-rows: 1fr;
+    grid-template-rows: 1fr auto auto;
   }
 
   .background {
@@ -29,10 +33,27 @@
   .wrapper {
     grid-area: content;
     padding: 1rem;
+
+    .title {
+      text-align: center;
+    }
+
+    > div,
+    .duration {
+      text-align: left;
+    }
   }
 
   .overview {
+    grid-area: overview;
+    padding: 0 1rem 1rem;
     text-align: justify;
+    min-height: 4.5em;
+  }
+
+  .links {
+    grid-area: links;
+    padding: 0 1rem 1rem;
   }
 
   .duration {

@@ -1,25 +1,70 @@
 @use "../placeholders" as *;
 @use "../icons";
+@use "../variables";
 
 .paragraph_head-story {
   @extend %head;
-
-  .content {}
+  min-height: 300px;
 
   .background {}
 
-  .wrapper {}
+  .content {}
 
-  .title {}
+  .wrapper {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
 
-  .author {}
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 
-  .chapters {}
+    span {
+      background: #232833;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
 
-  .date {}
+      a {
+        color: variables.$colortext-muted;
+        text-decoration: none;
+
+        &:hover {
+          color: variables.$colortext;
+        }
+      }
+    }
+  }
+
+  .title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    margin: 0 0 0.5rem;
+  }
+
+  .author,
+  .chapters,
+  .date {
+    color: variables.$colortext-muted;
+    font-size: 0.9rem;
+  }
 
   .pdf {
     a {
+      color: #fff;
+      text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+      text-decoration: none;
+      font-size: 0.9rem;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
       &::before {
         @extend .iconbefore;
         @extend .icon-pdf;

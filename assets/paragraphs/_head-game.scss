@@ -1,5 +1,6 @@
 @use "../placeholders" as *;
 @use "../icons";
+@use "../variables";
 
 .paragraph_head-game {
   .first {
@@ -20,6 +21,32 @@
       &::before {
         @extend .iconbefore;
         @extend .icon-runtime;
+      }
+    }
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      span {
+        background: #232833;
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 0.8rem;
+
+        a {
+          color: #fff;
+          text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: none;
+          }
+        }
       }
     }
   }
