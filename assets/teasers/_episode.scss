@@ -4,6 +4,7 @@
 
 .teaser-episode {
   @extend %teaser;
+  @extend %card;
   display: grid;
   grid-template-areas:
     "img"

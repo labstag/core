@@ -2,8 +2,11 @@
 @use "../mixins";
 @use "../icons";
 
+@use "../variables";
+
 .teaser-season {
   @extend %teaser;
+  @extend %card;
 
   .title {
     &::before {
@@ -12,56 +15,54 @@
     }
   }
 
-  h2 {
-    font-size: 0.75rem;
-  }
-
   a {
     display: grid;
     grid-template-areas:
       "img"
       "content";
     grid-template-columns: 1fr;
+    gap: 12px;
+    color: inherit;
+    text-decoration: none;
 
     @include mixins.respond-to(md) {
       grid-template-areas:
         "img content";
-      grid-template-columns: 1fr 4fr;
+      grid-template-columns: 180px 1fr;
       gap: 16px;
     }
-
-    .img {
-      grid-area: img;
-    }
-
-    .background {
-      height: 300px;
-    }
-
-    .content {
-      grid-area: content;
-    }
   }
 
-  &:nth-child(odd) {
-    a {
-      @include mixins.respond-to(md) {
-        grid-template-areas:
-          "img content"; // disposition normale
-        grid-template-columns: 1fr 4fr;
-      }
-    }
+  .img {
+    grid-area: img;
   }
 
-  // Quand le <li> est pair
-  &:nth-child(even) {
-    a {
-      @include mixins.respond-to(md) {
-        grid-template-areas:
-          "content img"; // on inverse l'ordre par exemple
-        grid-template-columns: 4fr 1fr;
-      }
-    }
+  .background {
+    height: 180px;
+    border-radius: 8px;
+  }
+
+  .wrapper {
+    grid-area: content;
+    padding: 0.5rem 0;
+  }
+
+  .title {
+    font-size: 1.1rem;
+    margin: 0 0 0.25rem;
+  }
+
+  .dates,
+  .duration,
+  .episodes {
+    color: variables.$colortext-muted;
+    font-size: 0.85rem;
+  }
+
+  .overview {
+    color: variables.$colortext-muted;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
   }
 
   .duration {

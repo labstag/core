@@ -13,22 +13,15 @@
 
   .episode-list {
     ul {
+      list-style: none;
       display: grid;
       grid-template-columns: 1fr;
-      gap: 12px;
-    }
+      gap: 1rem;
+      padding: 0;
+      margin: 0;
 
-    li {
-      &.teaser-episode {
-        background-color: color.scale(variables.$colorbg, $lightness: 15%);
-
-        &:nth-child(even) {
-          background-color: color.scale(variables.$colorbg, $lightness: 10%);
-        }
-      }
-
-      .wrapper {
-        padding: 1rem;
+      @include mixins.respond-to(md) {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   }

@@ -1,20 +1,29 @@
 @use "../placeholders" as *;
 @use "../icons";
 
+@use "../variables";
+
 .paragraph_head-season {
   .first {
     @extend %head;
-    height: 300px;
+    min-height: 260px;
 
     .background {}
 
-    .wrapper {}
+    .wrapper {
+      padding: 1rem;
+    }
 
-    .title {}
+    .title {
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      margin: 0 0 0.5rem;
+    }
 
-    .author {}
-
-    .date {}
+    .date,
+    .duration {
+      color: variables.$colortext-muted;
+      font-size: 0.85rem;
+    }
 
     .duration {
       &::before {
