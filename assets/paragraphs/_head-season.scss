@@ -33,10 +33,13 @@
     }
   }
 
-  .second .description {
-    max-width: 75ch;
+  .resume {
     color: variables.$colortext-muted;
     line-height: 1.7;
-    padding: 1rem;
+    padding: 1rem 0;
+
+    .wrapper {
+      max-width: 75ch;
+    }
   }
 }
