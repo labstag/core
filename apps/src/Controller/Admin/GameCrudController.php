@@ -93,7 +93,7 @@ class GameCrudController extends CrudControllerAbstract
         $id       = $request->query->get('id');
         $platform = $request->query->get('platform', '');
 
-        return $this->container->get(GameActionService::class)->addByApi($id, $platform);
+        return $this->gameActionService->addByApi($id, $platform);
     }
 
     #[AdminRoute(path: '/add-to-another-platform')]
@@ -143,7 +143,7 @@ class GameCrudController extends CrudControllerAbstract
             }
         }
 
-        $games   = $this->gameService->getGameApi($data, $limit, $offset);
+        $games   = $this->gameApiService->getGameApi($data, $limit, $offset);
 
         return $this->render(
             'admin/api/game/list.html.twig',
@@ -262,7 +262,7 @@ class GameCrudController extends CrudControllerAbstract
         $file     = $files['game_import']['file'] ?? null;
         $platform = $all['game_import']['platform'] ?? '';
 
-        return $this->container->get(GameActionService::class)->importFileGame($file, $platform);
+        return $this->gameActionService->importFileGame($file, $platform);
     }
 
     #[AdminRoute(path: '/json-movie')]
@@ -272,7 +272,7 @@ class GameCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $game                            = $repositoryAbstract->find($entityId);
-        $details                         = $this->container->get(GameApiService::class)->getApiGameId($game->getIgdb());
+        $details                         = $this->gameApiService->getApiGameId($game->getIgdb());
 
         return new JsonResponse($details);
     }
@@ -345,7 +345,7 @@ class GameCrudController extends CrudControllerAbstract
 
     public function updateAllGame(): RedirectResponse
     {
-        $this->container->get(GameActionService::class)->updateAll();
+        $this->gameActionService->updateAll();
 
         return $this->redirectToRoute('admin_game_index');
     }
@@ -357,7 +357,7 @@ class GameCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $game                            = $repositoryAbstract->find($entityId);
-        $this->container->get(GameActionService::class)->updateGame($game->getId());
+        $this->gameActionService->updateGame($game->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

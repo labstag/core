@@ -5,7 +5,6 @@ namespace Labstag\Service\Imdb;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
-use Labstag\Entity\Casting;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
@@ -147,13 +146,6 @@ final class SeasonService
 
         $episodes = $repository->getdeleteTrashBySeason($season);
         foreach ($episodes as $episode) {
-            $castings = $this->entityManager->getRepository(Casting::class)->findBy(
-                ['refEpisode' => $episode]
-            );
-            foreach ($castings as $casting) {
-                $this->entityManager->remove($casting);
-            }
-
             $this->entityManager->flush();
             $this->entityManager->remove($episode);
         }
@@ -166,26 +158,6 @@ final class SeasonService
 
     private function updateCredits(Season $season, array $details): bool
     {
-        foreach ($season->getCastings() as $casting) {
-            $season->removeCasting($casting);
-        }
-
-        if (isset($details['credits']['cast']) && is_array($details['credits']['cast'])) {
-            foreach ($details['credits']['cast'] as $cast) {
-                $person  = $this->personService->getPerson($cast);
-                $casting = $this->personService->addToCastingSeason($person, $season, $cast);
-                $season->addCasting($casting);
-            }
-        }
-
-        if (isset($details['credits']['crew']) && is_array($details['credits']['crew'])) {
-            foreach ($details['credits']['crew'] as $crew) {
-                $person  = $this->personService->getPerson($crew);
-                $casting = $this->personService->addToCastingSeason($person, $season, $crew);
-                $season->addCasting($casting);
-            }
-        }
-
         return true;
     }
 

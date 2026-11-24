@@ -21,7 +21,7 @@ final class SeasonActionService
         $this->messageBus->dispatch(new SeasonAllMessage());
     }
 
-    public function updateSeason(int $seasonId): void
+    public function updateSeason(string $seasonId): void
     {
         $this->messageBus->dispatch(new SeasonMessage($seasonId));
     }

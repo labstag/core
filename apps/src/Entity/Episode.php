@@ -71,15 +71,12 @@ class Episode implements Stringable
     #[ORM\Column(name: 'vote_count', nullable: true)]
     protected ?int $voteCount = null;
 
-    /**
-     * @var Collection<int, Casting>
-     */
-    #[ORM\OneToMany(targetEntity: Casting::class, mappedBy: 'refEpisode')]
-    private Collection $castings;
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $casting = null;
 
     public function __construct()
     {
-        $this->castings = new ArrayCollection();
+        // no-op
     }
 
     public function __toString(): string
@@ -87,27 +84,21 @@ class Episode implements Stringable
         return (string) $this->getTitle();
     }
 
-    public function addCasting(Casting $casting): static
-    {
-        if (!$this->castings->contains($casting)) {
-            $this->castings->add($casting);
-            $casting->setRefEpisode($this);
-        }
-
-        return $this;
-    }
-
     public function getAirDate(): ?DateTime
     {
         return $this->airDate;
     }
 
-    /**
-     * @return Collection<int, Casting>
-     */
-    public function getCastings(): Collection
+    public function getCasting(): ?array
     {
-        return $this->castings;
+        return $this->casting;
+    }
+
+    public function setCasting(?array $casting): static
+    {
+        $this->casting = $casting;
+
+        return $this;
     }
 
     public function getId(): ?string
@@ -168,16 +159,6 @@ class Episode implements Stringable
     public function isEnable(): ?bool
     {
         return $this->enable;
-    }
-
-    public function removeCasting(Casting $casting): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->castings->removeElement($casting) && $casting->getRefEpisode() === $this) {
-            $casting->setRefEpisode(null);
-        }
-
-        return $this;
     }
 
     public function setAirDate(?DateTime $airDate): static

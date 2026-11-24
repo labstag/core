@@ -4,9 +4,13 @@
     <div class="wrapper">
         <h2>{{ edito.title }}</h2>
         {% for tab in paragraphs %}
-            {{ debug_begin(tab) }}
+            {% if app.debug %}
+                {{ debug_begin(tab) }}
+            {% endif %}
             {{ paragraph_show(tab) }}
-            {{ debug_end(tab) }}
+            {% if app.debug %}
+                {{ debug_end(tab) }}
+            {% endif %}
         {% endfor %}
     </div>
 </section>

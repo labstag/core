@@ -1,8 +1,12 @@
 {% use "elements.html.twig" %}
 <div{% with {attr: block_contextmenu(block)} %}{{ block('attributes') }}{% endwith %}>
     {% for tab in paragraphs %}
-        {{ debug_begin(tab) }}
+        {% if app.debug %}
+            {{ debug_begin(tab) }}
+        {% endif %}
         {{ paragraph_show(tab) }}
-        {{ debug_end(tab) }}
+        {% if app.debug %}
+            {{ debug_end(tab) }}
+        {% endif %}
     {% endfor %}
 </div>

@@ -106,25 +106,31 @@ final class EpisodeService
 
     private function updateCredits(Episode $episode, array $details): bool
     {
-        foreach ($episode->getCastings() as $casting) {
-            $episode->removeCasting($casting);
-        }
+        $cast = [];
+        $crew = [];
 
         if (isset($details['credits']['cast']) && is_array($details['credits']['cast'])) {
-            foreach ($details['credits']['cast'] as $cast) {
-                $person  = $this->personService->getPerson($cast);
-                $casting = $this->personService->addToCastingEpisode($person, $episode, $cast);
-                $episode->addCasting($casting);
+            foreach ($details['credits']['cast'] as $c) {
+                $person = $this->personService->getPerson($c);
+                $cast[] = [
+                    'personId'  => $person->getId(),
+                    'character' => $c['character'] ?? null,
+                ];
             }
         }
 
         if (isset($details['credits']['crew']) && is_array($details['credits']['crew'])) {
-            foreach ($details['credits']['crew'] as $crew) {
-                $person  = $this->personService->getPerson($crew);
-                $casting = $this->personService->addToCastingEpisode($person, $episode, $crew);
-                $episode->addCasting($casting);
+            foreach ($details['credits']['crew'] as $c) {
+                $person = $this->personService->getPerson($c);
+                $crew[] = [
+                    'personId'   => $person->getId(),
+                    'department' => $c['department'] ?? null,
+                    'job'        => $c['job'] ?? null,
+                ];
             }
         }
+
+        $episode->setCasting(['cast' => $cast, 'crew' => $crew]);
 
         return true;
     }

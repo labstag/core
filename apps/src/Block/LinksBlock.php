@@ -90,7 +90,7 @@ class LinksBlock extends BlockAbstract
                 $translatableMessage = new TranslatableMessage('Link');
 
                 return $this->translator->trans(
-                    $translatableMessage,
+                    $translatableMessage->getMessage(),
                     $translatableMessage->getParameters()
                 );
             }

@@ -74,7 +74,8 @@ class FrontExtensionRuntime implements RuntimeExtensionInterface
         $image    = $this->metaService->getImageForMetatags($entity);
         $config   = $this->configurationService->getConfiguration();
         $favicon  = $this->siteService->getFileFavicon();
-        $jsonLd   = $this->metaService->getJsonLd($entity);
+        // $jsonLd   = $this->metaService->getJsonLd($entity);
+        $jsonLd = null;
 
         return $this->twigEnvironment->render(
             'metatags.html.twig',

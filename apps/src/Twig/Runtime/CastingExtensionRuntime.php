@@ -3,15 +3,18 @@
 namespace Labstag\Twig\Runtime;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Labstag\Entity\Casting;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Movie;
+use Labstag\Entity\Person;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class CastingExtensionRuntime implements RuntimeExtensionInterface
 {
+    protected array $persons = [];
+
+
     public function __construct(
         protected EntityManagerInterface $entityManager,
     )
@@ -26,77 +29,99 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
 
     public function cast($data): mixed
     {
-        $entityRepository = $this->entityManager->getRepository(Casting::class);
+        if (method_exists($data, 'getCasting')) {
+            $tab = $data->getCasting();
+            $tab = (is_array($tab) && isset($tab['cast'])) ? $tab['cast'] : [];
 
-        return $entityRepository->findWithActiveCastings($data);
+            return $this->getPersons($tab);
+        }
+
+        return [];
     }
 
-    public function directing($data): array
+    public function crew($data): mixed
     {
-        return $this->getByType('Directing', $data);
+        if (method_exists($data, 'getCasting')) {
+            $tab = $data->getCasting();
+            $tab = (is_array($tab) && isset($tab['crew'])) ? $tab['crew'] : [];
+
+            return $this->getPersons($tab);
+        }
+
+        return [];
     }
 
-    public function editing($data): array
+    private function getPersons(array $tab): array
     {
-        return $this->getByType('Editing', $data);
+        $persons = [];
+        foreach ($tab as $row) {
+            $row['person'] = $this->getPerson($row['personId'] ?? '');
+            $persons[] = $row;
+        }
+
+        return $persons;
+    }
+
+    private function getPerson(string $personId): ?Person
+    {
+        if (isset($this->persons[$personId])) {
+            return $this->persons[$personId];
+        }
+
+        $repository = $this->entityManager->getRepository(Person::class);
+        $person = $repository->find($personId);
+        $this->persons[$personId] = $person;
+
+        return $person;
     }
 
     public function movies($data): array
     {
-        $tab = [];
-        foreach ($data as $row) {
-            if ($row->getRefMovie() instanceof Movie) {
-                $id       = $row->getRefMovie()->getId();
-                $tab[$id] = $row->getRefMovie();
-            }
-        }
-
-        foreach ($tab as $key => $movie) {
-            if ($movie->isEnable()) {
-                continue;
-            }
-
-            unset($tab[$key]);
-        }
+        $repository = $this->entityManager->getRepository(Movie::class);
+        $movies = $repository->getByCasting($data->getId());
+        $tab['crew'] = $this->getPersonByEntity($movies, 'crew', $data->getId());
+        $tab['cast'] = $this->getPersonByEntity($movies, 'cast', $data->getId());
 
         return $tab;
     }
 
-    public function production($data): array
+    private function getPersonByEntity(array $entities, string $type, string $personId): array
     {
-        return $this->getByType('Production', $data);
+        $tab = [];
+        foreach ($entities as $entity) {
+            $casting = $entity->getCasting();
+            foreach ($casting[$type] as $row) {
+                if ($row['personId'] != $personId) {
+                    continue;
+                }
+
+                $row['entity'] = $entity;
+
+                $tab[] = $row;
+            }
+        }
+
+        return $tab;
     }
 
     public function series($data): array
     {
-        $tab = [];
-        foreach ($data as $row) {
-            if ($row->getRefSerie() instanceof Serie) {
-                $id       = $row->getRefSerie()->getId();
-                $tab[$id] = $row->getRefSerie();
-            } elseif ($row->getRefEpisode() instanceof Episode) {
-                $id       = $row->getRefEpisode()->getRefseason()->getRefserie()->getId();
-                $tab[$id] = $row->getRefEpisode()->getRefseason()->getRefserie();
-            } elseif ($row->getRefSeason() instanceof Season) {
-                $id       = $row->getRefSeason()->getRefserie()->getId();
-                $tab[$id] = $row->getRefSeason()->getRefserie();
-            }
-        }
-
-        foreach ($tab as $key => $serie) {
-            if ($serie->isEnable()) {
-                continue;
-            }
-
-            unset($tab[$key]);
-        }
+        $repository = $this->entityManager->getRepository(Serie::class);
+        $series = $repository->getByCasting($data->getId());
+        $tab['crew'] = $this->getPersonByEntity($series, 'crew', $data->getId());
+        $tab['cast'] = $this->getPersonByEntity($series, 'cast', $data->getId());
 
         return $tab;
     }
 
-    public function writing($data): array
+    public function episodes($data): array
     {
-        return $this->getByType('Writing', $data);
+        $repository = $this->entityManager->getRepository(Episode::class);
+        $episodes = $repository->getByCasting($data->getId());
+        $tab['crew'] = $this->getPersonByEntity($episodes, 'crew', $data->getId());
+        $tab['cast'] = $this->getPersonByEntity($episodes, 'cast', $data->getId());
+
+        return $tab;
     }
 
     private function getByType(string $type, $data): array

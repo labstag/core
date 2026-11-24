@@ -1,7 +1,16 @@
+@use "../variables";
+
 .paragraph_text {
   .wrapper {}
 
+  .html-content {
+    max-width: 75ch;
+    color: variables.$colortext-muted;
+    line-height: 1.7;
+  }
+
   a {
     text-decoration: underline;
+    color: variables.$accent;
   }
 }

@@ -5,6 +5,7 @@
         {% block meta %}
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="theme-color" content="#0f1115">
             {% if app.request.attributes.get('_route') != '' %}
                 <meta property="og:url" content="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}">
                 <link rel="canonical" href="{{ url(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}">
@@ -23,12 +24,17 @@
         {% endfor %}
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Aller au contenu principal</a>
         {% for balise, blockposition in blocks %}
-            <{{ balise }}>
+            <{{ balise }}{% if balise == 'main' %} id="main-content"{% endif %}>
                 {% for tab in blockposition %}
-                    {{ debug_begin(tab) }}
+                    {% if app.debug %}
+                        {{ debug_begin(tab) }}
+                    {% endif %}
                     {{ block_show(tab) }}
-                    {{ debug_end(tab) }}
+                    {% if app.debug %}
+                        {{ debug_end(tab) }}
+                    {% endif %}
                 {% endfor %}
             </{{ balise }}>
         {% endfor %}

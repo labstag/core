@@ -161,7 +161,7 @@ class SagaCrudController extends CrudControllerAbstract
 
     public function updateAllSaga(): RedirectResponse
     {
-        $this->container->get(SagaActionService::class)->updateAll();
+        $this->sagaActionService->updateAll();
 
         return $this->redirectToRoute('admin_saga_index');
     }
@@ -173,7 +173,7 @@ class SagaCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $saga                            = $repositoryAbstract->find($entityId);
-        $this->container->get(SagaActionService::class)->updateSaga($saga->getId());
+        $this->sagaActionService->updateSaga($saga->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

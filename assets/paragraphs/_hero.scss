@@ -1,3 +1,8 @@
+@use "../variables";
+
 .paragraph_hero {
-  .wrapper {}
+  .wrapper {
+    min-height: 0;
+    padding: 0;
+  }
 }

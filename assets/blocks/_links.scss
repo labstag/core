@@ -93,3 +93,28 @@
     content: " ▴";
   }
 }
+
+/* Footer links */
+footer .block_links {
+  .wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  > .wrapper > ul > li > a {
+    color: $colortext-muted;
+    font-size: 0.9rem;
+    padding: 4px 8px;
+
+    &:hover {
+      color: $colortext;
+      background: transparent;
+    }
+  }
+}

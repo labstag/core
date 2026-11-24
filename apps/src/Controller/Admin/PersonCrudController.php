@@ -3,6 +3,8 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use Labstag\Field\CastField;
+use Labstag\Field\CrewField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -73,19 +75,19 @@ class PersonCrudController extends CrudControllerAbstract
         $textField = TextField::new('placeOfBirth', new TranslatableMessage('Place of birth'));
         $textField->hideOnIndex();
 
-        $associationField = AssociationField::new('castings', new TranslatableMessage('Series'));
-        $associationField->setTemplatePath('admin/field/casting-series.html.twig');
-        $associationField->onlyOnDetail();
-
-        $movieField = AssociationField::new('castings', new TranslatableMessage('Movies'));
+        $movieField = CastField::new('casting', new TranslatableMessage('Movies'));
         $movieField->setTemplatePath('admin/field/casting-movies.html.twig');
         $movieField->onlyOnDetail();
 
-        $seasonField = AssociationField::new('castings', new TranslatableMessage('Seasons'));
+        $seriesField = CastField::new('casting', new TranslatableMessage('Series'));
+        $seriesField->setTemplatePath('admin/field/casting-series.html.twig');
+        $seriesField->onlyOnDetail();
+
+        $seasonField = CastField::new('casting', new TranslatableMessage('Seasons'));
         $seasonField->setTemplatePath('admin/field/casting-seasons.html.twig');
         $seasonField->onlyOnDetail();
 
-        $episodeField = AssociationField::new('castings', new TranslatableMessage('Episodes'));
+        $episodeField = CastField::new('casting', new TranslatableMessage('Episodes'));
         $episodeField->setTemplatePath('admin/field/casting-episodes.html.twig');
         $episodeField->onlyOnDetail();
 
@@ -113,8 +115,8 @@ class PersonCrudController extends CrudControllerAbstract
         $this->crudFieldFactory->addFieldsToTab(
             'casting',
             [
-                $associationField,
                 $movieField,
+                $seriesField,
                 $seasonField,
                 $episodeField,
             ]
@@ -156,7 +158,7 @@ class PersonCrudController extends CrudControllerAbstract
 
     public function updateAllPerson(): RedirectResponse
     {
-        $this->container->get(PersonActionService::class)->updateAll();
+        $this->personActionService->updateAll();
 
         return $this->redirectToRoute('admin_person_index');
     }
@@ -168,7 +170,7 @@ class PersonCrudController extends CrudControllerAbstract
         $entityId                        = $request->query->get('entityId');
         $repositoryAbstract              = $this->getRepository();
         $person                          = $repositoryAbstract->find($entityId);
-        $this->container->get(PersonActionService::class)->updatePerson($person->getId());
+        $this->personActionService->updatePerson($person->getId());
         if ($request->headers->has('referer')) {
             $url = $request->headers->get('referer');
             if (is_string($url) && '' !== $url) {

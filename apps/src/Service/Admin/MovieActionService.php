@@ -144,7 +144,7 @@ final class MovieActionService
         $this->messageBus->dispatch(new MovieAllMessage());
     }
 
-    public function updateMovie(int $movieId): void
+    public function updateMovie(string $movieId): void
     {
         $this->messageBus->dispatch(new MovieMessage($movieId));
     }

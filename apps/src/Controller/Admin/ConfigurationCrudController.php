@@ -124,11 +124,11 @@ class ConfigurationCrudController extends CrudControllerAbstract
     #[Override]
     public function index(AdminContext $context): Response
     {
-        $entityManager = $this->container->get('doctrine')->getManager();
+        $entityManager = $this->managerRegistry->getManager();
         $repository    = $entityManager->getRepository(Configuration::class);
         $configuration = $repository->findOneBy([]);
         if ($configuration instanceof Configuration) {
-            $urlGenerator = $this->container->get(AdminUrlGenerator::class);
+            $urlGenerator = $this->adminUrlGenerator;
             $url          = $urlGenerator->setController(self::class)->setAction(Action::EDIT)->setEntityId($configuration->getId())->generateUrl();
 
             return $this->redirect($url);

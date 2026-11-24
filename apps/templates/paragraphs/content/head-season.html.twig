@@ -9,7 +9,7 @@
 {% endfor %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
 	<div class="first">
-        <div class="background" style="--image-url: url('{{ site_asset(season, 'backdrop') }}')"></div>
+        <div class="background" style="--image-url: url('{{ site_asset(season, 'poster') }}')"></div>
         <div class="content">
                 <div class="wrapper">
                     <h3 class="title">
@@ -47,7 +47,7 @@
                 </div>
             </div>
     </div>
-    <div class="resume">
+    <div class="description">
         <div class="wrapper html-content">
             {{ season.overview|raw }}
         </div>

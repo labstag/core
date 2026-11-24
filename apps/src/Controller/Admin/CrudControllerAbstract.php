@@ -19,8 +19,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Labstag\Api\TheMovieDbApi;
 use Labstag\Controller\Admin\Factory\ActionsFactory;
 use Labstag\Controller\Admin\Factory\CrudFieldFactory;
+use Labstag\Service\Admin\BlockActionService;
+use Labstag\Service\Admin\EpisodeActionService;
+use Labstag\Service\Admin\GameActionService;
+use Labstag\Service\Admin\MovieActionService;
+use Labstag\Service\Admin\PersonActionService;
+use Labstag\Service\Admin\RedirectionActionService;
+use Labstag\Service\Admin\SagaActionService;
+use Labstag\Service\Admin\SeasonActionService;
+use Labstag\Service\Admin\SerieActionService;
+use Labstag\Service\Admin\StoryActionService;
+use Labstag\Service\Igdb\Game\GameApiService;
 use Labstag\Controller\Admin\Traits\ParagraphAdminTrait;
-use Labstag\Entity\Casting;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Paragraph;
@@ -95,6 +105,17 @@ abstract class CrudControllerAbstract extends AbstractCrudController
         protected AdminUrlGenerator $adminUrlGenerator,
         protected ManagerRegistry $managerRegistry,
         protected TranslatorInterface $translator,
+        protected BlockActionService $blockActionService,
+        protected EpisodeActionService $episodeActionService,
+        protected GameActionService $gameActionService,
+        protected GameApiService $gameApiService,
+        protected MovieActionService $movieActionService,
+        protected PersonActionService $personActionService,
+        protected RedirectionActionService $redirectionActionService,
+        protected SagaActionService $sagaActionService,
+        protected SeasonActionService $seasonActionService,
+        protected SerieActionService $serieActionService,
+        protected StoryActionService $storyActionService,
     )
     {
     }
@@ -194,13 +215,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
                 $criteria = ['refSerie' => $entityInstance];
             }
 
-            $castings = $entityManager->getRepository(Casting::class)->findBy($criteria);
-
-            foreach ($castings as $casting) {
-                $entityManager->remove($casting);
-            }
-
-            if ($entityInstance instanceof Serie) {
+        if ($entityInstance instanceof Serie) {
                 $seasons = $entityManager->getRepository(Season::class)->findBy(
                     ['refserie' => $entityInstance]
                 );

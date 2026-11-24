@@ -157,11 +157,8 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(nullable: true)]
     protected ?int $votes = null;
 
-    /**
-     * @var Collection<int, Casting>
-     */
-    #[ORM\OneToMany(targetEntity: Casting::class, mappedBy: 'refSerie')]
-    private Collection $castings;
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $casting = null;
 
     /**
      * @var Collection<int, Company>
@@ -180,23 +177,12 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         $this->seasons         = new ArrayCollection();
         $this->paragraphs      = new ArrayCollection();
         $this->companies       = new ArrayCollection();
-        $this->castings        = new ArrayCollection();
     }
 
     #[Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();
-    }
-
-    public function addCasting(Casting $casting): static
-    {
-        if (!$this->castings->contains($casting)) {
-            $this->castings->add($casting);
-            $casting->setRefSerie($this);
-        }
-
-        return $this;
     }
 
     public function addCategory(SerieCategory $serieCategory): static
@@ -249,12 +235,16 @@ class Serie implements Stringable, EntityWithParagraphsInterface
         return $this->backdropFile;
     }
 
-    /**
-     * @return Collection<int, Casting>
-     */
-    public function getCastings(): Collection
+    public function getCasting(): ?array
     {
-        return $this->castings;
+        return $this->casting;
+    }
+
+    public function setCasting(?array $casting): static
+    {
+        $this->casting = $casting;
+
+        return $this;
     }
 
     /**
@@ -395,16 +385,6 @@ class Serie implements Stringable, EntityWithParagraphsInterface
     public function isInProduction(): ?bool
     {
         return $this->inProduction;
-    }
-
-    public function removeCasting(Casting $casting): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->castings->removeElement($casting) && $casting->getRefSerie() === $this) {
-            $casting->setRefSerie(null);
-        }
-
-        return $this;
     }
 
     public function removeCategory(SerieCategory $serieCategory): static

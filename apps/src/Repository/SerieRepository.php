@@ -5,7 +5,6 @@ namespace Labstag\Repository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Labstag\Entity\Casting;
 use Labstag\Entity\Season;
 use Labstag\Entity\Serie;
 use SortDirection;
@@ -19,6 +18,18 @@ class SerieRepository extends RepositoryAbstract
     public function __construct(ManagerRegistry $managerRegistry)
     {
         parent::__construct($managerRegistry, Serie::class);
+    }
+
+    public function getByCasting(string $personId): array
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->where('s.casting LIKE :needle');
+        $queryBuilder->setParameter('needle', '%' . $personId . '%');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'series-by-casting-' . $personId);
+
+        return $query->getResult();
     }
 
     public function delete(object $entity): void
@@ -231,13 +242,6 @@ class SerieRepository extends RepositoryAbstract
             );
             foreach ($seasons as $season) {
                 $this->getEntityManager()->getRepository(Season::class)->remove($season);
-            }
-
-            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
-                ['refSerie' => $entity]
-            );
-            foreach ($castings as $casting) {
-                $this->getEntityManager()->remove($casting);
             }
 
             $this->getEntityManager()->flush();

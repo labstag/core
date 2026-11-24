@@ -1,11 +1,45 @@
 @use "../placeholders" as *;
 
+@use "../variables";
+
 .teaser-story {
   @extend %teaser;
+  @extend %card;
+
+  a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .background {
+    height: 180px;
+  }
 
   .wrapper {
-    &:nth-child(1) {
-      width: 100%;
-    }
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .tags span {
+    background: #6366f1;
+    color: #fff;
+    border-radius: 6px;
+    margin: 2px;
+  }
+
+  .title {
+    font-size: 1.1rem;
+    margin: 0.5rem 0 0.25rem;
+  }
+
+  .resume {
+    color: variables.$colortext-muted;
+    font-size: 0.85rem;
+  }
+
+  .date {
+    color: variables.$colortext-muted;
+    font-size: 0.75rem;
   }
 }

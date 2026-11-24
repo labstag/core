@@ -44,10 +44,9 @@ final class DetailService
             return false;
         }
 
-        $movie->setInProduction((bool) $details['tmdb']['in_production']);
         $adult = isset($details['tmdb']['adult']) && (bool) $details['tmdb']['adult'];
         $movie->setAdult($adult);
-        $movie->setTitle((string) $details['tmdb']['name']);
+        $movie->setTitle((string) ($details['tmdb']['title'] ?? $details['tmdb']['name'] ?? ''));
 
         $voteAverage = (float) ($details['tmdb']['vote_average'] ?? 0);
         $voteCount   = (int) ($details['tmdb']['vote_count'] ?? 0);
@@ -57,7 +56,25 @@ final class DetailService
 
         $movie->setCountries($details['tmdb']['origin_country']);
 
-        $movie->setTmdb($details['tmdb']['id']);
+        $citation = (string) ($details['tmdb']['tagline'] ?? '');
+        if ('' !== $citation) {
+            $movie->setCitation($citation);
+        }
+
+        $description = (string) ($details['tmdb']['overview'] ?? '');
+        if ('' !== $description) {
+            $movie->setDescription($description);
+        }
+
+        if (isset($details['tmdb']['release_date']) && '' !== $details['tmdb']['release_date']) {
+            $movie->setReleaseDate(new \DateTime($details['tmdb']['release_date']));
+        }
+
+        $movie->setTmdb((string) $details['tmdb']['id']);
+
+        if (isset($details['tmdb']['runtime'])) {
+            $movie->setDuration((int) $details['tmdb']['runtime']);
+        }
 
         return true;
     }

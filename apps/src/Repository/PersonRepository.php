@@ -6,7 +6,6 @@ use DateTime;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Labstag\Entity\Casting;
 use Labstag\Entity\Person;
 
 /**
@@ -91,13 +90,6 @@ class PersonRepository extends RepositoryAbstract
     public function remove(object $entity): void
     {
         if ($entity instanceof Person) {
-            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
-                ['refPerson' => $entity]
-            );
-            foreach ($castings as $casting) {
-                $this->getEntityManager()->remove($casting);
-            }
-
             $this->getEntityManager()->flush();
         }
 

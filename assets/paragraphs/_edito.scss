@@ -17,7 +17,20 @@
     }
   }
 
-  .background {}
+  .background {
+    height: 220px;
+  }
 
-  h3 {}
+  h2 {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .wrapper {
+    color: variables.$colortext;
+  }
+
+  .html-content {
+    color: variables.$colortext-muted;
+    max-width: 75ch;
+  }
 }

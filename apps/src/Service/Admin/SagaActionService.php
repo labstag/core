@@ -21,7 +21,7 @@ final class SagaActionService
         $this->messageBus->dispatch(new SagaAllMessage());
     }
 
-    public function updateSaga(int $sagaId): void
+    public function updateSaga(string $sagaId): void
     {
         $this->messageBus->dispatch(new SagaMessage($sagaId));
     }
