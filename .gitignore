@@ -25,3 +25,5 @@ docker-compose-*.yml
 .phpcs-cache
 /cypress/screenshots
 /.superpowers
+.superpowers/
+docs/
