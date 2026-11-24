@@ -1,0 +1,11 @@
+{% set controller = "Labstag\\Controller\\Admin\\ParagraphCrudController" %}
+<div class="modal-header">
+	<h5 class="modal-title">{{ 'Edit Paragraph'|trans }}</h5>
+	<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body">
+    <iframe id="paragraph-iframe" name="paragraph-iframe" title="Inline Frame Example" width="100%" height="750" src="{{ ea_url().setController(controller).setAction('edit').setEntityId(id).set('iframe', 1) }}" data-src="{{ path('admin_blank') }}"></iframe>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Close'|trans }}</button>
+</div>

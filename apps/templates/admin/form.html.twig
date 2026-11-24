@@ -3,7 +3,6 @@
   {% set instance = ea().entity.instance %}
   {% set urlOrder = ea_url().setController('Labstag\\Controller\\Admin\\ParagraphCrudController').setAction('order') %}
   {% set controller = form.vars.ea_vars.field.customOptions.get('controller') %}
-  {% include "admin/modal/paragraph.html.twig" %}
   <div
     class="paragraph-data"
     data-url-add="{{ ea_url().setController(controller).setAction('addParagraph').setEntityId(ea().entity.primaryKeyValue) }}"

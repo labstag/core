@@ -97,7 +97,8 @@ export class Paragraphs {
       element => {
         element.addEventListener(
           'click',
-          async () => {
+          async (event) => {
+            event.preventDefault();
             const dataParagraph = document.querySelector('.paragraphs-list').closest('.paragraph-data');
             const data = await fetch(dataParagraph.dataset.urlAdd, {
               method: 'POST',

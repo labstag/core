@@ -3,11 +3,14 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Labstag\Entity\Paragraph;
 use Labstag\Field\ParagraphParentField;
 use Labstag\Filter\DiscriminatorTypeFilter;
@@ -130,6 +133,17 @@ class ParagraphCrudController extends CrudControllerAbstract
         $filters->add($discriminatorTypeFilter);
 
         return $filters;
+    }
+
+    #[AdminRoute(path: '/modal/{id}', name: 'modal')]
+    public function showModalParagraph(string $id):  Response
+    {
+        return $this->render(
+            'admin/paragraph/edit.html.twig',
+            [
+                'id' => $id
+            ]
+        );
     }
 
     public static function getEntityFqcn(): string
