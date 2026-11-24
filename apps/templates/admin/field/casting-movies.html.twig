@@ -1,35 +1,46 @@
 {% set instance = entity.instance %}
+{% set castings = casting_movies(instance) %}
+{% set total = castings['crew']|length+castings['cast']|length %}
 {% if ea().crud.currentAction == 'detail' %}
-  <table class="table datagrid">
-    <thead>
-      <tr>
-        <th>{{ 'Person'|trans }}</th>
-        <th>{{ 'Known For Department'|trans }}</th>
-        <th>{{ 'Figure'|trans }}</th>
-        <th>{{ 'Movie'|trans }}</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for casting in instance.castings %}
-      {% if casting.refMovie is not null %}
-        <tr>
-          <td>
-            <a href="{{ admin_url('detail', casting.refPerson) }}">
-              {{ casting.refPerson.title }}
-            </a>
-          </td>
-          <td>{{ casting.knownForDepartment }}</td>
-          <td>{{ casting.figure }}</td>
-          <td>
-            <a href="{{ admin_url('detail', casting.refMovie) }}">
-              {{ casting.refMovie.title }}
-            </a>
-          </td>
-        </tr>
-      {% endif %}
-    {% endfor %}
-    </tbody>
-  </table>
+    {% if total != 0 %}
+        {% for id, casting in castings %}
+            {% if casting|length != 0 %}
+                <h8>{% if id == 'crew' %}{{ 'Crew'|trans }}{% else %}{{ 'Cast'|trans }}{% endif %}</h3>
+                <table class="table datagrid">
+                    <thead>
+                        <tr>
+                            <th>{{ 'Movie'|trans }}</th>
+                            {% if id == 'crew' %}
+                                <th>{{ 'Department'|trans }}</th>
+                                <th>{{ 'Job'|trans }}</th>
+                            {% else %}
+                                <th>{{ 'Character'|trans }}</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in casting %}
+                            <tr>
+                                <td>
+                                    <a href="{{ admin_url('detail', row.entity) }}">
+                                        {{ row.entity.title }}
+                                    </a>
+                                </td>
+                                {% if id == 'crew' %}
+                                    <td>{{ row.department }}</td>
+                                    <td>{{ row.job }}</td>
+                                {% else %}
+                                    <td>{{ row.character }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <p>{{ 'No castings available'|trans }}</p>
+    {% endif %}
 {% else %}
-  {{ instance.castings|length }}
+  {{ total }}
 {% endif %}

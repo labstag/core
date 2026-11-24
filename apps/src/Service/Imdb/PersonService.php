@@ -5,7 +5,6 @@ namespace Labstag\Service\Imdb;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Labstag\Api\TheMovieDbApi;
-use Labstag\Entity\Casting;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Movie;
 use Labstag\Entity\Person;
@@ -24,78 +23,6 @@ final class PersonService
         private TheMovieDbApi $theMovieDbApi,
     )
     {
-    }
-
-    public function addToCastingEpisode(Person $person, Episode $episode, array $data): Casting
-    {
-        $entityRepository = $this->entityManager->getRepository(Casting::class);
-        $casting          = $entityRepository->findOneBy(
-            [
-                'refEpisode' => $episode,
-                'refPerson'  => $person,
-            ]
-        );
-        if (!$casting instanceof Casting) {
-            $casting = new Casting();
-            $casting->setRefEpisode($episode);
-            $casting->setRefPerson($person);
-        }
-
-        return $this->addToCasting($casting, $data);
-    }
-
-    public function addToCastingMovie(Person $person, Movie $movie, array $data): Casting
-    {
-        $entityRepository = $this->entityManager->getRepository(Casting::class);
-        $casting          = $entityRepository->findOneBy(
-            [
-                'refMovie'  => $movie,
-                'refPerson' => $person,
-            ]
-        );
-        if (!$casting instanceof Casting) {
-            $casting = new Casting();
-            $casting->setRefMovie($movie);
-            $casting->setRefPerson($person);
-        }
-
-        return $this->addToCasting($casting, $data);
-    }
-
-    public function addToCastingSeason(Person $person, Season $season, array $data): Casting
-    {
-        $entityRepository = $this->entityManager->getRepository(Casting::class);
-        $casting          = $entityRepository->findOneBy(
-            [
-                'refSeason' => $season,
-                'refPerson' => $person,
-            ]
-        );
-        if (!$casting instanceof Casting) {
-            $casting = new Casting();
-            $casting->setRefSeason($season);
-            $casting->setRefPerson($person);
-        }
-
-        return $this->addToCasting($casting, $data);
-    }
-
-    public function addToCastingSerie(Person $person, Serie $serie, array $data): Casting
-    {
-        $entityRepository = $this->entityManager->getRepository(Casting::class);
-        $casting          = $entityRepository->findOneBy(
-            [
-                'refSerie'  => $serie,
-                'refPerson' => $person,
-            ]
-        );
-        if (!$casting instanceof Casting) {
-            $casting = new Casting();
-            $casting->setRefSerie($serie);
-            $casting->setRefPerson($person);
-        }
-
-        return $this->addToCasting($casting, $data);
     }
 
     public function getPerson(array $data): Person
@@ -134,17 +61,6 @@ final class PersonService
         ];
 
         return in_array(true, $statuses, true);
-    }
-
-    private function addToCasting(Casting $casting, array $data): Casting
-    {
-        $entityRepository = $this->entityManager->getRepository(Casting::class);
-        $casting->setKnownForDepartment($data['known_for_department'] ?? null);
-        $casting->setFigure($data['character'] ?? null);
-
-        $entityRepository->save($casting);
-
-        return $casting;
     }
 
     /**

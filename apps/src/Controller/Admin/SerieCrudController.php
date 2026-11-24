@@ -3,6 +3,8 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use Labstag\Field\CastField;
+use Labstag\Field\CrewField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -132,9 +134,8 @@ class SerieCrudController extends CrudControllerAbstract
         $posterTranslation   = new TranslatableMessage('Poster');
         $backdropTranslation = new TranslatableMessage('Backdrop');
 
-        $castingField = AssociationField::new('castings', new TranslatableMessage('Casting'));
-        $castingField->setTemplatePath('admin/field/castings.html.twig');
-        $castingField->onlyOnDetail();
+        $CastField = CastField::new('casting', new TranslatableMessage('Cast'));
+        $CastField->onlyOnDetail();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -171,7 +172,7 @@ class SerieCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->companiesFieldForPage(self::getEntityFqcn(), $pageName),
                 $associationField,
                 $booleanField,
-                $castingField,
+                $CastField,
                 $this->crudFieldFactory->booleanField('adult', new TranslatableMessage('Adult')),
             ]
         );

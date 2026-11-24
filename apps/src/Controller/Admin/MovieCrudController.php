@@ -3,6 +3,8 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use Labstag\Field\CastField;
+use Labstag\Field\CrewField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -128,9 +130,11 @@ class MovieCrudController extends CrudControllerAbstract
         $posterTranslation   = new TranslatableMessage('Poster');
         $backdropTranslation = new TranslatableMessage('Backdrop');
 
-        $associationField = AssociationField::new('castings', new TranslatableMessage('Casting'));
-        $associationField->setTemplatePath('admin/field/castings.html.twig');
-        $associationField->onlyOnDetail();
+        $castField = CastField::new('casting', new TranslatableMessage('Cast'));
+        $castField->onlyOnDetail();
+
+        $crewField = CrewField::new('crew', new TranslatableMessage('Crew'));
+        $crewField->onlyOnDetail();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -166,7 +170,8 @@ class MovieCrudController extends CrudControllerAbstract
                 $this->crudFieldFactory->companiesFieldForPage(self::getEntityFqcn(), $pageName),
                 // image field déjà incluse dans baseIdentitySet
                 $booleanField,
-                $associationField,
+                $castField,
+                $crewField,
                 $this->crudFieldFactory->booleanField('adult', new TranslatableMessage('Adult')),
             ]
         );

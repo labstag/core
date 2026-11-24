@@ -54,12 +54,19 @@ class MovieSlugHandler implements SlugHandlerInterface
             ]
         );
 
-        foreach ($existingMovies as $existingMovie) {
-            if ($existingMovie === $object) {
-                continue;
-            }
+        $collisions = array_filter(
+            $existingMovies,
+            static fn ($m): bool => $m !== $object
+        );
 
-            $date    = $object->getReleaseDate();
+        if ([] === $collisions) {
+            $slug = $originalSlug;
+
+            return;
+        }
+
+        foreach ($collisions as $existingMovie) {
+            $date    = $existingMovie->getReleaseDate();
             $newSlug = $date ? $originalSlug . '-' . $date->format('Y') : $originalSlug . '-' . uniqid();
             $existingMovie->setSlug($newSlug);
             $objectManager->persist($existingMovie);

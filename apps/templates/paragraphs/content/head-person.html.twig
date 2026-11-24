@@ -1,7 +1,7 @@
 {% use "elements.html.twig" %}
-{% set castings = casting_cast(person) %}
-{% set series = casting_series(castings) %}
-{% set movies = casting_movies(castings) %}
+{% set movies = casting_movies(person) %}
+{% set series = casting_series(person) %}
+{% set episodes = casting_episodes(person) %}
 <section{% with {attr: paragraph_contextmenu(paragraph)} %}{{ block('attributes') }}{% endwith %}>
 	<div class="first">
         <div class="background" style="--image-url: url('{{ site_asset(person, 'profile') }}')"></div>
@@ -27,26 +27,39 @@
                 {{ person.biography|raw }}
             </div>
         </div>
-        {% if series|length != 0 or movies|length != 0 %}
+        {% set totalseries = series['cast']|length+ series['crew']|length %}
+        {% set totalmovies = movies['cast']|length + movies['crew']|length %}
+        {% set totalepisodes = episodes['cast']|length + episodes['crew']|length %}
+        {% if totalseries != 0 or totalmovies != 0 or totalepisodes != 0 %}
             <div class="casting">
                 <div class="wrapper">
                     <div class="content">
-                        {% if series|length != 0 %}
-                            <h4>{{ 'Series'|trans }}</h4>
+                        {% if totalmovies != 0 %}
+                            <h4>{{ 'Movies'|trans }}</h4>
                             <ul>
-                                {% for serie in series %}
-                                    <li class="teaser-serie">
-                                        {% include "teasers/serie.html.twig"  with {'serie': serie} %}
+                                {% for row in movies['cast']|merge(movies['crew']) %}
+                                    <li class="teaser-movie">
+                                        {% include "teasers/movie.html.twig"  with {'movie': row.entity} %}
                                     </li>
                                 {% endfor %}
                             </ul>
                         {% endif %}
-                        {% if movies|length != 0 %}
-                            <h4>{{ 'Movies'|trans }}</h4>
+                        {% if totalseries != 0 %}
+                            <h4>{{ 'Series'|trans }}</h4>
                             <ul>
-                                {% for movie in movies %}
-                                    <li class="teaser-movie">
-                                        {% include "teasers/movie.html.twig"  with {'movie': movie} %}
+                                {% for row in series['cast']|merge(series['crew']) %}
+                                    <li class="teaser-serie">
+                                        {% include "teasers/serie.html.twig"  with {'serie': row.entity} %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if totalepisodes != 0 %}
+                            <h4>{{ 'Episodes'|trans }}</h4>
+                            <ul>
+                                {% for row in episodes['cast']|merge(episodes['crew']) %}
+                                    <li class="teaser-episode">
+                                        {% include "teasers/episode.html.twig"  with {'episode': row.entity} %}
                                     </li>
                                 {% endfor %}
                             </ul>

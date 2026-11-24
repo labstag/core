@@ -3,6 +3,8 @@
 namespace Labstag\Controller\Admin;
 
 use Doctrine\Persistence\Mapping\ClassMetadata;
+use Labstag\Field\CastField;
+use Labstag\Field\CrewField;
 use Doctrine\Persistence\ObjectManager;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -68,9 +70,11 @@ class SeasonCrudController extends CrudControllerAbstract
         $posterTranslation   = new TranslatableMessage('Poster');
         $backdropTranslation = new TranslatableMessage('Backdrop');
 
-        $associationField = AssociationField::new('castings', new TranslatableMessage('Casting'));
-        $associationField->setTemplatePath('admin/field/castings.html.twig');
-        $associationField->onlyOnDetail();
+        $castField = CastField::new('casting', new TranslatableMessage('Cast'));
+        $castField->onlyOnDetail();
+
+        $crewField = CrewField::new('crew', new TranslatableMessage('Crew'));
+        $crewField->onlyOnDetail();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -97,7 +101,8 @@ class SeasonCrudController extends CrudControllerAbstract
                 $this->episodesFieldForPage(self::getEntityFqcn(), $pageName),
                 $collectionField,
                 $wysiwygField,
-                $associationField,
+                $castField,
+                $crewField,
             ]
         );
         $this->crudFieldFactory->setTabDate($pageName);

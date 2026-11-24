@@ -31,7 +31,6 @@ use Labstag\Service\Admin\SerieActionService;
 use Labstag\Service\Admin\StoryActionService;
 use Labstag\Service\Igdb\Game\GameApiService;
 use Labstag\Controller\Admin\Traits\ParagraphAdminTrait;
-use Labstag\Entity\Casting;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Meta;
 use Labstag\Entity\Paragraph;
@@ -216,13 +215,7 @@ abstract class CrudControllerAbstract extends AbstractCrudController
                 $criteria = ['refSerie' => $entityInstance];
             }
 
-            $castings = $entityManager->getRepository(Casting::class)->findBy($criteria);
-
-            foreach ($castings as $casting) {
-                $entityManager->remove($casting);
-            }
-
-            if ($entityInstance instanceof Serie) {
+        if ($entityInstance instanceof Serie) {
                 $seasons = $entityManager->getRepository(Season::class)->findBy(
                     ['refserie' => $entityInstance]
                 );

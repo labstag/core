@@ -16,13 +16,13 @@ class CastingExtension extends AbstractExtension
     {
         return [
             new TwigFunction('casting_cast', [CastingExtensionRuntime::class, 'cast']),
+            new TwigFunction('casting_crew', [CastingExtensionRuntime::class, 'crew']),
+
+
             new TwigFunction('casting_acting', [CastingExtensionRuntime::class, 'acting']),
             new TwigFunction('casting_series', [CastingExtensionRuntime::class, 'series']),
+            new TwigFunction('casting_episodes', [CastingExtensionRuntime::class, 'episodes']),
             new TwigFunction('casting_movies', [CastingExtensionRuntime::class, 'movies']),
-            new TwigFunction('casting_directing', [CastingExtensionRuntime::class, 'directing']),
-            new TwigFunction('casting_writing', [CastingExtensionRuntime::class, 'writing']),
-            new TwigFunction('casting_production', [CastingExtensionRuntime::class, 'production']),
-            new TwigFunction('casting_editing', [CastingExtensionRuntime::class, 'editing']),
         ];
     }
 }

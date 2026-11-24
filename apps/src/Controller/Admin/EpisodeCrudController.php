@@ -3,6 +3,8 @@
 namespace Labstag\Controller\Admin;
 
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use Labstag\Field\CastField;
+use Labstag\Field\CrewField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -84,9 +86,11 @@ class EpisodeCrudController extends CrudControllerAbstract
         $wysiwygField        = WysiwygField::new('overview', $translatableMessage->getMessage());
         $wysiwygField->hideOnIndex();
 
-        $associationField = AssociationField::new('castings', new TranslatableMessage('Casting'));
-        $associationField->setTemplatePath('admin/field/castings.html.twig');
-        $associationField->onlyOnDetail();
+        $castField = CastField::new('casting', new TranslatableMessage('Cast'));
+        $castField->onlyOnDetail();
+
+        $crewField = CrewField::new('crew', new TranslatableMessage('Crew'));
+        $crewField->onlyOnDetail();
 
         $this->crudFieldFactory->addFieldsToTab(
             'principal',
@@ -101,7 +105,8 @@ class EpisodeCrudController extends CrudControllerAbstract
                 DateField::new('air_date', new TranslatableMessage('Air date')),
                 $integerField,
                 $wysiwygField,
-                $associationField,
+                $castField,
+                $crewField,
             ]
         );
 

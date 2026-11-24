@@ -112,21 +112,42 @@
                 </div>
             {% endif %}
         {% endif %}
-        {% set castings = casting_cast(movie) %}
-        {% set actings = casting_acting(castings) %}
-        {% set withImage = actings|filter(acting => acting.refperson and acting.refperson.profile) %}
-        {% set withoutImage = actings|filter(acting => not (acting.refperson and acting.refperson.profile)) %}
-        {% set actings = withImage|merge(withoutImage) %}
-        {% if actings|length > 0 %}
+        {% set cast = casting_cast(movie) %}
+        {% set withImage = cast|filter(acting => acting.person and acting.person.profile) %}
+        {% set withoutImage = cast|filter(acting => not (acting.person and acting.person.profile)) %}
+        {% set cast = withImage|merge(withoutImage) %}
+        {% if cast|length > 0 %}
             <div class="actings">
                 <h4 class="subtitle">
                     {{ 'Cast'|trans }}
                 </h4>
                 <div class="wrapper">
                     <ul> 
-                    {% for acting in actings %}
+                    {% for acting in cast %}
                         <li class="teaser-person">
-                            {% include "teasers/person.html.twig"  with {'person': acting.refperson, 'figure': acting.figure} %}
+                            {% include "teasers/person.html.twig"  with {'acting': acting} %}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+        {% set crew = casting_crew(movie) %}
+        {% set withImage = crew|filter(acting => acting.person and acting.person.profile) %}
+        {% set withoutImage = crew|filter(acting => not (acting.person and acting.person.profile)) %}
+        {% set crew = withImage|merge(withoutImage) %}
+        {% if crew|length > 0 %}
+            <div class="actings">
+                <h4 class="subtitle">
+                    {{ 'Crew'|trans }}
+                </h4>
+                <div class="wrapper">
+                    <ul> 
+                    {% for acting in crew %}
+                        <li class="teaser-person">
+                            {% if acting.person != null %}
+                                {% include "teasers/person.html.twig"  with {'acting': acting} %}
+                            {% endif %}
                         </li>
                     {% endfor %}
                     </ul>

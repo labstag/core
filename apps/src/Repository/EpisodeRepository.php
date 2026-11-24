@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ManagerRegistry;
-use Labstag\Entity\Casting;
 use Labstag\Entity\Episode;
 use Labstag\Entity\Season;
 use SortDirection;
@@ -33,13 +32,6 @@ class EpisodeRepository extends RepositoryAbstract
                 $filters->disable('softdeleteable');
             }
 
-            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
-                ['refEpisode' => $entity]
-            );
-            foreach ($castings as $casting) {
-                $this->getEntityManager()->remove($casting);
-            }
-
             $this->getEntityManager()->flush();
 
             if ($wasEnabled && $filters->has('softdeleteable') && !$filters->isEnabled('softdeleteable')) {
@@ -48,6 +40,18 @@ class EpisodeRepository extends RepositoryAbstract
         }
 
         parent::delete($entity);
+    }
+
+    public function getByCasting(string $personId): array
+    {
+        $queryBuilder = $this->createQueryBuilder('e');
+        $queryBuilder->where('e.casting LIKE :needle');
+        $queryBuilder->setParameter('needle', '%' . $personId . '%');
+
+        $query = $queryBuilder->getQuery();
+        $query->enableResultCache(3600, 'episodes-by-casting-' . $personId);
+
+        return $query->getResult();
     }
 
     public function getdeleteTrashBySeason(Season $season): array
@@ -86,13 +90,6 @@ class EpisodeRepository extends RepositoryAbstract
     public function remove(object $entity): void
     {
         if ($entity instanceof Episode) {
-            $castings = $this->getEntityManager()->getRepository(Casting::class)->findBy(
-                ['refEpisode' => $entity]
-            );
-            foreach ($castings as $casting) {
-                $this->getEntityManager()->remove($casting);
-            }
-
             $this->getEntityManager()->flush();
         }
 

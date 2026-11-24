@@ -140,11 +140,9 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     #[ORM\Column(nullable: true)]
     protected ?int $votes = null;
 
-    /**
-     * @var Collection<int, Casting>
-     */
-    #[ORM\OneToMany(targetEntity: Casting::class, mappedBy: 'refMovie')]
-    private Collection $castings;
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $casting = null;
+
 
     /**
      * @var Collection<int, Company>
@@ -162,23 +160,12 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         $this->categories      = new ArrayCollection();
         $this->paragraphs      = new ArrayCollection();
         $this->companies       = new ArrayCollection();
-        $this->castings        = new ArrayCollection();
     }
 
     #[Override]
     public function __toString(): string
     {
         return (string) $this->getTitle();
-    }
-
-    public function addCasting(Casting $casting): static
-    {
-        if (!$this->castings->contains($casting)) {
-            $this->castings->add($casting);
-            $casting->setRefMovie($this);
-        }
-
-        return $this;
     }
 
     public function addCategory(MovieCategory $movieCategory): static
@@ -221,12 +208,16 @@ class Movie implements Stringable, EntityWithParagraphsInterface
         return $this->backdropFile;
     }
 
-    /**
-     * @return Collection<int, Casting>
-     */
-    public function getCastings(): Collection
+    public function getCasting(): ?array
     {
-        return $this->castings;
+        return $this->casting;
+    }
+
+    public function setCasting(?array $casting): static
+    {
+        $this->casting = $casting;
+
+        return $this;
     }
 
     /**
@@ -359,16 +350,6 @@ class Movie implements Stringable, EntityWithParagraphsInterface
     public function isFile(): ?bool
     {
         return $this->file;
-    }
-
-    public function removeCasting(Casting $casting): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->castings->removeElement($casting) && $casting->getRefMovie() === $this) {
-            $casting->setRefMovie(null);
-        }
-
-        return $this;
     }
 
     public function removeCategory(MovieCategory $movieCategory): static

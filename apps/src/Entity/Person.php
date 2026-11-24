@@ -77,11 +77,7 @@ class Person
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $birthday = null;
 
-    /**
-     * @var Collection<int, Casting>
-     */
-    #[ORM\OneToMany(targetEntity: Casting::class, mappedBy: 'refPerson')]
-    private Collection $castings;
+
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?DateTime $deathday = null;
@@ -100,18 +96,8 @@ class Person
 
     public function __construct()
     {
-        $this->castings        = new ArrayCollection();
+
         $this->paragraphs      = new ArrayCollection();
-    }
-
-    public function addCasting(Casting $casting): static
-    {
-        if (!$this->castings->contains($casting)) {
-            $this->castings->add($casting);
-            $casting->setRefPerson($this);
-        }
-
-        return $this;
     }
 
     public function addParagraph(Paragraph $paragraph): static
@@ -132,14 +118,6 @@ class Person
     public function getBirthday(): ?DateTime
     {
         return $this->birthday;
-    }
-
-    /**
-     * @return Collection<int, Casting>
-     */
-    public function getCastings(): Collection
-    {
-        return $this->castings;
     }
 
     public function getDeathday(): ?DateTime
@@ -203,16 +181,6 @@ class Person
     public function isEnable(): ?bool
     {
         return $this->enable;
-    }
-
-    public function removeCasting(Casting $casting): static
-    {
-        // set the owning side to null (unless already changed)
-        if ($this->castings->removeElement($casting) && $casting->getRefPerson() === $this) {
-            $casting->setRefPerson(null);
-        }
-
-        return $this;
     }
 
     public function removeParagraph(Paragraph $paragraph): static

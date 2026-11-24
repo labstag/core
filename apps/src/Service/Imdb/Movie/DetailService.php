@@ -56,7 +56,25 @@ final class DetailService
 
         $movie->setCountries($details['tmdb']['origin_country']);
 
+        $citation = (string) ($details['tmdb']['tagline'] ?? '');
+        if ('' !== $citation) {
+            $movie->setCitation($citation);
+        }
+
+        $description = (string) ($details['tmdb']['overview'] ?? '');
+        if ('' !== $description) {
+            $movie->setDescription($description);
+        }
+
+        if (isset($details['tmdb']['release_date']) && '' !== $details['tmdb']['release_date']) {
+            $movie->setReleaseDate(new \DateTime($details['tmdb']['release_date']));
+        }
+
         $movie->setTmdb((string) $details['tmdb']['id']);
+
+        if (isset($details['tmdb']['runtime'])) {
+            $movie->setDuration((int) $details['tmdb']['runtime']);
+        }
 
         return true;
     }
