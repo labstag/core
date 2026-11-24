@@ -90,6 +90,10 @@ class CastingExtensionRuntime implements RuntimeExtensionInterface
         $tab = [];
         foreach ($entities as $entity) {
             $casting = $entity->getCasting();
+            if (!isset($casting[$type])) {
+                continue;
+            }
+
             foreach ($casting[$type] as $row) {
                 if ($row['personId'] != $personId) {
                     continue;
