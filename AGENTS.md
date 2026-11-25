@@ -10,10 +10,12 @@ Symfony 8.1 application (`apps/`) plus a Webpack Encore frontend (root `assets/`
 
 ## Layout
 
+- `apps/` — Symfony application only: PHP (`src/`), config, templates, migrations, tests, public output. No frontend source here.
 - `apps/src` — application code (controllers, entities, services, forms, Twig extensions, etc.)
 - `apps/tests/{Unit,Integration,Functional,Performance}` — PHPUnit suites
 - `apps/templates`, `apps/config`, `apps/migrations` — views, Symfony config, Doctrine migrations
-- `assets/` (root) — JS/SCSS entrypoints compiled by Encore into `apps/public/build`
+- `assets/` (root) — frontend source only: JS/SCSS entrypoints compiled by Webpack Encore into `apps/public/build`. No PHP here.
+- Rule: PHP/Symfony work in `apps/`; JS/CSS work in `assets/`. Encore bridges them via `apps/public/build`.
 - `taskfiles/` — git submodule (task runner includes); `lampy/` — external infra repo (not in this repo)
 
 ## Environment

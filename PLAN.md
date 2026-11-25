@@ -29,7 +29,7 @@ Priorités proposées (à valider).
 
 ## 6. Architecture
 - Réduire le couplage des services IMDB et FileService (fait).
-- Clarifier les frontières entre `apps/` et `assets/`.
+- Clarifier les frontières entre `apps/` et `assets/` (fait — voir AGENTS.md §Layout).
 - Documenter les entités workflow et les flux Messenger.
 
 ## 7. Gouvernance Git
