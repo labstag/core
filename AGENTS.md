@@ -80,6 +80,7 @@ Lint / quality:
 ## Conventions
 
 - All user-facing strings in Twig templates must be translation keys (use `|trans`); add entries to `apps/translations/messages.fr.xlf`.
+- Soft-delete: `disable('softdeleteable')` calls must be guarded by `if ($filters->isEnabled('softdeleteable'))` (or equivalent) before disabling, to avoid errors when the filter is already off. Pattern: check enabled, then disable; re-enable via `enable()` after the query when needed.
 
 ## Architecture notes
 
