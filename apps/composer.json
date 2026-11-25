@@ -54,10 +54,10 @@
         "symfony/webpack-encore-bundle": "2.4.*",
         "symfony/workflow": "8.1.*",
         "symfony/yaml": "8.1.*",
-        "twig/extra-bundle": "3.29.*",
-        "twig/intl-extra": "3.30.*",
-        "twig/markdown-extra": "3.29.*",
-        "twig/twig": "3.30.*",
+        "twig/extra-bundle": "3.31.*",
+        "twig/intl-extra": "3.31.*",
+        "twig/markdown-extra": "3.31.*",
+        "twig/twig": "3.31.*",
         "vich/uploader-bundle": "3.0.*"
     },
     "config": {
