@@ -42,6 +42,12 @@ services:
       - ${PWD}/conf/php.ini-development://usr/local/etc/php/conf.d/php.ini
       - ${PWD}/conf/apache2/000-default.conf:/etc/apache2/sites-available/000-default.conf:ro
       - ${PWD}/conf/apache2/apache2.conf:/etc/apache2/apache2.conf:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - serverhackariens
       - proxyhackariens

@@ -7,8 +7,10 @@ framework:
             async:
                 dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
                 retry_strategy:
-                    max_retries: 0
+                    max_retries: 3
                     delay: 5000
+                    multiplier: 2
+                    max_delay: 60000
             failed: 'doctrine://default?queue_name=failed'
             sync: "sync://"
             # https://symfony.com/doc/current/messenger.html#transport-configuration

@@ -24,8 +24,8 @@ Priorités proposées (à valider).
 
 ## 5. Infrastructure
 - Corriger Supervisor pour les logs non seekables (fait).
-- Stabiliser le service messenger et la gestion des retries.
-- Ajouter un healthcheck pour la stack.
+- Stabiliser le service messenger et la gestion des retries (fait).
+- Ajouter un healthcheck pour la stack (fait).
 
 ## 6. Architecture
 - Réduire le couplage des services IMDB et FileService.
