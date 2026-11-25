@@ -15,7 +15,7 @@ Priorités proposées (à valider).
 ## 3. CI / automatisation
 - Alléger `lint:all` (parallélisation, cache) et éviter les timeouts (fait — lint:all orchestre déjà les linters).
 - Corriger la config markdownlint pour appliquer le fichier de config (fait).
-- Ajouter des checks de sécurité dépendances dans la CI.
+- Ajouter des checks de sécurité dépendances dans la CI (fait — job security: npm audit + composer audit).
 
 ## 4. Sécurité
 - Traiter les 80 alertes Dependabot (2 critiques, 41 hautes).
