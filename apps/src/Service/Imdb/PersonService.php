@@ -14,7 +14,7 @@ use Labstag\Message\PersonMessage;
 use Labstag\Service\File\FileUploadService;
 use Labstag\Service\MessageDispatcherService;
 
-final class PersonService
+class PersonService
 {
     public function __construct(
         private MessageDispatcherService $messageDispatcherService,

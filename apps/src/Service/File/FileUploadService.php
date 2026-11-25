@@ -18,7 +18,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactoryInterface;
 
-final class FileUploadService
+class FileUploadService
 {
     private const BYTES = 1024;
 

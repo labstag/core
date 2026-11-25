@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Labstag\Tests\Unit\Service;
+
+use Doctrine\ORM\EntityManagerInterface;
+use Labstag\Repository\BlockRepository;
+use Labstag\Service\BlockService;
+use Labstag\Service\ConfigurationService;
+use Labstag\Service\ViewResolverService;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+use Twig\Environment;
+use Twig\Loader\ArrayLoader;
+
+final class ViewResolverServiceTest extends TestCase
+{
+    #[Test]
+    #[Group('unit')]
+    public function getViewByEntityNameReturnsDefaultWhenNoTemplate(): void
+    {
+        $twig = new Environment(new ArrayLoader([]));
+        $service = new ViewResolverService(
+            [],
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(ConfigurationService::class),
+            $this->createMock(BlockService::class),
+            $this->createMock(BlockRepository::class),
+            $twig,
+        );
+        $ref = new \ReflectionClass($service);
+        $method = $ref->getMethod('getViewByEntityName');
+        $method->setAccessible(true);
+        $this->assertSame('views/default.html.twig', $method->invoke($service, 'Foo'));
+    }
+}

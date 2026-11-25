@@ -8,7 +8,7 @@ use Labstag\Api\TheMovieDbApi;
 use Labstag\Entity\Movie;
 use Labstag\Service\File\FileUploadService;
 
-final class ImageService
+class ImageService
 {
     public function __construct(
         private FileUploadService $fileUploadService,

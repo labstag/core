@@ -11,7 +11,7 @@ use Labstag\Entity\Game;
 use Labstag\Entity\Platform;
 use DateTime;
 
-final class GameApiService
+class GameApiService
 {
     public function __construct(
         private IgdbApi $igdbApi,

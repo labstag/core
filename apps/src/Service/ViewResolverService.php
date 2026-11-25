@@ -9,7 +9,7 @@ use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Twig\Environment;
 
-final class ViewResolverService
+class ViewResolverService
 {
 
     /**

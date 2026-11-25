@@ -16,7 +16,7 @@ use Labstag\Service\Imdb\Serie\DetailService;
 use Labstag\Service\Imdb\Serie\ImageService;
 use Labstag\Service\MessageDispatcherService;
 
-final class SerieService
+class SerieService
 {
 
     /**

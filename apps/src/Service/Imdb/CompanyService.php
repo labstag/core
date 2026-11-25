@@ -10,7 +10,7 @@ use Labstag\Service\File\FileUploadService;
 use Labstag\Service\MessageDispatcherService;
 use Psr\Log\LoggerInterface;
 
-final class CompanyService
+class CompanyService
 {
     public function __construct(
         private LoggerInterface $logger,

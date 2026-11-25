@@ -10,7 +10,7 @@ use Labstag\Service\BlockService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-final class BlockActionService
+class BlockActionService
 {
     public function __construct(
         private BlockRepository $blockRepository,

@@ -13,7 +13,7 @@ use Labstag\Entity\GameCategory;
 use Labstag\Service\CategoryService;
 use Labstag\Service\FileService;
 
-final class GameUpdateService
+class GameUpdateService
 {
     public function __construct(
         private FileService $fileService,

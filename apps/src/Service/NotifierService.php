@@ -10,7 +10,7 @@ use Symfony\Component\Notifier\Bridge\Telegram\TelegramOptions;
 use Symfony\Component\Notifier\ChatterInterface;
 use Symfony\Component\Notifier\Message\ChatMessage;
 
-final class NotifierService
+class NotifierService
 {
     public function __construct(
         private ChatterInterface $chatter,

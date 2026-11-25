@@ -15,7 +15,7 @@ use Labstag\Service\File\FileStorageService;
 use Labstag\Service\File\FileUploadService;
 use Labstag\Service\MessageDispatcherService;
 
-final class SeasonService
+class SeasonService
 {
     public function __construct(
         private FileStorageService $fileStorageService,

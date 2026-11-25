@@ -13,7 +13,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final class SecurityService
+class SecurityService
 {
     public function __construct(
         private Security $security,

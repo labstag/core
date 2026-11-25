@@ -11,7 +11,7 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-final class WorkflowService
+class WorkflowService
 {
 
     /**

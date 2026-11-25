@@ -8,7 +8,7 @@ use Labstag\Repository\RedirectionRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-final class RedirectionActionService
+class RedirectionActionService
 {
     public function __construct(
         private RedirectionRepository $redirectionRepository,

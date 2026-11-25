@@ -3,7 +3,6 @@
 namespace Labstag\Service;
 
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Labstag\Controller\Admin\ParagraphCrudController;
 use Labstag\Entity\EntityWithParagraphsInterface;
@@ -17,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class ParagraphService
+class ParagraphService
 {
 
     private array $init = [];
@@ -25,7 +24,7 @@ final class ParagraphService
     public function __construct(
         #[AutowireIterator('labstag.paragraphs')]
         private readonly iterable $paragraphs,
-        private AdminUrlGenerator $adminUrlGenerator,
+        private AdminUrlGeneratorInterface $adminUrlGenerator,
         private ParagraphRepository $paragraphRepository,
         private TranslatorInterface $translator,
         private Security $security,

@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactoryInterface;
 
-final class FileStorageService
+class FileStorageService
 {
     public function __construct(
         #[AutowireIterator('labstag.filestorage')]

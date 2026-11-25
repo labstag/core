@@ -10,7 +10,7 @@ use Labstag\Entity\Season;
 use Labstag\Repository\EpisodeRepository;
 use Labstag\Service\File\FileUploadService;
 
-final class EpisodeService
+class EpisodeService
 {
     public function __construct(
         private FileUploadService $fileUploadService,

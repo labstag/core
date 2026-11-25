@@ -9,7 +9,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
  * Service de dispatch de messages avec déduplication.
  * Évite de dispatcher plusieurs fois le même message identique dans une même requête.
  */
-final class MessageDispatcherService
+class MessageDispatcherService
 {
 
     /**

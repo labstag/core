@@ -10,7 +10,7 @@ use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final class SlugService
+class SlugService
 {
 
     /**

@@ -9,7 +9,7 @@ use Vich\UploaderBundle\Mapping\Attribute\UploadableField;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
-final class FileCleanupService
+class FileCleanupService
 {
     public function __construct(
         #[AutowireIterator('labstag.filestorage')]

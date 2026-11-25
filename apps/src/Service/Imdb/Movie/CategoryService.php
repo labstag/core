@@ -8,7 +8,7 @@ use Labstag\Entity\Movie;
 use Labstag\Entity\MovieCategory;
 use Labstag\Service\CategoryService as BaseCategoryService;
 
-final class CategoryService
+class CategoryService
 {
     public function __construct(
         private BaseCategoryService $baseCategoryService,

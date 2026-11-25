@@ -5,7 +5,7 @@ namespace Labstag\Service;
 use Labstag\Entity\Configuration;
 use Labstag\Repository\ConfigurationRepository;
 
-final class ConfigurationService
+class ConfigurationService
 {
 
     private ?Configuration $configuration = null;

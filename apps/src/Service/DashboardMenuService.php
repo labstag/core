@@ -38,7 +38,7 @@ use Labstag\Controller\Admin\UserCrudController;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 
-final class DashboardMenuService
+class DashboardMenuService
 {
     public function __construct(
         private MenuItemFactory $menuItemFactory,

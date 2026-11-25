@@ -11,7 +11,7 @@ use Labstag\Service\Imdb\Movie\CreditService;
 use Labstag\Service\Imdb\Movie\DetailService;
 use Labstag\Service\Imdb\Movie\ImageService;
 
-final class MovieService
+class MovieService
 {
 
     /**

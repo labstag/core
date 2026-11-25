@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-final class SiteService
+class SiteService
 {
     public function __construct(
         #[AutowireIterator('labstag.datas')]

@@ -7,7 +7,7 @@ namespace Labstag\Service\Admin;
 use Labstag\Message\EpisodeMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-final class EpisodeActionService
+class EpisodeActionService
 {
     public function __construct(
         private MessageBusInterface $messageBus,

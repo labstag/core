@@ -10,7 +10,7 @@ use Labstag\Service\FileService;
 use Labstag\Service\Igdb\Game\GameApiService;
 use Labstag\Service\Igdb\Game\GameUpdateService;
 
-final class GameService extends AbstractIgdb
+class GameService extends AbstractIgdb
 {
     public function __construct(
         IgdbApi $igdbApi,

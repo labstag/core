@@ -7,7 +7,7 @@ namespace Labstag\Service\File;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-final class FileImportService
+class FileImportService
 {
     public function getimportCsvFile(string $path, string $delimiter = ','): array
     {

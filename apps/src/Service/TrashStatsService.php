@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace Labstag\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use ReflectionClass;
 use Symfony\Component\Translation\TranslatableMessage;
 
-final class TrashStatsService
+class TrashStatsService
 {
     /**
      * @param array<string, string> $controllers
      *
      * @return array<int, array{label: TranslatableMessage, count: int, url: string}>
      */
-    public function getTrashItems(array $controllers, EntityManagerInterface $entityManager, AdminUrlGenerator $urlGenerator): array
+    public function getTrashItems(array $controllers, EntityManagerInterface $entityManager, AdminUrlGeneratorInterface $urlGenerator): array
     {
         $trash   = [];
         $filters = $entityManager->getFilters();

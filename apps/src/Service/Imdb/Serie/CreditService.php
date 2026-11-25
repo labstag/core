@@ -6,7 +6,7 @@ namespace Labstag\Service\Imdb\Serie;
 use Labstag\Entity\Serie;
 use Labstag\Service\Imdb\PersonService;
 
-final class CreditService
+class CreditService
 {
     public function __construct(
         private PersonService $personService,
