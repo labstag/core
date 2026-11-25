@@ -21,17 +21,7 @@ final class MetaMessageHandler
 
     public function __invoke(MetaMessage $metaMessage): void
     {
-        $type   = $metaMessage->getType();
         $entity = $metaMessage->getEntity();
-        match ($type) {
-            'delete' => $this->deleteUselessMeta(),
-            'check'  => $this->correctionMeta($entity),
-            default  => null,
-        };
-    }
-
-    private function correctionMeta(string $entity): void
-    {
         try {
             $repository = $this->entityManager->getRepository($entity);
             $items      = $repository->findAll();
@@ -48,9 +38,5 @@ final class MetaMessageHandler
         } catch (Exception $exception) {
             echo $exception->getMessage();
         }
-    }
-
-    private function deleteUselessMeta(): void
-    {
     }
 }

@@ -10,7 +10,6 @@ use Symfony\Component\Messenger\Attribute\AsMessage;
 final class MetaMessage
 {
     public function __construct(
-        public readonly string $type,
         public readonly string $entity = '',
     )
     {
@@ -19,10 +18,5 @@ final class MetaMessage
     public function getEntity(): string
     {
         return $this->entity;
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
     }
 }

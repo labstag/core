@@ -31,7 +31,6 @@ final class MetaAllMessageHandler
     {
         unset($metaAllMessage);
 
-        $this->messageDispatcherService->dispatch(new MetaMessage('delete'));
         $entities = [
             Game::class,
             Movie::class,
@@ -44,7 +43,7 @@ final class MetaAllMessageHandler
             Story::class,
         ];
         foreach ($entities as $entity) {
-            $this->messageDispatcherService->dispatch(new MetaMessage('check', $entity));
+            $this->messageDispatcherService->dispatch(new MetaMessage($entity));
         }
     }
 }

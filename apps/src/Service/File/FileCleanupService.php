@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Labstag\Service\File;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Vich\UploaderBundle\Mapping\Attribute\UploadableField;
+use ReflectionClass;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 final class FileCleanupService
@@ -78,7 +80,10 @@ final class FileCleanupService
     private function findInEntity(string $entityClass, string $file): bool
     {
         $repository = $this->entityManager->getRepository($entityClass);
-        $fields     = $this->findInFields($entityClass, ['img', 'image', 'file']);
+        $fields     = $this->findVichFileNameProperties($entityClass);
+        if ([] === $fields) {
+            return false;
+        }
 
         foreach ($fields as $field) {
             $results = $repository->findBy(
@@ -92,17 +97,19 @@ final class FileCleanupService
         return false;
     }
 
-    private function findInFields(string $entityClass, array $fields): array
+    private function findVichFileNameProperties(string $entityClass): array
     {
-        $metadata = $this->entityManager->getClassMetadata($entityClass);
-        $found    = [];
-
-        foreach ($fields as $field) {
-            if ($metadata->hasField($field) || $metadata->hasAssociation($field)) {
-                $found[] = $field;
+        $reflection = new ReflectionClass($entityClass);
+        $fields     = [];
+        foreach ($reflection->getProperties() as $property) {
+            foreach ($property->getAttributes(UploadableField::class) as $attr) {
+                $args = $attr->getArguments();
+                if (isset($args['fileNameProperty'])) {
+                    $fields[] = $args['fileNameProperty'];
+                }
             }
         }
 
-        return $found;
+        return array_values(array_unique($fields));
     }
 }
