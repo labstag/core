@@ -11,10 +11,7 @@
     "publish": false
   },
   "hooks": {
-    "before:init": [
-      "git pull",
-      "task lint:all SKIP_DOCKER=true"
-    ],
+    "before:init": [],
     "after:bump": "npx auto-changelog -p",
     "after:release": "task labstag:docker:image"
   }
